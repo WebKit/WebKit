@@ -49,16 +49,16 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionSymbolIterator(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionSymbolIterator);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionEntries);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionKeys);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionValues);
+JSC_DECLARE_HOST_FUNCTION(jsTestIterablePrototypeFunctionForEach);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestIterableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestIterableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestIterableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestIterableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestIterablePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -172,7 +172,7 @@ template<> inline JSTestIterable* IDLOperation<JSTestIterable>::cast(JSGlobalObj
     return jsDynamicCast<JSTestIterable*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestIterableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestIterableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -182,7 +182,7 @@ EncodedJSValue jsTestIterableConstructor(JSGlobalObject* lexicalGlobalObject, En
     return JSValue::encode(JSTestIterable::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestIterableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestIterableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -250,6 +250,7 @@ private:
 };
 
 using TestIterableIteratorPrototype = JSDOMIteratorPrototype<JSTestIterable, TestIterableIteratorTraits>;
+JSC_ANNOTATE_HOST_FUNCTION(TestIterableIteratorPrototypeNext, TestIterableIteratorPrototype::next);
 
 template<>
 const JSC::ClassInfo TestIterableIteratorBase::s_info = { "TestIterable Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestIterableIteratorBase) };
@@ -263,7 +264,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionEntriesCaller(JSGlob
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Values));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionEntries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionEntriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
 }
@@ -273,7 +274,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionKeysCaller(JSGlobalO
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Keys));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionKeys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionKeysCaller>(*lexicalGlobalObject, *callFrame, "keys");
 }
@@ -283,7 +284,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionValuesCaller(JSGloba
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Values));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionValues, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionValuesCaller>(*lexicalGlobalObject, *callFrame, "values");
 }
@@ -293,7 +294,7 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionForEachCaller(JSGlob
     return JSValue::encode(iteratorForEach<TestIterableIterator>(*lexicalGlobalObject, *callFrame, *thisObject));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunctionForEach, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionForEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
 }

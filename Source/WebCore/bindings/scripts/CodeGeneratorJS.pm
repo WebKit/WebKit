@@ -3254,7 +3254,7 @@ sub GenerateHeader
             my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::JSGlobalObject*, JSC::CallFrame*);\n");
+            push(@headerContent, "JSC_DECLARE_HOST_FUNCTION(${functionName});\n");
             push(@headerContent, "#endif\n") if $conditionalString;
         }
 
@@ -3270,10 +3270,10 @@ sub GenerateHeader
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@headerContent, "JSC::EncodedJSValue ${getter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            push(@headerContent, "JSC::EncodedJSValue JIT_OPERATION ${getter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
             if (!IsReadonly($attribute)) {
                 my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@headerContent, "bool ${setter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@headerContent, "bool JIT_OPERATION ${setter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
             }
             push(@headerContent, "#endif\n") if $conditionalString;
         }
@@ -4262,7 +4262,7 @@ sub GenerateImplementation
             my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::JSGlobalObject*, JSC::CallFrame*);\n");
+            push(@implContent, "JSC_DECLARE_HOST_FUNCTION(${functionName});\n");
             if ($operation->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"DOMJITIDLType.h"} = 1;
                 my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
@@ -4286,10 +4286,10 @@ sub GenerateImplementation
 
         if (NeedsConstructorProperty($interface)) {
             my $constructorGetter = "js" . $interfaceName . "Constructor";
-            push(@implContent, "JSC::EncodedJSValue ${constructorGetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            push(@implContent, "JSC::EncodedJSValue JIT_OPERATION ${constructorGetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
 
             my $constructorSetter = "setJS" . $interfaceName . "Constructor";
-            push(@implContent, "bool ${constructorSetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+            push(@implContent, "bool JIT_OPERATION ${constructorSetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
         }
 
         foreach my $attribute (@{$interface->attributes}) {
@@ -4299,7 +4299,7 @@ sub GenerateImplementation
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            push(@implContent, "JSC::EncodedJSValue JIT_OPERATION ${getter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
             if (!IsReadonly($attribute)) {
                 my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
                 if ($readWriteConditional) {
@@ -4307,7 +4307,7 @@ sub GenerateImplementation
                     push(@implContent, "#if ${readWriteConditionalString}\n");
                 }
                 my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@implContent, "bool ${setter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@implContent, "bool JIT_OPERATION ${setter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
                 push(@implContent, "#endif\n") if $readWriteConditional;
             }
             push(@implContent, "#endif\n") if $conditionalString;
@@ -4870,7 +4870,7 @@ sub GenerateImplementation
     if (NeedsConstructorProperty($interface)) {
         my $constructorGetter = "js" . $interfaceName . "Constructor";
 
-        push(@implContent, "EncodedJSValue ${constructorGetter}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)\n");
+        push(@implContent, "EncodedJSValue JIT_OPERATION ${constructorGetter}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)\n");
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -4890,7 +4890,7 @@ sub GenerateImplementation
 
         my $constructorSetter = "setJS" . $interfaceName . "Constructor";
 
-        push(@implContent, "bool ${constructorSetter}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+        push(@implContent, "bool JIT_OPERATION ${constructorSetter}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -5338,7 +5338,7 @@ sub GenerateAttributeGetterTrampolineDefinition
         push(@templateParameters, "CastedThisErrorBehavior::Assert");
     }
     
-    push(@$outputArray, "EncodedJSValue ${attributeGetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)\n");
+    push(@$outputArray, "EncodedJSValue JIT_OPERATION ${attributeGetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeGetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, \"" . $attribute->name .  "\");\n");
     push(@$outputArray, "}\n\n");
@@ -5527,7 +5527,7 @@ sub GenerateAttributeSetterTrampolineDefinition
     push(@templateParameters, $attributeSetterBodyName);
     push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LegacyLenientThis};
     
-    push(@$outputArray, "bool ${attributeSetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+    push(@$outputArray, "bool JIT_OPERATION ${attributeSetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeSetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, encodedValue, \"" . $attribute->name . "\");\n");
     push(@$outputArray, "}\n\n");
@@ -5578,7 +5578,7 @@ sub GenerateOperationTrampolineDefinition
     push(@callFunctionTemplateArguments, $functionBodyName);
     push(@callFunctionTemplateArguments, "CastedThisErrorBehavior::Assert") if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
 
-    push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${functionName}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+    push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return ${idlOperationType}<${className}>::${callFunctionName}<" . join(", ", @callFunctionTemplateArguments) . ">(*lexicalGlobalObject, *callFrame, \"" . $operation->name . "\");\n");
     push(@$outputArray, "}\n\n");
@@ -5879,7 +5879,7 @@ sub GenerateDefaultToJSONOperationDefinition
     push(@$outputArray, "\n");
 
     my $interfaceName = $interface->type->name;
-    push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${functionName}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+    push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return IDLOperation<JS${interfaceName}>::call<${functionName}Body>(*lexicalGlobalObject, *callFrame, \"toJSON\");\n");
     push(@$outputArray, "}\n");
@@ -5927,7 +5927,7 @@ sub GenerateLegacyCallerDefinitions
 
         my $overloadFunctionPrefix = "call${className}";
 
-        push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${overloadFunctionPrefix}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+        push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${overloadFunctionPrefix}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
         push(@$outputArray, "{\n");
         push(@$outputArray, "    VM& vm = lexicalGlobalObject->vm();\n");
         push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -5958,7 +5958,8 @@ sub GenerateLegacyCallerDefinition
     if ($isOverloaded) {
         push(@$outputArray, "static inline EncodedJSValue call${className}$operation->{overloadIndex}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
     } else {
-        push(@$outputArray, "static EncodedJSValue JSC_HOST_CALL call${className}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+        push(@$outputArray, "static JSC_DECLARE_HOST_FUNCTION(call${className});\n");
+        push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(call${className}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
     }
 
     push(@$outputArray, "{\n");
@@ -6866,6 +6867,7 @@ private:
 };
 
 using ${iteratorPrototypeName} = JSDOMIteratorPrototype<${className}, ${iteratorTraitsName}>;
+JSC_ANNOTATE_HOST_FUNCTION(${iteratorPrototypeName}Next, ${iteratorPrototypeName}::next);
 
 template<>
 const JSC::ClassInfo ${iteratorName}Base::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${iteratorName}Base) };
@@ -6906,7 +6908,7 @@ END
         }
 
         push(@implContent,  <<END);
-JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<${className}>::call<${functionName}Caller>(*lexicalGlobalObject, *callFrame, "${propertyName}");
 }
@@ -7698,7 +7700,7 @@ sub GenerateConstructorDefinitions
 
             my $overloadFunctionPrefix = "construct${className}";
 
-            push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+            push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES ${className}Constructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
             push(@implContent, "{\n");
             push(@implContent, "    VM& vm = lexicalGlobalObject->vm();\n");
             push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -7706,7 +7708,8 @@ sub GenerateConstructorDefinitions
 
             GenerateOverloadDispatcher(@{$interface->constructors}[0], $interface, $overloadFunctionPrefix, "", "lexicalGlobalObject, callFrame");
 
-            push(@implContent, "}\n\n");
+            push(@implContent, "}\n");
+            push(@implContent, "JSC_ANNOTATE_HOST_FUNCTION(${className}ConstructorConstruct, ${className}Constructor::construct);\n\n");
         } elsif (@constructors == 1) {
             GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
         } else {
@@ -7728,17 +7731,18 @@ sub GenerateConstructorDefinition
 
     if (IsConstructable($interface)) {
         if (HasCustomConstructor($interface)) {
-            push(@$outputArray, "template<> JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)\n");
+            push(@$outputArray, "template<> JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES ${constructorClassName}::construct(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    ASSERT(callFrame);\n");
             push(@$outputArray, "    return construct${className}(lexicalGlobalObject, *callFrame);\n");
-            push(@$outputArray, "}\n\n");
+            push(@$outputArray, "}\n");
+            push(@implContent, "JSC_ANNOTATE_HOST_FUNCTION(${constructorClassName}Construct, ${constructorClassName}::construct);\n\n");
          } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{LegacyFactoryFunction} || $generatingLegacyFactoryFunction)) {
             my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
             if ($isOverloaded) {
                 push(@$outputArray, "static inline EncodedJSValue construct${className}$operation->{overloadIndex}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
             } else {
-                push(@$outputArray, "template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
+                push(@$outputArray, "template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES ${constructorClassName}::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
             }
 
             push(@$outputArray, "{\n");
@@ -7783,7 +7787,11 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    setSubclassStructureIfNeeded<${implType}>(lexicalGlobalObject, callFrame, asObject(jsValue));\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n");
             push(@$outputArray, "    return JSValue::encode(jsValue);\n");
-            push(@$outputArray, "}\n\n");
+            push(@$outputArray, "}\n");
+            if (!$isOverloaded) {
+                push(@$outputArray, "JSC_ANNOTATE_HOST_FUNCTION(${constructorClassName}Construct, ${constructorClassName}::construct);\n");
+            }
+            push(@$outputArray, "\n");
         }
     }
 }

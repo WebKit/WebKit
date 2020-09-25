@@ -50,12 +50,12 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestLegacyOverrideBuiltInsPrototypeFunctionNamedItem(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestLegacyOverrideBuiltInsPrototypeFunctionNamedItem);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestLegacyOverrideBuiltInsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestLegacyOverrideBuiltInsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestLegacyOverrideBuiltInsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestLegacyOverrideBuiltInsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestLegacyOverrideBuiltInsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -215,7 +215,7 @@ template<> inline JSTestLegacyOverrideBuiltIns* IDLOperation<JSTestLegacyOverrid
     return jsDynamicCast<JSTestLegacyOverrideBuiltIns*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestLegacyOverrideBuiltInsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestLegacyOverrideBuiltInsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -225,7 +225,7 @@ EncodedJSValue jsTestLegacyOverrideBuiltInsConstructor(JSGlobalObject* lexicalGl
     return JSValue::encode(JSTestLegacyOverrideBuiltIns::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestLegacyOverrideBuiltInsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestLegacyOverrideBuiltInsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -253,7 +253,7 @@ static inline JSC::EncodedJSValue jsTestLegacyOverrideBuiltInsPrototypeFunctionN
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.namedItem(WTFMove(name)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestLegacyOverrideBuiltInsPrototypeFunctionNamedItem(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestLegacyOverrideBuiltInsPrototypeFunctionNamedItem, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestLegacyOverrideBuiltIns>::call<jsTestLegacyOverrideBuiltInsPrototypeFunctionNamedItemBody>(*lexicalGlobalObject, *callFrame, "namedItem");
 }

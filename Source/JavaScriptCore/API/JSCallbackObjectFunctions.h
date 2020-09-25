@@ -444,7 +444,7 @@ CallData JSCallbackObject<Parent>::getConstructData(JSCell* cell)
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
             constructData.type = CallData::Type::Native;
-            constructData.native.function = construct;
+            constructData.native.function = getConstructFunction();
             break;
         }
     }
@@ -452,7 +452,7 @@ CallData JSCallbackObject<Parent>::getConstructData(JSCell* cell)
 }
 
 template <class Parent>
-EncodedJSValue JSCallbackObject<Parent>::construct(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue JSCallbackObject<Parent>::constructImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -521,7 +521,7 @@ CallData JSCallbackObject<Parent>::getCallData(JSCell* cell)
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsFunction) {
             callData.type = CallData::Type::Native;
-            callData.native.function = call;
+            callData.native.function = getCallFunction();
             break;
         }
     }
@@ -529,7 +529,7 @@ CallData JSCallbackObject<Parent>::getCallData(JSCell* cell)
 }
 
 template <class Parent>
-EncodedJSValue JSCallbackObject<Parent>::call(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue JSCallbackObject<Parent>::callImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

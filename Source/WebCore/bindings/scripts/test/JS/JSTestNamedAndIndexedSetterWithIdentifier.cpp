@@ -49,13 +49,13 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedAndIndexedSetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedAndIndexedSetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedAndIndexedSetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedAndIndexedSetterWithIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -329,7 +329,7 @@ template<> inline JSTestNamedAndIndexedSetterWithIdentifier* IDLOperation<JSTest
     return jsDynamicCast<JSTestNamedAndIndexedSetterWithIdentifier*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedAndIndexedSetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -339,7 +339,7 @@ EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierConstructor(JSGlobalObje
     return JSValue::encode(JSTestNamedAndIndexedSetterWithIdentifier::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedAndIndexedSetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedAndIndexedSetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -372,7 +372,7 @@ static inline JSC::EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierProto
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestNamedAndIndexedSetterWithIdentifier>::call<jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetterBody>(*lexicalGlobalObject, *callFrame, "namedSetter");
 }
@@ -397,7 +397,7 @@ static inline JSC::EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierProto
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestNamedAndIndexedSetterWithIdentifier>::call<jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetterBody>(*lexicalGlobalObject, *callFrame, "indexedSetter");
 }

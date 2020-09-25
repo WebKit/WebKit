@@ -49,10 +49,10 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ArrayPrototype, ArrayPrototype::Base);
 
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncSpeciesCreate);
+JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToString);
+JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncValues);
+JSC_DECLARE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy);
+JSC_DECLARE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy);
 
 } // namespace JSC

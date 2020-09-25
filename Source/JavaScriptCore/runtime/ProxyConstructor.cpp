@@ -44,15 +44,16 @@ ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
     return constructor;
 }
 
-static EncodedJSValue JSC_HOST_CALL callProxy(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructProxyObject(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callProxy);
+static JSC_DECLARE_HOST_FUNCTION(constructProxyObject);
+static JSC_DECLARE_HOST_FUNCTION(makeRevocableProxy);
 
 ProxyConstructor::ProxyConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callProxy, constructProxyObject)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -79,14 +80,14 @@ void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* 
     putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, "revocable"_s, makeRevocableProxy));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructProxyObject(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructProxyObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue target = callFrame->argument(0);
     JSValue handler = callFrame->argument(1);
     return JSValue::encode(ProxyObject::create(globalObject, target, handler));
 }
 
-static EncodedJSValue JSC_HOST_CALL callProxy(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callProxy, (JSGlobalObject* globalObject, CallFrame*))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Proxy"));

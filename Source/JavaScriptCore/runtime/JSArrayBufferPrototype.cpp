@@ -31,7 +31,11 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSlice);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength);
+static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength);
+
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncSlice, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -62,7 +66,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(JSGlobalObject* gl
 }
 
 // http://tc39.github.io/ecmascript_sharedmem/shmem.html#sec-get-arraybuffer.prototype.bytelength
-static EncodedJSValue JSC_HOST_CALL arrayBufferProtoGetterFuncByteLength(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -80,7 +84,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoGetterFuncByteLength(JSGloba
 }
 
 // http://tc39.github.io/ecmascript_sharedmem/shmem.html#StructuredData.SharedArrayBuffer.prototype.get_byteLength
-static EncodedJSValue JSC_HOST_CALL sharedArrayBufferProtoGetterFuncByteLength(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

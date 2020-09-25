@@ -36,7 +36,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlPluralRulesConstructor);
 
-static EncodedJSValue JSC_HOST_CALL IntlPluralRulesConstructorFuncSupportedLocalesOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlPluralRulesConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -64,8 +64,8 @@ Structure* IntlPluralRulesConstructor::createStructure(VM& vm, JSGlobalObject* g
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlPluralRules(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructIntlPluralRules(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callIntlPluralRules);
+static JSC_DECLARE_HOST_FUNCTION(constructIntlPluralRules);
 
 IntlPluralRulesConstructor::IntlPluralRulesConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callIntlPluralRules, constructIntlPluralRules)
@@ -79,7 +79,7 @@ void IntlPluralRulesConstructor::finishCreation(VM& vm, IntlPluralRulesPrototype
     pluralRulesPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlPluralRules(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructIntlPluralRules, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -100,7 +100,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlPluralRules(JSGlobalObject* glo
     return JSValue::encode(pluralRules);
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlPluralRules(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callIntlPluralRules, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -110,7 +110,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlPluralRules(JSGlobalObject* globalOb
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "PluralRules"));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlPluralRulesConstructorFuncSupportedLocalesOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

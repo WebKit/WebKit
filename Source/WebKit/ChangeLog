@@ -1,3 +1,18 @@
+2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging
+        https://bugs.webkit.org/show_bug.cgi?id=216966
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSC_DEFINE_HOST_FUNCTION):
+        (WebKit::callMethod): Deleted.
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSC_DEFINE_HOST_FUNCTION):
+        (WebKit::callNPJSObject): Deleted.
+        (WebKit::constructWithConstructor): Deleted.
+
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
         Add an experimental feature flag for CSS individual transform properties

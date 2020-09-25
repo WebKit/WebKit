@@ -56,7 +56,9 @@ namespace JSC {
 
 const ClassInfo WebAssemblyFunction::s_info = { "WebAssemblyFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunction) };
 
-static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyFunction);
+
+JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -48,8 +48,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestLegacyFactoryFunctionPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -101,7 +101,7 @@ template<> void JSTestLegacyFactoryFunctionConstructor::initializeProperties(VM&
 
 template<> const ClassInfo JSTestLegacyFactoryFunctionConstructor::s_info = { "TestLegacyFactoryFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionConstructor) };
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -132,6 +132,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestLegacyFactoryFunctionLegacyFactory
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
+JSC_ANNOTATE_HOST_FUNCTION(JSTestLegacyFactoryFunctionLegacyFactoryFunctionConstruct, JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct);
 
 template<> JSValue JSTestLegacyFactoryFunctionLegacyFactoryFunction::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -206,7 +207,7 @@ void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
     thisObject->JSTestLegacyFactoryFunction::~JSTestLegacyFactoryFunction();
 }
 
-EncodedJSValue jsTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -216,7 +217,7 @@ EncodedJSValue jsTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlo
     return JSValue::encode(JSTestLegacyFactoryFunction::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

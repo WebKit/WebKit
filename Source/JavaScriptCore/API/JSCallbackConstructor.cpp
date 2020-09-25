@@ -61,7 +61,9 @@ void JSCallbackConstructor::destroy(JSCell* cell)
     static_cast<JSCallbackConstructor*>(cell)->JSCallbackConstructor::~JSCallbackConstructor();
 }
 
-static EncodedJSValue JSC_HOST_CALL constructJSCallbackConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(constructJSCallbackConstructor);
+
+JSC_DEFINE_HOST_FUNCTION(constructJSCallbackConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return APICallbackFunction::constructImpl<JSCallbackConstructor>(globalObject, callFrame);
 }

@@ -35,7 +35,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlRelativeTimeFormatConstructor);
 
-static EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatConstructorFuncSupportedLocalesOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlRelativeTimeFormatConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -63,8 +63,8 @@ Structure* IntlRelativeTimeFormatConstructor::createStructure(VM& vm, JSGlobalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlRelativeTimeFormat(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructIntlRelativeTimeFormat(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callIntlRelativeTimeFormat);
+static JSC_DECLARE_HOST_FUNCTION(constructIntlRelativeTimeFormat);
 
 IntlRelativeTimeFormatConstructor::IntlRelativeTimeFormatConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callIntlRelativeTimeFormat, constructIntlRelativeTimeFormat)
@@ -79,7 +79,7 @@ void IntlRelativeTimeFormatConstructor::finishCreation(VM& vm, IntlRelativeTimeF
 }
 
 // https://tc39.es/ecma402/#sec-Intl.RelativeTimeFormat
-static EncodedJSValue JSC_HOST_CALL constructIntlRelativeTimeFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructIntlRelativeTimeFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -99,7 +99,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlRelativeTimeFormat(JSGlobalObje
 }
 
 // https://tc39.es/ecma402/#sec-Intl.RelativeTimeFormat
-static EncodedJSValue JSC_HOST_CALL callIntlRelativeTimeFormat(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callIntlRelativeTimeFormat, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -108,7 +108,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlRelativeTimeFormat(JSGlobalObject* g
 }
 
 // https://tc39.es/ecma402/#sec-Intl.RelativeTimeFormat.supportedLocalesOf
-EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatConstructorFuncSupportedLocalesOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

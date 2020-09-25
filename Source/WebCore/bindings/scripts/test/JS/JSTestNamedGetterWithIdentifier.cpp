@@ -47,12 +47,12 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedGetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedGetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedGetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedGetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedGetterWithIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -212,7 +212,7 @@ template<> inline JSTestNamedGetterWithIdentifier* IDLOperation<JSTestNamedGette
     return jsDynamicCast<JSTestNamedGetterWithIdentifier*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestNamedGetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedGetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -222,7 +222,7 @@ EncodedJSValue jsTestNamedGetterWithIdentifierConstructor(JSGlobalObject* lexica
     return JSValue::encode(JSTestNamedGetterWithIdentifier::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedGetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedGetterWithIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -250,7 +250,7 @@ static inline JSC::EncodedJSValue jsTestNamedGetterWithIdentifierPrototypeFuncti
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.getterName(WTFMove(name)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestNamedGetterWithIdentifier>::call<jsTestNamedGetterWithIdentifierPrototypeFunctionGetterNameBody>(*lexicalGlobalObject, *callFrame, "getterName");
 }

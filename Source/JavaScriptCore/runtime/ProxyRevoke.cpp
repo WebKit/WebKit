@@ -42,7 +42,7 @@ ProxyRevoke* ProxyRevoke::create(VM& vm, Structure* structure, ProxyObject* prox
     return revoke;
 }
 
-static EncodedJSValue JSC_HOST_CALL performProxyRevoke(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(performProxyRevoke);
 
 ProxyRevoke::ProxyRevoke(VM& vm, Structure* structure)
     : Base(vm, structure, performProxyRevoke, nullptr)
@@ -55,7 +55,7 @@ void ProxyRevoke::finishCreation(VM& vm, ProxyObject* proxy)
     m_proxy.set(vm, this, proxy);
 }
 
-static EncodedJSValue JSC_HOST_CALL performProxyRevoke(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(performProxyRevoke, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ProxyRevoke* proxyRevoke = jsCast<ProxyRevoke*>(callFrame->jsCallee());
     JSValue proxyValue = proxyRevoke->proxy();

@@ -42,9 +42,11 @@
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
-static EncodedJSValue JSC_HOST_CALL webAssemblyModuleCustomSections(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyModuleImports(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyModuleExports(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyModuleCustomSections);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyModuleImports);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyModuleExports);
+static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyModule);
+static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyModule);
 }
 
 #include "WebAssemblyModuleConstructor.lut.h"
@@ -61,7 +63,7 @@ const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_in
  @end
  */
 
-EncodedJSValue JSC_HOST_CALL webAssemblyModuleCustomSections(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -94,7 +96,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleCustomSections(JSGlobalObject* glo
     return JSValue::encode(result);
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyModuleImports(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -125,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleImports(JSGlobalObject* globalObje
     return JSValue::encode(result);
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyModuleExports(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -154,7 +156,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleExports(JSGlobalObject* globalObje
     return JSValue::encode(result);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyModule, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -165,7 +167,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(JSGlobalObject*
     RELEASE_AND_RETURN(scope, JSValue::encode(WebAssemblyModuleConstructor::createModule(globalObject, callFrame, WTFMove(source))));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyModule, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

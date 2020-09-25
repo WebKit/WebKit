@@ -54,9 +54,23 @@ void JSAPIWrapperGlobalObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> han
 
 namespace JSC {
 
-template <> const ClassInfo JSCallbackObject<JSAPIWrapperGlobalObject>::s_info = { "JSAPIWrapperGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
+static JSC_DECLARE_HOST_FUNCTION(callJSAPIWrapperGlobalObjectCallbackObject);
+static JSC_DECLARE_HOST_FUNCTION(constructJSAPIWrapperGlobalObjectCallbackObject);
 
+template <> const ClassInfo JSCallbackObject<JSAPIWrapperGlobalObject>::s_info = { "JSAPIWrapperGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template<> const bool JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = true;
+
+template <>
+RawNativeFunction JSCallbackObject<JSAPIWrapperGlobalObject>::getCallFunction()
+{
+    return callJSAPIWrapperGlobalObjectCallbackObject;
+}
+
+template <>
+RawNativeFunction JSCallbackObject<JSAPIWrapperGlobalObject>::getConstructFunction()
+{
+    return constructJSAPIWrapperGlobalObjectCallbackObject;
+}
 
 template <>
 IsoSubspace* JSCallbackObject<JSAPIWrapperGlobalObject>::subspaceForImpl(VM& vm, SubspaceAccess mode)
@@ -83,6 +97,16 @@ JSCallbackObject<JSAPIWrapperGlobalObject>* JSCallbackObject<JSAPIWrapperGlobalO
     JSCallbackObject<JSAPIWrapperGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSAPIWrapperGlobalObject>>(vm.heap)) JSCallbackObject(vm, classRef, structure);
     callbackObject->finishCreation(vm);
     return callbackObject;
+}
+
+JSC_DEFINE_HOST_FUNCTION(callJSAPIWrapperGlobalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSAPIWrapperGlobalObject>::callImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(constructJSAPIWrapperGlobalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSAPIWrapperGlobalObject>::constructImpl(globalObject, callFrame);
 }
 
 JSAPIWrapperGlobalObject::JSAPIWrapperGlobalObject(VM& vm, Structure* structure)

@@ -48,16 +48,16 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunctionToString);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestCEReactionsStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCEReactionsStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCEReactionsStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCEReactionsStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestCEReactionsStringifierPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -174,7 +174,7 @@ template<> inline JSTestCEReactionsStringifier* IDLOperation<JSTestCEReactionsSt
     return jsDynamicCast<JSTestCEReactionsStringifier*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -184,7 +184,7 @@ EncodedJSValue jsTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGl
     return JSValue::encode(JSTestCEReactionsStringifier::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -205,7 +205,7 @@ static inline JSValue jsTestCEReactionsStringifierValueGetter(JSGlobalObject& le
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.value())));
 }
 
-EncodedJSValue jsTestCEReactionsStringifierValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCEReactionsStringifierValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "value");
 }
@@ -224,7 +224,7 @@ static inline bool setJSTestCEReactionsStringifierValueSetter(JSGlobalObject& le
     return true;
 }
 
-bool setJSTestCEReactionsStringifierValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCEReactionsStringifierValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
 }
@@ -237,7 +237,7 @@ static inline JSValue jsTestCEReactionsStringifierValueWithoutReactionsGetter(JS
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.valueWithoutReactions())));
 }
 
-EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCEReactionsStringifierValueWithoutReactions(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueWithoutReactionsGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "valueWithoutReactions");
 }
@@ -256,7 +256,7 @@ static inline bool setJSTestCEReactionsStringifierValueWithoutReactionsSetter(JS
     return true;
 }
 
-bool setJSTestCEReactionsStringifierValueWithoutReactions(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCEReactionsStringifierValueWithoutReactions(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueWithoutReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "valueWithoutReactions");
 }
@@ -271,7 +271,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionT
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.value())));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCEReactionsStringifierPrototypeFunctionToString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }

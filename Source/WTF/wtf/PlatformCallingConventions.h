@@ -35,12 +35,18 @@
 
 
 #if CPU(X86) && COMPILER(MSVC)
-#define JSC_HOST_CALL __fastcall
+#define JSC_HOST_CALL_ATTRIBUTES __fastcall
 #elif CPU(X86) && COMPILER(GCC_COMPATIBLE)
-#define JSC_HOST_CALL __attribute__ ((fastcall))
+#define JSC_HOST_CALL_ATTRIBUTES __attribute__ ((fastcall))
 #else
-#define JSC_HOST_CALL
+#define JSC_HOST_CALL_ATTRIBUTES
 #endif
+
+#define JSC_DEFINE_HOST_FUNCTION(functionName, parameters) \
+    JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName parameters
+#define JSC_DECLARE_HOST_FUNCTION(functionName) \
+    JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName(JSC::JSGlobalObject*, JSC::CallFrame*)
+#define JSC_ANNOTATE_HOST_FUNCTION(functionId, function)
 
 #if CPU(X86) && OS(WINDOWS)
 #define CALLING_CONVENTION_IS_STDCALL 1

@@ -47,8 +47,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedAndIndexedSetterThrowingExceptionPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -315,7 +315,7 @@ bool JSTestNamedAndIndexedSetterThrowingException::defineOwnProperty(JSObject* o
     return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
-EncodedJSValue jsTestNamedAndIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedAndIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -325,7 +325,7 @@ EncodedJSValue jsTestNamedAndIndexedSetterThrowingExceptionConstructor(JSGlobalO
     return JSValue::encode(JSTestNamedAndIndexedSetterThrowingException::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedAndIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedAndIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

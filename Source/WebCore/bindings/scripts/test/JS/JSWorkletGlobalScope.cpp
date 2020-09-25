@@ -44,8 +44,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsWorkletGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSWorkletGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsWorkletGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSWorkletGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 using JSWorkletGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSWorkletGlobalScope>;
 
@@ -116,7 +116,7 @@ JSValue JSWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globa
     return getDOMConstructor<JSWorkletGlobalScopeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-EncodedJSValue jsWorkletGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsWorkletGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -126,7 +126,7 @@ EncodedJSValue jsWorkletGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObje
     return JSValue::encode(JSWorkletGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSWorkletGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSWorkletGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

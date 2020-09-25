@@ -43,15 +43,15 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeRWCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestJSBuiltinConstructorPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -171,7 +171,7 @@ template<> inline JSTestJSBuiltinConstructor* IDLOperation<JSTestJSBuiltinConstr
     return jsDynamicCast<JSTestJSBuiltinConstructor*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -181,7 +181,7 @@ EncodedJSValue jsTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlob
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -200,7 +200,7 @@ static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(JSGlob
     return thisObject.testAttributeCustom(lexicalGlobalObject);
 }
 
-EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestJSBuiltinConstructor>::get<jsTestJSBuiltinConstructorTestAttributeCustomGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeCustom");
 }
@@ -211,7 +211,7 @@ static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(JSGl
     return thisObject.testAttributeRWCustom(lexicalGlobalObject);
 }
 
-EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeRWCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestJSBuiltinConstructor>::get<jsTestJSBuiltinConstructorTestAttributeRWCustomGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeRWCustom");
 }
@@ -223,7 +223,7 @@ static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomSetter(JSGl
     return true;
 }
 
-bool setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestJSBuiltinConstructor>::set<setJSTestJSBuiltinConstructorTestAttributeRWCustomSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeRWCustom");
 }
@@ -237,7 +237,7 @@ static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTes
     RELEASE_AND_RETURN(throwScope, (JSValue::encode(castedThis->testCustomFunction(*lexicalGlobalObject, *callFrame))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestJSBuiltinConstructor>::call<jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionBody>(*lexicalGlobalObject, *callFrame, "testCustomFunction");
 }

@@ -33,24 +33,24 @@ namespace Inspector {
 
 using namespace JSC;
 
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionSubtype(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionFunctionDetails(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionGetInternalProperties(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionInternalConstructorName(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionProxyTargetValue(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapSize(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapEntries(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetSize(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetEntries(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIteratorEntries(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionSubtype);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionFunctionDetails);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetInternalProperties);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionInternalConstructorName);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionProxyTargetValue);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakMapSize);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakMapEntries);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakSetSize);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakSetEntries);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIteratorEntries);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryInstances);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryHolders);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension);
 
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeEvaluate(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeSavedResultAlias(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeAttributeEvaluate);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeAttributeSavedResultAlias);
 
 const ClassInfo JSInjectedScriptHostPrototype::s_info = { "InjectedScriptHost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInjectedScriptHostPrototype) };
 
@@ -79,7 +79,7 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("savedResultAlias", jsInjectedScriptHostPrototypeAttributeSavedResultAlias, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeEvaluate(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeAttributeEvaluate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeEvaluate(JSGl
     return JSValue::encode(castedThis->evaluate(globalObject));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeSavedResultAlias(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeAttributeSavedResultAlias, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -105,7 +105,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeSavedResultAl
     return JSValue::encode(castedThis->savedResultAlias(globalObject));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionInternalConstructorName(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionInternalConstructorName, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -118,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionInternalConstr
     return JSValue::encode(castedThis->internalConstructorName(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -131,7 +131,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsHTMLAllColle
     return JSValue::encode(castedThis->isHTMLAllCollection(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -144,7 +144,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsPromiseRejec
     return JSValue::encode(castedThis->isPromiseRejectedWithNativeGetterTypeError(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionProxyTargetValue(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionProxyTargetValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -157,7 +157,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionProxyTargetVal
     return JSValue::encode(castedThis->proxyTargetValue(vm, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapSize(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakMapSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -170,7 +170,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapSize(JS
     return JSValue::encode(castedThis->weakMapSize(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakMapEntries, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -183,7 +183,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapEntries
     return JSValue::encode(castedThis->weakMapEntries(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetSize(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakSetSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -196,7 +196,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetSize(JS
     return JSValue::encode(castedThis->weakSetSize(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakSetEntries, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -209,7 +209,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetEntries
     return JSValue::encode(castedThis->weakSetEntries(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIteratorEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIteratorEntries, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -222,7 +222,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIteratorEntrie
     return JSValue::encode(castedThis->iteratorEntries(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryInstances, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -235,7 +235,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances
     return JSValue::encode(castedThis->queryInstances(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryHolders, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -248,7 +248,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(J
     return JSValue::encode(castedThis->queryHolders(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -261,7 +261,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithSc
     return JSValue::encode(castedThis->evaluateWithScopeExtension(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionSubtype(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionSubtype, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -274,7 +274,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionSubtype(JSGlob
     return JSValue::encode(castedThis->subtype(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionFunctionDetails(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionFunctionDetails, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -287,7 +287,7 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionFunctionDetail
     return JSValue::encode(castedThis->functionDetails(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionGetInternalProperties(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetInternalProperties, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

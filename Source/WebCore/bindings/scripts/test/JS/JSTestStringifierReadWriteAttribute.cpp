@@ -47,14 +47,14 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierReadWriteAttributePrototypeFunctionToString(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestStringifierReadWriteAttributePrototypeFunctionToString);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestStringifierReadWriteAttributeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestStringifierReadWriteAttributeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestStringifierReadWriteAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestStringifierReadWriteAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestStringifierReadWriteAttributeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestStringifierReadWriteAttributeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestStringifierReadWriteAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestStringifierReadWriteAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestStringifierReadWriteAttributePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -170,7 +170,7 @@ template<> inline JSTestStringifierReadWriteAttribute* IDLOperation<JSTestString
     return jsDynamicCast<JSTestStringifierReadWriteAttribute*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestStringifierReadWriteAttributeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestStringifierReadWriteAttributeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -180,7 +180,7 @@ EncodedJSValue jsTestStringifierReadWriteAttributeConstructor(JSGlobalObject* le
     return JSValue::encode(JSTestStringifierReadWriteAttribute::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestStringifierReadWriteAttributeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestStringifierReadWriteAttributeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -201,7 +201,7 @@ static inline JSValue jsTestStringifierReadWriteAttributeIdentifierGetter(JSGlob
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.identifier())));
 }
 
-EncodedJSValue jsTestStringifierReadWriteAttributeIdentifier(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestStringifierReadWriteAttributeIdentifier(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestStringifierReadWriteAttribute>::get<jsTestStringifierReadWriteAttributeIdentifierGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "identifier");
 }
@@ -219,7 +219,7 @@ static inline bool setJSTestStringifierReadWriteAttributeIdentifierSetter(JSGlob
     return true;
 }
 
-bool setJSTestStringifierReadWriteAttributeIdentifier(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestStringifierReadWriteAttributeIdentifier(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestStringifierReadWriteAttribute>::set<setJSTestStringifierReadWriteAttributeIdentifierSetter>(*lexicalGlobalObject, thisValue, encodedValue, "identifier");
 }
@@ -234,7 +234,7 @@ static inline JSC::EncodedJSValue jsTestStringifierReadWriteAttributePrototypeFu
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.identifier())));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestStringifierReadWriteAttributePrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestStringifierReadWriteAttributePrototypeFunctionToString, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestStringifierReadWriteAttribute>::call<jsTestStringifierReadWriteAttributePrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }

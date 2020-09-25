@@ -37,7 +37,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlCollatorConstructor);
 
-static EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlCollatorConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -45,8 +45,8 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesO
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL callIntlCollator(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructIntlCollator(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callIntlCollator);
+static JSC_DECLARE_HOST_FUNCTION(constructIntlCollator);
 
 const ClassInfo IntlCollatorConstructor::s_info = { "Function", &InternalFunction::s_info, &collatorConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlCollatorConstructor) };
 
@@ -80,7 +80,7 @@ void IntlCollatorConstructor::finishCreation(VM& vm, IntlCollatorPrototype* coll
     collatorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlCollator(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructIntlCollator, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -103,7 +103,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(JSGlobalObject* global
     return JSValue::encode(collator);
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlCollator(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callIntlCollator, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     // 10.1.2 Intl.Collator ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
@@ -123,7 +123,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(JSGlobalObject* globalObjec
     return JSValue::encode(collator);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlCollatorConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

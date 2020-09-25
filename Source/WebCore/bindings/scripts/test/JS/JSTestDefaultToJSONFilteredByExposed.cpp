@@ -49,15 +49,15 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestDefaultToJSONFilteredByExposedNormalAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedNormalAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestDefaultToJSONFilteredByExposedPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -192,7 +192,7 @@ template<> inline JSTestDefaultToJSONFilteredByExposed* IDLOperation<JSTestDefau
     return jsDynamicCast<JSTestDefaultToJSONFilteredByExposed*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -202,7 +202,7 @@ EncodedJSValue jsTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* l
     return JSValue::encode(JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -223,7 +223,7 @@ static inline JSValue jsTestDefaultToJSONFilteredByExposedNormalAttributeGetter(
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.normalAttribute())));
 }
 
-EncodedJSValue jsTestDefaultToJSONFilteredByExposedNormalAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedNormalAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposedNormalAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "normalAttribute");
 }
@@ -236,7 +236,7 @@ static inline JSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute())));
 }
 
-EncodedJSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "filteredByExposedWindowAttribute");
 }
@@ -249,7 +249,7 @@ static inline JSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorke
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute())));
 }
 
-EncodedJSValue jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDefaultToJSONFilteredByExposed>::get<jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "filteredByExposedWorkerAttribute");
 }
@@ -271,7 +271,7 @@ static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFuncti
     return JSValue::encode(result);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestDefaultToJSONFilteredByExposed>::call<jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }

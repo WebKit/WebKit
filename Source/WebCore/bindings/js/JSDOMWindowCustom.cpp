@@ -63,8 +63,8 @@
 namespace WebCore {
 using namespace JSC;
 
-EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsDOMWindowInstanceFunctionShowModalDialog);
+JSC_DECLARE_HOST_FUNCTION(jsDOMWindowInstanceFunctionOpenDatabase);
 
 void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
 {
@@ -80,7 +80,7 @@ void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-static EncodedJSValue jsDOMWindowWebKit(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+static EncodedJSValue JIT_OPERATION jsDOMWindowWebKit(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = lexicalGlobalObject->vm();
     JSDOMWindow* castedThis = toJSDOMWindow(vm, JSValue::decode(thisValue));
@@ -633,7 +633,7 @@ template<> inline JSDOMWindow* IDLOperation<JSDOMWindow>::cast(JSGlobalObject& l
     return toJSDOMWindow(lexicalGlobalObject.vm(), callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::sloppy()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsDOMWindowInstanceFunctionOpenDatabase, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSDOMWindow>::call<jsDOMWindowInstanceFunctionOpenDatabaseBody>(*globalObject, *callFrame, "openDatabase");
 }

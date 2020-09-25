@@ -30,12 +30,22 @@ using namespace JSC;
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMConstructorBase);
 
-static EncodedJSValue JSC_HOST_CALL callThrowTypeError(JSGlobalObject* globalObject, CallFrame*)
+static JSC_DECLARE_HOST_FUNCTION(callThrowTypeError);
+
+JSC_DEFINE_HOST_FUNCTION(callThrowTypeError, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     throwTypeError(globalObject, scope, "Constructor requires 'new' operator"_s);
     return JSValue::encode(jsNull());
+}
+
+JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable, (JSC::JSGlobalObject* globalObject, JSC::CallFrame*))
+{
+    JSC::VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSC::throwTypeError(globalObject, scope, "Illegal constructor"_s);
+    return JSC::JSValue::encode(JSC::jsNull());
 }
 
 CallData JSDOMConstructorBase::getCallData(JSCell*)

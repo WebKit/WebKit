@@ -43,16 +43,16 @@ const ClassInfo MapPrototype::s_info = { "Map", &Base::s_info, &mapPrototypeTabl
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncDelete(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncGet(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncHas(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncSet(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncValues(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncEntries(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncClear);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncDelete);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGet);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncHas);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSet);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncValues);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncKeys);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncEntries);
 
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncSize(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSize);
     
 void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -97,7 +97,7 @@ ALWAYS_INLINE static JSMap* getMap(JSGlobalObject* globalObject, JSValue thisVal
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncClear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     if (!map)
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(JSGlobalObject* globalObject, Cal
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncDelete(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncDelete, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     if (!map)
@@ -114,7 +114,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncDelete(JSGlobalObject* globalObject, Ca
     return JSValue::encode(jsBoolean(map->remove(globalObject, callFrame->argument(0))));
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncGet(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncGet, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     if (!map)
@@ -122,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncGet(JSGlobalObject* globalObject, CallF
     return JSValue::encode(map->get(globalObject, callFrame->argument(0)));
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncHas(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncHas, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     if (!map)
@@ -130,7 +130,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncHas(JSGlobalObject* globalObject, CallF
     return JSValue::encode(jsBoolean(map->has(globalObject, callFrame->argument(0))));
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncSet(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncSet, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue thisValue = callFrame->thisValue();
     JSMap* map = getMap(globalObject, thisValue);
@@ -150,22 +150,22 @@ inline JSValue createMapIteratorObject(JSGlobalObject* globalObject, CallFrame* 
     return JSMapIterator::create(vm, globalObject->mapIteratorStructure(), map, kind);
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncValues(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncValues, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(createMapIteratorObject(globalObject, callFrame, IterationKind::Values));
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncKeys, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(createMapIteratorObject(globalObject, callFrame, IterationKind::Keys));
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncEntries, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(createMapIteratorObject(globalObject, callFrame, IterationKind::Entries));
 }
 
-EncodedJSValue JSC_HOST_CALL mapProtoFuncSize(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSMap* map = getMap(globalObject, callFrame->thisValue());
     if (!map)

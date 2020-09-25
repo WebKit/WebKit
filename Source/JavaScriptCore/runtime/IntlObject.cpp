@@ -70,7 +70,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlObject);
 
-static EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(intlObjectFuncGetCanonicalLocales);
 
 static JSValue createCollatorConstructor(VM& vm, JSObject* object)
 {
@@ -1400,7 +1400,7 @@ bool isWellFormedCurrencyCode(StringView currency)
     return currency.length() == 3 && currency.isAllSpecialCharacters<isASCIIAlpha>();
 }
 
-EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(intlObjectFuncGetCanonicalLocales, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     // Intl.getCanonicalLocales(locales)
     // https://tc39.github.io/ecma402/#sec-intl.getcanonicallocales

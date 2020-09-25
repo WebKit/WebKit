@@ -44,8 +44,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsDedicatedWorkerGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDedicatedWorkerGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDedicatedWorkerGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDedicatedWorkerGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 using JSDedicatedWorkerGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSDedicatedWorkerGlobalScope>;
 
@@ -106,7 +106,7 @@ JSValue JSDedicatedWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObjec
     return getDOMConstructor<JSDedicatedWorkerGlobalScopeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-EncodedJSValue jsDedicatedWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDedicatedWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -116,7 +116,7 @@ EncodedJSValue jsDedicatedWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGl
     return JSValue::encode(JSDedicatedWorkerGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSDedicatedWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDedicatedWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

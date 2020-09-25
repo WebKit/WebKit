@@ -1,3 +1,1307 @@
+2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging
+        https://bugs.webkit.org/show_bug.cgi?id=216966
+
+        Reviewed by Saam Barati.
+
+        No behavior change. We also annotate custom getters / setters with JIT_OPERATION since they can be invoked from JIT code.
+
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::construct):
+        * bindings/js/JSDOMConstructor.h:
+        * bindings/js/JSDOMConstructorBase.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::callThrowTypeError): Deleted.
+        * bindings/js/JSDOMConstructorBase.h:
+        * bindings/js/JSDOMConstructorNotConstructable.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::makeThisTypeErrorForBuiltins): Deleted.
+        (WebCore::makeGetterTypeErrorForBuiltins): Deleted.
+        (WebCore::makeDOMExceptionForBuiltins): Deleted.
+        (WebCore::isReadableByteStreamAPIEnabled): Deleted.
+        (WebCore::isWritableStreamAPIEnabled): Deleted.
+        (WebCore::whenSignalAborted): Deleted.
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::next):
+        * bindings/js/JSDOMLegacyFactoryFunction.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowWebKit):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsDOMWindowInstanceFunctionOpenDatabase): Deleted.
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::callPlugin): Deleted.
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::cloneArrayBuffer): Deleted.
+        (WebCore::structuredCloneArrayBuffer): Deleted.
+        (WebCore::structuredCloneArrayBufferView): Deleted.
+        * bindings/js/StructuredClone.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateAttributeGetterTrampolineDefinition):
+        (GenerateAttributeSetterTrampolineDefinition):
+        (GenerateOperationTrampolineDefinition):
+        (GenerateDefaultToJSONOperationDefinition):
+        (GenerateLegacyCallerDefinitions):
+        (GenerateLegacyCallerDefinition):
+        (GenerateIterableDefinition):
+        (GenerateConstructorDefinitions):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSDOMWindow.cpp:
+        (WebCore::jsDOMWindowConstructor):
+        (WebCore::setJSDOMWindowConstructor):
+        (WebCore::jsDOMWindowExposedToWorkerAndWindowConstructor):
+        (WebCore::setJSDOMWindowExposedToWorkerAndWindowConstructor):
+        (WebCore::jsDOMWindowTestConditionallyReadWriteConstructor):
+        (WebCore::setJSDOMWindowTestConditionallyReadWriteConstructor):
+        (WebCore::jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor):
+        (WebCore::setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor):
+        (WebCore::jsDOMWindowTestNodeConstructor):
+        (WebCore::setJSDOMWindowTestNodeConstructor):
+        (WebCore::jsDOMWindowTestObjectConstructor):
+        (WebCore::setJSDOMWindowTestObjectConstructor):
+        (WebCore::jsDOMWindowTestPromiseRejectionEventConstructor):
+        (WebCore::setJSDOMWindowTestPromiseRejectionEventConstructor):
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScope.cpp:
+        (WebCore::jsDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::setJSDedicatedWorkerGlobalScopeConstructor):
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.cpp:
+        (WebCore::JSExposedToWorkerAndWindowConstructor::construct):
+        (WebCore::jsExposedToWorkerAndWindowConstructor):
+        (WebCore::setJSExposedToWorkerAndWindowConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsExposedToWorkerAndWindowPrototypeFunctionDoSomething): Deleted.
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsMapLikePrototypeFunctionGet): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionForEach): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionSet): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionClear): Deleted.
+        (WebCore::jsMapLikePrototypeFunctionDelete): Deleted.
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScope.cpp:
+        (WebCore::jsPaintWorkletGlobalScopeConstructor):
+        (WebCore::setJSPaintWorkletGlobalScopeConstructor):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionGet): Deleted.
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSReadOnlySetLike.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsReadOnlySetLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsReadOnlySetLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsReadOnlySetLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsReadOnlySetLikePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScope.cpp:
+        (WebCore::jsServiceWorkerGlobalScopeConstructor):
+        (WebCore::setJSServiceWorkerGlobalScopeConstructor):
+        * bindings/scripts/test/JS/JSSetLike.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsSetLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionForEach): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionAdd): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionClear): Deleted.
+        (WebCore::jsSetLikePrototypeFunctionDelete): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectConstructor::prototypeForStructure):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction): Deleted.
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionPostMessage): Deleted.
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod): Deleted.
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::jsTestCEReactionsConstructor):
+        (WebCore::setJSTestCEReactionsConstructor):
+        (WebCore::jsTestCEReactionsAttributeWithCEReactions):
+        (WebCore::setJSTestCEReactionsAttributeWithCEReactions):
+        (WebCore::jsTestCEReactionsReflectAttributeWithCEReactions):
+        (WebCore::setJSTestCEReactionsReflectAttributeWithCEReactions):
+        (WebCore::jsTestCEReactionsStringifierAttribute):
+        (WebCore::setJSTestCEReactionsStringifierAttribute):
+        (WebCore::jsTestCEReactionsAttributeWithCEReactionsNotNeeded):
+        (WebCore::setJSTestCEReactionsAttributeWithCEReactionsNotNeeded):
+        (WebCore::jsTestCEReactionsReflectAttributeWithCEReactionsNotNeeded):
+        (WebCore::setJSTestCEReactionsReflectAttributeWithCEReactionsNotNeeded):
+        (WebCore::jsTestCEReactionsStringifierAttributeNotNeeded):
+        (WebCore::setJSTestCEReactionsStringifierAttributeNotNeeded):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestCEReactionsPrototypeFunctionMethodWithCEReactions): Deleted.
+        (WebCore::jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded): Deleted.
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::jsTestCEReactionsStringifierConstructor):
+        (WebCore::setJSTestCEReactionsStringifierConstructor):
+        (WebCore::jsTestCEReactionsStringifierValue):
+        (WebCore::setJSTestCEReactionsStringifierValue):
+        (WebCore::jsTestCEReactionsStringifierValueWithoutReactions):
+        (WebCore::setJSTestCEReactionsStringifierValueWithoutReactions):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestCEReactionsStringifierPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracerConstructor::prototypeForStructure):
+        (WebCore::jsTestCallTracerConstructor):
+        (WebCore::setJSTestCallTracerConstructor):
+        (WebCore::jsTestCallTracerTestAttributeInterface):
+        (WebCore::setJSTestCallTracerTestAttributeInterface):
+        (WebCore::jsTestCallTracerTestAttributeSpecified):
+        (WebCore::setJSTestCallTracerTestAttributeSpecified):
+        (WebCore::jsTestCallTracerTestAttributeWithVariant):
+        (WebCore::setJSTestCallTracerTestAttributeWithVariant):
+        (WebCore::jsTestCallTracerTestReadonlyAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationInterface): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationSpecified): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithArguments): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgument): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgument): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument): Deleted.
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument): Deleted.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::jsTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestClassWithJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        (WebCore::JSTestConditionalIncludesConstructor::prototypeForStructure):
+        (WebCore::jsTestConditionalIncludesConstructor):
+        (WebCore::setJSTestConditionalIncludesConstructor):
+        (WebCore::jsTestConditionalIncludesTestAttr):
+        (WebCore::jsTestConditionalIncludesMixinReadOnlyAttribute):
+        (WebCore::jsTestConditionalIncludesMixinAttribute):
+        (WebCore::setJSTestConditionalIncludesMixinAttribute):
+        (WebCore::jsTestConditionalIncludesMixinCustomAttribute):
+        (WebCore::setJSTestConditionalIncludesMixinCustomAttribute):
+        (WebCore::jsTestConditionalIncludesMixinNodeAttribute):
+        (WebCore::setJSTestConditionalIncludesMixinNodeAttribute):
+        (WebCore::jsTestConditionalIncludesPartialMixinAttributeFromPartial):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionMixinOperation): Deleted.
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionMixinComplexOperation): Deleted.
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionMixinCustomOperation): Deleted.
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionMixinConditionalOperation): Deleted.
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionMixinSettingsConditionalOperation): Deleted.
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionMixinResultFieldOperation): Deleted.
+        (WebCore::jsTestConditionalIncludesPrototypeFunctionPartialMixinOperationFromPartial): Deleted.
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.cpp:
+        (WebCore::JSTestConditionallyReadWriteConstructor::prototypeForStructure):
+        (WebCore::jsTestConditionallyReadWriteConstructor):
+        (WebCore::setJSTestConditionallyReadWriteConstructor):
+        (WebCore::jsTestConditionallyReadWriteConditionallyReadWriteAttribute):
+        (WebCore::setJSTestConditionallyReadWriteConditionallyReadWriteAttribute):
+        (WebCore::jsTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute):
+        (WebCore::setJSTestConditionallyReadWriteConditionalAndConditionallyReadWriteAttribute):
+        (WebCore::jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute):
+        (WebCore::setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttribute):
+        (WebCore::jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable):
+        (WebCore::setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeable):
+        (WebCore::jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate):
+        (WebCore::setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributeUnforgeablePrivate):
+        (WebCore::jsTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise):
+        (WebCore::setJSTestConditionallyReadWriteRuntimeConditionallyReadWriteAttributePromise):
+        (WebCore::jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute):
+        (WebCore::setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttribute):
+        (WebCore::jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable):
+        (WebCore::setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeable):
+        (WebCore::jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate):
+        (WebCore::setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributeUnforgeablePrivate):
+        (WebCore::jsTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise):
+        (WebCore::setJSTestConditionallyReadWriteSettingsConditionallyReadWriteAttributePromise):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::jsTestDOMJITConstructor):
+        (WebCore::setJSTestDOMJITConstructor):
+        (WebCore::jsTestDOMJITAnyAttr):
+        (WebCore::jsTestDOMJITBooleanAttr):
+        (WebCore::jsTestDOMJITByteAttr):
+        (WebCore::jsTestDOMJITOctetAttr):
+        (WebCore::jsTestDOMJITShortAttr):
+        (WebCore::jsTestDOMJITUnsignedShortAttr):
+        (WebCore::jsTestDOMJITLongAttr):
+        (WebCore::jsTestDOMJITUnsignedLongAttr):
+        (WebCore::jsTestDOMJITLongLongAttr):
+        (WebCore::jsTestDOMJITUnsignedLongLongAttr):
+        (WebCore::jsTestDOMJITFloatAttr):
+        (WebCore::jsTestDOMJITUnrestrictedFloatAttr):
+        (WebCore::jsTestDOMJITDoubleAttr):
+        (WebCore::jsTestDOMJITUnrestrictedDoubleAttr):
+        (WebCore::jsTestDOMJITDomStringAttr):
+        (WebCore::jsTestDOMJITByteStringAttr):
+        (WebCore::jsTestDOMJITUsvStringAttr):
+        (WebCore::jsTestDOMJITNodeAttr):
+        (WebCore::jsTestDOMJITBooleanNullableAttr):
+        (WebCore::jsTestDOMJITByteNullableAttr):
+        (WebCore::jsTestDOMJITOctetNullableAttr):
+        (WebCore::jsTestDOMJITShortNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedShortNullableAttr):
+        (WebCore::jsTestDOMJITLongNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedLongNullableAttr):
+        (WebCore::jsTestDOMJITLongLongNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedLongLongNullableAttr):
+        (WebCore::jsTestDOMJITFloatNullableAttr):
+        (WebCore::jsTestDOMJITUnrestrictedFloatNullableAttr):
+        (WebCore::jsTestDOMJITDoubleNullableAttr):
+        (WebCore::jsTestDOMJITUnrestrictedDoubleNullableAttr):
+        (WebCore::jsTestDOMJITDomStringNullableAttr):
+        (WebCore::jsTestDOMJITByteStringNullableAttr):
+        (WebCore::jsTestDOMJITUsvStringNullableAttr):
+        (WebCore::jsTestDOMJITNodeNullableAttr):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestDOMJITPrototypeFunctionGetAttribute): Deleted.
+        (WebCore::jsTestDOMJITPrototypeFunctionItem): Deleted.
+        (WebCore::jsTestDOMJITPrototypeFunctionHasAttribute): Deleted.
+        (WebCore::jsTestDOMJITPrototypeFunctionGetElementById): Deleted.
+        (WebCore::jsTestDOMJITPrototypeFunctionGetElementsByName): Deleted.
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.cpp:
+        (WebCore::jsTestDefaultToJSONConstructor):
+        (WebCore::setJSTestDefaultToJSONConstructor):
+        (WebCore::jsTestDefaultToJSONLongAttribute):
+        (WebCore::jsTestDefaultToJSONEnabledBySettingsAttribute):
+        (WebCore::jsTestDefaultToJSONEnabledByConditionalAttribute):
+        (WebCore::jsTestDefaultToJSONEventHandlerAttribute):
+        (WebCore::setJSTestDefaultToJSONEventHandlerAttribute):
+        (WebCore::jsTestDefaultToJSONFirstStringAttribute):
+        (WebCore::setJSTestDefaultToJSONFirstStringAttribute):
+        (WebCore::jsTestDefaultToJSONSecondLongAttribute):
+        (WebCore::setJSTestDefaultToJSONSecondLongAttribute):
+        (WebCore::jsTestDefaultToJSONThirdUnJSONableAttribute):
+        (WebCore::setJSTestDefaultToJSONThirdUnJSONableAttribute):
+        (WebCore::jsTestDefaultToJSONFourthUnrestrictedDoubleAttribute):
+        (WebCore::setJSTestDefaultToJSONFourthUnrestrictedDoubleAttribute):
+        (WebCore::jsTestDefaultToJSONFifthLongClampedAttribute):
+        (WebCore::setJSTestDefaultToJSONFifthLongClampedAttribute):
+        (WebCore::jsTestDefaultToJSONSixthTypedefAttribute):
+        (WebCore::setJSTestDefaultToJSONSixthTypedefAttribute):
+        (WebCore::jsTestDefaultToJSONSeventhDirectlyToJSONableAttribute):
+        (WebCore::setJSTestDefaultToJSONSeventhDirectlyToJSONableAttribute):
+        (WebCore::jsTestDefaultToJSONEighthIndirectlyAttribute):
+        (WebCore::setJSTestDefaultToJSONEighthIndirectlyAttribute):
+        (WebCore::jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute):
+        (WebCore::setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute):
+        (WebCore::jsTestDefaultToJSONTenthFrozenArrayAttribute):
+        (WebCore::setJSTestDefaultToJSONTenthFrozenArrayAttribute):
+        (WebCore::jsTestDefaultToJSONEleventhSequenceAttribute):
+        (WebCore::setJSTestDefaultToJSONEleventhSequenceAttribute):
+        (WebCore::jsTestDefaultToJSONTwelfthInterfaceSequenceAttribute):
+        (WebCore::setJSTestDefaultToJSONTwelfthInterfaceSequenceAttribute):
+        (WebCore::jsTestDefaultToJSONThirteenthRecordAttribute):
+        (WebCore::setJSTestDefaultToJSONThirteenthRecordAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestDefaultToJSONPrototypeFunctionToJSON): Deleted.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.cpp:
+        (WebCore::jsTestDefaultToJSONFilteredByExposedConstructor):
+        (WebCore::setJSTestDefaultToJSONFilteredByExposedConstructor):
+        (WebCore::jsTestDefaultToJSONFilteredByExposedNormalAttribute):
+        (WebCore::jsTestDefaultToJSONFilteredByExposedFilteredByExposedWindowAttribute):
+        (WebCore::jsTestDefaultToJSONFilteredByExposedFilteredByExposedWorkerAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestDefaultToJSONFilteredByExposedPrototypeFunctionToJSON): Deleted.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONIndirectInheritance.cpp:
+        (WebCore::jsTestDefaultToJSONIndirectInheritanceConstructor):
+        (WebCore::setJSTestDefaultToJSONIndirectInheritanceConstructor):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInherit.cpp:
+        (WebCore::jsTestDefaultToJSONInheritConstructor):
+        (WebCore::setJSTestDefaultToJSONInheritConstructor):
+        (WebCore::jsTestDefaultToJSONInheritInheritLongAttribute):
+        (WebCore::setJSTestDefaultToJSONInheritInheritLongAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestDefaultToJSONInheritPrototypeFunctionToJSON): Deleted.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInheritFinal.cpp:
+        (WebCore::jsTestDefaultToJSONInheritFinalConstructor):
+        (WebCore::setJSTestDefaultToJSONInheritFinalConstructor):
+        (WebCore::jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo):
+        (WebCore::setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo):
+        (WebCore::jsTestDefaultToJSONInheritFinalFinalLongAttributeBar):
+        (WebCore::setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON): Deleted.
+        * bindings/scripts/test/JS/JSTestDomainSecurity.cpp:
+        (WebCore::JSTestDomainSecurityConstructor::prototypeForStructure):
+        (WebCore::jsTestDomainSecurityConstructor):
+        (WebCore::setJSTestDomainSecurityConstructor):
+        (WebCore::jsTestDomainSecurityExcitingAttr):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestDomainSecurityPrototypeFunctionExcitingFunction): Deleted.
+        (WebCore::jsTestDomainSecurityPrototypeFunctionPostMessage): Deleted.
+        (WebCore::jsTestDomainSecurityPrototypeFunctionOverloadedMethod): Deleted.
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySettingConstructor::prototypeForStructure):
+        (WebCore::jsTestEnabledBySettingConstructor):
+        (WebCore::setJSTestEnabledBySettingConstructor):
+        (WebCore::jsTestEnabledBySettingTestSubObjEnabledBySettingConstructor):
+        (WebCore::setJSTestEnabledBySettingTestSubObjEnabledBySettingConstructor):
+        (WebCore::jsTestEnabledBySettingEnabledBySettingAttribute):
+        (WebCore::setJSTestEnabledBySettingEnabledBySettingAttribute):
+        (WebCore::jsTestEnabledBySettingEnabledByTwoSettingsAttribute):
+        (WebCore::setJSTestEnabledBySettingEnabledByTwoSettingsAttribute):
+        (WebCore::jsTestEnabledBySettingSupplementalAttribute):
+        (WebCore::setJSTestEnabledBySettingSupplementalAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperation): Deleted.
+        * bindings/scripts/test/JS/JSTestEnabledForContext.cpp:
+        (WebCore::jsTestEnabledForContextConstructor):
+        (WebCore::setJSTestEnabledForContextConstructor):
+        (WebCore::jsTestEnabledForContextTestSubObjEnabledForContextConstructor):
+        (WebCore::setJSTestEnabledForContextTestSubObjEnabledForContextConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        (WebCore::jsTestEventConstructorConstructor):
+        (WebCore::setJSTestEventConstructorConstructor):
+        (WebCore::jsTestEventConstructorAttr1):
+        (WebCore::jsTestEventConstructorAttr2):
+        (WebCore::jsTestEventConstructorAttr3):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetConstructor):
+        (WebCore::setJSTestEventTargetConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestEventTargetPrototypeFunctionItem): Deleted.
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::jsTestExceptionConstructor):
+        (WebCore::setJSTestExceptionConstructor):
+        (WebCore::jsTestExceptionName):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::jsTestGenerateIsReachableConstructor):
+        (WebCore::setJSTestGenerateIsReachableConstructor):
+        (WebCore::jsTestGenerateIsReachableASecretAttribute):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectConstructor):
+        (WebCore::setJSTestGlobalObjectConstructor):
+        (WebCore::jsTestGlobalObjectRegularAttribute):
+        (WebCore::setJSTestGlobalObjectRegularAttribute):
+        (WebCore::jsTestGlobalObjectPublicAndPrivateAttribute):
+        (WebCore::setJSTestGlobalObjectPublicAndPrivateAttribute):
+        (WebCore::jsTestGlobalObjectPublicAndPrivateConditionalAttribute):
+        (WebCore::setJSTestGlobalObjectPublicAndPrivateConditionalAttribute):
+        (WebCore::jsTestGlobalObjectEnabledAtRuntimeAttribute):
+        (WebCore::setJSTestGlobalObjectEnabledAtRuntimeAttribute):
+        (WebCore::jsTestGlobalObjectDOMWindowConstructor):
+        (WebCore::setJSTestGlobalObjectDOMWindowConstructor):
+        (WebCore::jsTestGlobalObjectDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectDedicatedWorkerGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectPaintWorkletGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectPaintWorkletGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectServiceWorkerGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectServiceWorkerGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectTestCEReactionsConstructor):
+        (WebCore::setJSTestGlobalObjectTestCEReactionsConstructor):
+        (WebCore::jsTestGlobalObjectTestCEReactionsStringifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestCEReactionsStringifierConstructor):
+        (WebCore::jsTestGlobalObjectTestCallTracerConstructor):
+        (WebCore::setJSTestGlobalObjectTestCallTracerConstructor):
+        (WebCore::jsTestGlobalObjectTestCallbackInterfaceConstructor):
+        (WebCore::setJSTestGlobalObjectTestCallbackInterfaceConstructor):
+        (WebCore::jsTestGlobalObjectTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestGlobalObjectTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::jsTestGlobalObjectTestConditionalIncludesConstructor):
+        (WebCore::setJSTestGlobalObjectTestConditionalIncludesConstructor):
+        (WebCore::jsTestGlobalObjectTestDOMJITConstructor):
+        (WebCore::setJSTestGlobalObjectTestDOMJITConstructor):
+        (WebCore::jsTestGlobalObjectTestDefaultToJSONConstructor):
+        (WebCore::setJSTestGlobalObjectTestDefaultToJSONConstructor):
+        (WebCore::jsTestGlobalObjectTestDefaultToJSONIndirectInheritanceConstructor):
+        (WebCore::setJSTestGlobalObjectTestDefaultToJSONIndirectInheritanceConstructor):
+        (WebCore::jsTestGlobalObjectTestDefaultToJSONInheritConstructor):
+        (WebCore::setJSTestGlobalObjectTestDefaultToJSONInheritConstructor):
+        (WebCore::jsTestGlobalObjectTestDefaultToJSONInheritFinalConstructor):
+        (WebCore::setJSTestGlobalObjectTestDefaultToJSONInheritFinalConstructor):
+        (WebCore::jsTestGlobalObjectTestDomainSecurityConstructor):
+        (WebCore::setJSTestGlobalObjectTestDomainSecurityConstructor):
+        (WebCore::jsTestGlobalObjectTestEnabledBySettingConstructor):
+        (WebCore::setJSTestGlobalObjectTestEnabledBySettingConstructor):
+        (WebCore::jsTestGlobalObjectTestEnabledForContextConstructor):
+        (WebCore::setJSTestGlobalObjectTestEnabledForContextConstructor):
+        (WebCore::jsTestGlobalObjectTestEventConstructorConstructor):
+        (WebCore::setJSTestGlobalObjectTestEventConstructorConstructor):
+        (WebCore::jsTestGlobalObjectTestEventTargetConstructor):
+        (WebCore::setJSTestGlobalObjectTestEventTargetConstructor):
+        (WebCore::jsTestGlobalObjectTestExceptionConstructor):
+        (WebCore::setJSTestGlobalObjectTestExceptionConstructor):
+        (WebCore::jsTestGlobalObjectTestGenerateIsReachableConstructor):
+        (WebCore::setJSTestGlobalObjectTestGenerateIsReachableConstructor):
+        (WebCore::jsTestGlobalObjectTestGlobalObjectConstructor):
+        (WebCore::setJSTestGlobalObjectTestGlobalObjectConstructor):
+        (WebCore::jsTestGlobalObjectTestIndexedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestIndexedSetterNoIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestIndexedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestGlobalObjectTestIndexedSetterThrowingExceptionConstructor):
+        (WebCore::jsTestGlobalObjectTestIndexedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestIndexedSetterWithIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestInterfaceConstructor):
+        (WebCore::setJSTestGlobalObjectTestInterfaceConstructor):
+        (WebCore::jsTestGlobalObjectTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::setJSTestGlobalObjectTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::jsTestGlobalObjectTestIterableConstructor):
+        (WebCore::setJSTestGlobalObjectTestIterableConstructor):
+        (WebCore::jsTestGlobalObjectTestJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestGlobalObjectTestJSBuiltinConstructorConstructor):
+        (WebCore::jsTestGlobalObjectTestLegacyFactoryFunctionConstructor):
+        (WebCore::setJSTestGlobalObjectTestLegacyFactoryFunctionConstructor):
+        (WebCore::jsTestGlobalObjectAudioConstructor):
+        (WebCore::setJSTestGlobalObjectAudioConstructor):
+        (WebCore::jsTestGlobalObjectTestLegacyOverrideBuiltInsConstructor):
+        (WebCore::setJSTestGlobalObjectTestLegacyOverrideBuiltInsConstructor):
+        (WebCore::jsTestGlobalObjectTestMapLikeConstructor):
+        (WebCore::setJSTestGlobalObjectTestMapLikeConstructor):
+        (WebCore::jsTestGlobalObjectTestMapLikeWithOverriddenOperationsConstructor):
+        (WebCore::setJSTestGlobalObjectTestMapLikeWithOverriddenOperationsConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedDeleterNoIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedDeleterNoIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedDeleterThrowingExceptionConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedDeleterWithIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedDeleterWithIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedDeleterWithIndexedGetterConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedDeleterWithIndexedGetterConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedGetterCallWithConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedGetterCallWithConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedGetterNoIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedGetterNoIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedGetterWithIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedGetterWithIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterNoIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterThrowingExceptionConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterWithIdentifierConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterWithIndexedGetterConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterWithIndexedGetterConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterWithLegacyOverrideBuiltInsConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterWithLegacyOverrideBuiltInsConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterWithLegacyUnforgeablePropertiesConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterWithLegacyUnforgeablePropertiesConstructor):
+        (WebCore::jsTestGlobalObjectTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor):
+        (WebCore::setJSTestGlobalObjectTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor):
+        (WebCore::jsTestGlobalObjectTestOperationConditionalConstructor):
+        (WebCore::setJSTestGlobalObjectTestOperationConditionalConstructor):
+        (WebCore::jsTestGlobalObjectTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::setJSTestGlobalObjectTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::jsTestGlobalObjectTestPluginInterfaceConstructor):
+        (WebCore::setJSTestGlobalObjectTestPluginInterfaceConstructor):
+        (WebCore::jsTestGlobalObjectTestReadOnlyMapLikeConstructor):
+        (WebCore::setJSTestGlobalObjectTestReadOnlyMapLikeConstructor):
+        (WebCore::jsTestGlobalObjectTestReadOnlySetLikeConstructor):
+        (WebCore::setJSTestGlobalObjectTestReadOnlySetLikeConstructor):
+        (WebCore::jsTestGlobalObjectTestReportExtraMemoryCostConstructor):
+        (WebCore::setJSTestGlobalObjectTestReportExtraMemoryCostConstructor):
+        (WebCore::jsTestGlobalObjectTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::setJSTestGlobalObjectTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::jsTestGlobalObjectTestSetLikeConstructor):
+        (WebCore::setJSTestGlobalObjectTestSetLikeConstructor):
+        (WebCore::jsTestGlobalObjectTestSetLikeWithOverriddenOperationsConstructor):
+        (WebCore::setJSTestGlobalObjectTestSetLikeWithOverriddenOperationsConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierAnonymousOperationConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierAnonymousOperationConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierNamedOperationConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierNamedOperationConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierOperationImplementedAsConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierOperationImplementedAsConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierOperationNamedToStringConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierOperationNamedToStringConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierReadOnlyAttributeConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierReadOnlyAttributeConstructor):
+        (WebCore::jsTestGlobalObjectTestStringifierReadWriteAttributeConstructor):
+        (WebCore::setJSTestGlobalObjectTestStringifierReadWriteAttributeConstructor):
+        (WebCore::jsTestGlobalObjectTestTypedefsConstructor):
+        (WebCore::setJSTestGlobalObjectTestTypedefsConstructor):
+        (WebCore::jsTestGlobalObjectWorkerGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectWorkerGlobalScopeConstructor):
+        (WebCore::jsTestGlobalObjectWorkletGlobalScopeConstructor):
+        (WebCore::setJSTestGlobalObjectWorkletGlobalScopeConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestGlobalObjectInstanceFunctionRegularOperation): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation): Deleted.
+        (WebCore::jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStatic): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionTestPrivateFunction): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionCalculateSecretResult): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionGetSecretBoolean): Deleted.
+        (WebCore::jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean): Deleted.
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::jsTestIndexedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestIndexedSetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::jsTestIndexedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestIndexedSetterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::jsTestIndexedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestIndexedSetterWithIdentifierConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        (WebCore::jsTestInterfaceConstructor):
+        (WebCore::setJSTestInterfaceConstructor):
+        (WebCore::jsTestInterfaceMixinReadOnlyAttribute):
+        (WebCore::jsTestInterfaceMixinAttribute):
+        (WebCore::setJSTestInterfaceMixinAttribute):
+        (WebCore::jsTestInterfaceMixinCustomAttribute):
+        (WebCore::setJSTestInterfaceMixinCustomAttribute):
+        (WebCore::jsTestInterfaceMixinNodeAttribute):
+        (WebCore::setJSTestInterfaceMixinNodeAttribute):
+        (WebCore::jsTestInterfacePartialMixinAttributeFromPartial):
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::setJSTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::jsTestInterfaceSupplementalStr1):
+        (WebCore::jsTestInterfaceSupplementalStr2):
+        (WebCore::setJSTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterfaceSupplementalStr3):
+        (WebCore::setJSTestInterfaceSupplementalStr3):
+        (WebCore::jsTestInterfaceSupplementalNode):
+        (WebCore::setJSTestInterfaceSupplementalNode):
+        (WebCore::jsTestInterfaceReflectAttribute):
+        (WebCore::setJSTestInterfaceReflectAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestInterfacePrototypeFunctionEntriesCaller):
+        (WebCore::jsTestInterfacePrototypeFunctionMixinOperation): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionMixinComplexOperation): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionMixinCustomOperation): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionMixinConditionalOperation): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionMixinSettingsConditionalOperation): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionMixinResultFieldOperation): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionPartialMixinOperationFromPartial): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod1): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod3): Deleted.
+        (WebCore::jsTestInterfaceConstructorFunctionSupplementalMethod4): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestInterfacePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::jsTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::setJSTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::jsTestInterfaceLeadingUnderscoreReadonly):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::jsTestIterableConstructor):
+        (WebCore::setJSTestIterableConstructor):
+        (WebCore::jsTestIterablePrototypeFunctionEntriesCaller):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestIterablePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestIterablePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestIterablePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestIterablePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::jsTestJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestJSBuiltinConstructorConstructor):
+        (WebCore::jsTestJSBuiltinConstructorTestAttributeCustom):
+        (WebCore::jsTestJSBuiltinConstructorTestAttributeRWCustom):
+        (WebCore::setJSTestJSBuiltinConstructorTestAttributeRWCustom):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction): Deleted.
+        * bindings/scripts/test/JS/JSTestLegacyFactoryFunction.cpp:
+        (WebCore::JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct):
+        (WebCore::jsTestLegacyFactoryFunctionConstructor):
+        (WebCore::setJSTestLegacyFactoryFunctionConstructor):
+        * bindings/scripts/test/JS/JSTestLegacyNoInterfaceObject.cpp:
+        (WebCore::JSTestLegacyNoInterfaceObjectPrototype::finishCreation):
+        (WebCore::jsTestLegacyNoInterfaceObjectReadonlyStringAttribute):
+        (WebCore::jsTestLegacyNoInterfaceObjectReadWriteStringAttribute):
+        (WebCore::setJSTestLegacyNoInterfaceObjectReadWriteStringAttribute):
+        (WebCore::jsTestLegacyNoInterfaceObjectCustomGetterSetterStringAttribute):
+        (WebCore::setJSTestLegacyNoInterfaceObjectCustomGetterSetterStringAttribute):
+        (WebCore::jsTestLegacyNoInterfaceObjectNodeAttribute):
+        (WebCore::setJSTestLegacyNoInterfaceObjectNodeAttribute):
+        (WebCore::jsTestLegacyNoInterfaceObjectConstructorStaticStringAttribute):
+        (WebCore::setJSTestLegacyNoInterfaceObjectConstructorStaticStringAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestLegacyNoInterfaceObjectPrototypeFunctionVoidOperation): Deleted.
+        (WebCore::jsTestLegacyNoInterfaceObjectPrototypeFunctionThrowingOperation): Deleted.
+        (WebCore::jsTestLegacyNoInterfaceObjectPrototypeFunctionCustomOperation): Deleted.
+        (WebCore::jsTestLegacyNoInterfaceObjectConstructorFunctionStaticOperation): Deleted.
+        * bindings/scripts/test/JS/JSTestLegacyOverrideBuiltIns.cpp:
+        (WebCore::jsTestLegacyOverrideBuiltInsConstructor):
+        (WebCore::setJSTestLegacyOverrideBuiltInsConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestLegacyOverrideBuiltInsPrototypeFunctionNamedItem): Deleted.
+        * bindings/scripts/test/JS/JSTestMapLike.cpp:
+        (WebCore::jsTestMapLikeConstructor):
+        (WebCore::setJSTestMapLikeConstructor):
+        (WebCore::jsTestMapLikeSize):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestMapLikePrototypeFunctionGet): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionForEach): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionSet): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionClear): Deleted.
+        (WebCore::jsTestMapLikePrototypeFunctionDelete): Deleted.
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.cpp:
+        (WebCore::jsTestMapLikeWithOverriddenOperationsConstructor):
+        (WebCore::setJSTestMapLikeWithOverriddenOperationsConstructor):
+        (WebCore::jsTestMapLikeWithOverriddenOperationsSet):
+        (WebCore::setJSTestMapLikeWithOverriddenOperationsSet):
+        (WebCore::jsTestMapLikeWithOverriddenOperationsSize):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionClear): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionGet): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionHas): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionValues): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionForEach): Deleted.
+        (WebCore::jsTestMapLikeWithOverriddenOperationsPrototypeFunctionDelete): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::jsTestNamedAndIndexedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedAndIndexedSetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::jsTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::jsTestNamedAndIndexedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedAndIndexedSetterWithIdentifierConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter): Deleted.
+        (WebCore::jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::jsTestNamedDeleterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedDeleterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::jsTestNamedDeleterThrowingExceptionConstructor):
+        (WebCore::setJSTestNamedDeleterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::jsTestNamedDeleterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedDeleterWithIdentifierConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::jsTestNamedDeleterWithIndexedGetterConstructor):
+        (WebCore::setJSTestNamedDeleterWithIndexedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::jsTestNamedGetterCallWithConstructor):
+        (WebCore::setJSTestNamedGetterCallWithConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::jsTestNamedGetterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedGetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::jsTestNamedGetterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedGetterWithIdentifierConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::jsTestNamedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedSetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::jsTestNamedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestNamedSetterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::jsTestNamedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedSetterWithIdentifierConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::jsTestNamedSetterWithIndexedGetterConstructor):
+        (WebCore::setJSTestNamedSetterWithIndexedGetterConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedSetterWithIndexedGetterPrototypeFunctionNamedSetter): Deleted.
+        (WebCore::jsTestNamedSetterWithIndexedGetterPrototypeFunctionIndexedSetter): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::jsTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        (WebCore::setJSTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetter): Deleted.
+        (WebCore::jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetter): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyOverrideBuiltIns.cpp:
+        (WebCore::jsTestNamedSetterWithLegacyOverrideBuiltInsConstructor):
+        (WebCore::setJSTestNamedSetterWithLegacyOverrideBuiltInsConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeablePropertiesConstructor::prototypeForStructure):
+        (WebCore::jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor):
+        (WebCore::setJSTestNamedSetterWithLegacyUnforgeablePropertiesConstructor):
+        (WebCore::jsTestNamedSetterWithLegacyUnforgeablePropertiesUnforgeableAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedSetterWithLegacyUnforgeablePropertiesInstanceFunctionUnforgeableOperation): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp:
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor::prototypeForStructure):
+        (WebCore::jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor):
+        (WebCore::setJSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor):
+        (WebCore::jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsUnforgeableAttribute):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsInstanceFunctionUnforgeableOperation): Deleted.
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        (WebCore::jsTestNodeConstructor):
+        (WebCore::setJSTestNodeConstructor):
+        (WebCore::jsTestNodeName):
+        (WebCore::setJSTestNodeName):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestNodePrototypeFunctionEntriesCaller):
+        (WebCore::jsTestNodePrototypeFunctionTestWorkerPromise): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionCalculateSecretResult): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionGetSecretBoolean): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionToJSON): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestNodePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestObjConstructor):
+        (WebCore::setJSTestObjConstructor):
+        (WebCore::jsTestObjReadOnlyLongAttr):
+        (WebCore::jsTestObjReadOnlyStringAttr):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjConstructorStaticReadOnlyLongAttr):
+        (WebCore::jsTestObjConstructorStaticStringAttr):
+        (WebCore::setJSTestObjConstructorStaticStringAttr):
+        (WebCore::jsTestObjConstructorTestSubObj):
+        (WebCore::jsTestObjConstructorTestStaticReadonlyObj):
+        (WebCore::jsTestObjEnumAttr):
+        (WebCore::setJSTestObjEnumAttr):
+        (WebCore::jsTestObjByteAttr):
+        (WebCore::setJSTestObjByteAttr):
+        (WebCore::jsTestObjOctetAttr):
+        (WebCore::setJSTestObjOctetAttr):
+        (WebCore::jsTestObjShortAttr):
+        (WebCore::setJSTestObjShortAttr):
+        (WebCore::jsTestObjClampedShortAttr):
+        (WebCore::setJSTestObjClampedShortAttr):
+        (WebCore::jsTestObjEnforceRangeShortAttr):
+        (WebCore::setJSTestObjEnforceRangeShortAttr):
+        (WebCore::jsTestObjUnsignedShortAttr):
+        (WebCore::setJSTestObjUnsignedShortAttr):
+        (WebCore::jsTestObjLongAttr):
+        (WebCore::setJSTestObjLongAttr):
+        (WebCore::jsTestObjLongLongAttr):
+        (WebCore::setJSTestObjLongLongAttr):
+        (WebCore::jsTestObjUnsignedLongLongAttr):
+        (WebCore::setJSTestObjUnsignedLongLongAttr):
+        (WebCore::jsTestObjStringAttr):
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::jsTestObjUsvstringAttr):
+        (WebCore::setJSTestObjUsvstringAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::jsTestObjTestNullableObjAttr):
+        (WebCore::setJSTestObjTestNullableObjAttr):
+        (WebCore::jsTestObjLenientTestObjAttr):
+        (WebCore::setJSTestObjLenientTestObjAttr):
+        (WebCore::jsTestObjUnforgeableAttr):
+        (WebCore::jsTestObjStringAttrTreatingNullAsEmptyString):
+        (WebCore::setJSTestObjStringAttrTreatingNullAsEmptyString):
+        (WebCore::jsTestObjUsvstringAttrTreatingNullAsEmptyString):
+        (WebCore::setJSTestObjUsvstringAttrTreatingNullAsEmptyString):
+        (WebCore::jsTestObjByteStringAttrTreatingNullAsEmptyString):
+        (WebCore::setJSTestObjByteStringAttrTreatingNullAsEmptyString):
+        (WebCore::jsTestObjStringLongRecordAttr):
+        (WebCore::setJSTestObjStringLongRecordAttr):
+        (WebCore::jsTestObjUsvstringLongRecordAttr):
+        (WebCore::setJSTestObjUsvstringLongRecordAttr):
+        (WebCore::jsTestObjStringObjRecordAttr):
+        (WebCore::setJSTestObjStringObjRecordAttr):
+        (WebCore::jsTestObjStringNullableObjRecordAttr):
+        (WebCore::setJSTestObjStringNullableObjRecordAttr):
+        (WebCore::jsTestObjStringVoidCallbackRecordAttr):
+        (WebCore::setJSTestObjStringVoidCallbackRecordAttr):
+        (WebCore::jsTestObjDictionaryAttr):
+        (WebCore::setJSTestObjDictionaryAttr):
+        (WebCore::jsTestObjNullableDictionaryAttr):
+        (WebCore::setJSTestObjNullableDictionaryAttr):
+        (WebCore::jsTestObjAnnotatedTypeInUnionAttr):
+        (WebCore::setJSTestObjAnnotatedTypeInUnionAttr):
+        (WebCore::jsTestObjAnnotatedTypeInSequenceAttr):
+        (WebCore::setJSTestObjAnnotatedTypeInSequenceAttr):
+        (WebCore::jsTestObjImplementationEnumAttr):
+        (WebCore::setJSTestObjImplementationEnumAttr):
+        (WebCore::jsTestObjMediaDevices):
+        (WebCore::jsTestObjXMLObjAttr):
+        (WebCore::setJSTestObjXMLObjAttr):
+        (WebCore::jsTestObjCreate):
+        (WebCore::setJSTestObjCreate):
+        (WebCore::jsTestObjReflectedStringAttr):
+        (WebCore::setJSTestObjReflectedStringAttr):
+        (WebCore::jsTestObjReflectedUSVStringAttr):
+        (WebCore::setJSTestObjReflectedUSVStringAttr):
+        (WebCore::jsTestObjReflectedIntegralAttr):
+        (WebCore::setJSTestObjReflectedIntegralAttr):
+        (WebCore::jsTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::setJSTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::jsTestObjReflectedBooleanAttr):
+        (WebCore::setJSTestObjReflectedBooleanAttr):
+        (WebCore::jsTestObjReflectedURLAttr):
+        (WebCore::setJSTestObjReflectedURLAttr):
+        (WebCore::jsTestObjReflectedUSVURLAttr):
+        (WebCore::setJSTestObjReflectedUSVURLAttr):
+        (WebCore::jsTestObjReflectedCustomIntegralAttr):
+        (WebCore::setJSTestObjReflectedCustomIntegralAttr):
+        (WebCore::jsTestObjReflectedCustomBooleanAttr):
+        (WebCore::setJSTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjReflectedCustomURLAttr):
+        (WebCore::setJSTestObjReflectedCustomURLAttr):
+        (WebCore::jsTestObjEnabledAtRuntimeAttribute):
+        (WebCore::setJSTestObjEnabledAtRuntimeAttribute):
+        (WebCore::jsTestObjConstructorEnabledAtRuntimeAttributeStatic):
+        (WebCore::setJSTestObjConstructorEnabledAtRuntimeAttributeStatic):
+        (WebCore::jsTestObjTypedArrayAttr):
+        (WebCore::setJSTestObjTypedArrayAttr):
+        (WebCore::jsTestObjCustomAttr):
+        (WebCore::setJSTestObjCustomAttr):
+        (WebCore::jsTestObjOnfoo):
+        (WebCore::setJSTestObjOnfoo):
+        (WebCore::jsTestObjOnwebkitfoo):
+        (WebCore::setJSTestObjOnwebkitfoo):
+        (WebCore::jsTestObjWithExecStateAttribute):
+        (WebCore::setJSTestObjWithExecStateAttribute):
+        (WebCore::jsTestObjWithCallWithAndSetterCallWithAttribute):
+        (WebCore::setJSTestObjWithCallWithAndSetterCallWithAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndExecStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndExecStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute):
+        (WebCore::jsTestObjConditionalAttr1):
+        (WebCore::setJSTestObjConditionalAttr1):
+        (WebCore::jsTestObjConditionalAttr2):
+        (WebCore::setJSTestObjConditionalAttr2):
+        (WebCore::jsTestObjConditionalAttr3):
+        (WebCore::setJSTestObjConditionalAttr3):
+        (WebCore::jsTestObjConditionalAttr4Constructor):
+        (WebCore::setJSTestObjConditionalAttr4Constructor):
+        (WebCore::jsTestObjConditionalAttr5Constructor):
+        (WebCore::setJSTestObjConditionalAttr5Constructor):
+        (WebCore::jsTestObjConditionalAttr6Constructor):
+        (WebCore::setJSTestObjConditionalAttr6Constructor):
+        (WebCore::jsTestObjCachedAttribute1):
+        (WebCore::jsTestObjCachedAttribute2):
+        (WebCore::jsTestObjCachedAttribute3):
+        (WebCore::jsTestObjAnyAttribute):
+        (WebCore::setJSTestObjAnyAttribute):
+        (WebCore::jsTestObjObjectAttribute):
+        (WebCore::setJSTestObjObjectAttribute):
+        (WebCore::jsTestObjContentDocument):
+        (WebCore::jsTestObjMutablePoint):
+        (WebCore::setJSTestObjMutablePoint):
+        (WebCore::jsTestObjStrawberry):
+        (WebCore::setJSTestObjStrawberry):
+        (WebCore::jsTestObjDescription):
+        (WebCore::jsTestObjId):
+        (WebCore::setJSTestObjId):
+        (WebCore::jsTestObjHash):
+        (WebCore::jsTestObjReplaceableAttribute):
+        (WebCore::setJSTestObjReplaceableAttribute):
+        (WebCore::jsTestObjNullableDoubleAttribute):
+        (WebCore::jsTestObjNullableLongAttribute):
+        (WebCore::jsTestObjNullableBooleanAttribute):
+        (WebCore::jsTestObjNullableStringAttribute):
+        (WebCore::jsTestObjNullableLongSettableAttribute):
+        (WebCore::setJSTestObjNullableLongSettableAttribute):
+        (WebCore::jsTestObjNullableStringSettableAttribute):
+        (WebCore::setJSTestObjNullableStringSettableAttribute):
+        (WebCore::jsTestObjNullableUSVStringSettableAttribute):
+        (WebCore::setJSTestObjNullableUSVStringSettableAttribute):
+        (WebCore::jsTestObjNullableByteStringSettableAttribute):
+        (WebCore::setJSTestObjNullableByteStringSettableAttribute):
+        (WebCore::jsTestObjAttribute):
+        (WebCore::jsTestObjAttributeWithReservedEnumType):
+        (WebCore::setJSTestObjAttributeWithReservedEnumType):
+        (WebCore::jsTestObjTestReadOnlyVoidPromiseAttribute):
+        (WebCore::jsTestObjTestReadOnlyPromiseAttribute):
+        (WebCore::jsTestObjPutForwardsAttribute):
+        (WebCore::setJSTestObjPutForwardsAttribute):
+        (WebCore::jsTestObjPutForwardsNullableAttribute):
+        (WebCore::setJSTestObjPutForwardsNullableAttribute):
+        (WebCore::jsTestObjStringifierAttribute):
+        (WebCore::setJSTestObjStringifierAttribute):
+        (WebCore::jsTestObjConditionallyExposedToWindowAttribute):
+        (WebCore::setJSTestObjConditionallyExposedToWindowAttribute):
+        (WebCore::jsTestObjConditionallyExposedToWorkerAttribute):
+        (WebCore::setJSTestObjConditionallyExposedToWorkerAttribute):
+        (WebCore::jsTestObjConditionallyExposedToWindowAndWorkerAttribute):
+        (WebCore::setJSTestObjConditionallyExposedToWindowAndWorkerAttribute):
+        (WebCore::callJSTestObj): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionEnabledAtRuntimeOperation): Deleted.
+        (WebCore::jsTestObjConstructorFunctionEnabledAtRuntimeOperationStatic): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWorldSpecificMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionCalculateSecretResult): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionGetSecretBoolean): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestFeatureGetSecretBoolean): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionUndefinedMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionUndefinedMethodWithArgs): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionByteMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOctetMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionLongMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionObjMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs): Deleted.
+        (WebCore::jsTestObjInstanceFunctionUnforgeableMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionNullableStringMethod): Deleted.
+        (WebCore::jsTestObjConstructorFunctionNullableStringStaticMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionNullableStringSpecialMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithEnumArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithStandaloneEnumArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalEnumArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUSVStringArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNullableUSVStringArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithByteStringArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNullableByteStringArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithRecord): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithExceptionReturningLong): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithExceptionReturningObject): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionCustomMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionCustomMethodWithArgs): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionPrivateMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionPublicAndPrivateMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoid): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObj): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoidException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObjException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecState): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateObjException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateWithSpaces): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithDocumentArgument): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithCallerDocumentArgument): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithCallerWindowArgument): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUSVString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomStringAndDefaultValue): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsNull): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomStringIsNull): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomStringIsEmptyString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalLongLong): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalSequence): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmpty): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalBoolean): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalse): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAny): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalObject): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapper): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalRecord): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalPromise): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg): Deleted.
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg): Deleted.
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackArg): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod1): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod2): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod3): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter): Deleted.
+        (WebCore::jsTestObjConstructorFunctionClassMethod): Deleted.
+        (WebCore::jsTestObjConstructorFunctionClassMethodWithOptional): Deleted.
+        (WebCore::jsTestObjConstructorFunctionClassMethod2): Deleted.
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod1): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClampOnOptional): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRange): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptional): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionStringArrayFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOperationWithOptionalUnionParameter): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionGetElementById): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionGetSVGDocument): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConvert1): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConvert2): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConvert3): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConvert4): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMutablePointFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOrange): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVariadicStringMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVariadicDoubleMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionVariadicUnionMethod): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionAny): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction): Deleted.
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunction): Deleted.
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestCustomPromiseFunction): Deleted.
+        (WebCore::jsTestObjConstructorFunctionTestStaticCustomPromiseFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionalOverload): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionSingleConditionalOverload): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionAttachShadowRoot): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionBufferSourceParameter): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionLegacyCallerNamed): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimization): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimizationWithException): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionallyExposedToWindowFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionallyExposedToWorkerFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestOperationConditional.cpp:
+        (WebCore::jsTestOperationConditionalConstructor):
+        (WebCore::setJSTestOperationConditionalConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestOperationConditionalPrototypeFunctionNonConditionalOperation): Deleted.
+        (WebCore::jsTestOperationConditionalPrototypeFunctionConditionalOperation): Deleted.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::construct):
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        (WebCore::setJSTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequenceConstructor::construct):
+        (WebCore::jsTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::setJSTestOverloadedConstructorsWithSequenceConstructor):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::jsTestPluginInterfaceConstructor):
+        (WebCore::setJSTestPluginInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventConstructor::construct):
+        (WebCore::jsTestPromiseRejectionEventConstructor):
+        (WebCore::setJSTestPromiseRejectionEventConstructor):
+        (WebCore::jsTestPromiseRejectionEventPromise):
+        (WebCore::jsTestPromiseRejectionEventReason):
+        * bindings/scripts/test/JS/JSTestReadOnlyMapLike.cpp:
+        (WebCore::jsTestReadOnlyMapLikeConstructor):
+        (WebCore::setJSTestReadOnlyMapLikeConstructor):
+        (WebCore::jsTestReadOnlyMapLikeSize):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestReadOnlyMapLikePrototypeFunctionGet): Deleted.
+        (WebCore::jsTestReadOnlyMapLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsTestReadOnlyMapLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestReadOnlyMapLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestReadOnlyMapLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestReadOnlyMapLikePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSTestReadOnlySetLike.cpp:
+        (WebCore::jsTestReadOnlySetLikeConstructor):
+        (WebCore::setJSTestReadOnlySetLikeConstructor):
+        (WebCore::jsTestReadOnlySetLikeSize):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestReadOnlySetLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsTestReadOnlySetLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestReadOnlySetLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestReadOnlySetLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestReadOnlySetLikePrototypeFunctionForEach): Deleted.
+        * bindings/scripts/test/JS/JSTestReportExtraMemoryCost.cpp:
+        (WebCore::jsTestReportExtraMemoryCostConstructor):
+        (WebCore::setJSTestReportExtraMemoryCostConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::setJSTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::jsTestSerializedScriptValueInterfaceValue):
+        (WebCore::setJSTestSerializedScriptValueInterfaceValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceReadonlyValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedValue):
+        (WebCore::setJSTestSerializedScriptValueInterfaceCachedValue):
+        (WebCore::jsTestSerializedScriptValueInterfacePorts):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedReadonlyValue):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestSerializedScriptValueInterfacePrototypeFunctionFunction): Deleted.
+        (WebCore::jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning): Deleted.
+        * bindings/scripts/test/JS/JSTestSetLike.cpp:
+        (WebCore::jsTestSetLikeConstructor):
+        (WebCore::setJSTestSetLikeConstructor):
+        (WebCore::jsTestSetLikeSize):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestSetLikePrototypeFunctionHas): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionValues): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionForEach): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionAdd): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionClear): Deleted.
+        (WebCore::jsTestSetLikePrototypeFunctionDelete): Deleted.
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.cpp:
+        (WebCore::jsTestSetLikeWithOverriddenOperationsConstructor):
+        (WebCore::setJSTestSetLikeWithOverriddenOperationsConstructor):
+        (WebCore::jsTestSetLikeWithOverriddenOperationsAdd):
+        (WebCore::setJSTestSetLikeWithOverriddenOperationsAdd):
+        (WebCore::jsTestSetLikeWithOverriddenOperationsSize):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionDelete): Deleted.
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionHas): Deleted.
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionEntries): Deleted.
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionKeys): Deleted.
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionValues): Deleted.
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionForEach): Deleted.
+        (WebCore::jsTestSetLikeWithOverriddenOperationsPrototypeFunctionClear): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::jsTestStringifierConstructor):
+        (WebCore::setJSTestStringifierConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::jsTestStringifierAnonymousOperationConstructor):
+        (WebCore::setJSTestStringifierAnonymousOperationConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierAnonymousOperationPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::jsTestStringifierNamedOperationConstructor):
+        (WebCore::setJSTestStringifierNamedOperationConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierNamedOperationPrototypeFunctionIdentifier): Deleted.
+        (WebCore::jsTestStringifierNamedOperationPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::jsTestStringifierOperationImplementedAsConstructor):
+        (WebCore::setJSTestStringifierOperationImplementedAsConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierOperationImplementedAsPrototypeFunctionIdentifier): Deleted.
+        (WebCore::jsTestStringifierOperationImplementedAsPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::jsTestStringifierOperationNamedToStringConstructor):
+        (WebCore::setJSTestStringifierOperationNamedToStringConstructor):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierOperationNamedToStringPrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::jsTestStringifierReadOnlyAttributeConstructor):
+        (WebCore::setJSTestStringifierReadOnlyAttributeConstructor):
+        (WebCore::jsTestStringifierReadOnlyAttributeIdentifier):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierReadOnlyAttributePrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::jsTestStringifierReadWriteAttributeConstructor):
+        (WebCore::setJSTestStringifierReadWriteAttributeConstructor):
+        (WebCore::jsTestStringifierReadWriteAttributeIdentifier):
+        (WebCore::setJSTestStringifierReadWriteAttributeIdentifier):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestStringifierReadWriteAttributePrototypeFunctionToString): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        (WebCore::jsTestTypedefsConstructor):
+        (WebCore::setJSTestTypedefsConstructor):
+        (WebCore::jsTestTypedefsUnsignedLongLongAttr):
+        (WebCore::setJSTestTypedefsUnsignedLongLongAttr):
+        (WebCore::jsTestTypedefsSerializedScriptValue):
+        (WebCore::setJSTestTypedefsSerializedScriptValue):
+        (WebCore::jsTestTypedefsConstructorTestSubObj):
+        (WebCore::jsTestTypedefsAttributeWithClamp):
+        (WebCore::setJSTestTypedefsAttributeWithClamp):
+        (WebCore::jsTestTypedefsAttributeWithClampInTypedef):
+        (WebCore::setJSTestTypedefsAttributeWithClampInTypedef):
+        (WebCore::jsTestTypedefsBufferSourceAttr):
+        (WebCore::setJSTestTypedefsBufferSourceAttr):
+        (WebCore::jsTestTypedefsDomTimeStampAttr):
+        (WebCore::setJSTestTypedefsDomTimeStampAttr):
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::jsTestTypedefsPrototypeFunctionFunc): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithSequenceArg): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableSequenceArg): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionUnionArg): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClamp): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionPointFunction): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionStringSequenceFunction): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionStringSequenceFunction2): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude): Deleted.
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithException): Deleted.
+        * bindings/scripts/test/JS/JSWorkerGlobalScope.cpp:
+        (WebCore::jsWorkerGlobalScopeConstructor):
+        (WebCore::setJSWorkerGlobalScopeConstructor):
+        (WebCore::jsWorkerGlobalScopeExposedToWorkerAndWindowConstructor):
+        (WebCore::setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructor):
+        (WebCore::jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor):
+        (WebCore::jsWorkerGlobalScopeTestNodeConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestNodeConstructor):
+        (WebCore::jsWorkerGlobalScopeTestObjectConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestObjectConstructor):
+        (WebCore::jsWorkerGlobalScopeTestPromiseRejectionEventConstructor):
+        (WebCore::setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor):
+        * bindings/scripts/test/JS/JSWorkletGlobalScope.cpp:
+        (WebCore::jsWorkletGlobalScopeConstructor):
+        (WebCore::setJSWorkletGlobalScopeConstructor):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::Bindings::callObjCFallbackObject): Deleted.
+        * bridge/runtime_array.cpp:
+        (JSC::arrayLengthGetter):
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::lengthGetter): Deleted.
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        (JSC::methodLengthGetter):
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::RuntimeMethod::lengthGetter): Deleted.
+        (JSC::callRuntimeMethod): Deleted.
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::fallbackObjectGetter):
+        (JSC::Bindings::fieldGetter):
+        (JSC::Bindings::methodGetter):
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        (JSC::Bindings::RuntimeObject::put):
+        (JSC::Bindings::RuntimeObject::defaultValue):
+        (JSC::Bindings::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::Bindings::RuntimeObject::getOwnPropertyNames):
+        (JSC::Bindings::throwRuntimeObjectInvalidAccessError):
+        (JSC::Bindings::RuntimeObject::fallbackObjectGetter): Deleted.
+        (JSC::Bindings::RuntimeObject::fieldGetter): Deleted.
+        (JSC::Bindings::RuntimeObject::methodGetter): Deleted.
+        (JSC::Bindings::callRuntimeObject): Deleted.
+        (JSC::Bindings::callRuntimeConstructor): Deleted.
+        (JSC::Bindings::RuntimeObject::throwInvalidAccessError): Deleted.
+        * bridge/runtime_object.h:
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r267589.

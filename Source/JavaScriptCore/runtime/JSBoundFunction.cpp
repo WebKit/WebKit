@@ -33,7 +33,7 @@ namespace JSC {
 
 const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBoundFunction) };
 
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
@@ -60,7 +60,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject* globalO
     return JSValue::encode(call(globalObject, targetFunction, callData, boundFunction->boundThis(), args));
 }
 
-EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(boundFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -87,7 +87,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject* globalObject, Cal
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, targetFunction, callData, boundFunction->boundThis(), args)));
 }
 
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionConstruct, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject* gl
     return JSValue::encode(construct(globalObject, targetFunction, constructData, args, newTarget));
 }
 
-EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -144,12 +144,12 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, targetFunction, constructData, args, newTarget)));
 }
 
-EncodedJSValue JSC_HOST_CALL isBoundFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(isBoundFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(globalObject->vm(), callFrame->uncheckedArgument(0)))));
 }
 
-EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(hasInstanceBoundFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSBoundFunction* boundObject = jsCast<JSBoundFunction*>(callFrame->uncheckedArgument(0));
     JSValue value = callFrame->uncheckedArgument(1);

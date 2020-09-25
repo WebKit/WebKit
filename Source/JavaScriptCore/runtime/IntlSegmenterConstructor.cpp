@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlSegmenterConstructor);
 
-static EncodedJSValue JSC_HOST_CALL IntlSegmenterConstructorSupportedLocalesOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlSegmenterConstructorSupportedLocalesOf);
 
 }
 
@@ -62,8 +62,8 @@ Structure* IntlSegmenterConstructor::createStructure(VM& vm, JSGlobalObject* glo
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlSegmenter(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructIntlSegmenter(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callIntlSegmenter);
+static JSC_DECLARE_HOST_FUNCTION(constructIntlSegmenter);
 
 IntlSegmenterConstructor::IntlSegmenterConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callIntlSegmenter, constructIntlSegmenter)
@@ -78,7 +78,7 @@ void IntlSegmenterConstructor::finishCreation(VM& vm, IntlSegmenterPrototype* se
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Segmenter
-static EncodedJSValue JSC_HOST_CALL constructIntlSegmenter(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructIntlSegmenter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -98,7 +98,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlSegmenter(JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Segmenter
-static EncodedJSValue JSC_HOST_CALL callIntlSegmenter(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callIntlSegmenter, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -106,7 +106,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlSegmenter(JSGlobalObject* globalObje
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Segmenter"));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlSegmenterConstructorSupportedLocalesOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlSegmenterConstructorSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

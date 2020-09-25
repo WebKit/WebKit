@@ -34,9 +34,10 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeGetterFormat);
+static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts);
+static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatFuncFormat);
 
 }
 
@@ -79,7 +80,7 @@ void IntlNumberFormatPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/ecma402/#sec-number-format-functions
-static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatFuncFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -107,7 +108,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormat(JSGlobalObject* g
     return JSValue::encode(numberFormat->format(globalObject, value));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -136,7 +137,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObjec
     return JSValue::encode(boundFormat);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -155,7 +156,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobal
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, value)));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

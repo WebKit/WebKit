@@ -36,7 +36,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlNumberFormatConstructor);
 
-static EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -64,8 +64,8 @@ Structure* IntlNumberFormatConstructor::createStructure(VM& vm, JSGlobalObject* 
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callIntlNumberFormat);
+static JSC_DECLARE_HOST_FUNCTION(constructIntlNumberFormat);
 
 IntlNumberFormatConstructor::IntlNumberFormatConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callIntlNumberFormat, constructIntlNumberFormat)
@@ -78,7 +78,7 @@ void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototy
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructIntlNumberFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -101,7 +101,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(JSGlobalObject* gl
     return JSValue::encode(numberFormat);
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callIntlNumberFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     // 11.1.2 Intl.NumberFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
@@ -121,7 +121,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(JSGlobalObject* globalO
     }));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

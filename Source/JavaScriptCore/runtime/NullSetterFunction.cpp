@@ -75,7 +75,10 @@ static bool callerIsStrict(VM& vm, CallFrame* callFrame)
 
 namespace NullSetterFunctionInternal {
 
-static EncodedJSValue JSC_HOST_CALL callReturnUndefined(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(callReturnUndefined);
+static JSC_DECLARE_HOST_FUNCTION(callThrowError);
+
+JSC_DEFINE_HOST_FUNCTION(callReturnUndefined, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
 #if !ASSERT_ENABLED
     UNUSED_PARAM(globalObject);
@@ -85,7 +88,7 @@ static EncodedJSValue JSC_HOST_CALL callReturnUndefined(JSGlobalObject* globalOb
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue JSC_HOST_CALL callThrowError(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callThrowError, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

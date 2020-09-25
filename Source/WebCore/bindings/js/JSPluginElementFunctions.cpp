@@ -35,6 +35,8 @@ using namespace HTMLNames;
 
 // JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
+static JSC_DECLARE_HOST_FUNCTION(callPlugin);
+
 Instance* pluginInstance(HTMLElement& element)
 {
     // The plugin element holds an owning reference, so we don't have to.
@@ -146,7 +148,7 @@ bool pluginElementCustomPut(JSHTMLElement* element, JSGlobalObject* lexicalGloba
     return true;
 }
 
-static EncodedJSValue JSC_HOST_CALL callPlugin(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callPlugin, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     JSHTMLElement* element = jsCast<JSHTMLElement*>(callFrame->jsCallee());
 

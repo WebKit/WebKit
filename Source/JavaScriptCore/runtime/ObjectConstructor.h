@@ -26,11 +26,11 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL objectConstructorKeys(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(objectConstructorGetOwnPropertyDescriptor);
+JSC_DECLARE_HOST_FUNCTION(objectConstructorGetOwnPropertyDescriptors);
+JSC_DECLARE_HOST_FUNCTION(objectConstructorGetOwnPropertySymbols);
+JSC_DECLARE_HOST_FUNCTION(objectConstructorGetOwnPropertyNames);
+JSC_DECLARE_HOST_FUNCTION(objectConstructorKeys);
 
 class ObjectPrototype;
 
@@ -166,6 +166,6 @@ JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
 JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode, Optional<CachedPropertyNamesKind>);
 bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
 
-EncodedJSValue JSC_HOST_CALL objectConstructorIs(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(objectConstructorIs);
 
 } // namespace JSC

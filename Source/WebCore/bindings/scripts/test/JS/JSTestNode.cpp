@@ -54,25 +54,25 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionCalculateSecretResult(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionTestWorkerPromise);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionCalculateSecretResult);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionGetSecretBoolean);
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean);
 #endif
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionToJSON);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionSymbolIterator);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionEntries);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionKeys);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionValues);
+JSC_DECLARE_HOST_FUNCTION(jsTestNodePrototypeFunctionForEach);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestNodeName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNodeName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNodeName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNodeName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNodePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -108,7 +108,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNodePrototype, JSTestNodePrototype::Ba
 
 using JSTestNodeConstructor = JSDOMConstructor<JSTestNode>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestNodeConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -123,6 +123,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(JSGloba
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
+JSC_ANNOTATE_HOST_FUNCTION(JSTestNodeConstructorConstruct, JSTestNodeConstructor::construct);
 
 template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -264,7 +265,7 @@ template<> inline JSTestNode* IDLOperation<JSTestNode>::cast(JSGlobalObject& lex
     return jsDynamicCast<JSTestNode*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -274,7 +275,7 @@ EncodedJSValue jsTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, Encode
     return JSValue::encode(JSTestNode::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -295,7 +296,7 @@ static inline JSValue jsTestNodeNameGetter(JSGlobalObject& lexicalGlobalObject, 
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.name())));
 }
 
-EncodedJSValue jsTestNodeName(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNodeName(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestNode>::get<jsTestNodeNameGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "name");
 }
@@ -313,7 +314,7 @@ static inline bool setJSTestNodeNameSetter(JSGlobalObject& lexicalGlobalObject, 
     return true;
 }
 
-bool setJSTestNodeName(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNodeName(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestNode>::set<setJSTestNodeNameSetter>(*lexicalGlobalObject, thisValue, encodedValue, "name");
 }
@@ -330,7 +331,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseBo
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionTestWorkerPromise, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionTestWorkerPromiseBody>(*lexicalGlobalObject, *callFrame, "testWorkerPromise");
 }
@@ -347,7 +348,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionCalculateSecretResu
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionCalculateSecretResult(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionCalculateSecretResult, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionCalculateSecretResultBody>(*lexicalGlobalObject, *callFrame, "calculateSecretResult");
 }
@@ -362,7 +363,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionGetSecretBooleanBod
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean())));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionGetSecretBoolean, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionGetSecretBooleanBody>(*lexicalGlobalObject, *callFrame, "getSecretBoolean");
 }
@@ -378,7 +379,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestFeatureGetSecre
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean())));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionTestFeatureGetSecretBooleanBody>(*lexicalGlobalObject, *callFrame, "testFeatureGetSecretBoolean");
 }
@@ -396,7 +397,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONBody(JSGlobalObjec
     return JSValue::encode(result);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionToJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }
@@ -456,6 +457,7 @@ private:
 };
 
 using TestNodeIteratorPrototype = JSDOMIteratorPrototype<JSTestNode, TestNodeIteratorTraits>;
+JSC_ANNOTATE_HOST_FUNCTION(TestNodeIteratorPrototypeNext, TestNodeIteratorPrototype::next);
 
 template<>
 const JSC::ClassInfo TestNodeIteratorBase::s_info = { "TestNode Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIteratorBase) };
@@ -469,7 +471,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(JSGlobalOb
     return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Values));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionEntries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionEntriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
 }
@@ -479,7 +481,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(JSGlobalObjec
     return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Keys));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionKeys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionKeysCaller>(*lexicalGlobalObject, *callFrame, "keys");
 }
@@ -489,7 +491,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(JSGlobalObj
     return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Values));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionValues, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionValuesCaller>(*lexicalGlobalObject, *callFrame, "values");
 }
@@ -499,7 +501,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionForEachCaller(JSGlobalOb
     return JSValue::encode(iteratorForEach<TestNodeIterator>(*lexicalGlobalObject, *callFrame, *thisObject));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunctionForEach, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionForEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
 }

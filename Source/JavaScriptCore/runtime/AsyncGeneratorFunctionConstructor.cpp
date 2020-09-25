@@ -36,13 +36,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AsyncGeneratorFunctionConstructor);
 
 const ClassInfo AsyncGeneratorFunctionConstructor::s_info = { "AsyncGeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL callAsyncGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DECLARE_HOST_FUNCTION(callAsyncGeneratorFunctionConstructor);
+JSC_DECLARE_HOST_FUNCTION(constructAsyncGeneratorFunctionConstructor);
+
+JSC_DEFINE_HOST_FUNCTION(callAsyncGeneratorFunctionConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::AsyncGenerator));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructAsyncGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructAsyncGeneratorFunctionConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::AsyncGenerator, callFrame->newTarget()));

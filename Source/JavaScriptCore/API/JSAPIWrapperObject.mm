@@ -67,10 +67,24 @@ bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::
 }
 
 namespace JSC {
-    
-template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JSAPIWrapperObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 
-template<> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
+static JSC_DECLARE_HOST_FUNCTION(callJSAPIWrapperObjectCallbackObject);
+static JSC_DECLARE_HOST_FUNCTION(constructJSAPIWrapperObjectCallbackObject);
+
+template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JSAPIWrapperObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
+template <> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
+
+template <>
+RawNativeFunction JSCallbackObject<JSAPIWrapperObject>::getCallFunction()
+{
+    return callJSAPIWrapperObjectCallbackObject;
+}
+
+template <>
+RawNativeFunction JSCallbackObject<JSAPIWrapperObject>::getConstructFunction()
+{
+    return constructJSAPIWrapperObjectCallbackObject;
+}
 
 template <>
 Structure* JSCallbackObject<JSAPIWrapperObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
@@ -116,6 +130,16 @@ IsoSubspace* JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl(VM& vm, Subsp
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+JSC_DEFINE_HOST_FUNCTION(callJSAPIWrapperObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSAPIWrapperObject>::callImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(constructJSAPIWrapperObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSAPIWrapperObject>::constructImpl(globalObject, callFrame);
 }
 
 } // namespace JSC

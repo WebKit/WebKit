@@ -2372,7 +2372,7 @@ bool JSObject::defaultHasInstance(JSGlobalObject* globalObject, JSValue value, J
     ASSERT_NOT_REACHED();
 }
 
-EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectPrivateFuncInstanceOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue value = callFrame->uncheckedArgument(0);
     JSValue proto = callFrame->uncheckedArgument(1);

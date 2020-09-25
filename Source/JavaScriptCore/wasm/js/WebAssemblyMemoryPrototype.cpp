@@ -38,8 +38,8 @@
 #include "StructureInlines.h"
 
 namespace JSC {
-static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyMemoryProtoFuncGrow);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyMemoryProtoFuncBuffer);
 }
 
 #include "WebAssemblyMemoryPrototype.lut.h"
@@ -69,7 +69,7 @@ ALWAYS_INLINE JSWebAssemblyMemory* getMemory(JSGlobalObject* globalObject, VM& v
     return memory;
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyMemoryProtoFuncGrow, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -86,7 +86,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject* glob
     return JSValue::encode(jsNumber(result.pageCount()));
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyMemoryProtoFuncBuffer, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);

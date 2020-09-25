@@ -43,8 +43,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestDefaultToJSONIndirectInheritanceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONIndirectInheritanceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONIndirectInheritanceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONIndirectInheritanceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestDefaultToJSONIndirectInheritancePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -141,7 +141,7 @@ JSValue JSTestDefaultToJSONIndirectInheritance::getConstructor(VM& vm, const JSG
     return getDOMConstructor<JSTestDefaultToJSONIndirectInheritanceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-EncodedJSValue jsTestDefaultToJSONIndirectInheritanceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONIndirectInheritanceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -151,7 +151,7 @@ EncodedJSValue jsTestDefaultToJSONIndirectInheritanceConstructor(JSGlobalObject*
     return JSValue::encode(JSTestDefaultToJSONIndirectInheritance::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestDefaultToJSONIndirectInheritanceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONIndirectInheritanceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

@@ -31,19 +31,19 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMaximize(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMinimize(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncToString(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterBaseName(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCalendar(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCaseFirst(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCollation(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterHourCycle(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterNumeric(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterNumberingSystem(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterLanguage(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterScript(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterRegion(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncMaximize);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncMinimize);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncToString);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterBaseName);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterCalendar);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterCaseFirst);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterCollation);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterHourCycle);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterNumeric);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterNumberingSystem);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterLanguage);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterScript);
+static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterRegion);
 
 }
 
@@ -96,7 +96,7 @@ void IntlLocalePrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.maximize
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMaximize(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncMaximize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -112,7 +112,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMaximize(JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.minimize
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMinimize(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncMinimize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -128,7 +128,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncMinimize(JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.toString
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -142,7 +142,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeFuncToString(JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.baseName
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterBaseName(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterBaseName, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -156,7 +156,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterBaseName(JSGlobalObject* g
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCalendar(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCalendar, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -170,7 +170,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCalendar(JSGlobalObject* g
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.caseFirst
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCaseFirst(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCaseFirst, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -184,7 +184,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCaseFirst(JSGlobalObject* 
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.collation
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCollation(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCollation, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -198,7 +198,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterCollation(JSGlobalObject* 
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterHourCycle(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterHourCycle, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -212,7 +212,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterHourCycle(JSGlobalObject* 
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numeric
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterNumeric(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterNumeric, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -225,7 +225,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterNumeric(JSGlobalObject* gl
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numberingSystem
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterNumberingSystem(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterNumberingSystem, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -239,7 +239,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterNumberingSystem(JSGlobalOb
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.language
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterLanguage(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterLanguage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -253,7 +253,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterLanguage(JSGlobalObject* g
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.script
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterScript(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterScript, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -267,7 +267,7 @@ EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterScript(JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.region
-EncodedJSValue JSC_HOST_CALL IntlLocalePrototypeGetterRegion(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterRegion, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

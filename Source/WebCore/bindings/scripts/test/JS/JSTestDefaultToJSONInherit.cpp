@@ -66,14 +66,14 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDefaultToJSONInheritPrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONInheritPrototypeFunctionToJSON);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestDefaultToJSONInheritConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONInheritConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestDefaultToJSONInheritInheritLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONInheritInheritLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONInheritConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritInheritLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONInheritInheritLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestDefaultToJSONInheritPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -182,7 +182,7 @@ template<> inline JSTestDefaultToJSONInherit* IDLOperation<JSTestDefaultToJSONIn
     return jsDynamicCast<JSTestDefaultToJSONInherit*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestDefaultToJSONInheritConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -192,7 +192,7 @@ EncodedJSValue jsTestDefaultToJSONInheritConstructor(JSGlobalObject* lexicalGlob
     return JSValue::encode(JSTestDefaultToJSONInherit::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestDefaultToJSONInheritConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONInheritConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -213,7 +213,7 @@ static inline JSValue jsTestDefaultToJSONInheritInheritLongAttributeGetter(JSGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.inheritLongAttribute())));
 }
 
-EncodedJSValue jsTestDefaultToJSONInheritInheritLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritInheritLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDefaultToJSONInherit>::get<jsTestDefaultToJSONInheritInheritLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "inheritLongAttribute");
 }
@@ -231,7 +231,7 @@ static inline bool setJSTestDefaultToJSONInheritInheritLongAttributeSetter(JSGlo
     return true;
 }
 
-bool setJSTestDefaultToJSONInheritInheritLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONInheritInheritLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestDefaultToJSONInherit>::set<setJSTestDefaultToJSONInheritInheritLongAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "inheritLongAttribute");
 }
@@ -269,7 +269,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritPrototypeFunctionToJSONBo
     return JSValue::encode(result);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDefaultToJSONInheritPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONInheritPrototypeFunctionToJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestDefaultToJSONInherit>::call<jsTestDefaultToJSONInheritPrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }

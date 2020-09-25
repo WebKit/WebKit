@@ -36,7 +36,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlDateTimeFormatConstructor);
 
-static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlDateTimeFormatConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -64,8 +64,8 @@ Structure* IntlDateTimeFormatConstructor::createStructure(VM& vm, JSGlobalObject
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callIntlDateTimeFormat);
+static JSC_DECLARE_HOST_FUNCTION(constructIntlDateTimeFormat);
 
 IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callIntlDateTimeFormat, constructIntlDateTimeFormat)
@@ -78,7 +78,7 @@ void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPro
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, dateTimeFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructIntlDateTimeFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -101,7 +101,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(JSGlobalObject* 
     return JSValue::encode(dateTimeFormat);
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callIntlDateTimeFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
@@ -121,7 +121,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(JSGlobalObject* globa
     }));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

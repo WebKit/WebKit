@@ -56,26 +56,26 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationInterface(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationSpecified(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithArguments(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgument(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgument(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationInterface);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationSpecified);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithArguments);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgument);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgument);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument);
+JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestCallTracerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCallTracerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCallTracerTestAttributeInterface(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCallTracerTestAttributeInterface(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCallTracerTestAttributeSpecified(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCallTracerTestAttributeSpecified(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCallTracerTestReadonlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCallTracerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeInterface(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCallTracerTestAttributeInterface(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeSpecified(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCallTracerTestAttributeSpecified(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestReadonlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestCallTracerPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -212,7 +212,7 @@ template<> inline JSTestCallTracer* IDLOperation<JSTestCallTracer>::cast(JSGloba
     return jsDynamicCast<JSTestCallTracer*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -222,7 +222,7 @@ EncodedJSValue jsTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, 
     return JSValue::encode(JSTestCallTracer::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -245,7 +245,7 @@ static inline JSValue jsTestCallTracerTestAttributeInterfaceGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeInterface())));
 }
 
-EncodedJSValue jsTestCallTracerTestAttributeInterface(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeInterface(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeInterfaceGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeInterface");
 }
@@ -265,7 +265,7 @@ static inline bool setJSTestCallTracerTestAttributeInterfaceSetter(JSGlobalObjec
     return true;
 }
 
-bool setJSTestCallTracerTestAttributeInterface(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCallTracerTestAttributeInterface(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeInterfaceSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeInterface");
 }
@@ -280,7 +280,7 @@ static inline JSValue jsTestCallTracerTestAttributeSpecifiedGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeSpecified())));
 }
 
-EncodedJSValue jsTestCallTracerTestAttributeSpecified(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeSpecified(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeSpecifiedGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeSpecified");
 }
@@ -300,7 +300,7 @@ static inline bool setJSTestCallTracerTestAttributeSpecifiedSetter(JSGlobalObjec
     return true;
 }
 
-bool setJSTestCallTracerTestAttributeSpecified(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCallTracerTestAttributeSpecified(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeSpecifiedSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeSpecified");
 }
@@ -315,7 +315,7 @@ static inline JSValue jsTestCallTracerTestAttributeWithVariantGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testAttributeWithVariant())));
 }
 
-EncodedJSValue jsTestCallTracerTestAttributeWithVariant(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeWithVariant(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeWithVariantGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeWithVariant");
 }
@@ -335,7 +335,7 @@ static inline bool setJSTestCallTracerTestAttributeWithVariantSetter(JSGlobalObj
     return true;
 }
 
-bool setJSTestCallTracerTestAttributeWithVariant(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestCallTracerTestAttributeWithVariant(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeWithVariantSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeWithVariant");
 }
@@ -348,7 +348,7 @@ static inline JSValue jsTestCallTracerTestReadonlyAttributeGetter(JSGlobalObject
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testReadonlyAttribute())));
 }
 
-EncodedJSValue jsTestCallTracerTestReadonlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestCallTracerTestReadonlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestReadonlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testReadonlyAttribute");
 }
@@ -367,7 +367,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationInterface(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationInterface, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationInterfaceBody>(*lexicalGlobalObject, *callFrame, "testOperationInterface");
 }
@@ -386,7 +386,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationSpecified(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationSpecified, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationSpecifiedBody>(*lexicalGlobalObject, *callFrame, "testOperationSpecified");
 }
@@ -416,7 +416,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithArguments(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithArguments, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationWithArgumentsBody>(*lexicalGlobalObject, *callFrame, "testOperationWithArguments");
 }
@@ -440,7 +440,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgument(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgumentBody>(*lexicalGlobalObject, *callFrame, "testOperationWithNullableArgument");
 }
@@ -464,7 +464,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgument(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgumentBody>(*lexicalGlobalObject, *callFrame, "testOperationWithVariantArgument");
 }
@@ -488,7 +488,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgumentBody>(*lexicalGlobalObject, *callFrame, "testOperationWithNullableVariantArgument");
 }
@@ -510,7 +510,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgumentBody>(*lexicalGlobalObject, *callFrame, "testOperationWithOptionalVariantArgument");
 }
@@ -532,7 +532,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestCallTracer>::call<jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgumentBody>(*lexicalGlobalObject, *callFrame, "testOperationWithDefaultVariantArgument");
 }

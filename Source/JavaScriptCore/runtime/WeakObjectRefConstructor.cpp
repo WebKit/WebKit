@@ -40,22 +40,22 @@ void WeakObjectRefConstructor::finishCreation(VM& vm, WeakObjectRefPrototype* pr
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakRef(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructWeakRef(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callWeakRef);
+static JSC_DECLARE_HOST_FUNCTION(constructWeakRef);
 
 WeakObjectRefConstructor::WeakObjectRefConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callWeakRef, constructWeakRef)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakRef(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callWeakRef, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WeakRef"));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWeakRef(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWeakRef, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

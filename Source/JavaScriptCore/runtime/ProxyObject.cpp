@@ -40,6 +40,9 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyObject);
 
 const ClassInfo ProxyObject::s_info = { "ProxyObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyObject) };
 
+static JSC_DECLARE_HOST_FUNCTION(performProxyCall);
+static JSC_DECLARE_HOST_FUNCTION(performProxyConstruct);
+
 ProxyObject::ProxyObject(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
@@ -470,7 +473,7 @@ bool ProxyObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigne
     return thisObject->putByIndexCommon(globalObject, thisObject, propertyName, value, shouldThrow);
 }
 
-static EncodedJSValue JSC_HOST_CALL performProxyCall(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     NO_TAIL_CALLS();
 
@@ -517,7 +520,7 @@ CallData ProxyObject::getCallData(JSCell* cell)
     return callData;
 }
 
-static EncodedJSValue JSC_HOST_CALL performProxyConstruct(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     NO_TAIL_CALLS();
 

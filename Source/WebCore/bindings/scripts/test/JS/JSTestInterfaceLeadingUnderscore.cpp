@@ -46,9 +46,9 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestInterfaceLeadingUnderscoreConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceLeadingUnderscoreConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestInterfaceLeadingUnderscoreReadonly(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestInterfaceLeadingUnderscoreConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestInterfaceLeadingUnderscoreConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestInterfaceLeadingUnderscoreReadonly(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestInterfaceLeadingUnderscorePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -158,7 +158,7 @@ template<> inline JSTestInterfaceLeadingUnderscore* IDLAttribute<JSTestInterface
     return jsDynamicCast<JSTestInterfaceLeadingUnderscore*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestInterfaceLeadingUnderscoreConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestInterfaceLeadingUnderscoreConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -168,7 +168,7 @@ EncodedJSValue jsTestInterfaceLeadingUnderscoreConstructor(JSGlobalObject* lexic
     return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestInterfaceLeadingUnderscoreConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestInterfaceLeadingUnderscoreConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -189,7 +189,7 @@ static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.readonly())));
 }
 
-EncodedJSValue jsTestInterfaceLeadingUnderscoreReadonly(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestInterfaceLeadingUnderscoreReadonly(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestInterfaceLeadingUnderscore>::get<jsTestInterfaceLeadingUnderscoreReadonlyGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readonly");
 }

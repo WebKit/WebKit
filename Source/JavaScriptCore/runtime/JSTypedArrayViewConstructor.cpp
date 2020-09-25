@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(constructTypedArrayView);
 
 JSTypedArrayViewConstructor::JSTypedArrayViewConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, constructTypedArrayView, constructTypedArrayView)
@@ -57,9 +57,7 @@ Structure* JSTypedArrayViewConstructor::createStructure(
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-
-
-static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(constructTypedArrayView, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

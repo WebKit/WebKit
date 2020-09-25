@@ -33,8 +33,9 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlCollatorPrototypeGetterCompare);
+static JSC_DECLARE_HOST_FUNCTION(IntlCollatorPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(IntlCollatorFuncCompare);
 
 }
 
@@ -75,7 +76,7 @@ void IntlCollatorPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlCollatorFuncCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -104,7 +105,7 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(JSGlobalObject* glob
     RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(globalObject, xViewWithString.view, yViewWithString.view)));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlCollatorPrototypeGetterCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -133,7 +134,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(JSGlobalObject* 
     return JSValue::encode(boundCompare);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlCollatorPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

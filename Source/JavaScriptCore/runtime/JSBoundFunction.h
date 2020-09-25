@@ -29,12 +29,12 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL isBoundFunction(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(boundThisNoArgsFunctionCall);
+JSC_DECLARE_HOST_FUNCTION(boundFunctionCall);
+JSC_DECLARE_HOST_FUNCTION(boundThisNoArgsFunctionConstruct);
+JSC_DECLARE_HOST_FUNCTION(boundFunctionConstruct);
+JSC_DECLARE_HOST_FUNCTION(isBoundFunction);
+JSC_DECLARE_HOST_FUNCTION(hasInstanceBoundFunction);
 
 class JSBoundFunction final : public JSFunction {
 public:
@@ -93,9 +93,9 @@ private:
     double m_length;
 };
 
-EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(boundFunctionCall);
+JSC_DECLARE_HOST_FUNCTION(boundFunctionConstruct);
+JSC_DECLARE_HOST_FUNCTION(boundThisNoArgsFunctionCall);
+JSC_DECLARE_HOST_FUNCTION(boundThisNoArgsFunctionConstruct);
 
 } // namespace JSC

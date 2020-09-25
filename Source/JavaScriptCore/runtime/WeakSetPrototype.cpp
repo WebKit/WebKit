@@ -33,9 +33,9 @@ namespace JSC {
 
 const ClassInfo WeakSetPrototype::s_info = { "WeakSet", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetDelete);
+static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetHas);
+static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetAdd);
 
 void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -67,7 +67,7 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(JSGlobalObject* globalObject, JSValue
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(protoFuncWeakSetDelete, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto* set = getWeakSet(globalObject, callFrame->thisValue());
     if (!set)
@@ -76,7 +76,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(JSGlobalObject* globalObject
     return JSValue::encode(jsBoolean(key.isObject() && set->remove(asObject(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(protoFuncWeakSetHas, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto* set = getWeakSet(globalObject, callFrame->thisValue());
     if (!set)
@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(JSGlobalObject* globalObject, C
     return JSValue::encode(jsBoolean(key.isObject() && set->has(asObject(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(protoFuncWeakSetAdd, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

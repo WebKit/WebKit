@@ -32,10 +32,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionPrototype);
 
 const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncToString);
+static JSC_DECLARE_HOST_FUNCTION(callFunctionPrototype);
 
 // https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object
-static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(JSGlobalObject*, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callFunctionPrototype, (JSGlobalObject*, CallFrame*))
 {
     return JSValue::encode(jsUndefined());
 }
@@ -71,7 +72,7 @@ void FunctionPrototype::initRestrictedProperties(VM& vm, JSGlobalObject* globalO
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->arguments, errorGetterSetter, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
-EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -49,8 +49,8 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NumberPrototype, NumberObject);
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(numberProtoFuncValueOf);
+JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToString);
 JSString* int32ToString(VM&, int32_t value, int32_t radix);
 JSString* int52ToString(VM&, int64_t value, int32_t radix);
 JSString* numberToString(VM&, double value, int32_t radix);

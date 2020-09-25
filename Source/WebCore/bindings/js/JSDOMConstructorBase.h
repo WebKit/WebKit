@@ -23,6 +23,8 @@
 
 namespace WebCore {
 
+JSC_DECLARE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable);
+
 // Base class for all constructor objects in the JSC bindings.
 class JSDOMConstructorBase : public JSDOMObject {
 public:

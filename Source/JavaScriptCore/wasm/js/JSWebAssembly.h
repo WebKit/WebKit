@@ -58,8 +58,8 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(webAssemblyCompileStreamingInternal);
+JSC_DECLARE_HOST_FUNCTION(webAssemblyInstantiateStreamingInternal);
 
 } // namespace JSC
 

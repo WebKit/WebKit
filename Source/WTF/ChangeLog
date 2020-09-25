@@ -1,3 +1,17 @@
+2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging
+        https://bugs.webkit.org/show_bug.cgi?id=216966
+
+        Reviewed by Saam Barati.
+
+        Rename JSC_HOST_CALL to JSC_HOST_CALL_ATTRIBUTE, and introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION.
+        We also introduce JSC_ANNOTATE_HOST_FUNCTION if the function is not defined as free-function[1].
+
+        [1]: https://stackoverflow.com/questions/4861914/what-is-the-meaning-of-the-term-free-function-in-c
+
+        * wtf/PlatformCallingConventions.h:
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         Get rid of AudioNode::RefType

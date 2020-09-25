@@ -38,6 +38,13 @@ namespace Bindings {
 
 WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeObject) };
 
+static JSC_DECLARE_HOST_FUNCTION(callRuntimeObject);
+static JSC_DECLARE_HOST_FUNCTION(callRuntimeConstructor);
+
+static EncodedJSValue JIT_OPERATION fallbackObjectGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue JIT_OPERATION fieldGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+static EncodedJSValue JIT_OPERATION methodGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+
 RuntimeObject::RuntimeObject(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
     : Base(vm, structure)
     , m_instance(WTFMove(instance))
@@ -63,16 +70,16 @@ void RuntimeObject::invalidate()
     m_instance = nullptr;
 }
 
-EncodedJSValue RuntimeObject::fallbackObjectGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+EncodedJSValue JIT_OPERATION fallbackObjectGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
-    RefPtr<Instance> instance = thisObj->m_instance;
+    RefPtr<Instance> instance = thisObj->getInternalInstance();
 
     if (!instance)
-        return JSValue::encode(throwInvalidAccessError(lexicalGlobalObject, scope));
+        return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
     
     instance->begin();
 
@@ -84,16 +91,16 @@ EncodedJSValue RuntimeObject::fallbackObjectGetter(JSGlobalObject* lexicalGlobal
     return JSValue::encode(result);
 }
 
-EncodedJSValue RuntimeObject::fieldGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+EncodedJSValue JIT_OPERATION fieldGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
 {    
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
-    RefPtr<Instance> instance = thisObj->m_instance;
+    RefPtr<Instance> instance = thisObj->getInternalInstance();
 
     if (!instance)
-        return JSValue::encode(throwInvalidAccessError(lexicalGlobalObject, scope));
+        return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
     
     instance->begin();
 
@@ -106,16 +113,16 @@ EncodedJSValue RuntimeObject::fieldGetter(JSGlobalObject* lexicalGlobalObject, E
     return JSValue::encode(result);
 }
 
-EncodedJSValue RuntimeObject::methodGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+EncodedJSValue JIT_OPERATION methodGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(thisValue));
-    RefPtr<Instance> instance = thisObj->m_instance;
+    RefPtr<Instance> instance = thisObj->getInternalInstance();
 
     if (!instance)
-        return JSValue::encode(throwInvalidAccessError(lexicalGlobalObject, scope));
+        return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
     
     instance->begin();
 
@@ -133,7 +140,7 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexical
 
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
-        throwInvalidAccessError(lexicalGlobalObject, scope);
+        throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope);
         return false;
     }
     
@@ -147,14 +154,14 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexical
         // See if the instance has a field with the specified name.
         Field *aField = aClass->fieldNamed(propertyName, instance.get());
         if (aField) {
-            slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete), thisObject->fieldGetter);
+            slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete), fieldGetter);
             instance->end();
             return true;
         } else {
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
             if (aClass->methodNamed(propertyName, instance.get())) {
-                slot.setCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, thisObject->methodGetter);
+                slot.setCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, methodGetter);
                 
                 instance->end();
                 return true;
@@ -163,7 +170,7 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexical
 
         // Try a fallback object.
         if (!aClass->fallbackObject(lexicalGlobalObject, instance.get(), propertyName).isUndefined()) {
-            slot.setCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, thisObject->fallbackObjectGetter);
+            slot.setCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, fallbackObjectGetter);
             instance->end();
             return true;
         }
@@ -181,7 +188,7 @@ bool RuntimeObject::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Prope
 
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
     if (!thisObject->m_instance) {
-        throwInvalidAccessError(lexicalGlobalObject, scope);
+        throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope);
         return false;
     }
     
@@ -213,7 +220,7 @@ JSValue RuntimeObject::defaultValue(const JSObject* object, JSGlobalObject* lexi
 
     const RuntimeObject* thisObject = jsCast<const RuntimeObject*>(object);
     if (!thisObject->m_instance)
-        return throwInvalidAccessError(lexicalGlobalObject, scope);
+        return throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope);
     
     RefPtr<Instance> instance = thisObject->m_instance;
 
@@ -223,7 +230,7 @@ JSValue RuntimeObject::defaultValue(const JSObject* object, JSGlobalObject* lexi
     return result;
 }
 
-static EncodedJSValue JSC_HOST_CALL callRuntimeObject(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callRuntimeObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT_UNUSED(globalObject, callFrame->jsCallee()->inherits<RuntimeObject>(globalObject->vm()));
     RefPtr<Instance> instance(static_cast<RuntimeObject*>(callFrame->jsCallee())->getInternalInstance());
@@ -246,7 +253,7 @@ CallData RuntimeObject::getCallData(JSCell* cell)
     return callData;
 }
 
-static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callRuntimeConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSObject* constructor = callFrame->jsCallee();
     ASSERT_UNUSED(globalObject, constructor->inherits<RuntimeObject>(globalObject->vm()));
@@ -280,7 +287,7 @@ void RuntimeObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexica
 
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
-        throwInvalidAccessError(lexicalGlobalObject, scope);
+        throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope);
         return;
     }
 
@@ -291,7 +298,7 @@ void RuntimeObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexica
     instance->end();
 }
 
-Exception* RuntimeObject::throwInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
+Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
 {
     return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."));
 }

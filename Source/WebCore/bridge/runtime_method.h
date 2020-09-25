@@ -74,8 +74,6 @@ protected:
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
 
 private:
-    static EncodedJSValue lengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-
     static IsoSubspace* subspaceForImpl(VM&);
 
     Bindings::Method* m_method;

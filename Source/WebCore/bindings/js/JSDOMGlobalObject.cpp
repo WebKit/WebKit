@@ -56,12 +56,12 @@
 namespace WebCore {
 using namespace JSC;
 
-EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL makeDOMExceptionForBuiltins(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL isReadableByteStreamAPIEnabled(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL isWritableStreamAPIEnabled(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL whenSignalAborted(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(makeThisTypeErrorForBuiltins);
+JSC_DECLARE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins);
+JSC_DECLARE_HOST_FUNCTION(makeDOMExceptionForBuiltins);
+JSC_DECLARE_HOST_FUNCTION(isReadableByteStreamAPIEnabled);
+JSC_DECLARE_HOST_FUNCTION(isWritableStreamAPIEnabled);
+JSC_DECLARE_HOST_FUNCTION(whenSignalAborted);
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
 
@@ -80,7 +80,7 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
     static_cast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
 }
 
-EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(makeThisTypeErrorForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 2);
@@ -94,7 +94,7 @@ EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(JSGlobalObject* global
     return JSValue::encode(createTypeError(globalObject, makeThisTypeErrorMessage(interfaceName.utf8().data(), functionName.utf8().data())));
 }
 
-EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 2);
@@ -111,7 +111,7 @@ EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(JSGlobalObject* glob
     return JSValue::encode(error);
 }
 
-EncodedJSValue JSC_HOST_CALL makeDOMExceptionForBuiltins(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 2);
@@ -135,17 +135,17 @@ EncodedJSValue JSC_HOST_CALL makeDOMExceptionForBuiltins(JSGlobalObject* globalO
     return JSValue::encode(value);
 }
 
-EncodedJSValue JSC_HOST_CALL isReadableByteStreamAPIEnabled(JSGlobalObject*, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(isReadableByteStreamAPIEnabled, (JSGlobalObject*, CallFrame*))
 {
     return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().readableByteStreamAPIEnabled()));
 }
 
-EncodedJSValue JSC_HOST_CALL isWritableStreamAPIEnabled(JSGlobalObject*, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(isWritableStreamAPIEnabled, (JSGlobalObject*, CallFrame*))
 {
     return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().writableStreamAPIEnabled()));
 }
 
-EncodedJSValue JSC_HOST_CALL whenSignalAborted(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 2);

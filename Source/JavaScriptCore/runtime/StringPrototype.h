@@ -55,11 +55,11 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(JSGlobalObject
 
 void substituteBackreferences(StringBuilder& result, const String& replacement, StringView source, const int* ovector, RegExp*);
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(stringProtoFuncRepeatCharacter);
+JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSplitFast);
 
-EncodedJSValue JSC_HOST_CALL builtinStringSubstringInternal(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL builtinStringIndexOfInternal(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(builtinStringSubstringInternal);
+JSC_DECLARE_HOST_FUNCTION(builtinStringIncludesInternal);
+JSC_DECLARE_HOST_FUNCTION(builtinStringIndexOfInternal);
 
 } // namespace JSC

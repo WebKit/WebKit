@@ -30,7 +30,7 @@ namespace JSC {
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototypeBase);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototype);
 
-static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(errorProtoFuncToString);
 
 }
 
@@ -67,7 +67,7 @@ ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
 // ------------------------------ Functions ---------------------------
 
 // ECMA-262 5.1, 15.11.4.4
-EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

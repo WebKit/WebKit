@@ -44,8 +44,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestReportExtraMemoryCostConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestReportExtraMemoryCostConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestReportExtraMemoryCostConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestReportExtraMemoryCostConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestReportExtraMemoryCostPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -150,7 +150,7 @@ void JSTestReportExtraMemoryCost::destroy(JSC::JSCell* cell)
     thisObject->JSTestReportExtraMemoryCost::~JSTestReportExtraMemoryCost();
 }
 
-EncodedJSValue jsTestReportExtraMemoryCostConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestReportExtraMemoryCostConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -160,7 +160,7 @@ EncodedJSValue jsTestReportExtraMemoryCostConstructor(JSGlobalObject* lexicalGlo
     return JSValue::encode(JSTestReportExtraMemoryCost::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestReportExtraMemoryCostConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestReportExtraMemoryCostConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

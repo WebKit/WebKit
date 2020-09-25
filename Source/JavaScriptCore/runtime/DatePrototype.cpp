@@ -38,47 +38,47 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetHours(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMinutes(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetSeconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTimezoneOffset(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDate(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDay(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCHours(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMilliseconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMinutes(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMonth(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCSeconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetDate(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetFullYear(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetHours(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMilliSeconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMinutes(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMonth(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetSeconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCDate(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCFullYear(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCHours(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMilliseconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMinutes(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMonth(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCSeconds(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToDateString(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToString(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToTimeString(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToUTCString(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetDate);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetDay);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetFullYear);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetHours);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetMilliSeconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetMinutes);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetMonth);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetSeconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetTimezoneOffset);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCDate);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCDay);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCFullYear);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCHours);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCMilliseconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCMinutes);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCMonth);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetUTCSeconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetYear);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetDate);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetFullYear);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetHours);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetMilliSeconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetMinutes);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetMonth);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetSeconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetTime);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCDate);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCFullYear);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCHours);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCMilliseconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCMinutes);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCMonth);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetUTCSeconds);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncSetYear);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToDateString);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToPrimitiveSymbol);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToString);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToTimeString);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToUTCString);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToISOString);
+JSC_DECLARE_HOST_FUNCTION(dateProtoFuncToJSON);
 
 }
 
@@ -287,19 +287,19 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 // Functions
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     const bool asUTCVariant = false;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToUTCString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToUTCString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     const bool asUTCVariant = true;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -336,19 +336,19 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(JSGlobalObject* globalObje
     return JSValue::encode(jsNontrivialString(vm, String(buffer, charactersWritten)));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToDateString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToDateString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     const bool asUTCVariant = false;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatDate, asUTCVariant);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToTimeString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToTimeString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     const bool asUTCVariant = false;
     return formateDateInstance(globalObject, callFrame, DateTimeFormatTime, asUTCVariant);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToPrimitiveSymbol, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -371,7 +371,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(JSGlobalObject* glob
     RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->ordinaryToPrimitive(globalObject, type)));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -383,7 +383,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(JSGlobalObject* globalObject, 
     return JSValue::encode(jsNumber(thisDateObj->internalNumber()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetFullYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -398,7 +398,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(JSGlobalObject* globalObje
     return JSValue::encode(jsNumber(gregorianDateTime->year()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCFullYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -413,7 +413,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(JSGlobalObject* globalO
     return JSValue::encode(jsNumber(gregorianDateTime->year()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -428,7 +428,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(JSGlobalObject* globalObject,
     return JSValue::encode(jsNumber(gregorianDateTime->month()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMonth(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -443,7 +443,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMonth(JSGlobalObject* globalObje
     return JSValue::encode(jsNumber(gregorianDateTime->month()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -458,7 +458,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(JSGlobalObject* globalObject, 
     return JSValue::encode(jsNumber(gregorianDateTime->monthDay()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDate(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -473,7 +473,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDate(JSGlobalObject* globalObjec
     return JSValue::encode(jsNumber(gregorianDateTime->monthDay()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetDay, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -488,7 +488,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(JSGlobalObject* globalObject, C
     return JSValue::encode(jsNumber(gregorianDateTime->weekDay()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDay(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCDay, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -503,7 +503,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDay(JSGlobalObject* globalObject
     return JSValue::encode(jsNumber(gregorianDateTime->weekDay()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetHours(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetHours, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -518,7 +518,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetHours(JSGlobalObject* globalObject,
     return JSValue::encode(jsNumber(gregorianDateTime->hour()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCHours(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCHours, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -533,7 +533,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCHours(JSGlobalObject* globalObje
     return JSValue::encode(jsNumber(gregorianDateTime->hour()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMinutes(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMinutes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -548,7 +548,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMinutes(JSGlobalObject* globalObjec
     return JSValue::encode(jsNumber(gregorianDateTime->minute()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMinutes(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMinutes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -563,7 +563,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMinutes(JSGlobalObject* globalOb
     return JSValue::encode(jsNumber(gregorianDateTime->minute()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetSeconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -578,7 +578,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetSeconds(JSGlobalObject* globalObjec
     return JSValue::encode(jsNumber(gregorianDateTime->second()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCSeconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -593,7 +593,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCSeconds(JSGlobalObject* globalOb
     return JSValue::encode(jsNumber(gregorianDateTime->second()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetMilliSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -612,7 +612,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(JSGlobalObject* global
     return JSValue::encode(jsNumber(static_cast<int32_t>(ms)));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMilliseconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetUTCMilliseconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -631,7 +631,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMilliseconds(JSGlobalObject* glo
     return JSValue::encode(jsNumber(static_cast<int32_t>(ms)));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTimezoneOffset(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetTimezoneOffset, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -646,7 +646,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTimezoneOffset(JSGlobalObject* glob
     return JSValue::encode(jsNumber(-gregorianDateTime->utcOffsetInMinute()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -747,77 +747,77 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
     return JSValue::encode(jsNumber(result));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMilliSeconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetMilliSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 1, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMilliseconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCMilliseconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 1, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetSeconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 2, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCSeconds(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCSeconds, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 2, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMinutes(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetMinutes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 3, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMinutes(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCMinutes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 3, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetHours(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetHours, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 4, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCHours(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCHours, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromTimeArgs(globalObject, callFrame, 4, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetDate(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromDateArgs(globalObject, callFrame, 1, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCDate(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCDate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromDateArgs(globalObject, callFrame, 1, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMonth(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromDateArgs(globalObject, callFrame, 2, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMonth(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromDateArgs(globalObject, callFrame, 2, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetFullYear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetFullYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromDateArgs(globalObject, callFrame, 3, WTF::LocalTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCFullYear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetUTCFullYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return setNewValueFromDateArgs(globalObject, callFrame, 3, WTF::UTCTime);
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -862,7 +862,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(JSGlobalObject* globalObject, 
     return JSValue::encode(jsNumber(result));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncGetYear, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -879,7 +879,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(JSGlobalObject* globalObject, 
     return JSValue::encode(jsNumber(gregorianDateTime->year() - 1900));
 }
 
-EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToJSON, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

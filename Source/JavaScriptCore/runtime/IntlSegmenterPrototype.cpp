@@ -31,8 +31,8 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlSegmenterPrototypeFuncSegment(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlSegmenterPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlSegmenterPrototypeFuncSegment);
+static JSC_DECLARE_HOST_FUNCTION(IntlSegmenterPrototypeFuncResolvedOptions);
 
 }
 
@@ -74,7 +74,7 @@ void IntlSegmenterPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-intl.segmenter.prototype.segment
-EncodedJSValue JSC_HOST_CALL IntlSegmenterPrototypeFuncSegment(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncSegment, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -87,7 +87,7 @@ EncodedJSValue JSC_HOST_CALL IntlSegmenterPrototypeFuncSegment(JSGlobalObject* g
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-Intl.Segmenter.prototype.resolvedOptions
-EncodedJSValue JSC_HOST_CALL IntlSegmenterPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -29,15 +29,15 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncValueOf);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncHasOwnProperty);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncIsPrototypeOf);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncDefineGetter);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncDefineSetter);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncLookupGetter);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncLookupSetter);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncPropertyIsEnumerable);
+static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncToLocaleString);
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ObjectPrototype);
 
@@ -74,7 +74,7 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 
 // ------------------------------ Functions --------------------------------
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncValueOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     JSObject* valueObj = thisValue.toObject(globalObject);
@@ -110,7 +110,7 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSValue base, c
     return result;
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncHasOwnProperty, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -122,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globa
     return JSValue::encode(jsBoolean(objectPrototypeHasOwnProperty(globalObject, base, propertyName)));
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncIsPrototypeOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -149,7 +149,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* global
     }
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncDefineGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -176,7 +176,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject* globalO
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncDefineSetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -203,7 +203,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject* globalO
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncLookupGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -233,7 +233,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(JSGlobalObject* globalO
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncLookupSetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -263,7 +263,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(JSGlobalObject* globalO
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncPropertyIsEnumerable, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -281,7 +281,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(JSGlobalObject*
 }
 
 // 15.2.4.3 Object.prototype.toLocaleString()
-EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncToLocaleString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -311,7 +311,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(JSGlobalObject* globa
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, toString, callData, thisValue, *vm.emptyList)));
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(objectProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -43,8 +43,8 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL callArrayConstructor(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callArrayConstructor);
+static JSC_DECLARE_HOST_FUNCTION(constructWithArrayConstructor);
 
 ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callArrayConstructor, constructWithArrayConstructor)
@@ -86,13 +86,13 @@ static inline JSArray* constructArrayWithSizeQuirk(JSGlobalObject* globalObject,
     return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), args, newTarget);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWithArrayConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructArrayWithSizeQuirk(globalObject, args, callFrame->newTarget()));
 }
 
-static EncodedJSValue JSC_HOST_CALL callArrayConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callArrayConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructArrayWithSizeQuirk(globalObject, args, JSValue()));
@@ -129,7 +129,7 @@ bool isArraySlow(JSGlobalObject* globalObject, ProxyObject* argument)
 
 // ES6 7.2.2
 // https://tc39.github.io/ecma262/#sec-isarray
-EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFuncIsArraySlow, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT_UNUSED(globalObject, jsDynamicCast<ProxyObject*>(globalObject->vm(), callFrame->argument(0)));
     return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));

@@ -239,7 +239,10 @@ JSValue JSNPObject::callConstructor(JSGlobalObject* lexicalGlobalObject, CallFra
     return value;
 }
 
-static EncodedJSValue JSC_HOST_CALL callNPJSObject(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(callNPJSObject);
+static JSC_DECLARE_HOST_FUNCTION(constructWithConstructor);
+
+JSC_DEFINE_HOST_FUNCTION(callNPJSObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSObject* object = callFrame->jsCallee();
     ASSERT_UNUSED(globalObject, object->inherits<JSNPObject>(globalObject->vm()));
@@ -259,7 +262,7 @@ CallData JSNPObject::getCallData(JSCell* cell)
     return callData;
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWithConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSObject* constructor = callFrame->jsCallee();
     ASSERT_UNUSED(globalObject, constructor->inherits<JSNPObject>(globalObject->vm()));

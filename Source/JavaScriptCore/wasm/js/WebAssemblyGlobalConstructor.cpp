@@ -38,12 +38,15 @@ namespace JSC {
 
 const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function", &Base::s_info, &constructorGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
 
+static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyGlobal);
+static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyGlobal);
+
 /* Source for WebAssemblyGlobalConstructor.lut.h
  @begin constructorGlobalWebAssemblyGlobal
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyGlobal(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -122,7 +125,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyGlobal(JSGlobalObject*
     RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(wasmGlobal))));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyGlobal(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyGlobal, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -39,8 +39,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AggregateErrorConstructor);
 
 const ClassInfo AggregateErrorConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AggregateErrorConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL callAggregateErrorConstructor(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructAggregateErrorConstructor(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callAggregateErrorConstructor);
+static JSC_DECLARE_HOST_FUNCTION(constructAggregateErrorConstructor);
 
 AggregateErrorConstructor::AggregateErrorConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callAggregateErrorConstructor, constructAggregateErrorConstructor)
@@ -55,7 +55,7 @@ void AggregateErrorConstructor::finishCreation(VM& vm, AggregateErrorPrototype* 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
-static EncodedJSValue JSC_HOST_CALL callAggregateErrorConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callAggregateErrorConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     JSValue errors = callFrame->argument(0);
@@ -64,7 +64,7 @@ static EncodedJSValue JSC_HOST_CALL callAggregateErrorConstructor(JSGlobalObject
     return JSValue::encode(AggregateError::create(globalObject, vm, errorStructure, errors, message, nullptr, TypeNothing, false));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructAggregateErrorConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructAggregateErrorConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -1,3 +1,1070 @@
+2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging
+        https://bugs.webkit.org/show_bug.cgi?id=216966
+
+        Reviewed by Saam Barati.
+
+        This patch introduces JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION and changes how to define host functions.
+        In the new way, we declare a function like,
+
+            JSC_DECLARE_HOST_FUNCTION(functionHelloWorld);
+
+        And define the function like,
+
+            JSC_DEFINE_HOST_FUNCTION(functionHelloWorld, (JSGlobalObject* globalObject, CallFrame* callFrame))
+            {
+                // function body.
+            }
+
+        This makes adding some meta information to each function easy, which helps JIT-caging to collect allowed function pointers.
+
+        * API/JSAPIWrapperObject.mm:
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::getCallFunction):
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::getConstructFunction):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSCallbackConstructor): Deleted.
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callJSCallbackFunction): Deleted.
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObject<JSNonFinalObject>::getCallFunction):
+        (JSC::JSCallbackObject<JSNonFinalObject>::getConstructFunction):
+        (JSC::JSCallbackObject<JSGlobalObject>::getCallFunction):
+        (JSC::JSCallbackObject<JSGlobalObject>::getConstructFunction):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getConstructData):
+        (JSC::JSCallbackObject<Parent>::constructImpl):
+        (JSC::JSCallbackObject<Parent>::getCallData):
+        (JSC::JSCallbackObject<Parent>::callImpl):
+        (JSC::JSCallbackObject<Parent>::construct): Deleted.
+        (JSC::JSCallbackObject<Parent>::call): Deleted.
+        * API/ObjCCallbackFunction.mm:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callObjCCallbackFunction): Deleted.
+        (JSC::constructObjCCallbackFunction): Deleted.
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::getCallFunction):
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::getConstructFunction):
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::getCallFunction):
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::getConstructFunction):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callJSCCallbackFunction): Deleted.
+        (JSC::constructJSCCallbackFunction): Deleted.
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSC_DEFINE_HOST_FUNCTION):
+        (Inspector::jsInjectedScriptHostPrototypeAttributeEvaluate): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeAttributeSavedResultAlias): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionInternalConstructorName): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionProxyTargetValue): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakMapSize): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakMapEntries): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakSetSize): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakSetEntries): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIteratorEntries): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionQueryInstances): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionQueryHolders): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionSubtype): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionFunctionDetails): Deleted.
+        (Inspector::jsInjectedScriptHostPrototypeFunctionGetInternalProperties): Deleted.
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSC_DEFINE_HOST_FUNCTION):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension): Deleted.
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionScopeDescriptions): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeCaller): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeSourceID): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeLine): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeColumn): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeFunctionName): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeScopeChain): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeThisObject): Deleted.
+        (Inspector::jsJavaScriptCallFrameAttributeType): Deleted.
+        (Inspector::jsJavaScriptCallFrameIsTailDeleted): Deleted.
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        (functionPrintStdOut): Deleted.
+        (functionPrintStdErr): Deleted.
+        (functionDebug): Deleted.
+        (functionDescribe): Deleted.
+        (functionDescribeArray): Deleted.
+        (functionSleepSeconds): Deleted.
+        (functionJSCStack): Deleted.
+        (functionGCAndSweep): Deleted.
+        (functionFullGC): Deleted.
+        (functionEdenGC): Deleted.
+        (functionHeapSize): Deleted.
+        (functionResetMemoryPeak): Deleted.
+        (functionAddressOf): Deleted.
+        (functionVersion): Deleted.
+        (functionRun): Deleted.
+        (functionRunString): Deleted.
+        (functionLoad): Deleted.
+        (functionLoadString): Deleted.
+        (functionReadFile): Deleted.
+        (functionCheckSyntax): Deleted.
+        (functionSetSamplingFlags): Deleted.
+        (functionClearSamplingFlags): Deleted.
+        (functionGetRandomSeed): Deleted.
+        (functionSetRandomSeed): Deleted.
+        (functionIsRope): Deleted.
+        (functionCallerSourceOrigin): Deleted.
+        (functionReadline): Deleted.
+        (functionPreciseTime): Deleted.
+        (functionNeverInlineFunction): Deleted.
+        (functionNoDFG): Deleted.
+        (functionNoFTL): Deleted.
+        (functionNoOSRExitFuzzing): Deleted.
+        (functionOptimizeNextInvocation): Deleted.
+        (functionNumberOfDFGCompiles): Deleted.
+        (functionCallerIsOMGCompiled): Deleted.
+        (functionDollarCreateRealm): Deleted.
+        (functionDollarEvalScript): Deleted.
+        (functionDollarAgentStart): Deleted.
+        (functionDollarAgentReceiveBroadcast): Deleted.
+        (functionDollarAgentReport): Deleted.
+        (functionDollarAgentSleep): Deleted.
+        (functionDollarAgentBroadcast): Deleted.
+        (functionDollarAgentGetReport): Deleted.
+        (functionDollarAgentLeaving): Deleted.
+        (functionDollarAgentMonotonicNow): Deleted.
+        (functionWaitForReport): Deleted.
+        (functionHeapCapacity): Deleted.
+        (functionFlashHeapAccess): Deleted.
+        (functionDisableRichSourceInfo): Deleted.
+        (functionMallocInALoop): Deleted.
+        (functionTotalCompileTime): Deleted.
+        (functionJSCOptions): Deleted.
+        (functionReoptimizationRetryCount): Deleted.
+        (functionTransferArrayBuffer): Deleted.
+        (functionFailNextNewCodeBlock): Deleted.
+        (functionQuit): Deleted.
+        (functionFalse): Deleted.
+        (functionUndefined1): Deleted.
+        (functionUndefined2): Deleted.
+        (functionIsInt32): Deleted.
+        (functionIsPureNaN): Deleted.
+        (functionIdentity): Deleted.
+        (functionEffectful42): Deleted.
+        (functionMakeMasquerader): Deleted.
+        (functionCallMasquerader): Deleted.
+        (functionHasCustomProperties): Deleted.
+        (functionDumpTypesForAllVariables): Deleted.
+        (functionDrainMicrotasks): Deleted.
+        (functionSetTimeout): Deleted.
+        (functionReleaseWeakRefs): Deleted.
+        (functionFinalizationRegistryLiveCount): Deleted.
+        (functionFinalizationRegistryDeadCount): Deleted.
+        (functionIs32BitPlatform): Deleted.
+        (functionCreateGlobalObject): Deleted.
+        (functionCreateHeapBigInt): Deleted.
+        (functionCreateBigInt32): Deleted.
+        (functionUseBigInt32): Deleted.
+        (functionIsBigInt32): Deleted.
+        (functionIsHeapBigInt): Deleted.
+        (functionCheckModuleSyntax): Deleted.
+        (functionPlatformSupportsSamplingProfiler): Deleted.
+        (functionGenerateHeapSnapshot): Deleted.
+        (functionGenerateHeapSnapshotForGCDebugging): Deleted.
+        (functionResetSuperSamplerState): Deleted.
+        (functionEnsureArrayStorage): Deleted.
+        (functionStartSamplingProfiler): Deleted.
+        (functionSamplingProfilerStackTraces): Deleted.
+        (functionMaxArguments): Deleted.
+        (functionAsyncTestStart): Deleted.
+        (functionAsyncTestPassed): Deleted.
+        (functionWebAssemblyMemoryMode): Deleted.
+        (functionSetUnhandledRejectionCallback): Deleted.
+        (functionAsDoubleNumber): Deleted.
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callAggregateErrorConstructor): Deleted.
+        (JSC::constructAggregateErrorConstructor): Deleted.
+        * runtime/ArrayConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructWithArrayConstructor): Deleted.
+        (JSC::callArrayConstructor): Deleted.
+        (JSC::arrayConstructorPrivateFuncIsArraySlow): Deleted.
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::arrayProtoFuncSpeciesCreate): Deleted.
+        (JSC::arrayProtoFuncToString): Deleted.
+        (JSC::arrayProtoFuncToLocaleString): Deleted.
+        (JSC::arrayProtoFuncJoin): Deleted.
+        (JSC::arrayProtoFuncValues): Deleted.
+        (JSC::arrayProtoFuncEntries): Deleted.
+        (JSC::arrayProtoFuncKeys): Deleted.
+        (JSC::arrayProtoFuncPop): Deleted.
+        (JSC::arrayProtoFuncPush): Deleted.
+        (JSC::arrayProtoFuncReverse): Deleted.
+        (JSC::arrayProtoFuncShift): Deleted.
+        (JSC::arrayProtoFuncSlice): Deleted.
+        (JSC::arrayProtoFuncSplice): Deleted.
+        (JSC::arrayProtoFuncUnShift): Deleted.
+        (JSC::arrayProtoFuncIndexOf): Deleted.
+        (JSC::arrayProtoFuncLastIndexOf): Deleted.
+        (JSC::arrayProtoPrivateFuncConcatMemcpy): Deleted.
+        (JSC::arrayProtoPrivateFuncAppendMemcpy): Deleted.
+        * runtime/ArrayPrototype.h:
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callAsyncFunctionConstructor): Deleted.
+        (JSC::constructAsyncFunctionConstructor): Deleted.
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callAsyncGeneratorFunctionConstructor): Deleted.
+        (JSC::constructAsyncGeneratorFunctionConstructor): Deleted.
+        * runtime/AtomicsObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::atomicsFuncAdd): Deleted.
+        (JSC::atomicsFuncAnd): Deleted.
+        (JSC::atomicsFuncCompareExchange): Deleted.
+        (JSC::atomicsFuncExchange): Deleted.
+        (JSC::atomicsFuncIsLockFree): Deleted.
+        (JSC::atomicsFuncLoad): Deleted.
+        (JSC::atomicsFuncOr): Deleted.
+        (JSC::atomicsFuncStore): Deleted.
+        (JSC::atomicsFuncSub): Deleted.
+        (JSC::atomicsFuncWait): Deleted.
+        (JSC::atomicsFuncWake): Deleted.
+        (JSC::atomicsFuncXor): Deleted.
+        * runtime/BigIntConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callBigIntConstructor): Deleted.
+        (JSC::bigIntConstructorFuncAsUintN): Deleted.
+        (JSC::bigIntConstructorFuncAsIntN): Deleted.
+        * runtime/BigIntPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::bigIntProtoFuncToString): Deleted.
+        (JSC::bigIntProtoFuncToLocaleString): Deleted.
+        (JSC::bigIntProtoFuncValueOf): Deleted.
+        * runtime/BooleanConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callBooleanConstructor): Deleted.
+        (JSC::constructWithBooleanConstructor): Deleted.
+        * runtime/BooleanPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::booleanProtoFuncToString): Deleted.
+        (JSC::booleanProtoFuncValueOf): Deleted.
+        * runtime/ConsoleObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::consoleProtoFuncDebug): Deleted.
+        (JSC::consoleProtoFuncError): Deleted.
+        (JSC::consoleProtoFuncLog): Deleted.
+        (JSC::consoleProtoFuncInfo): Deleted.
+        (JSC::consoleProtoFuncWarn): Deleted.
+        (JSC::consoleProtoFuncClear): Deleted.
+        (JSC::consoleProtoFuncDir): Deleted.
+        (JSC::consoleProtoFuncDirXML): Deleted.
+        (JSC::consoleProtoFuncTable): Deleted.
+        (JSC::consoleProtoFuncTrace): Deleted.
+        (JSC::consoleProtoFuncAssert): Deleted.
+        (JSC::consoleProtoFuncCount): Deleted.
+        (JSC::consoleProtoFuncCountReset): Deleted.
+        (JSC::consoleProtoFuncProfile): Deleted.
+        (JSC::consoleProtoFuncProfileEnd): Deleted.
+        (JSC::consoleProtoFuncTakeHeapSnapshot): Deleted.
+        (JSC::consoleProtoFuncTime): Deleted.
+        (JSC::consoleProtoFuncTimeLog): Deleted.
+        (JSC::consoleProtoFuncTimeEnd): Deleted.
+        (JSC::consoleProtoFuncTimeStamp): Deleted.
+        (JSC::consoleProtoFuncGroup): Deleted.
+        (JSC::consoleProtoFuncGroupCollapsed): Deleted.
+        (JSC::consoleProtoFuncGroupEnd): Deleted.
+        (JSC::consoleProtoFuncRecord): Deleted.
+        (JSC::consoleProtoFuncRecordEnd): Deleted.
+        (JSC::consoleProtoFuncScreenshot): Deleted.
+        * runtime/DateConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructWithDateConstructor): Deleted.
+        (JSC::callDate): Deleted.
+        (JSC::dateParse): Deleted.
+        (JSC::dateNow): Deleted.
+        (JSC::dateUTC): Deleted.
+        * runtime/DatePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::dateProtoFuncToString): Deleted.
+        (JSC::dateProtoFuncToUTCString): Deleted.
+        (JSC::dateProtoFuncToISOString): Deleted.
+        (JSC::dateProtoFuncToDateString): Deleted.
+        (JSC::dateProtoFuncToTimeString): Deleted.
+        (JSC::dateProtoFuncToPrimitiveSymbol): Deleted.
+        (JSC::dateProtoFuncGetTime): Deleted.
+        (JSC::dateProtoFuncGetFullYear): Deleted.
+        (JSC::dateProtoFuncGetUTCFullYear): Deleted.
+        (JSC::dateProtoFuncGetMonth): Deleted.
+        (JSC::dateProtoFuncGetUTCMonth): Deleted.
+        (JSC::dateProtoFuncGetDate): Deleted.
+        (JSC::dateProtoFuncGetUTCDate): Deleted.
+        (JSC::dateProtoFuncGetDay): Deleted.
+        (JSC::dateProtoFuncGetUTCDay): Deleted.
+        (JSC::dateProtoFuncGetHours): Deleted.
+        (JSC::dateProtoFuncGetUTCHours): Deleted.
+        (JSC::dateProtoFuncGetMinutes): Deleted.
+        (JSC::dateProtoFuncGetUTCMinutes): Deleted.
+        (JSC::dateProtoFuncGetSeconds): Deleted.
+        (JSC::dateProtoFuncGetUTCSeconds): Deleted.
+        (JSC::dateProtoFuncGetMilliSeconds): Deleted.
+        (JSC::dateProtoFuncGetUTCMilliseconds): Deleted.
+        (JSC::dateProtoFuncGetTimezoneOffset): Deleted.
+        (JSC::dateProtoFuncSetTime): Deleted.
+        (JSC::dateProtoFuncSetMilliSeconds): Deleted.
+        (JSC::dateProtoFuncSetUTCMilliseconds): Deleted.
+        (JSC::dateProtoFuncSetSeconds): Deleted.
+        (JSC::dateProtoFuncSetUTCSeconds): Deleted.
+        (JSC::dateProtoFuncSetMinutes): Deleted.
+        (JSC::dateProtoFuncSetUTCMinutes): Deleted.
+        (JSC::dateProtoFuncSetHours): Deleted.
+        (JSC::dateProtoFuncSetUTCHours): Deleted.
+        (JSC::dateProtoFuncSetDate): Deleted.
+        (JSC::dateProtoFuncSetUTCDate): Deleted.
+        (JSC::dateProtoFuncSetMonth): Deleted.
+        (JSC::dateProtoFuncSetUTCMonth): Deleted.
+        (JSC::dateProtoFuncSetFullYear): Deleted.
+        (JSC::dateProtoFuncSetUTCFullYear): Deleted.
+        (JSC::dateProtoFuncSetYear): Deleted.
+        (JSC::dateProtoFuncGetYear): Deleted.
+        (JSC::dateProtoFuncToJSON): Deleted.
+        * runtime/DatePrototype.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructErrorConstructor): Deleted.
+        (JSC::callErrorConstructor): Deleted.
+        * runtime/ErrorPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::errorProtoFuncToString): Deleted.
+        * runtime/FinalizationRegistryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callFinalizationRegistry): Deleted.
+        (JSC::constructFinalizationRegistry): Deleted.
+        * runtime/FinalizationRegistryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::protoFuncFinalizationRegistryRegister): Deleted.
+        (JSC::protoFuncFinalizationRegistryUnregister): Deleted.
+        * runtime/FunctionConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructWithFunctionConstructor): Deleted.
+        (JSC::callFunctionConstructor): Deleted.
+        * runtime/FunctionPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callFunctionPrototype): Deleted.
+        (JSC::functionProtoFuncToString): Deleted.
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callGeneratorFunctionConstructor): Deleted.
+        (JSC::constructGeneratorFunctionConstructor): Deleted.
+        * runtime/InspectorInstrumentationObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::inspectorInstrumentationObjectLog): Deleted.
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlCollator): Deleted.
+        (JSC::callIntlCollator): Deleted.
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf): Deleted.
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlCollatorFuncCompare): Deleted.
+        (JSC::IntlCollatorPrototypeGetterCompare): Deleted.
+        (JSC::IntlCollatorPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlDateTimeFormat): Deleted.
+        (JSC::callIntlDateTimeFormat): Deleted.
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf): Deleted.
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlDateTimeFormatFuncFormatDateTime): Deleted.
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat): Deleted.
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatToParts): Deleted.
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatRange): Deleted.
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlDisplayNames): Deleted.
+        (JSC::callIntlDisplayNames): Deleted.
+        (JSC::IntlDisplayNamesConstructorSupportedLocalesOf): Deleted.
+        * runtime/IntlDisplayNamesPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlDisplayNamesPrototypeFuncOf): Deleted.
+        (JSC::IntlDisplayNamesPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlLocaleConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlLocale): Deleted.
+        (JSC::callIntlLocale): Deleted.
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlLocalePrototypeFuncMaximize): Deleted.
+        (JSC::IntlLocalePrototypeFuncMinimize): Deleted.
+        (JSC::IntlLocalePrototypeFuncToString): Deleted.
+        (JSC::IntlLocalePrototypeGetterBaseName): Deleted.
+        (JSC::IntlLocalePrototypeGetterCalendar): Deleted.
+        (JSC::IntlLocalePrototypeGetterCaseFirst): Deleted.
+        (JSC::IntlLocalePrototypeGetterCollation): Deleted.
+        (JSC::IntlLocalePrototypeGetterHourCycle): Deleted.
+        (JSC::IntlLocalePrototypeGetterNumeric): Deleted.
+        (JSC::IntlLocalePrototypeGetterNumberingSystem): Deleted.
+        (JSC::IntlLocalePrototypeGetterLanguage): Deleted.
+        (JSC::IntlLocalePrototypeGetterScript): Deleted.
+        (JSC::IntlLocalePrototypeGetterRegion): Deleted.
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlNumberFormat): Deleted.
+        (JSC::callIntlNumberFormat): Deleted.
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf): Deleted.
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlNumberFormatFuncFormat): Deleted.
+        (JSC::IntlNumberFormatPrototypeGetterFormat): Deleted.
+        (JSC::IntlNumberFormatPrototypeFuncFormatToParts): Deleted.
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::intlObjectFuncGetCanonicalLocales): Deleted.
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlPluralRules): Deleted.
+        (JSC::callIntlPluralRules): Deleted.
+        (JSC::IntlPluralRulesConstructorFuncSupportedLocalesOf): Deleted.
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlPluralRulesPrototypeFuncSelect): Deleted.
+        (JSC::IntlPluralRulesPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlRelativeTimeFormat): Deleted.
+        (JSC::callIntlRelativeTimeFormat): Deleted.
+        (JSC::IntlRelativeTimeFormatConstructorFuncSupportedLocalesOf): Deleted.
+        * runtime/IntlRelativeTimeFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlRelativeTimeFormatPrototypeFuncFormat): Deleted.
+        (JSC::IntlRelativeTimeFormatPrototypeFuncFormatToParts): Deleted.
+        (JSC::IntlRelativeTimeFormatPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlSegmentIteratorPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlSegmentIteratorPrototypeFuncNext): Deleted.
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructIntlSegmenter): Deleted.
+        (JSC::callIntlSegmenter): Deleted.
+        (JSC::IntlSegmenterConstructorSupportedLocalesOf): Deleted.
+        * runtime/IntlSegmenterPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlSegmenterPrototypeFuncSegment): Deleted.
+        (JSC::IntlSegmenterPrototypeFuncResolvedOptions): Deleted.
+        * runtime/IntlSegmentsPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::IntlSegmentsPrototypeFuncContaining): Deleted.
+        (JSC::IntlSegmentsPrototypeFuncIterator): Deleted.
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callArrayBuffer): Deleted.
+        (JSC::constructArrayBuffer): Deleted.
+        (JSC::constructSharedArrayBuffer): Deleted.
+        (JSC::arrayBufferFuncIsView): Deleted.
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::arrayBufferProtoFuncSlice): Deleted.
+        (JSC::arrayBufferProtoGetterFuncByteLength): Deleted.
+        (JSC::sharedArrayBufferProtoGetterFuncByteLength): Deleted.
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::boundThisNoArgsFunctionCall): Deleted.
+        (JSC::boundFunctionCall): Deleted.
+        (JSC::boundThisNoArgsFunctionConstruct): Deleted.
+        (JSC::boundFunctionConstruct): Deleted.
+        (JSC::isBoundFunction): Deleted.
+        (JSC::hasInstanceBoundFunction): Deleted.
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::customGetterSetterFunctionCall): Deleted.
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::dataViewProtoGetterBuffer): Deleted.
+        (JSC::dataViewProtoGetterByteLength): Deleted.
+        (JSC::dataViewProtoGetterByteOffset): Deleted.
+        (JSC::dataViewProtoFuncGetInt8): Deleted.
+        (JSC::dataViewProtoFuncGetInt16): Deleted.
+        (JSC::dataViewProtoFuncGetInt32): Deleted.
+        (JSC::dataViewProtoFuncGetUint8): Deleted.
+        (JSC::dataViewProtoFuncGetUint16): Deleted.
+        (JSC::dataViewProtoFuncGetUint32): Deleted.
+        (JSC::dataViewProtoFuncGetFloat32): Deleted.
+        (JSC::dataViewProtoFuncGetFloat64): Deleted.
+        (JSC::dataViewProtoFuncSetInt8): Deleted.
+        (JSC::dataViewProtoFuncSetInt16): Deleted.
+        (JSC::dataViewProtoFuncSetInt32): Deleted.
+        (JSC::dataViewProtoFuncSetUint8): Deleted.
+        (JSC::dataViewProtoFuncSetUint16): Deleted.
+        (JSC::dataViewProtoFuncSetUint32): Deleted.
+        (JSC::dataViewProtoFuncSetFloat32): Deleted.
+        (JSC::dataViewProtoFuncSetFloat64): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::argumentsGetter):
+        (JSC::callerGetter):
+        (JSC::callHostFunctionAsConstructor): Deleted.
+        (JSC::JSFunction::argumentsGetter): Deleted.
+        (JSC::JSFunction::callerGetter): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor):
+        (JSC::constructGenericTypedArrayViewImpl):
+        (JSC::callGenericTypedArrayViewImpl):
+        (JSC::constructGenericTypedArrayView): Deleted.
+        (JSC::callGenericTypedArrayView): Deleted.
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::genericTypedArrayViewProtoFuncSet): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncIncludes): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncIndexOf): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncJoin): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf): Deleted.
+        (JSC::genericTypedArrayViewProtoGetterFuncBuffer): Deleted.
+        (JSC::genericTypedArrayViewProtoGetterFuncLength): Deleted.
+        (JSC::genericTypedArrayViewProtoGetterFuncByteLength): Deleted.
+        (JSC::genericTypedArrayViewProtoGetterFuncByteOffset): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncReverse): Deleted.
+        (JSC::genericTypedArrayViewPrivateFuncSort): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncSlice): Deleted.
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::makeBoundFunction): Deleted.
+        (JSC::hasOwnLengthProperty): Deleted.
+        (JSC::createPrivateSymbol): Deleted.
+        (JSC::assertCall): Deleted.
+        (JSC::enableSamplingProfiler): Deleted.
+        (JSC::disableSamplingProfiler): Deleted.
+        (JSC::enableSuperSampler): Deleted.
+        (JSC::disableSuperSampler): Deleted.
+        (JSC::enqueueJob): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::globalFuncEval): Deleted.
+        (JSC::globalFuncParseInt): Deleted.
+        (JSC::globalFuncParseFloat): Deleted.
+        (JSC::globalFuncDecodeURI): Deleted.
+        (JSC::globalFuncDecodeURIComponent): Deleted.
+        (JSC::globalFuncEncodeURI): Deleted.
+        (JSC::globalFuncEncodeURIComponent): Deleted.
+        (JSC::globalFuncEscape): Deleted.
+        (JSC::globalFuncUnescape): Deleted.
+        (JSC::globalFuncThrowTypeError): Deleted.
+        (JSC::globalFuncThrowTypeErrorArgumentsCalleeAndCaller): Deleted.
+        (JSC::globalFuncMakeTypeError): Deleted.
+        (JSC::globalFuncProtoGetter): Deleted.
+        (JSC::globalFuncProtoSetter): Deleted.
+        (JSC::globalFuncSetPrototypeDirect): Deleted.
+        (JSC::globalFuncHostPromiseRejectionTracker): Deleted.
+        (JSC::globalFuncBuiltinLog): Deleted.
+        (JSC::globalFuncBuiltinDescribe): Deleted.
+        (JSC::globalFuncImportModule): Deleted.
+        (JSC::globalFuncPropertyIsEnumerable): Deleted.
+        (JSC::globalFuncOwnKeys): Deleted.
+        (JSC::globalFuncDateTimeFormat): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::moduleLoaderParseModule): Deleted.
+        (JSC::moduleLoaderRequestedModules): Deleted.
+        (JSC::moduleLoaderModuleDeclarationInstantiation): Deleted.
+        (JSC::moduleLoaderResolve): Deleted.
+        (JSC::moduleLoaderResolveSync): Deleted.
+        (JSC::moduleLoaderFetch): Deleted.
+        (JSC::moduleLoaderGetModuleNamespaceObject): Deleted.
+        (JSC::moduleLoaderEvaluate): Deleted.
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::runStdFunction): Deleted.
+        * runtime/JSONObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSONProtoFuncParse): Deleted.
+        (JSC::JSONProtoFuncStringify): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::objectPrivateFuncInstanceOf): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructTypedArrayView): Deleted.
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::typedArrayViewPrivateFuncIsTypedArrayView): Deleted.
+        (JSC::typedArrayViewPrivateFuncIsNeutered): Deleted.
+        (JSC::typedArrayViewPrivateFuncLength): Deleted.
+        (JSC::typedArrayViewPrivateFuncGetOriginalConstructor): Deleted.
+        (JSC::typedArrayViewProtoFuncValues): Deleted.
+        (JSC::typedArrayProtoViewFuncEntries): Deleted.
+        (JSC::typedArrayViewProtoFuncKeys): Deleted.
+        (JSC::typedArrayViewPrivateFuncSort): Deleted.
+        (JSC::typedArrayViewProtoFuncSet): Deleted.
+        (JSC::typedArrayViewProtoFuncCopyWithin): Deleted.
+        (JSC::typedArrayViewProtoFuncIncludes): Deleted.
+        (JSC::typedArrayViewProtoFuncLastIndexOf): Deleted.
+        (JSC::typedArrayViewProtoFuncIndexOf): Deleted.
+        (JSC::typedArrayViewProtoFuncJoin): Deleted.
+        (JSC::typedArrayViewProtoGetterFuncBuffer): Deleted.
+        (JSC::typedArrayViewProtoGetterFuncLength): Deleted.
+        (JSC::typedArrayViewProtoGetterFuncByteLength): Deleted.
+        (JSC::typedArrayViewProtoGetterFuncByteOffset): Deleted.
+        (JSC::typedArrayViewProtoFuncReverse): Deleted.
+        (JSC::typedArrayViewPrivateFuncSubarrayCreate): Deleted.
+        (JSC::typedArrayViewProtoFuncSlice): Deleted.
+        (JSC::typedArrayViewProtoGetterFuncToStringTag): Deleted.
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/JSTypedArrays.cpp:
+        (JSC::createUint8TypedArray): Deleted.
+        * runtime/MapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callMap): Deleted.
+        (JSC::constructMap): Deleted.
+        (JSC::mapPrivateFuncMapBucketHead): Deleted.
+        (JSC::mapPrivateFuncMapBucketNext): Deleted.
+        (JSC::mapPrivateFuncMapBucketKey): Deleted.
+        (JSC::mapPrivateFuncMapBucketValue): Deleted.
+        * runtime/MapConstructor.h:
+        * runtime/MapPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::mapProtoFuncClear): Deleted.
+        (JSC::mapProtoFuncDelete): Deleted.
+        (JSC::mapProtoFuncGet): Deleted.
+        (JSC::mapProtoFuncHas): Deleted.
+        (JSC::mapProtoFuncSet): Deleted.
+        (JSC::mapProtoFuncValues): Deleted.
+        (JSC::mapProtoFuncKeys): Deleted.
+        (JSC::mapProtoFuncEntries): Deleted.
+        (JSC::mapProtoFuncSize): Deleted.
+        * runtime/MathObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::mathProtoFuncAbs): Deleted.
+        (JSC::mathProtoFuncACos): Deleted.
+        (JSC::mathProtoFuncASin): Deleted.
+        (JSC::mathProtoFuncATan): Deleted.
+        (JSC::mathProtoFuncATan2): Deleted.
+        (JSC::mathProtoFuncCeil): Deleted.
+        (JSC::mathProtoFuncClz32): Deleted.
+        (JSC::mathProtoFuncCos): Deleted.
+        (JSC::mathProtoFuncExp): Deleted.
+        (JSC::mathProtoFuncFloor): Deleted.
+        (JSC::mathProtoFuncHypot): Deleted.
+        (JSC::mathProtoFuncLog): Deleted.
+        (JSC::mathProtoFuncMax): Deleted.
+        (JSC::mathProtoFuncMin): Deleted.
+        (JSC::mathProtoFuncPow): Deleted.
+        (JSC::mathProtoFuncRandom): Deleted.
+        (JSC::mathProtoFuncRound): Deleted.
+        (JSC::mathProtoFuncSign): Deleted.
+        (JSC::mathProtoFuncSin): Deleted.
+        (JSC::mathProtoFuncSqrt): Deleted.
+        (JSC::mathProtoFuncTan): Deleted.
+        (JSC::mathProtoFuncIMul): Deleted.
+        (JSC::mathProtoFuncACosh): Deleted.
+        (JSC::mathProtoFuncASinh): Deleted.
+        (JSC::mathProtoFuncATanh): Deleted.
+        (JSC::mathProtoFuncCbrt): Deleted.
+        (JSC::mathProtoFuncCosh): Deleted.
+        (JSC::mathProtoFuncExpm1): Deleted.
+        (JSC::mathProtoFuncFround): Deleted.
+        (JSC::mathProtoFuncLog1p): Deleted.
+        (JSC::mathProtoFuncLog10): Deleted.
+        (JSC::mathProtoFuncLog2): Deleted.
+        (JSC::mathProtoFuncSinh): Deleted.
+        (JSC::mathProtoFuncTanh): Deleted.
+        (JSC::mathProtoFuncTrunc): Deleted.
+        * runtime/MathObject.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callEvalError): Deleted.
+        (JSC::constructEvalError): Deleted.
+        (JSC::callRangeError): Deleted.
+        (JSC::constructRangeError): Deleted.
+        (JSC::callReferenceError): Deleted.
+        (JSC::constructReferenceError): Deleted.
+        (JSC::callSyntaxError): Deleted.
+        (JSC::constructSyntaxError): Deleted.
+        (JSC::callTypeError): Deleted.
+        (JSC::constructTypeError): Deleted.
+        (JSC::callURIError): Deleted.
+        (JSC::constructURIError): Deleted.
+        * runtime/NativeFunction.h:
+        * runtime/NullGetterFunction.cpp:
+        (JSC::NullGetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::NullGetterFunctionInternal::callReturnUndefined): Deleted.
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::NullSetterFunctionInternal::callReturnUndefined): Deleted.
+        (JSC::NullSetterFunctionInternal::callThrowError): Deleted.
+        * runtime/NumberConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructNumberConstructor): Deleted.
+        (JSC::callNumberConstructor): Deleted.
+        (JSC::numberConstructorFuncIsInteger): Deleted.
+        (JSC::numberConstructorFuncIsSafeInteger): Deleted.
+        * runtime/NumberPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::numberProtoFuncToExponential): Deleted.
+        (JSC::numberProtoFuncToFixed): Deleted.
+        (JSC::numberProtoFuncToPrecision): Deleted.
+        (JSC::numberProtoFuncToString): Deleted.
+        (JSC::numberProtoFuncToLocaleString): Deleted.
+        (JSC::numberProtoFuncValueOf): Deleted.
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructWithObjectConstructor): Deleted.
+        (JSC::callObjectConstructor): Deleted.
+        (JSC::objectConstructorGetPrototypeOf): Deleted.
+        (JSC::objectConstructorSetPrototypeOf): Deleted.
+        (JSC::objectConstructorGetOwnPropertyNames): Deleted.
+        (JSC::objectConstructorGetOwnPropertySymbols): Deleted.
+        (JSC::objectConstructorKeys): Deleted.
+        (JSC::objectConstructorAssign): Deleted.
+        (JSC::objectConstructorValues): Deleted.
+        (JSC::objectConstructorDefineProperty): Deleted.
+        (JSC::objectConstructorDefineProperties): Deleted.
+        (JSC::objectConstructorCreate): Deleted.
+        (JSC::objectConstructorPreventExtensions): Deleted.
+        (JSC::objectConstructorIsSealed): Deleted.
+        (JSC::objectConstructorIsFrozen): Deleted.
+        (JSC::objectConstructorIsExtensible): Deleted.
+        (JSC::objectConstructorIs): Deleted.
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::objectProtoFuncValueOf): Deleted.
+        (JSC::objectProtoFuncHasOwnProperty): Deleted.
+        (JSC::objectProtoFuncIsPrototypeOf): Deleted.
+        (JSC::objectProtoFuncDefineGetter): Deleted.
+        (JSC::objectProtoFuncDefineSetter): Deleted.
+        (JSC::objectProtoFuncLookupGetter): Deleted.
+        (JSC::objectProtoFuncLookupSetter): Deleted.
+        (JSC::objectProtoFuncPropertyIsEnumerable): Deleted.
+        (JSC::objectProtoFuncToLocaleString): Deleted.
+        (JSC::objectProtoFuncToString): Deleted.
+        * runtime/ObjectPrototype.h:
+        * runtime/ProxyConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::makeRevocableProxy): Deleted.
+        (JSC::constructProxyObject): Deleted.
+        (JSC::callProxy): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::performProxyCall): Deleted.
+        (JSC::performProxyConstruct): Deleted.
+        * runtime/ProxyRevoke.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::performProxyRevoke): Deleted.
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::reflectObjectConstruct): Deleted.
+        (JSC::reflectObjectDefineProperty): Deleted.
+        (JSC::reflectObjectGet): Deleted.
+        (JSC::reflectObjectGetOwnPropertyDescriptor): Deleted.
+        (JSC::reflectObjectGetPrototypeOf): Deleted.
+        (JSC::reflectObjectIsExtensible): Deleted.
+        (JSC::reflectObjectOwnKeys): Deleted.
+        (JSC::reflectObjectPreventExtensions): Deleted.
+        (JSC::reflectObjectSet): Deleted.
+        (JSC::reflectObjectSetPrototypeOf): Deleted.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::esSpecRegExpCreate): Deleted.
+        (JSC::esSpecIsRegExp): Deleted.
+        (JSC::constructWithRegExpConstructor): Deleted.
+        (JSC::callRegExpConstructor): Deleted.
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::regExpProtoFuncTestFast): Deleted.
+        (JSC::regExpProtoFuncExec): Deleted.
+        (JSC::regExpProtoFuncMatchFast): Deleted.
+        (JSC::regExpProtoFuncCompile): Deleted.
+        (JSC::regExpProtoFuncToString): Deleted.
+        (JSC::regExpProtoGetterGlobal): Deleted.
+        (JSC::regExpProtoGetterIgnoreCase): Deleted.
+        (JSC::regExpProtoGetterMultiline): Deleted.
+        (JSC::regExpProtoGetterDotAll): Deleted.
+        (JSC::regExpProtoGetterSticky): Deleted.
+        (JSC::regExpProtoGetterUnicode): Deleted.
+        (JSC::regExpProtoGetterFlags): Deleted.
+        (JSC::regExpProtoGetterSource): Deleted.
+        (JSC::regExpProtoFuncSearchFast): Deleted.
+        (JSC::regExpProtoFuncSplitFast): Deleted.
+        * runtime/RegExpPrototype.h:
+        * runtime/SetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callSet): Deleted.
+        (JSC::constructSet): Deleted.
+        (JSC::setPrivateFuncSetBucketHead): Deleted.
+        (JSC::setPrivateFuncSetBucketNext): Deleted.
+        (JSC::setPrivateFuncSetBucketKey): Deleted.
+        * runtime/SetConstructor.h:
+        * runtime/SetPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::setProtoFuncAdd): Deleted.
+        (JSC::setProtoFuncClear): Deleted.
+        (JSC::setProtoFuncDelete): Deleted.
+        (JSC::setProtoFuncHas): Deleted.
+        (JSC::setProtoFuncSize): Deleted.
+        (JSC::setProtoFuncValues): Deleted.
+        (JSC::setProtoFuncEntries): Deleted.
+        * runtime/StringConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::stringFromCharCode):
+        (JSC::stringFromCodePoint): Deleted.
+        (JSC::constructWithStringConstructor): Deleted.
+        (JSC::callStringConstructor): Deleted.
+        * runtime/StringConstructor.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::stringProtoFuncRepeatCharacter): Deleted.
+        (JSC::stringProtoFuncReplaceUsingRegExp): Deleted.
+        (JSC::stringProtoFuncReplaceUsingStringSearch): Deleted.
+        (JSC::stringProtoFuncReplaceAllUsingStringSearch): Deleted.
+        (JSC::stringProtoFuncToString): Deleted.
+        (JSC::stringProtoFuncCharAt): Deleted.
+        (JSC::stringProtoFuncCharCodeAt): Deleted.
+        (JSC::stringProtoFuncCodePointAt): Deleted.
+        (JSC::stringProtoFuncIndexOf): Deleted.
+        (JSC::builtinStringIndexOfInternal): Deleted.
+        (JSC::stringProtoFuncLastIndexOf): Deleted.
+        (JSC::stringProtoFuncSlice): Deleted.
+        (JSC::stringProtoFuncSplitFast): Deleted.
+        (JSC::stringProtoFuncSubstr): Deleted.
+        (JSC::stringProtoFuncSubstring): Deleted.
+        (JSC::builtinStringSubstringInternal): Deleted.
+        (JSC::stringProtoFuncToLowerCase): Deleted.
+        (JSC::stringProtoFuncToUpperCase): Deleted.
+        (JSC::stringProtoFuncLocaleCompare): Deleted.
+        (JSC::stringProtoFuncToLocaleLowerCase): Deleted.
+        (JSC::stringProtoFuncToLocaleUpperCase): Deleted.
+        (JSC::stringProtoFuncTrim): Deleted.
+        (JSC::stringProtoFuncTrimStart): Deleted.
+        (JSC::stringProtoFuncTrimEnd): Deleted.
+        (JSC::stringProtoFuncStartsWith): Deleted.
+        (JSC::stringProtoFuncEndsWith): Deleted.
+        (JSC::stringProtoFuncIncludes): Deleted.
+        (JSC::builtinStringIncludesInternal): Deleted.
+        (JSC::stringProtoFuncIterator): Deleted.
+        (JSC::stringProtoFuncNormalize): Deleted.
+        * runtime/StringPrototype.h:
+        * runtime/Structure.h:
+        * runtime/SymbolConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callSymbol): Deleted.
+        (JSC::constructSymbol): Deleted.
+        (JSC::symbolConstructorFor): Deleted.
+        (JSC::symbolConstructorKeyFor): Deleted.
+        * runtime/SymbolPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::symbolProtoGetterDescription): Deleted.
+        (JSC::symbolProtoFuncToString): Deleted.
+        (JSC::symbolProtoFuncValueOf): Deleted.
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callWeakMap): Deleted.
+        (JSC::constructWeakMap): Deleted.
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::protoFuncWeakMapDelete): Deleted.
+        (JSC::protoFuncWeakMapGet): Deleted.
+        (JSC::protoFuncWeakMapHas): Deleted.
+        (JSC::protoFuncWeakMapSet): Deleted.
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callWeakRef): Deleted.
+        (JSC::constructWeakRef): Deleted.
+        * runtime/WeakObjectRefPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::protoFuncWeakRefDeref): Deleted.
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callWeakSet): Deleted.
+        (JSC::constructWeakSet): Deleted.
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::protoFuncWeakSetDelete): Deleted.
+        (JSC::protoFuncWeakSetHas): Deleted.
+        (JSC::protoFuncWeakSetAdd): Deleted.
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::functionCrash): Deleted.
+        (JSC::functionBreakpoint): Deleted.
+        (JSC::functionDFGTrue): Deleted.
+        (JSC::functionFTLTrue): Deleted.
+        (JSC::functionCpuMfence): Deleted.
+        (JSC::functionCpuRdtsc): Deleted.
+        (JSC::functionCpuCpuid): Deleted.
+        (JSC::functionCpuPause): Deleted.
+        (JSC::functionCpuClflush): Deleted.
+        (JSC::functionLLintTrue): Deleted.
+        (JSC::functionBaselineJITTrue): Deleted.
+        (JSC::functionNoInline): Deleted.
+        (JSC::functionGC): Deleted.
+        (JSC::functionEdenGC): Deleted.
+        (JSC::functionGCSweepAsynchronously): Deleted.
+        (JSC::functionDumpSubspaceHashes): Deleted.
+        (JSC::functionCallFrame): Deleted.
+        (JSC::functionCodeBlockForFrame): Deleted.
+        (JSC::functionCodeBlockFor): Deleted.
+        (JSC::functionDumpSourceFor): Deleted.
+        (JSC::functionDumpBytecodeFor): Deleted.
+        (JSC::functionDataLog): Deleted.
+        (JSC::functionPrint): Deleted.
+        (JSC::functionDumpCallFrame): Deleted.
+        (JSC::functionDumpStack): Deleted.
+        (JSC::functionDumpRegisters): Deleted.
+        (JSC::functionDumpCell): Deleted.
+        (JSC::functionIndexingMode): Deleted.
+        (JSC::functionInlineCapacity): Deleted.
+        (JSC::functionValue): Deleted.
+        (JSC::functionGetPID): Deleted.
+        (JSC::functionHaveABadTime): Deleted.
+        (JSC::functionIsHavingABadTime): Deleted.
+        (JSC::functionCallWithStackSize): Deleted.
+        (JSC::functionCreateGlobalObject): Deleted.
+        (JSC::functionCreateProxy): Deleted.
+        (JSC::functionCreateRuntimeArray): Deleted.
+        (JSC::functionCreateNullRopeString): Deleted.
+        (JSC::functionCreateImpureGetter): Deleted.
+        (JSC::functionCreateCustomGetterObject): Deleted.
+        (JSC::functionCreateDOMJITNodeObject): Deleted.
+        (JSC::functionCreateDOMJITGetterObject): Deleted.
+        (JSC::functionCreateDOMJITGetterNoEffectsObject): Deleted.
+        (JSC::functionCreateDOMJITGetterComplexObject): Deleted.
+        (JSC::functionCreateDOMJITFunctionObject): Deleted.
+        (JSC::functionCreateDOMJITCheckJSCastObject): Deleted.
+        (JSC::functionCreateDOMJITGetterBaseJSObject): Deleted.
+        (JSC::functionCreateWasmStreamingParser): Deleted.
+        (JSC::functionCreateStaticCustomAccessor): Deleted.
+        (JSC::functionCreateStaticCustomValue): Deleted.
+        (JSC::functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus): Deleted.
+        (JSC::functionCreateEmptyFunctionWithName): Deleted.
+        (JSC::functionSetImpureGetterDelegate): Deleted.
+        (JSC::functionCreateBuiltin): Deleted.
+        (JSC::functionGetPrivateProperty): Deleted.
+        (JSC::functionCreateRoot): Deleted.
+        (JSC::functionCreateElement): Deleted.
+        (JSC::functionGetElement): Deleted.
+        (JSC::functionCreateSimpleObject): Deleted.
+        (JSC::functionGetHiddenValue): Deleted.
+        (JSC::functionSetHiddenValue): Deleted.
+        (JSC::functionShadowChickenFunctionsOnStack): Deleted.
+        (JSC::functionSetGlobalConstRedeclarationShouldNotThrow): Deleted.
+        (JSC::functionFindTypeForExpression): Deleted.
+        (JSC::functionReturnTypeFor): Deleted.
+        (JSC::functionFlattenDictionaryObject): Deleted.
+        (JSC::functionDumpBasicBlockExecutionRanges): Deleted.
+        (JSC::functionHasBasicBlockExecuted): Deleted.
+        (JSC::functionBasicBlockExecutionCount): Deleted.
+        (JSC::functionEnableDebuggerModeWhenIdle): Deleted.
+        (JSC::functionDisableDebuggerModeWhenIdle): Deleted.
+        (JSC::functionDeleteAllCodeWhenIdle): Deleted.
+        (JSC::functionGlobalObjectCount): Deleted.
+        (JSC::functionGlobalObjectForObject): Deleted.
+        (JSC::functionGetGetterSetter): Deleted.
+        (JSC::functionLoadGetterFromGetterSetter): Deleted.
+        (JSC::functionCreateCustomTestGetterSetter): Deleted.
+        (JSC::functionDeltaBetweenButterflies): Deleted.
+        (JSC::functionCurrentCPUTime): Deleted.
+        (JSC::functionTotalGCTime): Deleted.
+        (JSC::functionParseCount): Deleted.
+        (JSC::functionIsWasmSupported): Deleted.
+        (JSC::functionMake16BitStringIfPossible): Deleted.
+        (JSC::JSDollarVMHelper::functionGetStructureTransitionList): Deleted.
+        (JSC::functionGetConcurrently): Deleted.
+        (JSC::functionHasOwnLengthProperty): Deleted.
+        (JSC::functionRejectPromiseAsHandled): Deleted.
+        (JSC::functionSetUserPreferredLanguages): Deleted.
+        (JSC::functionICUVersion): Deleted.
+        (JSC::functionICUHeaderVersion): Deleted.
+        (JSC::functionAssertEnabled): Deleted.
+        (JSC::functionIsMemoryLimited): Deleted.
+        (JSC::functionUseJIT): Deleted.
+        (JSC::functionIsGigacageEnabled): Deleted.
+        (JSC::functionToUncacheableDictionary): Deleted.
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::webAssemblyCompileFunc): Deleted.
+        (JSC::webAssemblyInstantiateFunc): Deleted.
+        (JSC::webAssemblyValidateFunc): Deleted.
+        (JSC::webAssemblyCompileStreamingInternal): Deleted.
+        (JSC::webAssemblyInstantiateStreamingInternal): Deleted.
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyCompileError): Deleted.
+        (JSC::callJSWebAssemblyCompileError): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callWebAssemblyFunction): Deleted.
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyGlobal): Deleted.
+        (JSC::callJSWebAssemblyGlobal): Deleted.
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::webAssemblyGlobalProtoFuncValueOf): Deleted.
+        (JSC::webAssemblyGlobalProtoGetterFuncValue): Deleted.
+        (JSC::webAssemblyGlobalProtoSetterFuncValue): Deleted.
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyInstance): Deleted.
+        (JSC::callJSWebAssemblyInstance): Deleted.
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::webAssemblyInstanceProtoFuncExports): Deleted.
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyLinkError): Deleted.
+        (JSC::callJSWebAssemblyLinkError): Deleted.
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyMemory): Deleted.
+        (JSC::callJSWebAssemblyMemory): Deleted.
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::webAssemblyMemoryProtoFuncGrow): Deleted.
+        (JSC::webAssemblyMemoryProtoFuncBuffer): Deleted.
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::webAssemblyModuleCustomSections): Deleted.
+        (JSC::webAssemblyModuleImports): Deleted.
+        (JSC::webAssemblyModuleExports): Deleted.
+        (JSC::constructJSWebAssemblyModule): Deleted.
+        (JSC::callJSWebAssemblyModule): Deleted.
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyRuntimeError): Deleted.
+        (JSC::callJSWebAssemblyRuntimeError): Deleted.
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::constructJSWebAssemblyTable): Deleted.
+        (JSC::callJSWebAssemblyTable): Deleted.
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::webAssemblyTableProtoFuncLength): Deleted.
+        (JSC::webAssemblyTableProtoFuncGrow): Deleted.
+        (JSC::webAssemblyTableProtoFuncGet): Deleted.
+        (JSC::webAssemblyTableProtoFuncSet): Deleted.
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::callWebAssemblyWrapperFunction): Deleted.
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         Get rid of AudioNode::RefType

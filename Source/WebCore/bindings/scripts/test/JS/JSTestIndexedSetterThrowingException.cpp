@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestIndexedSetterThrowingExceptionPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -241,7 +241,7 @@ bool JSTestIndexedSetterThrowingException::defineOwnProperty(JSObject* object, J
     return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
-EncodedJSValue jsTestIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -251,7 +251,7 @@ EncodedJSValue jsTestIndexedSetterThrowingExceptionConstructor(JSGlobalObject* l
     return JSValue::encode(JSTestIndexedSetterThrowingException::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestIndexedSetterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

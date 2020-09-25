@@ -31,9 +31,9 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncFormat(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncFormatToParts(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncFormat);
+static JSC_DECLARE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncFormatToParts);
+static JSC_DECLARE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncResolvedOptions);
 
 }
 
@@ -76,7 +76,7 @@ void IntlRelativeTimeFormatPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/ecma402/#sec-Intl.RelativeTimeFormat.prototype.format
-EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -95,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncFormat(JSGlobalO
 }
 
 // https://tc39.es/ecma402/#sec-Intl.RelativeTimeFormat.prototype.formatToParts
-EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncFormatToParts(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -114,7 +114,7 @@ EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncFormatToParts(JS
 }
 
 // https://tc39.es/ecma402/#sec-intl.relativetimeformat.prototype.resolvedoptions
-EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

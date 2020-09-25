@@ -57,9 +57,9 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(MapConstructor, InternalFunction);
 
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketKey(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketValue(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketHead);
+JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketNext);
+JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketKey);
+JSC_DECLARE_HOST_FUNCTION(mapPrivateFuncMapBucketValue);
 
 } // namespace JSC

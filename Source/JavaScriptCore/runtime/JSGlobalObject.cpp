@@ -242,6 +242,20 @@ FOR_EACH_SIMPLE_BUILTIN_TYPE(CHECK_FEATURE_FLAG_TYPE)
 FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CHECK_FEATURE_FLAG_TYPE)
 FOR_EACH_LAZY_BUILTIN_TYPE(CHECK_FEATURE_FLAG_TYPE)
 
+static JSC_DECLARE_HOST_FUNCTION(makeBoundFunction);
+static JSC_DECLARE_HOST_FUNCTION(hasOwnLengthProperty);
+static JSC_DECLARE_HOST_FUNCTION(createPrivateSymbol);
+static JSC_DECLARE_HOST_FUNCTION(enableSuperSampler);
+static JSC_DECLARE_HOST_FUNCTION(disableSuperSampler);
+static JSC_DECLARE_HOST_FUNCTION(enqueueJob);
+#if ASSERT_ENABLED
+static JSC_DECLARE_HOST_FUNCTION(assertCall);
+#endif
+#if ENABLE(SAMPLING_PROFILER)
+static JSC_DECLARE_HOST_FUNCTION(enableSamplingProfiler);
+static JSC_DECLARE_HOST_FUNCTION(disableSamplingProfiler);
+#endif
+
 static JSValue createProxyProperty(VM& vm, JSObject* object)
 {
     JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
@@ -272,7 +286,7 @@ static JSValue createConsoleProperty(VM& vm, JSObject* object)
     return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, constructEmptyObject(global)));
 }
 
-static EncodedJSValue JSC_HOST_CALL makeBoundFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(makeBoundFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -286,7 +300,7 @@ static EncodedJSValue JSC_HOST_CALL makeBoundFunction(JSGlobalObject* globalObje
     RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs.isCell() ? jsCast<JSImmutableButterfly*>(boundArgs) : nullptr, length, nameString)));
 }
 
-static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(hasOwnLengthProperty, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -306,14 +320,14 @@ static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalO
 
 // FIXME: use a bytecode or intrinsic for creating a private symbol.
 // https://bugs.webkit.org/show_bug.cgi?id=212782
-static EncodedJSValue JSC_HOST_CALL createPrivateSymbol(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(createPrivateSymbol, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     return JSValue::encode(Symbol::create(vm, PrivateSymbolImpl::createNullSymbol().get()));
 }
 
 #if ASSERT_ENABLED
-static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(assertCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     RELEASE_ASSERT(callFrame->argument(0).isBoolean());
     if (callFrame->argument(0).asBoolean())
@@ -341,7 +355,7 @@ static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, Cal
 #endif // ASSERT_ENABLED
 
 #if ENABLE(SAMPLING_PROFILER)
-static EncodedJSValue JSC_HOST_CALL enableSamplingProfiler(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(enableSamplingProfiler, (JSGlobalObject* globalObject, CallFrame*))
 {
     SamplingProfiler* profiler = globalObject->vm().samplingProfiler();
     if (!profiler)
@@ -350,7 +364,7 @@ static EncodedJSValue JSC_HOST_CALL enableSamplingProfiler(JSGlobalObject* globa
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue JSC_HOST_CALL disableSamplingProfiler(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(disableSamplingProfiler, (JSGlobalObject* globalObject, CallFrame*))
 {
     SamplingProfiler* profiler = globalObject->vm().samplingProfiler();
     if (!profiler)
@@ -365,13 +379,13 @@ static EncodedJSValue JSC_HOST_CALL disableSamplingProfiler(JSGlobalObject* glob
 }
 #endif
 
-static EncodedJSValue JSC_HOST_CALL enableSuperSampler(JSGlobalObject*, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(enableSuperSampler, (JSGlobalObject*, CallFrame*))
 {
     enableSuperSampler();
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue JSC_HOST_CALL disableSuperSampler(JSGlobalObject*, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(disableSuperSampler, (JSGlobalObject*, CallFrame*))
 {
     disableSuperSampler();
     return JSValue::encode(jsUndefined());
@@ -452,7 +466,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL enqueueJob(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(enqueueJob, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
 

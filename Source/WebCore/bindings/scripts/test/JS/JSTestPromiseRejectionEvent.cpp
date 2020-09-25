@@ -127,10 +127,10 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
 
 // Attributes
 
-JSC::EncodedJSValue jsTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestPromiseRejectionEventPromise(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestPromiseRejectionEventReason(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestPromiseRejectionEventPromise(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestPromiseRejectionEventReason(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestPromiseRejectionEventPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -166,7 +166,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestPromiseRejectionEventPrototype, JSTest
 
 using JSTestPromiseRejectionEventConstructor = JSDOMConstructor<JSTestPromiseRejectionEvent>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestPromiseRejectionEventConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -189,6 +189,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
+JSC_ANNOTATE_HOST_FUNCTION(JSTestPromiseRejectionEventConstructorConstruct, JSTestPromiseRejectionEventConstructor::construct);
 
 template<> JSValue JSTestPromiseRejectionEventConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -258,7 +259,7 @@ template<> inline JSTestPromiseRejectionEvent* IDLAttribute<JSTestPromiseRejecti
     return jsDynamicCast<JSTestPromiseRejectionEvent*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -268,7 +269,7 @@ EncodedJSValue jsTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlo
     return JSValue::encode(JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -289,7 +290,7 @@ static inline JSValue jsTestPromiseRejectionEventPromiseGetter(JSGlobalObject& l
     RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLAny>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.promise())));
 }
 
-EncodedJSValue jsTestPromiseRejectionEventPromise(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestPromiseRejectionEventPromise(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventPromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "promise");
 }
@@ -302,7 +303,7 @@ static inline JSValue jsTestPromiseRejectionEventReasonGetter(JSGlobalObject& le
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, impl.reason())));
 }
 
-EncodedJSValue jsTestPromiseRejectionEventReason(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestPromiseRejectionEventReason(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventReasonGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reason");
 }

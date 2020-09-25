@@ -50,15 +50,15 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionSet(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionGet);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionHas);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionEntries);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionKeys);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionValues);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionForEach);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionSet);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionClear);
+JSC_DECLARE_HOST_FUNCTION(jsMapLikePrototypeFunctionDelete);
 
 // Attributes
 
@@ -238,7 +238,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetBody(JSC::JSGloba
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionGet, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionGetBody>(*lexicalGlobalObject, *callFrame, "get");
 }
@@ -257,7 +257,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasBody(JSC::JSGloba
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionHas, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionHasBody>(*lexicalGlobalObject, *callFrame, "has");
 }
@@ -271,7 +271,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionEntriesBody(JSC::JSG
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionEntries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionEntriesBody>(*lexicalGlobalObject, *callFrame, "entries");
 }
@@ -285,7 +285,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionKeysBody(JSC::JSGlob
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionKeys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionKeysBody>(*lexicalGlobalObject, *callFrame, "keys");
 }
@@ -299,7 +299,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionValuesBody(JSC::JSGl
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionValues, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
 }
@@ -318,7 +318,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachBody(JSC::JSG
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionForEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
@@ -340,7 +340,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionSetBody(JSC::JSGloba
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardSetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key), WTFMove(value)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionSet(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionSet, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionSetBody>(*lexicalGlobalObject, *callFrame, "set");
 }
@@ -356,7 +356,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearBody(JSC::JSGlo
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionClear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionClearBody>(*lexicalGlobalObject, *callFrame, "clear");
 }
@@ -375,7 +375,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteBody(JSC::JSGl
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsMapLikePrototypeFunctionDelete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionDeleteBody>(*lexicalGlobalObject, *callFrame, "delete");
 }

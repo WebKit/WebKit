@@ -47,8 +47,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedAndIndexedSetterNoIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -315,7 +315,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::defineOwnProperty(JSObject* object
     return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);
 }
 
-EncodedJSValue jsTestNamedAndIndexedSetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedAndIndexedSetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -325,7 +325,7 @@ EncodedJSValue jsTestNamedAndIndexedSetterNoIdentifierConstructor(JSGlobalObject
     return JSValue::encode(JSTestNamedAndIndexedSetterNoIdentifier::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedAndIndexedSetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedAndIndexedSetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

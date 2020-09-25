@@ -34,7 +34,7 @@
 #include "JSWebAssemblyInstance.h"
 
 namespace JSC {
-static EncodedJSValue JSC_HOST_CALL webAssemblyInstanceProtoFuncExports(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstanceProtoFuncExports);
 }
 
 #include "WebAssemblyInstancePrototype.lut.h"
@@ -61,7 +61,7 @@ static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalOb
     return result;
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyInstanceProtoFuncExports(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyInstanceProtoFuncExports, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);

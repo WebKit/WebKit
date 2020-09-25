@@ -47,8 +47,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedDeleterWithIndexedGetterConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedDeleterWithIndexedGetterConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedDeleterWithIndexedGetterConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedDeleterWithIndexedGetterConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedDeleterWithIndexedGetterPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -241,7 +241,7 @@ bool JSTestNamedDeleterWithIndexedGetter::deletePropertyByIndex(JSCell* cell, JS
     return !impl.isSupportedPropertyIndex(index);
 }
 
-EncodedJSValue jsTestNamedDeleterWithIndexedGetterConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedDeleterWithIndexedGetterConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -251,7 +251,7 @@ EncodedJSValue jsTestNamedDeleterWithIndexedGetterConstructor(JSGlobalObject* le
     return JSValue::encode(JSTestNamedDeleterWithIndexedGetter::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedDeleterWithIndexedGetterConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedDeleterWithIndexedGetterConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

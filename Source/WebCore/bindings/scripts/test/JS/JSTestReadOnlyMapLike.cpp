@@ -50,18 +50,18 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionGet(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionHas(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionGet);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionHas);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionEntries);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionKeys);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionValues);
+JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionForEach);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestReadOnlyMapLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestReadOnlyMapLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestReadOnlyMapLikePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -183,7 +183,7 @@ template<> inline JSTestReadOnlyMapLike* IDLOperation<JSTestReadOnlyMapLike>::ca
     return jsDynamicCast<JSTestReadOnlyMapLike*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestReadOnlyMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestReadOnlyMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -193,7 +193,7 @@ EncodedJSValue jsTestReadOnlyMapLikeConstructor(JSGlobalObject* lexicalGlobalObj
     return JSValue::encode(JSTestReadOnlyMapLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestReadOnlyMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestReadOnlyMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -213,7 +213,7 @@ static inline JSValue jsTestReadOnlyMapLikeSizeGetter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToMapLike(lexicalGlobalObject, thisObject))));
 }
 
-EncodedJSValue jsTestReadOnlyMapLikeSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestReadOnlyMapLikeSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestReadOnlyMapLike>::get<jsTestReadOnlyMapLikeSizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }
@@ -232,7 +232,7 @@ static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunctionGetBody(
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionGet(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionGet, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestReadOnlyMapLike>::call<jsTestReadOnlyMapLikePrototypeFunctionGetBody>(*lexicalGlobalObject, *callFrame, "get");
 }
@@ -251,7 +251,7 @@ static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunctionHasBody(
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionHas(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionHas, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestReadOnlyMapLike>::call<jsTestReadOnlyMapLikePrototypeFunctionHasBody>(*lexicalGlobalObject, *callFrame, "has");
 }
@@ -265,7 +265,7 @@ static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunctionEntriesB
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionEntries(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionEntries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestReadOnlyMapLike>::call<jsTestReadOnlyMapLikePrototypeFunctionEntriesBody>(*lexicalGlobalObject, *callFrame, "entries");
 }
@@ -279,7 +279,7 @@ static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunctionKeysBody
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionKeys(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionKeys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestReadOnlyMapLike>::call<jsTestReadOnlyMapLikePrototypeFunctionKeysBody>(*lexicalGlobalObject, *callFrame, "keys");
 }
@@ -293,7 +293,7 @@ static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunctionValuesBo
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionValues, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestReadOnlyMapLike>::call<jsTestReadOnlyMapLikePrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
 }
@@ -312,7 +312,7 @@ static inline JSC::EncodedJSValue jsTestReadOnlyMapLikePrototypeFunctionForEachB
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestReadOnlyMapLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestReadOnlyMapLikePrototypeFunctionForEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestReadOnlyMapLike>::call<jsTestReadOnlyMapLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }

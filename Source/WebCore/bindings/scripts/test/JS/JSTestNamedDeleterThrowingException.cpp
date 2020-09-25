@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedDeleterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedDeleterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedDeleterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedDeleterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedDeleterThrowingExceptionPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -227,7 +227,7 @@ bool JSTestNamedDeleterThrowingException::deletePropertyByIndex(JSCell* cell, JS
     return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
 }
 
-EncodedJSValue jsTestNamedDeleterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedDeleterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -237,7 +237,7 @@ EncodedJSValue jsTestNamedDeleterThrowingExceptionConstructor(JSGlobalObject* le
     return JSValue::encode(JSTestNamedDeleterThrowingException::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedDeleterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedDeleterThrowingExceptionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

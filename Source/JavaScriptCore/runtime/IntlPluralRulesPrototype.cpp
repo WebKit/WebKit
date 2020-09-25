@@ -32,8 +32,8 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncSelect);
+static JSC_DECLARE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncResolvedOptions);
 
 }
 
@@ -74,7 +74,7 @@ void IntlPluralRulesPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncSelect, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(JSGlobalObject* 
     RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->select(globalObject, value)));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

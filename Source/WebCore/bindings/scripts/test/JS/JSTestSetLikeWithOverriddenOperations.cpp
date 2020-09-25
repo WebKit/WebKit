@@ -51,21 +51,21 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionDelete(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionHas(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionClear(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionDelete);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionHas);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionEntries);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionKeys);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionValues);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionForEach);
+JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionClear);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestSetLikeWithOverriddenOperationsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsAdd(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestSetLikeWithOverriddenOperationsAdd(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsAdd(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsAdd(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestSetLikeWithOverriddenOperationsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -189,7 +189,7 @@ template<> inline JSTestSetLikeWithOverriddenOperations* IDLOperation<JSTestSetL
     return jsDynamicCast<JSTestSetLikeWithOverriddenOperations*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -199,7 +199,7 @@ EncodedJSValue jsTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* 
     return JSValue::encode(JSTestSetLikeWithOverriddenOperations::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -220,7 +220,7 @@ static inline JSValue jsTestSetLikeWithOverriddenOperationsAddGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.add())));
 }
 
-EncodedJSValue jsTestSetLikeWithOverriddenOperationsAdd(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsAdd(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::get<jsTestSetLikeWithOverriddenOperationsAddGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "add");
 }
@@ -238,7 +238,7 @@ static inline bool setJSTestSetLikeWithOverriddenOperationsAddSetter(JSGlobalObj
     return true;
 }
 
-bool setJSTestSetLikeWithOverriddenOperationsAdd(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsAdd(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::set<setJSTestSetLikeWithOverriddenOperationsAddSetter>(*lexicalGlobalObject, thisValue, encodedValue, "add");
 }
@@ -250,7 +250,7 @@ static inline JSValue jsTestSetLikeWithOverriddenOperationsSizeGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToSetLike(lexicalGlobalObject, thisObject))));
 }
 
-EncodedJSValue jsTestSetLikeWithOverriddenOperationsSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::get<jsTestSetLikeWithOverriddenOperationsSizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }
@@ -267,7 +267,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionDelete(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionDelete, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionDeleteBody>(*lexicalGlobalObject, *callFrame, "delete");
 }
@@ -286,7 +286,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardHasToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionHas(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionHas, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionHasBody>(*lexicalGlobalObject, *callFrame, "has");
 }
@@ -300,7 +300,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardEntriesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionEntries(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionEntries, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionEntriesBody>(*lexicalGlobalObject, *callFrame, "entries");
 }
@@ -314,7 +314,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardKeysToSetLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionKeys(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionKeys, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionKeysBody>(*lexicalGlobalObject, *callFrame, "keys");
 }
@@ -328,7 +328,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardValuesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionValues, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
 }
@@ -347,7 +347,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLAny>(forwardForEachToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionForEach, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
@@ -363,7 +363,7 @@ static inline JSC::EncodedJSValue jsTestSetLikeWithOverriddenOperationsPrototype
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSetLikeWithOverriddenOperationsPrototypeFunctionClear(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunctionClear, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestSetLikeWithOverriddenOperations>::call<jsTestSetLikeWithOverriddenOperationsPrototypeFunctionClearBody>(*lexicalGlobalObject, *callFrame, "clear");
 }

@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestNamedGetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestNamedGetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestNamedGetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestNamedGetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestNamedGetterNoIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -201,7 +201,7 @@ void JSTestNamedGetterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlob
     JSObject::getOwnPropertyNames(object, lexicalGlobalObject, propertyNames, mode);
 }
 
-EncodedJSValue jsTestNamedGetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestNamedGetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -211,7 +211,7 @@ EncodedJSValue jsTestNamedGetterNoIdentifierConstructor(JSGlobalObject* lexicalG
     return JSValue::encode(JSTestNamedGetterNoIdentifier::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestNamedGetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestNamedGetterNoIdentifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

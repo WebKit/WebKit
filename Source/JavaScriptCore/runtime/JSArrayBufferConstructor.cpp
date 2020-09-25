@@ -33,10 +33,10 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL callArrayBuffer(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructSharedArrayBuffer(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferFuncIsView);
+static JSC_DECLARE_HOST_FUNCTION(callArrayBuffer);
+static JSC_DECLARE_HOST_FUNCTION(constructArrayBuffer);
+static JSC_DECLARE_HOST_FUNCTION(constructSharedArrayBuffer);
 
 template<>
 const ClassInfo JSArrayBufferConstructor::s_info = {
@@ -117,19 +117,19 @@ const ClassInfo* JSGenericArrayBufferConstructor<sharingMode>::info()
     return &JSGenericArrayBufferConstructor<sharingMode>::s_info;
 }
 
-static EncodedJSValue JSC_HOST_CALL callArrayBuffer(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callArrayBuffer, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "ArrayBuffer"));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructArrayBuffer, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Default>::constructImpl(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructSharedArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructSharedArrayBuffer, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Shared>::constructImpl(globalObject, callFrame);
 }
@@ -137,7 +137,7 @@ static EncodedJSValue JSC_HOST_CALL constructSharedArrayBuffer(JSGlobalObject* g
 // ------------------------------ Functions --------------------------------
 
 // ECMA 24.1.3.1
-EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(arrayBufferFuncIsView, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(globalObject->vm(), callFrame->argument(0))));
 }

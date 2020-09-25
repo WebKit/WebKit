@@ -45,8 +45,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestClassWithJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestClassWithJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestClassWithJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestClassWithJSBuiltinConstructorPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -155,7 +155,7 @@ void JSTestClassWithJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestClassWithJSBuiltinConstructor::~JSTestClassWithJSBuiltinConstructor();
 }
 
-EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestClassWithJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -165,7 +165,7 @@ EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(JSGlobalObject* le
     return JSValue::encode(JSTestClassWithJSBuiltinConstructor::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestClassWithJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestClassWithJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

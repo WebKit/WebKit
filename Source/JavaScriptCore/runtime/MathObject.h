@@ -54,8 +54,8 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(mathProtoFuncAbs);
+JSC_DECLARE_HOST_FUNCTION(mathProtoFuncFloor);
+JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTrunc);
 
 } // namespace JSC

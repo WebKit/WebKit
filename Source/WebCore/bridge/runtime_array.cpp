@@ -39,6 +39,8 @@ namespace JSC {
 
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
 
+static EncodedJSValue JIT_OPERATION arrayLengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+
 RuntimeArray::RuntimeArray(VM& vm, Structure* structure)
     : JSArray(vm, structure, nullptr)
     , m_array(nullptr)
@@ -62,7 +64,7 @@ void RuntimeArray::destroy(JSCell* cell)
     static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
-EncodedJSValue RuntimeArray::lengthGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION arrayLengthGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -92,7 +94,7 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalG
     VM& vm = lexicalGlobalObject->vm();
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (propertyName == vm.propertyNames->length) {
-        slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, thisObject->lengthGetter);
+        slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, arrayLengthGetter);
         return true;
     }
     

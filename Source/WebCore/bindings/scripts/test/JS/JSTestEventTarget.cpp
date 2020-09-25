@@ -50,12 +50,12 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestEventTargetPrototypeFunctionItem);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestEventTargetConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestEventTargetConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestEventTargetConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestEventTargetConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestEventTargetPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -226,7 +226,7 @@ template<> inline JSTestEventTarget* IDLOperation<JSTestEventTarget>::cast(JSGlo
     return jsDynamicCast<JSTestEventTarget*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -236,7 +236,7 @@ EncodedJSValue jsTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject,
     return JSValue::encode(JSTestEventTarget::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -264,7 +264,7 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.item(WTFMove(index)))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestEventTargetPrototypeFunctionItem, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestEventTarget>::call<jsTestEventTargetPrototypeFunctionItemBody>(*lexicalGlobalObject, *callFrame, "item");
 }

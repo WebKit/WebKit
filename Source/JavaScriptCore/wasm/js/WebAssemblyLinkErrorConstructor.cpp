@@ -38,12 +38,15 @@ namespace JSC {
 
 const ClassInfo WebAssemblyLinkErrorConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyLinkError, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorConstructor) };
 
+static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyLinkError);
+static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyLinkError);
+
 /* Source for WebAssemblyLinkErrorConstructor.lut.h
  @begin constructorTableWebAssemblyLinkError
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyLinkError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -58,7 +61,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(JSGlobalObje
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyLinkError::create(globalObject, vm, structure, message)));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyLinkError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyLinkError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = globalObject->webAssemblyLinkErrorStructure();

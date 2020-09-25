@@ -82,8 +82,8 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 */
 
 
-static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callRegExpConstructor);
+static JSC_DECLARE_HOST_FUNCTION(constructWithRegExpConstructor);
 
 RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callRegExpConstructor, constructWithRegExpConstructor)
@@ -309,26 +309,26 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
     RELEASE_AND_RETURN(scope, regExpCreate(globalObject, newTarget, patternArg, flagsArg));
 }
 
-EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(esSpecRegExpCreate, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue patternArg = callFrame->argument(0);
     JSValue flagsArg = callFrame->argument(1);
     return JSValue::encode(regExpCreate(globalObject, JSValue(), patternArg, flagsArg));
 }
 
-EncodedJSValue JSC_HOST_CALL esSpecIsRegExp(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(esSpecIsRegExp, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     return JSValue::encode(jsBoolean(isRegExp(vm, globalObject, callFrame->argument(0))));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWithRegExpConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructRegExp(globalObject, args, callFrame->jsCallee(), callFrame->newTarget()));
 }
 
-static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callRegExpConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructRegExp(globalObject, args, callFrame->jsCallee()));

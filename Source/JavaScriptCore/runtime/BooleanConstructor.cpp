@@ -30,14 +30,17 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanConstructor);
 
 const ClassInfo BooleanConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BooleanConstructor) };
 
+static JSC_DECLARE_HOST_FUNCTION(callBooleanConstructor);
+static JSC_DECLARE_HOST_FUNCTION(constructWithBooleanConstructor);
+
 // ECMA 15.6.1
-static EncodedJSValue JSC_HOST_CALL callBooleanConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callBooleanConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(jsBoolean(callFrame->argument(0).toBoolean(globalObject)));
 }
 
 // ECMA 15.6.2
-static EncodedJSValue JSC_HOST_CALL constructWithBooleanConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWithBooleanConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

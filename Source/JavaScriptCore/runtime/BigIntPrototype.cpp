@@ -38,9 +38,9 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(bigIntProtoFuncToString);
+static JSC_DECLARE_HOST_FUNCTION(bigIntProtoFuncToLocaleString);
+static JSC_DECLARE_HOST_FUNCTION(bigIntProtoFuncValueOf);
 
 }
 
@@ -103,7 +103,7 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(JSGlobalObject* globalObject, J
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -127,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObjec
 }
 
 // FIXME: this function should introduce the right separators for thousands and similar things.
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToLocaleString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -141,7 +141,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globa
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, value)));
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncValueOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

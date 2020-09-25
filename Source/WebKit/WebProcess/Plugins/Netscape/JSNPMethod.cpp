@@ -46,7 +46,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNPMethod);
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNPMethod) };
 
-static EncodedJSValue JSC_HOST_CALL callMethod(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callMethod);
 
 JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIdentifier npIdentifier)
     : InternalFunction(globalObject->vm(), structure, callMethod, nullptr)
@@ -66,7 +66,7 @@ IsoSubspace* JSNPMethod::subspaceForImpl(VM& vm)
     return &perVM.get().forVM(vm);
 }
 
-static EncodedJSValue JSC_HOST_CALL callMethod(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callMethod, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

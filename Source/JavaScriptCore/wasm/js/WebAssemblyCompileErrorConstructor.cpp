@@ -38,12 +38,15 @@ namespace JSC {
 
 const ClassInfo WebAssemblyCompileErrorConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyCompileError, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorConstructor) };
 
+static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyCompileError);
+static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyCompileError);
+
 /* Source for WebAssemblyCompileErrorConstructor.lut.h
  @begin constructorTableWebAssemblyCompileError
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyCompileError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyCompileError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -58,7 +61,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyCompileError(JSGlobalO
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyCompileError::create(globalObject, vm, structure, message)));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyCompileError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyCompileError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = globalObject->webAssemblyCompileErrorStructure();

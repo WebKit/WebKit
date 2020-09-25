@@ -50,8 +50,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestOverloadedConstructorsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestOverloadedConstructorsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestOverloadedConstructorsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestOverloadedConstructorsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestOverloadedConstructorsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -181,7 +181,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(JSGlobalObje
     return JSValue::encode(jsValue);
 }
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -204,6 +204,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor:
     }
     return throwVMTypeError(lexicalGlobalObject, throwScope);
 }
+JSC_ANNOTATE_HOST_FUNCTION(JSTestOverloadedConstructorsConstructorConstruct, JSTestOverloadedConstructorsConstructor::construct);
 
 template<> JSValue JSTestOverloadedConstructorsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -273,7 +274,7 @@ void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
     thisObject->JSTestOverloadedConstructors::~JSTestOverloadedConstructors();
 }
 
-EncodedJSValue jsTestOverloadedConstructorsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestOverloadedConstructorsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -283,7 +284,7 @@ EncodedJSValue jsTestOverloadedConstructorsConstructor(JSGlobalObject* lexicalGl
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestOverloadedConstructorsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestOverloadedConstructorsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

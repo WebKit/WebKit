@@ -34,8 +34,8 @@ namespace JSC {
 
 const ClassInfo FinalizationRegistryPrototype::s_info = { "FinalizationRegistry", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL protoFuncFinalizationRegistryRegister(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL protoFuncFinalizationRegistryUnregister(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister);
+static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister);
 
 void FinalizationRegistryPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -65,7 +65,7 @@ ALWAYS_INLINE static JSFinalizationRegistry* getFinalizationRegistry(VM& vm, JSG
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncFinalizationRegistryRegister(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -89,7 +89,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncFinalizationRegistryRegister(JSGlobalObjec
     return encodedJSUndefined();
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncFinalizationRegistryUnregister(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

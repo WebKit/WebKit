@@ -62,17 +62,17 @@ static EncodedJSValue cloneArrayBufferImpl(JSGlobalObject* lexicalGlobalObject, 
     return JSValue::encode(JSArrayBuffer::create(lexicalGlobalObject->vm(), lexicalGlobalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength())));
 }
 
-EncodedJSValue JSC_HOST_CALL cloneArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(cloneArrayBuffer, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Partial);
 }
 
-EncodedJSValue JSC_HOST_CALL structuredCloneArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(structuredCloneArrayBuffer, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Full);
 }
 
-EncodedJSValue JSC_HOST_CALL structuredCloneArrayBufferView(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(structuredCloneArrayBufferView, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount());

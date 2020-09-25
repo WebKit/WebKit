@@ -32,7 +32,7 @@ namespace JSC {
 
 class CallFrame;
 
-typedef EncodedJSValue (JSC_HOST_CALL *RawNativeFunction)(JSGlobalObject*, CallFrame*);
+typedef EncodedJSValue (JSC_HOST_CALL_ATTRIBUTES *RawNativeFunction)(JSGlobalObject*, CallFrame*);
 
 class NativeFunction {
 public:

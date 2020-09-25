@@ -56,9 +56,9 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncMatchFast);
+JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSearchFast);
+JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSplitFast);
+JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncTestFast);
 
 } // namespace JSC

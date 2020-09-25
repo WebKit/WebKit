@@ -36,16 +36,7 @@ namespace JSC {
 
 const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyWrapperFunction) };
 
-static EncodedJSValue JSC_HOST_CALL callWebAssemblyWrapperFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    WebAssemblyWrapperFunction* wasmFunction = jsCast<WebAssemblyWrapperFunction*>(callFrame->jsCallee());
-    JSObject* function = wasmFunction->function();
-    auto callData = getCallData(vm, function);
-    RELEASE_ASSERT(callData.type != CallData::Type::None);
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, function, callData, jsUndefined(), ArgList(callFrame))));
-}
+static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunction);
 
 WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction)
     : Base(vm, executable, globalObject, structure)
@@ -83,6 +74,17 @@ void WebAssemblyWrapperFunction::visitChildren(JSCell* cell, SlotVisitor& visito
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(thisObject->m_function);
+}
+
+JSC_DEFINE_HOST_FUNCTION(callWebAssemblyWrapperFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    WebAssemblyWrapperFunction* wasmFunction = jsCast<WebAssemblyWrapperFunction*>(callFrame->jsCallee());
+    JSObject* function = wasmFunction->function();
+    auto callData = getCallData(vm, function);
+    RELEASE_ASSERT(callData.type != CallData::Type::None);
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, function, callData, jsUndefined(), ArgList(callFrame))));
 }
 
 } // namespace JSC

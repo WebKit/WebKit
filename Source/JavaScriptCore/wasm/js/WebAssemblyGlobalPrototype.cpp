@@ -35,9 +35,9 @@
 #include "JSWebAssemblyGlobal.h"
 
 namespace JSC {
-static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoFuncValueOf(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoGetterFuncValue(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoSetterFuncValue(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyGlobalProtoFuncValueOf);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyGlobalProtoGetterFuncValue);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue);
 }
 
 #include "WebAssemblyGlobalPrototype.lut.h"
@@ -65,7 +65,7 @@ static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject
     return result;
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoFuncValueOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -81,7 +81,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoFuncValueOf(JSGlobalOb
     }
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoGetterFuncValue(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoGetterFuncValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -97,7 +97,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoGetterFuncValue(JSGlob
     }
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoSetterFuncValue(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);

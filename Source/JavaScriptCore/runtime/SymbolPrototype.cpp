@@ -33,9 +33,9 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(symbolProtoGetterDescription);
+static JSC_DECLARE_HOST_FUNCTION(symbolProtoFuncToString);
+static JSC_DECLARE_HOST_FUNCTION(symbolProtoFuncValueOf);
 
 }
 
@@ -87,7 +87,7 @@ inline Symbol* tryExtractSymbol(VM& vm, JSValue thisValue)
     return asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
 }
 
-EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(symbolProtoGetterDescription, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(JSGlobalObject* global
     return JSValue::encode(description.isNull() ? jsUndefined() : jsString(vm, description));
 }
 
-EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(symbolProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(JSGlobalObject* globalObjec
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNontrivialString(vm, symbol->descriptiveString())));
 }
 
-EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(symbolProtoFuncValueOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

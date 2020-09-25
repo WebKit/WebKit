@@ -49,7 +49,7 @@ class Signature;
 }
 
 
-JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(callHostFunctionAsConstructor);
 
 JS_EXPORT_PRIVATE String getCalculatedDisplayName(VM&, JSObject*);
 
@@ -216,9 +216,6 @@ private:
 #endif
 
     friend class LLIntOffsetsExtractor;
-
-    static EncodedJSValue argumentsGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-    static EncodedJSValue callerGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
 
     uintptr_t m_executableOrRareData;
 };

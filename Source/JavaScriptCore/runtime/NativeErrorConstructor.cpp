@@ -31,6 +31,19 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NativeErrorConstructorBase);
 
 const ClassInfo NativeErrorConstructorBase::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeErrorConstructorBase) };
 
+static JSC_DECLARE_HOST_FUNCTION(callEvalError);
+static JSC_DECLARE_HOST_FUNCTION(constructEvalError);
+static JSC_DECLARE_HOST_FUNCTION(callRangeError);
+static JSC_DECLARE_HOST_FUNCTION(constructRangeError);
+static JSC_DECLARE_HOST_FUNCTION(callReferenceError);
+static JSC_DECLARE_HOST_FUNCTION(constructReferenceError);
+static JSC_DECLARE_HOST_FUNCTION(callSyntaxError);
+static JSC_DECLARE_HOST_FUNCTION(constructSyntaxError);
+static JSC_DECLARE_HOST_FUNCTION(callTypeError);
+static JSC_DECLARE_HOST_FUNCTION(constructTypeError);
+static JSC_DECLARE_HOST_FUNCTION(callURIError);
+static JSC_DECLARE_HOST_FUNCTION(constructURIError);
+
 template<ErrorType errorType>
 inline EncodedJSValue NativeErrorConstructor<errorType>::constructImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
@@ -56,56 +69,56 @@ inline EncodedJSValue NativeErrorConstructor<errorType>::callImpl(JSGlobalObject
     return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false));
 }
 
-static EncodedJSValue JSC_HOST_CALL callEvalError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callEvalError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::EvalError>::callImpl(globalObject, callFrame);
 }
-static EncodedJSValue JSC_HOST_CALL constructEvalError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructEvalError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::EvalError>::constructImpl(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL callRangeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callRangeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::RangeError>::callImpl(globalObject, callFrame);
 }
-static EncodedJSValue JSC_HOST_CALL constructRangeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructRangeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::RangeError>::constructImpl(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL callReferenceError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callReferenceError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::ReferenceError>::callImpl(globalObject, callFrame);
 }
-static EncodedJSValue JSC_HOST_CALL constructReferenceError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructReferenceError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::ReferenceError>::constructImpl(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL callSyntaxError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callSyntaxError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::SyntaxError>::callImpl(globalObject, callFrame);
 }
-static EncodedJSValue JSC_HOST_CALL constructSyntaxError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructSyntaxError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::SyntaxError>::constructImpl(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL callTypeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callTypeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::TypeError>::callImpl(globalObject, callFrame);
 }
-static EncodedJSValue JSC_HOST_CALL constructTypeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructTypeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::TypeError>::constructImpl(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL callURIError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callURIError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::URIError>::callImpl(globalObject, callFrame);
 }
-static EncodedJSValue JSC_HOST_CALL constructURIError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructURIError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return NativeErrorConstructor<ErrorType::URIError>::constructImpl(globalObject, callFrame);
 }

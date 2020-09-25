@@ -30,9 +30,9 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL dateParse(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateUTC(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL dateNow(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(dateParse);
+JSC_DECLARE_HOST_FUNCTION(dateUTC);
+JSC_DECLARE_HOST_FUNCTION(dateNow);
 
 }
 
@@ -52,8 +52,8 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DateConstructor);
 
-static EncodedJSValue JSC_HOST_CALL callDate(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callDate);
+static JSC_DECLARE_HOST_FUNCTION(constructWithDateConstructor);
 
 DateConstructor::DateConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callDate, constructWithDateConstructor)
@@ -135,14 +135,14 @@ JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const A
     return DateInstance::create(vm, dateStructure, value);
 }
     
-static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWithDateConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructDate(globalObject, callFrame->newTarget(), args));
 }
 
 // ECMA 15.9.2
-static EncodedJSValue JSC_HOST_CALL callDate(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callDate, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     GregorianDateTime ts;
@@ -150,7 +150,7 @@ static EncodedJSValue JSC_HOST_CALL callDate(JSGlobalObject* globalObject, CallF
     return JSValue::encode(jsNontrivialString(vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 
-EncodedJSValue JSC_HOST_CALL dateParse(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateParse, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -164,12 +164,12 @@ JSValue dateNowImpl()
     return jsNumber(jsCurrentTime());
 }
 
-EncodedJSValue JSC_HOST_CALL dateNow(JSGlobalObject*, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(dateNow, (JSGlobalObject*, CallFrame*))
 {
     return JSValue::encode(jsNumber(jsCurrentTime()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateUTC(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(dateUTC, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     double ms = millisecondsFromComponents(globalObject, ArgList(callFrame), WTF::UTCTime);
     return JSValue::encode(jsNumber(timeClip(ms)));

@@ -40,10 +40,10 @@ typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToLocaleString);
+static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToFixed);
+static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToExponential);
+static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToPrecision);
 
 }
 
@@ -382,7 +382,7 @@ String toStringWithRadix(double doubleValue, int32_t radix)
 // This method takes an optional argument specifying a number of *decimal places*
 // to round the significand to (or, put another way, this method optionally rounds
 // to argument-plus-one significant figures).
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -419,7 +419,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(JSGlobalObject* global
 // This method takes an argument specifying a number of decimal places to round the
 // significand to. However when converting large values (1e+21 and above) this
 // method will instead fallback to calling ToString. 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToFixed, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -453,7 +453,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(JSGlobalObject* globalObject
 // decimal, whilst 1000 is converted to the exponential representation 1.00e+3.
 // For negative exponents values >= 1e-6 are formated as decimal fractions,
 // with smaller values converted to exponential representation.
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -549,7 +549,7 @@ JSString* numberToString(VM& vm, double doubleValue, int32_t radix)
     return numberToStringInternal(vm, doubleValue, radix);
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -564,7 +564,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(JSGlobalObject* globalObjec
     return JSValue::encode(numberToStringInternal(vm, doubleValue, radix));
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToLocaleString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -579,7 +579,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(JSGlobalObject* globa
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, x)));
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(numberProtoFuncValueOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

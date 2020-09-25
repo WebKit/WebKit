@@ -45,8 +45,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestPluginInterfacePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -211,7 +211,7 @@ CallData JSTestPluginInterface::getCallData(JSCell* cell)
     return pluginElementCustomGetCallData(thisObject);
 }
 
-EncodedJSValue jsTestPluginInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestPluginInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -221,7 +221,7 @@ EncodedJSValue jsTestPluginInterfaceConstructor(JSGlobalObject* lexicalGlobalObj
     return JSValue::encode(JSTestPluginInterface::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestPluginInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestPluginInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

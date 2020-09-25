@@ -63,49 +63,49 @@ using namespace JSC;
 // Functions
 
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinComplexOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinComplexOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinCustomOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinCustomOperation);
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinConditionalOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinConditionalOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinSettingsConditionalOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinSettingsConditionalOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinResultFieldOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinResultFieldOperation);
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionPartialMixinOperationFromPartial(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionPartialMixinOperationFromPartial);
 #endif
 
 // Attributes
 
-JSC::EncodedJSValue jsTestConditionalIncludesConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestConditionalIncludesConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestConditionalIncludesTestAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestConditionalIncludesConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesTestAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestConditionalIncludesMixinReadOnlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinReadOnlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestConditionalIncludesMixinAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestConditionalIncludesMixinAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestConditionalIncludesMixinAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestConditionalIncludesMixinCustomAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestConditionalIncludesMixinCustomAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinCustomAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestConditionalIncludesMixinCustomAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestConditionalIncludesMixinNodeAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestConditionalIncludesMixinNodeAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinNodeAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestConditionalIncludesMixinNodeAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestConditionalIncludesPartialMixinAttributeFromPartial(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestConditionalIncludesPartialMixinAttributeFromPartial(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 
 class JSTestConditionalIncludesPrototype final : public JSC::JSNonFinalObject {
@@ -490,7 +490,7 @@ template<> inline JSTestConditionalIncludes* IDLOperation<JSTestConditionalInclu
     return jsDynamicCast<JSTestConditionalIncludes*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestConditionalIncludesConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -500,7 +500,7 @@ EncodedJSValue jsTestConditionalIncludesConstructor(JSGlobalObject* lexicalGloba
     return JSValue::encode(JSTestConditionalIncludes::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestConditionalIncludesConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestConditionalIncludesConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -521,7 +521,7 @@ static inline JSValue jsTestConditionalIncludesTestAttrGetter(JSGlobalObject& le
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.testAttr())));
 }
 
-EncodedJSValue jsTestConditionalIncludesTestAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesTestAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestConditionalIncludes>::get<jsTestConditionalIncludesTestAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttr");
 }
@@ -535,7 +535,7 @@ static inline JSValue jsTestConditionalIncludesMixinReadOnlyAttributeGetter(JSGl
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinReadOnlyAttribute())));
 }
 
-EncodedJSValue jsTestConditionalIncludesMixinReadOnlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinReadOnlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestConditionalIncludes>::get<jsTestConditionalIncludesMixinReadOnlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinReadOnlyAttribute");
 }
@@ -551,7 +551,7 @@ static inline JSValue jsTestConditionalIncludesMixinAttributeGetter(JSGlobalObje
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.mixinAttribute())));
 }
 
-EncodedJSValue jsTestConditionalIncludesMixinAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestConditionalIncludes>::get<jsTestConditionalIncludesMixinAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinAttribute");
 }
@@ -572,7 +572,7 @@ static inline bool setJSTestConditionalIncludesMixinAttributeSetter(JSGlobalObje
     return true;
 }
 
-bool setJSTestConditionalIncludesMixinAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestConditionalIncludesMixinAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestConditionalIncludes>::set<setJSTestConditionalIncludesMixinAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinAttribute");
 }
@@ -586,7 +586,7 @@ static inline JSValue jsTestConditionalIncludesMixinCustomAttributeGetter(JSGlob
     return thisObject.mixinCustomAttribute(lexicalGlobalObject);
 }
 
-EncodedJSValue jsTestConditionalIncludesMixinCustomAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinCustomAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestConditionalIncludes>::get<jsTestConditionalIncludesMixinCustomAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinCustomAttribute");
 }
@@ -601,7 +601,7 @@ static inline bool setJSTestConditionalIncludesMixinCustomAttributeSetter(JSGlob
     return true;
 }
 
-bool setJSTestConditionalIncludesMixinCustomAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestConditionalIncludesMixinCustomAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestConditionalIncludes>::set<setJSTestConditionalIncludesMixinCustomAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinCustomAttribute");
 }
@@ -617,7 +617,7 @@ static inline JSValue jsTestConditionalIncludesMixinNodeAttributeGetter(JSGlobal
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.mixinNodeAttribute())));
 }
 
-EncodedJSValue jsTestConditionalIncludesMixinNodeAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesMixinNodeAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestConditionalIncludes>::get<jsTestConditionalIncludesMixinNodeAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mixinNodeAttribute");
 }
@@ -638,7 +638,7 @@ static inline bool setJSTestConditionalIncludesMixinNodeAttributeSetter(JSGlobal
     return true;
 }
 
-bool setJSTestConditionalIncludesMixinNodeAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestConditionalIncludesMixinNodeAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestConditionalIncludes>::set<setJSTestConditionalIncludesMixinNodeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mixinNodeAttribute");
 }
@@ -654,7 +654,7 @@ static inline JSValue jsTestConditionalIncludesPartialMixinAttributeFromPartialG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.partialMixinAttributeFromPartial())));
 }
 
-EncodedJSValue jsTestConditionalIncludesPartialMixinAttributeFromPartial(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestConditionalIncludesPartialMixinAttributeFromPartial(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestConditionalIncludes>::get<jsTestConditionalIncludesPartialMixinAttributeFromPartialGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "partialMixinAttributeFromPartial");
 }
@@ -674,7 +674,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionMixi
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinOperation(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionMixinOperationBody>(*lexicalGlobalObject, *callFrame, "mixinOperation");
 }
@@ -703,7 +703,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionMixi
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.mixinComplexOperation(*context, WTFMove(strArg), *objArg))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinComplexOperation(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinComplexOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionMixinComplexOperationBody>(*lexicalGlobalObject, *callFrame, "mixinComplexOperation");
 }
@@ -720,7 +720,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionMixi
     RELEASE_AND_RETURN(throwScope, (JSValue::encode(castedThis->mixinCustomOperation(*lexicalGlobalObject, *callFrame))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinCustomOperation(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinCustomOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionMixinCustomOperationBody>(*lexicalGlobalObject, *callFrame, "mixinCustomOperation");
 }
@@ -740,7 +740,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionMixi
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinConditionalOperation(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionMixinConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "mixinConditionalOperation");
 }
@@ -760,7 +760,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionMixi
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinSettingsConditionalOperation(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinSettingsConditionalOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionMixinSettingsConditionalOperationBody>(*lexicalGlobalObject, *callFrame, "mixinSettingsConditionalOperation");
 }
@@ -779,7 +779,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionMixi
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(implResult.nodes))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionMixinResultFieldOperation(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionMixinResultFieldOperation, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionMixinResultFieldOperationBody>(*lexicalGlobalObject, *callFrame, "mixinResultFieldOperation");
 }
@@ -799,7 +799,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunctionPart
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestConditionalIncludesPrototypeFunctionPartialMixinOperationFromPartial(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestConditionalIncludesPrototypeFunctionPartialMixinOperationFromPartial, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestConditionalIncludes>::call<jsTestConditionalIncludesPrototypeFunctionPartialMixinOperationFromPartialBody>(*lexicalGlobalObject, *callFrame, "partialMixinOperationFromPartial");
 }

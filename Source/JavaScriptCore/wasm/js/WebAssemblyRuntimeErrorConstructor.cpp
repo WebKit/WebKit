@@ -38,12 +38,15 @@ namespace JSC {
 
 const ClassInfo WebAssemblyRuntimeErrorConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorConstructor) };
 
+static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyRuntimeError);
+static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyRuntimeError);
+
 /* Source for WebAssemblyRuntimeErrorConstructor.lut.h
  @begin constructorTableWebAssemblyRuntimeError
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyRuntimeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -60,7 +63,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyRuntimeError(JSGlobalO
     return JSValue::encode(JSWebAssemblyRuntimeError::create(globalObject, vm, structure, WTFMove(messageString)));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyRuntimeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = globalObject->webAssemblyRuntimeErrorStructure();

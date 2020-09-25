@@ -246,7 +246,9 @@ bool ObjcFallbackObjectImp::put(JSCell*, JSGlobalObject*, PropertyName, JSValue,
     return false;
 }
 
-static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(callObjCFallbackObject);
+
+JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -261,7 +263,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(JSGlobalObject* lexic
     ObjcInstance* objcInstance = runtimeObject->getInternalObjCInstance();
 
     if (!objcInstance)
-        return JSValue::encode(RuntimeObject::throwInvalidAccessError(lexicalGlobalObject, scope));
+        return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
     
     objcInstance->begin();
 

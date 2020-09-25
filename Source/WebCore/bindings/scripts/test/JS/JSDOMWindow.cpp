@@ -51,20 +51,20 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsDOMWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsDOMWindowTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsDOMWindowTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSDOMWindowTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowTestConditionallyReadWriteConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsDOMWindowTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSDOMWindowTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 using JSDOMWindowConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
@@ -166,7 +166,7 @@ template<> inline JSDOMWindow* IDLAttribute<JSDOMWindow>::cast(JSGlobalObject& l
     return jsDynamicCast<JSDOMWindow*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsDOMWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -176,7 +176,7 @@ EncodedJSValue jsDOMWindowConstructor(JSGlobalObject* lexicalGlobalObject, Encod
     return JSValue::encode(JSDOMWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSDOMWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -195,7 +195,7 @@ static inline JSValue jsDOMWindowExposedToWorkerAndWindowConstructorGetter(JSGlo
     return JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-EncodedJSValue jsDOMWindowExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindowExposedToWorkerAndWindowConstructorGetter>(*lexicalGlobalObject, thisValue, "ExposedToWorkerAndWindow");
 }
@@ -207,7 +207,7 @@ static inline bool setJSDOMWindowExposedToWorkerAndWindowConstructorSetter(JSGlo
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("ExposedToWorkerAndWindow"), strlen("ExposedToWorkerAndWindow")), value);
 }
 
-bool setJSDOMWindowExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowExposedToWorkerAndWindowConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "ExposedToWorkerAndWindow");
 }
@@ -218,7 +218,7 @@ static inline JSValue jsDOMWindowTestConditionallyReadWriteConstructorGetter(JSG
     return JSTestConditionallyReadWrite::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-EncodedJSValue jsDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestConditionallyReadWriteConstructorGetter>(*lexicalGlobalObject, thisValue, "TestConditionallyReadWrite");
 }
@@ -230,7 +230,7 @@ static inline bool setJSDOMWindowTestConditionallyReadWriteConstructorSetter(JSG
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestConditionallyReadWrite"), strlen("TestConditionallyReadWrite")), value);
 }
 
-bool setJSDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowTestConditionallyReadWriteConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestConditionallyReadWriteConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestConditionallyReadWrite");
 }
@@ -241,7 +241,7 @@ static inline JSValue jsDOMWindowTestDefaultToJSONFilteredByExposedConstructorGe
     return JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-EncodedJSValue jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestDefaultToJSONFilteredByExposedConstructorGetter>(*lexicalGlobalObject, thisValue, "TestDefaultToJSONFilteredByExposed");
 }
@@ -253,7 +253,7 @@ static inline bool setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructorSe
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestDefaultToJSONFilteredByExposed"), strlen("TestDefaultToJSONFilteredByExposed")), value);
 }
 
-bool setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestDefaultToJSONFilteredByExposedConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestDefaultToJSONFilteredByExposed");
 }
@@ -264,7 +264,7 @@ static inline JSValue jsDOMWindowTestNodeConstructorGetter(JSGlobalObject& lexic
     return JSTestNode::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-EncodedJSValue jsDOMWindowTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestNodeConstructorGetter>(*lexicalGlobalObject, thisValue, "TestNode");
 }
@@ -276,7 +276,7 @@ static inline bool setJSDOMWindowTestNodeConstructorSetter(JSGlobalObject& lexic
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNode"), strlen("TestNode")), value);
 }
 
-bool setJSDOMWindowTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestNodeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestNode");
 }
@@ -287,7 +287,7 @@ static inline JSValue jsDOMWindowTestObjectConstructorGetter(JSGlobalObject& lex
     return JSTestObj::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-EncodedJSValue jsDOMWindowTestObjectConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowTestObjectConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestObjectConstructorGetter>(*lexicalGlobalObject, thisValue, "TestObject");
 }
@@ -299,7 +299,7 @@ static inline bool setJSDOMWindowTestObjectConstructorSetter(JSGlobalObject& lex
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestObject"), strlen("TestObject")), value);
 }
 
-bool setJSDOMWindowTestObjectConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowTestObjectConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestObjectConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestObject");
 }
@@ -310,7 +310,7 @@ static inline JSValue jsDOMWindowTestPromiseRejectionEventConstructorGetter(JSGl
     return JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
 }
 
-EncodedJSValue jsDOMWindowTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsDOMWindowTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSDOMWindow>::get<jsDOMWindowTestPromiseRejectionEventConstructorGetter>(*lexicalGlobalObject, thisValue, "TestPromiseRejectionEvent");
 }
@@ -322,7 +322,7 @@ static inline bool setJSDOMWindowTestPromiseRejectionEventConstructorSetter(JSGl
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestPromiseRejectionEvent"), strlen("TestPromiseRejectionEvent")), value);
 }
 
-bool setJSDOMWindowTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSDOMWindowTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSDOMWindow>::set<setJSDOMWindowTestPromiseRejectionEventConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestPromiseRejectionEvent");
 }

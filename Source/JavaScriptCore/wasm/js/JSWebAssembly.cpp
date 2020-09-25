@@ -62,9 +62,9 @@ FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_CALLBACK_FOR_CONSTRUCTOR)
 
 #undef DEFINE_CALLBACK_FOR_CONSTRUCTOR
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyCompileFunc);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstantiateFunc);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyValidateFunc);
 
 }
 
@@ -151,7 +151,7 @@ static void webAssemblyModuleValidateAsyncInternal(JSGlobalObject* globalObject,
     }));
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileFunc, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -291,7 +291,7 @@ void JSWebAssembly::webAssemblyModuleInstantinateAsync(JSGlobalObject* globalObj
     CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, void());
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
 
@@ -317,7 +317,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(JSGlobalObject* g
     }
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -330,7 +330,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(JSGlobalObject* glob
     return JSValue::encode(jsBoolean(validationResult.has_value()));
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
@@ -353,7 +353,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(JSGlobalObject*
     return JSValue::encode(promise);
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
 

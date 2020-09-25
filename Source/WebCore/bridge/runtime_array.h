@@ -88,7 +88,6 @@ private:
     RuntimeArray(VM&, Structure*);
     void finishCreation(VM&, Bindings::Array*);
 
-    static EncodedJSValue lengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     BindingsArray* m_array;

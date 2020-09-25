@@ -56,8 +56,8 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SetConstructor, InternalFunction);
 
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(JSGlobalObject*, CallFrame*);
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(JSGlobalObject*, CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetBucketHead);
+JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetBucketNext);
+JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetBucketKey);
 
 } // namespace JSC

@@ -123,12 +123,12 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
 
 // Attributes
 
-JSC::EncodedJSValue jsTestEventConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestEventConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestEventConstructorAttr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestEventConstructorAttr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestEventConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestEventConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestEventConstructorAttr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestEventConstructorAttr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #if ENABLE(SPECIAL_EVENT)
-JSC::EncodedJSValue jsTestEventConstructorAttr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestEventConstructorAttr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 
 class JSTestEventConstructorPrototype final : public JSC::JSNonFinalObject {
@@ -165,7 +165,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEventConstructorPrototype, JSTestEvent
 
 using JSTestEventConstructorConstructor = JSDOMConstructor<JSTestEventConstructor>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -188,6 +188,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
+JSC_ANNOTATE_HOST_FUNCTION(JSTestEventConstructorConstructorConstruct, JSTestEventConstructorConstructor::construct);
 
 template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -262,7 +263,7 @@ template<> inline JSTestEventConstructor* IDLAttribute<JSTestEventConstructor>::
     return jsDynamicCast<JSTestEventConstructor*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -272,7 +273,7 @@ EncodedJSValue jsTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalOb
     return JSValue::encode(JSTestEventConstructor::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -293,7 +294,7 @@ static inline JSValue jsTestEventConstructorAttr1Getter(JSGlobalObject& lexicalG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr1())));
 }
 
-EncodedJSValue jsTestEventConstructorAttr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestEventConstructorAttr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr1");
 }
@@ -306,7 +307,7 @@ static inline JSValue jsTestEventConstructorAttr2Getter(JSGlobalObject& lexicalG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr2())));
 }
 
-EncodedJSValue jsTestEventConstructorAttr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestEventConstructorAttr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr2");
 }
@@ -320,7 +321,7 @@ static inline JSValue jsTestEventConstructorAttr3Getter(JSGlobalObject& lexicalG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr3())));
 }
 
-EncodedJSValue jsTestEventConstructorAttr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestEventConstructorAttr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr3");
 }

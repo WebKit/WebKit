@@ -45,7 +45,7 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callHostFunctionAsConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -314,7 +314,7 @@ static JSValue retrieveArguments(VM& vm, CallFrame* callFrame, JSFunction* funct
     return functor.result();
 }
 
-EncodedJSValue JSFunction::argumentsGetter(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName)
+static EncodedJSValue JIT_OPERATION argumentsGetter(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = globalObject->vm();
     JSFunction* thisObj = jsCast<JSFunction*>(JSValue::decode(thisValue));
@@ -374,7 +374,7 @@ static JSValue retrieveCallerFunction(VM& vm, CallFrame* callFrame, JSFunction* 
     return functor.result();
 }
 
-EncodedJSValue JSFunction::callerGetter(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName)
+static EncodedJSValue JIT_OPERATION callerGetter(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

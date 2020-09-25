@@ -535,12 +535,15 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
 
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
-static EncodedJSValue JSC_HOST_CALL callObjCCallbackFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(callObjCCallbackFunction);
+static JSC_DECLARE_HOST_FUNCTION(constructObjCCallbackFunction);
+
+JSC_DEFINE_HOST_FUNCTION(callObjCCallbackFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return APICallbackFunction::callImpl<ObjCCallbackFunction>(globalObject, callFrame);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructObjCCallbackFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructObjCCallbackFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return APICallbackFunction::constructImpl<ObjCCallbackFunction>(globalObject, callFrame);
 }

@@ -669,6 +669,8 @@ public:
 
     static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
 
+    UniquedStringImpl* transitionPropertyName() const { return m_transitionPropertyName.get(); }
+
     struct PropertyHashEntry {
         const HashTable* table;
         const HashTableValue* value;

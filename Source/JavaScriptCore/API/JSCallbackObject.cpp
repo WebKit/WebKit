@@ -31,12 +31,40 @@
 
 namespace JSC {
 
+static JSC_DECLARE_HOST_FUNCTION(callJSNonFinalObjectCallbackObject);
+static JSC_DECLARE_HOST_FUNCTION(constructJSNonFinalObjectCallbackObject);
+static JSC_DECLARE_HOST_FUNCTION(callJSGlobalObjectCallbackObject);
+static JSC_DECLARE_HOST_FUNCTION(constructJSGlobalObjectCallbackObject);
+
 // Define the two types of JSCallbackObjects we support.
 template <> const ClassInfo JSCallbackObject<JSNonFinalObject>::s_info = { "CallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::s_info = { "CallbackGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
-
 template<> const bool JSCallbackObject<JSNonFinalObject>::needsDestruction = true;
 template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = true;
+
+template<>
+RawNativeFunction JSCallbackObject<JSNonFinalObject>::getCallFunction()
+{
+    return callJSNonFinalObjectCallbackObject;
+}
+
+template<>
+RawNativeFunction JSCallbackObject<JSNonFinalObject>::getConstructFunction()
+{
+    return constructJSNonFinalObjectCallbackObject;
+}
+
+template<>
+RawNativeFunction JSCallbackObject<JSGlobalObject>::getCallFunction()
+{
+    return callJSGlobalObjectCallbackObject;
+}
+
+template<>
+RawNativeFunction JSCallbackObject<JSGlobalObject>::getConstructFunction()
+{
+    return constructJSGlobalObjectCallbackObject;
+}
 
 template<>
 JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& vm, JSClassRef classRef, Structure* structure)
@@ -82,6 +110,26 @@ IsoSubspace* JSCallbackObject<JSGlobalObject>::subspaceForImpl(VM& vm, SubspaceA
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+JSC_DEFINE_HOST_FUNCTION(callJSNonFinalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSNonFinalObject>::callImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(constructJSNonFinalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSNonFinalObject>::constructImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(callJSGlobalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSGlobalObject>::callImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(constructJSGlobalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSCallbackObject<JSGlobalObject>::constructImpl(globalObject, callFrame);
 }
 
 } // namespace JSC

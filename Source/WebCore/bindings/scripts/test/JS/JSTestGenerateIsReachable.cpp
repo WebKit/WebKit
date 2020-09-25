@@ -46,9 +46,9 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestGenerateIsReachableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestGenerateIsReachableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestGenerateIsReachableASecretAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue JIT_OPERATION jsTestGenerateIsReachableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestGenerateIsReachableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestGenerateIsReachableASecretAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestGenerateIsReachablePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -168,7 +168,7 @@ template<> inline JSTestGenerateIsReachable* IDLAttribute<JSTestGenerateIsReacha
     return jsDynamicCast<JSTestGenerateIsReachable*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestGenerateIsReachableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestGenerateIsReachableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -178,7 +178,7 @@ EncodedJSValue jsTestGenerateIsReachableConstructor(JSGlobalObject* lexicalGloba
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestGenerateIsReachableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestGenerateIsReachableConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -199,7 +199,7 @@ static inline JSValue jsTestGenerateIsReachableASecretAttributeGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.aSecretAttribute())));
 }
 
-EncodedJSValue jsTestGenerateIsReachableASecretAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestGenerateIsReachableASecretAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestGenerateIsReachable>::get<jsTestGenerateIsReachableASecretAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "aSecretAttribute");
 }

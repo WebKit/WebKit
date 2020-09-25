@@ -41,22 +41,22 @@ void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakSet(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(callWeakSet);
+static JSC_DECLARE_HOST_FUNCTION(constructWeakSet);
 
 WeakSetConstructor::WeakSetConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callWeakSet, constructWeakSet)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakSet(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callWeakSet, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WeakSet"));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructWeakSet, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

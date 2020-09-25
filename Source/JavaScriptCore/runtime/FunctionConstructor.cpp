@@ -37,14 +37,17 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionConstructor);
 
 const ClassInfo FunctionConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+static JSC_DECLARE_HOST_FUNCTION(constructWithFunctionConstructor);
+static JSC_DECLARE_HOST_FUNCTION(callFunctionConstructor);
+
+JSC_DEFINE_HOST_FUNCTION(constructWithFunctionConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::Function, callFrame->newTarget()));
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
-static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(callFunctionConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ArgList args(callFrame);
     return JSValue::encode(constructFunction(globalObject, callFrame, args));

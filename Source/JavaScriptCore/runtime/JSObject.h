@@ -1234,7 +1234,7 @@ private:
     }
 };
 
-JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(objectPrivateFuncInstanceOf);
 
 inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
 {

@@ -37,10 +37,10 @@
 #include "StructureInlines.h"
 
 namespace JSC {
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(JSGlobalObject*, CallFrame*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(JSGlobalObject*, CallFrame*);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncLength);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncGet);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncSet);
 }
 
 #include "WebAssemblyTablePrototype.lut.h"
@@ -70,7 +70,7 @@ static ALWAYS_INLINE JSWebAssemblyTable* getTable(JSGlobalObject* globalObject, 
     return result;
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -80,7 +80,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(JSGlobalObje
     return JSValue::encode(jsNumber(table->length()));
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -99,7 +99,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(JSGlobalObject
     return JSValue::encode(jsNumber(oldLength));
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGet, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -115,7 +115,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(JSGlobalObject*
     return JSValue::encode(table->get(index));
 }
 
-static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);

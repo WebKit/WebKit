@@ -32,6 +32,8 @@
 namespace JSC {
 namespace Bindings {
 
+Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject*, ThrowScope&);
+
 class WEBCORE_EXPORT RuntimeObject : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -68,8 +70,6 @@ public:
 
     Instance* getInternalInstance() const { return m_instance.get(); }
 
-    static Exception* throwInvalidAccessError(JSGlobalObject*, ThrowScope&);
-
     DECLARE_INFO;
 
     static ObjectPrototype* createPrototype(VM&, JSGlobalObject& globalObject)
@@ -87,10 +87,6 @@ protected:
     void finishCreation(VM&);
 
 private:
-    static EncodedJSValue fallbackObjectGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-    static EncodedJSValue fieldGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-    static EncodedJSValue methodGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-
     static IsoSubspace* subspaceForImpl(VM&);
 
     RefPtr<Instance> m_instance;

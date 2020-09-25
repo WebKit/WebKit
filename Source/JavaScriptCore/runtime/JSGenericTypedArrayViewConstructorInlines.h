@@ -38,14 +38,8 @@
 namespace JSC {
 
 template<typename ViewClass>
-static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(JSGlobalObject*, CallFrame*);
-
-template<typename ViewClass>
-EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(JSGlobalObject*, CallFrame*);
-
-template<typename ViewClass>
 JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure, callGenericTypedArrayView<ViewClass>, constructGenericTypedArrayView<ViewClass>)
+    : Base(vm, structure, callConstructor(), constructConstructor())
 {
 }
 
@@ -206,7 +200,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 }
 
 template<typename ViewClass>
-EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(JSGlobalObject* globalObject, CallFrame* callFrame)
+ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -247,7 +241,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(JSGlobalObject* glob
 }
 
 template<typename ViewClass>
-static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(JSGlobalObject* globalObject, CallFrame*)
+ALWAYS_INLINE EncodedJSValue callGenericTypedArrayViewImpl(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -39,6 +39,9 @@ namespace JSC {
 
 const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstanceConstructor) };
 
+static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyInstance);
+static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyInstance);
+
 /* Source for WebAssemblyInstanceConstructor.lut.h
  @begin constructorTableWebAssemblyInstance
  @end
@@ -46,7 +49,7 @@ const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function", &Base::s_
 
 using Wasm::Plan;
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyInstance, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -76,7 +79,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(JSGlobalObjec
     return JSValue::encode(instance);
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(JSGlobalObject* globalObject, CallFrame*)
+JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyInstance, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

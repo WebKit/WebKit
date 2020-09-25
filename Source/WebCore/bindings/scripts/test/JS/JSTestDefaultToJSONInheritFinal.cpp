@@ -66,16 +66,16 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON);
 
 // Attributes
 
-JSC::EncodedJSValue jsTestDefaultToJSONInheritFinalConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONInheritFinalConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritFinalConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONInheritFinalConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool JIT_OPERATION setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestDefaultToJSONInheritFinalPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -185,7 +185,7 @@ template<> inline JSTestDefaultToJSONInheritFinal* IDLOperation<JSTestDefaultToJ
     return jsDynamicCast<JSTestDefaultToJSONInheritFinal*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestDefaultToJSONInheritFinalConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritFinalConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -195,7 +195,7 @@ EncodedJSValue jsTestDefaultToJSONInheritFinalConstructor(JSGlobalObject* lexica
     return JSValue::encode(JSTestDefaultToJSONInheritFinal::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestDefaultToJSONInheritFinalConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONInheritFinalConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -216,7 +216,7 @@ static inline JSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeFooGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeFoo())));
 }
 
-EncodedJSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDefaultToJSONInheritFinal>::get<jsTestDefaultToJSONInheritFinalFinalLongAttributeFooGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeFoo");
 }
@@ -234,7 +234,7 @@ static inline bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeFooSetter
     return true;
 }
 
-bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONInheritFinalFinalLongAttributeFoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestDefaultToJSONInheritFinal>::set<setJSTestDefaultToJSONInheritFinalFinalLongAttributeFooSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeFoo");
 }
@@ -247,7 +247,7 @@ static inline JSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeBarGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeBar())));
 }
 
-EncodedJSValue jsTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue JIT_OPERATION jsTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDefaultToJSONInheritFinal>::get<jsTestDefaultToJSONInheritFinalFinalLongAttributeBarGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeBar");
 }
@@ -265,7 +265,7 @@ static inline bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeBarSetter
     return true;
 }
 
-bool setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool JIT_OPERATION setJSTestDefaultToJSONInheritFinalFinalLongAttributeBar(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestDefaultToJSONInheritFinal>::set<setJSTestDefaultToJSONInheritFinalFinalLongAttributeBarSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeBar");
 }
@@ -305,7 +305,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritFinalPrototypeFunctionToJ
     return JSValue::encode(result);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSON, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestDefaultToJSONInheritFinal>::call<jsTestDefaultToJSONInheritFinalPrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
 }
