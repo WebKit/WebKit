@@ -1,3 +1,20 @@
+2020-09-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late September 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=216950
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * Modules/webaudio/AudioNodeInput.cpp: Add missing AudioUtilities.h include.
+        * Modules/webaudio/AudioNodeOutput.cpp: Ditto.
+        * Modules/webaudio/BiquadProcessor.cpp: Ditto.
+        * Modules/webaudio/GainNode.cpp: Ditto.
+        * Modules/webaudio/PannerNode.cpp: Ditto.
+        * page/PerformanceUserTiming.cpp: Add missing JavaScriptCore/JSCJSValueInlines.h include.
+        * platform/audio/AudioUtilities.h: Add missing <cmath> include.
+
 2020-09-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add helper functions to create LineBox::InlineBox objects for inline level boxes.

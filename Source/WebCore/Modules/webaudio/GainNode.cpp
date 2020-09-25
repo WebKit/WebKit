@@ -31,6 +31,7 @@
 #include "AudioBus.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

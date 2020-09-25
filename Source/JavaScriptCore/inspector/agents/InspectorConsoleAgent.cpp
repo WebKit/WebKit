@@ -29,6 +29,7 @@
 #include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
 #include "InspectorHeapAgent.h"
+#include "ScriptArguments.h"
 #include "ScriptCallStackFactory.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 

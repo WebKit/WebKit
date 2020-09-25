@@ -32,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioParam.h"
+#include "AudioUtilities.h"
 #include <wtf/Threading.h>
 
 namespace WebCore {

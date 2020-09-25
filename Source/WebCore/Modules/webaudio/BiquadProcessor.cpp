@@ -28,6 +28,7 @@
 
 #include "BiquadProcessor.h"
 
+#include "AudioUtilities.h"
 #include "BiquadDSPKernel.h"
 
 namespace WebCore {

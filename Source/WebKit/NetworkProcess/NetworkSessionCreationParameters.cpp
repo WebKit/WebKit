@@ -32,7 +32,7 @@
 #include "ArgumentCodersCF.h"
 #endif
 
-#if USE(CURL)
+#if USE(CURL) || USE(SOUP)
 #include "WebCoreArgumentCoders.h"
 #endif
 

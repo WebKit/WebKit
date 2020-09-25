@@ -33,6 +33,7 @@
 #include "PerformanceMeasureOptions.h"
 #include "PerformanceTiming.h"
 #include "SerializedScriptValue.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

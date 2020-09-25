@@ -32,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include "ChannelCountMode.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"

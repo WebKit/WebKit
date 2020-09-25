@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNode.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include "ChannelCountMode.h"
 #include <algorithm>
 
