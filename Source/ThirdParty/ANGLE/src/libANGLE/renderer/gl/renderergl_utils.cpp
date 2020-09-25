@@ -1481,7 +1481,8 @@ void GenerateCaps(const FunctionsGL *functions,
     // EXT_float_blend
     // Assume all desktop driver supports this by default.
     extensions->floatBlend = functions->standard == STANDARD_GL_DESKTOP ||
-                             functions->hasGLESExtension("GL_EXT_float_blend");
+                             functions->hasGLESExtension("GL_EXT_float_blend") ||
+                             functions->isAtLeastGLES(gl::Version(3, 2));
 
     // ANGLE_base_vertex_base_instance
     extensions->baseVertexBaseInstance =

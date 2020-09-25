@@ -1448,6 +1448,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTBlendMinMax.cpp
         html/canvas/EXTColorBufferFloat.cpp
         html/canvas/EXTColorBufferHalfFloat.cpp
+        html/canvas/EXTFloatBlend.cpp
         html/canvas/EXTFragDepth.cpp
         html/canvas/EXTShaderTextureLOD.cpp
         html/canvas/EXTTextureFilterAnisotropic.cpp
@@ -1504,6 +1505,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTBlendMinMax.idl
     html/canvas/EXTColorBufferFloat.idl
     html/canvas/EXTColorBufferHalfFloat.idl
+    html/canvas/EXTFloatBlend.idl
     html/canvas/EXTFragDepth.idl
     html/canvas/EXTShaderTextureLOD.idl
     html/canvas/EXTTextureFilterAnisotropic.idl

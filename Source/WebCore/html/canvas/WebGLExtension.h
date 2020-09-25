@@ -63,6 +63,7 @@ public:
         WebGLCompressedTextureASTCName,
         ANGLEInstancedArraysName,
         EXTColorBufferHalfFloatName,
+        EXTFloatBlendName,
         WebGLColorBufferFloatName,
         EXTColorBufferFloatName,
     };

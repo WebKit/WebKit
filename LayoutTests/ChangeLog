@@ -1,3 +1,14 @@
+2020-09-25  James Darpinian  <jdarpinian@chromium.org>
+
+        Support EXT_float_blend
+        https://bugs.webkit.org/show_bug.cgi?id=216949
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/conformance/extensions/ext-float-blend-expected.txt: Added.
+        * webgl/conformance/extensions/ext-float-blend.html: Added.
+        * webgl/resources/...: Added some support files.
+
 2020-09-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect width value is set for partially collapsible trailing space

@@ -31,6 +31,7 @@
 #include "CachedImage.h"
 #include "EXTColorBufferFloat.h"
 #include "EXTColorBufferHalfFloat.h"
+#include "EXTFloatBlend.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EventLoop.h"
 #include "ExtensionsGL.h"
@@ -2692,6 +2693,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", m_context->getExtensions().supports("GL_ANGLE_translated_shader_source"_s));
     ENABLE_IF_REQUESTED(EXTColorBufferFloat, m_extColorBufferFloat, "EXT_color_buffer_float", EXTColorBufferFloat::supported(*this));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*this));
+    ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend", EXTFloatBlend::supported(*this));
     return nullptr;
 }
 
@@ -2740,6 +2742,8 @@ Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         result.append("EXT_color_buffer_float"_s);
     if (EXTColorBufferHalfFloat::supported(*this))
         result.append("EXT_color_buffer_half_float"_s);
+    if (EXTFloatBlend::supported(*this))
+        result.append("EXT_float_blend"_s);
 
     return result;
 }

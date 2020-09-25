@@ -1,3 +1,36 @@
+2020-09-25  James Darpinian  <jdarpinian@chromium.org>
+
+        Support EXT_float_blend
+        https://bugs.webkit.org/show_bug.cgi?id=216949
+
+        Reviewed by Kenneth Russell.
+
+        Test: webgl/conformance/extensions/ext-float-blend.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/EXTFloatBlend.cpp: Added.
+        (WebCore::EXTFloatBlend::EXTFloatBlend):
+        (WebCore::EXTFloatBlend::getName const):
+        (WebCore::EXTFloatBlend::supported):
+        * html/canvas/EXTFloatBlend.h: Added.
+        * html/canvas/EXTFloatBlend.idl: Added.
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        (WebCore::WebGLRenderingContextBase::loseExtensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-09-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect width value is set for partially collapsible trailing space

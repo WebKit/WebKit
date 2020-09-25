@@ -37,6 +37,7 @@
 #include "EXTBlendMinMax.h"
 #include "EXTColorBufferFloat.h"
 #include "EXTColorBufferHalfFloat.h"
+#include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
@@ -3736,6 +3737,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_webglDrawBuffers, "WEBGL_draw_buffers");
     CHECK_EXTENSION(m_angleInstancedArrays, "ANGLE_instanced_arrays");
     CHECK_EXTENSION(m_extColorBufferHalfFloat, "EXT_color_buffer_half_float");
+    CHECK_EXTENSION(m_extFloatBlend, "EXT_float_blend");
     CHECK_EXTENSION(m_webglColorBufferFloat, "WEBGL_color_buffer_float");
     CHECK_EXTENSION(m_extColorBufferFloat, "EXT_color_buffer_float");
     return false;
@@ -7802,6 +7804,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_webglDrawBuffers);
     LOSE_EXTENSION(m_angleInstancedArrays);
     LOSE_EXTENSION(m_extColorBufferHalfFloat);
+    LOSE_EXTENSION(m_extFloatBlend);
     LOSE_EXTENSION(m_webglColorBufferFloat);
     LOSE_EXTENSION(m_extColorBufferFloat);
 }

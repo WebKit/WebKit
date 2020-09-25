@@ -71,6 +71,7 @@ class ANGLEInstancedArrays;
 class EXTBlendMinMax;
 class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
+class EXTFloatBlend;
 class EXTTextureFilterAnisotropic;
 class EXTShaderTextureLOD;
 class EXTsRGB;
@@ -690,6 +691,7 @@ protected:
     RefPtr<WebGLDrawBuffers> m_webglDrawBuffers;
     RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
+    RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
     RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
 

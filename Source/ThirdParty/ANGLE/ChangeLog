@@ -1,3 +1,13 @@
+2020-09-25  James Darpinian  <jdarpinian@chromium.org>
+
+        Support EXT_float_blend
+        https://bugs.webkit.org/show_bug.cgi?id=216949
+
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::GenerateCaps):
+
 2020-09-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION: Textures Fail to Render in WebGL from HLS Stream [iOS 14]

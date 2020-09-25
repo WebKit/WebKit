@@ -33,6 +33,7 @@
 #include "JSEXTBlendMinMax.h"
 #include "JSEXTColorBufferFloat.h"
 #include "JSEXTColorBufferHalfFloat.h"
+#include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureFilterAnisotropic.h"
@@ -217,6 +218,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<ANGLEInstancedArrays&>(extension));
     case WebGLExtension::EXTColorBufferHalfFloatName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTColorBufferHalfFloat&>(extension));
+    case WebGLExtension::EXTFloatBlendName:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTFloatBlend&>(extension));
     case WebGLExtension::WebGLColorBufferFloatName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLColorBufferFloat&>(extension));
     case WebGLExtension::EXTColorBufferFloatName:
