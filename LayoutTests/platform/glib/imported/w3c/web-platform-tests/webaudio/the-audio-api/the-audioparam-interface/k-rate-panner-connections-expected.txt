@@ -9,13 +9,13 @@ PASS Executing "Listener z"
 PASS Audit report 
 PASS > [Panner x] k-rate input 
 PASS   Panner: positionX: Expected output channel 0 is not constantly 0.017871391028165817 (contains 512 different values). 
-PASS   positionX: Expected output channel 1 is not constantly 0.036486219614744186 (contains 512 different values). 
+PASS   positionX: Expected output channel 1 is not constantly 0.03648622706532478 (contains 512 different values). 
 PASS   Panner: positionX: Channel 0 output[0, 127] contains only the constant 0.017871391028165817. 
 PASS   Panner: positionX: Channel 0 output[128, 255] contains only the constant 0.012888134457170963. 
 PASS   Panner: positionX: Channel 0 output[256, 383] contains only the constant 0.007589159067720175. 
 PASS   Panner: positionX: Channel 0 output[384, 511] contains only the constant 0.004646967630833387. 
-PASS   Panner: positionX: Channel 0 output[512, 639] contains only the constant 0.0030441570561379194. 
-PASS   Panner: positionX: Channel 1 output[0, 127] contains only the constant 0.036486219614744186. 
+PASS   Panner: positionX: Channel 0 output[512, 639] contains only the constant 0.0030441568233072758. 
+PASS   Panner: positionX: Channel 1 output[0, 127] contains only the constant 0.03648622706532478. 
 PASS   Panner: positionX: Channel 1 output[128, 255] contains only the constant 0.044254120439291. 
 PASS   Panner: positionX: Channel 1 output[256, 383] contains only the constant 0.04127275571227074. 
 PASS   Panner: positionX: Channel 1 output[384, 511] contains only the constant 0.03552864491939545. 
@@ -25,17 +25,17 @@ PASS   Panner: positionX: Actual output channel 1 equals [expected array] with a
 PASS < [Panner x] All assertions passed. (total 14 assertions) 
 PASS > [Panner y] k-rate input 
 PASS   Panner: positionY: Expected output channel 0 is not constantly 0.039904240518808365 (contains 512 different values). 
-PASS   positionY: Expected output channel 1 is not constantly 0.08146847039461136 (contains 512 different values). 
+PASS   positionY: Expected output channel 1 is not constantly 0.08146847784519196 (contains 512 different values). 
 PASS   Panner: positionY: Channel 0 output[0, 127] contains only the constant 0.039904240518808365. 
 PASS   Panner: positionY: Channel 0 output[128, 255] contains only the constant 0.030709920451045036. 
 PASS   Panner: positionY: Channel 0 output[256, 383] contains only the constant 0.02095188945531845. 
 PASS   Panner: positionY: Channel 0 output[384, 511] contains only the constant 0.01528366282582283. 
 PASS   Panner: positionY: Channel 0 output[512, 639] contains only the constant 0.011893529444932938. 
-PASS   Panner: positionY: Channel 1 output[0, 127] contains only the constant 0.08146847039461136. 
-PASS   Panner: positionY: Channel 1 output[128, 255] contains only the constant 0.06269735842943192. 
-PASS   Panner: positionY: Channel 1 output[256, 383] contains only the constant 0.042775362730026245. 
-PASS   Panner: positionY: Channel 1 output[384, 511] contains only the constant 0.031203117221593857. 
-PASS   Panner: positionY: Channel 1 output[512, 639] contains only the constant 0.0242818221449852. 
+PASS   Panner: positionY: Channel 1 output[0, 127] contains only the constant 0.08146847784519196. 
+PASS   Panner: positionY: Channel 1 output[128, 255] contains only the constant 0.06269736588001251. 
+PASS   Panner: positionY: Channel 1 output[256, 383] contains only the constant 0.042775366455316544. 
+PASS   Panner: positionY: Channel 1 output[384, 511] contains only the constant 0.031203120946884155. 
+PASS   Panner: positionY: Channel 1 output[512, 639] contains only the constant 0.024281825870275497. 
 PASS   Panner: positionY: Actual output channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Panner: positionY: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Panner y] All assertions passed. (total 14 assertions) 
@@ -50,7 +50,7 @@ PASS   Panner: positionZ: Channel 0 output[512, 639] contains only the constant 
 PASS   Panner: positionZ: Channel 1 output[0, 127] contains only the constant 0.0541204996407032. 
 PASS   Panner: positionZ: Channel 1 output[128, 255] contains only the constant 0.03781212866306305. 
 PASS   Panner: positionZ: Channel 1 output[256, 383] contains only the constant 0.031430669128894806. 
-PASS   Panner: positionZ: Channel 1 output[384, 511] contains only the constant 0.025715911760926247. 
+PASS   Panner: positionZ: Channel 1 output[384, 511] contains only the constant 0.025715915486216545. 
 PASS   Panner: positionZ: Channel 1 output[512, 639] contains only the constant 0.021292630583047867. 
 PASS   Panner: positionZ: Actual output channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS   Panner: positionZ: Actual output channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
@@ -68,16 +68,16 @@ PASS   Listener: positionX: Channel 1 output[384, 511] contains only the constan
 PASS   Listener: positionX: Channel 1 output[512, 639] contains only the constant 0.0074769556522369385. 
 PASS < [Listener x] All assertions passed. (total 10 assertions) 
 PASS > [Listener y] k-rate input 
-PASS   Listener: positionY: Channel 0 output[0, 127] contains only the constant 0.016606438905000687. 
+PASS   Listener: positionY: Channel 0 output[0, 127] contains only the constant 0.016606437042355537. 
 PASS   Listener: positionY: Channel 0 output[128, 255] contains only the constant 0.02337583154439926. 
-PASS   Listener: positionY: Channel 0 output[256, 383] contains only the constant 0.03255589306354523. 
+PASS   Listener: positionY: Channel 0 output[256, 383] contains only the constant 0.03255588933825493. 
 PASS   Listener: positionY: Channel 0 output[384, 511] contains only the constant 0.03216671943664551. 
-PASS   Listener: positionY: Channel 0 output[512, 639] contains only the constant 0.02294781245291233. 
-PASS   Listener: positionY: Channel 1 output[0, 127] contains only the constant 0.04241393506526947. 
-PASS   Listener: positionY: Channel 1 output[128, 255] contains only the constant 0.059703413397073746. 
-PASS   Listener: positionY: Channel 1 output[256, 383] contains only the constant 0.08314989507198334. 
-PASS   Listener: positionY: Channel 1 output[384, 511] contains only the constant 0.08215592056512833. 
-PASS   Listener: positionY: Channel 1 output[512, 639] contains only the constant 0.0586102232336998. 
+PASS   Listener: positionY: Channel 0 output[512, 639] contains only the constant 0.02294781059026718. 
+PASS   Listener: positionY: Channel 1 output[0, 127] contains only the constant 0.04241393879055977. 
+PASS   Listener: positionY: Channel 1 output[128, 255] contains only the constant 0.05970342084765434. 
+PASS   Listener: positionY: Channel 1 output[256, 383] contains only the constant 0.08314990252256393. 
+PASS   Listener: positionY: Channel 1 output[384, 511] contains only the constant 0.08215592801570892. 
+PASS   Listener: positionY: Channel 1 output[512, 639] contains only the constant 0.058610230684280396. 
 PASS < [Listener y] All assertions passed. (total 10 assertions) 
 PASS > [Listener z] k-rate input 
 PASS   Listener: positionZ: Channel 0 output[0, 127] contains only the constant 0.016306867823004723. 

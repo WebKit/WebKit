@@ -1,3 +1,19 @@
+2020-09-24  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Rebaseline and unify some expectations after r267551
+
+        Unreviewed test gardening.
+
+        This one was missing from previous mathml gardening:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-style-001.tentative-expected.txt:
+
+        After r267551:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt: Removed.
+
 2020-09-24  Keith Miller  <keith_miller@apple.com>
 
         CSS angle unit conversions should consistently use the same associativity

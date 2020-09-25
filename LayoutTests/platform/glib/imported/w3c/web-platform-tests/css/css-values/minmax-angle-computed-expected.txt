@@ -1,34 +1,34 @@
 
-PASS Property transform value 'rotate(min(1deg))' computes to 'matrix(0.9998476951563913, 0.01745240643728351, -0.01745240643728351, 0.9998476951563913, 0, 0)' 
-PASS Property transform value 'rotate(min(1grad))' computes to 'matrix(0.9998766324816606, 0.015707317311820675, -0.015707317311820675, 0.9998766324816606, 0, 0)' 
-PASS Property transform value 'rotate(min(1rad))' computes to 'matrix(0.5403023058681398, 0.8414709848078965, -0.8414709848078965, 0.5403023058681398, 0, 0)' 
-PASS Property transform value 'rotate(min(1turn))' computes to 'matrix(1, -2.4492935982947064e-16, 2.4492935982947064e-16, 1, 0, 0)' 
-PASS Property transform value 'rotate(max(1deg))' computes to 'matrix(0.9998476951563913, 0.01745240643728351, -0.01745240643728351, 0.9998476951563913, 0, 0)' 
-PASS Property transform value 'rotate(max(1grad))' computes to 'matrix(0.9998766324816606, 0.015707317311820675, -0.015707317311820675, 0.9998766324816606, 0, 0)' 
-PASS Property transform value 'rotate(max(1rad))' computes to 'matrix(0.5403023058681398, 0.8414709848078965, -0.8414709848078965, 0.5403023058681398, 0, 0)' 
-PASS Property transform value 'rotate(max(1turn))' computes to 'matrix(1, -2.4492935982947064e-16, 2.4492935982947064e-16, 1, 0, 0)' 
-PASS Property transform value 'rotate(min(1deg, 2deg))' computes to 'matrix(0.9998476951563913, 0.01745240643728351, -0.01745240643728351, 0.9998476951563913, 0, 0)' 
-PASS Property transform value 'rotate(min(1grad, 2grad))' computes to 'matrix(0.9998766324816606, 0.015707317311820675, -0.015707317311820675, 0.9998766324816606, 0, 0)' 
-PASS Property transform value 'rotate(min(1rad, 2rad))' computes to 'matrix(0.5403023058681398, 0.8414709848078965, -0.8414709848078965, 0.5403023058681398, 0, 0)' 
-PASS Property transform value 'rotate(min(1turn, 2turn))' computes to 'matrix(1, -2.4492935982947064e-16, 2.4492935982947064e-16, 1, 0, 0)' 
-PASS Property transform value 'rotate(max(1deg, 2deg))' computes to 'matrix(0.9993908270190958, 0.03489949670250097, -0.03489949670250097, 0.9993908270190958, 0, 0)' 
-PASS Property transform value 'rotate(max(1grad, 2grad))' computes to 'matrix(0.9995065603657316, 0.03141075907812829, -0.03141075907812829, 0.9995065603657316, 0, 0)' 
-PASS Property transform value 'rotate(max(1rad, 2rad))' computes to 'matrix(-0.4161468365471424, 0.9092974268256817, -0.9092974268256817, -0.4161468365471424, 0, 0)' 
-PASS Property transform value 'rotate(max(1turn, 2turn))' computes to 'matrix(1, -4.898587196589413e-16, 4.898587196589413e-16, 1, 0, 0)' 
-PASS Property transform value 'rotate(min(90deg, 0.26turn))' computes to 'matrix(6.123233995736766e-17, 1, -1, 6.123233995736766e-17, 0, 0)' 
-FAIL Property transform value 'rotate(min(1.57rad, 95deg))' computes to 'matrix(0.0007963267107332633, 0.9999996829318346, -0.9999996829318346, 0.0007963267107332633, 0, 0)' assert_equals: expected "matrix(0.0007963267107332633, 0.9999996829318346, -0.9999996829318346, 0.0007963267107332633, 0, 0)" but got "matrix(0.0007963267107334854, 0.9999996829318346, -0.9999996829318346, 0.0007963267107334854, 0, 0)"
-PASS Property transform value 'rotate(max(91deg, 0.25turn))' computes to 'matrix(-0.017452406437283477, 0.9998476951563913, -0.9998476951563913, -0.017452406437283477, 0, 0)' 
-PASS Property transform value 'rotate(max(1.58rad, 90deg))' computes to 'matrix(-0.009203543268808559, 0.9999576464987401, -0.9999576464987401, -0.009203543268808559, 0, 0)' 
-FAIL Property transform value 'rotate(min(270deg, max(0.25turn, 3.14rad)))' computes to 'matrix(-0.9999987317275395, 0.0015926529164868282, -0.0015926529164868282, -0.9999987317275395, 0, 0)' assert_equals: expected "matrix(-0.9999987317275395, 0.0015926529164868282, -0.0015926529164868282, -0.9999987317275395, 0, 0)" but got "matrix(-0.9999987317275395, 0.0015926529164872723, -0.0015926529164872723, -0.9999987317275395, 0, 0)"
-FAIL Property transform value 'rotate(max(0.25turn, min(270deg, 3.14rad)))' computes to 'matrix(-0.9999987317275395, 0.0015926529164868282, -0.0015926529164868282, -0.9999987317275395, 0, 0)' assert_equals: expected "matrix(-0.9999987317275395, 0.0015926529164868282, -0.0015926529164868282, -0.9999987317275395, 0, 0)" but got "matrix(-0.9999987317275395, 0.0015926529164872723, -0.0015926529164872723, -0.9999987317275395, 0, 0)"
-PASS Property transform value 'rotate(calc(min(90deg, 1.58rad) + 0.25turn))' computes to 'matrix(-1, 1.2246467991473532e-16, -1.2246467991473532e-16, -1, 0, 0)' 
-PASS Property transform value 'rotate(calc(min(90deg, 1.58rad) - 0.125turn))' computes to 'matrix(0.7071067811865476, 0.7071067811865475, -0.7071067811865475, 0.7071067811865476, 0, 0)' 
-PASS Property transform value 'rotate(calc(min(90deg, 1.58rad) * 2)' computes to 'matrix(-1, 1.2246467991473532e-16, -1.2246467991473532e-16, -1, 0, 0)' 
-PASS Property transform value 'rotate(calc(min(90deg, 1.58rad) / 2)' computes to 'matrix(0.7071067811865476, 0.7071067811865475, -0.7071067811865475, 0.7071067811865476, 0, 0)' 
-PASS Property transform value 'rotate(calc(max(90deg, 1.56rad) + 0.25turn))' computes to 'matrix(-1, 1.2246467991473532e-16, -1.2246467991473532e-16, -1, 0, 0)' 
-PASS Property transform value 'rotate(calc(max(90deg, 1.56rad) - 0.125turn))' computes to 'matrix(0.7071067811865476, 0.7071067811865475, -0.7071067811865475, 0.7071067811865476, 0, 0)' 
-PASS Property transform value 'rotate(calc(max(90deg, 1.56rad) * 2)' computes to 'matrix(-1, 1.2246467991473532e-16, -1.2246467991473532e-16, -1, 0, 0)' 
-PASS Property transform value 'rotate(calc(max(90deg, 1.56rad) / 2)' computes to 'matrix(0.7071067811865476, 0.7071067811865475, -0.7071067811865475, 0.7071067811865476, 0, 0)' 
-PASS Property transform value 'rotate(calc(min(90deg, 1.58rad) + max(0.25turn, 99grad)))' computes to 'matrix(-1, 1.2246467991473532e-16, -1.2246467991473532e-16, -1, 0, 0)' 
-PASS Property transform value 'rotate(calc(min(90deg, 1.58rad) - max(0.25turn, 99grad)))' computes to 'matrix(1, 0, 0, 1, 0, 0)' 
+PASS min(1deg) should be used-value-equivalent to 1deg 
+PASS min(1grad) should be used-value-equivalent to 1grad 
+PASS min(1rad) should be used-value-equivalent to 1rad 
+PASS min(1turn) should be used-value-equivalent to 1turn 
+PASS max(1deg) should be used-value-equivalent to 1deg 
+PASS max(1grad) should be used-value-equivalent to 1grad 
+PASS max(1rad) should be used-value-equivalent to 1rad 
+PASS max(1turn) should be used-value-equivalent to 1turn 
+PASS min(1deg, 2deg) should be used-value-equivalent to 1deg 
+PASS min(1grad, 2grad) should be used-value-equivalent to 1grad 
+PASS min(1rad, 2rad) should be used-value-equivalent to 1rad 
+PASS min(1turn, 2turn) should be used-value-equivalent to 1turn 
+PASS max(1deg, 2deg) should be used-value-equivalent to 2deg 
+PASS max(1grad, 2grad) should be used-value-equivalent to 2grad 
+PASS max(1rad, 2rad) should be used-value-equivalent to 2rad 
+PASS max(1turn, 2turn) should be used-value-equivalent to 2turn 
+PASS min(90deg, 0.26turn) should be used-value-equivalent to 90deg 
+PASS min(1.57rad, 95deg) should be used-value-equivalent to 1.57rad 
+PASS max(91deg, 0.25turn) should be used-value-equivalent to 91deg 
+PASS max(1.58rad, 90deg) should be used-value-equivalent to 1.58rad 
+PASS min(270deg, max(0.25turn, 3.14rad)) should be used-value-equivalent to 3.14rad 
+PASS max(0.25turn, min(270deg, 3.14rad)) should be used-value-equivalent to 3.14rad 
+PASS calc(min(90deg, 1.58rad) + 0.25turn) should be used-value-equivalent to 180deg 
+PASS calc(min(90deg, 1.58rad) - 0.125turn) should be used-value-equivalent to 45deg 
+PASS calc(min(90deg, 1.58rad) * 2 should be used-value-equivalent to 180deg 
+PASS calc(min(90deg, 1.58rad) / 2 should be used-value-equivalent to 45deg 
+PASS calc(max(90deg, 1.56rad) + 0.25turn) should be used-value-equivalent to 180deg 
+PASS calc(max(90deg, 1.56rad) - 0.125turn) should be used-value-equivalent to 45deg 
+PASS calc(max(90deg, 1.56rad) * 2 should be used-value-equivalent to 180deg 
+PASS calc(max(90deg, 1.56rad) / 2 should be used-value-equivalent to 45deg 
+PASS calc(min(90deg, 1.58rad) + max(0.25turn, 99grad)) should be used-value-equivalent to 180deg 
+PASS calc(min(90deg, 1.58rad) - max(0.25turn, 99grad)) should be used-value-equivalent to 0deg 
 
