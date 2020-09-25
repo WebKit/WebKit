@@ -1,3 +1,25 @@
+2020-09-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add helper functions to create LineBox::InlineBox objects for inline level boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=216957
+
+        Reviewed by Simon Fraser.
+
+        The overloaded LineBox::InlineBox constructors were representing different types of inline level boxes.
+        These new helper functions make it easier to figure out how to initiate LineBox::InlineBox objects depending on the type of
+        the inline level box.
+        This patch also removes an incorrect ASSERT on the inline box's height. It is okay to have a zero height inline box.  
+
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructInlineBoxes):
+        * layout/inlineformatting/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::m_baseline):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::createBoxForRootInlineBox):
+        (WebCore::Layout::LineBox::InlineBox::createBoxForAtomicInlineLevelBox):
+        (WebCore::Layout::LineBox::InlineBox::createBoxForInlineBox):
+
 2020-09-24  Keith Miller  <keith_miller@apple.com>
 
         CSS angle unit conversions should consistently use the same associativity

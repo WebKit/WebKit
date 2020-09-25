@@ -32,13 +32,11 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::InlineBox::InlineBox(const Box& layoutBox, const InlineRect& rect, InlineLayoutUnit baseline)
+LineBox::InlineBox::InlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, InlineLayoutUnit baseline)
     : m_layoutBox(makeWeakPtr(layoutBox))
-    , m_logicalRect(rect)
+    , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_baseline(baseline)
-    , m_isEmpty(false)
 {
-    ASSERT(rect.height());
 }
 
 LineBox::InlineBox::InlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)

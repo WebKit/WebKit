@@ -57,12 +57,14 @@ class LineBoxBuilder;
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    // FIXME: This name is in conflict with the actual inline box term: inline level box whose contents participate in this IFC.
+    // This class represents a rectangle on the line (initiated by an inline level box) with some additional attributes like baseline, descent etc.
     struct InlineBox {
         WTF_MAKE_ISO_ALLOCATED_INLINE(InlineBox);
     public:
-        InlineBox(const Box&, const InlineRect&, InlineLayoutUnit baseline);
-        InlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        InlineBox() = default;
+        static std::unique_ptr<LineBox::InlineBox> createBoxForRootInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        static std::unique_ptr<LineBox::InlineBox> createBoxForAtomicInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, InlineLayoutUnit baseline);
+        static std::unique_ptr<LineBox::InlineBox> createBoxForInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
 
         const InlineRect& logicalRect() const { return m_logicalRect; }
         InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }
@@ -81,6 +83,10 @@ public:
         const FontMetrics& fontMetrics() const { return layoutBox().style().fontMetrics(); }
         const Box& layoutBox() const { return *m_layoutBox; }
 
+        InlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, InlineLayoutUnit baseline);
+        InlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        InlineBox() = default;
+
     private:
         friend class LineBoxBuilder;
 
@@ -91,6 +97,7 @@ public:
         void setDescent(InlineLayoutUnit descent) { m_descent = descent; }
         void setLineSpacing(InlineLayoutUnit lineSpacing) { m_lineSpacing = lineSpacing; }
 
+    private:
         WeakPtr<const Box> m_layoutBox;
         InlineRect m_logicalRect;
         InlineLayoutUnit m_baseline { 0 };
@@ -141,6 +148,21 @@ private:
 
     HashMap<const Box*, InlineBox*> m_inlineBoxRectMap;
 };
+
+inline std::unique_ptr<LineBox::InlineBox> LineBox::InlineBox::createBoxForRootInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+{
+    return makeUnique<LineBox::InlineBox>(layoutBox, logicalLeft, logicalWidth);
+}
+
+inline std::unique_ptr<LineBox::InlineBox> LineBox::InlineBox::createBoxForAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, InlineLayoutUnit baseline)
+{
+    return makeUnique<LineBox::InlineBox>(layoutBox, logicalLeft, logicalSize, baseline);
+}
+
+inline std::unique_ptr<LineBox::InlineBox> LineBox::InlineBox::createBoxForInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+{
+    return makeUnique<LineBox::InlineBox>(layoutBox, logicalLeft, logicalWidth);
+}
 
 }
 }

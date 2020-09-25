@@ -179,9 +179,9 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
         if (auto lineSpacing = fontMetrics.lineSpacing() - logicalHeight)
             inlineBox.setLineSpacing(lineSpacing);
     };
-
+    auto horizontalAligmentOffset = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { });
     auto constructRootInlineBox = [&] {
-        auto rootInlineBox = makeUnique<LineBox::InlineBox>(rootBox(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineBox.logicalWidth());
+        auto rootInlineBox = LineBox::InlineBox::createBoxForRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
 
         auto lineHasImaginaryStrut = !layoutState().inQuirksMode();
         auto isInitiallyConsideredNonEmpty = !lineBox.isLineVisuallyEmpty() && lineHasImaginaryStrut;
@@ -215,7 +215,7 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
             }
             // Construct the missing LineBox::InlineBoxes starting with the topmost ancestor.
             for (auto* ancestor : WTF::makeReversedRange(ancestorsWithoutInlineBoxes)) {
-                auto inlineBox = makeUnique<LineBox::InlineBox>(*ancestor, lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineBox.logicalWidth());
+                auto inlineBox = LineBox::InlineBox::createBoxForInlineBox(*ancestor, horizontalAligmentOffset, lineBox.logicalWidth());
                 inlineBox->setIsNonEmpty();
                 adjustVerticalGeometryForNonEmptyInlineBox(*inlineBox);
                 lineBox.addInlineBox(WTFMove(inlineBox));
@@ -226,7 +226,7 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
     for (auto& run : runs) {
         auto& inlineLevelBox = run.layoutBox();
         if (run.isBox()) {
-            auto logicalLeft = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }) + run.logicalLeft();
+            auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(inlineLevelBox);
             auto logicalHeight = inlineLevelBoxGeometry.marginBoxHeight();
             auto baseline = logicalHeight;
@@ -248,13 +248,15 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
                 auto inlineBlockBaseline = lastLine.logicalTop() + lastLine.baseline();
                 baseline = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
             }
-            auto rect = InlineRect { { }, logicalLeft, run.logicalWidth(), logicalHeight };
-            lineBox.addInlineBox(makeUnique<LineBox::InlineBox>(inlineLevelBox, rect, baseline));
+            auto inlineBox = LineBox::InlineBox::createBoxForAtomicInlineLevelBox(inlineLevelBox, logicalLeft, { run.logicalWidth(), logicalHeight }, baseline);
+            if (logicalHeight)
+                inlineBox->setIsNonEmpty();
+            lineBox.addInlineBox(WTFMove(inlineBox));
         } else if (run.isContainerStart()) {
-            auto logicalLeft = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }) + run.logicalLeft();
+            auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
-            lineBox.addInlineBox(makeUnique<LineBox::InlineBox>(inlineLevelBox, logicalLeft, initialLogicalWidth));
+            lineBox.addInlineBox(LineBox::InlineBox::createBoxForInlineBox(inlineLevelBox, logicalLeft, initialLogicalWidth));
         } else if (run.isContainerEnd()) {
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = lineBox.inlineBoxForLayoutBox(inlineLevelBox);
