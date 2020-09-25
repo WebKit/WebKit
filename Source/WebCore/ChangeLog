@@ -1,3 +1,16 @@
+2020-09-25  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix WEBGL_compressed_texture_s3tc_srgb in WebGL 2
+        https://bugs.webkit.org/show_bug.cgi?id=216951
+
+        Reviewed by Kenneth Russell.
+
+        Tested by webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+
 2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging
