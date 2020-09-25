@@ -1,3 +1,15 @@
+2020-09-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Uncaught Exception: TypeError: null is not an object (evaluating 'this.listItemElement.classList')
+        https://bugs.webkit.org/show_bug.cgi?id=216307
+        <rdar://problem/68565824>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater.prototype._updateModifiedNodes):
+        Don't update the element if it hasn't been attached yet. It will use the latest data when attached.
+
 2020-09-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r267379): Web Inspector: Sources navigation sidebar is empty every other time it's selected

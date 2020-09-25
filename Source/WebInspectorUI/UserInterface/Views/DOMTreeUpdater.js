@@ -124,7 +124,7 @@ WI.DOMTreeUpdater.prototype = {
         this._recentlyDeletedNodes.forEach(markNodeParentForUpdate);
 
         for (let parentTreeElement of parentElementsToUpdate) {
-            if (parentTreeElement.treeOutline) {
+            if (parentTreeElement.treeOutline && parentTreeElement.listItemElement) {
                 parentTreeElement.updateTitle();
                 parentTreeElement.updateChildren();
             }
