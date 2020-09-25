@@ -1,3 +1,52 @@
+2020-09-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266813. rdar://problem/69582551
+
+    OutOfBoundsSaneChain operations should use their own heap locations
+    https://bugs.webkit.org/show_bug.cgi?id=216328
+    <rdar://problem/68568039>
+    
+    Reviewed by Keith Miller.
+    
+    JSTests:
+    
+    * stress/out-of-bounds-sane-chain-need-their-own-heap-location.js: Added.
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    There is code in local CSE that does some basic bounds check elimination
+    for PutByVal. It does this analysis by seeing if a particular heap location
+    is already defined, and if so, it eliminates the bounds check for the
+    PutByVal. This doesn't work for OutOfBoundsSaneChain for the obvious reason
+    that these GetByVals are not proven to be in bounds. So GetByVal's in the
+    OutOfBoundsSaneChain mode reusing non OutOfBoundsSaneChain heap locations
+    can lead to a bug where we mistakenly remove a bounds check. The fix is to
+    have all OutOfBoundsSaneChain operations use distinct heaps, and for CSE to
+    not query those heaps.
+    
+    * dfg/DFGArrayMode.h:
+    (JSC::DFG::ArrayMode::isAnySaneChain const): Deleted.
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGHeapLocation.cpp:
+    (WTF::printInternal):
+    * dfg/DFGHeapLocation.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266813 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-09  Saam Barati  <sbarati@apple.com>
+
+            OutOfBoundsSaneChain operations should use their own heap locations
+            https://bugs.webkit.org/show_bug.cgi?id=216328
+            <rdar://problem/68568039>
+
+            Reviewed by Keith Miller.
+
+            * stress/out-of-bounds-sane-chain-need-their-own-heap-location.js: Added.
+            (foo):
+
 2020-09-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266907. rdar://problem/69178126

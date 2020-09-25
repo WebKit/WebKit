@@ -142,16 +142,20 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("IndexedPropertyDoubleSaneChainLoc");
         return;
 
-    case IndexedPropertyDoubleOrOtherSaneChainLoc:
-        out.print("IndexedPropertyDoubleOrOtherSaneChainLoc");
+    case IndexedPropertyDoubleOutOfBoundsSaneChainLoc:
+        out.print("IndexedPropertyDoubleOutOfBoundsSaneChainLoc");
+        return;
+
+    case IndexedPropertyDoubleOrOtherOutOfBoundsSaneChainLoc:
+        out.print("IndexedPropertyDoubleOrOtherOutOfBoundsSaneChainLoc");
         return;
 
     case IndexedPropertyInt32Loc:
         out.print("IndexedPropertyInt32Loc");
         return;
 
-    case IndexedPropertyInt32OrOtherLoc:
-        out.print("IndexedPropertyInt32OrOtherLoc");
+    case IndexedPropertyInt32OutOfBoundsSaneChainLoc:
+        out.print("IndexedPropertyInt32OutOfBoundsSaneChainLoc");
         return;
 
     case IndexedPropertyInt52Loc:
@@ -160,6 +164,10 @@ void printInternal(PrintStream& out, LocationKind kind)
 
     case IndexedPropertyJSLoc:
         out.print("IndexedPropertyJSLoc");
+        return;
+
+    case IndexedPropertyJSOutOfBoundsSaneChainLoc:
+        out.print("IndexedPropertyJSOutOfBoundsSaneChainLoc");
         return;
 
     case IndexedPropertyStorageLoc:
