@@ -1,5 +1,18 @@
 2020-09-24  Ross Kirsling  <ross.kirsling@sony.com>
 
+        %TypedArray%.prototype.sort must throw if comparator is defined and uncallable
+        https://bugs.webkit.org/show_bug.cgi?id=216952
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/typedarray-sort.js:
+        Fix test.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
+2020-09-24  Ross Kirsling  <ross.kirsling@sony.com>
+
         %TypedArray%.prototype.{map, filter} should perform TypedArraySpeciesCreate correctly
         https://bugs.webkit.org/show_bug.cgi?id=216938
 

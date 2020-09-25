@@ -1251,9 +1251,6 @@ test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-same-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/sort/comparefn-nonfunction-call-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/toLocaleString/calls-tostring-from-each-value.js:
   default: 'Test262Error: should not call valueOf if toString is present (Testing with Float64Array.)'
   strict mode: 'Test262Error: should not call valueOf if toString is present (Testing with Float64Array.)'

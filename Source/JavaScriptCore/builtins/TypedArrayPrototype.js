@@ -217,16 +217,18 @@ function sort(comparator)
         }
     }
 
-    var length = @typedArrayLength(this);
+    if (comparator !== @undefined && !@isCallable(comparator))
+        @throwTypeError("TypedArray.prototype.sort requires the comparator argument to be a function or undefined");
 
+    var length = @typedArrayLength(this);
     if (length < 2)
         return;
 
-    if (@isCallable(comparator))
+    if (comparator !== @undefined)
         mergeSort(this, length, comparator);
     else
         @typedArraySort(this);
-    
+
     return this;
 }
 

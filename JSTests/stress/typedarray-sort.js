@@ -49,9 +49,9 @@ shouldThrow("testPrototypeFunction('sort', '(compareException)', [12, 15, 10, 13
 debug("");
 
 debug("4.0 Wrong Type for Callback Test");
-shouldBeTrue("testPrototypeFunction('sort', '(8)', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
-shouldBeTrue("testPrototypeFunction('sort', '(\"wrong\")', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
-shouldBeTrue("testPrototypeFunction('sort', '(new Object())', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
-shouldBeTrue("testPrototypeFunction('sort', '(null)', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
+shouldThrow("testPrototypeFunction('sort', '(8)', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
+shouldThrow("testPrototypeFunction('sort', '(\"wrong\")', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
+shouldThrow("testPrototypeFunction('sort', '(new Object())', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
+shouldThrow("testPrototypeFunction('sort', '(null)', [12, 15, 10, 13, 44], [10, 12, 13, 15, 44])");
 debug("");
 finishJSTest();
