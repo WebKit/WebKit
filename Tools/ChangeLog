@@ -1,3 +1,10 @@
+2020-09-25  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed dashboard fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS14Device.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/IOS14Device@2x.png: Removed.
+
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
         Add an experimental feature flag for CSS individual transform properties
