@@ -316,7 +316,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     // Any non-whitespace, no-trimmable content resets the existing trimmable.
     m_trimmableTrailingContent.reset();
     if (!formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing() && !inlineTextItem.isWhitespace() && inlineTextItem.style().letterSpacing() > 0)
-        m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, logicalWidth);
+        m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, inlineTextItem.style().letterSpacing());
 }
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)

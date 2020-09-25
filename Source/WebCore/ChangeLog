@@ -1,3 +1,17 @@
+2020-09-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect width value is set for partially collapsible trailing space
+        https://bugs.webkit.org/show_bug.cgi?id=216990
+
+        Reviewed by Simon Fraser.
+
+        Use the letter-spacing value as the collapsible space.
+
+        Test: fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendTextContent):
+
 2020-09-25  James Darpinian  <jdarpinian@chromium.org>
 
         Fix WEBGL_compressed_texture_s3tc_srgb in WebGL 2
