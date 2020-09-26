@@ -1,3 +1,17 @@
+2020-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop AudioNode::lazyInitialize()
+        https://bugs.webkit.org/show_bug.cgi?id=217004
+
+        Reviewed by Darin Adler.
+
+        Drop AudioNode::lazyInitialize(), this is dead code.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::lazyInitialize): Deleted.
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::isInitialized const):
+
 2020-09-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for <wbr>

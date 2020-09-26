@@ -141,12 +141,6 @@ void AudioNode::uninitialize()
     m_isInitialized = false;
 }
 
-void AudioNode::lazyInitialize()
-{
-    if (!isInitialized())
-        initialize();
-}
-
 void AudioNode::addInput()
 {
     ASSERT(isMainThread());
