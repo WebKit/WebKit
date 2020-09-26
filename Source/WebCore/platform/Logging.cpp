@@ -90,6 +90,7 @@ void initializeLogChannelsIfNecessary(Optional<String> logChannelString)
 
     String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
+    LogCompositing.state = WTFLogChannelState::On;
 }
 
 WTFLogChannel* getLogChannel(const String& name)

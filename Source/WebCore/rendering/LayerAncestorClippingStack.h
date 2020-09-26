@@ -77,6 +77,8 @@ public:
     
     bool equalToClipData(const Vector<CompositedClipData>&) const;
     bool updateWithClipData(ScrollingCoordinator*, Vector<CompositedClipData>&&);
+    
+    Vector<CompositedClipData> compositedClipData() const;
 
     void clear(ScrollingCoordinator*);
     void detachFromScrollingCoordinator(ScrollingCoordinator&);
@@ -86,9 +88,7 @@ public:
     GraphicsLayer* firstClippingLayer() const;
     GraphicsLayer* lastClippingLayer() const;
     ScrollingNodeID lastOverflowScrollProxyNodeID() const;
-    
-    bool update(LayerAncestorClippingStack&&);
-    
+
     struct ClippingStackEntry {
         CompositedClipData clipData;
         ScrollingNodeID overflowScrollProxyNodeID { 0 }; // The node for repositioning the scrolling proxy layer.
