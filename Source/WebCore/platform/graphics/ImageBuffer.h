@@ -38,12 +38,6 @@ class DrawingContext;
 
 class ImageBuffer {
 public:
-    struct SerializationState {
-        bool originClean { false };
-        bool premultiplyAlpha { false };
-        bool forciblyPremultiplyAlpha { false };
-    };
-
     // Will return a null pointer on allocation failure.
     WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, ShouldAccelerate, ShouldUseDisplayList, RenderingPurpose, float resolutionScale = 1, ColorSpace = ColorSpace::SRGB, const HostWindow* = nullptr);
     WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale = 1, ColorSpace = ColorSpace::SRGB, const HostWindow* = nullptr);

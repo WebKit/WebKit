@@ -1194,6 +1194,7 @@ html/HTMLVideoElement.cpp
 html/HTMLWBRElement.cpp
 html/HiddenInputType.cpp
 html/ImageBitmap.cpp
+html/ImageBitmapBacking.cpp
 html/ImageData.cpp
 html/ImageDocument.cpp
 html/ImageInputType.cpp

@@ -1,3 +1,62 @@
+2020-09-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Move SerializationState from ImageBuffer to ImageBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=216565
+
+        Reviewed by Kenneth Russell.
+
+        Introduce ImageBitmapBacking and make it a member of ImageBitmap. It
+        represents the backing store of an ImageBitmap. Currently it encapsulates
+        an ImageBuffer and the new enum SerializationState. In the future, it can
+        be extended to encapsulate either a texture or an ImageBuffer.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImageBitmap):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readTransferredImageBitmap):
+        (WebCore::CloneDeserializer::readImageBitmap):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::computeMemoryCost const):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::create):
+        (WebCore::ImageBitmap::detachBitmaps):
+        (WebCore::ImageBitmap::resolveWithBlankImageBuffer):
+        (WebCore::ImageBitmap::createPromise):
+        (WebCore::ImageBitmap::createFromBuffer):
+        (WebCore::ImageBitmap::ImageBitmap):
+        (WebCore::ImageBitmap::takeImageBitmapBacking):
+        (WebCore::ImageBitmap::takeImageBuffer):
+        (WebCore::ImageBitmap::width const): Deleted.
+        (WebCore::ImageBitmap::height const): Deleted.
+        (WebCore::ImageBitmap::close): Deleted.
+        (WebCore::ImageBitmap::transferOwnershipAndClose): Deleted.
+        * html/ImageBitmap.h:
+        * html/ImageBitmapBacking.cpp: Added.
+        (WebCore::ImageBitmapBacking::ImageBitmapBacking):
+        (WebCore::ImageBitmapBacking::buffer const):
+        (WebCore::ImageBitmapBacking::takeImageBuffer):
+        (WebCore::ImageBitmapBacking::width const):
+        (WebCore::ImageBitmapBacking::height const):
+        * html/ImageBitmapBacking.h: Added.
+        (WebCore::ImageBitmapBacking::originClean const):
+        (WebCore::ImageBitmapBacking::premultiplyAlpha const):
+        (WebCore::ImageBitmapBacking::forciblyPremultiplyAlpha const):
+        (WebCore::ImageBitmapBacking::serializationState const):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::transferToImageBitmap):
+        * html/canvas/ImageBitmapRenderingContext.cpp:
+        (WebCore::ImageBitmapRenderingContext::setOutputBitmap):
+        * platform/graphics/ImageBuffer.h:
+        (): Deleted.
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         visibilitychange:hidden doesn't fire during page navigations

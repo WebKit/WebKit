@@ -250,13 +250,13 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { RefPtr<ImageBitmap> { nullptr } };
 
         if (!m_hasCreatedImageBuffer)
-            return { ImageBitmap::create({ ImageBuffer::create(size(), RenderingMode::Unaccelerated), ImageBuffer::SerializationState { true, false, false }}) };
+            return { ImageBitmap::create(ImageBitmapBacking(ImageBuffer::create(size(), RenderingMode::Unaccelerated))) };
 
         auto buffer = takeImageBuffer();
         if (!buffer)
             return { RefPtr<ImageBitmap> { nullptr } };
 
-        return { ImageBitmap::create({ WTFMove(buffer), ImageBuffer::SerializationState { originClean(), false, false }}) };
+        return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer), originClean() ? SerializationState::OriginClean : SerializationState())) };
     }
 
 #if ENABLE(WEBGL)

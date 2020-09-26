@@ -26,7 +26,7 @@
 #pragma once
 
 #include "IDLTypes.h"
-#include "ImageBuffer.h"
+#include "ImageBitmapBacking.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
@@ -83,38 +83,34 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
     static Ref<ImageBitmap> create(IntSize);
-    static Ref<ImageBitmap> create(std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>&&);
+    static Ref<ImageBitmap> create(Optional<ImageBitmapBacking>&&);
 
     ~ImageBitmap();
 
-    unsigned width() const;
-    unsigned height() const;
-    void close();
+    ImageBuffer* buffer() const { return m_backingStore ? m_backingStore->buffer() : nullptr; }
+    // This function has the implicit side-effect of detaching the backing store.
+    // It returns nullptr if the ImageBitmap's already detached.
+    std::unique_ptr<ImageBuffer> takeImageBuffer();
+    OptionSet<SerializationState> serializationState() const { return m_backingStore ? m_backingStore->serializationState() : SerializationState(); }
 
-    bool isDetached() const { return m_detached; }
+    unsigned width() const { return m_backingStore ? m_backingStore->width() : 0; }
+    unsigned height() const { return m_backingStore ? m_backingStore->height() : 0; }
 
-    ImageBuffer* buffer() { return m_bitmapData.get(); }
+    bool originClean() const { return m_backingStore && m_backingStore->originClean(); }
+    bool premultiplyAlpha() const { return m_backingStore && m_backingStore->premultiplyAlpha(); }
+    bool forciblyPremultiplyAlpha() const { return m_backingStore && m_backingStore->forciblyPremultiplyAlpha(); }
 
-    bool originClean() const { return m_originClean; }
+    Optional<ImageBitmapBacking> takeImageBitmapBacking();
+    bool isDetached() const { return !m_backingStore.hasValue(); }
+    void close() { takeImageBitmapBacking(); }
 
-    bool premultiplyAlpha() const { return m_premultiplyAlpha; }
-
-    // When WebGL consumes an Image coming from an ImageBitmap's ImageBuffer, it typically honors
-    // the alpha mode of that native image - CGImageAlphaInfo in the Core Graphics backend. For
-    // ImageBitmaps created from ImageBitmaps, this information is not accurate, and callers must be
-    // told to ignore the alpha mode, and forcibly premultiply the alpha channel.
-    bool forciblyPremultiplyAlpha() const { return m_forciblyPremultiplyAlpha; }
-
-    std::unique_ptr<ImageBuffer> transferOwnershipAndClose();
-
-    static Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
+    static Vector<Optional<ImageBitmapBacking>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
 
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
 
-    static Ref<ImageBitmap> create(std::unique_ptr<ImageBuffer>&&);
-    ImageBitmap(std::unique_ptr<ImageBuffer>&&);
+    ImageBitmap(Optional<ImageBitmapBacking>&&);
 
     static void resolveWithBlankImageBuffer(bool originClean, Promise&&);
 
@@ -133,11 +129,7 @@ private:
     static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
     static void createFromBuffer(Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
 
-    std::unique_ptr<ImageBuffer> m_bitmapData;
-    bool m_detached { false };
-    bool m_originClean { true };
-    bool m_premultiplyAlpha { false };
-    bool m_forciblyPremultiplyAlpha { false };
+    Optional<ImageBitmapBacking> m_backingStore;
 };
 
 }

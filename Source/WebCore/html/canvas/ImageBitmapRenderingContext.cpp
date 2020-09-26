@@ -117,7 +117,7 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
         canvas()->setOriginClean();
     else
         canvas()->setOriginTainted();
-    canvas()->setImageBufferAndMarkDirty(imageBitmap->transferOwnershipAndClose());
+    canvas()->setImageBufferAndMarkDirty(imageBitmap->takeImageBuffer());
 }
 
 ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<ImageBitmap> imageBitmap)

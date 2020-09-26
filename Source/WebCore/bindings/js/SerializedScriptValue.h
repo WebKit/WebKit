@@ -27,7 +27,6 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "ImageBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Strong.h>
@@ -51,8 +50,8 @@ namespace WebCore {
 class DetachedOffscreenCanvas;
 #endif
 class IDBValue;
-class ImageBitmap;
 class MessagePort;
+class ImageBitmapBacking;
 class SharedBuffer;
 enum class SerializationReturnCode;
 
@@ -117,7 +116,7 @@ public:
 private:
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&);
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>);
-    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>>&& imageBuffers
+    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<Optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
 #endif
@@ -131,7 +130,7 @@ private:
     Vector<unsigned char> m_data;
     std::unique_ptr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     std::unique_ptr<ArrayBufferContentsArray> m_sharedBufferContentsArray;
-    Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>> m_imageBuffers;
+    Vector<Optional<ImageBitmapBacking>> m_backingStores;
 #if ENABLE(OFFSCREEN_CANVAS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
 #endif
