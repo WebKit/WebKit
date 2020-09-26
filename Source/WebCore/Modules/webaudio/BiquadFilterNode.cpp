@@ -38,8 +38,6 @@ ExceptionOr<Ref<BiquadFilterNode>> BiquadFilterNode::create(BaseAudioContext& co
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     auto node = adoptRef(*new BiquadFilterNode(context));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });

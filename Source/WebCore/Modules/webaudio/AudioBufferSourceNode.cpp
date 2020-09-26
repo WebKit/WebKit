@@ -70,8 +70,6 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     auto node = adoptRef(*new AudioBufferSourceNode(context));
 
     node->setBuffer(WTFMove(options.buffer));

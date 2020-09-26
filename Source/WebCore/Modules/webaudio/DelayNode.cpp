@@ -52,8 +52,6 @@ ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const D
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     if (options.maxDelayTime <= 0 || options.maxDelayTime >= maximumAllowedDelayTime)
         return Exception { NotSupportedError };
 

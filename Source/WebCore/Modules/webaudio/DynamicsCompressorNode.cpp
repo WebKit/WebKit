@@ -50,8 +50,6 @@ ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudi
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     auto node = adoptRef(*new DynamicsCompressorNode(context, options));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });

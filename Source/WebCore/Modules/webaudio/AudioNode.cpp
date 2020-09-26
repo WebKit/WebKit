@@ -114,6 +114,10 @@ AudioNode::AudioNode(BaseAudioContext& context, NodeType type)
         atexit(AudioNode::printNodeCounts);
     }
 #endif
+
+    // AudioDestinationNodes are not constructed by JS and should not cause lazy initialization.
+    if (type != NodeTypeDestination)
+        context.lazyInitialize();
 }
 
 AudioNode::~AudioNode()

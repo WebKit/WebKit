@@ -44,8 +44,6 @@ ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext
     if (context.isStopped())
         return Exception { InvalidStateError };
     
-    context.lazyInitialize();
-    
     auto node = adoptRef(*new ConstantSourceNode(context, options.offset));
     
     context.refNode(node);

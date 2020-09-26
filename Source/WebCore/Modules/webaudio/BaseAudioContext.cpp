@@ -229,6 +229,7 @@ void BaseAudioContext::lazyInitialize()
             ++s_hardwareContextCount;
         }
     }
+
     m_isInitialized = true;
 }
 

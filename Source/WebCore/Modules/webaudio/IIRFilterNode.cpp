@@ -87,8 +87,6 @@ ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& sc
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     if (!options.feedforward.size() || options.feedforward.size() > IIRFilter::maxOrder)
         return Exception { NotSupportedError, "feedforward array must have a length between 1 and 20"_s };
 

@@ -65,8 +65,6 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     if (options.type == OscillatorType::Custom && !options.periodicWave)
         return Exception { InvalidStateError, "Must provide periodicWave when using custom type."_s };
     

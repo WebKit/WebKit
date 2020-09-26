@@ -55,8 +55,6 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::creat
     if (options.mediaElement->audioSourceNode())
         return Exception { InvalidStateError, "Media element is already associated with an audio source node"_s };
 
-    context.lazyInitialize();
-
     auto node = adoptRef(*new MediaElementAudioSourceNode(context, *options.mediaElement));
 
     options.mediaElement->setAudioSourceNode(node.ptr());

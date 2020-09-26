@@ -40,8 +40,6 @@ ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, c
 {
     if (context.isStopped())
         return Exception { InvalidStateError };
-
-    context.lazyInitialize();
     
     auto analyser = adoptRef(*new AnalyserNode(context));
     

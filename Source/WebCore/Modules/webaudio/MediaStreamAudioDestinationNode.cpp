@@ -44,8 +44,6 @@ ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNod
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     auto node = adoptRef(*new MediaStreamAudioDestinationNode(context));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Explicit, ChannelInterpretation::Speakers });

@@ -60,8 +60,6 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     if (!providerTrack)
         return Exception { InvalidStateError, "Could not find an audio track with an audio source provider"_s };
 
-    context.lazyInitialize();
-
     auto node = adoptRef(*new MediaStreamAudioSourceNode(context, *options.mediaStream, *providerTrack));
     node->setFormat(2, context.sampleRate());
 

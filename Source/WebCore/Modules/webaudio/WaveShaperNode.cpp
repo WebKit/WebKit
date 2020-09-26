@@ -42,9 +42,6 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-    UNUSED_PARAM(options);
-
     RefPtr<Float32Array> curve;
     if (options.curve) {
         curve = Float32Array::tryCreate(options.curve->data(), options.curve->size());

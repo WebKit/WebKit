@@ -45,8 +45,6 @@ ExceptionOr<Ref<ChannelMergerNode>> ChannelMergerNode::create(BaseAudioContext& 
 {
     if (context.isStopped())
         return Exception { InvalidStateError };
-
-    context.lazyInitialize();
     
     if (options.numberOfInputs > AudioContext::maxNumberOfChannels() || !options.numberOfInputs)
         return Exception { IndexSizeError, "Number of inputs is not in the allowed range."_s };

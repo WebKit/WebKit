@@ -60,8 +60,6 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
     if (context.isStopped())
         return Exception { InvalidStateError };
 
-    context.lazyInitialize();
-
     auto panner = adoptRef(*new PannerNode(context, options));
 
     auto result = panner->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });

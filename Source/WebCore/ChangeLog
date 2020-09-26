@@ -1,3 +1,58 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Avoid having to call context.lazyInitialize() in every AudioNode factory function
+        https://bugs.webkit.org/show_bug.cgi?id=216989
+
+        Reviewed by Darin Adler.
+
+        Avoid having to call context.lazyInitialize() in every AudioNode factory function.
+        Replace all these calls with a single one inside the AudioNode constructor.
+
+        No new tests, no Web facing behavior change.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::create):
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::lazyInitialize):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::create):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        * Modules/webaudio/ConstantSourceNode.cpp:
+        (WebCore::ConstantSourceNode::create):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::create):
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::create):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::create):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::create):
+        * Modules/webaudio/IIRFilterNode.cpp:
+        (WebCore::IIRFilterNode::create):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::create):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::create):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::create):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::create):
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::create):
+        * Modules/webaudio/StereoPannerNode.cpp:
+        (WebCore::StereoPannerNode::create):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::create):
+
 2020-09-25  Lauro Moura  <lmoura@igalia.com>
 
         Use CMake 3.10 compatible list functions

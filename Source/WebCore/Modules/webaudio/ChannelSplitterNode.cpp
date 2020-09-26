@@ -41,8 +41,6 @@ ExceptionOr<Ref<ChannelSplitterNode>> ChannelSplitterNode::create(BaseAudioConte
 {
     if (context.isStopped())
         return Exception { InvalidStateError };
-
-    context.lazyInitialize();
     
     if (options.numberOfOutputs > AudioContext::maxNumberOfChannels() || !options.numberOfOutputs)
         return Exception { IndexSizeError, "Number of outputs is not in the allowed range"_s };
