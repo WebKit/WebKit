@@ -1,3 +1,14 @@
+2020-09-25  James Darpinian  <jdarpinian@chromium.org>
+
+        Support OES_fbo_render_mipmap
+        https://bugs.webkit.org/show_bug.cgi?id=217003
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/conformance/extensions/oes-fbo-render-mipmap-expected.txt: Added.
+        * webgl/conformance/extensions/oes-fbo-render-mipmap.html: Added.
+        * webgl/resources/webgl_test_files/conformance/extensions/oes-fbo-render-mipmap.html: Added.
+
 2020-09-25  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r266932): [ Catalina wk2 ] fast/scrolling/latching/latched-scroll-into-nonfast-region.html is a flaky failure

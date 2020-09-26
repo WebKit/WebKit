@@ -1,3 +1,34 @@
+2020-09-25  James Darpinian  <jdarpinian@chromium.org>
+
+        Support OES_fbo_render_mipmap
+        https://bugs.webkit.org/show_bug.cgi?id=217003
+
+        Reviewed by Kenneth Russell.
+
+        Test: webgl/conformance/extensions/oes-fbo-render-mipmap.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/OESFBORenderMipmap.cpp: Added.
+        (WebCore::OESFBORenderMipmap::OESFBORenderMipmap):
+        (WebCore::OESFBORenderMipmap::getName const):
+        (WebCore::OESFBORenderMipmap::supported):
+        * html/canvas/OESFBORenderMipmap.h: Added.
+        * html/canvas/OESFBORenderMipmap.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::framebufferTexture2D):
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        (WebCore::WebGLRenderingContextBase::loseExtensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-09-25  Tim Horton  <timothy_horton@apple.com>
 
         Crunchyroll playback controls do not work on iPad with trackpad

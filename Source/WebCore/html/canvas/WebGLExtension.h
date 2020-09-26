@@ -56,6 +56,7 @@ public:
         WebGLDepthTextureName,
         WebGLDrawBuffersName,
         OESElementIndexUintName,
+        OESFBORenderMipmapName,
         WebGLCompressedTextureATCName,
         WebGLCompressedTextureETCName,
         WebGLCompressedTextureETC1Name,

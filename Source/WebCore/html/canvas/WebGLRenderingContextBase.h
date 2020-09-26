@@ -86,6 +86,7 @@ class OESTextureHalfFloat;
 class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
 class OESElementIndexUint;
+class OESFBORenderMipmap;
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
 #endif
@@ -677,6 +678,7 @@ protected:
     RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
     RefPtr<OESElementIndexUint> m_oesElementIndexUint;
+    RefPtr<OESFBORenderMipmap> m_oesFBORenderMipmap;
     RefPtr<WebGLLoseContext> m_webglLoseContext;
     RefPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     RefPtr<WebGLDebugShaders> m_webglDebugShaders;

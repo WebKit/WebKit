@@ -1256,6 +1256,7 @@ html/canvas/EXTsRGB.cpp
 html/canvas/GPUBasedCanvasRenderingContext.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
 html/canvas/OESElementIndexUint.cpp
+html/canvas/OESFBORenderMipmap.cpp
 html/canvas/OESStandardDerivatives.cpp
 html/canvas/OESTextureFloat.cpp
 html/canvas/OESTextureFloatLinear.cpp
@@ -3133,6 +3134,7 @@ JSNotification.cpp
 JSNotificationPermission.cpp
 JSNotificationPermissionCallback.cpp
 JSOESElementIndexUint.cpp
+JSOESFBORenderMipmap.cpp
 JSOESStandardDerivatives.cpp
 JSOESTextureFloat.cpp
 JSOESTextureFloatLinear.cpp

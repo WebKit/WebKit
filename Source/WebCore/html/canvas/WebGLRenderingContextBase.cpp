@@ -62,6 +62,7 @@
 #include "NavigatorWebXR.h"
 #include "NotImplemented.h"
 #include "OESElementIndexUint.h"
+#include "OESFBORenderMipmap.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESTextureFloatLinear.h"
@@ -2724,8 +2725,8 @@ void WebGLRenderingContextBase::framebufferTexture2D(GCGLenum target, GCGLenum a
 {
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("framebufferTexture2D", target, attachment))
         return;
-    if (level && isWebGL1()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "framebufferTexture2D", "level not 0");
+    if (level && isWebGL1() && !m_oesFBORenderMipmap) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "framebufferTexture2D", "level not 0 and OES_fbo_render_mipmap not enabled");
         return;
     }
     if (texture && !texture->validate(contextGroup(), *this)) {
@@ -3723,6 +3724,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_oesStandardDerivatives, "OES_standard_derivatives");
     CHECK_EXTENSION(m_oesVertexArrayObject, "OES_vertex_array_object");
     CHECK_EXTENSION(m_oesElementIndexUint, "OES_element_index_uint");
+    CHECK_EXTENSION(m_oesFBORenderMipmap, "OES_fbo_render_mipmap");
     CHECK_EXTENSION(m_webglLoseContext, "WEBGL_lose_context");
     CHECK_EXTENSION(m_webglDebugRendererInfo, "WEBGL_debug_renderer_info");
     CHECK_EXTENSION(m_webglDebugShaders, "WEBGL_debug_shaders");
@@ -7791,6 +7793,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_oesStandardDerivatives);
     LOSE_EXTENSION(m_oesVertexArrayObject);
     LOSE_EXTENSION(m_oesElementIndexUint);
+    LOSE_EXTENSION(m_oesFBORenderMipmap);
     LOSE_EXTENSION(m_webglLoseContext);
     LOSE_EXTENSION(m_webglDebugRendererInfo);
     LOSE_EXTENSION(m_webglDebugShaders);

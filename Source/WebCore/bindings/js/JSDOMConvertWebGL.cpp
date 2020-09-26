@@ -39,6 +39,7 @@
 #include "JSEXTTextureFilterAnisotropic.h"
 #include "JSEXTsRGB.h"
 #include "JSOESElementIndexUint.h"
+#include "JSOESFBORenderMipmap.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESTextureFloatLinear.h"
@@ -192,6 +193,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESVertexArrayObject&>(extension));
     case WebGLExtension::OESElementIndexUintName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESElementIndexUint&>(extension));
+    case WebGLExtension::OESFBORenderMipmapName:
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESFBORenderMipmap&>(extension));
     case WebGLExtension::WebGLDebugRendererInfoName:
         return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDebugRendererInfo&>(extension));
     case WebGLExtension::WebGLDebugShadersName:

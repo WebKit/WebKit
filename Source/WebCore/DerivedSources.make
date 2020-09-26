@@ -957,6 +957,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/ImageBitmapRenderingContextSettings.idl \
     $(WebCore)/html/canvas/ImageSmoothingQuality.idl \
     $(WebCore)/html/canvas/OESElementIndexUint.idl \
+    $(WebCore)/html/canvas/OESFBORenderMipmap.idl \
     $(WebCore)/html/canvas/OESStandardDerivatives.idl \
     $(WebCore)/html/canvas/OESTextureFloat.idl \
     $(WebCore)/html/canvas/OESTextureFloatLinear.idl \

@@ -44,6 +44,7 @@
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "OESElementIndexUint.h"
+#include "OESFBORenderMipmap.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESTextureFloatLinear.h"
@@ -159,6 +160,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(OESTextureHalfFloatLinear, m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear", enableSupportedExtension("GL_OES_texture_half_float_linear"_s));
     ENABLE_IF_REQUESTED(OESVertexArrayObject, m_oesVertexArrayObject, "OES_vertex_array_object", enableSupportedExtension("GL_OES_vertex_array_object"_s));
     ENABLE_IF_REQUESTED(OESElementIndexUint, m_oesElementIndexUint, "OES_element_index_uint", enableSupportedExtension("GL_OES_element_index_uint"_s));
+    ENABLE_IF_REQUESTED(OESFBORenderMipmap, m_oesFBORenderMipmap, "OES_fbo_render_mipmap", enableSupportedExtension("GL_OES_fbo_render_mipmap"_s));
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context", true);
     ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*this));
@@ -234,6 +236,8 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_vertex_array_object"_s);
     if (m_context->getExtensions().supports("GL_OES_element_index_uint"_s))
         result.append("OES_element_index_uint"_s);
+    if (m_context->getExtensions().supports("GL_OES_fbo_render_mipmap"_s))
+        result.append("OES_fbo_render_mipmap"_s);
     result.append("WEBGL_lose_context"_s);
     if (WebGLCompressedTextureASTC::supported(*this))
         result.append("WEBGL_compressed_texture_astc"_s);
