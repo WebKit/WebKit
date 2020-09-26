@@ -99,7 +99,7 @@ static const CGFloat colorPopoverCornerRadius = 9;
 - (instancetype)initWithView:(WKContentView *)view
 {
     RetainPtr<NSObject <WKFormControl>> control;
-    if (WebKit::currentUserInterfaceIdiomIsPad())
+    if (WebKit::currentUserInterfaceIdiomIsPadOrMac())
         control = adoptNS([[WKColorPopover alloc] initWithView:view]);
     else
         control = adoptNS([[WKColorPicker alloc] initWithView:view]);

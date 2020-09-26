@@ -38,7 +38,7 @@ namespace WebKit {
 
 bool defaultTextAutosizingUsesIdempotentMode()
 {
-    return currentUserInterfaceIdiomIsPad();
+    return currentUserInterfaceIdiomIsPadOrMac();
 }
 
 #endif
