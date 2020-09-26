@@ -8572,7 +8572,8 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
             || WebCore::IOSApplication::isNoggin() // <rdar://problem/64830335>
             || WebCore::IOSApplication::isOKCupid() // <rdar://problem/65698496>
             || WebCore::IOSApplication::isJWLibrary() // <rdar://problem/68104852>
-            || WebCore::IOSApplication::isPaperIO()) { // <rdar://problem/68738585>
+            || WebCore::IOSApplication::isPaperIO() // <rdar://problem/68738585>
+            || WebCore::IOSApplication::isCrunchyroll()) { // <rdar://problem/66362029>
             warningVersion = "14.2";
             return YES;
         }

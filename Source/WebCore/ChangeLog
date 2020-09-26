@@ -1,3 +1,15 @@
+2020-09-25  Tim Horton  <timothy_horton@apple.com>
+
+        Crunchyroll playback controls do not work on iPad with trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=217000
+        <rdar://problem/66362029>
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isCrunchyroll):
+
 2020-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         Make renderingUpdateScheduler() internal to Page

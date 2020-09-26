@@ -1,3 +1,15 @@
+2020-09-25  Tim Horton  <timothy_horton@apple.com>
+
+        Crunchyroll playback controls do not work on iPad with trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=217000
+        <rdar://problem/66362029>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (applicationIsKnownToIgnoreMouseEvents):
+        Add it to the list.
+
 2020-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Move NetworkProcessProxy ownership from WebProcessPool to WebsiteDataStore
