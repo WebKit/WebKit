@@ -35,16 +35,25 @@
                   (position 0.00 35.00)
                   (bounds 35.00 15.00)
                   (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=35 height=15)
+                  )
                 )
                 (GraphicsLayer
                   (position 35.00 0.00)
                   (bounds 15.00 35.00)
                   (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=15 height=35)
+                  )
                 )
                 (GraphicsLayer
                   (position 35.00 35.00)
                   (bounds 15.00 15.00)
                   (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=15 height=15)
+                  )
                 )
               )
             )
