@@ -99,6 +99,7 @@ public:
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
     
+    static constexpr bool isOriginAtUpperLeftCorner = false;
     virtual bool isAccelerated() const { return false; }
 
 protected:

@@ -64,6 +64,8 @@ public:
     IOSurface* surface();
     bool isAccelerated() const override;
 
+    static constexpr bool isOriginAtUpperLeftCorner = true;
+
 protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;

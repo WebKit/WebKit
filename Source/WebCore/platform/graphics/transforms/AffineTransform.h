@@ -111,7 +111,7 @@ public:
 
     WEBCORE_EXPORT AffineTransform& multiply(const AffineTransform& other);
     WEBCORE_EXPORT AffineTransform& scale(double);
-    AffineTransform& scale(double sx, double sy); 
+    WEBCORE_EXPORT AffineTransform& scale(double sx, double sy);
     WEBCORE_EXPORT AffineTransform& scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
     WEBCORE_EXPORT AffineTransform& scale(const FloatSize&);
     WEBCORE_EXPORT AffineTransform& rotate(double);

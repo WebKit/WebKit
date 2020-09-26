@@ -48,12 +48,12 @@ public:
 
     ImageBuffer(std::unique_ptr<BackendType>&& dataBackend, const FloatSize& size)
         : BaseConcreteImageBuffer(WTFMove(dataBackend))
-        , m_drawingContext(size, this)
+        , m_drawingContext(size, initialDrawingContextCTM(size), this)
     {
     }
 
     ImageBuffer(const FloatSize& size)
-        : m_drawingContext(size, this)
+        : m_drawingContext(size, initialDrawingContextCTM(size), this)
     {
     }
 
@@ -74,7 +74,17 @@ public:
         m_drawingContext.replayDisplayList(BaseConcreteImageBuffer::context());
     }
 
+protected:
     DrawingContext m_drawingContext;
+
+private:
+    static AffineTransform initialDrawingContextCTM(const FloatSize& logicalSize)
+    {
+        AffineTransform initialCTM;
+        if (BackendType::isOriginAtUpperLeftCorner)
+            initialCTM = initialCTM.scale(1, -1).translate(0, -logicalSize.height());
+        return initialCTM;
+    }
 };
 
 } // DisplayList

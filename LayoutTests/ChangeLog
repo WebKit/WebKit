@@ -1,3 +1,15 @@
+2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] fast/canvas/canvas-composite-canvas.html and fast/canvas/canvas-composite-image.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=216982
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline this display list test to account for the fact that display list extent rects are in the global
+        coordinate space, and are therefore vertically flipped since the initial CTM flips everything about the x-axis.
+
+        * displaylists/canvas-display-list-expected.txt:
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         visibilitychange:hidden doesn't fire during page navigations

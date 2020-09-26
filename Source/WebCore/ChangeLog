@@ -1,3 +1,56 @@
+2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] fast/canvas/canvas-composite-canvas.html and fast/canvas/canvas-composite-image.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=216982
+
+        Reviewed by Simon Fraser.
+
+        When painting into display-list-backed image buffers with remote `IOSurface`-backed image buffers in the GPU
+        process, the display-list-backed image buffer has an initial CTM of the identity matrix, while the `IOSurface`-
+        backed image buffer's initial CTM is flipped about the x-axis. This is because image buffer backends based on
+        CoreGraphics always flip their context about the x-axis upon creation, in `ImageBufferCGBackend::setupContext()`.
+        This causes the CTM of the DisplayList context in the web process to fall out of sync with the CTM of the
+        platform context in the GPU process, so any canvas rendering codepaths that attempt to consult the current CTM
+        in the web process (e.g. `CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage`) will get an incorrect
+        value.
+
+        To fix this, we give the display-list-backed image buffer in the web process an initial CTM that matches the CTM
+        of the native image buffer in the GPU process; see below for more details.
+
+        Tests: fast/canvas/canvas-composite-canvas.html and fast/canvas/canvas-composite-image.html
+
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+
+        Add a flag indicating whether the origin (0, 0) is intended to be at the top left corner of the image, in which
+        case we set up the image buffer's graphics context by flipping it vertically about the x-axis. This is true on
+        CoreGraphics-backed image buffers.
+
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/displaylists/DisplayListDrawingContext.cpp:
+        (WebCore::DisplayList::DrawingContext::DrawingContext):
+        * platform/graphics/displaylists/DisplayListDrawingContext.h:
+        (WebCore::DisplayList::DrawingContext::DrawingContext):
+
+        Add an additional argument to the constructor of `DrawingContext`, so that it now takes an initial affine CTM.
+        By default, this is the identity matrix.
+
+        * platform/graphics/displaylists/DisplayListImageBuffer.h:
+        (WebCore::DisplayList::ImageBuffer::ImageBuffer):
+        (WebCore::DisplayList::ImageBuffer::initialDrawingContextCTM):
+
+        Add a helper to compute the initial CTM of the drawing context. This was previously only the identity matrix,
+        but if we're using an image buffer backend that will flip the context vertically, then we need to start the
+        CTM of the display-list-backed image buffer in the same state.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+
+        Rename the `baseCTM` argument to `initialCTM`. This is because this argument determines the CTM of the initial
+        graphics context state in the state stack, rather than the value of the base CTM. See above for more details.
+
+        * platform/graphics/transforms/AffineTransform.h:
+
 2020-09-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Move SerializationState from ImageBuffer to ImageBitmap

@@ -6,11 +6,11 @@
   (fill-color #C80000)
   (shadows-ignore-transforms 1))
 (fill-rect
-  (extent at (10,10) size 55x50)
+  (extent at (10,140) size 55x50)
   (rect at (10,10) size 55x50))
 (set-state
   (change-flags 128)
   (fill-color #0000C880))
 (fill-rect
-  (extent at (30,30) size 55x50)
+  (extent at (30,120) size 55x50)
   (rect at (30,30) size 55x50))
