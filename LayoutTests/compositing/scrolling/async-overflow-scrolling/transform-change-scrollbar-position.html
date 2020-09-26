@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container {
+            padding: 10px;
+            margin: 50px;
+            border: 2px solid black;
+            height: 400px;
+            width: 500px;
+            overflow-y: hidden;
+            overflow-x: scroll;
+        }
+
+        .wrapper {
+            position: relative;
+            width: 2000px;
+            z-index: 1;
+        }
+
+        .positioned {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: silver;
+            z-index: 2;
+            padding: 20px;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .inner {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+        
+        body.changed .inner {
+            transform: translate(0px, 0px);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.add('changed');
+                if (window.internals)
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <div class="positioned">
+                &nbsp;
+                <div class="inner">
+                    &nbsp;
+                </div>
+            </div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

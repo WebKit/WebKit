@@ -1,0 +1,120 @@
+overlaps scrollbar
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 7
+        (GraphicsLayer
+          (offsetFromRenderer width=-14 height=-14)
+          (position 44.00 36.00)
+          (bounds 358.00 358.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=15 height=15)
+              (position 29.00 29.00)
+              (bounds 300.00 300.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=15 height=15)
+                  (anchor 0.00 0.00)
+                  (bounds 380.00 630.00)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 73.00 65.00)
+          (bounds 300.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=-14 height=-14)
+              (position 36.00 36.00)
+              (bounds 358.00 558.00)
+              (drawsContent 1)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=15 height=15)
+                  (position 29.00 29.00)
+                  (bounds 300.00 500.00)
+                  (children 1
+                    (GraphicsLayer
+                      (offsetFromRenderer width=15 height=15)
+                      (anchor 0.00 0.00)
+                      (bounds 300.00 750.00)
+                      (drawsContent 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 250.00 220.00)
+          (bounds 200.00 200.00)
+        )
+        (GraphicsLayer
+          (position 73.00 65.00)
+          (bounds 300.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (position 65.00 65.00)
+              (bounds 300.00 500.00)
+              (children 1
+                (GraphicsLayer
+                  (position 0.00 250.00)
+                  (bounds 300.00 100.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 73.00 65.00)
+          (bounds 300.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (position 65.00 65.00)
+              (bounds 300.00 500.00)
+              (children 1
+                (GraphicsLayer
+                  (position 285.00 0.00)
+                  (bounds 15.00 500.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 73.00 65.00)
+          (bounds 300.00 300.00)
+          (children 2
+            (GraphicsLayer
+              (position 0.00 285.00)
+              (bounds 300.00 15.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 285.00 0.00)
+              (bounds 15.00 300.00)
+              (drawsContent 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 150.00 150.00)
+          (bounds 240.00 100.00)
+        )
+      )
+    )
+  )
+)
+

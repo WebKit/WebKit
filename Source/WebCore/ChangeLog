@@ -1,5 +1,180 @@
 2020-09-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266825. rdar://problem/69583178
+
+    REGRESSION (Async overflow scroll): Truncated scrollbars in facebook chat
+    https://bugs.webkit.org/show_bug.cgi?id=216294
+    <rdar://problem/61918702>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When both async overflow scroll and overlay scrollbars are enabled, it's possible for
+    composited layers that are later in z-order than the overflow to overlap the scrollbars
+    (overflow does not create stacking context, so they are later siblings to the overflow).
+    
+    To fix this we have to hoist the layer that hosts the overflow controls above all later layers
+    which belong to contents scrolled by this overflow. We know which layers these are; they have
+    ancestor clippings stacks that reference the overflow layer.
+    
+    This overflow controls layer hoisting happens in the context of the enclosing composited layer.
+    
+    So to fix this RenderLayerCompositor::updateBackingAndHierarchy() tracks these layers that belong to
+    an overflow scroll. RenderLayerCompositor::adjustOverflowScrollbarContainerLayers() uses them to find
+    the overflow scroll layers whose controls need hoisting, and where to insert those overflow controls
+    hosting layers in the sublayers list of the enclosing composited layer.
+    
+    An additional source of complexity occurs with overflow scroll nested inside another scroller or
+    overflow:hidden (in the same composited stacking context): the overflow controls reparenting is hoisting
+    that layer up, so that layer itself needs additional layers to clip it (essentially the overflow control
+    layer behaves like a later sibling that needs its own ancestor clipping stack). When this occurs,
+    RenderLayerBacking creates an additional "ancestor clipping stack" in m_overflowControlsHostLayerAncestorClippingStack
+    which is a parallel stack to m_ancestorClippingStack, but with its own set of clipping layers. At some point
+    this will also need scrolling tree nodes created for it. Some minor refactoring helps share code for
+    the two LayerAncestorClippingStacks.
+    
+    This new code all runs late in the compositing update for a given layer, which is not ideal; we replicate
+    some code from updateGeometry() and updateInternalHierarchy(). Ideally we'd be able to know at
+    computeCompositingRequirements() time if we need to do layer hoisting and ancestor clipping stack duplication,
+    but that proves hard because of ordering dependencies.
+    
+    Tests: compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-dynamic.html
+           compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-inside-hidden.html
+           compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-nested.html
+           compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar.html
+           compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position.html
+    
+    * rendering/LayerAncestorClippingStack.cpp:
+    (WebCore::LayerAncestorClippingStack::compositedClipData const):
+    * rendering/LayerAncestorClippingStack.h:
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::updateConfiguration):
+    (WebCore::RenderLayerBacking::updateGeometry):
+    (WebCore::RenderLayerBacking::adjustOverflowControlsPositionRelativeToAncestor):
+    (WebCore::RenderLayerBacking::updateInternalHierarchy):
+    (WebCore::RenderLayerBacking::updateAncestorClippingStack):
+    (WebCore::RenderLayerBacking::ensureOverflowControlsHostLayerAncestorClippingStack):
+    (WebCore::RenderLayerBacking::ensureClippingStackLayers):
+    (WebCore::RenderLayerBacking::removeClippingStackLayers):
+    (WebCore::RenderLayerBacking::connectClippingStackLayers):
+    (WebCore::RenderLayerBacking::updateClippingStackLayerGeometry):
+    (WebCore::RenderLayerBacking::updateAncestorClipping):
+    (WebCore::RenderLayerBacking::offsetRelativeToRendererOriginForDescendantLayers const):
+    * rendering/RenderLayerBacking.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::UpdateBackingTraversalState::UpdateBackingTraversalState):
+    (WebCore::RenderLayerCompositor::UpdateBackingTraversalState::stateForDescendants const):
+    (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+    (WebCore::RenderLayerCompositor::adjustOverflowScrollbarContainerLayers):
+    (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole):
+    * rendering/RenderLayerCompositor.h:
+    
+    LayoutTests:
+    
+    Some new tests, and new baselines for tests that have different layer trees now.
+    
+    * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+    * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+    * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+    * compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+    * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt:
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-dynamic-expected.txt: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-dynamic.html: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-expected.txt: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-inside-hidden-expected.txt: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-inside-hidden.html: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-nested-expected.txt: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-nested.html: Added.
+    * compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar.html: Added.
+    * compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position-expected.txt: Added.
+    * compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position.html: Added.
+    * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt:
+    * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266825 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (Async overflow scroll): Truncated scrollbars in facebook chat
+            https://bugs.webkit.org/show_bug.cgi?id=216294
+            <rdar://problem/61918702>
+
+            Reviewed by Antti Koivisto.
+
+            When both async overflow scroll and overlay scrollbars are enabled, it's possible for
+            composited layers that are later in z-order than the overflow to overlap the scrollbars
+            (overflow does not create stacking context, so they are later siblings to the overflow).
+
+            To fix this we have to hoist the layer that hosts the overflow controls above all later layers
+            which belong to contents scrolled by this overflow. We know which layers these are; they have
+            ancestor clippings stacks that reference the overflow layer.
+
+            This overflow controls layer hoisting happens in the context of the enclosing composited layer.
+
+            So to fix this RenderLayerCompositor::updateBackingAndHierarchy() tracks these layers that belong to
+            an overflow scroll. RenderLayerCompositor::adjustOverflowScrollbarContainerLayers() uses them to find
+            the overflow scroll layers whose controls need hoisting, and where to insert those overflow controls
+            hosting layers in the sublayers list of the enclosing composited layer.
+
+            An additional source of complexity occurs with overflow scroll nested inside another scroller or
+            overflow:hidden (in the same composited stacking context): the overflow controls reparenting is hoisting
+            that layer up, so that layer itself needs additional layers to clip it (essentially the overflow control
+            layer behaves like a later sibling that needs its own ancestor clipping stack). When this occurs,
+            RenderLayerBacking creates an additional "ancestor clipping stack" in m_overflowControlsHostLayerAncestorClippingStack
+            which is a parallel stack to m_ancestorClippingStack, but with its own set of clipping layers. At some point
+            this will also need scrolling tree nodes created for it. Some minor refactoring helps share code for
+            the two LayerAncestorClippingStacks.
+
+            This new code all runs late in the compositing update for a given layer, which is not ideal; we replicate
+            some code from updateGeometry() and updateInternalHierarchy(). Ideally we'd be able to know at
+            computeCompositingRequirements() time if we need to do layer hoisting and ancestor clipping stack duplication,
+            but that proves hard because of ordering dependencies.
+
+            Tests: compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-dynamic.html
+                   compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-inside-hidden.html
+                   compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar-nested.html
+                   compositing/scrolling/async-overflow-scrolling/overlapped-overlay-scrollbar.html
+                   compositing/scrolling/async-overflow-scrolling/transform-change-scrollbar-position.html
+
+            * rendering/LayerAncestorClippingStack.cpp:
+            (WebCore::LayerAncestorClippingStack::compositedClipData const):
+            * rendering/LayerAncestorClippingStack.h:
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::updateConfiguration):
+            (WebCore::RenderLayerBacking::updateGeometry):
+            (WebCore::RenderLayerBacking::adjustOverflowControlsPositionRelativeToAncestor):
+            (WebCore::RenderLayerBacking::updateInternalHierarchy):
+            (WebCore::RenderLayerBacking::updateAncestorClippingStack):
+            (WebCore::RenderLayerBacking::ensureOverflowControlsHostLayerAncestorClippingStack):
+            (WebCore::RenderLayerBacking::ensureClippingStackLayers):
+            (WebCore::RenderLayerBacking::removeClippingStackLayers):
+            (WebCore::RenderLayerBacking::connectClippingStackLayers):
+            (WebCore::RenderLayerBacking::updateClippingStackLayerGeometry):
+            (WebCore::RenderLayerBacking::updateAncestorClipping):
+            (WebCore::RenderLayerBacking::offsetRelativeToRendererOriginForDescendantLayers const):
+            * rendering/RenderLayerBacking.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::UpdateBackingTraversalState::UpdateBackingTraversalState):
+            (WebCore::RenderLayerCompositor::UpdateBackingTraversalState::stateForDescendants const):
+            (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+            (WebCore::RenderLayerCompositor::adjustOverflowScrollbarContainerLayers):
+            (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole):
+            * rendering/RenderLayerCompositor.h:
+
+2020-09-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266148. rdar://problem/69583151
 
     Font loads quickly followed by navigations may fail indefinitely
