@@ -28,7 +28,7 @@
 #import "WebPreferencesPrivate.h"
 
 #import "WebFeatureInternal.h"
-#import "WebPreferencesDefaultValues.h"
+#import "WebPreferencesDefinitions.h"
 
 using namespace WebKit;
 
@@ -41,7 +41,7 @@ using namespace WebKit;
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        [[WebFeature alloc] initWithKey:@"<%= @pref.name %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:<%= @pref.defaultValue %> hidden:<%= @pref.hidden %>],
+        [[WebFeature alloc] initWithKey:@"<%= @pref.name %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>],
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

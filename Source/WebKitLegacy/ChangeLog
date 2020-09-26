@@ -1,3 +1,13 @@
+2020-09-26  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] It should be possible to have different default values for WebKitLegacy and WebKit in preference yaml files
+        https://bugs.webkit.org/show_bug.cgi?id=216987
+
+        Reviewed by Darin Adler.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        Update script phase to explicitly specify the frontend (WebKitLegacy) and the templates to generate.
+
 2020-09-25  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Start generating experimental feature preferences for legacy WebKit

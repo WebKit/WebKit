@@ -3468,7 +3468,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\n${SRCROOT}/mac/Scripts/GeneratePreferences.rb --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${SRCROOT}/mac/WebView/WebPreferences.yaml --debug ${SRCROOT}/mac/WebView/WebPreferencesDebug.yaml --experimental ${SRCROOT}/mac/WebView/WebPreferencesExperimental.yaml --internal ${SRCROOT}/mac/WebView/WebPreferencesInternal.yaml\n";
+			shellScript = "set -e\n\n${SRCROOT}/mac/Scripts/GeneratePreferences.rb --frontend WebKitLegacy --template WebPreferencesDefinitions.h --template WebPreferencesExperimentalFeatures.mm --template WebViewPreferencesChangedGenerated.mm --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${SRCROOT}/mac/WebView/WebPreferences.yaml --debug ${SRCROOT}/mac/WebView/WebPreferencesDebug.yaml --experimental ${SRCROOT}/mac/WebView/WebPreferencesExperimental.yaml --internal ${SRCROOT}/mac/WebView/WebPreferencesInternal.yaml\n";
 		};
 		A13EE61D185AE82700556064 /* Postprocess Headers */ = {
 			isa = PBXShellScriptBuildPhase;

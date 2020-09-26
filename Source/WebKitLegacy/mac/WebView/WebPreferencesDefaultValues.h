@@ -27,12 +27,6 @@
 
 #include <wtf/Forward.h>
 
-#if ENABLE(EXPERIMENTAL_FEATURES)
-#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
-#else
-#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
-#endif
-
 #if PLATFORM(MAC)
 #define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED true
 #else
@@ -56,8 +50,5 @@ bool defaultIncrementalPDFEnabled();
 #if ENABLE(WEBXR)
 bool defaultWebXREnabled();
 #endif
-
-bool defaultVisualViewportAPIEnabled();
-bool defaultModernUnprefixedWebAudioEnabled();
 
 } // namespace WebKit

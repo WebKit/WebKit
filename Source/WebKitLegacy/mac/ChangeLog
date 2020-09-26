@@ -1,3 +1,53 @@
+2020-09-26  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] It should be possible to have different default values for WebKitLegacy and WebKit in preference yaml files
+        https://bugs.webkit.org/show_bug.cgi?id=216987
+
+        Reviewed by Darin Adler.
+
+        Add new syntax for default values that allows specializing based on both frontend (WebKit or 
+        WebKitLegacy) and then futher based on platform macros. For example, the preference for 
+        CSSTypedOMEnabled now looks like:
+        
+           CSSTypedOMEnabled:
+             type: bool
+             humanReadableName: "CSS Typed OM"
+             humanReadableDescription: "Enable the CSS Typed OM"
+             webcoreBinding: RuntimeEnabledFeatures
+             condition: ENABLE(CSS_TYPED_OM)
+             defaultValue:
+               WebKitLegacy:
+                 default: false
+               WebKit:
+                 "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+                 default: false
+        
+        Which means that in WebKitLegacy, the default value is false, and in WebKit, the default
+        value will be:
+        
+            #if ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))
+               true
+            #else
+               false
+            #endif
+
+        As many platform macro based conditions can be provided as wanted, and they are evaluated
+        in the order specified in the file.
+        
+        The syntax currently always requires explicitly specifying WebKitLegacy and WebKit and default 
+        for each, even if they are all the same, but could be extended in the future to allow compaction
+        if that becomes desirable. There is also not yet support for conditionally enabling a feature
+        based on os-feature-flags or linked-on-or-after checks, so those still require specifying the
+        default value as a function, but that seems like a nice future improvement.
+        
+        As this is still staging for doing this for both WebKitLegacy and WebKit, this change only effects
+        WebKitLegacy for now, and subsequent changes will move this to a shared location.
+
+        * Scripts/GeneratePreferences.rb:
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb:
+        * WebView/WebPreferencesExperimental.yaml:
+
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
         Add an experimental feature flag for CSS individual transform properties

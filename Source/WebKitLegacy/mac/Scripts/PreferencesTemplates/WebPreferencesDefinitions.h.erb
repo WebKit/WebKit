@@ -32,19 +32,33 @@
 // Default initialization of WebPreferences' internal dictionary.
 
 <%- for @pref in @experimentalFeatures do -%>
-<%- if @pref.condition -%>
+<%-   if @pref.condition -%>
 #if <%= @pref.condition %>
-#define INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES_<%= @pref.name %> @(<%= @pref.defaultValue %>), @"WebKit<%= @pref.name %>",
+<%-   end -%>
+<%-   if @pref.frontendSpecificDefaultValues.size() == 1 -%>
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= @pref.frontendSpecificDefaultValues['default'] %>
+<%-   else -%>
+<%-     @pref.frontendSpecificDefaultValues.each_with_index do |(key, value), index| -%>
+<%-       if index == 0 -%>
+#if <%= key %>
+<%-       elsif index != @pref.frontendSpecificDefaultValues.size() - 1 -%>
+#elif <%= key %>
+<%-       else -%>
 #else
-#define INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES_<%= @pref.name %> @NO, @"WebKit<%= @pref.name %>",
+<%-       end -%>
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= value %>
+<%-     end -%>
 #endif
-<% else -%>
-#define INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES_<%= @pref.name %> @(<%= @pref.defaultValue %>), @"WebKit<%= @pref.name %>",
-<%- end -%>
+<%-   end -%>
+<%-   if @pref.condition -%>
+#else
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> false
+#endif
+<%-   end -%>
 <%- end -%>
 
 #define INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES \
 <%- for @pref in @experimentalFeatures do -%>
-    INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES_<%= @pref.name %> \
+    @(DEFAULT_VALUE_FOR_<%= @pref.name %>), @"WebKit<%= @pref.name %>", \
 <%- end -%>
     \

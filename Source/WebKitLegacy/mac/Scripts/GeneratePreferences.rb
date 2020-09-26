@@ -29,27 +29,31 @@ require 'optparse'
 require 'yaml'
 
 options = {
+  :frontend => nil,
   :basePreferences => nil,
   :debugPreferences => nil,
   :experimentalPreferences => nil,
   :internalPreferences => nil,
-  :outputDirectory => nil
+  :outputDirectory => nil,
+  :templates => []
 }
 optparse = OptionParser.new do |opts|
-    opts.banner = "Usage: #{File.basename($0)} --input file"
+  opts.banner = "Usage: #{File.basename($0)} --input file"
 
-    opts.separator ""
+  opts.separator ""
 
-    opts.on("--base input", "file to generate preferences from") { |basePreferences| options[:basePreferences] = basePreferences }
-    opts.on("--debug input", "file to generate debug preferences from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
-    opts.on("--experimental input", "file to generate experimental preferences from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
-    opts.on("--internal input", "file to generate internal preferences from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
-    opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
+  opts.on("--frontend input", "frontend to generate preferences for (WebKit, WebKitLegacy)") { |frontend| options[:frontend] = frontend }
+  opts.on("--base input", "file to generate preferences from") { |basePreferences| options[:basePreferences] = basePreferences }
+  opts.on("--debug input", "file to generate debug preferences from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
+  opts.on("--experimental input", "file to generate experimental preferences from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
+  opts.on("--internal input", "file to generate internal preferences from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
+  opts.on("--template input", "template to use for generation (may be specified multiple times") { |template| options[:templates] << template }
+  opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
 end
 
 optparse.parse!
 
-if !options[:basePreferences] || !options[:debugPreferences] || !options[:experimentalPreferences] || !options[:internalPreferences]
+if !options[:frontend] || !options[:basePreferences] || !options[:debugPreferences] || !options[:experimentalPreferences] || !options[:internalPreferences]
   puts optparse
   exit -1
 end
@@ -92,17 +96,16 @@ end
 class Preference
   attr_accessor :name
   attr_accessor :type
-  attr_accessor :defaultValue
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
   attr_accessor :webcoreBinding
   attr_accessor :condition
   attr_accessor :hidden
+  attr_accessor :frontendSpecificDefaultValues
 
-  def initialize(name, opts)
+  def initialize(name, opts, frontend)
     @name = name
     @type = opts["type"]
-    @defaultValue = opts["defaultValue"]
     @humanReadableName = '"' + (opts["humanReadableName"] || "") + '"'
     @humanReadableDescription = '"' + (opts["humanReadableDescription"] || "") + '"'
     @getter = opts["getter"]
@@ -110,6 +113,7 @@ class Preference
     @webcoreName = opts["webcoreName"]
     @condition = opts["condition"]
     @hidden = opts["hidden"] || false
+    @frontendSpecificDefaultValues = opts["defaultValue"][frontend]
   end
 
   def nameLower
@@ -156,8 +160,9 @@ end
 class Preferences
   attr_accessor :preferences
 
-  def initialize(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, outputDirectory)
+  def initialize(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, outputDirectory, frontend)
     @outputDirectory = outputDirectory
+    @frontend = frontend
 
     @preferences = []
     @preferencesNotDebug = []
@@ -167,28 +172,28 @@ class Preferences
 
     if parsedBasePreferences
       parsedBasePreferences.each do |name, options|
-        preference = Preference.new(name, options)
+        preference = Preference.new(name, options, @frontend)
         @preferences << preference
         @preferencesNotDebug << preference
       end
     end
     if parsedDebugPreferences
       parsedDebugPreferences.each do |name, options|
-        preference = Preference.new(name, options)
+        preference = Preference.new(name, options, @frontend)
         @preferences << preference
         @preferencesDebug << preference
       end
     end
     if parsedExperimentalPreferences
       parsedExperimentalPreferences.each do |name, options|
-        preference = Preference.new(name, options)
+        preference = Preference.new(name, options, @frontend)
         @preferences << preference
         @experimentalFeatures << preference
       end
     end
     if parsedInternalPreferences
       parsedInternalPreferences.each do |name, options|
-        preference = Preference.new(name, options)
+        preference = Preference.new(name, options, @frontend)
         @preferences << preference
         @internalDebugFeatures << preference
       end
@@ -217,7 +222,8 @@ class Preferences
   end
 end
 
-preferences = Preferences.new(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, options[:outputDirectory])
-preferences.renderTemplate("WebPreferencesDefinitions.h")
-preferences.renderTemplate("WebPreferencesExperimentalFeatures.mm")
-preferences.renderTemplate("WebViewPreferencesChangedGenerated.mm")
+preferences = Preferences.new(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, options[:outputDirectory], options[:frontend])
+
+options[:templates].each do |template|
+  preferences.renderTemplate(template)
+end

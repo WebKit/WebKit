@@ -93,22 +93,4 @@ bool defaultWebXREnabled()
 
 #endif // ENABLE(WEBXR)
 
-bool defaultVisualViewportAPIEnabled()
-{
-#if PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    return true;
-#endif
-}
-
-bool defaultModernUnprefixedWebAudioEnabled()
-{
-#if PLATFORM(IOS_FAMILY)
-    return true;
-#else
-    return false;
-#endif
-}
-
 } // namespace WebKit
