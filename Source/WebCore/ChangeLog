@@ -1,5 +1,38 @@
 2020-09-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266899. rdar://problem/69586659
+
+    Address a post-commit review comment after r266887
+    https://bugs.webkit.org/show_bug.cgi?id=216257
+    
+    Reviewed by Darin Adler.
+    
+    Remove a check that currently makes us conditionally set `IsComputedStyleInvalidFlag` if there is a computed
+    style in rare data. There should be no change in behavior; this just makes the code a bit simpler.
+    
+    * dom/Element.cpp:
+    (WebCore::Element::invalidateStyle):
+    (WebCore::Element::storeDisplayContentsStyle):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266899 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Address a post-commit review comment after r266887
+            https://bugs.webkit.org/show_bug.cgi?id=216257
+
+            Reviewed by Darin Adler.
+
+            Remove a check that currently makes us conditionally set `IsComputedStyleInvalidFlag` if there is a computed
+            style in rare data. There should be no change in behavior; this just makes the code a bit simpler.
+
+            * dom/Element.cpp:
+            (WebCore::Element::invalidateStyle):
+            (WebCore::Element::storeDisplayContentsStyle):
+
+2020-09-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266887. rdar://problem/69586659
 
     REGRESSION (r257839): clickpay.com - password placeholder text cannot be replaced
