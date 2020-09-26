@@ -1,3 +1,13 @@
+2020-09-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect breaking position when inline box content fits the line but the inline content itself does not.
+        https://bugs.webkit.org/show_bug.cgi?id=217007
+
+        Reviewed by Simon Fraser.
+
+        * fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not-expected.html: Added.
+        * fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not.html: Added.
+
 2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] fast/canvas/canvas-composite-canvas.html and fast/canvas/canvas-composite-image.html fail

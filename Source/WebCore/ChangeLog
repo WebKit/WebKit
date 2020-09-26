@@ -1,3 +1,24 @@
+2020-09-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect breaking position when inline box content fits the line but the inline content itself does not.
+        https://bugs.webkit.org/show_bug.cgi?id=217007
+
+        Reviewed by Simon Fraser.
+
+        When the inline box does not fit the line but its text content does, the last breaking opportunity (in case of arbitrary breaking position)
+        is not the end of the text.
+        e.g
+        <div style="width: 200px; word-break: break-word;"><span style="border-right: 100px;">text_content_fits</span></div>
+        in this case the border right overflows the containing block and should be wrapped to the next available vertical position.
+        However the last breaking opportunity is not between 's' and the </span> but between 't' and 's'.
+
+        Test: fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not.html
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem): [container start](<span>) and [container end](</span>) runs are not collapsible.
+
 2020-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] fast/canvas/canvas-composite-canvas.html and fast/canvas/canvas-composite-image.html fail

@@ -301,7 +301,9 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
         if (findLastBreakablePosition) {
             // When the run can be split at arbitrary position,
             // let's just return the entire run when it is intended to fit on the line.
-            return PartialRun { inlineTextItem.length(), overflowRun.logicalWidth, false };
+            ASSERT(inlineTextItem.length());
+            auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end() - 1, logicalLeft);
+            return PartialRun { inlineTextItem.length() - 1, trailingPartialRunWidth, false };
         }
         auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, logicalLeft);
         return PartialRun { splitData.length, splitData.logicalWidth, false };

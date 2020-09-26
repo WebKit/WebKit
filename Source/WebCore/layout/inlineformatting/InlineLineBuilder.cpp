@@ -247,6 +247,9 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
             return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
         }
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+            return false;
+        ASSERT_NOT_REACHED();
         return true;
     };
     if (isFullyCollapsible()) {
