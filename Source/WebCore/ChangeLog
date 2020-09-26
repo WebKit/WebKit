@@ -1,5 +1,23 @@
 2020-09-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266884. rdar://problem/69583178
+
+    Revert accidental hard-coding of compositing logging from r266825.
+    
+    * platform/Logging.cpp:
+    (WebCore::initializeLogChannelsIfNecessary):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266884 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+            Revert accidental hard-coding of compositing logging from r266825.
+
+            * platform/Logging.cpp:
+            (WebCore::initializeLogChannelsIfNecessary):
+
+2020-09-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266825. rdar://problem/69583178
 
     REGRESSION (Async overflow scroll): Truncated scrollbars in facebook chat
