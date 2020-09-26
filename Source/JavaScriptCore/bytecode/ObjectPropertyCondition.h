@@ -122,12 +122,12 @@ public:
         return equivalenceWithoutBarrier(object, uid, value);
     }
 
-    static ObjectPropertyCondition customFunctionEquivalence(
+    static ObjectPropertyCondition hasStaticProperty(
         VM& vm, JSCell* owner, JSObject* object, UniquedStringImpl* uid)
     {
         ObjectPropertyCondition result;
         result.m_object = object;
-        result.m_condition = PropertyCondition::customFunctionEquivalence(uid);
+        result.m_condition = PropertyCondition::hasStaticProperty(uid);
         if (owner)
             vm.heap.writeBarrier(owner);
         return result;

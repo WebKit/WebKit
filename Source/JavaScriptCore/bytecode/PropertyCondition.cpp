@@ -54,7 +54,7 @@ void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) co
     case Equivalence:
         out.print(m_header.type(), " of ", m_header.pointer(), " with ", inContext(requiredValue(), context));
         return;
-    case CustomFunctionEquivalence:
+    case HasStaticProperty:
         out.print(m_header.type(), " of ", m_header.pointer());
         return;
     case HasPrototype:
@@ -89,7 +89,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     case Absence:
     case AbsenceOfSetEffect:
     case Equivalence:
-    case CustomFunctionEquivalence:
+    case HasStaticProperty:
         if (!structure->propertyAccessesAreCacheable()) {
             if (PropertyConditionInternal::verbose)
                 dataLog("Invalid because property accesses are not cacheable.\n");
@@ -253,7 +253,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         
         return true;
     } 
-    case CustomFunctionEquivalence: {
+    case HasStaticProperty: {
+        if (isValidOffset(structure->getConcurrently(uid())))
+            return false;
         if (structure->staticPropertiesReified())
             return false;
         return !!structure->findPropertyHashEntry(uid());
@@ -273,7 +275,7 @@ bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* stru
     case Presence:
     case Absence:
     case Equivalence:
-    case CustomFunctionEquivalence:
+    case HasStaticProperty:
         return structure->needImpurePropertyWatchpoint();
     case AbsenceOfSetEffect:
     case HasPrototype:
@@ -299,7 +301,7 @@ bool PropertyCondition::isStillValid(Structure* structure, JSObject* base) const
         break;
     case Presence:
     case Equivalence:
-    case CustomFunctionEquivalence:
+    case HasStaticProperty:
         if (structure->typeInfo().getOwnPropertySlotIsImpure())
             return false;
         break;
@@ -342,7 +344,7 @@ bool PropertyCondition::isWatchableWhenValid(
         break;
     }
 
-    case CustomFunctionEquivalence: {
+    case HasStaticProperty: {
         // We just use the structure transition watchpoint for this. A structure S starts
         // off with a property P in the static property hash table. If S transitions to
         // S', either P remains in the static property table or not. If not, then we
@@ -430,8 +432,8 @@ void printInternal(PrintStream& out, JSC::PropertyCondition::Kind condition)
     case JSC::PropertyCondition::Equivalence:
         out.print("Equivalence");
         return;
-    case JSC::PropertyCondition::CustomFunctionEquivalence:
-        out.print("CustomFunctionEquivalence");
+    case JSC::PropertyCondition::HasStaticProperty:
+        out.print("HasStaticProperty");
         return;
     case JSC::PropertyCondition::HasPrototype:
         out.print("HasPrototype");
