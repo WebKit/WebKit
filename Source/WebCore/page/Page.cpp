@@ -103,6 +103,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RenderingUpdateScheduler.h"
 #include "ResizeObserver.h"
 #include "ResourceUsageOverlay.h"
 #include "RuntimeEnabledFeatures.h"
@@ -1419,6 +1420,11 @@ void Page::scheduleTimedRenderingUpdate()
     if (chrome().client().scheduleTimedRenderingUpdate())
         return;
     renderingUpdateScheduler().scheduleTimedRenderingUpdate();
+}
+
+void Page::scheduleImmediateRenderingUpdate()
+{
+    renderingUpdateScheduler().scheduleImmediateRenderingUpdate();
 }
 
 void Page::startTrackingRenderingUpdates()

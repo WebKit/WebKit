@@ -2266,7 +2266,7 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         return String();
 
     flushPendingLayerChanges(true);
-    page().renderingUpdateScheduler().scheduleImmediateRenderingUpdate();
+    page().scheduleImmediateRenderingUpdate();
 
     LayerTreeAsTextBehavior layerTreeBehavior = LayerTreeAsTextBehaviorNormal;
     if (flags & LayerTreeFlagsIncludeDebugInfo)

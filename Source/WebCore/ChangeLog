@@ -1,3 +1,29 @@
+2020-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Make renderingUpdateScheduler() internal to Page
+        https://bugs.webkit.org/show_bug.cgi?id=216993
+
+        Reviewed by Said Abou-Hallawa.
+
+        renderingUpdateScheduler() should be an implementation detail of Page.
+
+        Also add some explanatory comments.
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleTimedRenderingUpdate):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * page/Page.cpp:
+        (WebCore::Page::scheduleImmediateRenderingUpdate):
+        * page/Page.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::notifyFlushRequired):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, update xcfilelist files.

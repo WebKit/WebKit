@@ -7561,7 +7561,7 @@ void Document::scheduleTimedRenderingUpdate()
     m_intersectionObserversInitialUpdateTimer.stop();
 #endif
     if (auto page = this->page())
-        page->renderingUpdateScheduler().scheduleTimedRenderingUpdate();
+        page->scheduleTimedRenderingUpdate();
 }
 
 #if ENABLE(INTERSECTION_OBSERVER)

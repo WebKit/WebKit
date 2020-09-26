@@ -35,7 +35,6 @@
 #include "RTCController.h"
 #include "Region.h"
 #include "RegistrableDomain.h"
-#include "RenderingUpdateScheduler.h"
 #include "ScrollTypes.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include "Supplementable.h"
@@ -131,6 +130,7 @@ class PointerLockController;
 class ProgressTracker;
 class RenderObject;
 class ResourceUsageOverlay;
+class RenderingUpdateScheduler;
 class ScrollLatchingController;
 class ScrollingCoordinator;
 class ServicesOverlayController;
@@ -265,8 +265,6 @@ public:
     void mainFrameDidChangeToNonInitialEmptyDocument();
 
     PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
-
-    RenderingUpdateScheduler& renderingUpdateScheduler();
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
@@ -492,10 +490,14 @@ public:
     WEBCORE_EXPORT void updateRendering();
     
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
-    
+
+    // Do immediate or timed update as dictated by the ChromeClient.
     WEBCORE_EXPORT void scheduleRenderingUpdate();
+    // Schedule an update that coordinates with display refresh; the normal kind of update.
     void scheduleTimedRenderingUpdate();
-    
+    // Schedule an update in the current runloop; this is an eager update that may trigger rendering more than once per display refresh.
+    void scheduleImmediateRenderingUpdate();
+
     WEBCORE_EXPORT void startTrackingRenderingUpdates();
     WEBCORE_EXPORT unsigned renderingUpdateCount() const;
 
@@ -813,6 +815,8 @@ private:
     void domTimerAlignmentIntervalIncreaseTimerFired();
 
     void doAfterUpdateRendering();
+
+    RenderingUpdateScheduler& renderingUpdateScheduler();
 
     WheelEventTestMonitor& ensureWheelEventTestMonitor();
 
