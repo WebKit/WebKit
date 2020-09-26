@@ -67,7 +67,7 @@ bool ObjectPropertyConditionSet::hasOneSlotBaseCondition() const
         switch (condition.kind()) {
         case PropertyCondition::Presence:
         case PropertyCondition::Equivalence:
-        case PropertyCondition::CustomFunctionEquivalence:
+        case PropertyCondition::HasStaticProperty:
             if (sawBase)
                 return false;
             sawBase = true;
@@ -87,7 +87,7 @@ ObjectPropertyCondition ObjectPropertyConditionSet::slotBaseCondition() const
     for (const ObjectPropertyCondition& condition : *this) {
         if (condition.kind() == PropertyCondition::Presence
             || condition.kind() == PropertyCondition::Equivalence
-            || condition.kind() == PropertyCondition::CustomFunctionEquivalence) {
+            || condition.kind() == PropertyCondition::HasStaticProperty) {
             result = condition;
             numFound++;
         }
@@ -244,11 +244,11 @@ ObjectPropertyCondition generateCondition(
         result = ObjectPropertyCondition::equivalence(vm, owner, object, uid, value);
         break;
     }
-    case PropertyCondition::CustomFunctionEquivalence: {
+    case PropertyCondition::HasStaticProperty: {
         auto entry = object->findPropertyHashEntry(vm, uid);
         if (!entry)
             return ObjectPropertyCondition();
-        result = ObjectPropertyCondition::customFunctionEquivalence(vm, owner, object, uid);
+        result = ObjectPropertyCondition::hasStaticProperty(vm, owner, object, uid);
         break;
     }
     default:
@@ -409,7 +409,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
 
                     kind = PropertyCondition::Equivalence;
                 } else if (structure->findPropertyHashEntry(uid))
-                    kind = PropertyCondition::CustomFunctionEquivalence;
+                    kind = PropertyCondition::HasStaticProperty;
                 else if (attributes & PropertyAttribute::DontDelete) {
                     // This can't change, so we can blindly cache it.
                     return true;
