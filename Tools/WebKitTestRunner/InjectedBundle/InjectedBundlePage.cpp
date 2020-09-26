@@ -834,17 +834,22 @@ static bool hasDocumentElement(WKBundleFrameRef frame)
     return JSValueToBoolean(context, documentElementValue);
 }
 
-static void dumpFrameText(WKBundleFrameRef frame, StringBuilder& stringBuilder)
+static void dumpFrameText(WKBundleFrameRef frame, StringBuilder& builder)
 {
     // If the frame doesn't have a document element, its inner text will be an empty string, so
-    // we'll end up just appending a single newline below. But DumpRenderTree doesn't append
-    // anything in this case, so we shouldn't either.
+    // we'll end up just appending a single newline below. Since DumpRenderTree didn't append
+    // anything in this case, we decided to preserve that behavior.
     if (!hasDocumentElement(frame))
         return;
 
-    WKRetainPtr<WKStringRef> text = adoptWK(WKBundleFrameCopyInnerText(frame));
-    stringBuilder.append(toWTFString(text));
-    stringBuilder.append('\n');
+    // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
+    // Breaking the string up into lines lets us efficiently strip and has a side effect of adding a newline after the last line.
+    auto text = toWTFString(adoptWK(WKBundleFrameCopyInnerText(frame)));
+    for (auto line : StringView(text).splitAllowingEmptyEntries('\n')) {
+        while (line.endsWith(' '))
+            line = line.substring(0, line.length() - 1);
+        builder.append(line, '\n');
+    }
 }
 
 static void dumpDescendantFramesText(WKBundleFrameRef frame, StringBuilder& stringBuilder)
@@ -1056,9 +1061,7 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef, WKBu
 
     StringBuilder stringBuilder;
     dumpFrameDescriptionSuitableForTestResult(frame, stringBuilder);
-    stringBuilder.appendLiteral(" - willPerformClientRedirectToURL: ");
-    stringBuilder.append(pathSuitableForTestResult(url));
-    stringBuilder.appendLiteral(" \n");
+    stringBuilder.append(" - willPerformClientRedirectToURL: ", pathSuitableForTestResult(url), '\n');
     injectedBundle.outputText(stringBuilder.toString());
 }
 
@@ -1345,7 +1348,7 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
 
     if (injectedBundle.testRunner()->shouldDumpPolicyCallbacks()) {
         StringBuilder stringBuilder;
-        stringBuilder.appendLiteral(" - decidePolicyForNavigationAction \n");
+        stringBuilder.appendLiteral(" - decidePolicyForNavigationAction\n");
         dumpRequestDescriptionSuitableForTestResult(request, stringBuilder);
         stringBuilder.appendLiteral(" is main frame - ");
         stringBuilder.append(WKBundleFrameIsMainFrame(frame) ? "yes" : "no");
@@ -1449,6 +1452,23 @@ uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKBundlePageRef page, WKSecu
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didExceedDatabaseQuota(origin, databaseName, databaseDisplayName, currentQuotaBytes, currentOriginUsageBytes, currentDatabaseUsageBytes, expectedUsageBytes);
 }
 
+static WTF::String stripTrailingSpacesAddNewline(const WTF::String& string)
+{
+    StringBuilder builder;
+    for (auto line : StringView(string).splitAllowingEmptyEntries('\n')) {
+        while (line.endsWith(' '))
+            line = line.substring(0, line.length() - 1);
+        builder.append(line, '\n');
+    }
+    return builder.toString();
+}
+
+static WTF::String addLeadingSpaceStripTrailingSpacesAddNewline(const WTF::String& string)
+{
+    auto result = stripTrailingSpacesAddNewline(string);
+    return (result.isEmpty() || result.startsWith('\n')) ? result : makeString(' ', result);
+}
+
 static WTF::String lastFileURLPathComponent(const WTF::String& path)
 {
     size_t pos = path.find("file://");
@@ -1485,15 +1505,11 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message)
         // FIXME: The code below does not handle additional text after url nor multiple urls. This matches DumpRenderTree implementation.
         messageString = messageString.substring(0, fileProtocolStart) + lastFileURLPathComponent(messageString.substring(fileProtocolStart));
 
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("CONSOLE MESSAGE: ");
-    stringBuilder.append(messageString);
-    stringBuilder.append('\n');
-
+    messageString = makeString("CONSOLE MESSAGE:", addLeadingSpaceStripTrailingSpacesAddNewline(messageString));
     if (injectedBundle.dumpJSConsoleLogInStdErr())
-        injectedBundle.dumpToStdErr(stringBuilder.toString());
+        injectedBundle.dumpToStdErr(messageString);
     else
-        injectedBundle.outputText(stringBuilder.toString());
+        injectedBundle.outputText(messageString);
 }
 
 void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)
@@ -1518,11 +1534,7 @@ void InjectedBundlePage::willRunJavaScriptAlert(WKStringRef message, WKBundleFra
     if (!injectedBundle.isTestRunning())
         return;
 
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("ALERT: ");
-    stringBuilder.append(toWTFString(message));
-    stringBuilder.append('\n');
-    injectedBundle.outputText(stringBuilder.toString());
+    injectedBundle.outputText(makeString("ALERT:", addLeadingSpaceStripTrailingSpacesAddNewline(toWTFString(message))));
 }
 
 void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef)
@@ -1531,22 +1543,12 @@ void InjectedBundlePage::willRunJavaScriptConfirm(WKStringRef message, WKBundleF
     if (!injectedBundle.isTestRunning())
         return;
 
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("CONFIRM: ");
-    stringBuilder.append(toWTFString(message));
-    stringBuilder.append('\n');
-    injectedBundle.outputText(stringBuilder.toString());
+    injectedBundle.outputText(makeString("CONFIRM:", addLeadingSpaceStripTrailingSpacesAddNewline(toWTFString(message))));
 }
 
 void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef)
 {
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("PROMPT: ");
-    stringBuilder.append(toWTFString(message));
-    stringBuilder.appendLiteral(", default text: ");
-    stringBuilder.append(toWTFString(defaultValue));
-    stringBuilder.append('\n');
-    InjectedBundle::singleton().outputText(stringBuilder.toString());
+    InjectedBundle::singleton().outputText(makeString("PROMPT: ", toWTFString(message), ", default text:", addLeadingSpaceStripTrailingSpacesAddNewline(toWTFString(defaultValue))));
 }
 
 void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKSecurityOriginRef origin, int64_t totalBytesNeeded)

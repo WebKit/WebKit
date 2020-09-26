@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -453,22 +453,54 @@ HRESULT UIDelegate::webViewFrame(_In_opt_ IWebView* /*sender*/, _Out_ RECT* fram
     return S_OK;
 }
 
-const wchar_t* toMessage(const BSTR message)
+static std::string stripTrailingSpaces(const std::string& string)
+{
+    auto result = string;
+    std::wstring::size_type spacePosition;
+    while ((spacePosition = result.find(" \n")) != std::wstring::npos)
+        result.erase(spacePosition, 1);
+    while (!result.empty() && result.back() == ' ')
+        result.pop_back();
+    return result;
+}
+
+static std::string addLeadingSpaceStripTrailingSpaces(const std::string& string)
+{
+    auto result = stripTrailingSpaces(string);
+    return (result.empty() || result.front() == '\n') ? result : ' ' + result;
+}
+
+static std::string addLeadingSpaceStripTrailingSpaces(const std::wstring& string)
+{
+    return addLeadingSpaceStripTrailingSpaces(toUTF8(string));
+}
+
+std::string toMessage(BSTR message)
 {
     auto length = SysStringLen(message);
     if (!length)
-        return message;
+        return "";
     // Return "(null)" for an invalid UTF-16 sequence to align with WebKitTestRunner.
-    auto utf8 = StringView(ucharFrom(message), length).tryGetUtf8(StrictConversion);
-    if (!utf8)
-        return L"(null)";
-    return message;
+    // FIXME: Could probably take advantage of WC_ERR_INVALID_CHARS and avoid converting to UTF-8 twice.
+    if (!StringView(ucharFrom(message), length).tryGetUtf8(StrictConversion))
+        return "(null)";
+    return toUTF8(message);
+}
+
+static std::string addLeadingSpaceStripTrailingSpaces(BSTR message)
+{
+    return addLeadingSpaceStripTrailingSpaces(toMessage(message));
+}
+
+static std::string stripTrailingSpaces(BSTR message)
+{
+    return stripTrailingSpaces(toMessage(message));
 }
 
 HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView* /*sender*/, _In_ BSTR message)
 {
     if (!done) {
-        fprintf(testResult, "ALERT: %S\n", toMessage(message));
+        fprintf(testResult, "ALERT:%s\n", addLeadingSpaceStripTrailingSpaces(message).c_str());
         fflush(testResult);
     }
 
@@ -478,7 +510,7 @@ HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView* /*send
 HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, _Out_ BOOL* result)
 {
     if (!done)
-        fprintf(testResult, "CONFIRM: %S\n", toMessage(message));
+        fprintf(testResult, "CONFIRM:%s\n", addLeadingSpaceStripTrailingSpaces(message).c_str());
 
     *result = TRUE;
 
@@ -488,7 +520,7 @@ HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView* /*se
 HRESULT UIDelegate::runJavaScriptTextInputPanelWithPrompt(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, _In_ BSTR defaultText, __deref_opt_out BSTR* result)
 {
     if (!done)
-        fprintf(testResult, "PROMPT: %S, default text: %S\n", toMessage(message), toMessage(defaultText));
+        fprintf(testResult, "PROMPT: %s, default text:%s\n", toMessage(message).c_str(), addLeadingSpaceStripTrailingSpaces(defaultText).c_str());
 
     *result = SysAllocString(defaultText);
 
@@ -501,7 +533,7 @@ HRESULT UIDelegate::runBeforeUnloadConfirmPanelWithMessage(_In_opt_ IWebView* /*
         return E_POINTER;
 
     if (!done)
-        fprintf(testResult, "CONFIRM NAVIGATION: %S\n", toMessage(message));
+        fprintf(testResult, "CONFIRM NAVIGATION:%s\n", addLeadingSpaceStripTrailingSpaces(message).c_str());
 
     *result = !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
 
@@ -523,8 +555,7 @@ HRESULT UIDelegate::webViewAddMessageToConsole(_In_opt_ IWebView* /*sender*/, _I
     }
 
     auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : testResult;
-    fprintf(out, "CONSOLE MESSAGE: ");
-    fprintf(out, "%s\n", toUTF8(newMessage).c_str());
+    fprintf(out, "CONSOLE MESSAGE:%s\n", addLeadingSpaceStripTrailingSpaces(newMessage).c_str());
     return S_OK;
 }
 
@@ -673,7 +704,7 @@ HRESULT UIDelegate::webViewDidInvalidate(_In_opt_ IWebView* /*sender*/)
 HRESULT UIDelegate::setStatusText(_In_opt_ IWebView*, _In_ BSTR text)
 {
     if (!done && gTestRunner->dumpStatusCallbacks())
-        fprintf(testResult, "UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", toMessage(text));
+        fprintf(testResult, "UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", stripTrailingSpaces(text).c_str());
     return S_OK;
 }
 

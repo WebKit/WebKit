@@ -1515,6 +1515,10 @@ static NSString *dumpFramesAsText(WebFrame *frame)
         }
     }
 
+    // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
+    [result replaceOccurrencesOfString:@" +\n" withString:@"\n" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
+    [result replaceOccurrencesOfString:@" +$" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
+
     return result;
 }
 

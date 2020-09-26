@@ -292,7 +292,7 @@ HRESULT FrameLoadDelegate::didFailLoadWithError(_In_opt_ IWebView*, _In_opt_ IWe
 HRESULT FrameLoadDelegate::willPerformClientRedirectToURL(_In_opt_ IWebView*, _In_ BSTR url, double /*delaySeconds*/, DATE /*fireDate*/, _In_opt_ IWebFrame* frame)
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
-        fprintf(testResult, "%s - willPerformClientRedirectToURL: %S \n", descriptionSuitableForTestResult(frame).c_str(),
+        fprintf(testResult, "%s - willPerformClientRedirectToURL: %S\n", descriptionSuitableForTestResult(frame).c_str(),
                 urlSuitableForTestResult(std::wstring(url, ::SysStringLen(url))).c_str());
 
     return S_OK;

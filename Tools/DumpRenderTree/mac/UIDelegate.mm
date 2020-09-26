@@ -76,6 +76,18 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     return NSMakeRect(windowOrigin.x, windowOrigin.y, size.width, size.height);
 }
 
+static NSString *stripTrailingSpaces(NSString *string)
+{
+    auto result = [string stringByReplacingOccurrencesOfString:@" +\n" withString:@"\n" options:NSRegularExpressionSearch range:NSMakeRange(0, string.length)];
+    return [result stringByReplacingOccurrencesOfString:@" +$" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, result.length)];
+}
+
+static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
+{
+    auto result = stripTrailingSpaces(string);
+    return (result.length && ![result hasPrefix:@"\n"]) ? [@" " stringByAppendingString:result] : result;
+}
+
 - (void)webView:(WebView *)sender addMessageToConsole:(NSDictionary *)dictionary withSource:(NSString *)source
 {
     if (done)
@@ -87,9 +99,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     if (range.location != NSNotFound)
         message = [[message substringToIndex:range.location] stringByAppendingString:[[message substringFromIndex:NSMaxRange(range)] lastPathComponent]];
 
-    auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : stdout;
-    fprintf(out, "CONSOLE MESSAGE: ");
-    fprintf(out, "%s\n", [message UTF8String]);
+    fprintf(gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : stdout, "CONSOLE MESSAGE:%s\n", addLeadingSpaceStripTrailingSpaces(message).UTF8String ?: " (null)");
 }
 
 - (void)modalWindowWillClose:(NSNotification *)notification
@@ -113,7 +123,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     if (!done) {
-        printf("ALERT: %s\n", [message UTF8String]);
+        printf("ALERT:%s\n", addLeadingSpaceStripTrailingSpaces(message).UTF8String ?: " (null)");
         fflush(stdout);
     }
 }
@@ -121,22 +131,21 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     if (!done)
-        printf("CONFIRM: %s\n", [message UTF8String]);
+        printf("CONFIRM:%s\n", addLeadingSpaceStripTrailingSpaces(message).UTF8String ?: " (null)");
     return YES;
 }
 
 - (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
 {
     if (!done)
-        printf("PROMPT: %s, default text: %s\n", [prompt UTF8String], [defaultText UTF8String]);
+        printf("PROMPT: %s, default text:%s\n", prompt.UTF8String, addLeadingSpaceStripTrailingSpaces(defaultText).UTF8String ?: " (null)");
     return defaultText;
 }
 
 - (BOOL)webView:(WebView *)c runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     if (!done)
-        printf("CONFIRM NAVIGATION: %s\n", [message UTF8String]);
-    
+        printf("CONFIRM NAVIGATION:%s\n", addLeadingSpaceStripTrailingSpaces(message).UTF8String ?: " (null)");
     return !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
 }
 
@@ -235,7 +244,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text
 {
     if (!done && gTestRunner->dumpStatusCallbacks())
-        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", [text UTF8String]);
+        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", stripTrailingSpaces(text).UTF8String);
 }
 
 - (void)webView:(WebView *)webView decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin *)origin frame:(WebFrame *)frame listener:(id<WebAllowDenyPolicyListener>)listener

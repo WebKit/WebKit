@@ -412,7 +412,7 @@ IGNORE_WARNINGS_END
 - (void)webView:(WebView *)sender willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame
 {
     if (!done && gTestRunner->dumpFrameLoadCallbacks()) {
-        NSString *string = [NSString stringWithFormat:@"%@ - willPerformClientRedirectToURL: %@ ", [frame _drt_descriptionSuitableForTestResult], [URL _drt_descriptionSuitableForTestResult]];
+        NSString *string = [NSString stringWithFormat:@"%@ - willPerformClientRedirectToURL: %@", [frame _drt_descriptionSuitableForTestResult], [URL _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
 

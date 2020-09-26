@@ -488,6 +488,13 @@ static wstring dumpFramesAsText(IWebFrame* frame)
         }
     }
 
+    // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
+    std::wstring::size_type spacePosition;
+    while ((spacePosition = result.find(L" \n")) != std::wstring::npos)
+        result.erase(spacePosition, 1);
+    while (!result.empty() && result.back() == ' ')
+        result.pop_back();
+
     return result;
 }
 

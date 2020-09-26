@@ -1270,7 +1270,8 @@ static NSUInteger swizzledEventPressedMouseButtons()
     }
     
     if ([event isKindOfClass:[DOMKeyboardEvent class]]) {
-        printf("  keyIdentifier: %s\n", [[(DOMKeyboardEvent*)event keyIdentifier] UTF8String]);
+        auto keyIdentifier = [(DOMKeyboardEvent*)event keyIdentifier];
+        printf("  keyIdentifier:%s%s\n", keyIdentifier.length ? " " : "", [keyIdentifier UTF8String]);
         printf("  keyLocation:   %d\n", [(DOMKeyboardEvent*)event location]);
         printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
                [(DOMKeyboardEvent*)event ctrlKey] ? 1 : 0, 

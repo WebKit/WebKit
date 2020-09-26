@@ -1,3 +1,58 @@
+2020-09-25  Darin Adler  <darin@apple.com>
+
+        Change dumpAsText to strip trailing spaces
+        https://bugs.webkit.org/show_bug.cgi?id=216944
+
+        Reviewed by Alan Bujtas.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFramesAsText): Strip trailing spaces.
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:]):
+        Don't add trailing space.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:withSource:]): Ditto.
+        (addLeadingSpaceStripTrailingSpaces): Added.
+        (stripTrailingSpaces): Added.
+        (-[UIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]): Don't add trailing space.
+        (-[UIDelegate webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:]): Ditto.
+        (-[UIDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:]): Ditto.
+        (-[UIDelegate webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:]): Ditto.
+        (-[UIDelegate webView:setStatusText:]): Ditto.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpFramesAsText): Strip trailing spaces.
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::willPerformClientRedirectToURL): Don't add trailing space.
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (toMessage): Changed to return std::wstring.
+        (stripTrailingSpaces): Added.
+        (addLeadingSpaceStripTrailingSpaces): Added.
+        (UIDelegate::runJavaScriptAlertPanelWithMessage): Don't add trailing space.
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage): Ditto.
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt): Ditto.
+        (UIDelegate::runBeforeUnloadConfirmPanelWithMessage): Ditto.
+        (UIDelegate::webViewAddMessageToConsole): Ditto.
+        (UIDelegate::setStatusText): Ditto.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.do_text_results_differ): Strip trailing spaces from expected text.
+        Plan is to remove this after stripping the actual expected.txt files.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.do_text_results_differ): Call through to base.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpFrameText): Strip trailing spaces.
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame): Don't add trailing space.
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction): Ditto.
+        (WTR::stripTrailingSpaces): Added.
+        (WTR::addLeadingSpaceStripTrailingSpaces): Added.
+        (WTR::InjectedBundlePage::willAddMessageToConsole): Don't add trailing space.
+        (WTR::InjectedBundlePage::willRunJavaScriptAlert): Ditto.
+        (WTR::InjectedBundlePage::willRunJavaScriptConfirm): Ditto.
+        (WTR::InjectedBundlePage::willRunJavaScriptPrompt): Ditto.
+
 2020-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r267608.
