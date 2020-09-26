@@ -1,3 +1,17 @@
+2020-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Do not set site for cookies twice in case of redirection
+        https://bugs.webkit.org/show_bug.cgi?id=217010
+
+        Reviewed by Michael Catanzaro.
+
+        ResourceRequest::updateSoupMessage() already fills the same site information, but we are duplicating the code in
+        NetworkDataTaskSoup::continueHTTPRedirection().
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection): Do not set same site information here, it will be done
+        again in NetworkDataTaskSoup::createRequest().
+
 2020-09-25  Hoa Dinh  <dvh@apple.com>
 
         Add -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:] to provide a way to allow app link

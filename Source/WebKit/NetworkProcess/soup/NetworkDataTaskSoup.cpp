@@ -695,19 +695,8 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
     m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
-    if (isTopLevelNavigation()) {
+    if (isTopLevelNavigation())
         request.setFirstPartyForCookies(request.url());
-#if SOUP_CHECK_VERSION(2, 69, 90)
-        soup_message_set_is_top_level_navigation(m_soupMessage.get(), true);
-#endif
-    }
-
-#if SOUP_CHECK_VERSION(2, 69, 90)
-    if (request.isSameSite()) {
-        GUniquePtr<SoupURI> requestURI = urlToSoupURI(request.url());
-        soup_message_set_site_for_cookies(m_soupMessage.get(), requestURI.get());
-    }
-#endif
 
     if (isCrossOrigin) {
         // The network layer might carry over some headers from the original request that
