@@ -937,6 +937,7 @@ $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContextSettings.idl
 $(PROJECT_DIR)/html/canvas/ImageSmoothingQuality.idl
 $(PROJECT_DIR)/html/canvas/OESElementIndexUint.idl
+$(PROJECT_DIR)/html/canvas/OESFBORenderMipmap.idl
 $(PROJECT_DIR)/html/canvas/OESStandardDerivatives.idl
 $(PROJECT_DIR)/html/canvas/OESTextureFloat.idl
 $(PROJECT_DIR)/html/canvas/OESTextureFloatLinear.idl

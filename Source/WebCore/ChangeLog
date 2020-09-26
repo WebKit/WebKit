@@ -1,3 +1,11 @@
+2020-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Big Sur clean build after r267613
+        https://bugs.webkit.org/show_bug.cgi?id=217003
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
 2020-09-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line content logical width expands with run expansions (text-align: justify)
