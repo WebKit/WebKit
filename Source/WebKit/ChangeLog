@@ -1,3 +1,61 @@
+2020-09-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266798. rdar://problem/69583118
+
+    Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
+    <rdar://problem/62978295> and https://bugs.webkit.org/show_bug.cgi?id=216317
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    Covered by new API test.
+    
+    When WebsiteDataStores are gathering all the NetworkProcesses they might need to message, they miss some
+    obvious candidates if there are no longer any related WKWebViews.
+    
+    Fix that by tracking which sessions a NetworkProcess knows about.
+    
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::addSession):
+    (WebKit::NetworkProcessProxy::hasSession const):
+    (WebKit::NetworkProcessProxy::removeSession):
+    * UIProcess/Network/NetworkProcessProxy.h:
+    
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::isAssociatedProcessPool const):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266798 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-09  Brady Eidson  <beidson@apple.com>
+
+            Make sure WKWebsiteDataStore operations reuse existing process pools even when all WKWebViews have closed.
+            <rdar://problem/62978295> and https://bugs.webkit.org/show_bug.cgi?id=216317
+
+            Reviewed by Geoffrey Garen.
+
+            Covered by new API test.
+
+            When WebsiteDataStores are gathering all the NetworkProcesses they might need to message, they miss some
+            obvious candidates if there are no longer any related WKWebViews.
+
+            Fix that by tracking which sessions a NetworkProcess knows about.
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::addSession):
+            (WebKit::NetworkProcessProxy::hasSession const):
+            (WebKit::NetworkProcessProxy::removeSession):
+            * UIProcess/Network/NetworkProcessProxy.h:
+
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::isAssociatedProcessPool const):
+
 2020-09-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r267208. rdar://problem/69178138
