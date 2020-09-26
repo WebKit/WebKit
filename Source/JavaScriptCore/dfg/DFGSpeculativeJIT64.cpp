@@ -4472,8 +4472,7 @@ void SpeculativeJIT::compile(Node* node)
             flushRegisters();
             GPRFlushedCallResult result(this);
             GPRReg resultGPR = result.gpr();
-            callOperation(operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputGPR);
-            m_jit.exceptionCheck();
+            callOperation(operationMapHashHeapBigInt, resultGPR, &vm(), inputGPR);
             strictInt32Result(resultGPR, node);
             break;
         }
@@ -4502,7 +4501,7 @@ void SpeculativeJIT::compile(Node* node)
                 auto isHeapBigInt = m_jit.branchIfHeapBigInt(inputGPR);
                 m_jit.move(inputGPR, resultGPR);
                 m_jit.wangsInt64Hash(resultGPR, tempGPR);
-                addSlowPathGenerator(slowPathCall(isHeapBigInt, this, operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputGPR));
+                addSlowPathGenerator(slowPathCall(isHeapBigInt, this, operationMapHashHeapBigInt, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGPR, &vm(), inputGPR));
                 done.append(m_jit.jump());
                 isString.link(&m_jit);
             }
@@ -4556,7 +4555,7 @@ void SpeculativeJIT::compile(Node* node)
         straightHash.link(&m_jit);
         m_jit.move(inputGPR, resultGPR);
         m_jit.wangsInt64Hash(resultGPR, tempGPR);
-        addSlowPathGenerator(slowPathCall(isHeapBigInt, this, operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputGPR));
+        addSlowPathGenerator(slowPathCall(isHeapBigInt, this, operationMapHashHeapBigInt, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGPR, &vm(), inputGPR));
         done.append(m_jit.jump());
 
         slowPath.link(&m_jit);
@@ -4648,7 +4647,7 @@ void SpeculativeJIT::compile(Node* node)
             done.append(m_jit.branch64(MacroAssembler::Equal, bucketGPR, keyGPR));
             loopAround.append(m_jit.branchIfNotCell(JSValueRegs(bucketGPR)));
 
-            auto isBucketString = m_jit.branchIfString(bucketGPR);
+            auto bucketIsString = m_jit.branchIfString(bucketGPR);
             loopAround.append(m_jit.branchIfNotHeapBigInt(bucketGPR));
 
             // bucket is HeapBigInt.
@@ -4656,7 +4655,7 @@ void SpeculativeJIT::compile(Node* node)
             loopAround.append(m_jit.jump());
 
             // bucket is String.
-            isBucketString.link(&m_jit);
+            bucketIsString.link(&m_jit);
             loopAround.append(m_jit.branchIfNotString(keyGPR));
             slowPathCases.append(m_jit.jump());
             break;
@@ -4682,14 +4681,14 @@ void SpeculativeJIT::compile(Node* node)
             // first is a cell here.
             loopAround.append(m_jit.branchIfNotCell(JSValueRegs(keyGPR)));
             // Both are cells here.
-            auto isBucketString = m_jit.branchIfString(bucketGPR);
+            auto bucketIsString = m_jit.branchIfString(bucketGPR);
             // bucket is not String.
             loopAround.append(m_jit.branchIfNotHeapBigInt(bucketGPR));
             // bucket is HeapBigInt.
             slowPathCases.append(m_jit.branchIfHeapBigInt(keyGPR));
             loopAround.append(m_jit.jump());
             // bucket is String.
-            isBucketString.link(&m_jit);
+            bucketIsString.link(&m_jit);
             loopAround.append(m_jit.branchIfNotString(keyGPR));
             slowPathCases.append(m_jit.jump());
             break;

@@ -11297,7 +11297,7 @@ private:
 
         case HeapBigIntUse: {
             LValue key = lowHeapBigInt(m_node->child1());
-            setInt32(m_out.castToInt32(vmCall(Int64, operationMapHash, weakPointer(globalObject), key)));
+            setInt32(m_out.castToInt32(vmCall(Int64, operationMapHashHeapBigInt, m_vmValue, key)));
             return;
         }
 
@@ -11305,7 +11305,7 @@ private:
             LBasicBlock isString = m_out.newBlock();
             LBasicBlock notString = m_out.newBlock();
             LBasicBlock isHeapBigIntCase = m_out.newBlock();
-            LBasicBlock notStringHeapBigIntCase = m_out.newBlock();
+            LBasicBlock notStringNorHeapBigIntCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
             LValue value = lowCell(m_node->child1());
@@ -11318,13 +11318,13 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(notString, isHeapBigIntCase);
-            m_out.branch(isHeapBigInt(value, (provenType(m_node->child1()) & ~SpecString)), unsure(isHeapBigIntCase), unsure(notStringHeapBigIntCase));
+            m_out.branch(isHeapBigInt(value, (provenType(m_node->child1()) & ~SpecString)), unsure(isHeapBigIntCase), unsure(notStringNorHeapBigIntCase));
 
-            m_out.appendTo(isHeapBigIntCase, notStringHeapBigIntCase);
-            ValueFromBlock heapBigIntResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationMapHash, weakPointer(globalObject), value)));
+            m_out.appendTo(isHeapBigIntCase, notStringNorHeapBigIntCase);
+            ValueFromBlock heapBigIntResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationMapHashHeapBigInt, m_vmValue, value)));
             m_out.jump(continuation);
 
-            m_out.appendTo(notStringHeapBigIntCase, continuation);
+            m_out.appendTo(notStringNorHeapBigIntCase, continuation);
             ValueFromBlock notStringResult = m_out.anchor(wangsInt64Hash(value));
             m_out.jump(continuation);
 
@@ -11410,7 +11410,7 @@ private:
         m_out.branch(isNotHeapBigInt(key, (provenType(m_node->child1()) & SpecCellCheck)), unsure(continuation), unsure(isHeapBigIntCase));
 
         m_out.appendTo(isHeapBigIntCase, notCellCase);
-        ValueFromBlock bigIntResult = m_out.anchor(vmCall(Int64, operationNormalizeMapKey, m_vmValue, key));
+        ValueFromBlock bigIntResult = m_out.anchor(vmCall(Int64, operationNormalizeMapKeyHeapBigInt, m_vmValue, key));
         m_out.jump(continuation);
 
         m_out.appendTo(notCellCase, isNumberCase);

@@ -3212,12 +3212,12 @@ void JIT_OPERATION operationPutDynamicVarNonStrict(JSGlobalObject* globalObject,
     return putDynamicVar(globalObject, vm, scope, value, impl, getPutInfoBits, isStrictMode);
 }
 
-EncodedJSValue JIT_OPERATION operationNormalizeMapKey(VM* vmPointer, EncodedJSValue input)
+EncodedJSValue JIT_OPERATION operationNormalizeMapKeyHeapBigInt(VM* vmPointer, JSBigInt* input)
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return JSValue::encode(normalizeMapKey(JSValue::decode(input)));
+    return JSValue::encode(normalizeMapKey(input));
 }
 
 UCPUStrictInt32 JIT_OPERATION operationMapHash(JSGlobalObject* globalObject, EncodedJSValue input)
@@ -3227,6 +3227,15 @@ UCPUStrictInt32 JIT_OPERATION operationMapHash(JSGlobalObject* globalObject, Enc
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return toUCPUStrictInt32(jsMapHash(globalObject, vm, JSValue::decode(input)));
+}
+
+UCPUStrictInt32 JIT_OPERATION operationMapHashHeapBigInt(VM* vmPointer, JSBigInt* input)
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return toUCPUStrictInt32(jsMapHash(input));
 }
 
 JSCell* JIT_OPERATION operationJSMapFindBucket(JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash)

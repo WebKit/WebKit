@@ -1,3 +1,24 @@
+2020-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, follow-up after r267373 to resolve post-commit review comments
+        https://bugs.webkit.org/show_bug.cgi?id=216667
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNormalizeMapKey):
+        * runtime/HashMapImpl.h:
+        (JSC::jsMapHash):
+
 2020-09-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         %TypedArray%.{from, of} no longer perform AllocateTypedArray

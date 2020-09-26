@@ -1381,8 +1381,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        SpeculatedType typeMaybeNormalized = (SpecFullNumber & ~SpecInt32Only) | SpecHeapBigInt;
-        if (!(forNode(node->child1()).m_type & typeMaybeNormalized)) {
+        SpeculatedType typesNeedingNormalization = (SpecFullNumber & ~SpecInt32Only) | SpecHeapBigInt;
+        if (!(forNode(node->child1()).m_type & typesNeedingNormalization)) {
             m_state.setShouldTryConstantFolding(true);
             forNode(node) = forNode(node->child1());
             break;

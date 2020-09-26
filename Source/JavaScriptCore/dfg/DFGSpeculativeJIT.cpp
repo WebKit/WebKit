@@ -12582,7 +12582,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
 
     passThroughCases.link(&m_jit);
     m_jit.moveValueRegs(keyRegs, resultRegs);
-    addSlowPathGenerator(slowPathCall(slowPath, this, operationNormalizeMapKey, resultRegs, &vm(), keyRegs));
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationNormalizeMapKeyHeapBigInt, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultRegs, &vm(), keyRegs.payloadGPR()));
 
     doneCases.link(&m_jit);
     jsValueResult(resultRegs, node);

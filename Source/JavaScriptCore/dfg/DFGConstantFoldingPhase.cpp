@@ -909,8 +909,8 @@ private:
             }
 
             case NormalizeMapKey: {
-                SpeculatedType typeMaybeNormalized = (SpecFullNumber & ~SpecInt32Only) | SpecHeapBigInt;
-                if (m_state.forNode(node->child1()).m_type & typeMaybeNormalized)
+                SpeculatedType typesNeedingNormalization = (SpecFullNumber & ~SpecInt32Only) | SpecHeapBigInt;
+                if (m_state.forNode(node->child1()).m_type & typesNeedingNormalization)
                     break;
 
                 node->convertToIdentity();

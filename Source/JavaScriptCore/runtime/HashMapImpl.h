@@ -279,6 +279,11 @@ static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
     return static_cast<unsigned>(key);
 }
 
+ALWAYS_INLINE uint32_t jsMapHash(JSBigInt* bigInt)
+{
+    return bigInt->hash();
+}
+
 ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject* globalObject, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");
@@ -291,7 +296,7 @@ ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject* globalObject, VM& vm, JSValue v
     }
 
     if (value.isHeapBigInt())
-        return value.asHeapBigInt()->hash();
+        return jsMapHash(value.asHeapBigInt());
 
     return wangsInt64Hash(JSValue::encode(value));
 }
