@@ -1,0 +1,49 @@
+Makes sure that we don't throw an exception when constructing an AudioNode with a closed context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new AnalyserNode(context) did not throw exception.
+PASS new AudioBufferSourceNode(context) did not throw exception.
+PASS new BiquadFilterNode(context) did not throw exception.
+PASS new ChannelMergerNode(context) did not throw exception.
+PASS new ChannelSplitterNode(context) did not throw exception.
+PASS new ConstantSourceNode(context) did not throw exception.
+PASS new ConvolverNode(context) did not throw exception.
+PASS new DelayNode(context) did not throw exception.
+PASS new DynamicsCompressorNode(context) did not throw exception.
+PASS new GainNode(context) did not throw exception.
+PASS new IIRFilterNode(context, { feedforward: [1], feedback: [1, -0.9] }) did not throw exception.
+PASS new MediaElementAudioSourceNode(context, { mediaElement: new Audio }) did not throw exception.
+PASS new MediaStreamAudioDestinationNode(context) threw exception NotAllowedError: Cannot create a MediaStreamAudioDestinationNode in a detached frame.
+PASS new OscillatorNode(context) did not throw exception.
+PASS new PannerNode(context) did not throw exception.
+PASS new PeriodicWave(context) did not throw exception.
+PASS new StereoPannerNode(context) did not throw exception.
+PASS new WaveShaperNode(context) did not throw exception.
+PASS context.createAnalyser() did not throw exception.
+PASS context.createBufferSource() did not throw exception.
+PASS context.createBiquadFilter() did not throw exception.
+PASS context.createChannelMerger() did not throw exception.
+PASS context.createChannelSplitter() did not throw exception.
+PASS context.createConstantSource() did not throw exception.
+PASS context.createConvolver() did not throw exception.
+PASS context.createDelay() did not throw exception.
+PASS context.createDynamicsCompressor() did not throw exception.
+PASS context.createGain() did not throw exception.
+PASS context.createIIRFilter([1], [1, -0.9]) did not throw exception.
+PASS context.createMediaElementSource(new Audio) did not throw exception.
+PASS context.createMediaStreamDestination() threw exception NotAllowedError: Cannot create a MediaStreamAudioDestinationNode in a detached frame.
+PASS context.createOscillator() did not throw exception.
+PASS context.createPanner() did not throw exception.
+PASS context.createPeriodicWave([1, 2], [1, 2]) did not throw exception.
+PASS context.createStereoPanner() did not throw exception.
+PASS context.createWaveShaper() did not throw exception.
+PASS context.createScriptProcessor() did not throw exception.
+PASS context.suspend() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS context.resume() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS context.close() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

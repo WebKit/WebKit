@@ -121,7 +121,7 @@ public:
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
     size_t currentSampleFrame() const { return m_destinationNode ? m_destinationNode->currentSampleFrame() : 0; }
     double currentTime() const { return m_destinationNode ? m_destinationNode->currentTime() : 0.; }
-    float sampleRate() const { return m_destinationNode ? m_destinationNode->sampleRate() : 0.f; }
+    float sampleRate() const;
     unsigned long activeSourceCount() const { return static_cast<unsigned long>(m_activeSourceCount); }
 
     void incrementActiveSourceCount();

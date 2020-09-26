@@ -47,9 +47,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitDynamicsCompressorNode);
 
 ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudioContext& context, const DynamicsCompressorOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     auto node = adoptRef(*new DynamicsCompressorNode(context, options));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });

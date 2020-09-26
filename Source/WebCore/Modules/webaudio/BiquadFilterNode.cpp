@@ -35,9 +35,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BiquadFilterNode);
 
 ExceptionOr<Ref<BiquadFilterNode>> BiquadFilterNode::create(BaseAudioContext& context, const BiquadFilterOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     auto node = adoptRef(*new BiquadFilterNode(context));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });

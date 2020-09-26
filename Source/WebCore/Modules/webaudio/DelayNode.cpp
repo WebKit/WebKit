@@ -49,9 +49,6 @@ inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
 
 ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const DelayOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     if (options.maxDelayTime <= 0 || options.maxDelayTime >= maximumAllowedDelayTime)
         return Exception { NotSupportedError };
 

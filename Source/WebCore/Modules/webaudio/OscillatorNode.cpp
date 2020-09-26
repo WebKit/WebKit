@@ -62,9 +62,6 @@ static void clampFrequency(float* frequency, size_t framesToProcess, float nyqui
 
 ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& context, const OscillatorOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     if (options.type == OscillatorType::Custom && !options.periodicWave)
         return Exception { InvalidStateError, "Must provide periodicWave when using custom type."_s };
     

@@ -1,3 +1,21 @@
+2020-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Constructing an AudioNode for a closed context should not throw an exception
+        https://bugs.webkit.org/show_bug.cgi?id=216994
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/webaudio/audiocontext-stopped-expected.txt: Removed.
+        * http/wpt/webaudio/audiocontext-stopped.html: Removed.
+        Drop outdated test. It is replaced with the new test I am introducing.
+
+        * webaudio/MediaStreamAudioDestination/create-in-destroyed-context-expected.txt:
+        Rebaseline Blink-imported test that is now passing.
+
+        * webaudio/construct-node-with-closed-context-expected.txt: Added.
+        * webaudio/construct-node-with-closed-context.html: Added.
+        Add layout test coverage.
+
 2020-09-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for <wbr>

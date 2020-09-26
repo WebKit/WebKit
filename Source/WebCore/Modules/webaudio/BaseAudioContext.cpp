@@ -35,6 +35,7 @@
 #include "AudioBufferCallback.h"
 #include "AudioBufferOptions.h"
 #include "AudioBufferSourceNode.h"
+#include "AudioDestination.h"
 #include "AudioListener.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
@@ -207,7 +208,8 @@ BaseAudioContext::~BaseAudioContext()
 
 void BaseAudioContext::lazyInitialize()
 {
-    ASSERT(!m_isStopScheduled);
+    if (isStopped())
+        return;
 
     if (m_isInitialized)
         return;
@@ -374,6 +376,11 @@ DocumentIdentifier BaseAudioContext::hostingDocumentIdentifier() const
     return document ? document->identifier() : DocumentIdentifier { };
 }
 
+float BaseAudioContext::sampleRate() const
+{
+    return m_destinationNode ? m_destinationNode->sampleRate() : AudioDestination::hardwareSampleRate();
+}
+
 bool BaseAudioContext::isSuspended() const
 {
     return !document() || document()->activeDOMObjectsAreSuspended() || document()->activeDOMObjectsAreStopped();
@@ -466,11 +473,6 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
 
     // W3C Editor's Draft 06 June 2017
     //  https://webaudio.github.io/web-audio-api/#widl-BaseAudioContext-createScriptProcessor-ScriptProcessorNode-unsigned-long-bufferSize-unsigned-long-numberOfInputChannels-unsigned-long-numberOfOutputChannels

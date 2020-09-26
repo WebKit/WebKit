@@ -40,9 +40,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(GainNode);
 
 ExceptionOr<Ref<GainNode>> GainNode::create(BaseAudioContext& context, const GainOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     auto gainNode = adoptRef(*new GainNode(context));
 
     auto result = gainNode->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });

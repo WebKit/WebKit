@@ -38,9 +38,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AnalyserNode);
 
 ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, const AnalyserOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-    
     auto analyser = adoptRef(*new AnalyserNode(context));
     
     auto result = analyser->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });

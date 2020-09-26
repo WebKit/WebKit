@@ -1,5 +1,61 @@
 2020-09-26  Chris Dumez  <cdumez@apple.com>
 
+        Constructing an AudioNode for a closed context should not throw an exception
+        https://bugs.webkit.org/show_bug.cgi?id=216994
+
+        Reviewed by Darin Adler.
+
+        Constructing an AudioNode for a closed context should not throw an exception. This
+        behavior is not as per specification and does not match the behavior of Chrome &
+        Firefox either.
+
+        Test: webaudio/construct-node-with-closed-context.html
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::create):
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::lazyInitialize):
+        (WebCore::BaseAudioContext::sampleRate const):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::create):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        * Modules/webaudio/ConstantSourceNode.cpp:
+        (WebCore::ConstantSourceNode::create):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::create):
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::create):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::create):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::create):
+        * Modules/webaudio/IIRFilterNode.cpp:
+        (WebCore::IIRFilterNode::create):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::create):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::create):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::create):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::create):
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::create):
+        * Modules/webaudio/StereoPannerNode.cpp:
+        (WebCore::StereoPannerNode::create):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::create):
+
+2020-09-26  Chris Dumez  <cdumez@apple.com>
+
         Drop AudioNode::lazyInitialize()
         https://bugs.webkit.org/show_bug.cgi?id=217004
 

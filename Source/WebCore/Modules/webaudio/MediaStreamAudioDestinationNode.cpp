@@ -41,8 +41,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamAudioDestinationNode);
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNode::create(BaseAudioContext& context, const AudioNodeOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
+    // This behavior is not part of the specification. This is done for consistency with Blink.
+    if (context.isStopped() || !context.scriptExecutionContext())
+        return Exception { NotAllowedError, "Cannot create a MediaStreamAudioDestinationNode in a detached frame"_s };
 
     auto node = adoptRef(*new MediaStreamAudioDestinationNode(context));
 

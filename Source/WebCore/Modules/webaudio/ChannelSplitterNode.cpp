@@ -39,9 +39,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelSplitterNode);
 
 ExceptionOr<Ref<ChannelSplitterNode>> ChannelSplitterNode::create(BaseAudioContext& context, const ChannelSplitterOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-    
     if (options.numberOfOutputs > AudioContext::maxNumberOfChannels() || !options.numberOfOutputs)
         return Exception { IndexSizeError, "Number of outputs is not in the allowed range"_s };
     

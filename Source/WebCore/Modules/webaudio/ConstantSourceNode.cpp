@@ -41,9 +41,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ConstantSourceNode);
 
 ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext& context, const ConstantSourceOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-    
     auto node = adoptRef(*new ConstantSourceNode(context, options.offset));
     
     context.refNode(node);

@@ -57,9 +57,6 @@ static unsigned computeNumberOfOutputChannels(unsigned inputChannels, unsigned r
 
 ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context, ConvolverOptions&& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     auto node = adoptRef(*new ConvolverNode(context));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });

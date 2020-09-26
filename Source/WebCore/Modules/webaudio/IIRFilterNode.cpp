@@ -84,9 +84,6 @@ static bool isFilterStable(const Vector<double>& feedback)
 
 ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& scriptExecutionContext, BaseAudioContext& context, IIRFilterOptions&& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     if (!options.feedforward.size() || options.feedforward.size() > IIRFilter::maxOrder)
         return Exception { NotSupportedError, "feedforward array must have a length between 1 and 20"_s };
 

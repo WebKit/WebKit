@@ -43,9 +43,6 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
 {
     RELEASE_ASSERT(options.mediaStream);
 
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-
     auto audioTracks = options.mediaStream->getAudioTracks();
     if (audioTracks.isEmpty())
         return Exception { InvalidStateError, "Media stream has no audio tracks"_s };

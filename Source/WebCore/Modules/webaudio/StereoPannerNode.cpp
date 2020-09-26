@@ -41,9 +41,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(StereoPannerNode);
 
 ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& context, const StereoPannerOptions& options)
 {
-    if (context.isStopped())
-        return Exception { InvalidStateError };
-    
     auto stereo = adoptRef(*new StereoPannerNode(context, options.pan));
     
     auto result = stereo->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });
