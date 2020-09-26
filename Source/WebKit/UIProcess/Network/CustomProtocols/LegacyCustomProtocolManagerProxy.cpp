@@ -44,17 +44,17 @@ LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 
 void LegacyCustomProtocolManagerProxy::startLoading(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_networkProcessProxy.customProtocolManagerClient().startLoading(*this, customProtocolID, request);
+    m_networkProcessProxy.processPool().customProtocolManagerClient().startLoading(*this, customProtocolID, request);
 }
 
 void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID customProtocolID)
 {
-    m_networkProcessProxy.customProtocolManagerClient().stopLoading(*this, customProtocolID);
+    m_networkProcessProxy.processPool().customProtocolManagerClient().stopLoading(*this, customProtocolID);
 }
 
 void LegacyCustomProtocolManagerProxy::invalidate()
 {
-    m_networkProcessProxy.customProtocolManagerClient().invalidate(*this);
+    m_networkProcessProxy.processPool().customProtocolManagerClient().invalidate(*this);
 }
 
 void LegacyCustomProtocolManagerProxy::wasRedirectedToRequest(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)

@@ -33,7 +33,6 @@
 #import "NetworkResourceLoader.h"
 #import "NetworkSessionCocoa.h"
 #import "SandboxExtension.h"
-#import "WebCookieManager.h"
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffix.h>
 #import <WebCore/ResourceRequestCFNet.h>
@@ -79,6 +78,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
+#if ENABLE(INDEXED_DATABASE)
+    SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.indexedDatabaseTempBlobDirectoryExtensionHandle);
+#endif
 #endif
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
@@ -101,6 +103,11 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // Disable NSURLCache.
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
     [NSURLCache setSharedURLCache:urlCache.get()];
+}
+
+std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const
+{
+    return makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
@@ -214,7 +221,7 @@ void NetworkProcess::flushCookies(const PAL::SessionID& sessionID, CompletionHan
     platformFlushCookies(sessionID, WTFMove(completionHandler));
 }
 
-void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
+static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(cookieStorage);

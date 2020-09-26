@@ -48,7 +48,7 @@ public:
     virtual ~AuxiliaryProcessProxy();
 
     void connect();
-    virtual void terminate();
+    void terminate();
 
     virtual ProcessThrottler& throttler() = 0;
 

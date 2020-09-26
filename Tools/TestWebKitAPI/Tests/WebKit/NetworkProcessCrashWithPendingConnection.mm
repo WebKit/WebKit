@@ -32,7 +32,6 @@
 #import <WebKit/WKProcessGroupPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -88,7 +87,7 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
     pid_t webView2PID = [webView2.get() _webProcessIdentifier];
     EXPECT_NE(webView1PID, webView2PID);
 
-    pid_t initialNetworkProcessIdentififer = [configuration.get().websiteDataStore _networkProcessIdentifier];
+    pid_t initialNetworkProcessIdentififer = [processPool.get() _networkProcessIdentifier];
     EXPECT_NE(initialNetworkProcessIdentififer, 0);
     kill(initialNetworkProcessIdentififer, SIGKILL);
     Util::run(&networkProcessCrashed);
@@ -97,7 +96,7 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
     [webView1.get() loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     [webView1.get() _test_waitForDidFinishNavigation];
 
-    pid_t relaunchedNetworkProcessIdentifier = [configuration.get().websiteDataStore _networkProcessIdentifier];
+    pid_t relaunchedNetworkProcessIdentifier = [processPool.get() _networkProcessIdentifier];
     EXPECT_NE(initialNetworkProcessIdentififer, relaunchedNetworkProcessIdentifier);
     EXPECT_FALSE(networkProcessCrashed);
 
@@ -147,8 +146,8 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
 
     // Constucting a WebView starts a network process so terminate this one. The page load below will then request a network process and we
     // make this new network process launch crash on startup.
-    [WKWebsiteDataStore _makeNextNetworkProcessLaunchFailForTesting];
-    [configuration.get().websiteDataStore _terminateNetworkProcess];
+    [processPool _terminateNetworkProcess];
+    [processPool _makeNextNetworkProcessLaunchFailForTesting];
 
     auto delegate = adoptNS([[MonitorWebContentCrashNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
@@ -159,7 +158,7 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
     EXPECT_TRUE(networkProcessCrashed);
     EXPECT_FALSE(webProcessCrashed);
     EXPECT_GT([webView _webProcessIdentifier], 0);
-    EXPECT_GT([configuration.get().websiteDataStore _networkProcessIdentifier], 0);
+    EXPECT_GT([processPool.get() _networkProcessIdentifier], 0);
 }
 
 } // namespace TestWebKitAPI

@@ -55,6 +55,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessSDKVersion;
     IPC::encode(encoder, networkATSContext.get());
 #endif
+    encoder << defaultDataStoreParameters;
 #if USE(SOUP)
     encoder << cookieAcceptPolicy;
     encoder << languages;
@@ -65,6 +66,9 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsLocal;
     encoder << urlSchemesRegisteredAsNoAccess;
 
+#if ENABLE(SERVICE_WORKER)
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << shouldDisableServiceWorkerProcessTerminationDelay;
+#endif
     encoder << shouldEnableITPDatabase;
     encoder << enableAdClickAttributionDebugMode;
 }
@@ -110,6 +114,12 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #endif
 
+    Optional<WebsiteDataStoreParameters> defaultDataStoreParameters;
+    decoder >> defaultDataStoreParameters;
+    if (!defaultDataStoreParameters)
+        return false;
+    result.defaultDataStoreParameters = WTFMove(*defaultDataStoreParameters);
+
 #if USE(SOUP)
     if (!decoder.decode(result.cookieAcceptPolicy))
         return false;
@@ -125,6 +135,20 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredAsNoAccess))
         return false;
+
+#if ENABLE(SERVICE_WORKER)
+    if (!decoder.decode(result.serviceWorkerRegistrationDirectory))
+        return false;
+    
+    Optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
+    decoder >> serviceWorkerRegistrationDirectoryExtensionHandle;
+    if (!serviceWorkerRegistrationDirectoryExtensionHandle)
+        return false;
+    result.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
+
+    if (!decoder.decode(result.shouldDisableServiceWorkerProcessTerminationDelay))
+        return false;
+#endif
 
     if (!decoder.decode(result.shouldEnableITPDatabase))
         return false;

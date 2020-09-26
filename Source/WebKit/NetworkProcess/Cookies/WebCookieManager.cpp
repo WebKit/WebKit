@@ -32,7 +32,6 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
-#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
@@ -144,18 +143,15 @@ void WebCookieManager::stopObservingCookieChanges(PAL::SessionID sessionID)
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
-    platformSetHTTPCookieAcceptPolicy(policy, [policy, process = makeRef(m_process), completionHandler = WTFMove(completionHandler)] () mutable {
-        process->cookieAcceptPolicyChanged(policy);
-        completionHandler();
-    });
+    platformSetHTTPCookieAcceptPolicy(policy);
+    m_process.cookieAcceptPolicyChanged(policy);
+
+    completionHandler();
 }
 
-void WebCookieManager::getHTTPCookieAcceptPolicy(PAL::SessionID sessionID, CompletionHandler<void(HTTPCookieAcceptPolicy)>&& completionHandler)
+void WebCookieManager::getHTTPCookieAcceptPolicy(CompletionHandler<void(HTTPCookieAcceptPolicy)>&& completionHandler)
 {
-    if (auto* storageSession = m_process.storageSession(sessionID))
-        completionHandler(storageSession->cookieAcceptPolicy());
-    else
-        completionHandler(HTTPCookieAcceptPolicy::Never);
+    completionHandler(m_process.defaultStorageSession().cookieAcceptPolicy());
 }
 
 } // namespace WebKit

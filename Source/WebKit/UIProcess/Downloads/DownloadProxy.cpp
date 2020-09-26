@@ -75,8 +75,8 @@ void DownloadProxy::cancel()
     if (!m_processPool)
         return;
 
-    if (m_dataStore)
-        m_dataStore->networkProcess().send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
+    if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
+        networkProcess->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
 }
 
 void DownloadProxy::invalidate()
@@ -103,13 +103,15 @@ WebPageProxy* DownloadProxy::originatingPage() const
 #if PLATFORM(COCOA)
 void DownloadProxy::publishProgress(const URL& URL)
 {
-    if (!m_dataStore)
+    if (!m_processPool)
         return;
 
-    SandboxExtension::Handle handle;
-    bool createdSandboxExtension = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite, handle);
-    ASSERT_UNUSED(createdSandboxExtension, createdSandboxExtension);
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);
+    if (auto* networkProcess = m_processPool->networkProcess()) {
+        SandboxExtension::Handle handle;
+        bool createdSandboxExtension = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite, handle);
+        ASSERT_UNUSED(createdSandboxExtension, createdSandboxExtension);
+        networkProcess->send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);
+    }
 }
 #endif // PLATFORM(COCOA)
 
@@ -129,10 +131,11 @@ void DownloadProxy::didStart(const ResourceRequest& request, const String& sugge
 
 void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID)
 {
-    if (!m_processPool || !m_dataStore)
+    if (!m_processPool)
         return;
 
-    auto authenticationChallengeProxy = AuthenticationChallengeProxy::create(WTFMove(authenticationChallenge), challengeID, makeRef(*m_dataStore->networkProcess().connection()), nullptr);
+    auto authenticationChallengeProxy = AuthenticationChallengeProxy::create(WTFMove(authenticationChallenge), challengeID, makeRef(*m_processPool->networkingProcessConnection()), nullptr);
+
     m_processPool->downloadClient().didReceiveAuthenticationChallenge(*this, authenticationChallengeProxy.get());
 }
 
@@ -143,10 +146,15 @@ void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const Res
 
     m_processPool->downloadClient().willSendRequest(*this, WTFMove(proposedRequest), redirectResponse, [this, protectedThis = makeRef(*this)](ResourceRequest&& newRequest) {
         m_redirectChain.append(newRequest.url());
-        if (!protectedThis->m_dataStore)
+
+        if (!protectedThis->m_processPool)
             return;
-        auto& networkProcessProxy = protectedThis->m_dataStore->networkProcess();
-        networkProcessProxy.send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
+
+        auto* networkProcessProxy = protectedThis->m_processPool->networkProcess();
+        if (!networkProcessProxy)
+            return;
+
+        networkProcessProxy->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
     });
 }
 
@@ -171,14 +179,16 @@ void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downl
     if (!m_processPool)
         return;
     
-    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), downloadID] (AllowOverwrite allowOverwrite, String destination) {
+    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), downloadID = downloadID] (AllowOverwrite allowOverwrite, String destination) {
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
-        if (!m_dataStore)
+        if (!m_processPool)
             return;
-        m_dataStore->networkProcess().send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite == AllowOverwrite::Yes), 0);
+
+        if (auto* networkProcess = m_processPool->networkProcess())
+            networkProcess->send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite == AllowOverwrite::Yes), 0);
     });
 }
 

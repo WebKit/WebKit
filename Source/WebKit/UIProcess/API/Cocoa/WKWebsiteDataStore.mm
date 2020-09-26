@@ -617,11 +617,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
-- (BOOL)_networkProcessHasEntitlementForTesting:(NSString *)entitlement
-{
-    return _websiteDataStore->networkProcessHasEntitlementForTesting(entitlement);
-}
-
 - (id <_WKWebsiteDataStoreDelegate>)_delegate
 {
     return _delegate.get().get();
@@ -671,44 +666,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #else
     completionHandler({ });
 #endif
-}
-
-- (void)_terminateNetworkProcess
-{
-    _websiteDataStore->terminateNetworkProcess();
-}
-
-- (void)_sendNetworkProcessPrepareToSuspend:(void(^)(void))completionHandler
-{
-    _websiteDataStore->sendNetworkProcessPrepareToSuspendForTesting([completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
-}
-
-- (void)_sendNetworkProcessWillSuspendImminently
-{
-    _websiteDataStore->sendNetworkProcessWillSuspendImminentlyForTesting();
-
-}
-
-- (void)_sendNetworkProcessDidResume
-{
-    _websiteDataStore->sendNetworkProcessDidResume();
-}
-
-- (void)_synthesizeAppIsBackground:(BOOL)background
-{
-    _websiteDataStore->networkProcess().synthesizeAppIsBackground(background);
-}
-
-- (pid_t)_networkProcessIdentifier
-{
-    return _websiteDataStore->networkProcess().processIdentifier();
-}
-
-+ (void)_makeNextNetworkProcessLaunchFailForTesting
-{
-    WebKit::WebsiteDataStore::makeNextNetworkProcessLaunchFailForTesting();
 }
 
 @end

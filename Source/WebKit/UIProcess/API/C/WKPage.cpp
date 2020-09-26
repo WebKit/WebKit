@@ -398,11 +398,6 @@ uint64_t WKPageGetRenderTreeSize(WKPageRef page)
     return toImpl(page)->renderTreeSize();
 }
 
-WKWebsiteDataStoreRef WKPageGetWebsiteDataStore(WKPageRef page)
-{
-    return toAPI(&toImpl(page)->websiteDataStore());
-}
-
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->inspector());

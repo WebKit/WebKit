@@ -55,10 +55,14 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
         SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
-    if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty() && parameters.networkSessionParameters.sessionID != PAL::SessionID::defaultSessionID())
+    if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty())
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
     networkProcess.ensureSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, makeString(base, '.', sessionID.toUInt64()), WTFMove(uiProcessCookieStorage));
+
+    auto* session = networkProcess.storageSession(sessionID);
+    for (const auto& cookie : parameters.pendingCookies)
+        session->setCookie(cookie);
 
     networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
 }

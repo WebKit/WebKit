@@ -27,6 +27,7 @@
 
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include "WebsiteDataStoreParameters.h"
 #include <WebCore/Cookie.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
@@ -69,6 +70,8 @@ struct NetworkProcessCreationParameters {
     RetainPtr<CFDataRef> networkATSContext;
 #endif
 
+    WebsiteDataStoreParameters defaultDataStoreParameters;
+    
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::AlwaysAccept };
     Vector<String> languages;
@@ -79,6 +82,11 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsLocal;
     Vector<String> urlSchemesRegisteredAsNoAccess;
 
+#if ENABLE(SERVICE_WORKER)
+    String serviceWorkerRegistrationDirectory;
+    SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
+    bool shouldDisableServiceWorkerProcessTerminationDelay { false };
+#endif
     bool shouldEnableITPDatabase { false };
     bool enableAdClickAttributionDebugMode { false };
 };

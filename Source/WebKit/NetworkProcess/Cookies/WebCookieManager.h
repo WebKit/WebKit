@@ -37,8 +37,6 @@
 #include "SoupCookiePersistentStorageType.h"
 #endif
 
-OBJC_CLASS NSHTTPCookieStorage;
-
 namespace WebCore {
 struct Cookie;
 enum class HTTPCookieAcceptPolicy : uint8_t;
@@ -81,17 +79,13 @@ private:
     void getAllCookies(PAL::SessionID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void getCookies(PAL::SessionID, const URL&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
-    void platformSetHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
-    void getHTTPCookieAcceptPolicy(PAL::SessionID, CompletionHandler<void(WebCore::HTTPCookieAcceptPolicy)>&&);
+    void platformSetHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy);
+    void getHTTPCookieAcceptPolicy(CompletionHandler<void(WebCore::HTTPCookieAcceptPolicy)>&&);
 
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);
 
     NetworkProcess& m_process;
 };
-
-#if PLATFORM(COCOA)
-void saveCookies(NSHTTPCookieStorage *, CompletionHandler<void()>&&);
-#endif
 
 } // namespace WebKit

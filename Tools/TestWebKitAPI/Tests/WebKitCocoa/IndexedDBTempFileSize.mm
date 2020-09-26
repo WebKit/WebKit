@@ -95,7 +95,7 @@ TEST(IndexedDB, IndexedDBTempFileSize)
 
     // Terminate network process to keep WAL on disk.
     webView = nil;
-    [configuration.get().websiteDataStore _terminateNetworkProcess];
+    [configuration.get().processPool _terminateNetworkProcess];
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:walFilePath.get().path]);
     RetainPtr<NSDictionary> fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:walFilePath.get().path error:nil];

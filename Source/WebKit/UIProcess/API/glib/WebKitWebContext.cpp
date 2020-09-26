@@ -402,12 +402,15 @@ static void webkitWebContextConstructed(GObject* object)
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
 
     priv->processPool = WebProcessPool::create(configuration);
+    priv->processPool->setPrimaryDataStore(webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()));
     priv->processPool->setUserMessageHandler([webContext](UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler) {
         // Sink the floating ref.
         GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), WTFMove(completionHandler));
         gboolean returnValue;
         g_signal_emit(webContext, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
     });
+
+    webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), *priv->processPool);
 
     priv->processModel = WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
 
@@ -434,6 +437,11 @@ static void webkitWebContextDispose(GObject* object)
         priv->clientsDetached = true;
         priv->processPool->setInjectedBundleClient(nullptr);
         priv->processPool->setDownloadClient(makeUniqueRef<API::DownloadClient>());
+    }
+
+    if (priv->websiteDataManager) {
+        webkitWebsiteDataManagerRemoveProcessPool(priv->websiteDataManager.get(), *priv->processPool);
+        priv->websiteDataManager = nullptr;
     }
 
     if (priv->faviconDatabase) {
@@ -1573,8 +1581,8 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(hostname);
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-    websiteDataStore.networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
+    if (context->priv->dnsPrefetchedHosts.add(hostname).isNewEntry)
+        context->priv->processPool->sendToNetworkingProcess(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)));
     context->priv->dnsPrefetchHystereris.impulse();
 }
 

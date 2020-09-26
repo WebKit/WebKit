@@ -34,7 +34,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
     CookieAcceptPolicy curlPolicy = CookieAcceptPolicy::OnlyFromMainDocumentDomain;
     switch (policy) {
@@ -55,7 +55,6 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
     m_process.forEachNetworkStorageSession([curlPolicy] (const auto& networkStorageSession) {
         networkStorageSession.setCookieAcceptPolicy(curlPolicy);
     });
-    completionHandler();
 }
 
 } // namespace WebKit

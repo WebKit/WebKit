@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Connection.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 
 namespace WebKit {

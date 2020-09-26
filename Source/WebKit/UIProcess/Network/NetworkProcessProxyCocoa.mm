@@ -51,11 +51,8 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
     if (messageName.isEmpty())
         return false;
 
-    if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
-        m_networkProcess->m_endpointMessage = event;
-        for (auto& dataStore : m_networkProcess->m_websiteDataStores)
-            dataStore.sendNetworkProcessXPCEndpointToAllWebProcesses();
-    }
+    if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName)
+        m_networkProcess->processPool().sendNetworkProcessXPCEndpointToWebProcess(event);
 
     return true;
 }

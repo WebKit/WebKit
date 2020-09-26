@@ -173,7 +173,6 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #endif
 
 #if USE(SOUP)
-    // FIXME: Do not use the default session ID.
     DNSResolveQueueSoup::setGlobalDefaultSoupSessionAccessor([this]() -> SoupSession* {
         return static_cast<NetworkSessionSoup&>(*networkSession(PAL::SessionID::defaultSessionID())).soupSession();
     });
@@ -348,6 +347,30 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setAdClickAttributionDebugMode(parameters.enableAdClickAttributionDebugMode);
 
+    SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsParameters.directoryExtensionHandle);
+
+    auto sessionID = parameters.defaultDataStoreParameters.networkSessionParameters.sessionID;
+    setSession(sessionID, NetworkSession::create(*this, WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
+
+    SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.cacheStorageDirectoryExtensionHandle);
+    addSessionStorageQuotaManager(sessionID, parameters.defaultDataStoreParameters.perOriginStorageQuota, parameters.defaultDataStoreParameters.perThirdPartyOriginStorageQuota, parameters.defaultDataStoreParameters.cacheStorageDirectory, parameters.defaultDataStoreParameters.cacheStorageDirectoryExtensionHandle);
+
+#if ENABLE(INDEXED_DATABASE)
+    addIndexedDatabaseSession(sessionID, parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    bool serviceWorkerProcessTerminationDelayEnabled = true;
+    addServiceWorkerSession(PAL::SessionID::defaultSessionID(), serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+#endif
+
+    m_storageManagerSet->add(sessionID, parameters.defaultDataStoreParameters.localStorageDirectory, parameters.defaultDataStoreParameters.localStorageDirectoryExtensionHandle);
+
+    auto* defaultSession = networkSession(PAL::SessionID::defaultSessionID());
+    auto* defaultStorageSession = defaultSession->networkStorageSession();
+    for (const auto& cookie : parameters.defaultDataStoreParameters.pendingCookies)
+        defaultStorageSession->setCookie(cookie);
+
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
 
@@ -482,6 +505,8 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldU
 void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase)
 #endif
 {
+    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
+
     auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
     if (!addResult.isNewEntry)
         return;
@@ -496,7 +521,7 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldU
     RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
     if (sessionID.isEphemeral())
         storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
-    else if (sessionID != PAL::SessionID::defaultSessionID())
+    else
         storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
 
     if (NetworkStorageSession::processMayUseCookieAPI()) {
@@ -519,11 +544,21 @@ void NetworkProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
 
 WebCore::NetworkStorageSession* NetworkProcess::storageSession(const PAL::SessionID& sessionID) const
 {
+    if (sessionID == PAL::SessionID::defaultSessionID())
+        return &defaultStorageSession();
     return m_networkStorageSessions.get(sessionID);
+}
+
+WebCore::NetworkStorageSession& NetworkProcess::defaultStorageSession() const
+{
+    if (!m_defaultNetworkStorageSession)
+        m_defaultNetworkStorageSession = platformCreateDefaultStorageSession();
+    return *m_defaultNetworkStorageSession;
 }
 
 void NetworkProcess::forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>& functor)
 {
+    functor(defaultStorageSession());
     for (auto& storageSession : m_networkStorageSessions.values())
         functor(*storageSession);
 }

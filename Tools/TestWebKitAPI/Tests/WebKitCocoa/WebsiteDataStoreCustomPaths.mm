@@ -244,7 +244,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     // Now, with brand new WKWebsiteDataStores pointing at the same custom cookie storage location,
     // in newly fired up NetworkProcesses, verify that the fetch and delete APIs work as expected.
 
-    [dataStore _terminateNetworkProcess];
+    [processPool _terminateNetworkProcess];
     auto newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
 
     [newCustomDataStore fetchDataRecordsOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
@@ -255,7 +255,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 
-    [dataStore _terminateNetworkProcess];
+    [processPool _terminateNetworkProcess];
     newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
 
     [newCustomDataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] modifiedSince:[NSDate distantPast] completionHandler:^ {
@@ -385,10 +385,11 @@ TEST(WebKit, CustomDataStoreDestroyWhileFetchingNetworkProcessData)
 
         // Terminate the network process while a query is pending.
         auto* allProcessPools = [WKProcessPool _allProcessPoolsForTesting];
-        ASSERT_EQ(0U, [allProcessPools count]);
-        while (![dataStore _networkProcessIdentifier])
+        ASSERT_EQ(1U, [allProcessPools count]);
+        auto* processPool = allProcessPools[0];
+        while (![processPool _networkProcessIdentifier])
             TestWebKitAPI::Util::sleep(0.01);
-        kill([dataStore _networkProcessIdentifier], SIGKILL);
+        kill([processPool _networkProcessIdentifier], SIGKILL);
         allProcessPools = nil;
         dataStore = nil;
     }
@@ -464,9 +465,7 @@ TEST(WebKit, AlternativeServicesDefaultDirectoryCreation)
     
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:key];
 
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
-    configuration.websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease]] autorelease];
-    TestWKWebView *webView2 = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    TestWKWebView *webView2 = [[[TestWKWebView alloc] init] autorelease];
     [webView2 synchronouslyLoadHTMLString:@"start auxiliary processes" baseURL:nil];
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
@@ -540,7 +539,7 @@ TEST(WebKit, DoLoadWithNonDefaultDataStoreAfterTerminatingNetworkProcess)
 
     TestWebKitAPI::Util::spinRunLoop(1);
 
-    [webViewConfiguration.get().websiteDataStore _terminateNetworkProcess];
+    [webViewConfiguration.get().processPool _terminateNetworkProcess];
 
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -858,7 +857,7 @@ TEST(WebKit, MediaCache)
     EXPECT_FALSE(error);
 
     done = true;
-    [[webView configuration].websiteDataStore _terminateNetworkProcess];
+    [[webView configuration].processPool _terminateNetworkProcess];
 
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);

@@ -32,7 +32,6 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
@@ -89,8 +88,8 @@ TEST(IndexedDB, IndexedDBSuspendImminently)
 
     runTestAndCheckResult(@"Continue");
 
-    [configuration.get().websiteDataStore _sendNetworkProcessWillSuspendImminently];
-    [configuration.get().websiteDataStore _sendNetworkProcessDidResume];
+    [configuration.get().processPool _sendNetworkProcessWillSuspendImminently];
+    [configuration.get().processPool _sendNetworkProcessDidResume];
 
     runTestAndCheckResult(@"Expected Abort For Suspension");
     runTestAndCheckResult(@"Expected Success After Resume");
@@ -159,8 +158,8 @@ TEST(IndexedDB, SuspendImminentlyForThirdPartyDatabases)
     [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     runTestAndCheckResult(@"database is created");
 
-    [configuration.get().websiteDataStore _sendNetworkProcessWillSuspendImminently];
-    [configuration.get().websiteDataStore _sendNetworkProcessDidResume];
+    [configuration.get().processPool _sendNetworkProcessWillSuspendImminently];
+    [configuration.get().processPool _sendNetworkProcessDidResume];
 
     runTestAndCheckResult(@"transaction is completed");
 }

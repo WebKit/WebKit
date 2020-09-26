@@ -28,7 +28,6 @@
 
 #include "APIArray.h"
 #include "APIHTTPCookieStore.h"
-#include "NetworkProcessProxy.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "WKAPICast.h"
 #include "WKDictionary.h"
@@ -68,16 +67,6 @@ WKWebsiteDataStoreRef WKWebsiteDataStoreCreateWithConfiguration(WKWebsiteDataSto
 {
     auto sessionID = WebKit::toImpl(configuration)->isPersistent() ? PAL::SessionID::generatePersistentSessionID() : PAL::SessionID::generateEphemeralSessionID();
     return WebKit::toAPI(&WebKit::WebsiteDataStore::create(*WebKit::toImpl(configuration), sessionID).leakRef());
-}
-
-void WKWebsiteDataStoreTerminateNetworkProcess(WKWebsiteDataStoreRef dataStore)
-{
-    WebKit::toImpl(dataStore)->terminateNetworkProcess();
-}
-
-WKProcessID WKWebsiteDataStoreGetNetworkProcessIdentifier(WKWebsiteDataStoreRef dataStore)
-{
-    return WebKit::toImpl(dataStore)->networkProcess().processIdentifier();
 }
 
 void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreRemoveITPDataForDomainFunction callback)

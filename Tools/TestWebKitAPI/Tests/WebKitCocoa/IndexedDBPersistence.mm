@@ -78,7 +78,7 @@ TEST(IndexedDB, IndexedDBPersistence)
     webView = nil;
 
     // Terminate the network process
-    [configuration.get().websiteDataStore _terminateNetworkProcess];
+    [configuration.get().processPool _terminateNetworkProcess];
 
     // Make a new web view to finish the test
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -268,7 +268,7 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
 
     webView = nil;
     secondWebView = nil;
-    [configuration.get().websiteDataStore _terminateNetworkProcess];
+    [configuration.get().processPool _terminateNetworkProcess];
 
     // Third-party IDB storage is stored in the memory of network process.
     auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -385,7 +385,7 @@ TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
 
     webView = nil;
     secondWebView = nil;
-    [configuration.get().websiteDataStore _terminateNetworkProcess];
+    [configuration.get().processPool _terminateNetworkProcess];
 
     auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     loadTestPageInWebView(thirdWebView.get(), @"database is created");

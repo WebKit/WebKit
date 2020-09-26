@@ -268,9 +268,6 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 {
     ASSERT(!m_websiteDataStore);
     m_websiteDataStore = &dataStore;
-#if PLATFORM(COCOA)
-    dataStore.sendNetworkProcessXPCEndpointToWebProcess(*this);
-#endif
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
 }
@@ -741,7 +738,7 @@ void WebProcessProxy::getPluginProcessConnection(uint64_t pluginProcessToken, Me
 
 void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
-    websiteDataStore().getNetworkProcessConnection(*this, WTFMove(reply));
+    m_processPool->getNetworkProcessConnection(*this, WTFMove(reply));
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -958,8 +955,9 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     }
 
 #if PLATFORM(COCOA)
-    if (m_websiteDataStore)
-        m_websiteDataStore->sendNetworkProcessXPCEndpointToWebProcess(*this);
+    auto endpointMessage = processPool().xpcEndpointMessage();
+    if (endpointMessage)
+        xpc_connection_send_message(connection()->xpcConnection(), endpointMessage.get());
 #endif
 
     RELEASE_ASSERT(!m_webConnection);
