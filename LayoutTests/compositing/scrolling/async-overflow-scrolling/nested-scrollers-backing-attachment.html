@@ -1,0 +1,103 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that with nested scrollers, we trigger geometry updates on relative layers within the correct ancestor to get backing store attachment right.</title>
+    <style>
+        main {
+            display: flex;
+            position: absolute;
+            width: 700px;
+            height: 500px;
+            border: 1px solid black;
+        }
+        
+        .left {
+            flex-basis: 20%;
+            flex-grow: 0;
+            min-width: 16rem;
+        }
+        
+        .main {
+            flex-grow: 1;
+            flex-shrink: 1;
+            min-width: 20rem;
+        }
+        
+        .panel {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .scroller {
+            overflow: scroll;
+        }
+        
+        .article-content {
+            margin: 0 auto;
+            max-width: 60rem;
+            overflow: hidden;
+        }
+
+        .content {
+            position: relative;
+            background-color: silver;
+            height: 1000px;
+        }
+        
+        .relative-box {
+            position: relative;
+            height: 200px;
+            margin: 300px 10px;
+            background-color: silver;
+            border: 1px solid gray;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                let scroller = document.getElementById('target');
+                scroller.scrollTo(0, 1000);
+                if (window.internals)
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING + internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <main>
+        <nav class="left panel">
+            <div class="scroller">
+                <div class="content">
+                </div>
+            </div>
+        </nav>
+        <article class="main panel">
+            <div id="target" class="scroller">
+                <div class="article-content">
+                    <div class="relative-box">
+                    </div>
+                    <div class="relative-box">
+                    </div>
+                    <div class="relative-box">
+                    </div>
+                    <div class="relative-box">
+                    </div>
+                    <div class="relative-box">
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+<pre id="layers"></pre>
+</body>
+</html>
+
