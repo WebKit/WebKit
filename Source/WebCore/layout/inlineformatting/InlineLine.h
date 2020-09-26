@@ -66,6 +66,7 @@ public:
         bool isText() const { return m_type == InlineItem::Type::Text; }
         bool isBox() const { return m_type == InlineItem::Type::Box; }
         bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak || m_type == InlineItem::Type::SoftLineBreak; }
+        bool isWordBreakOpportunity() const { return m_type == InlineItem::Type::WordBreakOpportunity; }
         bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
         bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
 
@@ -143,6 +144,7 @@ private:
     void appendInlineContainerStart(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendInlineContainerEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&);
+    void appendWordBreakOpportunity(const InlineItem&);
 
     void removeTrailingTrimmableContent();
     void visuallyCollapsePreWrapOverflowContent();

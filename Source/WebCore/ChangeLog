@@ -1,3 +1,31 @@
+2020-09-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for <wbr>
+        https://bugs.webkit.org/show_bug.cgi?id=217014
+
+        Reviewed by Antti Koivisto.
+
+        Introduce the WordBreakOpportunity type of InlineItem and take it into account while searching for word break opportunities.
+        It generates an empty line run but it does not yet have geometry information.
+
+        Test: fast/layoutformattingcontext/wbr-simple.html
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentIfNeeded):
+        * layout/inlineformatting/InlineItem.h:
+        (WebCore::Layout::InlineItem::isWordBreakOpportunity const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendWith):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendWordBreakOpportunity):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::isWordBreakOpportunity const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::nextWrapOpportunity):
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineBuilder::inlineItemWidth const):
+        (WebCore::Layout::LineBuilder::nextContentForLine):
+
 2020-09-26  Alex Christensen  <achristensen@webkit.org>
 
         Fix Big Sur clean build after r267613

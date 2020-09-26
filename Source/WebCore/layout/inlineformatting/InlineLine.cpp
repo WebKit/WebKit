@@ -224,6 +224,8 @@ void Line::appendWith(const InlineItem& inlineItem, const InlineRunDetails& inli
         appendTextContent(downcast<InlineTextItem>(inlineItem), inlineRunDetails.logicalWidth, inlineRunDetails.needsHyphen);
     else if (inlineItem.isLineBreak())
         appendLineBreak(inlineItem);
+    else if (inlineItem.isWordBreakOpportunity())
+        appendWordBreakOpportunity(inlineItem);
     else if (inlineItem.isContainerStart())
         appendInlineContainerStart(inlineItem, inlineRunDetails.logicalWidth);
     else if (inlineItem.isContainerEnd())
@@ -284,7 +286,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
             // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
             if (run.isText())
                 return run.hasCollapsibleTrailingWhitespace();
-            ASSERT(run.isContainerStart() || run.isContainerEnd());
+            ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isWordBreakOpportunity());
         }
         // Leading whitespace.
         return !isWhitespacePreserved(inlineTextItem.style());
@@ -348,6 +350,11 @@ void Line::appendLineBreak(const InlineItem& inlineItem)
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalWidth() });
 }
 
+void Line::appendWordBreakOpportunity(const InlineItem& inlineItem)
+{
+    m_runs.append({ inlineItem, contentLogicalWidth(), 0_lu });
+}
+
 bool Line::isRunVisuallyNonEmpty(const Run& run) const
 {
     if (run.isText())
@@ -373,6 +380,9 @@ bool Line::isRunVisuallyNonEmpty(const Run& run) const
         ASSERT(run.layoutBox().isInlineBlockBox() || run.layoutBox().isInlineTableBox());
         return run.logicalWidth();
     }
+
+    if (run.isWordBreakOpportunity())
+        return false;
 
     ASSERT_NOT_REACHED();
     return false;

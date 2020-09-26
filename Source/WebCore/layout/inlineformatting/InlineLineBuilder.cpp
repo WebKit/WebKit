@@ -110,55 +110,41 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
 
 static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_t startIndex, const LineBuilder::InlineItemRange layoutRange)
 {
-    // 1. Find the start candidate by skipping leading non-content items e.g <span><span>start : skip "<span><span>"
-    // 2. Find the end candidate by skipping non-content items inbetween e.g. <span><span>start</span>end: skip "</span>"
+    // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
+    // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
     // 3. Check if there's a soft wrap opportunity between the 2 candidate inline items and repeat.
-    // 4. Any force line break inbetween is considered as a wrap opportunity.
+    // 4. Any force line break/explicit wrap content inbetween is considered as wrap opportunity.
 
-    // [ex-][container start][container end][float][ample] (ex-<span></span><div style="float:left"></div>ample) : wrap index is at [ex-].
-    // [ex][container start][amp-][container start][le] (ex<span>amp-<span>ample) : wrap index is at [amp-].
-    // [ex-][container start][line break][ample] (ex-<span><br>ample) : wrap index is after [br].
-    auto isAtLineBreak = false;
-
-    auto inlineItemIndexWithContent = [&] (auto index) {
-        // Note that floats are not part of the inline content. We should treat them as if they were not here as far as wrap opportunities are concerned.
-        // [text][float box][text] is essentially just [text][text]
-        for (; index < layoutRange.end; ++index) {
-            auto& inlineItem = inlineContent[index];
-            if (inlineItem.isText() || inlineItem.isBox())
-                return index;
-            if (inlineItem.isLineBreak()) {
-                isAtLineBreak = true;
-                return index;
-            }
+    // [ex-][container start][container end][float][ample] (ex-<span></span><div style="float:left"></div>ample). Wrap index is at [ex-].
+    // [ex][container start][amp-][container start][le] (ex<span>amp-<span>ample). Wrap index is at [amp-].
+    // [ex-][container start][line break][ample] (ex-<span><br>ample). Wrap index is after [br].
+    auto previousInlineItemIndex = Optional<size_t> { };
+    for (auto index = startIndex; index < layoutRange.end; ++index) {
+        auto& inlineItem = inlineContent[index];
+        if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity()) {
+            // We always stop at explicit wrapping opportunities e.g. <br>. The wrap position is after the opportunity position.
+            return ++index;
         }
-        return layoutRange.end;
-    };
-
-    // Start at the first inline item with content.
-    // [container start][ex-] : start at [ex-]
-    auto startContentIndex = inlineItemIndexWithContent(startIndex);
-    if (isAtLineBreak) {
-        // Content starts with a line break. The wrap position is after the line break.
-        return startContentIndex + 1;
-    }
-
-    while (startContentIndex < layoutRange.end) {
-        // 1. Find the next inline item with content.
-        // 2. Check if there's a soft wrap opportunity between the start and the next inline item.
-        auto nextContentIndex = inlineItemIndexWithContent(startContentIndex + 1);
-        if (nextContentIndex == layoutRange.end)
-            return nextContentIndex;
-        if (isAtLineBreak) {
-            // We always stop at line breaks. The wrap position is after the line break.
-            return nextContentIndex + 1;
+        if (inlineItem.isFloat()) {
+            // Floats are not part of the inline content. We ignore them as far as wrap opportunities are concerned.
+            // [text][float box][text] is essentially just [text][text]
+            continue;
         }
-        if (isAtSoftWrapOpportunity(inlineContent[startContentIndex], inlineContent[nextContentIndex])) {
-            // There's a soft wrap opportunity between the start and the nextContent.
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
+            // There's no wrapping opportunity between <span>text, <span></span> or </span>text. 
+            continue;
+        }
+        ASSERT(inlineItem.isText() || inlineItem.isBox());
+        if (!previousInlineItemIndex) {
+            previousInlineItemIndex = index;
+            continue;
+        }
+        if (isAtSoftWrapOpportunity(inlineContent[*previousInlineItemIndex], inlineContent[index])) {
+            // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][container start][container end][ample]
             // where [ex-] is startContent and [ample] is the nextContent.
-            for (auto candidateIndex = startContentIndex + 1; candidateIndex < nextContentIndex; ++candidateIndex) {
+            for (auto candidateIndex = *previousInlineItemIndex + 1; candidateIndex < index; ++candidateIndex) {
                 if (inlineContent[candidateIndex].isContainerStart()) {
                     // inline content and [container start] and [container end] form unbreakable content.
                     // ex-<span></span>ample  : wrap opportunity is after "ex-".
@@ -168,9 +154,9 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_
                     return candidateIndex;
                 }
             }
-            return nextContentIndex;
+            return index;
         }
-        startContentIndex = nextContentIndex;
+        previousInlineItemIndex = index;
     }
     return layoutRange.end;
 }
@@ -247,7 +233,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
             return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
         }
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isWordBreakOpportunity())
             return false;
         ASSERT_NOT_REACHED();
         return true;
@@ -310,8 +296,8 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return TextUtil::width(inlineTextItem, inlineTextItem.start(), end, contentLogicalLeft);
     }
 
-    if (inlineItem.isLineBreak())
-        return 0;
+    if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity())
+        return { };
 
     auto& layoutBox = inlineItem.layoutBox();
     auto& boxGeometry = m_inlineFormattingContext.geometryForBox(layoutBox);
@@ -537,7 +523,7 @@ void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, unsigned curr
             accumulatedWidth += floatWidth;
             continue;
         }
-        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox()) {
+        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox() || inlineItem.isWordBreakOpportunity()) {
             auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItenmWidth);
             currentLogicalRight += inlineItenmWidth;
