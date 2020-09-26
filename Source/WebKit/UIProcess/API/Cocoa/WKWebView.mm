@@ -1927,7 +1927,25 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
 {
-    return wrapper(_page->loadRequest(request, shouldOpenExternalURLs ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+    _WKShouldOpenExternalURLsPolicy policy = shouldOpenExternalURLs ? _WKShouldOpenExternalURLsPolicyAllow : _WKShouldOpenExternalURLsPolicyNotAllow;
+    return [self _loadRequest:request shouldOpenExternalURLsPolicy:policy];
+}
+
+- (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLsPolicy:(_WKShouldOpenExternalURLsPolicy)shouldOpenExternalURLsPolicy
+{
+    WebCore::ShouldOpenExternalURLsPolicy policy;
+    switch (shouldOpenExternalURLsPolicy) {
+    case _WKShouldOpenExternalURLsPolicyNotAllow:
+        policy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+        break;
+    case _WKShouldOpenExternalURLsPolicyAllow:
+        policy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow;
+        break;
+    case _WKShouldOpenExternalURLsPolicyAllowExternalSchemesButNotAppLinks:
+        policy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks;
+        break;
+    }
+    return wrapper(_page->loadRequest(request, policy));
 }
 
 - (NSArray *)_certificateChain

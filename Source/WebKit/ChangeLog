@@ -1,3 +1,19 @@
+2020-09-25  Hoa Dinh  <dvh@apple.com>
+
+        Add -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:] to provide a way to allow app link
+        https://bugs.webkit.org/show_bug.cgi?id=216977
+
+        Reviewed by Alex Christensen.
+
+        The method -[WKWebView _loadRequest:shouldOpenExternalURLs:] would only allow opening external or not.
+        It wasn't providing the ability to allow external URL but not app links.
+        This patch adds -[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]. The parameters value for
+        shouldOpenExternalURLsPolicy has the same meaning than WebCore::ShouldOpenExternalURLsPolicy.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Added enum _WKShouldOpenExternalURLsPolicy, 
+
 2020-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r267608.
