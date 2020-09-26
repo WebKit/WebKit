@@ -553,7 +553,7 @@ protected:
 
         ChildrenAffectedByFirstChildRulesFlag = 1 << 25,
         ChildrenAffectedByLastChildRulesFlag = 1 << 26,
-        // UnusedFlag = 1 << 27,
+        IsComputedStyleInvalidFlag = 1 << 27,
 
         AffectsNextSiblingElementStyle = 1 << 28,
         StyleIsAffectedByPreviousSibling = 1 << 29,
@@ -775,6 +775,7 @@ inline void Node::setHasValidStyle()
 {
     m_nodeFlags &= ~StyleValidityMask;
     clearFlag(StyleResolutionShouldRecompositeLayerFlag);
+    clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
 
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
