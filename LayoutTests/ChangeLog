@@ -1,3 +1,13 @@
+2020-09-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line content logical width expands with run expansions (text-align: justify)
+        https://bugs.webkit.org/show_bug.cgi?id=217011
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/run-expansion-extends-line-content-width-expected.html: Added.
+        * fast/layoutformattingcontext/run-expansion-extends-line-content-width.html: Added.
+
 2020-09-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect breaking position when inline box content fits the line but the inline content itself does not.

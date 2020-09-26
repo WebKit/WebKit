@@ -111,6 +111,9 @@ void Line::applyRunExpansion()
         run.shrinkHorizontally(-computedExpansion);
         accumulatedExpansion += computedExpansion;
     }
+    // Content grows as runs expand.
+    m_contentLogicalWidth += accumulatedExpansion;
+    ASSERT(m_contentLogicalWidth == m_horizontalConstraint);
 }
 
 void Line::removeTrailingTrimmableContent()
