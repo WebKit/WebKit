@@ -1,0 +1,107 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            top: 10px;
+            left: 10px;
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow-y: scroll;
+        }
+        .content {
+            height: 400%;
+        }
+
+        ::-webkit-scrollbar {
+            width: 50px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: silver;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: gray;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 0);
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            overflowScrollEventCount = 0;
+            windowScrollEventCount = 0;
+        }
+        
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test scroll over content');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(100, 100);
+
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount == 0', 'true');
+        }
+
+        async function testScrollOverScrollbar()
+        {
+            debug('');
+            debug('Test scroll over border');
+            await resetScrollPositions();
+            
+            let bounds = scroller.getBoundingClientRect();
+            await UIHelper.mouseWheelScrollAt(bounds.right - 50, bounds.top + 50);
+            
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount == 0', 'true');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            await testScrollOverScrollbar();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content">asdf</div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

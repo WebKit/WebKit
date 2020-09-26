@@ -1,5 +1,57 @@
 2020-09-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r266923. rdar://problem/69586712
+
+    REGRESSION (Async overflow scroll): Mouse wheel scrolling over an "always-on" overflow scrollbar doesn't work
+    https://bugs.webkit.org/show_bug.cgi?id=216381
+    <rdar://problem/68593743>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    The scrollbar and scroll corner layers need event regions and scrollingNodeIDs so that
+    we hit-test them via CA layers and find the right scrolling node.
+    
+    Test: fast/scrolling/mac/mousewheel-over-scrollbar.html
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::updateAfterDescendants):
+    (WebCore::RenderLayerBacking::updateEventRegion):
+    (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+    (WebCore::RenderLayerBacking::setScrollingNodeIDForRole):
+    
+    LayoutTests:
+    
+    * fast/scrolling/mac/border-radius-event-region-expected.txt:
+    * fast/scrolling/mac/event-region-scrolled-contents-layer-expected.txt:
+    * fast/scrolling/mac/event-region-subscroller-overflow-expected.txt:
+    * fast/scrolling/mac/event-region-visibility-hidden-expected.txt:
+    * fast/scrolling/mac/mousewheel-over-scrollbar-expected.txt: Added.
+    * fast/scrolling/mac/mousewheel-over-scrollbar.html: Added.
+    * fast/scrolling/mac/negative-z-index-overflow-scroll-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266923 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (Async overflow scroll): Mouse wheel scrolling over an "always-on" overflow scrollbar doesn't work
+            https://bugs.webkit.org/show_bug.cgi?id=216381
+            <rdar://problem/68593743>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/scrolling/mac/border-radius-event-region-expected.txt:
+            * fast/scrolling/mac/event-region-scrolled-contents-layer-expected.txt:
+            * fast/scrolling/mac/event-region-subscroller-overflow-expected.txt:
+            * fast/scrolling/mac/event-region-visibility-hidden-expected.txt:
+            * fast/scrolling/mac/mousewheel-over-scrollbar-expected.txt: Added.
+            * fast/scrolling/mac/mousewheel-over-scrollbar.html: Added.
+            * fast/scrolling/mac/negative-z-index-overflow-scroll-expected.txt:
+
+2020-09-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266887. rdar://problem/69586659
 
     REGRESSION (r257839): clickpay.com - password placeholder text cannot be replaced
