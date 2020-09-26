@@ -142,7 +142,7 @@ public:
         double value = toButterfly()->contiguousDouble().at(this, index);
         // Holes are not supported yet.
         ASSERT(!std::isnan(value));
-        return jsNumber(value);
+        return jsDoubleNumber(value);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
