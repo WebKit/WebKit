@@ -29,8 +29,8 @@
 
 namespace WebKit {
 
-bool currentUserInterfaceIdiomIsPad();
-void setCurrentUserInterfaceIdiomIsPad(bool);
+bool currentUserInterfaceIdiomIsPadOrMac();
+void setCurrentUserInterfaceIdiomIsPadOrMac(bool);
 
 }
 

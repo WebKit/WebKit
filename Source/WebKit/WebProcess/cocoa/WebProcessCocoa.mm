@@ -253,7 +253,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if PLATFORM(IOS_FAMILY)
-    setCurrentUserInterfaceIdiomIsPad(parameters.currentUserInterfaceIdiomIsPad);
+    setCurrentUserInterfaceIdiomIsPadOrMac(parameters.currentUserInterfaceIdiomIsPad);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);

@@ -43,6 +43,12 @@ static UserInterfaceIdiomState userInterfaceIdiomIsPadState = UserInterfaceIdiom
 
 static inline bool userInterfaceIdiomIsPad()
 {
+#if PLATFORM(MACCATALYST)
+    // UIKit varies the UIUserInterfaceIdiom between iPad and macOS in macCatalyst, depending on various settings,
+    // but for the purposes of WebKit we always want to use iPad behavior (vs. iPhone) in macCatalyst.
+    // FIXME: We should get rid of this function and have callers make explicit decisions for all of iPhone/iPad/macOS.
+    return true;
+#else
     // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
     // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
     // but is not sufficient in the application case.
@@ -52,22 +58,23 @@ static inline bool userInterfaceIdiomIsPad()
     // This inline function exists to thwart unreachable code
     // detection on platforms where UICurrentUserInterfaceIdiomIsPad
     // is defined directly to false.
-#if USE(APPLE_INTERNAL_SDK) && !PLATFORM(MACCATALYST)
+#if USE(APPLE_INTERNAL_SDK)
     return UICurrentUserInterfaceIdiomIsPad();
 #else
     return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
 #endif
+#endif
 }
 
-bool currentUserInterfaceIdiomIsPad()
+bool currentUserInterfaceIdiomIsPadOrMac()
 {
     if (userInterfaceIdiomIsPadState == UserInterfaceIdiomState::Unknown)
-        setCurrentUserInterfaceIdiomIsPad(userInterfaceIdiomIsPad());
+        setCurrentUserInterfaceIdiomIsPadOrMac(userInterfaceIdiomIsPad());
 
     return userInterfaceIdiomIsPadState == UserInterfaceIdiomState::IsPad;
 }
 
-void setCurrentUserInterfaceIdiomIsPad(bool isPad)
+void setCurrentUserInterfaceIdiomIsPadOrMac(bool isPad)
 {
     userInterfaceIdiomIsPadState = isPad ? UserInterfaceIdiomState::IsPad : UserInterfaceIdiomState::IsNotPad;
 }
