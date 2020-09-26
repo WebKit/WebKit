@@ -3280,8 +3280,8 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
                 m_frame.document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame.document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache), m_frame.document());
             }
 
-            // FIXME: update Page Visibility state here.
-            // https://bugs.webkit.org/show_bug.cgi?id=116770
+            // This takes care of firing the visibilitychange event and making sure the document is reported as hidden.
+            m_frame.document()->setVisibilityHiddenDueToDismissal(true);
 
             if (m_frame.document()->backForwardCacheState() == Document::NotInBackForwardCache) {
                 Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No));

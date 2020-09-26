@@ -1772,7 +1772,7 @@ VisibilityState Document::visibilityState() const
     // page. If there is no page associated with the document, we will assume
     // that the page is hidden, as specified by the spec:
     // https://w3c.github.io/page-visibility/#visibilitystate-attribute
-    if (!m_frame || !m_frame->page())
+    if (!m_frame || !m_frame->page() || m_visibilityHiddenDueToDismissal)
         return VisibilityState::Hidden;
     return m_frame->page()->visibilityState();
 }
@@ -3255,6 +3255,15 @@ void Document::setTimerThrottlingEnabled(bool shouldThrottle)
 
     m_isTimerThrottlingEnabled = shouldThrottle;
     didChangeTimerAlignmentInterval();
+}
+
+void Document::setVisibilityHiddenDueToDismissal(bool hiddenDueToDismissal)
+{
+    if (m_visibilityHiddenDueToDismissal == hiddenDueToDismissal)
+        return;
+
+    m_visibilityHiddenDueToDismissal = hiddenDueToDismissal;
+    dispatchEvent(Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const

@@ -92,8 +92,9 @@ static void firePageShowAndPopStateEvents(Page& page)
         if (!document)
             continue;
 
-        // FIXME: Update Page Visibility state here.
-        // https://bugs.webkit.org/show_bug.cgi?id=116770
+        // This takes care of firing the visibilitychange event and making sure the document is reported as visible.
+        document->setVisibilityHiddenDueToDismissal(false);
+
         document->dispatchPageshowEvent(PageshowEventPersisted);
 
         auto* historyItem = child->loader().history().currentItem();

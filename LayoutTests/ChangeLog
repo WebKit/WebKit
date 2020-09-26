@@ -1,3 +1,17 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        visibilitychange:hidden doesn't fire during page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=151234
+        <rdar://problem/23688763>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test coverage for the visibilitychange event and document.visibilitystate when entering
+        and coming out of the back/forward cache.
+
+        * fast/history/back-forward-cache-visibility-state-expected.txt: Added.
+        * fast/history/back-forward-cache-visibility-state.html: Added.
+
 2020-09-25  James Darpinian  <jdarpinian@chromium.org>
 
         Support OES_fbo_render_mipmap

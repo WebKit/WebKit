@@ -1,0 +1,58 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Tests document.visibilityState and the visibilitychange event when entering the backforward cache.');
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.clearAllDatabases();
+
+let visibilityChangeEventCount = 0;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    shouldBeEqualToString("document.visibilityState", "visible");
+
+    if (event.persisted)
+        shouldBe("visibilityChangeEventCount", "2");
+    
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    shouldBeEqualToString("document.visibilityState", "visible");
+    shouldBe("visibilityChangeEventCount", "0");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.addEventListener("visibilitychange", () => {
+            if (visibilityChangeEventCount > 2)
+                return;
+
+            ++visibilityChangeEventCount;
+            debug("visibilitychange - visibilityState: " + document.visibilityState);
+            if (visibilityChangeEventCount == 1)
+                shouldBeEqualToString("document.visibilityState", "hidden");
+            else
+                shouldBeEqualToString("document.visibilityState", "visible");
+        });
+
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+</body>
+</html>

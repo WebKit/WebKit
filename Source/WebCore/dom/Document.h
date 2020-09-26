@@ -491,6 +491,8 @@ public:
     void setTimerThrottlingEnabled(bool);
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
 
+    void setVisibilityHiddenDueToDismissal(bool);
+
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> adoptNode(Node& source);
 
     WEBCORE_EXPORT Ref<HTMLCollection> images();
@@ -2127,6 +2129,8 @@ private:
     bool m_hasStartedApplePaySession { false };
 #endif
     bool m_hasVisuallyNonEmptyCustomContent { false };
+
+    bool m_visibilityHiddenDueToDismissal { false };
 
     Ref<UndoManager> m_undoManager;
 #if PLATFORM(IOS_FAMILY)

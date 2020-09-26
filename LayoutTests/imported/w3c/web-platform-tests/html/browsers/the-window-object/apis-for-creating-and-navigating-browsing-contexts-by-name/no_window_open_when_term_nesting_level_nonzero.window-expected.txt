@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Error: assert_equals: expected no popup during pagehide expected null but got object "[object Window]"
+CONSOLE MESSAGE: Error: assert_equals: expected no popup during visibilitychange expected null but got object "[object Window]"
 CONSOLE MESSAGE: Error: assert_equals: expected no popup during unload expected null but got object "[object Window]"
 
 PASS no popups with frame removal 

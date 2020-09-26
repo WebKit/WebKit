@@ -1,3 +1,46 @@
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
+        visibilitychange:hidden doesn't fire during page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=151234
+        <rdar://problem/23688763>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fire a visibilitychange during document unload, as per the specification:
+        - https://www.w3.org/TR/page-visibility/#reacting-to-visibilitychange-changes
+        - https://html.spec.whatwg.org/multipage/browsing-the-web.html#unloading-document-visibility-change-steps
+
+        Note that the specification currently says to fire the visibilitychange event before the pagehide event.
+        However, Both Chrome and Firefox fire the pagehide event then the visibilitychange event. This change
+        aligns our behavior with both Chrome and Firefox. The following bug has been filed against the
+        specification:
+        - https://github.com/w3c/page-visibility/issues/67
+
+        We also fire a visibilitychange event when coming out of the back/forward cache. This makes sense given
+        that we fire one when the document enters the back/forward cache. This is also Firefox's behavior.
+        I have verified that the new fast/history/back-forward-cache-visibility-state.html layout test is passing
+        in Firefox.
+
+        Tests: fast/history/back-forward-cache-visibility-state.html
+               imported/w3c/web-platform-tests/page-visibility/idlharness.window.html
+               imported/w3c/web-platform-tests/page-visibility/iframe-unload.html
+               imported/w3c/web-platform-tests/page-visibility/onvisibilitychange.html
+               imported/w3c/web-platform-tests/page-visibility/test_attributes_exist.html
+               imported/w3c/web-platform-tests/page-visibility/test_child_document.html
+               imported/w3c/web-platform-tests/page-visibility/test_default_view.html
+               imported/w3c/web-platform-tests/page-visibility/test_read_only.html
+               imported/w3c/web-platform-tests/page-visibility/unload-bubbles.html
+               imported/w3c/web-platform-tests/page-visibility/unload.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityState const):
+        (WebCore::Document::setHiddenDueToDismissal):
+        * dom/Document.h:
+        * history/CachedPage.cpp:
+        (WebCore::firePageShowAndPopStateEvents):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+
 2020-09-25  James Darpinian  <jdarpinian@chromium.org>
 
         Support OES_fbo_render_mipmap
