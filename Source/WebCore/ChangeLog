@@ -1,3 +1,16 @@
+2020-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Slack.com is not working, new messages do not load due to WebSocket authentication failure issue
+        https://bugs.webkit.org/show_bug.cgi?id=149551
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we are not including all the cookies in the web socket request. There are two cookies with
+        the Lax same-site policy set, that are not included for the websocket request.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::webSocketConnectRequest): Add same site information to WebSocket requests.
+
 2020-09-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect breaking position when inline box content fits the line but the inline content itself does not.
