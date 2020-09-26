@@ -1,5 +1,12 @@
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, update xcfilelist files.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
+2020-09-25  Chris Dumez  <cdumez@apple.com>
+
         Avoid having to call context.lazyInitialize() in every AudioNode factory function
         https://bugs.webkit.org/show_bug.cgi?id=216989
 

@@ -928,6 +928,7 @@ $(PROJECT_DIR)/html/canvas/CanvasUserInterface.idl
 $(PROJECT_DIR)/html/canvas/EXTBlendMinMax.idl
 $(PROJECT_DIR)/html/canvas/EXTColorBufferFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTColorBufferHalfFloat.idl
+$(PROJECT_DIR)/html/canvas/EXTFloatBlend.idl
 $(PROJECT_DIR)/html/canvas/EXTFragDepth.idl
 $(PROJECT_DIR)/html/canvas/EXTShaderTextureLOD.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureFilterAnisotropic.idl
