@@ -1,3 +1,47 @@
+2020-09-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266611. rdar://problem/69594191
+
+    MediaRecorder timeslice parameter causing internal error on longer videos
+    https://bugs.webkit.org/show_bug.cgi?id=216076
+    <rdar://problem/68209422>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: http/wpt/fetch/blob-range.html
+    
+    * platform/network/BlobResourceHandle.cpp:
+    (WebCore::BlobResourceHandle::readDataAsync):
+    
+    Source/WebKit:
+    
+    Test: http/wpt/fetch/blob-range.html
+    
+    * NetworkProcess/NetworkDataTaskBlob.cpp:
+    (WebKit::NetworkDataTaskBlob::readData):
+    readData can be re-entrant so we need to reset m_currentItemReadSize before consuming data.
+    
+    LayoutTests:
+    
+    * http/wpt/fetch/blob-range-expected.txt: Added.
+    * http/wpt/fetch/blob-range.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266611 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-04  Youenn Fablet  <youenn@apple.com>
+
+            MediaRecorder timeslice parameter causing internal error on longer videos
+            https://bugs.webkit.org/show_bug.cgi?id=216076
+            <rdar://problem/68209422>
+
+            Reviewed by Eric Carlson.
+
+            * http/wpt/fetch/blob-range-expected.txt: Added.
+            * http/wpt/fetch/blob-range.html: Added.
+
 2020-09-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r267067. rdar://problem/69586680
