@@ -635,7 +635,6 @@ $(PROJECT_DIR)/css/SelectorPseudoElementTypeMap.in
 $(PROJECT_DIR)/css/StyleMedia.idl
 $(PROJECT_DIR)/css/StyleSheet.idl
 $(PROJECT_DIR)/css/StyleSheetList.idl
-$(PROJECT_DIR)/css/WebKitCSSMatrix.idl
 $(PROJECT_DIR)/css/WebKitCSSViewportRule.idl
 $(PROJECT_DIR)/css/WebKitFontFamilyNames.in
 $(PROJECT_DIR)/css/dialog.css

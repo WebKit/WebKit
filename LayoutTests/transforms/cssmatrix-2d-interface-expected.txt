@@ -189,7 +189,12 @@ PASS sx.e is 0
 PASS sx.f is 0
 
 Test multiply with missing argument
-PASS m2 is null
+PASS m2.a is 1
+PASS m2.b is 2
+PASS m2.c is 3
+PASS m2.d is 4
+PASS m2.e is 5
+PASS m2.f is 6
 
 Test inverse
 PASS parseFloat(m2.a) is 0.5
@@ -208,7 +213,20 @@ PASS parseFloat(m.e) is 10
 PASS parseFloat(m.f) is 20
 
 Test throwing exception from inverse
-PASS m.inverse() threw exception NotSupportedError: The operation is not supported..
+PASS m2.a is NaN
+PASS m2.b is NaN
+PASS m2.c is NaN
+PASS m2.d is NaN
+PASS m2.e is NaN
+PASS m2.f is NaN
+
+Test immutability of inverse
+PASS m.a is 0
+PASS m.b is 0
+PASS m.c is 0
+PASS m.d is 0
+PASS m.e is 0
+PASS m.f is 0
 
 PASS successfullyParsed is true
 

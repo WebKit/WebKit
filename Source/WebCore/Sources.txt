@@ -765,7 +765,6 @@ css/StyleSheet.cpp
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
 css/TransformFunctions.cpp
-css/WebKitCSSMatrix.cpp
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSDeferredParser.cpp
 css/parser/CSSParser.cpp
@@ -3600,7 +3599,6 @@ JSWebKitAudioBufferSourceNode.cpp
 JSWebKitAudioContext.cpp
 JSWebKitAudioListener.cpp
 JSWebKitAudioPannerNode.cpp
-JSWebKitCSSMatrix.cpp
 JSWebKitDynamicsCompressorNode.cpp
 JSWebKitMediaKeyError.cpp
 JSWebKitMediaKeyMessageEvent.cpp

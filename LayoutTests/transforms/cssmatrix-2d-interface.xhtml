@@ -255,7 +255,12 @@ debug("");
 debug("Test multiply with missing argument");
 m = new WebKitCSSMatrix("matrix(1, 2, 3, 4, 5, 6)");
 m2 = m.multiply();
-shouldBe('m2', 'null');
+shouldBe('m2.a', '1');
+shouldBe('m2.b', '2');
+shouldBe('m2.c', '3');
+shouldBe('m2.d', '4');
+shouldBe('m2.e', '5');
+shouldBe('m2.f', '6');
 
 debug("");
 debug("Test inverse");
@@ -281,7 +286,23 @@ shouldBe('parseFloat(m.f)', '20');
 debug("");
 debug("Test throwing exception from inverse");
 m = new WebKitCSSMatrix("matrix(0, 0, 0, 0, 0, 0)"); // not invertible
-shouldThrow('m.inverse()');
+m2 = m.inverse();
+
+shouldBeNaN('m2.a');
+shouldBeNaN('m2.b');
+shouldBeNaN('m2.c');
+shouldBeNaN('m2.d');
+shouldBeNaN('m2.e');
+shouldBeNaN('m2.f');
+
+debug("");
+debug("Test immutability of inverse");
+shouldBe('m.a', '0');
+shouldBe('m.b', '0');
+shouldBe('m.c', '0');
+shouldBe('m.d', '0');
+shouldBe('m.e', '0');
+shouldBe('m.f', '0');
 
 debug("");
 

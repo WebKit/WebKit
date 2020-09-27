@@ -1,9 +1,5 @@
 
-FAIL Equivalence test assert_equals: interface object expected function "function DOMMatrix() {
-    [native code]
-}" but got function "function WebKitCSSMatrix() {
-    [native code]
-}"
+PASS Equivalence test
 PASS Property descriptor for WebKitCSSMatrix
 PASS Property descriptor for DOMMatrix
 

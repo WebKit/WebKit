@@ -9,6 +9,6 @@ shouldBe("WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix(new WebKit
          "'matrix(1, 0, 0, 1, 0, 0)'");
 
 shouldBe("WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix('matrix3d(1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000)'))",
-         "'matrix(1, 0, 0, 1, 0, 0)'");
+         "'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'");
 
 var successfullyParsed = true;

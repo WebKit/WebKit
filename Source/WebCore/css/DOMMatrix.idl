@@ -27,6 +27,7 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
+    LegacyWindowAlias=WebKitCSSMatrix,
     ImplementationLacksVTable
 ] interface DOMMatrix : DOMMatrixReadOnly {
     [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);

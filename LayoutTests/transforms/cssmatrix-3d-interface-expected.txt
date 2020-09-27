@@ -216,9 +216,6 @@ PASS parseFloat(m.m42) is 20
 PASS parseFloat(m.m43) is 30
 PASS parseFloat(m.m44) is 1
 
-Test throwing exception from inverse
-PASS m.inverse() threw exception NotSupportedError: The operation is not supported..
-
 Test translate
 PASS m2.m11 is 1
 PASS m2.m12 is 0

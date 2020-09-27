@@ -277,11 +277,6 @@ shouldBe('parseFloat(m.m43)', '30');
 shouldBe('parseFloat(m.m44)', '1');
 
 debug("");
-debug("Test throwing exception from inverse");
-m = new WebKitCSSMatrix("matrix3d(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)"); // not invertible
-shouldThrow('m.inverse()');
-
-debug("");
 debug("Test translate");
 m = new WebKitCSSMatrix();
 var m2 = m.translate(10, 20, 30);

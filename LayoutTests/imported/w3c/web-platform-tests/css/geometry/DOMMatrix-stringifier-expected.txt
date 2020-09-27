@@ -52,29 +52,29 @@ PASS DOMMatrixReadOnly stringifier: Number.MIN_VALUE (3d)
 PASS DOMMatrixReadOnly stringifier: throwing getters (2d)
 PASS DOMMatrixReadOnly stringifier: throwing getters (3d)
 PASS WebKitCSSMatrix stringifier: identity (2d)
-FAIL WebKitCSSMatrix stringifier: identity (3d) self[constr].fromMatrix is not a function. (In 'self[constr].fromMatrix({is2D: false})', 'self[constr].fromMatrix' is undefined)
-FAIL WebKitCSSMatrix stringifier: NaN (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: NaN (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Infinity (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Infinity (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: -Infinity (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: -Infinity (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 1/3 (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 1/3 (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 1/300000 (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 1/300000 (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 1/300000000 (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 1/300000000 (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 100000 + (1/3) (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: 100000 + (1/3) (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Math.pow(2, 53) + 1 (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Math.pow(2, 53) + 1 (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Math.pow(2, 53) + 2 (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Math.pow(2, 53) + 2 (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Number.MAX_VALUE (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Number.MAX_VALUE (3d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Number.MIN_VALUE (2d) The string did not match the expected pattern.
-FAIL WebKitCSSMatrix stringifier: Number.MIN_VALUE (3d) The string did not match the expected pattern.
+PASS WebKitCSSMatrix stringifier: identity (3d)
+PASS WebKitCSSMatrix stringifier: NaN (2d)
+PASS WebKitCSSMatrix stringifier: NaN (3d)
+PASS WebKitCSSMatrix stringifier: Infinity (2d)
+PASS WebKitCSSMatrix stringifier: Infinity (3d)
+PASS WebKitCSSMatrix stringifier: -Infinity (2d)
+PASS WebKitCSSMatrix stringifier: -Infinity (3d)
+PASS WebKitCSSMatrix stringifier: 1/3 (2d)
+PASS WebKitCSSMatrix stringifier: 1/3 (3d)
+PASS WebKitCSSMatrix stringifier: 1/300000 (2d)
+PASS WebKitCSSMatrix stringifier: 1/300000 (3d)
+PASS WebKitCSSMatrix stringifier: 1/300000000 (2d)
+PASS WebKitCSSMatrix stringifier: 1/300000000 (3d)
+PASS WebKitCSSMatrix stringifier: 100000 + (1/3) (2d)
+PASS WebKitCSSMatrix stringifier: 100000 + (1/3) (3d)
+PASS WebKitCSSMatrix stringifier: Math.pow(2, 53) + 1 (2d)
+PASS WebKitCSSMatrix stringifier: Math.pow(2, 53) + 1 (3d)
+PASS WebKitCSSMatrix stringifier: Math.pow(2, 53) + 2 (2d)
+PASS WebKitCSSMatrix stringifier: Math.pow(2, 53) + 2 (3d)
+PASS WebKitCSSMatrix stringifier: Number.MAX_VALUE (2d)
+PASS WebKitCSSMatrix stringifier: Number.MAX_VALUE (3d)
+PASS WebKitCSSMatrix stringifier: Number.MIN_VALUE (2d)
+PASS WebKitCSSMatrix stringifier: Number.MIN_VALUE (3d)
 PASS WebKitCSSMatrix stringifier: throwing getters (2d)
-FAIL WebKitCSSMatrix stringifier: throwing getters (3d) self[constr].fromMatrix is not a function. (In 'self[constr].fromMatrix({is2D: false})', 'self[constr].fromMatrix' is undefined)
+PASS WebKitCSSMatrix stringifier: throwing getters (3d)
 
