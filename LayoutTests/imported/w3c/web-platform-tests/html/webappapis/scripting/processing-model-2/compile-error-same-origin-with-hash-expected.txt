@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected token ')'
 
-PASS window.onerror - compile error in <script src=...> with hash 
-PASS window.onerror - compile error in <script src=...> with hash (column) 
+PASS window.onerror - compile error in <script src=...> with hash
+PASS window.onerror - compile error in <script src=...> with hash (column)
 

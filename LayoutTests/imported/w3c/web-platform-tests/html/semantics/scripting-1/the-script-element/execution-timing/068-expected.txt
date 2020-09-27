@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: external script and parsing of markup added with document.write  
+PASS  scheduler: external script and parsing of markup added with document.write
 

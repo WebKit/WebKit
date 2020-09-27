@@ -1,7 +1,7 @@
-    
 
-PASS Images are lazyloaded 
-PASS Image referrerPolicy mutation does not cause deferred loading=lazy images to be fetched 
-PASS Image crossOrigin mutation does not cause deferred loading=lazy images to be fetched 
-PASS Image src mutation does not cause deferred loading=lazy images to be fetched 
+
+PASS Images are lazyloaded
+PASS Image referrerPolicy mutation does not cause deferred loading=lazy images to be fetched
+PASS Image crossOrigin mutation does not cause deferred loading=lazy images to be fetched
+PASS Image src mutation does not cause deferred loading=lazy images to be fetched
 

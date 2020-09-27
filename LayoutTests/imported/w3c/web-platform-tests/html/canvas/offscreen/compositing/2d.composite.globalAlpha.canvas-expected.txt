@@ -1,5 +1,5 @@
 2d.composite.globalAlpha.canvas
 
 
-PASS OffscreenCanvas test: 2d.composite.globalAlpha.canvas 
+PASS OffscreenCanvas test: 2d.composite.globalAlpha.canvas
 

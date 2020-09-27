@@ -1,5 +1,5 @@
 
-PASS Getting spellcheck IDL attribute 
-PASS Setting spellcheck IDL attribute to true 
-PASS Setting spellcheck IDL attribute to false 
-  
+PASS Getting spellcheck IDL attribute
+PASS Setting spellcheck IDL attribute to true
+PASS Setting spellcheck IDL attribute to false
+

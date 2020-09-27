@@ -1,9 +1,9 @@
 
-PASS HTMLTableSectionElement insertRow(0) 
-PASS HTMLTableSectionElement insertRow(-1) 
-PASS HTMLTableSectionElement insertRow() 
-PASS HTMLTableSectionElement insertRow(rows.length) 
-PASS HTMLTableSectionElement insertRow(-2) 
-PASS HTMLTableSectionElement insertRow(rows.length + 1) 
+PASS HTMLTableSectionElement insertRow(0)
+PASS HTMLTableSectionElement insertRow(-1)
+PASS HTMLTableSectionElement insertRow()
+PASS HTMLTableSectionElement insertRow(rows.length)
+PASS HTMLTableSectionElement insertRow(-2)
+PASS HTMLTableSectionElement insertRow(rows.length + 1)
 ABCDEF
 

@@ -1,4 +1,4 @@
 
-PASS It should be possible to open same origin documents. 
-PASS It should be possible to implicitly open same origin documents. 
+PASS It should be possible to open same origin documents.
+PASS It should be possible to implicitly open same origin documents.
 

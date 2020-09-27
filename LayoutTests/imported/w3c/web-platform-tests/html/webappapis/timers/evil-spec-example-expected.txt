@@ -1,3 +1,3 @@
 
-PASS Interaction of setTimeout and WebIDL 
+PASS Interaction of setTimeout and WebIDL
 

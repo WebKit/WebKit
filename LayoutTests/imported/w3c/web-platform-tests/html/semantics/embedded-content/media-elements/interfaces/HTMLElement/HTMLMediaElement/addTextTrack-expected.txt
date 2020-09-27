@@ -1,13 +1,13 @@
 
-PASS HTMLMediaElement.addTextTrack bogus first arg 
-PASS HTMLMediaElement.addTextTrack uppercase first arg 
-PASS HTMLMediaElement.addTextTrack subtitles first arg 
-PASS HTMLMediaElement.addTextTrack captions first arg 
-PASS HTMLMediaElement.addTextTrack descriptions first arg 
-PASS HTMLMediaElement.addTextTrack chapters first arg 
-PASS HTMLMediaElement.addTextTrack metadata first arg 
-PASS HTMLMediaElement.addTextTrack undefined second and third arg 
-PASS HTMLMediaElement.addTextTrack null second and third arg 
-PASS HTMLMediaElement.addTextTrack foo and bar second and third arg 
-PASS HTMLMediaElement.addTextTrack foo second arg, third arg omitted 
+PASS HTMLMediaElement.addTextTrack bogus first arg
+PASS HTMLMediaElement.addTextTrack uppercase first arg
+PASS HTMLMediaElement.addTextTrack subtitles first arg
+PASS HTMLMediaElement.addTextTrack captions first arg
+PASS HTMLMediaElement.addTextTrack descriptions first arg
+PASS HTMLMediaElement.addTextTrack chapters first arg
+PASS HTMLMediaElement.addTextTrack metadata first arg
+PASS HTMLMediaElement.addTextTrack undefined second and third arg
+PASS HTMLMediaElement.addTextTrack null second and third arg
+PASS HTMLMediaElement.addTextTrack foo and bar second and third arg
+PASS HTMLMediaElement.addTextTrack foo second arg, third arg omitted
 

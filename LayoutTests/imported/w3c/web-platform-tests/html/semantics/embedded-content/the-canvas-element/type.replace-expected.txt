@@ -3,5 +3,5 @@ HTMLCanvasElement methods can be replaced, and the replacement methods used by c
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS HTMLCanvasElement methods can be replaced, and the replacement methods used by canvases 
+PASS HTMLCanvasElement methods can be replaced, and the replacement methods used by canvases
 

@@ -1,4 +1,4 @@
 
-PASS document.open() and document's URL containing a fragment (entry is not relevant) 
-PASS document.open() and document's URL containing a fragment (entry is relevant) 
+PASS document.open() and document's URL containing a fragment (entry is not relevant)
+PASS document.open() and document's URL containing a fragment (entry is relevant)
 

@@ -8,8 +8,8 @@ html-script-module-errorHandling
 
 
 FAIL IFrame test: 'iframe_parseError_Root' assert_equals: Unexpected _errorReported value expected "error" but got ""
-PASS IFrame test: 'iframe_parseError_Dependent' 
-PASS IFrame test: 'iframe_parseError_DependentMultiple' 
-PASS External root module with non-script mimetype 
-PASS Module with imported non-script mimetype 
+PASS IFrame test: 'iframe_parseError_Dependent'
+PASS IFrame test: 'iframe_parseError_DependentMultiple'
+PASS External root module with non-script mimetype
+PASS Module with imported non-script mimetype
 

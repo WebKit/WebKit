@@ -1,9 +1,9 @@
 
-PASS HTML elements should have a .dataset 
-PASS Should return 'undefined' before setting an attribute 
-PASS Should return 'value' if that's the value 
-PASS Should return the empty string if that's the value 
-PASS Should return 'undefined' after removing an attribute 
-PASS Should not have a .dataset on random elements 
-PASS SVG elements should have a .dataset 
+PASS HTML elements should have a .dataset
+PASS Should return 'undefined' before setting an attribute
+PASS Should return 'value' if that's the value
+PASS Should return the empty string if that's the value
+PASS Should return 'undefined' after removing an attribute
+PASS Should not have a .dataset on random elements
+PASS SVG elements should have a .dataset
 

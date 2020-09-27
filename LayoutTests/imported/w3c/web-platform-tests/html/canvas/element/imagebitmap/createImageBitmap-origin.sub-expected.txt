@@ -5,25 +5,25 @@ CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has bee
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 
-PASS cross-origin HTMLImageElement: origin unclear getImageData 
-PASS cross-origin HTMLImageElement: origin unclear 2dContext.drawImage 
-PASS cross-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap 
+PASS cross-origin HTMLImageElement: origin unclear getImageData
+PASS cross-origin HTMLImageElement: origin unclear 2dContext.drawImage
+PASS cross-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
 FAIL cross-origin SVGImageElement: origin unclear getImageData promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL cross-origin SVGImageElement: origin unclear 2dContext.drawImage promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL cross-origin SVGImageElement: origin unclear bitmaprenderer.transferFromImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS cross-origin HTMLVideoElement: origin unclear getImageData 
-PASS cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage 
-PASS cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap 
-PASS redirected to cross-origin HTMLVideoElement: origin unclear getImageData 
-PASS redirected to cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage 
-PASS redirected to cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap 
-PASS redirected to same-origin HTMLVideoElement: origin unclear getImageData 
-PASS redirected to same-origin HTMLVideoElement: origin unclear 2dContext.drawImage 
-PASS redirected to same-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap 
-PASS unclean HTMLCanvasElement: origin unclear getImageData 
-PASS unclean HTMLCanvasElement: origin unclear 2dContext.drawImage 
-PASS unclean HTMLCanvasElement: origin unclear bitmaprenderer.transferFromImageBitmap 
-PASS unclean ImageBitmap: origin unclear getImageData 
-PASS unclean ImageBitmap: origin unclear 2dContext.drawImage 
-PASS unclean ImageBitmap: origin unclear bitmaprenderer.transferFromImageBitmap 
+PASS cross-origin HTMLVideoElement: origin unclear getImageData
+PASS cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage
+PASS cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS redirected to cross-origin HTMLVideoElement: origin unclear getImageData
+PASS redirected to cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage
+PASS redirected to cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS redirected to same-origin HTMLVideoElement: origin unclear getImageData
+PASS redirected to same-origin HTMLVideoElement: origin unclear 2dContext.drawImage
+PASS redirected to same-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS unclean HTMLCanvasElement: origin unclear getImageData
+PASS unclean HTMLCanvasElement: origin unclear 2dContext.drawImage
+PASS unclean HTMLCanvasElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS unclean ImageBitmap: origin unclear getImageData
+PASS unclean ImageBitmap: origin unclear 2dContext.drawImage
+PASS unclean ImageBitmap: origin unclear bitmaprenderer.transferFromImageBitmap
 

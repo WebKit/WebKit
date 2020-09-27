@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Areas outside shadows are drawn correctly with destination-out 
+PASS Areas outside shadows are drawn correctly with destination-out
 

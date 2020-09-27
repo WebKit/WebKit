@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: no readystatechange events when adding external scripts  
+PASS  scheduler: no readystatechange events when adding external scripts
 

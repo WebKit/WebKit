@@ -2,28 +2,28 @@ xxxx
 xxxx
 xxxx
 
-PASS display: block - available width: 50px 
-PASS display: block - available width: 200px 
-PASS display: block - available width: 300px 
-PASS display: inline - available width: 50px 
-PASS display: inline - available width: 200px 
-PASS display: inline - available width: 300px 
-PASS display: inline-block - available width: 50px 
-PASS display: inline-block - available width: 200px 
-PASS display: inline-block - available width: 300px 
-PASS display: list-item - available width: 50px 
-PASS display: list-item - available width: 200px 
-PASS display: list-item - available width: 300px 
-PASS display: table - available width: 50px 
-PASS display: table - available width: 200px 
-PASS display: table - available width: 300px 
-PASS display: table-row - available width: 50px 
-PASS display: table-row - available width: 200px 
-PASS display: table-row - available width: 300px 
-PASS display: table-cell - available width: 50px 
-PASS display: table-cell - available width: 200px 
-PASS display: table-cell - available width: 300px 
-PASS float: left - available width: 50px 
-PASS float: left - available width: 200px 
-PASS float: left - available width: 300px 
+PASS display: block - available width: 50px
+PASS display: block - available width: 200px
+PASS display: block - available width: 300px
+PASS display: inline - available width: 50px
+PASS display: inline - available width: 200px
+PASS display: inline - available width: 300px
+PASS display: inline-block - available width: 50px
+PASS display: inline-block - available width: 200px
+PASS display: inline-block - available width: 300px
+PASS display: list-item - available width: 50px
+PASS display: list-item - available width: 200px
+PASS display: list-item - available width: 300px
+PASS display: table - available width: 50px
+PASS display: table - available width: 200px
+PASS display: table - available width: 300px
+PASS display: table-row - available width: 50px
+PASS display: table-row - available width: 200px
+PASS display: table-row - available width: 300px
+PASS display: table-cell - available width: 50px
+PASS display: table-cell - available width: 200px
+PASS display: table-cell - available width: 300px
+PASS float: left - available width: 50px
+PASS float: left - available width: 200px
+PASS float: left - available width: 300px
 

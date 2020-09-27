@@ -1,5 +1,5 @@
 
-PASS An action URL should be resolved relative to the document's base URL (not the document's URL) 
-PASS An empty-string action content attribute should cause the IDL attribute to return the document's URL (not the document's base URL) 
-PASS A missing action content attribute should cause the IDL attribute to return the document's URL (not the document's base URL) 
+PASS An action URL should be resolved relative to the document's base URL (not the document's URL)
+PASS An empty-string action content attribute should cause the IDL attribute to return the document's URL (not the document's base URL)
+PASS A missing action content attribute should cause the IDL attribute to return the document's URL (not the document's base URL)
 

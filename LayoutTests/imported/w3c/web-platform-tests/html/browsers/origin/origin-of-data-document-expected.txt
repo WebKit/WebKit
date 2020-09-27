@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from access
 
 
 
-PASS The origin of a 'data:' document in a frame is opaque. 
+PASS The origin of a 'data:' document in a frame is opaque.
 

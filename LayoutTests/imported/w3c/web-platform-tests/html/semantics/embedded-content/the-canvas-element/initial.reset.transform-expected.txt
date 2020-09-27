@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Resetting the canvas state resets the current transformation matrix 
+PASS Resetting the canvas state resets the current transformation matrix
 

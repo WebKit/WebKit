@@ -1,4 +1,4 @@
-  
 
-PASS In-viewport loading=lazy images do not block the window load event 
+
+PASS In-viewport loading=lazy images do not block the window load event
 

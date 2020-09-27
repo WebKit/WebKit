@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: document.write inline in markup  
+PASS  scheduler: document.write inline in markup
 

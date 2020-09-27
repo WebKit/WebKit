@@ -3,5 +3,5 @@
 save()/restore() does not affect the current path
 
 
-PASS save()/restore() does not affect the current path 
+PASS save()/restore() does not affect the current path
 

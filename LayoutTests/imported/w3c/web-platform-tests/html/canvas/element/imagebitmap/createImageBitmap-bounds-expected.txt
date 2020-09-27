@@ -1,3 +1,3 @@
 
-PASS createImageBitmap: clipping to the bitmap 
+PASS createImageBitmap: clipping to the bitmap
 

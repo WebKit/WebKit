@@ -3,5 +3,5 @@
 lineJoin 'bevel' is rendered correctly
 
 
-PASS lineJoin 'bevel' is rendered correctly 
+PASS lineJoin 'bevel' is rendered correctly
 

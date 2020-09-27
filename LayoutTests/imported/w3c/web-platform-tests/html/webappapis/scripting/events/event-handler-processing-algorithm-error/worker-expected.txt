@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 
-PASS error event is normal (return true does not cancel; one arg) on Worker, with a syntax error in the worker code 
-PASS error event is normal (return true does not cancel; one arg) on Worker, with a synthetic Event 
-PASS error event is normal (return true does not cancel; one arg) on Worker, with a synthetic ErrorEvent 
+PASS error event is normal (return true does not cancel; one arg) on Worker, with a syntax error in the worker code
+PASS error event is normal (return true does not cancel; one arg) on Worker, with a synthetic Event
+PASS error event is normal (return true does not cancel; one arg) on Worker, with a synthetic ErrorEvent
 

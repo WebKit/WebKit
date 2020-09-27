@@ -1,8 +1,8 @@
 
-PASS HTMLAnchorElement.text getting 
-PASS Test for anchor 0 
-PASS Test for anchor 1 
-PASS Test for anchor 2 
-PASS Test for anchor 3 
-PASS Test for anchor 4 
+PASS HTMLAnchorElement.text getting
+PASS Test for anchor 0
+PASS Test for anchor 1
+PASS Test for anchor 2
+PASS Test for anchor 3
+PASS Test for anchor 4
 a b c a b c a b c a c a b c

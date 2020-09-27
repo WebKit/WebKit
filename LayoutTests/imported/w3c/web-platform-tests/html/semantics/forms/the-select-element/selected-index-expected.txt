@@ -1,15 +1,15 @@
 
-PASS get empty 
-PASS get default 
-PASS get disabled 
-PASS get unselected 
-PASS set empty (HTMLSelectElement) 
-PASS set empty (HTMLOptionsCollection) 
-PASS set (HTMLSelectElement) 
-PASS set (HTMLOptionsCollection) 
-PASS set and reset (HTMLSelectElement) 
-PASS set and reset (HTMLOptionsCollection) 
-PASS get display:none 
-PASS reset to display:none 
-PASS set selectedIndex=-1 
-          
+PASS get empty
+PASS get default
+PASS get disabled
+PASS get unselected
+PASS set empty (HTMLSelectElement)
+PASS set empty (HTMLOptionsCollection)
+PASS set (HTMLSelectElement)
+PASS set (HTMLOptionsCollection)
+PASS set and reset (HTMLSelectElement)
+PASS set and reset (HTMLOptionsCollection)
+PASS get display:none
+PASS reset to display:none
+PASS set selectedIndex=-1
+

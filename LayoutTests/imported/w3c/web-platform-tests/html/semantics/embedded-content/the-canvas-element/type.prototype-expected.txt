@@ -3,5 +3,5 @@ window.HTMLCanvasElement has prototype, which is { ReadOnly, DontDelete }. proto
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS window.HTMLCanvasElement has prototype, which is { ReadOnly, DontDelete }. prototype has getContext, which is not 
+PASS window.HTMLCanvasElement has prototype, which is { ReadOnly, DontDelete }. prototype has getContext, which is not
 

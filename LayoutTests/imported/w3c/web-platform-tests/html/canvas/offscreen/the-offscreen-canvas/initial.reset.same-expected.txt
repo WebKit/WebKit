@@ -3,5 +3,5 @@ initial.reset.same
 Setting size (not changing the value) resets canvas to transparent black
 
 
-PASS Setting size (not changing the value) resets canvas to transparent black 
+PASS Setting size (not changing the value) resets canvas to transparent black
 

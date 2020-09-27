@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
-PASS noupdate event test 
+PASS noupdate event test
 

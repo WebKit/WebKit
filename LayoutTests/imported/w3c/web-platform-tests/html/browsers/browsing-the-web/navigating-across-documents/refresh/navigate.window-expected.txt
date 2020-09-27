@@ -1,4 +1,4 @@
 
-PASS When navigating the Refresh header needs to be followed 
-PASS When there's both a Refresh header and <meta> the Refresh header wins 
+PASS When navigating the Refresh header needs to be followed
+PASS When there's both a Refresh header and <meta> the Refresh header wins
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: document.write several scripts into IFRAME  
+PASS  scheduler: document.write several scripts into IFRAME
 

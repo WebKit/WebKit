@@ -1,53 +1,53 @@
 
 
-PASS utility code 
-PASS application/octet-stream not supported 
-PASS fictional formats and codecs not supported 
-PASS audio/mp4 (optional) 
-PASS audio/mp4; codecs="mp4a.40.2" (optional) 
+PASS utility code
+PASS application/octet-stream not supported
+PASS fictional formats and codecs not supported
+PASS audio/mp4 (optional)
+PASS audio/mp4; codecs="mp4a.40.2" (optional)
 FAIL audio/mp4 with bogus codec assert_equals: audio/mp4; codecs="bogus" expected "" but got "maybe"
-PASS audio/mp4 with and without codecs 
+PASS audio/mp4 with and without codecs
 FAIL audio/ogg (optional) assert_equals: audio/ogg expected "maybe" but got ""
 FAIL audio/ogg; codecs="opus" (optional) assert_equals: audio/ogg; codecs="opus" expected "probably" but got ""
 FAIL audio/ogg; codecs="vorbis" (optional) assert_equals: audio/ogg; codecs="vorbis" expected "probably" but got ""
-PASS audio/ogg with bogus codec 
-PASS audio/ogg with and without codecs 
-PASS audio/wav (optional) 
+PASS audio/ogg with bogus codec
+PASS audio/ogg with and without codecs
+PASS audio/wav (optional)
 FAIL audio/wav; codecs="1" (optional) assert_equals: audio/wav; codecs="1" expected "probably" but got "maybe"
 FAIL audio/wav with bogus codec assert_equals: audio/wav; codecs="bogus" expected "" but got "maybe"
 FAIL audio/wav with and without codecs assert_equals: expected false but got true
 FAIL audio/webm (optional) assert_equals: audio/webm expected "maybe" but got ""
 FAIL audio/webm; codecs="opus" (optional) assert_equals: audio/webm; codecs="opus" expected "probably" but got ""
 FAIL audio/webm; codecs="vorbis" (optional) assert_equals: audio/webm; codecs="vorbis" expected "probably" but got ""
-PASS audio/webm with bogus codec 
-PASS audio/webm with and without codecs 
-PASS video/3gpp (optional) 
-PASS video/3gpp; codecs="samr" (optional) 
-PASS video/3gpp; codecs="mp4v.20.8" (optional) 
-PASS video/3gpp codecs subset 
-PASS video/3gpp codecs order 
+PASS audio/webm with bogus codec
+PASS audio/webm with and without codecs
+PASS video/3gpp (optional)
+PASS video/3gpp; codecs="samr" (optional)
+PASS video/3gpp; codecs="mp4v.20.8" (optional)
+PASS video/3gpp codecs subset
+PASS video/3gpp codecs order
 FAIL video/3gpp with bogus codec assert_equals: video/3gpp; codecs="bogus" expected "" but got "maybe"
-PASS video/3gpp with and without codecs 
-PASS video/mp4 (optional) 
-PASS video/mp4; codecs="mp4a.40.2" (optional) 
-PASS video/mp4; codecs="avc1.42E01E" (optional) 
-PASS video/mp4; codecs="avc1.4D401E" (optional) 
-PASS video/mp4; codecs="avc1.58A01E" (optional) 
-PASS video/mp4; codecs="avc1.64001E" (optional) 
-PASS video/mp4; codecs="mp4v.20.8" (optional) 
-PASS video/mp4; codecs="mp4v.20.240" (optional) 
-PASS video/mp4 codecs subset 
-PASS video/mp4 codecs order 
+PASS video/3gpp with and without codecs
+PASS video/mp4 (optional)
+PASS video/mp4; codecs="mp4a.40.2" (optional)
+PASS video/mp4; codecs="avc1.42E01E" (optional)
+PASS video/mp4; codecs="avc1.4D401E" (optional)
+PASS video/mp4; codecs="avc1.58A01E" (optional)
+PASS video/mp4; codecs="avc1.64001E" (optional)
+PASS video/mp4; codecs="mp4v.20.8" (optional)
+PASS video/mp4; codecs="mp4v.20.240" (optional)
+PASS video/mp4 codecs subset
+PASS video/mp4 codecs order
 FAIL video/mp4 with bogus codec assert_equals: video/mp4; codecs="bogus" expected "" but got "maybe"
-PASS video/mp4 with and without codecs 
+PASS video/mp4 with and without codecs
 FAIL video/ogg (optional) assert_equals: video/ogg expected "maybe" but got ""
 FAIL video/ogg; codecs="opus" (optional) assert_equals: video/ogg; codecs="opus" expected "probably" but got ""
 FAIL video/ogg; codecs="vorbis" (optional) assert_equals: video/ogg; codecs="vorbis" expected "probably" but got ""
 FAIL video/ogg; codecs="theora" (optional) assert_equals: video/ogg; codecs="theora" expected "probably" but got ""
-PASS video/ogg codecs subset 
-PASS video/ogg codecs order 
-PASS video/ogg with bogus codec 
-PASS video/ogg with and without codecs 
+PASS video/ogg codecs subset
+PASS video/ogg codecs order
+PASS video/ogg with bogus codec
+PASS video/ogg with and without codecs
 FAIL video/webm (optional) assert_equals: video/webm expected "maybe" but got ""
 FAIL video/webm; codecs="opus" (optional) assert_equals: video/webm; codecs="opus" expected "probably" but got ""
 FAIL video/webm; codecs="vorbis" (optional) assert_equals: video/webm; codecs="vorbis" expected "probably" but got ""
@@ -55,8 +55,8 @@ FAIL video/webm; codecs="vp8" (optional) assert_equals: video/webm; codecs="vp8"
 FAIL video/webm; codecs="vp8.0" (optional) assert_equals: video/webm; codecs="vp8.0" expected "probably" but got ""
 FAIL video/webm; codecs="vp9" (optional) assert_equals: video/webm; codecs="vp9" expected "probably" but got ""
 FAIL video/webm; codecs="vp9.0" (optional) assert_equals: video/webm; codecs="vp9.0" expected "probably" but got ""
-PASS video/webm codecs subset 
-PASS video/webm codecs order 
-PASS video/webm with bogus codec 
-PASS video/webm with and without codecs 
+PASS video/webm codecs subset
+PASS video/webm codecs order
+PASS video/webm with bogus codec
+PASS video/webm with and without codecs
 

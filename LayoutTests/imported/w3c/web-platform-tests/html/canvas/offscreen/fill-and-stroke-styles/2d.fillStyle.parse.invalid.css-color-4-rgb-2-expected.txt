@@ -1,5 +1,5 @@
 2d.fillStyle.parse.invalid.css-color-4-rgb-2
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.invalid.css-color-4-rgb-2 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.invalid.css-color-4-rgb-2
 

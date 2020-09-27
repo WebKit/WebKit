@@ -1,7 +1,7 @@
 
-PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test empty template 
-PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test not empty template 
-PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test nested templates 
-PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test loading XHTML document from a file 
-PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test loading of XHTML document with nested templates from a file 
+PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test empty template
+PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test not empty template
+PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test nested templates
+PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test loading XHTML document from a file
+PASS Parsing XHTML: Node's node document must be set to that of the element to which it will be appended. Test loading of XHTML document with nested templates from a file
 

@@ -3,5 +3,5 @@
 moveTo() with Infinity/NaN is ignored
 
 
-PASS moveTo() with Infinity/NaN is ignored 
+PASS moveTo() with Infinity/NaN is ignored
 

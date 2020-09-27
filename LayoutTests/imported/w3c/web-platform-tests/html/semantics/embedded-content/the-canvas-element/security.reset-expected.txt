@@ -2,5 +2,5 @@ security.reset
 Resetting the canvas state does not reset the origin-clean flag
 Actual output:
 
-PASS Resetting the canvas state does not reset the origin-clean flag 
+PASS Resetting the canvas state does not reset the origin-clean flag
 

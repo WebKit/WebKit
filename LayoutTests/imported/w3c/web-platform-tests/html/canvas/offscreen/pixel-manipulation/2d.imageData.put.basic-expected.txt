@@ -3,5 +3,5 @@
 putImageData() puts image data from getImageData() onto the canvas
 
 
-PASS putImageData() puts image data from getImageData() onto the canvas 
+PASS putImageData() puts image data from getImageData() onto the canvas
 

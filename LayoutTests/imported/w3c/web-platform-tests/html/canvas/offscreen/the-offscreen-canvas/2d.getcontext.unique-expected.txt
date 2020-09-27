@@ -3,5 +3,5 @@
 getContext('2d') returns the same object
 
 
-PASS getContext('2d') returns the same object 
+PASS getContext('2d') returns the same object
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS clearRect is affected by transforms 
+PASS clearRect is affected by transforms
 

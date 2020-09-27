@@ -1,4 +1,4 @@
 
-PASS tFoot tests 
-PASS tFoot tests 1 
+PASS tFoot tests
+PASS tFoot tests 1
 

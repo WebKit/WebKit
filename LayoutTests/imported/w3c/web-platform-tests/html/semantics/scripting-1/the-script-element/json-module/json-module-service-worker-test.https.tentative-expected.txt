@@ -1,5 +1,5 @@
 
 FAIL Javascript importing JSON Module should load within the context of a service worker promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected string literal './module.json'. import call expects exactly one argument."
 FAIL JSON Modules should load within the context of a service worker promise_test: Unhandled rejection with value: object "SecurityError: MIME Type is not a JavaScript MIME type"
-PASS JSON Module dynamic import should not load within the context of a service worker 
+PASS JSON Module dynamic import should not load within the context of a service worker
 

@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - loadeddata 
-PASS setting src attribute on autoplay audio should trigger loadeddata event 
-PASS video events - loadeddata 
-PASS setting src attribute on autoplay video should trigger loadeddata event 
+
+PASS audio events - loadeddata
+PASS setting src attribute on autoplay audio should trigger loadeddata event
+PASS video events - loadeddata
+PASS setting src attribute on autoplay video should trigger loadeddata event
 

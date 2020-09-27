@@ -3,5 +3,5 @@ initial.reset.2dstate
 Resetting the canvas state resets 2D state variables
 
 
-PASS Resetting the canvas state resets 2D state variables 
+PASS Resetting the canvas state resets 2D state variables
 

@@ -1,4 +1,4 @@
 Please wait...
 
-PASS  adding several types of scripts through the DOM and removing some of them confuses scheduler (slow-loading scripts)  
+PASS  adding several types of scripts through the DOM and removing some of them confuses scheduler (slow-loading scripts)
 

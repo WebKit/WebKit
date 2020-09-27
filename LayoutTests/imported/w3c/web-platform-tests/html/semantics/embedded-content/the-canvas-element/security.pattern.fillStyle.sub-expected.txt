@@ -6,11 +6,11 @@ CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has bee
 Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean
 
 
-PASS cross-origin HTMLImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
+PASS cross-origin HTMLImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
 FAIL cross-origin SVGImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-PASS redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-PASS redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-PASS unclean HTMLCanvasElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
+PASS cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
+PASS redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
+PASS redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
+PASS unclean HTMLCanvasElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
 FAIL unclean ImageBitmap: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

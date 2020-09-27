@@ -3,5 +3,5 @@
 strokeRect does not affect the current path
 
 
-PASS strokeRect does not affect the current path 
+PASS strokeRect does not affect the current path
 

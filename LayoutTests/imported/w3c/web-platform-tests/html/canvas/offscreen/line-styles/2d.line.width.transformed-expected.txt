@@ -3,5 +3,5 @@
 Line stroke widths are affected by scale transformations
 
 
-PASS Line stroke widths are affected by scale transformations 
+PASS Line stroke widths are affected by scale transformations
 

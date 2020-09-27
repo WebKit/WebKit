@@ -1,8 +1,8 @@
 
-PASS ':checked' matches checked <input>s in checkbox and radio button states, selected <option>s 
-PASS ':checked' should no longer match <input>s whose type checkbox/radio has been removed 
-PASS ':checked' matches clicked checkbox and radio buttons 
-     
+PASS ':checked' matches checked <input>s in checkbox and radio button states, selected <option>s
+PASS ':checked' should no longer match <input>s whose type checkbox/radio has been removed
+PASS ':checked' matches clicked checkbox and radio buttons
+
 
 
 

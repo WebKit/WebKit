@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Strokes in opposite directions are unioned, not subtracted 
+PASS Strokes in opposite directions are unioned, not subtracted
 

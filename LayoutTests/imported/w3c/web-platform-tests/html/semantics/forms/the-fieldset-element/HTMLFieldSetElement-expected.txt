@@ -1,6 +1,6 @@
 
-PASS The type attribute must return 'fieldset' 
-PASS The form attribute must return the fieldset's form owner 
-PASS The elements must return an HTMLCollection object 
-PASS The controls must root at the fieldset element 
+PASS The type attribute must return 'fieldset'
+PASS The form attribute must return the fieldset's form owner
+PASS The elements must return an HTMLCollection object
+PASS The controls must root at the fieldset element
 

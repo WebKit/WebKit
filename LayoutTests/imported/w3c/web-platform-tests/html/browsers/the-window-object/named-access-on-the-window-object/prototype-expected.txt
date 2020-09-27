@@ -1,6 +1,6 @@
 
-PASS Property on window. 
-PASS Property on Window.prototype. 
-PASS Property on EventTarget.prototype. 
-PASS Property on Object.prototype. 
+PASS Property on window.
+PASS Property on Window.prototype.
+PASS Property on EventTarget.prototype.
+PASS Property on Object.prototype.
 

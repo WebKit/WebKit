@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/html/semantics/embedded-content/the-iframe-element/support/standalone-pass.htm due to access control checks.
 
-PASS Block XMLHttpRequest in an iframe with the sandbox attribute. 
+PASS Block XMLHttpRequest in an iframe with the sandbox attribute.
 

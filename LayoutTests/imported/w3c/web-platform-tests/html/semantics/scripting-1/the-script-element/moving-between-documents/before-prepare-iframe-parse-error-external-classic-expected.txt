@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: SyntaxError: Left side of assignment is not a reference.
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move parse-error external classic script to iframe before-prepare 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move parse-error external classic script to iframe before-prepare
 FAIL <script> load: Move parse-error external classic script to iframe before-prepare assert_unreached: Script load event fired unexpectedly Reached unreachable code
-PASS <script> error: Move parse-error external classic script to iframe before-prepare 
+PASS <script> error: Move parse-error external classic script to iframe before-prepare
 FAIL window error: Move parse-error external classic script to iframe before-prepare assert_unreached: Window error event shouldn't fired on destination window Reached unreachable code
 

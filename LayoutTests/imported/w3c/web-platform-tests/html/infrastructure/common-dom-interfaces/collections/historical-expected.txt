@@ -1,7 +1,7 @@
 
-PASS HTMLFormControlsCollection legacycaller should not be supported 
-PASS HTMLOptionsCollection legacycaller should not be supported 
-PASS HTMLAllCollection legacycaller with two arguments should not be supported 
+PASS HTMLFormControlsCollection legacycaller should not be supported
+PASS HTMLOptionsCollection legacycaller should not be supported
+PASS HTMLAllCollection legacycaller with two arguments should not be supported
 
 
 

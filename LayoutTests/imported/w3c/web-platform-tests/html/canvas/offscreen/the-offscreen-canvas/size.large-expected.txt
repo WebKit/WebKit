@@ -3,5 +3,5 @@ size.large
 Not sure how reasonable this is, but the spec doesn't say there's an upper limit on the size.
 
 
-PASS OffscreenCanvas test: size.large 
+PASS OffscreenCanvas test: size.large
 

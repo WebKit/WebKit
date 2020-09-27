@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: adding async attribute at runtime 
+PASS  scheduler: adding async attribute at runtime
 

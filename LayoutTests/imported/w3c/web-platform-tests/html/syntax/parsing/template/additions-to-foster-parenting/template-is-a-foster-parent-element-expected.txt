@@ -1,4 +1,4 @@
 
-PASS Template is a foster parent element. Test <table> immediately below <template> 
-PASS Template is a foster parent element. Test <template> element without <table> 
+PASS Template is a foster parent element. Test <table> immediately below <template>
+PASS Template is a foster parent element. Test <template> element without <table>
 

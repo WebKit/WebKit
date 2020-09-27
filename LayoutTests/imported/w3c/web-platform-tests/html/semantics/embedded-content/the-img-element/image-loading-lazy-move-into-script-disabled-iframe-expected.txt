@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/semantics/embedded-content/the-img-element/resources/subframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/semantics/embedded-content/the-img-element/resources/subframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
- 
+
 
 Harness Error (TIMEOUT), message = null
 

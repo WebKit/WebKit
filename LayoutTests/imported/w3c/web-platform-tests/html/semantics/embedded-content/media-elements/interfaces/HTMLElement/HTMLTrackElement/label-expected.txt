@@ -1,13 +1,13 @@
 
-PASS HTMLTrackElement.label missing value 
-PASS HTMLTrackElement.label empty string content attribute 
-PASS HTMLTrackElement.label empty string IDL attribute 
-PASS HTMLTrackElement.label lowercase content attribute 
-PASS HTMLTrackElement.label uppercase content attribute 
-PASS HTMLTrackElement.label\u0000 in content attribute 
-PASS HTMLTrackElement.label lowercase IDL attribute 
-PASS HTMLTrackElement.label uppercase IDL attribute 
-PASS HTMLTrackElement.label whitespace in content attribute 
-PASS HTMLTrackElement.label whitespace in IDL attribute 
-PASS HTMLTrackElement.label \u0000 in IDL attribute 
+PASS HTMLTrackElement.label missing value
+PASS HTMLTrackElement.label empty string content attribute
+PASS HTMLTrackElement.label empty string IDL attribute
+PASS HTMLTrackElement.label lowercase content attribute
+PASS HTMLTrackElement.label uppercase content attribute
+PASS HTMLTrackElement.label\u0000 in content attribute
+PASS HTMLTrackElement.label lowercase IDL attribute
+PASS HTMLTrackElement.label uppercase IDL attribute
+PASS HTMLTrackElement.label whitespace in content attribute
+PASS HTMLTrackElement.label whitespace in IDL attribute
+PASS HTMLTrackElement.label \u0000 in IDL attribute
 

@@ -1,5 +1,5 @@
 2d.text.baseline.valid
 Actual output:
 
-PASS Canvas test: 2d.text.baseline.valid 
+PASS Canvas test: 2d.text.baseline.valid
 

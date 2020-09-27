@@ -1,4 +1,4 @@
 
-PASS scheduler: altering the type attribute and adding/removing external script  
-PASS Reinserted script async IDL attribute 
+PASS scheduler: altering the type attribute and adding/removing external script
+PASS Reinserted script async IDL attribute
 

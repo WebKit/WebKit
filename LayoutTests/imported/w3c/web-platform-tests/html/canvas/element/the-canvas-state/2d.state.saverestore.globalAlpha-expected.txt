@@ -2,5 +2,5 @@
 save()/restore() works for globalAlpha
 Actual output:
 
-PASS save()/restore() works for globalAlpha 
+PASS save()/restore() works for globalAlpha
 

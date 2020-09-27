@@ -1,8 +1,8 @@
 
-PASS history.state should initially be null 
-PASS popstate event should not fire before onload fires 
-PASS history.state should still be null onload 
-PASS popstate event should not fire after onload fires 
-PASS history.state should still be null after onload 
-PASS writing to history.state should be silently ignored and not throw an error 
+PASS history.state should initially be null
+PASS popstate event should not fire before onload fires
+PASS history.state should still be null onload
+PASS popstate event should not fire after onload fires
+PASS history.state should still be null after onload
+PASS writing to history.state should be silently ignored and not throw an error
 

@@ -1,4 +1,4 @@
 
 
-PASS Textarea's type attribute should return 'textarea' 
+PASS Textarea's type attribute should return 'textarea'
 

@@ -8,13 +8,13 @@ rendered legend
 second legend
 div
 
-PASS rendered legend (writing-mode: horizontal-tb) 
-PASS second legend (writing-mode: horizontal-tb) 
-PASS div (writing-mode: horizontal-tb) 
-PASS rendered legend (writing-mode: vertical-lr) 
-PASS second legend (writing-mode: vertical-lr) 
-PASS div (writing-mode: vertical-lr) 
-PASS rendered legend (writing-mode: vertical-rl) 
-PASS second legend (writing-mode: vertical-rl) 
-PASS div (writing-mode: vertical-rl) 
+PASS rendered legend (writing-mode: horizontal-tb)
+PASS second legend (writing-mode: horizontal-tb)
+PASS div (writing-mode: horizontal-tb)
+PASS rendered legend (writing-mode: vertical-lr)
+PASS second legend (writing-mode: vertical-lr)
+PASS div (writing-mode: vertical-lr)
+PASS rendered legend (writing-mode: vertical-rl)
+PASS second legend (writing-mode: vertical-rl)
+PASS div (writing-mode: vertical-rl)
 

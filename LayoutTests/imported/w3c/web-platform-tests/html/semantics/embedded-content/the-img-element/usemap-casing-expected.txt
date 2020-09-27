@@ -1,11 +1,11 @@
-             
 
-PASS Image with usemap of #sanityCheck should match the area with map named sanityCheck 
-PASS Image with usemap of #sImPlE should not match any of the areas 
-PASS Image with usemap of #paSSfield-killroyß should not match any of the areas 
-PASS Image with usemap of #глупый should not match any of the areas 
-PASS Image with usemap of #åωk should not match any of the areas 
-PASS Image with usemap of #blah1 should not match any of the areas 
-PASS Image with usemap of #tÉdz5アパートFi should not match any of the areas 
-PASS Image with usemap of #ΣΣ should not match any of the areas 
+
+PASS Image with usemap of #sanityCheck should match the area with map named sanityCheck
+PASS Image with usemap of #sImPlE should not match any of the areas
+PASS Image with usemap of #paSSfield-killroyß should not match any of the areas
+PASS Image with usemap of #глупый should not match any of the areas
+PASS Image with usemap of #åωk should not match any of the areas
+PASS Image with usemap of #blah1 should not match any of the areas
+PASS Image with usemap of #tÉdz5アパートFi should not match any of the areas
+PASS Image with usemap of #ΣΣ should not match any of the areas
 

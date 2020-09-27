@@ -1,5 +1,5 @@
 2d.text.font.parse.tiny
 
 
-PASS OffscreenCanvas test: 2d.text.font.parse.tiny 
+PASS OffscreenCanvas test: 2d.text.font.parse.tiny
 

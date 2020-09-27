@@ -3,5 +3,5 @@
 rotate() is clockwise
 
 
-PASS rotate() is clockwise 
+PASS rotate() is clockwise
 

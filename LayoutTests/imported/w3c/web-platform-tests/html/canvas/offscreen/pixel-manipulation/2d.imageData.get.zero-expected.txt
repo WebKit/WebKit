@@ -3,5 +3,5 @@
 getImageData() throws INDEX_SIZE_ERR if size is zero
 
 
-PASS getImageData() throws INDEX_SIZE_ERR if size is zero 
+PASS getImageData() throws INDEX_SIZE_ERR if size is zero
 

@@ -3,5 +3,5 @@
 Shadows are drawn for stroke joins respecting miter limit
 
 
-PASS Shadows are drawn for stroke joins respecting miter limit 
+PASS Shadows are drawn for stroke joins respecting miter limit
 

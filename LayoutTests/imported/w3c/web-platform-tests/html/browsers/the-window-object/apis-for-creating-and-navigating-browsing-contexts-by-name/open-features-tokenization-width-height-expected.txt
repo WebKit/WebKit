@@ -1,20 +1,20 @@
 
-PASS "width=401" should set width of opened window 
-PASS " width = 401" should set width of opened window 
-PASS "width==401" should set width of opened window 
-PASS "\nwidth= 401" should set width of opened window 
-PASS ",width=401,," should set width of opened window 
-PASS "WIDTH=401" should set width of opened window 
-PASS "height=402" should set height of opened window 
-PASS " height = 402" should set height of opened window 
-PASS "height==402" should set height of opened window 
-PASS "\nheight= 402" should set height of opened window 
-PASS ",height=402,," should set height of opened window 
-PASS "HEIGHT=402" should set height of opened window 
-PASS "height=402,width=401" should set height and width of opened window 
-PASS " height = 402 , width = 401 ," should set height and width of opened window 
-PASS "height==402 width = 401" should set height and width of opened window 
-PASS "\nheight= 402,,width=\n401" should set height and width of opened window 
-PASS ",height=402,,width==401" should set height and width of opened window 
-PASS "HEIGHT=402, WIDTH=401" should set height and width of opened window 
+PASS "width=401" should set width of opened window
+PASS " width = 401" should set width of opened window
+PASS "width==401" should set width of opened window
+PASS "\nwidth= 401" should set width of opened window
+PASS ",width=401,," should set width of opened window
+PASS "WIDTH=401" should set width of opened window
+PASS "height=402" should set height of opened window
+PASS " height = 402" should set height of opened window
+PASS "height==402" should set height of opened window
+PASS "\nheight= 402" should set height of opened window
+PASS ",height=402,," should set height of opened window
+PASS "HEIGHT=402" should set height of opened window
+PASS "height=402,width=401" should set height and width of opened window
+PASS " height = 402 , width = 401 ," should set height and width of opened window
+PASS "height==402 width = 401" should set height and width of opened window
+PASS "\nheight= 402,,width=\n401" should set height and width of opened window
+PASS ",height=402,,width==401" should set height and width of opened window
+PASS "HEIGHT=402, WIDTH=401" should set height and width of opened window
 

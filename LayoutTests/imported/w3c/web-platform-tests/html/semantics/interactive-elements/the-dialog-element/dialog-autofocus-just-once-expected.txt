@@ -1,4 +1,4 @@
- 
+
 
 FAIL An autofocus element in a dialog element should not try to get focus twice. assert_equals: dialog.show() should set focus on a descendant element with an autofocus attribute. expected Element node <input autofocus=""></input> but got Element node <body>
 <dialog open="">

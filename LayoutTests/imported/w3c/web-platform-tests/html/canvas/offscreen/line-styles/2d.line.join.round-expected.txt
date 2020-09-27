@@ -3,5 +3,5 @@
 lineJoin 'round' is rendered correctly
 
 
-PASS lineJoin 'round' is rendered correctly 
+PASS lineJoin 'round' is rendered correctly
 

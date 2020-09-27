@@ -3,5 +3,5 @@ HTMLCanvasElement methods can be added, and the new methods used by canvases
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS HTMLCanvasElement methods can be added, and the new methods used by canvases 
+PASS HTMLCanvasElement methods can be added, and the new methods used by canvases
 

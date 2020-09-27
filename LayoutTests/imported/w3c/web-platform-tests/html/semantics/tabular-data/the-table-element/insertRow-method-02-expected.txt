@@ -1,6 +1,6 @@
 
-PASS insertRow(): Empty table 
-PASS table should start out empty 
-PASS insertRow should insert a tr element 
-PASS insertRow should insert a tbody element 
+PASS insertRow(): Empty table
+PASS table should start out empty
+PASS insertRow should insert a tr element
+PASS insertRow should insert a tbody element
 

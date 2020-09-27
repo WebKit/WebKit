@@ -1,4 +1,4 @@
 
-PASS document.open() works in custom element constructor for createElement() 
-PASS document.open() is forbidden in custom element constructor when creating element from parser 
+PASS document.open() works in custom element constructor for createElement()
+PASS document.open() is forbidden in custom element constructor when creating element from parser
 

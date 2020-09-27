@@ -1,5 +1,5 @@
 2d.path.rect.negative
 Actual output:
 
-PASS Canvas test: 2d.path.rect.negative 
+PASS Canvas test: 2d.path.rect.negative
 

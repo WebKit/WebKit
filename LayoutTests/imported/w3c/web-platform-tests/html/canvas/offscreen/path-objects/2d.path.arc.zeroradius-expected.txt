@@ -3,5 +3,5 @@
 arc() with zero radius draws a line to the start point
 
 
-PASS arc() with zero radius draws a line to the start point 
+PASS arc() with zero radius draws a line to the start point
 

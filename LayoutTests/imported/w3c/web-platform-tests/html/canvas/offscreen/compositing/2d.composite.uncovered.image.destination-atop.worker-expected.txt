@@ -1,3 +1,3 @@
 
-PASS drawImage() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged. 
+PASS drawImage() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged.
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows of shapes outside the visible area can be offset onto the visible area 
+PASS Shadows of shapes outside the visible area can be offset onto the visible area
 

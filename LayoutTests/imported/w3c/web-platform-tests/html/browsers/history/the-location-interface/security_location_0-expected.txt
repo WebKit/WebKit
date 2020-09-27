@@ -1,5 +1,5 @@
 Access location object from different origins doesn't raise SECURITY_ERR exception
 
 
-PASS Accessing location object from different origins doesn't raise SECURITY_ERR exception 
+PASS Accessing location object from different origins doesn't raise SECURITY_ERR exception
 

@@ -2,5 +2,5 @@
 Verify isPointInPath throws exceptions with invalid inputs.
 Actual output:
 
-PASS Verify isPointInPath throws exceptions with invalid inputs. 
+PASS Verify isPointInPath throws exceptions with invalid inputs.
 

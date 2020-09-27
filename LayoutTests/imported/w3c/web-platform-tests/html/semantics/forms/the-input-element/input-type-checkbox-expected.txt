@@ -1,9 +1,9 @@
 
-PASS default checkbox has no checkedness state 
-PASS checkbox with initial state set to checked has checkedness state 
-PASS changing the checked attribute to a string sets the checkedness state 
-PASS a checkbox has an indeterminate state set to false onload 
-PASS on setting, a checkbox's indeterminate state must be set to the new value and returns the last value it was set to 
-PASS default/on: on getting, if the element has a value attribute, it must return that attribute's value; otherwise, it must return the string 'on' 
-PASS on getting, if the element has a value attribute, it must return that attribute's value 
+PASS default checkbox has no checkedness state
+PASS checkbox with initial state set to checked has checkedness state
+PASS changing the checked attribute to a string sets the checkedness state
+PASS a checkbox has an indeterminate state set to false onload
+PASS on setting, a checkbox's indeterminate state must be set to the new value and returns the last value it was set to
+PASS default/on: on getting, if the element has a value attribute, it must return that attribute's value; otherwise, it must return the string 'on'
+PASS on getting, if the element has a value attribute, it must return that attribute's value
 

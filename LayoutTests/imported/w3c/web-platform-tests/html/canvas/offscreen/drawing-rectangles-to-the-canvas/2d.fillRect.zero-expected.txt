@@ -3,5 +3,5 @@
 fillRect of zero pixels has no effect
 
 
-PASS fillRect of zero pixels has no effect 
+PASS fillRect of zero pixels has no effect
 

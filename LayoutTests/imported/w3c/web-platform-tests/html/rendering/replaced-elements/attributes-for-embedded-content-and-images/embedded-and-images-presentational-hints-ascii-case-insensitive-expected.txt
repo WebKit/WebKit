@@ -1,6 +1,6 @@
-        
 
-PASS keyword absbottom 
+
+PASS keyword absbottom
 FAIL keyword abscenter assert_equals: lowercase valid expected "middle" but got "baseline"
-PASS keyword absmiddle 
+PASS keyword absmiddle
 

@@ -1,4 +1,4 @@
 
-PASS If value > max, then current value = max 
-PASS If value < max, then current value = value 
+PASS If value > max, then current value = max
+PASS If value < max, then current value = value
 

@@ -1,13 +1,13 @@
 math in html: parsing
 
 
-PASS The id attribute should be recognised on math elements 
-PASS The node name should be math 
-PASS math should be in MathML Namespace 
-PASS Math has 2 children (empty tag syntax) 
-PASS Nested mrow elements should be parsed correctly 
-PASS Testing rang and lang entity code points 
-PASS Testing Kopf (Plane 1) entity code point 
-PASS Empty element tags in annotation-xml parsed as per XML. 
-PASS html tags allowed in annotation-xml/@encoding='text/html'. 
+PASS The id attribute should be recognised on math elements
+PASS The node name should be math
+PASS math should be in MathML Namespace
+PASS Math has 2 children (empty tag syntax)
+PASS Nested mrow elements should be parsed correctly
+PASS Testing rang and lang entity code points
+PASS Testing Kopf (Plane 1) entity code point
+PASS Empty element tags in annotation-xml parsed as per XML.
+PASS html tags allowed in annotation-xml/@encoding='text/html'.
 

@@ -1,4 +1,4 @@
  
 
-PASS The browser will recognize a language declared in a meta element in the head using http-equiv='Content-Language' content='..' (with a single language tag value), when there is no other language declaration inside the document. 
+PASS The browser will recognize a language declared in a meta element in the head using http-equiv='Content-Language' content='..' (with a single language tag value), when there is no other language declaration inside the document.
 

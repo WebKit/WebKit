@@ -1,4 +1,4 @@
- 
+
 
 FAIL Fulfillment handler on fulfilled promise assert_equals: expected "http://localhost:8800/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/resources/function/resources/window-to-open.html" but got "http://localhost:8800/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/resources/window-to-open.html"
 FAIL Rejection handler on rejected promise assert_equals: expected "http://localhost:8800/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/resources/function/resources/window-to-open.html" but got "http://localhost:8800/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/resources/window-to-open.html"

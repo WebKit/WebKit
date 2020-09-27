@@ -2,5 +2,5 @@
 ImageData.data converts strings to numbers with ToNumber
 Actual output:
 
-PASS ImageData.data converts strings to numbers with ToNumber 
+PASS ImageData.data converts strings to numbers with ToNumber
 

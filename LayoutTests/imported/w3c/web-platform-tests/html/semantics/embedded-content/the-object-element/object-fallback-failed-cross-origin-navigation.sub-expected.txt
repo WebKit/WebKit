@@ -1,5 +1,5 @@
 Blocked access to external URL http://nonexistent.127.0.0.1:8800/foo.html
 n
 
-PASS Verify fallback content for failed cross-origin navigations is shown correctly. 
+PASS Verify fallback content for failed cross-origin navigations is shown correctly.
 

@@ -3,5 +3,5 @@
 Negative source width/height represents the correct rectangle
 
 
-PASS Negative source width/height represents the correct rectangle 
+PASS Negative source width/height represents the correct rectangle
 

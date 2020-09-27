@@ -1,6 +1,6 @@
 
 
-PASS text.simple 
-PASS textarea.simple 
-PASS nokeygen.simple 
+PASS text.simple
+PASS textarea.simple
+PASS nokeygen.simple
 

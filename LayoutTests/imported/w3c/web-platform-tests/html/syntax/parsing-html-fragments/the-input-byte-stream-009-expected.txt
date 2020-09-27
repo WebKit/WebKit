@@ -1,4 +1,4 @@
  
 
-PASS The character encoding of the page can be set by a meta element with charset attribute. 
+PASS The character encoding of the page can be set by a meta element with charset attribute.
 

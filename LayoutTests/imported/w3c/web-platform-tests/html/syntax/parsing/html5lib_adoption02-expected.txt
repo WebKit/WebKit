@@ -1,6 +1,6 @@
 html5lib Parser Test
 
 
-PASS html5lib_adoption02.html cefc9890d621707fedf5eb634f3a86d753659d9b 
-PASS html5lib_adoption02.html 2a8f569e9d55b3cb7e54b026f758dea8593f4cb4 
+PASS html5lib_adoption02.html cefc9890d621707fedf5eb634f3a86d753659d9b
+PASS html5lib_adoption02.html 2a8f569e9d55b3cb7e54b026f758dea8593f4cb4
 

@@ -1,13 +1,13 @@
 
-PASS reset button only resets the form owner 
-PASS the element is barred from constraint validation 
-PASS clicking on a disabled reset does nothing 
-PASS reset button resets controls associated with their form using the form element pointer 
-PASS reset button resets controls associated with a form using the form attribute 
-PASS reset button associated with a form using the form attribute resets all the form's controls 
-    
+PASS reset button only resets the form owner
+PASS the element is barred from constraint validation
+PASS clicking on a disabled reset does nothing
+PASS reset button resets controls associated with their form using the form element pointer
+PASS reset button resets controls associated with a form using the form attribute
+PASS reset button associated with a form using the form attribute resets all the form's controls
 
-  
+
+
 
 
 

@@ -3,5 +3,5 @@
 Shadow colour alpha components are used
 
 
-PASS Shadow colour alpha components are used 
+PASS Shadow colour alpha components are used
 

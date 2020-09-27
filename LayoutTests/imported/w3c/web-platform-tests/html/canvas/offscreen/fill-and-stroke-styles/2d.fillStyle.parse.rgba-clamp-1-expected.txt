@@ -1,5 +1,5 @@
 2d.fillStyle.parse.rgba-clamp-1
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.rgba-clamp-1 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.rgba-clamp-1
 

@@ -3,5 +3,5 @@
 arc() from 0 to pi does not draw anything in the wrong half
 
 
-PASS arc() from 0 to pi does not draw anything in the wrong half 
+PASS arc() from 0 to pi does not draw anything in the wrong half
 

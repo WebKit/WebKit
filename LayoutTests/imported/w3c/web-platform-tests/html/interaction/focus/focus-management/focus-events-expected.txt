@@ -1,4 +1,4 @@
 
-PASS focusing on a focusable element fires a focus event at the element 
-PASS focusing on a focusable element fires a blur event at the previous focussed element 
- 
+PASS focusing on a focusable element fires a focus event at the element
+PASS focusing on a focusable element fires a blur event at the previous focussed element
+

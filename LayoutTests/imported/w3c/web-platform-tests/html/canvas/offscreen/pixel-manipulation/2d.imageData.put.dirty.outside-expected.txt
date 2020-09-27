@@ -3,5 +3,5 @@
 putImageData() handles dirty rectangles outside the canvas correctly
 
 
-PASS putImageData() handles dirty rectangles outside the canvas correctly 
+PASS putImageData() handles dirty rectangles outside the canvas correctly
 

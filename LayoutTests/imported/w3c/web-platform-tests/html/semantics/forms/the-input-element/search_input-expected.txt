@@ -1,6 +1,6 @@
 Search Input
 
 
-PASS search type support on input element 
-PASS placeholder attribute support on input element 
+PASS search type support on input element
+PASS placeholder attribute support on input element
 

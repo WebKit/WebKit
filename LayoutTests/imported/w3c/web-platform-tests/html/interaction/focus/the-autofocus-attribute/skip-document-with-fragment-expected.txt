@@ -1,4 +1,4 @@
- 
+
 
 FAIL Autofocus elements in iframed documents with URL fragments should be skipped. assert_equals: Autofocus elements in iframes should not be focused. expected Element node <body><iframe src="resources/frame-with-autofocus-element... but got Element node <iframe src="resources/frame-with-autofocus-element.html#...
 FAIL Autofocus elements in top-level browsing context's documents with URI fragments should be skipped. assert_equals: expected Element node <body>

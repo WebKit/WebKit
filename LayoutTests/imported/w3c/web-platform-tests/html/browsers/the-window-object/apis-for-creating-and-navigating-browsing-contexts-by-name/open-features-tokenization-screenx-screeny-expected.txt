@@ -1,16 +1,16 @@
 
-PASS "screenx=141" should set left position of opened window 
-PASS " screenx = 141" should set left position of opened window 
-PASS "screenx==141" should set left position of opened window 
-PASS "\nscreenx= 141" should set left position of opened window 
-PASS ",screenx=141,," should set left position of opened window 
-PASS "SCREENX=141" should set left position of opened window 
-PASS "screenX=141" should set left position of opened window 
-PASS "screeny=142" should set top position of opened window 
-PASS " screeny = 142" should set top position of opened window 
-PASS "screeny==142" should set top position of opened window 
-PASS "\nscreeny= 142" should set top position of opened window 
-PASS ",screeny=142,," should set top position of opened window 
-PASS "SCREENY=142" should set top position of opened window 
-PASS "screenY=142" should set top position of opened window 
+PASS "screenx=141" should set left position of opened window
+PASS " screenx = 141" should set left position of opened window
+PASS "screenx==141" should set left position of opened window
+PASS "\nscreenx= 141" should set left position of opened window
+PASS ",screenx=141,," should set left position of opened window
+PASS "SCREENX=141" should set left position of opened window
+PASS "screenX=141" should set left position of opened window
+PASS "screeny=142" should set top position of opened window
+PASS " screeny = 142" should set top position of opened window
+PASS "screeny==142" should set top position of opened window
+PASS "\nscreeny= 142" should set top position of opened window
+PASS ",screeny=142,," should set top position of opened window
+PASS "SCREENY=142" should set top position of opened window
+PASS "screenY=142" should set top position of opened window
 

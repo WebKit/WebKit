@@ -7,5 +7,5 @@ The result will be pass/fail per the testharness.js results
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT onclick that directly imports should successfully import, using page's base URL Test timed out
-NOTRUN onclick that indirectly imports after a task should successfully import, using page's base URL 
+NOTRUN onclick that indirectly imports after a task should successfully import, using page's base URL
 

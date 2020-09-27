@@ -1,5 +1,5 @@
 2d.pattern.transform.invalid
 Actual output:
 
-PASS Canvas test: 2d.pattern.transform.invalid 
+PASS Canvas test: 2d.pattern.transform.invalid
 

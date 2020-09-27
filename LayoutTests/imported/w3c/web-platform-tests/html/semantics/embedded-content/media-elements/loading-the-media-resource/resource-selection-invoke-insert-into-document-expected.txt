@@ -1,3 +1,3 @@
 
-PASS NOT invoking resource selection by inserting into a document 
+PASS NOT invoking resource selection by inserting into a document
 

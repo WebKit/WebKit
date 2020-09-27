@@ -7,6 +7,6 @@ FAIL document.all cannot find applet assert_equals: expected (undefined) undefin
 FAIL document cannot find applet assert_equals: expected (undefined) undefined but got (object) Element node <applet name="war" align="left"></applet>
 FAIL window cannot find applet assert_equals: expected (undefined) undefined but got (object) Element node <applet name="war" align="left"></applet>
 FAIL applet is not styled assert_equals: expected "none" but got "left"
-PASS HTMLTableDataCellElement interface is removed 
-PASS HTMLTableHeaderCellElement interface is removed 
+PASS HTMLTableDataCellElement interface is removed
+PASS HTMLTableHeaderCellElement interface is removed
 

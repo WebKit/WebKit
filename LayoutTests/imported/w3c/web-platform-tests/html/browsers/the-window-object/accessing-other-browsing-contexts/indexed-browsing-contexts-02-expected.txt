@@ -1,5 +1,5 @@
 
 FAIL Accessing child browsing contexts 1 assert_equals: The top browsing context should have 3 child browsing contexts. expected 3 but got 1
-PASS Accessing child browsing contexts 2 
+PASS Accessing child browsing contexts 2
 FAIL Accessing child browsing contexts 3 assert_equals: The top browsing context should have 3 child browsing contexts. expected 3 but got 1
 

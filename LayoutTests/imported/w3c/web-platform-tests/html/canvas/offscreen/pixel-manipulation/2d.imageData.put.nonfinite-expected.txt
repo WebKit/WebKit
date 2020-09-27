@@ -3,5 +3,5 @@
 putImageData() throws TypeError if arguments are not finite
 
 
-PASS putImageData() throws TypeError if arguments are not finite 
+PASS putImageData() throws TypeError if arguments are not finite
 

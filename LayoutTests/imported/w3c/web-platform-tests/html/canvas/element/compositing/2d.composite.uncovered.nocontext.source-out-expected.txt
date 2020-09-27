@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS drawImage() of a canvas with no context draws pixels as (0,0,0,0), and does not leave the pixels unchanged. 
+PASS drawImage() of a canvas with no context draws pixels as (0,0,0,0), and does not leave the pixels unchanged.
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: IFRAMEs added with DOM (innerHTML), javascript: URL 
+PASS  scheduler: IFRAMEs added with DOM (innerHTML), javascript: URL
 

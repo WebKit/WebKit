@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: DOM added scripts and doc.write 
+PASS  scheduler: DOM added scripts and doc.write
 

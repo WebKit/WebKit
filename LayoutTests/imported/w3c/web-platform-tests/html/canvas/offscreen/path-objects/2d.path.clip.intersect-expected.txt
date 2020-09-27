@@ -1,5 +1,5 @@
 2d.path.clip.intersect
 
 
-PASS OffscreenCanvas test: 2d.path.clip.intersect 
+PASS OffscreenCanvas test: 2d.path.clip.intersect
 

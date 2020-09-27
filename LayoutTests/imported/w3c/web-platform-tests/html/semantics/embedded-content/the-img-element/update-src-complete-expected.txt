@@ -1,4 +1,4 @@
 
 
-PASS Changing the img src should retain the 'complete' property 
+PASS Changing the img src should retain the 'complete' property
 

@@ -1,9 +1,9 @@
 
-PASS No child browsing contexts 
-PASS iframe not inserted into the document 
-PASS One iframe inserted into the document 
-PASS Child browsing context has a child browsing context 
-PASS window.length in child frame 
-PASS Opened window 
-PASS Iframe in opened window 
+PASS No child browsing contexts
+PASS iframe not inserted into the document
+PASS One iframe inserted into the document
+PASS Child browsing context has a child browsing context
+PASS window.length in child frame
+PASS Opened window
+PASS Iframe in opened window
 

@@ -1,5 +1,5 @@
 
-PASS document.open bailout should not have any side effects (ignore-opens-during-unload is greater than 0 during unload event) 
-PASS document.open bailout should not have any side effects (ignore-opens-during-unload is greater than 0 during beforeunload event) 
-PASS document.open bailout should not have any side effects (ignore-opens-during-unload is greater than 0 during pagehide event) 
+PASS document.open bailout should not have any side effects (ignore-opens-during-unload is greater than 0 during unload event)
+PASS document.open bailout should not have any side effects (ignore-opens-during-unload is greater than 0 during beforeunload event)
+PASS document.open bailout should not have any side effects (ignore-opens-during-unload is greater than 0 during pagehide event)
 

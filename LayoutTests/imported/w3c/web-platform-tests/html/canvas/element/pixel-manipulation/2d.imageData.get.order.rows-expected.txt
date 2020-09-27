@@ -2,5 +2,5 @@
 getImageData() returns topmost rows first
 Actual output:
 
-PASS getImageData() returns topmost rows first 
+PASS getImageData() returns topmost rows first
 

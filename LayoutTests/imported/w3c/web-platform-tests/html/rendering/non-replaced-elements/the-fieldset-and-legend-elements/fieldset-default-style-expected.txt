@@ -1,25 +1,25 @@
 
 
-PASS display 
-PASS margin-top 
-PASS margin-right 
-PASS margin-bottom 
-PASS margin-left 
-PASS border-top-style 
-PASS border-right-style 
-PASS border-bottom-style 
-PASS border-left-style 
-PASS border-top-width 
-PASS border-right-width 
-PASS border-bottom-width 
-PASS border-left-width 
-PASS border-top-color 
-PASS border-right-color 
-PASS border-bottom-color 
-PASS border-left-color 
-PASS padding-top 
-PASS padding-right 
-PASS padding-bottom 
-PASS padding-left 
-PASS min-width 
+PASS display
+PASS margin-top
+PASS margin-right
+PASS margin-bottom
+PASS margin-left
+PASS border-top-style
+PASS border-right-style
+PASS border-bottom-style
+PASS border-left-style
+PASS border-top-width
+PASS border-right-width
+PASS border-bottom-width
+PASS border-left-width
+PASS border-top-color
+PASS border-right-color
+PASS border-bottom-color
+PASS border-left-color
+PASS padding-top
+PASS padding-right
+PASS padding-bottom
+PASS padding-left
+PASS min-width
 

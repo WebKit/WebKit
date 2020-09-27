@@ -1,50 +1,50 @@
 
-PASS noninteractive unlabelable content <div></div> as first child of <label> 
-PASS noninteractive unlabelable content <div></div> deeply nested under <label> 
-PASS noninteractive unlabelable content <div></div> as second child under <label> 
-PASS noninteractive unlabelable content <svg></svg> as first child of <label> 
-PASS noninteractive unlabelable content <svg></svg> deeply nested under <label> 
-PASS noninteractive unlabelable content <svg></svg> as second child under <label> 
-PASS noninteractive unlabelable content <a></a> as first child of <label> 
-PASS noninteractive unlabelable content <a></a> deeply nested under <label> 
-PASS noninteractive unlabelable content <a></a> as second child under <label> 
-PASS noninteractive unlabelable content <audio></audio> as first child of <label> 
-PASS noninteractive unlabelable content <audio></audio> deeply nested under <label> 
-PASS noninteractive unlabelable content <audio></audio> as second child under <label> 
-PASS noninteractive unlabelable content <img> as first child of <label> 
-PASS noninteractive unlabelable content <img> deeply nested under <label> 
-PASS noninteractive unlabelable content <img> as second child under <label> 
-PASS noninteractive unlabelable content <input type="hidden"> as first child of <label> 
-PASS noninteractive unlabelable content <input type="hidden"> deeply nested under <label> 
-PASS noninteractive unlabelable content <input type="hidden"> as second child under <label> 
-PASS noninteractive unlabelable content <object></object> as first child of <label> 
-PASS noninteractive unlabelable content <object></object> deeply nested under <label> 
-PASS noninteractive unlabelable content <object></object> as second child under <label> 
-PASS noninteractive unlabelable content <video></video> as first child of <label> 
-PASS noninteractive unlabelable content <video></video> deeply nested under <label> 
-PASS noninteractive unlabelable content <video></video> as second child under <label> 
-PASS noninteractive unlabelable content <a tabindex=""></a> as first child of <label> 
-PASS noninteractive unlabelable content <a tabindex=""></a> deeply nested under <label> 
-PASS noninteractive unlabelable content <a tabindex=""></a> as second child under <label> 
-PASS noninteractive unlabelable content <audio tabindex=""></audio> as first child of <label> 
-PASS noninteractive unlabelable content <audio tabindex=""></audio> deeply nested under <label> 
-PASS noninteractive unlabelable content <audio tabindex=""></audio> as second child under <label> 
-PASS noninteractive unlabelable content <div tabindex=""></div> as first child of <label> 
-PASS noninteractive unlabelable content <div tabindex=""></div> deeply nested under <label> 
-PASS noninteractive unlabelable content <div tabindex=""></div> as second child under <label> 
-PASS noninteractive unlabelable content <img tabindex=""> as first child of <label> 
-PASS noninteractive unlabelable content <img tabindex=""> deeply nested under <label> 
-PASS noninteractive unlabelable content <img tabindex=""> as second child under <label> 
-PASS noninteractive unlabelable content <input type="hidden" tabindex=""> as first child of <label> 
-PASS noninteractive unlabelable content <input type="hidden" tabindex=""> deeply nested under <label> 
-PASS noninteractive unlabelable content <input type="hidden" tabindex=""> as second child under <label> 
-PASS noninteractive unlabelable content <object tabindex=""></object> as first child of <label> 
-PASS noninteractive unlabelable content <object tabindex=""></object> deeply nested under <label> 
-PASS noninteractive unlabelable content <object tabindex=""></object> as second child under <label> 
-PASS noninteractive unlabelable content <video tabindex=""></video> as first child of <label> 
-PASS noninteractive unlabelable content <video tabindex=""></video> deeply nested under <label> 
-PASS noninteractive unlabelable content <video tabindex=""></video> as second child under <label> 
-PASS noninteractive unlabelable content <details></details> as first child of <label> 
-PASS noninteractive unlabelable content <details></details> deeply nested under <label> 
-PASS noninteractive unlabelable content <details></details> as second child under <label> 
+PASS noninteractive unlabelable content <div></div> as first child of <label>
+PASS noninteractive unlabelable content <div></div> deeply nested under <label>
+PASS noninteractive unlabelable content <div></div> as second child under <label>
+PASS noninteractive unlabelable content <svg></svg> as first child of <label>
+PASS noninteractive unlabelable content <svg></svg> deeply nested under <label>
+PASS noninteractive unlabelable content <svg></svg> as second child under <label>
+PASS noninteractive unlabelable content <a></a> as first child of <label>
+PASS noninteractive unlabelable content <a></a> deeply nested under <label>
+PASS noninteractive unlabelable content <a></a> as second child under <label>
+PASS noninteractive unlabelable content <audio></audio> as first child of <label>
+PASS noninteractive unlabelable content <audio></audio> deeply nested under <label>
+PASS noninteractive unlabelable content <audio></audio> as second child under <label>
+PASS noninteractive unlabelable content <img> as first child of <label>
+PASS noninteractive unlabelable content <img> deeply nested under <label>
+PASS noninteractive unlabelable content <img> as second child under <label>
+PASS noninteractive unlabelable content <input type="hidden"> as first child of <label>
+PASS noninteractive unlabelable content <input type="hidden"> deeply nested under <label>
+PASS noninteractive unlabelable content <input type="hidden"> as second child under <label>
+PASS noninteractive unlabelable content <object></object> as first child of <label>
+PASS noninteractive unlabelable content <object></object> deeply nested under <label>
+PASS noninteractive unlabelable content <object></object> as second child under <label>
+PASS noninteractive unlabelable content <video></video> as first child of <label>
+PASS noninteractive unlabelable content <video></video> deeply nested under <label>
+PASS noninteractive unlabelable content <video></video> as second child under <label>
+PASS noninteractive unlabelable content <a tabindex=""></a> as first child of <label>
+PASS noninteractive unlabelable content <a tabindex=""></a> deeply nested under <label>
+PASS noninteractive unlabelable content <a tabindex=""></a> as second child under <label>
+PASS noninteractive unlabelable content <audio tabindex=""></audio> as first child of <label>
+PASS noninteractive unlabelable content <audio tabindex=""></audio> deeply nested under <label>
+PASS noninteractive unlabelable content <audio tabindex=""></audio> as second child under <label>
+PASS noninteractive unlabelable content <div tabindex=""></div> as first child of <label>
+PASS noninteractive unlabelable content <div tabindex=""></div> deeply nested under <label>
+PASS noninteractive unlabelable content <div tabindex=""></div> as second child under <label>
+PASS noninteractive unlabelable content <img tabindex=""> as first child of <label>
+PASS noninteractive unlabelable content <img tabindex=""> deeply nested under <label>
+PASS noninteractive unlabelable content <img tabindex=""> as second child under <label>
+PASS noninteractive unlabelable content <input type="hidden" tabindex=""> as first child of <label>
+PASS noninteractive unlabelable content <input type="hidden" tabindex=""> deeply nested under <label>
+PASS noninteractive unlabelable content <input type="hidden" tabindex=""> as second child under <label>
+PASS noninteractive unlabelable content <object tabindex=""></object> as first child of <label>
+PASS noninteractive unlabelable content <object tabindex=""></object> deeply nested under <label>
+PASS noninteractive unlabelable content <object tabindex=""></object> as second child under <label>
+PASS noninteractive unlabelable content <video tabindex=""></video> as first child of <label>
+PASS noninteractive unlabelable content <video tabindex=""></video> deeply nested under <label>
+PASS noninteractive unlabelable content <video tabindex=""></video> as second child under <label>
+PASS noninteractive unlabelable content <details></details> as first child of <label>
+PASS noninteractive unlabelable content <details></details> deeply nested under <label>
+PASS noninteractive unlabelable content <details></details> as second child under <label>
 

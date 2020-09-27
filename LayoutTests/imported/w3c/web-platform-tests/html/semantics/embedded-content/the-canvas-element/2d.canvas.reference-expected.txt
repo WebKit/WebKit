@@ -2,5 +2,5 @@
 CanvasRenderingContext2D.canvas refers back to its canvas
 Actual output:
 
-PASS CanvasRenderingContext2D.canvas refers back to its canvas 
+PASS CanvasRenderingContext2D.canvas refers back to its canvas
 

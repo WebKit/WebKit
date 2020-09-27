@@ -1,6 +1,6 @@
 
-PASS window.navigator[0] should not exist 
-PASS window.navigator[0] should be settable 
-PASS window.navigator[-1] should not exist 
-PASS window.navigator[-1] should be settable 
+PASS window.navigator[0] should not exist
+PASS window.navigator[0] should be settable
+PASS window.navigator[-1] should not exist
+PASS window.navigator[-1] should be settable
 

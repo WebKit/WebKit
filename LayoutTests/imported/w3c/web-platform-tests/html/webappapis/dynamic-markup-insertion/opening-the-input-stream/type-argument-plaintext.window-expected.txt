@@ -1,10 +1,10 @@
 
-PASS document.open() on plaintext document with type set to: replace (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: NOBODY (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: @ FD ; (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: it does not matter, you see  (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: text/plain (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: text/xml (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: application/octet-stream (type argument is supposed to be ignored) 
-PASS document.open() on plaintext document with type set to: \0 (type argument is supposed to be ignored) 
+PASS document.open() on plaintext document with type set to: replace (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: NOBODY (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: @ FD ; (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: it does not matter, you see  (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: text/plain (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: text/xml (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: application/octet-stream (type argument is supposed to be ignored)
+PASS document.open() on plaintext document with type set to: \0 (type argument is supposed to be ignored)
 

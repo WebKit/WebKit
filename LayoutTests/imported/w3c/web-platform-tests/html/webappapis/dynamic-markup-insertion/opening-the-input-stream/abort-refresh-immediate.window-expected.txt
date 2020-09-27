@@ -3,8 +3,8 @@ Harness Error (TIMEOUT), message = null
 
 TIMEOUT document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (XMLHttpRequest) Test timed out
 FAIL document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (fetch()) assert_unreached: Fetch should have been aborted Reached unreachable code
-PASS document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (image loading) 
+PASS document.open() aborts documents that are queued for navigation through <meta> refresh with timeout 0 (image loading)
 TIMEOUT document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (XMLHttpRequest) Test timed out
 FAIL document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (fetch()) assert_unreached: Fetch should have been aborted Reached unreachable code
-PASS document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (image loading) 
+PASS document.open() aborts documents that are queued for navigation through Refresh header with timeout 0 (image loading)
 

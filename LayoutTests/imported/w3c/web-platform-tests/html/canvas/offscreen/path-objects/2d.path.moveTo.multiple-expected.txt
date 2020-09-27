@@ -1,5 +1,5 @@
 2d.path.moveTo.multiple
 
 
-PASS OffscreenCanvas test: 2d.path.moveTo.multiple 
+PASS OffscreenCanvas test: 2d.path.moveTo.multiple
 

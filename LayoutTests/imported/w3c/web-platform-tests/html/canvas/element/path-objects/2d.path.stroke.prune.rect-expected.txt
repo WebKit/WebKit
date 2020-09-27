@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Zero-length line segments from rect and strokeRect are removed before stroking 
+PASS Zero-length line segments from rect and strokeRect are removed before stroking
 

@@ -2,5 +2,5 @@
 arcTo() with negative radius throws an exception
 Actual output:
 
-PASS arcTo() with negative radius throws an exception 
+PASS arcTo() with negative radius throws an exception
 

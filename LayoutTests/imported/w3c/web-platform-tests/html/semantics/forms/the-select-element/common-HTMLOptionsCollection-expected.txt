@@ -1,10 +1,10 @@
 
-PASS On getting, the length attribute must return the number of nodes represented by the collection. 
-PASS Changing the length adds new nodes; The number of new nodes = new length minus old length 
-PASS New nodes have no value 
-PASS Setting a length equal to existing length changes nothing 
-PASS Setting a length lower than the old length trims nodes from the end 
-PASS Setting element to null by index removed the element 
-PASS Setting element by index should correctly append and replace elements 
-PASS Changing the length adds new nodes; The new nodes will not copy select's prefix 
+PASS On getting, the length attribute must return the number of nodes represented by the collection.
+PASS Changing the length adds new nodes; The number of new nodes = new length minus old length
+PASS New nodes have no value
+PASS Setting a length equal to existing length changes nothing
+PASS Setting a length lower than the old length trims nodes from the end
+PASS Setting element to null by index removed the element
+PASS Setting element by index should correctly append and replace elements
+PASS Changing the length adds new nodes; The new nodes will not copy select's prefix
 

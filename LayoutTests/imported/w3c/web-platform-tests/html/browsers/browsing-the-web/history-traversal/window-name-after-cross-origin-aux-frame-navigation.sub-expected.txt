@@ -2,5 +2,5 @@ Blocked access to external URL http://www1.localhost:8800/html/browsers/browsing
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that the window name is correct 
+NOTRUN Test that the window name is correct
 

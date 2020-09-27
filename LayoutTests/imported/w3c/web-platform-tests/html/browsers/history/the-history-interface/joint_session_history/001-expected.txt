@@ -1,11 +1,11 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Session history length on initial load 
-PASS Session history length on adding new iframe 
-PASS Navigating second iframe 
-PASS Traversing history back (1) 
-PASS Navigating first iframe 
-NOTRUN Traversing history back (2) 
-NOTRUN Traversing history forward 
+PASS Session history length on initial load
+PASS Session history length on adding new iframe
+PASS Navigating second iframe
+PASS Traversing history back (1)
+PASS Navigating first iframe
+NOTRUN Traversing history back (2)
+NOTRUN Traversing history forward
 

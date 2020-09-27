@@ -1,13 +1,13 @@
 
-PASS option.text should recurse 
-PASS option.text should not recurse into HTML script elements 
-PASS option.text should not recurse into SVG script elements 
-PASS option.text should recurse into MathML script elements 
-PASS option.text should recurse into null script elements 
-PASS option.text should work if a child of the option ends with a script 
-PASS option.text should work if the option is in an HTML script element 
-PASS option.text should work if the option is in an SVG script element 
-PASS option.text should work if the option is in a MathML script element 
-PASS option.text should ignore comment children 
-PASS option.text should ignore PI children 
+PASS option.text should recurse
+PASS option.text should not recurse into HTML script elements
+PASS option.text should not recurse into SVG script elements
+PASS option.text should recurse into MathML script elements
+PASS option.text should recurse into null script elements
+PASS option.text should work if a child of the option ends with a script
+PASS option.text should work if the option is in an HTML script element
+PASS option.text should work if the option is in an SVG script element
+PASS option.text should work if the option is in a MathML script element
+PASS option.text should ignore comment children
+PASS option.text should ignore PI children
 

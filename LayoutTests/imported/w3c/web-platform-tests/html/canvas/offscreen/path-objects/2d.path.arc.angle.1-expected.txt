@@ -3,5 +3,5 @@
 arc() draws pi/2 .. -pi anticlockwise correctly
 
 
-PASS arc() draws pi/2 .. -pi anticlockwise correctly 
+PASS arc() draws pi/2 .. -pi anticlockwise correctly
 

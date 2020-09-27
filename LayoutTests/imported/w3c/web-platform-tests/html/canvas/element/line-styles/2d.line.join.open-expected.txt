@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Line joins are not drawn at the corner of an unclosed rectangle 
+PASS Line joins are not drawn at the corner of an unclosed rectangle
 

@@ -3,5 +3,5 @@
 Shadows are drawn correctly for partially-transparent images
 
 
-PASS Shadows are drawn correctly for partially-transparent images 
+PASS Shadows are drawn correctly for partially-transparent images
 

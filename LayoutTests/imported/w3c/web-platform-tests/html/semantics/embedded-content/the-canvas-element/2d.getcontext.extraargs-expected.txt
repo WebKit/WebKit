@@ -2,5 +2,5 @@
 The 2D context ignores extra getContext arguments
 Actual output:
 
-PASS The 2D context ignores extra getContext arguments 
+PASS The 2D context ignores extra getContext arguments
 

@@ -2,11 +2,11 @@
 FAIL dialog element: showModal() assert_equals: expected Element node <button id="b1">OK</button> but got Element node <body><div id="log"></div>
 <button id="b0">OK</button>
 <d...
-PASS showModal() on a <dialog> that already has an open attribute throws an InvalidStateError exception 
-PASS showModal() on a <dialog> after initial showModal() and removing the open attribute 
-PASS showModal() on a <dialog> not in a Document throws an InvalidStateError exception 
-PASS when opening multiple dialogs, only the newest one is non-inert 
-PASS opening dialog without focusable children 
+PASS showModal() on a <dialog> that already has an open attribute throws an InvalidStateError exception
+PASS showModal() on a <dialog> after initial showModal() and removing the open attribute
+PASS showModal() on a <dialog> not in a Document throws an InvalidStateError exception
+PASS when opening multiple dialogs, only the newest one is non-inert
+PASS opening dialog without focusable children
 FAIL opening dialog with multiple focusable children assert_equals: expected Element node <input id="i71" value="foobar"></input> but got Element node <body><div id="log"></div>
 <button id="b0">OK</button>
 <d...

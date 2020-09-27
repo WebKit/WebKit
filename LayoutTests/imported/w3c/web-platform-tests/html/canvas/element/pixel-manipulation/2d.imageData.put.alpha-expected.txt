@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS putImageData() puts non-solid image data correctly 
+PASS putImageData() puts non-solid image data correctly
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows are not drawn when only shadowColor is set 
+PASS Shadows are not drawn when only shadowColor is set
 

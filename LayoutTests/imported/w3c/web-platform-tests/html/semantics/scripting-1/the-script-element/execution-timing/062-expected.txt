@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: cloneNode (shallow) and script execution 
+PASS  scheduler: cloneNode (shallow) and script execution
 

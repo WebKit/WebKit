@@ -1,6 +1,6 @@
 
-PASS Placeholder label options within a select 
-PASS Placeholder label-like options within optgroup 
-PASS Validation on selects with display size set as more than one 
-PASS Validation on selects with multiple set 
+PASS Placeholder label options within a select
+PASS Placeholder label-like options within optgroup
+PASS Validation on selects with display size set as more than one
+PASS Validation on selects with multiple set
 

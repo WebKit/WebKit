@@ -3,5 +3,5 @@
 arcTo scales the curve, not just the control points
 
 
-PASS arcTo scales the curve, not just the control points 
+PASS arcTo scales the curve, not just the control points
 

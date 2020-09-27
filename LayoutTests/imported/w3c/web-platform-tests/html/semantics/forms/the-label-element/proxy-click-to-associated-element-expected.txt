@@ -1,5 +1,5 @@
 
-PASS label with for attribute should proxy click events to the associated element 
-PASS label without for attribute should proxy click events to the first labelable child 
-PASS clicking a label that prevents the event's default should not proxy click events 
+PASS label with for attribute should proxy click events to the associated element
+PASS label without for attribute should proxy click events to the first labelable child
+PASS clicking a label that prevents the event's default should not proxy click events
  foo   bar   baz   baz

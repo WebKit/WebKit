@@ -1,6 +1,6 @@
 
-PASS The body element must be the active element if no element is focused 
-PASS The element must be the active element if it is focused 
-PASS The hasFocus() method must return false if the Document has no browsing context 
-PASS When a child browsing context is focused, its browsing context container is also focused 
-  
+PASS The body element must be the active element if no element is focused
+PASS The element must be the active element if it is focused
+PASS The hasFocus() method must return false if the Document has no browsing context
+PASS When a child browsing context is focused, its browsing context container is also focused
+

@@ -1,5 +1,5 @@
 
-PASS if before and node are the same element nothing should be done 
-PASS add method should add option elements correctly 
-PASS add method should add option groups correctly 
+PASS if before and node are the same element nothing should be done
+PASS add method should add option elements correctly
+PASS add method should add option groups correctly
 

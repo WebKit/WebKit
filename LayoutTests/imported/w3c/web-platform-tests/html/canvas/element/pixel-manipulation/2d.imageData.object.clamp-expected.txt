@@ -2,5 +2,5 @@
 ImageData.data clamps numbers to [0, 255]
 Actual output:
 
-PASS ImageData.data clamps numbers to [0, 255] 
+PASS ImageData.data clamps numbers to [0, 255]
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: interaction of parsing and script execution - script added through DOM 
+PASS  scheduler: interaction of parsing and script execution - script added through DOM
 

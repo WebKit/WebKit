@@ -2,5 +2,5 @@
 putImageData(getImageData(...), ...) has no effect
 Actual output:
 
-PASS putImageData(getImageData(...), ...) has no effect 
+PASS putImageData(getImageData(...), ...) has no effect
 

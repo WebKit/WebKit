@@ -3,5 +3,5 @@
 getImageData() works with negative width and height, and returns top-to-bottom left-to-right
 
 
-PASS getImageData() works with negative width and height, and returns top-to-bottom left-to-right 
+PASS getImageData() works with negative width and height, and returns top-to-bottom left-to-right
 

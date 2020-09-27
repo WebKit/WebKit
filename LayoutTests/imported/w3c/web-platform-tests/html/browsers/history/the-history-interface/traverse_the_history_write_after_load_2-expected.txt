@@ -4,5 +4,5 @@ main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 
-PASS Traverse the history back and forward when a history entry is written after the load event 
+PASS Traverse the history back and forward when a history entry is written after the load event
 

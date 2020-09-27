@@ -1,20 +1,20 @@
-    
 
-PASS img src and srcset omitted 
-PASS img src and srcset omitted on newly-created image 
-PASS img src and srcset omitted on newly-created-and-inserted image 
-PASS img src and srcset omitted on newly-created-via-innerHTML image 
-PASS img src empty and srcset omitted 
-PASS img src empty and srcset omitted on newly-created image 
-PASS img src empty and srcset omitted on newly-created-and-inserted image 
-PASS img src empty and srcset omitted on newly-created-via-innerHTML image 
-PASS img src and srcset omitted on image after it started a load 
-PASS async src complete test 
-PASS async srcset complete test 
-PASS IDL attribute complete cannot "randomly" change during a task 
-PASS async src broken test 
-PASS async src removal test 
-PASS async srcset removal test 
-PASS async src available image lookup test 
-PASS async pending request test 
+
+PASS img src and srcset omitted
+PASS img src and srcset omitted on newly-created image
+PASS img src and srcset omitted on newly-created-and-inserted image
+PASS img src and srcset omitted on newly-created-via-innerHTML image
+PASS img src empty and srcset omitted
+PASS img src empty and srcset omitted on newly-created image
+PASS img src empty and srcset omitted on newly-created-and-inserted image
+PASS img src empty and srcset omitted on newly-created-via-innerHTML image
+PASS img src and srcset omitted on image after it started a load
+PASS async src complete test
+PASS async srcset complete test
+PASS IDL attribute complete cannot "randomly" change during a task
+PASS async src broken test
+PASS async src removal test
+PASS async srcset removal test
+PASS async src available image lookup test
+PASS async pending request test
 

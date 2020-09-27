@@ -2,5 +2,5 @@
 Missing arguments cause TypeError
 Actual output:
 
-PASS Missing arguments cause TypeError 
+PASS Missing arguments cause TypeError
 

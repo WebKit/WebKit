@@ -2,9 +2,9 @@ Inputs Date
 
 
 FAIL date type support on input element assert_equals: expected "date" but got "text"
-PASS The value attribute, if specified and not empty, must have a value that is a valid date string. 
-PASS The min attribute must be reflected verbatim by the min property. 
-PASS The max attribute must be reflected verbatim by the max property. 
+PASS The value attribute, if specified and not empty, must have a value that is a valid date string.
+PASS The min attribute must be reflected verbatim by the min property.
+PASS The max attribute must be reflected verbatim by the max property.
 FAIL User agents must not allow the user to set the value to a non-empty string that is not a valid date string. assert_equals: expected "" but got "invalid-date"
 FAIL Number of days assert_equals: January has 31 days expected "" but got "2014-01-32"
 

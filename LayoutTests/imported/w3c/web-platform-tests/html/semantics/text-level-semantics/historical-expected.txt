@@ -1,7 +1,7 @@
 
-PASS area.hreflang should not be supported 
-PASS area.type should not be supported 
-PASS time.datetime should not be supported 
-PASS a.media should not be supported 
-PASS area.media should not be supported 
+PASS area.hreflang should not be supported
+PASS area.type should not be supported
+PASS time.datetime should not be supported
+PASS a.media should not be supported
+PASS area.media should not be supported
 

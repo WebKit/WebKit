@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: parser-created defer script after document load 
+PASS  scheduler: parser-created defer script after document load
 

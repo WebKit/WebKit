@@ -1,5 +1,5 @@
 Description: isPointInPath must check the point (x, y) as coordinates unaffected by the current transformation matrix.
 
 
-PASS isPointInPath unaffected by transformation matrix 
+PASS isPointInPath unaffected by transformation matrix
 

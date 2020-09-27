@@ -1,4 +1,4 @@
 
 
-PASS Navigating to new page should reset to "auto" and navigating back should restore and respect scroll restoration mode 
+PASS Navigating to new page should reset to "auto" and navigating back should restore and respect scroll restoration mode
 

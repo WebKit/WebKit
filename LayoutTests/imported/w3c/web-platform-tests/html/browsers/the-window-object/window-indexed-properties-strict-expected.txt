@@ -1,10 +1,10 @@
 
-PASS Indexed properties of the window object (strict mode) 
+PASS Indexed properties of the window object (strict mode)
 FAIL Indexed properties of the window object (strict mode) 1 assert_throws_js: function "function () {
     window[0] = "foo";
   }" did not throw
 FAIL Indexed properties of the window object (strict mode) 2 assert_throws_js: function "function () {
     window[1] = "foo";
   }" did not throw
-PASS Indexed properties of the window object (strict mode) 3 
+PASS Indexed properties of the window object (strict mode) 3
 

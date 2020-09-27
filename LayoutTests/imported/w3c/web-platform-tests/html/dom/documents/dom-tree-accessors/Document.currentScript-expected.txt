@@ -3,21 +3,21 @@ Blocked access to external URL http://some.nonexistant.test/fail
 CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 CONSOLE MESSAGE: ReferenceError: Can't find variable: undefinedfn
 
-PASS Script parse-inline 
-PASS Script parse-ext 
-PASS Script dom-inline 
-PASS Script dom-ext 
-PASS Script nested 
-PASS Script script-load-error 
-PASS Script script-window-error 
-PASS Script timeout 
-PASS Script eval 
-PASS Script xhr-test 
-PASS Script script-svg 
-PASS Script script-async 
-PASS Script script-defer 
-PASS Script script-async-false 
-PASS Script iframe-src 
-PASS Script cross-origin 
-PASS Script document-write 
+PASS Script parse-inline
+PASS Script parse-ext
+PASS Script dom-inline
+PASS Script dom-ext
+PASS Script nested
+PASS Script script-load-error
+PASS Script script-window-error
+PASS Script timeout
+PASS Script eval
+PASS Script xhr-test
+PASS Script script-svg
+PASS Script script-async
+PASS Script script-defer
+PASS Script script-async-false
+PASS Script iframe-src
+PASS Script cross-origin
+PASS Script document-write
 

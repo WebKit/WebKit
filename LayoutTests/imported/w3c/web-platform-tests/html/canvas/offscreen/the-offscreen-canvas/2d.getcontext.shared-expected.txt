@@ -3,5 +3,5 @@
 getContext('2d') returns objects which share canvas state
 
 
-PASS getContext('2d') returns objects which share canvas state 
+PASS getContext('2d') returns objects which share canvas state
 

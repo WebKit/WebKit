@@ -3,5 +3,5 @@
 createRadialGradient() throws TypeError if arguments are not finite
 
 
-PASS createRadialGradient() throws TypeError if arguments are not finite 
+PASS createRadialGradient() throws TypeError if arguments are not finite
 

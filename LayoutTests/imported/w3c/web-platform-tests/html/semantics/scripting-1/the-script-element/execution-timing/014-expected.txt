@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: SCRIPT elements that move themselves in DOM  
+PASS  scheduler: SCRIPT elements that move themselves in DOM
 

@@ -1,5 +1,5 @@
 2d.pattern.paint.repeat.coord1
 
 
-PASS OffscreenCanvas test: 2d.pattern.paint.repeat.coord1 
+PASS OffscreenCanvas test: 2d.pattern.paint.repeat.coord1
 

@@ -1,5 +1,5 @@
 
-PASS global scope unchanged 
-PASS window object unchanged 
-PASS this is the window object 
+PASS global scope unchanged
+PASS window object unchanged
+PASS this is the window object
 

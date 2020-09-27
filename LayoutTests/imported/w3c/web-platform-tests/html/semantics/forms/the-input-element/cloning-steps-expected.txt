@@ -1,6 +1,6 @@
 
-PASS input element's value should be cloned 
-PASS input element's dirty value flag should be cloned, so setAttribute doesn't affect the cloned input's value 
-PASS input element's checkedness should be cloned 
+PASS input element's value should be cloned
+PASS input element's dirty value flag should be cloned, so setAttribute doesn't affect the cloned input's value
+PASS input element's checkedness should be cloned
 FAIL input element's dirty checkedness should be cloned, so setAttribute doesn't affect the cloned input's checkedness assert_equals: expected false but got true
 

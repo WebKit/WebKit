@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.fillStyle.parse.css-color-4-hsla-9 
+PASS Canvas test: 2d.fillStyle.parse.css-color-4-hsla-9
 

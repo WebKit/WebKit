@@ -1,8 +1,8 @@
 
-PASS application/json+protobuf 
-PASS application/json+blah 
-PASS text/x-json 
-PASS text/json+blah 
-PASS application/blahjson 
-PASS image/json 
+PASS application/json+protobuf
+PASS application/json+blah
+PASS text/x-json
+PASS text/json+blah
+PASS application/blahjson
+PASS image/json
 

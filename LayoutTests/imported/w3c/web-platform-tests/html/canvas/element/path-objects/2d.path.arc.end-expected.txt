@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arc() adds the end point of the arc to the subpath 
+PASS arc() adds the end point of the arc to the subpath
 

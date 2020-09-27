@@ -8,6 +8,6 @@ TIMEOUT img (srcset 1 cand) Test timed out
 TIMEOUT img (srcset 1 cand), parent is picture Test timed out
 TIMEOUT img (srcset 1 cand), previous sibling is source Test timed out
 FAIL adopt a cloned img in template assert_equals: expected "http://localhost:8800/images/green-1x1.png" but got "/images/green-1x1.png"
-PASS adoption is from appendChild 
+PASS adoption is from appendChild
 
- 
+

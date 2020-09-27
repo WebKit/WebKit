@@ -2,5 +2,5 @@
 Verify correct behavior of canvas on an invalid strokeStyle()
 Actual output:
 
-PASS Verify correct behavior of canvas on an invalid strokeStyle() 
+PASS Verify correct behavior of canvas on an invalid strokeStyle()
 

@@ -1,4 +1,4 @@
 
-PASS textarea element's value should be cloned 
-PASS textarea element's dirty value flag should be cloned, so setAttribute doesn't affect the cloned textarea's value 
+PASS textarea element's value should be cloned
+PASS textarea element's dirty value flag should be cloned, so setAttribute doesn't affect the cloned textarea's value
 

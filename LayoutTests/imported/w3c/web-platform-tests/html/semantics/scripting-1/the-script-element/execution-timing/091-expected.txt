@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: force-async off on non-parser-inserted script 
+PASS  scheduler: force-async off on non-parser-inserted script
 

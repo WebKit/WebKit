@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Miter joins are not drawn when the miter limit is exceeded 
+PASS Miter joins are not drawn when the miter limit is exceeded
 

@@ -1,7 +1,7 @@
 
-PASS registerContentHandler() is removed 
-PASS isProtocolHandlerRegistered() is removed 
-PASS isContentHandlerRegistered() is removed 
-PASS unregisterContentHandler() is removed 
+PASS registerContentHandler() is removed
+PASS isProtocolHandlerRegistered() is removed
+PASS isContentHandlerRegistered() is removed
+PASS unregisterContentHandler() is removed
 FAIL registerProtocolHandler has no third argument self.navigator.registerProtocolHandler is not a function. (In 'self.navigator.registerProtocolHandler("web+test", "%s", { toString: () => called = true })', 'self.navigator.registerProtocolHandler' is undefined)
 

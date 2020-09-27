@@ -2,7 +2,7 @@
 Actual output:
 Expected output:
 
- 
 
-PASS Canvas test: 2d.drawImage.incomplete.reload 
+
+PASS Canvas test: 2d.drawImage.incomplete.reload
 

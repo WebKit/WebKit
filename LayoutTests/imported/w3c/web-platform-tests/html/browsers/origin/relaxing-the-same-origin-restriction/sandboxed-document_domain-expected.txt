@@ -1,7 +1,7 @@
 
-PASS Sandboxed document.domain 
-PASS Sandboxed document.domain 1 
-PASS Sandboxed document.domain 2 
-PASS Sandboxed document.domain 3 
-PASS Sandboxed document.domain 4 
+PASS Sandboxed document.domain
+PASS Sandboxed document.domain 1
+PASS Sandboxed document.domain 2
+PASS Sandboxed document.domain 3
+PASS Sandboxed document.domain 4
 

@@ -1,14 +1,14 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS tasks without document.open() (timeout) 
-PASS document.open() and tasks (timeout) 
-PASS tasks without document.open() (window message) 
-PASS document.open() and tasks (window message) 
-PASS tasks without document.open() (canvas.toBlob()) 
-PASS document.open() and tasks (canvas.toBlob()) 
-PASS tasks without document.open() (MessagePort) 
-PASS document.open() and tasks (MessagePort) 
+PASS tasks without document.open() (timeout)
+PASS document.open() and tasks (timeout)
+PASS tasks without document.open() (window message)
+PASS document.open() and tasks (window message)
+PASS tasks without document.open() (canvas.toBlob())
+PASS document.open() and tasks (canvas.toBlob())
+PASS tasks without document.open() (MessagePort)
+PASS document.open() and tasks (MessagePort)
 TIMEOUT tasks without document.open() (Promise rejection) Test timed out
 TIMEOUT document.open() and tasks (Promise rejection) Test timed out
 TIMEOUT tasks without document.open() (marquee start) Test timed out

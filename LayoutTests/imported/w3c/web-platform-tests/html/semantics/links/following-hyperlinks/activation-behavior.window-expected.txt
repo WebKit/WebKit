@@ -1,6 +1,6 @@
 
-PASS <a> that is not connected should be followed 
-PASS <a> that is from an inactive document should not be followed 
-PASS <area> that is not connected should not be followed 
-PASS <area> that is from an inactive document should not be followed 
+PASS <a> that is not connected should be followed
+PASS <a> that is from an inactive document should not be followed
+PASS <area> that is not connected should not be followed
+PASS <area> that is from an inactive document should not be followed
 

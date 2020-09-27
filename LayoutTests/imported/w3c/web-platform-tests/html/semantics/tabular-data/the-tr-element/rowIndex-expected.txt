@@ -1,14 +1,14 @@
 
-PASS HTMLTableRowElement.rowIndex 
-PASS HTMLTableRowElement.rowIndex 1 
-PASS HTMLTableRowElement.rowIndex 2 
-PASS HTMLTableRowElement.rowIndex 3 
-PASS HTMLTableRowElement.rowIndex 4 
-PASS HTMLTableRowElement.rowIndex 5 
-PASS HTMLTableRowElement.rowIndex 6 
-PASS HTMLTableRowElement.rowIndex 7 
-PASS HTMLTableRowElement.rowIndex 8 
-PASS HTMLTableRowElement.rowIndex 9 
-PASS HTMLTableRowElement.rowIndex 10 
-PASS HTMLTableRowElement.rowIndex 11 
+PASS HTMLTableRowElement.rowIndex
+PASS HTMLTableRowElement.rowIndex 1
+PASS HTMLTableRowElement.rowIndex 2
+PASS HTMLTableRowElement.rowIndex 3
+PASS HTMLTableRowElement.rowIndex 4
+PASS HTMLTableRowElement.rowIndex 5
+PASS HTMLTableRowElement.rowIndex 6
+PASS HTMLTableRowElement.rowIndex 7
+PASS HTMLTableRowElement.rowIndex 8
+PASS HTMLTableRowElement.rowIndex 9
+PASS HTMLTableRowElement.rowIndex 10
+PASS HTMLTableRowElement.rowIndex 11
 

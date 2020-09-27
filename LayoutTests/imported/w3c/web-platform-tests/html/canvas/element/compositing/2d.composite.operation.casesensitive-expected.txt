@@ -1,5 +1,5 @@
 2d.composite.operation.casesensitive
 Actual output:
 
-PASS Canvas test: 2d.composite.operation.casesensitive 
+PASS Canvas test: 2d.composite.operation.casesensitive
 

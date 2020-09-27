@@ -1,6 +1,6 @@
 
-PASS track element cloneNode, not loaded 
-PASS track element cloneNode, loading 
-PASS track element cloneNode, loaded 
-PASS track element cloneNode, failed to load 
+PASS track element cloneNode, not loaded
+PASS track element cloneNode, loading
+PASS track element cloneNode, loaded
+PASS track element cloneNode, failed to load
 

@@ -1,9 +1,9 @@
 html-script-module-imports
 
 
-PASS Import a module that validly imports itself 
-PASS Import a module with a valid cyclical module dependency 
-PASS Import a simple module 
-PASS Import a simple module, renamed 
-PASS Import the same module multiple times 
+PASS Import a module that validly imports itself
+PASS Import a module with a valid cyclical module dependency
+PASS Import a simple module
+PASS Import a simple module, renamed
+PASS Import the same module multiple times
 

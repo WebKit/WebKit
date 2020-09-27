@@ -3,15 +3,15 @@ Blocked access to external URL http://xn--lve-6lad.localhost:8801/html/dom/resou
 
 Harness Error (TIMEOUT), message = null
 
-PASS Assigning blob url 
-NOTRUN Should have the right origin for cross-origin subframe 
-NOTRUN Should have the right origin for cross-origin subframe after setting document.domain 
-NOTRUN Should have the right origin for IDN subframe 
-NOTRUN Should have the right origin for IDN subframe after setting document.domain 
-NOTRUN Should have the right origin for sandboxed iframe 
-PASS We should have the right origin for our page 
-PASS about:blank subframe origins 
+PASS Assigning blob url
+NOTRUN Should have the right origin for cross-origin subframe
+NOTRUN Should have the right origin for cross-origin subframe after setting document.domain
+NOTRUN Should have the right origin for IDN subframe
+NOTRUN Should have the right origin for IDN subframe after setting document.domain
+NOTRUN Should have the right origin for sandboxed iframe
+PASS We should have the right origin for our page
+PASS about:blank subframe origins
 FAIL blob: subframe origins assert_equals: Should have the right location origin for blob: iframe expected "http://localhost:8800" but got "null"
-PASS javascript: subframe origins 
-PASS srcdoc subframe origins 
-       
+PASS javascript: subframe origins
+PASS srcdoc subframe origins
+

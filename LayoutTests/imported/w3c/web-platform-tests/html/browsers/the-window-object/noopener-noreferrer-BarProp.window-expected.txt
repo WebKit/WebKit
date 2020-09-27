@@ -1,5 +1,5 @@
 
-PASS All bars visible 
+PASS All bars visible
 FAIL window.open() with noopener should have all bars visible Can't find variable: BroadcastChannel
 FAIL window.open() with noreferrer should have all bars visible Can't find variable: BroadcastChannel
 

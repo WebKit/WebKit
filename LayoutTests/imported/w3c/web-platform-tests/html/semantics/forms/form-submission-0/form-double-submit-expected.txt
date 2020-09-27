@@ -4,5 +4,5 @@ This frame should navigate (to 404)
 
 
 
-PASS default submit action should supersede onclick submit() 
+PASS default submit action should supersede onclick submit()
 

@@ -1,4 +1,4 @@
 
-PASS Link with onclick form submit to javascript url with document.write and href navigation  
+PASS Link with onclick form submit to javascript url with document.write and href navigation
 
 Test

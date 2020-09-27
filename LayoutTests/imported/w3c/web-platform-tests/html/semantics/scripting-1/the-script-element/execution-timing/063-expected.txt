@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: cloneNode (deep) of the currently executing script  
+PASS  scheduler: cloneNode (deep) of the currently executing script
 

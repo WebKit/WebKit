@@ -1,10 +1,10 @@
 
-PASS same-origin use-credentials 
-PASS same-origin invalid 
-PASS same-origin missing 
-PASS cross-origin use-credentials 
-PASS cross-origin invalid 
-PASS cross-origin missing 
-PASS cross-origin use-credentials mixed case 
-PASS cross-origin use-credentials non-ASCII 
+PASS same-origin use-credentials
+PASS same-origin invalid
+PASS same-origin missing
+PASS cross-origin use-credentials
+PASS cross-origin invalid
+PASS cross-origin missing
+PASS cross-origin use-credentials mixed case
+PASS cross-origin use-credentials non-ASCII
 

@@ -2,7 +2,7 @@
 Actual output:
 Expected output:
 
- 
 
-PASS Canvas test: 2d.drawImage.3arg 
+
+PASS Canvas test: 2d.drawImage.3arg
 

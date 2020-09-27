@@ -3,5 +3,5 @@
 Shadows can be offset with positive x
 
 
-PASS Shadows can be offset with positive x 
+PASS Shadows can be offset with positive x
 

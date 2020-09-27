@@ -1,5 +1,5 @@
 
-PASS setting img.src is async 
-PASS DOMContentLoaded doesn't wait for images 
-PASS load waits for images 
+PASS setting img.src is async
+PASS DOMContentLoaded doesn't wait for images
+PASS load waits for images
 

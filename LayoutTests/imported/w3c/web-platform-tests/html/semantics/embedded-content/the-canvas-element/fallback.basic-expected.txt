@@ -2,5 +2,5 @@ fallback.basic
 Fallback content is inserted into the DOM
 Actual output:
 
-PASS Fallback content is inserted into the DOM 
+PASS Fallback content is inserted into the DOM
 

@@ -1,7 +1,7 @@
 
 FAIL setTimeout should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
-PASS eval should successfully import 
-PASS Function should successfully import 
-PASS reflected-inline-event-handlers should successfully import 
-PASS inline-event-handlers-UA-code should successfully import 
+PASS eval should successfully import
+PASS Function should successfully import
+PASS reflected-inline-event-handlers should successfully import
+PASS inline-event-handlers-UA-code should successfully import
 

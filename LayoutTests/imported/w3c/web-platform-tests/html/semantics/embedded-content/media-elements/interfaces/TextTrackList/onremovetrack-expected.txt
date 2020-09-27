@@ -1,4 +1,4 @@
 
-PASS TextTrackList.onremovetrack 
-PASS TextTrackList.addEventListener/removeEventListener 
+PASS TextTrackList.onremovetrack
+PASS TextTrackList.addEventListener/removeEventListener
 

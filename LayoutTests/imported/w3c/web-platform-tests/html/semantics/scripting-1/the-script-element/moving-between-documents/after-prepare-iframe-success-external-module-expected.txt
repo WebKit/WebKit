@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: TypeError: Requested module is not instantiated yet.
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move success external module script to iframe after-prepare 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move success external module script to iframe after-prepare
 FAIL <script> load: Move success external module script to iframe after-prepare assert_unreached: Script load event fired unexpectedly Reached unreachable code
-PASS <script> error: Move success external module script to iframe after-prepare 
+PASS <script> error: Move success external module script to iframe after-prepare
 FAIL window error: Move success external module script to iframe after-prepare assert_unreached: Window error event shouldn't fired on destination window Reached unreachable code
 

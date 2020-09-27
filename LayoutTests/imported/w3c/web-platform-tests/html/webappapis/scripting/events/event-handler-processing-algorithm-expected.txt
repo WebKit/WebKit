@@ -1,9 +1,9 @@
 
-PASS mouseover listener returning false cancels event (using Event) 
-PASS mouseover listener returning false cancels event (using MouseEvent) 
-PASS mouseover listener returning true doesn't cancel event (using Event) 
-PASS mouseover listener returning true doesn't cancel event (using MouseEvent) 
-PASS click listener returning false cancels event 
-PASS blur listener returning false cancels event 
-PASS dblclick listener returning false cancels event 
+PASS mouseover listener returning false cancels event (using Event)
+PASS mouseover listener returning false cancels event (using MouseEvent)
+PASS mouseover listener returning true doesn't cancel event (using Event)
+PASS mouseover listener returning true doesn't cancel event (using MouseEvent)
+PASS click listener returning false cancels event
+PASS blur listener returning false cancels event
+PASS dblclick listener returning false cancels event
 

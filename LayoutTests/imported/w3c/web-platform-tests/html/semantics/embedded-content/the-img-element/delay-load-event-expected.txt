@@ -1,6 +1,6 @@
 
 
-PASS script execution doesn't wait for the image to load 
-PASS DOMContentLoaded doesn't wait for images 
-PASS Image element delays window's load event 
+PASS script execution doesn't wait for the image to load
+PASS DOMContentLoaded doesn't wait for images
+PASS Image element delays window's load event
 

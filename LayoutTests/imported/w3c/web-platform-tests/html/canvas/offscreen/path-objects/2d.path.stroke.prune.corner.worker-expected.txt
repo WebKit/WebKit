@@ -1,3 +1,3 @@
 
-PASS Zero-length line segments are removed before stroking with miters 
+PASS Zero-length line segments are removed before stroking with miters
 

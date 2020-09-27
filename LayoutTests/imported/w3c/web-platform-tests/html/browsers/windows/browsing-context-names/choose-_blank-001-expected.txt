@@ -1,4 +1,4 @@
 
-PASS window.open into `_blank` should create a new browsing context each time 
-PASS `_blank` should be ASCII case-insensitive 
+PASS window.open into `_blank` should create a new browsing context each time
+PASS `_blank` should be ASCII case-insensitive
 

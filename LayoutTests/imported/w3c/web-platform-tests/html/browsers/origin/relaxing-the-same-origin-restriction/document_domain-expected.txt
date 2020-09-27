@@ -1,6 +1,6 @@
 
-PASS basics 
-PASS current document 
-PASS new Document() 
-PASS XMLHttpRequest's response document 
+PASS basics
+PASS current document
+PASS new Document()
+PASS XMLHttpRequest's response document
 

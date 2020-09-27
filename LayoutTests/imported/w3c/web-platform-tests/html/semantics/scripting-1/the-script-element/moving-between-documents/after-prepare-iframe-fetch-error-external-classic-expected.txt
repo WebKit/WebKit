@@ -1,8 +1,8 @@
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move fetch-error external classic script to iframe after-prepare 
-PASS <script> load: Move fetch-error external classic script to iframe after-prepare 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move fetch-error external classic script to iframe after-prepare
+PASS <script> load: Move fetch-error external classic script to iframe after-prepare
 FAIL <script> error: Move fetch-error external classic script to iframe after-prepare assert_unreached: Script error evennt fired unexpectedly Reached unreachable code
-PASS window error: Move fetch-error external classic script to iframe after-prepare 
+PASS window error: Move fetch-error external classic script to iframe after-prepare
 

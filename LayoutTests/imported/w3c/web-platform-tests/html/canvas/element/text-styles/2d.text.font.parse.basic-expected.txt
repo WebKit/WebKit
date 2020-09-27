@@ -1,5 +1,5 @@
 2d.text.font.parse.basic
 Actual output:
 
-PASS Canvas test: 2d.text.font.parse.basic 
+PASS Canvas test: 2d.text.font.parse.basic
 

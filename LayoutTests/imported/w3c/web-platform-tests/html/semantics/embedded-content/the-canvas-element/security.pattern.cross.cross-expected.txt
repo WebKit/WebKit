@@ -3,5 +3,5 @@ security.pattern.cross.cross
 Using an unclean pattern makes the target canvas origin-unclean, not the pattern canvas
 Actual output:
 
-PASS Using an unclean pattern makes the target canvas origin-unclean, not the pattern canvas 
+PASS Using an unclean pattern makes the target canvas origin-unclean, not the pattern canvas
 

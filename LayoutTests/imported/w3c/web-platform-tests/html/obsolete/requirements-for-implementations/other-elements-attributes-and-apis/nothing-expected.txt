@@ -1,7 +1,7 @@
 
-PASS document.clear 
-PASS document.captureEvents 
-PASS document.releaseEvents 
-PASS window.captureEvents 
-PASS window.releaseEvents 
+PASS document.clear
+PASS document.captureEvents
+PASS document.releaseEvents
+PASS window.captureEvents
+PASS window.releaseEvents
 

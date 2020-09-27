@@ -3,5 +3,5 @@
 canvas refers back to its canvas
 
 
-PASS canvas refers back to its canvas 
+PASS canvas refers back to its canvas
 

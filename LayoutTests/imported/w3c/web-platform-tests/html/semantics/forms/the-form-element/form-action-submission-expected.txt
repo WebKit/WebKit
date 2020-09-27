@@ -1,6 +1,6 @@
- 
 
-PASS An action URL should be resolved relative to the document's base URL (= document's URL in this case) 
-PASS An empty-string action should submit the form to the document's URL (= document's base URL in this case) 
-PASS A missing action should submit the form to the document's URL (= document's base URL in this case) 
+
+PASS An action URL should be resolved relative to the document's base URL (= document's URL in this case)
+PASS An empty-string action should submit the form to the document's URL (= document's base URL in this case)
+PASS A missing action should submit the form to the document's URL (= document's base URL in this case)
 

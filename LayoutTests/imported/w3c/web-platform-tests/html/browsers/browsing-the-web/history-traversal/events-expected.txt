@@ -1,18 +1,18 @@
 
-PASS Constructing pageshow event 
-PASS Constructing pagehide event 
-PASS Constructing pageshow event, persisted true 
-PASS Constructing pagehide event, persisted true 
-PASS Constructing pageshow event, empty options 
-PASS Constructing pagehide event, empty options 
-PASS Constructing pageshow event, missing options 
-PASS Constructing pagehide event, missing options 
-PASS Constructing pageshow event, persisted:null 
-PASS Constructing pagehide event, persisted:null 
-PASS Constructing pageshow event, persisted:undefined 
-PASS Constructing pagehide event, persisted:undefined 
-PASS Constructing pageshow event, bubbles:true 
-PASS Constructing pagehide event, bubbles:true 
-PASS Constructing pageshow event, cancelable:true 
-PASS Constructing pagehide event, cancelable:true 
+PASS Constructing pageshow event
+PASS Constructing pagehide event
+PASS Constructing pageshow event, persisted true
+PASS Constructing pagehide event, persisted true
+PASS Constructing pageshow event, empty options
+PASS Constructing pagehide event, empty options
+PASS Constructing pageshow event, missing options
+PASS Constructing pagehide event, missing options
+PASS Constructing pageshow event, persisted:null
+PASS Constructing pagehide event, persisted:null
+PASS Constructing pageshow event, persisted:undefined
+PASS Constructing pagehide event, persisted:undefined
+PASS Constructing pageshow event, bubbles:true
+PASS Constructing pagehide event, bubbles:true
+PASS Constructing pageshow event, cancelable:true
+PASS Constructing pagehide event, cancelable:true
 

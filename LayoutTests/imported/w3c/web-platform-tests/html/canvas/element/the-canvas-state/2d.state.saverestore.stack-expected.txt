@@ -2,5 +2,5 @@
 save()/restore() can be nested as a stack
 Actual output:
 
-PASS save()/restore() can be nested as a stack 
+PASS save()/restore() can be nested as a stack
 

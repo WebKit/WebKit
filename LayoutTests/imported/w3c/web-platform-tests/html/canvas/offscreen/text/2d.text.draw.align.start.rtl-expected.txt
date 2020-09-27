@@ -3,5 +3,5 @@
 textAlign start with rtl is the right edge
 
 
-PASS textAlign start with rtl is the right edge 
+PASS textAlign start with rtl is the right edge
 

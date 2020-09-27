@@ -34,11 +34,11 @@ FAIL [shared worker] blocked by CORP: same-origin promise_test: Unhandled reject
 FAIL [shared worker] blocked due to COEP promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 FAIL [shared worker] blocked during redirect promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 TIMEOUT [service worker] same-origin Test timed out
-NOTRUN [service worker] blocked by CORP: same-origin 
-NOTRUN [service worker] blocked due to COEP 
-NOTRUN [service worker] blocked during redirect 
-NOTRUN [between service worker and page] same-origin 
-NOTRUN [between service worker and page] blocked by CORP: same-origin 
-NOTRUN [between service worker and page] blocked due to COEP 
-NOTRUN [between service worker and page] blocked during redirect 
+NOTRUN [service worker] blocked by CORP: same-origin
+NOTRUN [service worker] blocked due to COEP
+NOTRUN [service worker] blocked during redirect
+NOTRUN [between service worker and page] same-origin
+NOTRUN [between service worker and page] blocked by CORP: same-origin
+NOTRUN [between service worker and page] blocked due to COEP
+NOTRUN [between service worker and page] blocked during redirect
 

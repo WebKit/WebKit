@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: focus and blur events 
+PASS  scheduler: focus and blur events
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: adding external script that removes all scripts from document 
+PASS  scheduler: adding external script that removes all scripts from document
 

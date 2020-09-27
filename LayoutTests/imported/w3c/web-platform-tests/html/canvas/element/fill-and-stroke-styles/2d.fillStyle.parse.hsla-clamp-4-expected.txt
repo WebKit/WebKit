@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.fillStyle.parse.hsla-clamp-4 
+PASS Canvas test: 2d.fillStyle.parse.hsla-clamp-4
 

@@ -1,6 +1,6 @@
 I"m green when light DOM link is on
 I"m green when Shadow DOM link is on
 
-PASS Removing stylesheet from link rel attribute should remove the stylesheet for light DOM 
-PASS Removing stylesheet from link rel attribute should remove the stylesheet for shadow DOM 
+PASS Removing stylesheet from link rel attribute should remove the stylesheet for light DOM
+PASS Removing stylesheet from link rel attribute should remove the stylesheet for shadow DOM
 

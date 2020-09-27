@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: SyntaxError: Parser error
 
-PASS Compiling invalid uncompiled raw handlers should keep the position in event listener list 
+PASS Compiling invalid uncompiled raw handlers should keep the position in event listener list
 

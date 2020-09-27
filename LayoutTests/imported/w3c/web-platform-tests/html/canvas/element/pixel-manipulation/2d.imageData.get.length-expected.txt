@@ -2,5 +2,5 @@
 getImageData() returns a correctly-sized Uint8ClampedArray
 Actual output:
 
-PASS getImageData() returns a correctly-sized Uint8ClampedArray 
+PASS getImageData() returns a correctly-sized Uint8ClampedArray
 

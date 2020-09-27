@@ -1,10 +1,10 @@
 
-PASS clicking on button should not submit a form 
-PASS the element is barred from constraint validation 
-PASS clicking on button should not reset other form fields 
-PASS clicking on button should not unchecked radio buttons 
-PASS clicking on button should not change its indeterminate IDL attribute 
+PASS clicking on button should not submit a form
+PASS the element is barred from constraint validation
+PASS clicking on button should not reset other form fields
+PASS clicking on button should not unchecked radio buttons
+PASS clicking on button should not change its indeterminate IDL attribute
 
-  
-  
-  
+
+
+

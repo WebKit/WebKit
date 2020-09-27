@@ -1,4 +1,4 @@
 
 
-PASS Cue text position and alignment from settings 
+PASS Cue text position and alignment from settings
 

@@ -1,7 +1,7 @@
 
-PASS HTMLAnchorElement.text setting 
-PASS Test for anchor 0 
-PASS Test for anchor 1 
-PASS Test for anchor 2 
-PASS Test for anchor 3 
+PASS HTMLAnchorElement.text setting
+PASS Test for anchor 0
+PASS Test for anchor 1
+PASS Test for anchor 2
+PASS Test for anchor 3
 y y y y

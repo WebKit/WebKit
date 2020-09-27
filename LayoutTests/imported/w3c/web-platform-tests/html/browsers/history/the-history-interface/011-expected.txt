@@ -1,5 +1,5 @@
 
-PASS pushState should be able to set the location state 
-PASS pushed location should be reflected immediately 
-PASS pushed location should be retained after the page has loaded 
+PASS pushState should be able to set the location state
+PASS pushed location should be reflected immediately
+PASS pushed location should be retained after the page has loaded
 

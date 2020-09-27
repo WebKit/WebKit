@@ -1,4 +1,4 @@
 
-PASS It interleaves with MutationObservers as expected 
-PASS It interleaves with MutationObservers and promises together as expected 
+PASS It interleaves with MutationObservers as expected
+PASS It interleaves with MutationObservers and promises together as expected
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS rotate() wraps large negative values correctly 
+PASS rotate() wraps large negative values correctly
 

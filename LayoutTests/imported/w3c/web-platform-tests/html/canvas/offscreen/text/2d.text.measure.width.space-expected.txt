@@ -3,5 +3,5 @@
 Space characters are converted to U+0020 and collapsed (per CSS)
 
 
-PASS Space characters are converted to U+0020 and collapsed (per CSS) 
+PASS Space characters are converted to U+0020 and collapsed (per CSS)
 

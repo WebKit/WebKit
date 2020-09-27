@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS toDataURL with PNG handles non-primary and non-solid colours correctly 
+PASS toDataURL with PNG handles non-primary and non-solid colours correctly
 

@@ -1,6 +1,6 @@
 
-PASS document not in a browsing context 
-PASS document.location equals window.location 
+PASS document not in a browsing context
+PASS document.location equals window.location
 FAIL Attribute getter deduplication assert_equals: expected function "function location() {
     [native code]
 }" but got function "function location() {

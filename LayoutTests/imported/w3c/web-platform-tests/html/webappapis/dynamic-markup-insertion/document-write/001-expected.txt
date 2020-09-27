@@ -1,4 +1,4 @@
 PASS
 
-PASS document.write 
+PASS document.write
 

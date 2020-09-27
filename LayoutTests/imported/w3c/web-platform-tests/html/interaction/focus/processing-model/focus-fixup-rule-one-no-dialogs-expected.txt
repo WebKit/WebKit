@@ -5,7 +5,7 @@ editor
 
 FAIL Disabling the active element (making it expressly inert) assert_not_equals: After disabling, the button must no longer be focused got disallowed value Element node <button id="button1" disabled="">Button 1</button>
 FAIL Hiding the active element assert_not_equals: After hiding, the button must no longer be focused got disallowed value Element node <button id="button2" hidden="">Button 2</button>
-PASS Removing the active element from the DOM 
+PASS Removing the active element from the DOM
 FAIL Disabling <fieldset> affects its descendants assert_not_equals: After disabling ancestor fieldset, the button must no longer be focused got disallowed value Element node <button id="button4">Button 4</button>
 FAIL Changing the first legend element in disabled <fieldset> assert_not_equals: After changing a legend element, the button must no longer be focused got disallowed value Element node <button id="button5">Button 5</button>
 FAIL Removing the tabindex attribute from a div assert_not_equals: After removing tabindex, the div must no longer be focused got disallowed value Element node <div id="div">Div</div>

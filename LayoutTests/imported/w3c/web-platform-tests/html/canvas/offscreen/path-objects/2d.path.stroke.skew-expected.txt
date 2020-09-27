@@ -3,5 +3,5 @@
 Strokes lines are skewed by the current transformation matrix
 
 
-PASS Strokes lines are skewed by the current transformation matrix 
+PASS Strokes lines are skewed by the current transformation matrix
 

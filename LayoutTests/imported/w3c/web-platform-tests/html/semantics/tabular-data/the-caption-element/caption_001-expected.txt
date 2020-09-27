@@ -1,7 +1,7 @@
 
-PASS first caption element child of the first table element 
-PASS setting caption on a table 
-PASS caption IDL attribute is null 
-PASS caption of the third table element should be null 
-PASS dynamically removing caption on a table 
+PASS first caption element child of the first table element
+PASS setting caption on a table
+PASS caption IDL attribute is null
+PASS caption of the third table element should be null
+PASS dynamically removing caption on a table
 

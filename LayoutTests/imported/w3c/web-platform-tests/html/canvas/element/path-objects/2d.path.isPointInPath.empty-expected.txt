@@ -2,5 +2,5 @@
 isPointInPath() works when there is no path
 Actual output:
 
-PASS isPointInPath() works when there is no path 
+PASS isPointInPath() works when there is no path
 

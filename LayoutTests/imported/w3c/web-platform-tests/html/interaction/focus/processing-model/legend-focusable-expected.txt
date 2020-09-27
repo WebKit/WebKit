@@ -1,5 +1,5 @@
-legend  
+legend
 
 
-PASS legend focusable 
+PASS legend focusable
 

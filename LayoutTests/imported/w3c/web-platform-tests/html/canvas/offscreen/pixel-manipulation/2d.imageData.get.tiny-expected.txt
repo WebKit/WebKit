@@ -3,5 +3,5 @@
 getImageData() works for sizes smaller than one pixel
 
 
-PASS getImageData() works for sizes smaller than one pixel 
+PASS getImageData() works for sizes smaller than one pixel
 

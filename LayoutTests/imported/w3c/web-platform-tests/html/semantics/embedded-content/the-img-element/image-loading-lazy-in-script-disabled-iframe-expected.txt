@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/semanti
 
 
 PASS Images with loading='lazy' in script disabled iframe are not handled
-       as 'lazy' 
+       as 'lazy'
 

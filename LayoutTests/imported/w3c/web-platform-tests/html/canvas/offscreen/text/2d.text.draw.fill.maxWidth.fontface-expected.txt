@@ -3,5 +3,5 @@
 fillText works on @font-face fonts
 
 
-PASS fillText works on @font-face fonts 
+PASS fillText works on @font-face fonts
 

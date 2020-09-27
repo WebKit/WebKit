@@ -3,5 +3,5 @@
 strokeRect draws shadows
 
 
-PASS strokeRect draws shadows 
+PASS strokeRect draws shadows
 

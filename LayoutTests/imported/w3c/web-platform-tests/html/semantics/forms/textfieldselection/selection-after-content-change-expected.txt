@@ -1,21 +1,21 @@
- 
+
 
 FAIL input out of document: selection must not change when setting the same value assert_equals: selectionStart must not change expected 1 but got 5
-PASS input out of document: selection must change when setting a different value 
+PASS input out of document: selection must change when setting a different value
 FAIL input out of document: selection must not change when setting a value that becomes the same after the value sanitization algorithm assert_equals: selectionStart must not change expected 1 but got 5
 FAIL input in document: selection must not change when setting the same value assert_equals: selectionStart must not change expected 1 but got 5
-PASS input in document: selection must change when setting a different value 
+PASS input in document: selection must change when setting a different value
 FAIL input in document: selection must not change when setting a value that becomes the same after the value sanitization algorithm assert_equals: selectionStart must not change expected 1 but got 5
 FAIL input in document, with focus: selection must not change when setting the same value assert_equals: selectionStart must not change expected 1 but got 5
-PASS input in document, with focus: selection must change when setting a different value 
+PASS input in document, with focus: selection must change when setting a different value
 FAIL input in document, with focus: selection must not change when setting a value that becomes the same after the value sanitization algorithm assert_equals: selectionStart must not change expected 1 but got 5
-PASS textarea out of document: selection must not change when setting the same value 
+PASS textarea out of document: selection must not change when setting the same value
 FAIL textarea out of document: selection must change when setting a different value assert_equals: selectionStart must be reset to the end expected 6 but got 1
-PASS textarea out of document: selection must not change when setting the same normalized value 
-PASS textarea in document: selection must not change when setting the same value 
-PASS textarea in document: selection must change when setting a different value 
-PASS textarea in document: selection must not change when setting the same normalized value 
-PASS textarea in document, with focus: selection must not change when setting the same value 
-PASS textarea in document, with focus: selection must change when setting a different value 
-PASS textarea in document, with focus: selection must not change when setting the same normalized value 
+PASS textarea out of document: selection must not change when setting the same normalized value
+PASS textarea in document: selection must not change when setting the same value
+PASS textarea in document: selection must change when setting a different value
+PASS textarea in document: selection must not change when setting the same normalized value
+PASS textarea in document, with focus: selection must not change when setting the same value
+PASS textarea in document, with focus: selection must change when setting a different value
+PASS textarea in document, with focus: selection must not change when setting the same normalized value
 

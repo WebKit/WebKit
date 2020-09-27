@@ -1,31 +1,31 @@
 
-PASS Primitive string is cloned 
-PASS Primitive integer is cloned 
-PASS Primitive floating point is cloned 
-PASS Primitive floating point (negative) is cloned 
-PASS Primitive number (hex) is cloned 
-PASS Primitive number (scientific) is cloned 
-PASS Primitive boolean is cloned 
-PASS Instance of Boolean is cloned 
-PASS Instance of Number is cloned 
-PASS Instance of String is cloned 
-PASS Instance of Date is cloned 
-PASS Instance of RegExp is cloned 
-PASS Value 'null' is cloned 
-PASS Value 'undefined' is cloned 
-PASS Object properties are cloned 
-PASS Prototype chains are not walked. 
-PASS Property descriptors of Objects are not cloned 
-PASS Cycles are preserved in Objects 
-PASS Identity of duplicates is preserved 
-PASS Property order is preserved 
-PASS Enumerable properties of Arrays are cloned 
-PASS Property descriptors of Arrays are not cloned 
-PASS Cycles are preserved in Arrays 
-PASS ImageData object can be cloned 
-PASS ImageData expandos are not cloned 
-PASS Window objects cannot be cloned 
-PASS Document objects cannot be cloned 
+PASS Primitive string is cloned
+PASS Primitive integer is cloned
+PASS Primitive floating point is cloned
+PASS Primitive floating point (negative) is cloned
+PASS Primitive number (hex) is cloned
+PASS Primitive number (scientific) is cloned
+PASS Primitive boolean is cloned
+PASS Instance of Boolean is cloned
+PASS Instance of Number is cloned
+PASS Instance of String is cloned
+PASS Instance of Date is cloned
+PASS Instance of RegExp is cloned
+PASS Value 'null' is cloned
+PASS Value 'undefined' is cloned
+PASS Object properties are cloned
+PASS Prototype chains are not walked.
+PASS Property descriptors of Objects are not cloned
+PASS Cycles are preserved in Objects
+PASS Identity of duplicates is preserved
+PASS Property order is preserved
+PASS Enumerable properties of Arrays are cloned
+PASS Property descriptors of Arrays are not cloned
+PASS Cycles are preserved in Arrays
+PASS ImageData object can be cloned
+PASS ImageData expandos are not cloned
+PASS Window objects cannot be cloned
+PASS Document objects cannot be cloned
 FAIL Empty Error objects can be cloned The object can not be cloned.
 FAIL Error objects can be cloned The object can not be cloned.
 FAIL EvalError objects can be cloned The object can not be cloned.

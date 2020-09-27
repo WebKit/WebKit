@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: removing defer script at runtime 
+PASS  scheduler: removing defer script at runtime
 

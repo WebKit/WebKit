@@ -2,5 +2,5 @@ size.attributes.setAttribute.zero
 Parsing of non-negative integers in setAttribute
 Actual output:
 
-PASS Parsing of non-negative integers in setAttribute 
+PASS Parsing of non-negative integers in setAttribute
 

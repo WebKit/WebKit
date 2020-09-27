@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS toDataURL with PNG handles simple colours correctly 
+PASS toDataURL with PNG handles simple colours correctly
 

@@ -3,5 +3,5 @@
 getImageData() exists and returns something
 
 
-PASS getImageData() exists and returns something 
+PASS getImageData() exists and returns something
 

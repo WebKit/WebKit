@@ -1,5 +1,5 @@
 2d.composite.transparent.xor
 
 
-PASS OffscreenCanvas test: 2d.composite.transparent.xor 
+PASS OffscreenCanvas test: 2d.composite.transparent.xor
 

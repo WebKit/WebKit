@@ -1,5 +1,5 @@
 2d.fillStyle.invalidstring
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.invalidstring 
+PASS OffscreenCanvas test: 2d.fillStyle.invalidstring
 

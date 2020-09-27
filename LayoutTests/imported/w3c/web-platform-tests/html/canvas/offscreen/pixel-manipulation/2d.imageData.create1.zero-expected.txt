@@ -3,5 +3,5 @@
 createImageData(null) throws TypeError
 
 
-PASS createImageData(null) throws TypeError 
+PASS createImageData(null) throws TypeError
 

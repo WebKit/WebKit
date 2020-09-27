@@ -3,5 +3,5 @@
 canvas is readonly
 
 
-PASS canvas is readonly 
+PASS canvas is readonly
 

@@ -1,13 +1,13 @@
 
-PASS ':disabled' should match only disabled elements 
-PASS ':disabled' should not match elements whose disabled attribute has been removed 
-PASS ':disabled' should also match elements whose disabled attribute has been set 
-PASS ':disabled' should also match elements whose disabled attribute has been set twice 
-PASS ':disabled' should also match disabled elements whose type has changed 
-PASS ':disabled' should not match elements not in the document 
-button1 button2         
-Name on card: 
+PASS ':disabled' should match only disabled elements
+PASS ':disabled' should not match elements whose disabled attribute has been removed
+PASS ':disabled' should also match elements whose disabled attribute has been set
+PASS ':disabled' should also match elements whose disabled attribute has been set twice
+PASS ':disabled' should also match disabled elements whose type has changed
+PASS ':disabled' should not match elements not in the document
+button1 button2
+Name on card:
 
-Card number: 
+Card number:
 
-     
+

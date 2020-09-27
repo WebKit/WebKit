@@ -1,5 +1,5 @@
 2d.composite.operation.clear
 Actual output:
 
-PASS Canvas test: 2d.composite.operation.clear 
+PASS Canvas test: 2d.composite.operation.clear
 

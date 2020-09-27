@@ -3,5 +3,5 @@
 drawImage() of an SVG image
 
 
-PASS drawImage() of an SVG image 
+PASS drawImage() of an SVG image
 

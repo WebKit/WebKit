@@ -4,15 +4,15 @@ Blocked access to external URL http://www1.localhost:8800/html/browsers/origin/r
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Access allowed if same-origin with no 'document.domain' modification. (Sanity check) Test timed out
-NOTRUN Access not allowed if different-origin with no 'document.domain' modification. (Sanity check) 
-NOTRUN Access disallowed if same-origin but only one sets document.domain. 
-NOTRUN Access allowed if same-origin and both set document.domain to existing value. 
-NOTRUN Access allowed if different-origin but both set document.domain to parent domain. 
-NOTRUN Access disallowed again if same-origin, both set document-domain to existing value, then one sets to parent. 
-NOTRUN Access is revoked to Window object when we stop being same effective script origin due to document.domain. 
-NOTRUN Access is revoked to Location object when we stop being same effective script origin due to document.domain. 
-NOTRUN Access is not revoked to Document object when we stop being same effective script origin due to document.domain. 
-NOTRUN Access is not revoked to random object when we stop being same effective script origin due to document.domain. 
-NOTRUN Access evolves correctly for non-cross-origin objects when we join up via document.domain and then diverge again. 
-NOTRUN Access evolves correctly for cross-origin objects when we join up via document.domain and then diverge again. 
+NOTRUN Access not allowed if different-origin with no 'document.domain' modification. (Sanity check)
+NOTRUN Access disallowed if same-origin but only one sets document.domain.
+NOTRUN Access allowed if same-origin and both set document.domain to existing value.
+NOTRUN Access allowed if different-origin but both set document.domain to parent domain.
+NOTRUN Access disallowed again if same-origin, both set document-domain to existing value, then one sets to parent.
+NOTRUN Access is revoked to Window object when we stop being same effective script origin due to document.domain.
+NOTRUN Access is revoked to Location object when we stop being same effective script origin due to document.domain.
+NOTRUN Access is not revoked to Document object when we stop being same effective script origin due to document.domain.
+NOTRUN Access is not revoked to random object when we stop being same effective script origin due to document.domain.
+NOTRUN Access evolves correctly for non-cross-origin objects when we join up via document.domain and then diverge again.
+NOTRUN Access evolves correctly for cross-origin objects when we join up via document.domain and then diverge again.
 

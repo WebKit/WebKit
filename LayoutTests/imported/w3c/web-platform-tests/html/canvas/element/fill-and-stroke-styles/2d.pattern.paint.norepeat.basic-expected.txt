@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.pattern.paint.norepeat.basic 
+PASS Canvas test: 2d.pattern.paint.norepeat.basic
 

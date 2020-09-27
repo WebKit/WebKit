@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.composite.globalAlpha.fill 
+PASS Canvas test: 2d.composite.globalAlpha.fill
 

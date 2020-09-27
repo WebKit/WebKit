@@ -1,6 +1,6 @@
 
-PASS Date returned by lastModified is current at page load 
-PASS Date returned by lastModified is in the form "MM/DD/YYYY hh:mm:ss". 
-PASS Date returned by lastModified is in the user's local time zone. 
-PASS Date returned by lastModified is current after timeout. 
+PASS Date returned by lastModified is current at page load
+PASS Date returned by lastModified is in the form "MM/DD/YYYY hh:mm:ss".
+PASS Date returned by lastModified is in the user's local time zone.
+PASS Date returned by lastModified is current after timeout.
 

@@ -3,5 +3,5 @@
 getImageData() returns transparent black outside the canvas
 
 
-PASS getImageData() returns transparent black outside the canvas 
+PASS getImageData() returns transparent black outside the canvas
 

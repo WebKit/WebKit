@@ -2,5 +2,5 @@
 save()/restore() works for font
 Actual output:
 
-PASS save()/restore() works for font 
+PASS save()/restore() works for font
 

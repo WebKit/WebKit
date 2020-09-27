@@ -1,28 +1,28 @@
 
-PASS Childless document 
-PASS Childless html element 
-PASS Body followed by frameset inside the html element 
-PASS Frameset followed by body inside the html element 
-PASS Body followed by frameset inside a non-HTML html element 
-PASS Frameset followed by body inside a non-HTML html element 
-PASS Non-HTML body followed by body inside the html element 
-PASS Non-HTML frameset followed by body inside the html element 
-PASS Body inside an x element followed by a body 
-PASS Frameset inside an x element followed by a frameset 
-PASS Body as the root node 
-PASS Frameset as the root node 
-PASS Body as the root node with a frameset child 
-PASS Frameset as the root node with a body child 
-PASS Non-HTML body as the root node 
-PASS Non-HTML frameset as the root node 
-PASS existing document's body 
-PASS Setting document.body to a string. 
-PASS Setting document.body to a div element. 
-PASS Setting document.body when there's no root element. 
-PASS Setting document.body to a new body element. 
-PASS Setting document.body to a new frameset element. 
-PASS Setting document.body to a body will replace an existing frameset if there is one. 
-PASS Setting document.body to a frameset will replace an existing body if there is one. 
-PASS Setting document.body to a frameset will replace the first existing body/frameset. 
-PASS Setting document.body to a new body element when the root element is a test element. 
+PASS Childless document
+PASS Childless html element
+PASS Body followed by frameset inside the html element
+PASS Frameset followed by body inside the html element
+PASS Body followed by frameset inside a non-HTML html element
+PASS Frameset followed by body inside a non-HTML html element
+PASS Non-HTML body followed by body inside the html element
+PASS Non-HTML frameset followed by body inside the html element
+PASS Body inside an x element followed by a body
+PASS Frameset inside an x element followed by a frameset
+PASS Body as the root node
+PASS Frameset as the root node
+PASS Body as the root node with a frameset child
+PASS Frameset as the root node with a body child
+PASS Non-HTML body as the root node
+PASS Non-HTML frameset as the root node
+PASS existing document's body
+PASS Setting document.body to a string.
+PASS Setting document.body to a div element.
+PASS Setting document.body when there's no root element.
+PASS Setting document.body to a new body element.
+PASS Setting document.body to a new frameset element.
+PASS Setting document.body to a body will replace an existing frameset if there is one.
+PASS Setting document.body to a frameset will replace an existing body if there is one.
+PASS Setting document.body to a frameset will replace the first existing body/frameset.
+PASS Setting document.body to a new body element when the root element is a test element.
 

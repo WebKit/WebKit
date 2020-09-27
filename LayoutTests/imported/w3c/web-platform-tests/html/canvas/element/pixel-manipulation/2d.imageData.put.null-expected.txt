@@ -2,5 +2,5 @@
 putImageData() with null imagedata throws TypeError
 Actual output:
 
-PASS putImageData() with null imagedata throws TypeError 
+PASS putImageData() with null imagedata throws TypeError
 

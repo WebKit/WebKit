@@ -3,5 +3,5 @@
 CSS3 Color says "The integer value 255 corresponds to 100%". (In particular, it is not 254...)
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.rgb-percent 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.rgb-percent
 

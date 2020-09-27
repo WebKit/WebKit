@@ -1,7 +1,7 @@
 
-PASS HTML parsing should locate 2 details elements in this document 
-PASS HTML parsing should close an unclosed <p> before <details> 
-PASS HTMLDetailsElement should be exposed for prototyping 
-PASS a dynamically created details element should be instanceof HTMLDetailsElement 
-PASS a details element from the parser should be instanceof HTMLDetailsElement 
+PASS HTML parsing should locate 2 details elements in this document
+PASS HTML parsing should close an unclosed <p> before <details>
+PASS HTMLDetailsElement should be exposed for prototyping
+PASS a dynamically created details element should be instanceof HTMLDetailsElement
+PASS a details element from the parser should be instanceof HTMLDetailsElement
 

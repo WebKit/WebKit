@@ -3,5 +3,5 @@
 bezierCurveTo() with Infinity/NaN is ignored
 
 
-PASS bezierCurveTo() with Infinity/NaN is ignored 
+PASS bezierCurveTo() with Infinity/NaN is ignored
 

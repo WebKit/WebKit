@@ -3,5 +3,5 @@
 Line caps are not drawn at the corners of an unclosed rectangle
 
 
-PASS Line caps are not drawn at the corners of an unclosed rectangle 
+PASS Line caps are not drawn at the corners of an unclosed rectangle
 

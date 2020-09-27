@@ -1,4 +1,4 @@
- 
+
 
 FAIL reset()'s event must be fired in the Realm of the target assert_equals: the event must be created in the realm of the target expected function "function Function() {
     [native code]

@@ -1,4 +1,4 @@
  
 
-PASS The HTTP header has a higher precedence than an encoding declaration in a meta content attribute. 
+PASS The HTTP header has a higher precedence than an encoding declaration in a meta content attribute.
 

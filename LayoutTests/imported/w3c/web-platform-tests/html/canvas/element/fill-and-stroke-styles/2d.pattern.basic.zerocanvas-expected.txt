@@ -1,5 +1,5 @@
 2d.pattern.basic.zerocanvas
 Actual output:
 
-PASS Canvas test: 2d.pattern.basic.zerocanvas 
+PASS Canvas test: 2d.pattern.basic.zerocanvas
 

@@ -3,5 +3,5 @@ window.CanvasRenderingContext2D.prototype are not [[Writable]] and not [[Configu
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS window.CanvasRenderingContext2D.prototype are not [[Writable]] and not [[Configurable]], and its methods are [[Configurable]]. 
+PASS window.CanvasRenderingContext2D.prototype are not [[Writable]] and not [[Configurable]], and its methods are [[Configurable]].
 

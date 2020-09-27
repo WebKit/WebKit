@@ -3,5 +3,5 @@
 createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero
 
 
-PASS createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero 
+PASS createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero
 

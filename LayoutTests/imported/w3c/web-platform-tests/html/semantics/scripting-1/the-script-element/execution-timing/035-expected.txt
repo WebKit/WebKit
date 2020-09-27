@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: innerHTML adding frames with JS in and moving scripts 
+PASS  scheduler: innerHTML adding frames with JS in and moving scripts
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: inline in markup  
+PASS  scheduler: inline in markup
 

@@ -3,5 +3,5 @@
 Stroking does not start a new path or subpath
 
 
-PASS Stroking does not start a new path or subpath 
+PASS Stroking does not start a new path or subpath
 

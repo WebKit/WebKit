@@ -1,13 +1,13 @@
 
-PASS title.text and space normalization (markup) 
-PASS title.text and space normalization: "one space" 
-PASS title.text and space normalization: "two  spaces" 
-PASS title.text and space normalization: "one\ttab" 
-PASS title.text and space normalization: "two\t\ttabs" 
-PASS title.text and space normalization: "one\nnewline" 
-PASS title.text and space normalization: "two\n\nnewlines" 
-PASS title.text and space normalization: "one\fform feed" 
-PASS title.text and space normalization: "two\f\fform feeds" 
-PASS title.text and space normalization: "one\rcarriage return" 
-PASS title.text and space normalization: "two\r\rcarriage returns" 
+PASS title.text and space normalization (markup)
+PASS title.text and space normalization: "one space"
+PASS title.text and space normalization: "two  spaces"
+PASS title.text and space normalization: "one\ttab"
+PASS title.text and space normalization: "two\t\ttabs"
+PASS title.text and space normalization: "one\nnewline"
+PASS title.text and space normalization: "two\n\nnewlines"
+PASS title.text and space normalization: "one\fform feed"
+PASS title.text and space normalization: "two\f\fform feeds"
+PASS title.text and space normalization: "one\rcarriage return"
+PASS title.text and space normalization: "two\r\rcarriage returns"
 

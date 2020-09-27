@@ -3,5 +3,5 @@
 arc() with Infinity/NaN is ignored
 
 
-PASS arc() with Infinity/NaN is ignored 
+PASS arc() with Infinity/NaN is ignored
 

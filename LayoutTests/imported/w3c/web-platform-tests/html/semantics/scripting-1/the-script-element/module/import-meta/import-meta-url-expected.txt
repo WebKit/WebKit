@@ -1,9 +1,9 @@
 
-PASS import.meta.url in a root inline script 
-PASS import.meta.url in a root external script 
-PASS import.meta.url in a dependent external script 
-PASS import.meta is an object 
-PASS import.meta is extensible 
-PASS import.meta's properties are writable, configurable, and enumerable 
-PASS import.meta.url when importing the module with different fragments 
+PASS import.meta.url in a root inline script
+PASS import.meta.url in a root external script
+PASS import.meta.url in a dependent external script
+PASS import.meta is an object
+PASS import.meta is extensible
+PASS import.meta's properties are writable, configurable, and enumerable
+PASS import.meta.url when importing the module with different fragments
 

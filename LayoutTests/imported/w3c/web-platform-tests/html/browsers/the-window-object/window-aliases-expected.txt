@@ -1,5 +1,5 @@
 
-PASS window should be the global object 
-PASS frames should be the global object 
-PASS self should be the global object 
+PASS window should be the global object
+PASS frames should be the global object
+PASS self should be the global object
 

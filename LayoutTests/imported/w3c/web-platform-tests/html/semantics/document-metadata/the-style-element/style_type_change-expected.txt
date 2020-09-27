@@ -1,6 +1,6 @@
 Text content.
 
-PASS Check initial styleSheets length type 
+PASS Check initial styleSheets length type
 FAIL Change type from invalid type to valid type assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Change type from valid type to invalid type assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

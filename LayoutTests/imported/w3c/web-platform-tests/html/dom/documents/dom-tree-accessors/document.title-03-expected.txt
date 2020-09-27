@@ -1,13 +1,13 @@
 
-PASS document.title initial value 
-PASS document.title after setting to "one space" 
-PASS document.title after setting to "two  spaces" 
-PASS document.title after setting to "one\ttab" 
-PASS document.title after setting to "two\t\ttabs" 
-PASS document.title after setting to "one\nnewline" 
-PASS document.title after setting to "two\n\nnewlines" 
-PASS document.title after setting to "one\fform feed" 
-PASS document.title after setting to "two\f\fform feeds" 
-PASS document.title after setting to "one\rcarriage return" 
-PASS document.title after setting to "two\r\rcarriage returns" 
+PASS document.title initial value
+PASS document.title after setting to "one space"
+PASS document.title after setting to "two  spaces"
+PASS document.title after setting to "one\ttab"
+PASS document.title after setting to "two\t\ttabs"
+PASS document.title after setting to "one\nnewline"
+PASS document.title after setting to "two\n\nnewlines"
+PASS document.title after setting to "one\fform feed"
+PASS document.title after setting to "two\f\fform feeds"
+PASS document.title after setting to "one\rcarriage return"
+PASS document.title after setting to "two\r\rcarriage returns"
 

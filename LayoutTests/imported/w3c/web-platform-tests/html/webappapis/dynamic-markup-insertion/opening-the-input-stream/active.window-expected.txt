@@ -1,9 +1,9 @@
 
-PASS document.open() removes the document's children (fully active document) 
-PASS document.open() removes the document's children (active but not fully active document) 
-PASS document.open() removes the document's children (non-active document with an associated Window object; frame is removed) 
-PASS document.open() removes the document's children (non-active document with an associated Window object; navigated away) 
-PASS document.open() removes the document's children (non-active document without an associated Window object; createHTMLDocument) 
-PASS document.open() removes the document's children (non-active document without an associated Window object; DOMParser) 
-PASS document.open() removes the document's children (non-active document without an associated Window object; XMLHttpRequest) 
+PASS document.open() removes the document's children (fully active document)
+PASS document.open() removes the document's children (active but not fully active document)
+PASS document.open() removes the document's children (non-active document with an associated Window object; frame is removed)
+PASS document.open() removes the document's children (non-active document with an associated Window object; navigated away)
+PASS document.open() removes the document's children (non-active document without an associated Window object; createHTMLDocument)
+PASS document.open() removes the document's children (non-active document without an associated Window object; DOMParser)
+PASS document.open() removes the document's children (non-active document without an associated Window object; XMLHttpRequest)
 

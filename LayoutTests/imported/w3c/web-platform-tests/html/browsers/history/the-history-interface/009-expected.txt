@@ -1,6 +1,6 @@
 
-PASS HTTP Referer should use the pushed state 
-PASS document.referrer should use the pushed state 
-PASS HTTP Referer should use the replaced state 
-PASS document.referrer should use the replaced state 
+PASS HTTP Referer should use the pushed state
+PASS document.referrer should use the pushed state
+PASS HTTP Referer should use the replaced state
+PASS document.referrer should use the replaced state
 

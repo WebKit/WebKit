@@ -1,11 +1,11 @@
 
-PASS When the canvas context is created, imageSmoothingEnabled must be set to true. 
-PASS On getting imageSmoothingEnabled, the user agent must return the last value it was set to. 
-PASS Test that image smoothing is actually on by default and just the attribute value. 
-PASS Test that image smoothing works when imageSmoothingEnabled is set to true 
-PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage(). 
+PASS When the canvas context is created, imageSmoothingEnabled must be set to true.
+PASS On getting imageSmoothingEnabled, the user agent must return the last value it was set to.
+PASS Test that image smoothing is actually on by default and just the attribute value.
+PASS Test that image smoothing works when imageSmoothingEnabled is set to true
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage().
 FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern(). assert_array_equals: expected property 0 to be 0 but got 178 (expected array [0, 255, 0, 255] got object "178,77,0,255")
 FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern(). assert_array_equals: expected property 0 to be 0 but got 178 (expected array [0, 255, 0, 255] got object "178,77,0,255")
 FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern(). assert_array_equals: expected property 0 to be 0 but got 178 (expected array [0, 255, 0, 255] got object "178,77,0,255")
-PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints. 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints.
 

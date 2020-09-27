@@ -1,3 +1,3 @@
 
-PASS Allow script execution inside iframe with sandbox attribute when sandbox='allow-scripts'. 
+PASS Allow script execution inside iframe with sandbox attribute when sandbox='allow-scripts'.
 

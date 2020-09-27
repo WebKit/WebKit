@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.fillStyle.parse.hsl-4 
+PASS Canvas test: 2d.fillStyle.parse.hsl-4
 

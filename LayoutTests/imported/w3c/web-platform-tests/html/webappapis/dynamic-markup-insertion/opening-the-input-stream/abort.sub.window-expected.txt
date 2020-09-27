@@ -1,7 +1,7 @@
 
-PASS document.open() does not abort documents that are not navigating (XMLHttpRequest) 
-PASS document.open() does not abort documents that are not navigating (fetch()) 
-PASS document.open() does not abort documents that are not navigating (image loading) 
-PASS document.open() does not abort documents that are not navigating (establish a WebSocket connection) 
-PASS document.open() does not abort documents that are not navigating (already established WebSocket connection) 
+PASS document.open() does not abort documents that are not navigating (XMLHttpRequest)
+PASS document.open() does not abort documents that are not navigating (fetch())
+PASS document.open() does not abort documents that are not navigating (image loading)
+PASS document.open() does not abort documents that are not navigating (establish a WebSocket connection)
+PASS document.open() does not abort documents that are not navigating (already established WebSocket connection)
 

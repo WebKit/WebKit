@@ -1,4 +1,4 @@
 
 
-PASS Changing type from file to text should not crash. 
+PASS Changing type from file to text should not crash.
 

@@ -3,5 +3,5 @@
 getImageData() throws TypeError if arguments are not finite
 
 
-PASS getImageData() throws TypeError if arguments are not finite 
+PASS getImageData() throws TypeError if arguments are not finite
 

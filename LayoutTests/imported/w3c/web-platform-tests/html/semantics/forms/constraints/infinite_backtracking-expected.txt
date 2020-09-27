@@ -1,4 +1,4 @@
 
 
-PASS Infinite backtracking pattern terminates 
+PASS Infinite backtracking pattern terminates
 

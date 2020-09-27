@@ -1,4 +1,4 @@
 
 
-PASS Script-blocking style sheet should pause flushing autofocus candidates. 
+PASS Script-blocking style sheet should pause flushing autofocus candidates.
 

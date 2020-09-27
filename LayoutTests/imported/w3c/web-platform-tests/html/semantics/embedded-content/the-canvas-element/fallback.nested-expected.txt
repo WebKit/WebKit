@@ -2,5 +2,5 @@ fallback.nested
 Fallback content containing another canvas (mostly testing parsers)
 Actual output:
 
-PASS Fallback content containing another canvas (mostly testing parsers) 
+PASS Fallback content containing another canvas (mostly testing parsers)
 

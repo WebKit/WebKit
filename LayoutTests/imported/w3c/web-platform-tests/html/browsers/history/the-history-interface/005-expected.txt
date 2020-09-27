@@ -1,5 +1,5 @@
 
-PASS history.pushState support is needed for this testcase 
-PASS <body onpopstate="..."> should register a listener for the popstate event 
-PASS window.onpopstate should register a listener for the popstate event 
+PASS history.pushState support is needed for this testcase
+PASS <body onpopstate="..."> should register a listener for the popstate event
+PASS window.onpopstate should register a listener for the popstate event
 

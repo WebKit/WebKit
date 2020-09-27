@@ -1,5 +1,5 @@
 The popup blocker must be disabled for this test
 
 
-PASS Assignment to location with click during load 
+PASS Assignment to location with click during load
 

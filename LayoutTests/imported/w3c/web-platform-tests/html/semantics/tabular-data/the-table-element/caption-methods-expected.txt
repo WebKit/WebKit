@@ -1,20 +1,20 @@
 
-PASS createCaption method creates new caption if existing caption is not in html namespace 
-PASS createCaption method returns the first caption element child of the table 
-PASS createCaption method creates a new caption and inserts it as the first node of the table element 
-PASS createCaption will not create new caption if one exists 
-PASS createCaption will not copy table's prefix 
-PASS deleteCaption method removes the first caption element child of the table element 
-PASS deleteCaption method not remove caption that is not in html namespace 
-PASS Setting caption rethrows exception 
-PASS Assigning a caption to table.caption 
-PASS Assigning null to table.caption 
-PASS Assigning a non-caption to table.caption 
-PASS Assigning a foreign caption to table.caption 
-PASS Set table.caption when the table doesn't already have a caption 
-PASS Set table.caption when the table has a caption child but with other siblings before it 
-PASS Set table.caption when the table has a caption descendant 
-PASS Set table.caption when the table has two caption children 
-PASS Assigning a caption has a different owner document to table.caption 
-PASS Assigning the caption already in the table to table.caption 
-caption  
+PASS createCaption method creates new caption if existing caption is not in html namespace
+PASS createCaption method returns the first caption element child of the table
+PASS createCaption method creates a new caption and inserts it as the first node of the table element
+PASS createCaption will not create new caption if one exists
+PASS createCaption will not copy table's prefix
+PASS deleteCaption method removes the first caption element child of the table element
+PASS deleteCaption method not remove caption that is not in html namespace
+PASS Setting caption rethrows exception
+PASS Assigning a caption to table.caption
+PASS Assigning null to table.caption
+PASS Assigning a non-caption to table.caption
+PASS Assigning a foreign caption to table.caption
+PASS Set table.caption when the table doesn't already have a caption
+PASS Set table.caption when the table has a caption child but with other siblings before it
+PASS Set table.caption when the table has a caption descendant
+PASS Set table.caption when the table has two caption children
+PASS Assigning a caption has a different owner document to table.caption
+PASS Assigning the caption already in the table to table.caption
+caption

@@ -4,12 +4,12 @@ FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: Th
 FAIL [INPUT in WEEK status] The week type must be supported. assert_equals: The week type should be supported. expected "week" but got "text"
 FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The time type should be supported. expected "time" but got "text"
 FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
-PASS [INPUT in NUMBER status] The step attribute is not set 
+PASS [INPUT in NUMBER status] The step attribute is not set
 FAIL [INPUT in NUMBER status] The step attribute is not set and the value attribute is a floating number assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
-PASS [INPUT in NUMBER status] The value attribute is empty string 
-PASS [INPUT in NUMBER status] The value must match the step 
+PASS [INPUT in NUMBER status] The value attribute is empty string
+PASS [INPUT in NUMBER status] The value must match the step
 FAIL [INPUT in NUMBER status] The value must mismatch the step assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
-PASS [INPUT in NUMBER status] No step mismatch when step is a floating number and value is its integral multiple 
-PASS [INPUT in NUMBER status] No step mismatch when step is a floating number in exponent format and value is its integral multiple 
+PASS [INPUT in NUMBER status] No step mismatch when step is a floating number and value is its integral multiple
+PASS [INPUT in NUMBER status] No step mismatch when step is a floating number in exponent format and value is its integral multiple
 FAIL [INPUT in NUMBER status] Step mismatch when step is a very small floating number and value is not its integral multiple assert_true: The validity.stepMismatch should be true, when control is disabled. expected true got false
 

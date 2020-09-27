@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: ReferenceError: Can't find variable: undefined_variable
 CONSOLE MESSAGE: ReferenceError: Can't find variable: undefined_variable_in_onerror
 
-PASS runtime error in <body onerror> 
+PASS runtime error in <body onerror>
 

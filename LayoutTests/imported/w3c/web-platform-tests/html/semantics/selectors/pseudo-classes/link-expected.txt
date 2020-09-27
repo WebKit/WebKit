@@ -1,4 +1,4 @@
 
-PASS Only <a>s, <area>s and <link>s that have a href attribute match ':link' 
-PASS ':link' doesn't match elements whos href attribute has been removed 
+PASS Only <a>s, <area>s and <link>s that have a href attribute match ':link'
+PASS ':link' doesn't match elements whos href attribute has been removed
 

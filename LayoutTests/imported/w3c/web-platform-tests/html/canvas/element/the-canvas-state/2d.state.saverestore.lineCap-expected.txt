@@ -2,5 +2,5 @@
 save()/restore() works for lineCap
 Actual output:
 
-PASS save()/restore() works for lineCap 
+PASS save()/restore() works for lineCap
 

@@ -3,5 +3,5 @@
 Shadows are drawn if shadowOffsetY is set
 
 
-PASS Shadows are drawn if shadowOffsetY is set 
+PASS Shadows are drawn if shadowOffsetY is set
 

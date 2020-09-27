@@ -1,5 +1,5 @@
 
-PASS Clone template node. Test call to cloneNode(true) 
-PASS Clone template node. Test call to cloneNode() with the default parameter (false by default) 
-PASS Clone template node. Test call to cloneNode(false) 
+PASS Clone template node. Test call to cloneNode(true)
+PASS Clone template node. Test call to cloneNode() with the default parameter (false by default)
+PASS Clone template node. Test call to cloneNode(false)
 

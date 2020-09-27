@@ -3,12 +3,12 @@ CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
 CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
 CONSOLE MESSAGE: An invalid form control with name='' is not focusable.
 
-PASS If there is any invalid submittable element whose form owner is the form, the form.checkValidity must be false 
-PASS If there is any invalid submittable element whose form owner is the form, the form.reportValidity must be false 
-PASS If all of the submittable elements whose form owner is the form are valid, the form.checkValidity must be true 
-PASS If all of the submittable elements whose form owner is the form are valid, the form.reportValidity must be true 
-PASS Check the checkValidity method of the form element when it has a fieldset child 
-PASS Check the reportValidity method of the form element when it has a fieldset child 
-PASS The invalid event must be fired at the invalid controls 
-PASS The invalid event must not be fired at the invalid controls 
+PASS If there is any invalid submittable element whose form owner is the form, the form.checkValidity must be false
+PASS If there is any invalid submittable element whose form owner is the form, the form.reportValidity must be false
+PASS If all of the submittable elements whose form owner is the form are valid, the form.checkValidity must be true
+PASS If all of the submittable elements whose form owner is the form are valid, the form.reportValidity must be true
+PASS Check the checkValidity method of the form element when it has a fieldset child
+PASS Check the reportValidity method of the form element when it has a fieldset child
+PASS The invalid event must be fired at the invalid controls
+PASS The invalid event must not be fired at the invalid controls
 

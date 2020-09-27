@@ -1,8 +1,8 @@
 
-PASS empty value 
-PASS Valid value: Value should be 2014-W52 
+PASS empty value
+PASS Valid value: Value should be 2014-W52
 FAIL 2014 has 52 weeks: Value should be empty assert_equals: expected "" but got "2014-W53"
-PASS 2015 has 53 weeks: Value should be 2015-W53 
+PASS 2015 has 53 weeks: Value should be 2015-W53
 FAIL Invalid value: year only assert_equals: expected "" but got "2014"
 FAIL Invalid value: no week number assert_equals: expected "" but got "2014W"
 FAIL Invalid value: no '-' (U+002D) assert_equals: expected "" but got "2014W52"
@@ -11,8 +11,8 @@ FAIL Invalid value: should be capital letter 'W' assert_equals: expected "" but 
 FAIL Invalid value: incorrect with '-' at the end assert_equals: expected "" but got "2017-W52-"
 FAIL Invalid value: value should be two parts assert_equals: expected "" but got "2017-W52-12"
 FAIL Invalid value: yearless week and no '-' (U+002D) assert_equals: expected "" but got "W52"
-PASS Value >= min attribute 
-PASS Value < min attribute 
-PASS Value <= max attribute 
-PASS Value > max attribute 
+PASS Value >= min attribute
+PASS Value < min attribute
+PASS Value <= max attribute
+PASS Value > max attribute
 

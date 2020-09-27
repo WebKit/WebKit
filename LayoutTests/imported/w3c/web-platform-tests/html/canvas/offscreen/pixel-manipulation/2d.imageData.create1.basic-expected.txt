@@ -3,5 +3,5 @@
 createImageData(imgdata) exists and returns something
 
 
-PASS createImageData(imgdata) exists and returns something 
+PASS createImageData(imgdata) exists and returns something
 

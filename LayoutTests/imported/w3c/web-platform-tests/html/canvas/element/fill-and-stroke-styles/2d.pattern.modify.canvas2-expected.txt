@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.pattern.modify.canvas2 
+PASS Canvas test: 2d.pattern.modify.canvas2
 

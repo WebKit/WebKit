@@ -2,5 +2,5 @@ size.attributes.reflect.setidlzero
 Setting IDL attributes to 0 updates IDL and content attributes
 Actual output:
 
-PASS Setting IDL attributes to 0 updates IDL and content attributes 
+PASS Setting IDL attributes to 0 updates IDL and content attributes
 

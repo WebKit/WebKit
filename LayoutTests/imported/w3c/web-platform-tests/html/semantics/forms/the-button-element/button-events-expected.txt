@@ -1,11 +1,11 @@
 
-PASS The submit event must be fired when click a button in submit status 
-PASS The reset event must be fired when click a button in reset status 
-PASS type=button shouldn't trigger submit or reset events 
-PASS Switching from type=button to type=submit should submit the form 
-PASS Switching from type=button to type=reset should reset the form 
-PASS Innermost button should submit its form 
-PASS Innermost button should reset its form 
-PASS Anchor inside a button should be prevent button activation 
-PASS input type=submit inside a button should be prevent button activation 
+PASS The submit event must be fired when click a button in submit status
+PASS The reset event must be fired when click a button in reset status
+PASS type=button shouldn't trigger submit or reset events
+PASS Switching from type=button to type=submit should submit the form
+PASS Switching from type=button to type=reset should reset the form
+PASS Innermost button should submit its form
+PASS Innermost button should reset its form
+PASS Anchor inside a button should be prevent button activation
+PASS input type=submit inside a button should be prevent button activation
 

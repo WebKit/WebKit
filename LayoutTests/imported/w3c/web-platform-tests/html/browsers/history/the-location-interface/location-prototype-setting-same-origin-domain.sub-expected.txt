@@ -5,5 +5,5 @@ CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://localhost:88
 Harness Error (FAIL), message = SecurityError: Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 
 FAIL Same-origin-domain prerequisite check: the original prototype is accessible assert_not_equals: got disallowed value null
-PASS Same-origin-domain: setting the prototype to an empty object via Object.setPrototypeOf should throw a TypeError 
+PASS Same-origin-domain: setting the prototype to an empty object via Object.setPrototypeOf should throw a TypeError
 

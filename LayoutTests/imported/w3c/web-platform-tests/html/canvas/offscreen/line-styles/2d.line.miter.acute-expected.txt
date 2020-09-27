@@ -3,5 +3,5 @@
 Miter joins are drawn correctly with acute angles
 
 
-PASS Miter joins are drawn correctly with acute angles 
+PASS Miter joins are drawn correctly with acute angles
 

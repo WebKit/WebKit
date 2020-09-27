@@ -3,5 +3,5 @@
 getImageData() returns non-premultiplied colours
 
 
-PASS getImageData() returns non-premultiplied colours 
+PASS getImageData() returns non-premultiplied colours
 

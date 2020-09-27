@@ -3,5 +3,5 @@
 getImageData() returns values in the range [0, 255]
 
 
-PASS getImageData() returns values in the range [0, 255] 
+PASS getImageData() returns values in the range [0, 255]
 

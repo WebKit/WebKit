@@ -1,4 +1,4 @@
-  
+
 
 FAIL If topDocument's focused area is not topDocument, autofocus is not processed. assert_equals: activeElement should not be changed expected Element node <iframe srcdoc="<input><script>document.querySelector('in... but got Element node <input autofocus=""></input>
 

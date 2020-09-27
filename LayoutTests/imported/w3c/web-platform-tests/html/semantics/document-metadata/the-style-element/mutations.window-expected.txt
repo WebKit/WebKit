@@ -1,7 +1,7 @@
 
-PASS Mutating the style element: inserting a Comment node 
-PASS Mutating the style element: mutating a Comment node 
-PASS Mutating the style element: using normalize() 
-PASS Mutating the style element: removing a Comment node 
-PASS Mutating the style element: inserting an empty DocumentFragment node 
+PASS Mutating the style element: inserting a Comment node
+PASS Mutating the style element: mutating a Comment node
+PASS Mutating the style element: using normalize()
+PASS Mutating the style element: removing a Comment node
+PASS Mutating the style element: inserting an empty DocumentFragment node
 

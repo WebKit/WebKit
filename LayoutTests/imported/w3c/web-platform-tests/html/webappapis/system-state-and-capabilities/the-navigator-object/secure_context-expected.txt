@@ -1,4 +1,4 @@
 
-PASS navigator.registerProtocolHandler does not exist in non-secure contexts. 
-PASS navigator.unregisterProtocolHandler does not exist in non-secure contexts. 
+PASS navigator.registerProtocolHandler does not exist in non-secure contexts.
+PASS navigator.unregisterProtocolHandler does not exist in non-secure contexts.
 

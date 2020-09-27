@@ -3,5 +3,5 @@
 fillRect() with Infinity/NaN is ignored
 
 
-PASS fillRect() with Infinity/NaN is ignored 
+PASS fillRect() with Infinity/NaN is ignored
 

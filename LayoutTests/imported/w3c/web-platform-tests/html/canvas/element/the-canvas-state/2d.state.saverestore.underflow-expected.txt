@@ -2,5 +2,5 @@
 restore() with an empty stack has no effect
 Actual output:
 
-PASS restore() with an empty stack has no effect 
+PASS restore() with an empty stack has no effect
 

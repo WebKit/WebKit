@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Session history length on initial load 
-PASS Session history length on adding new iframe 
+PASS Session history length on initial load
+PASS Session history length on adding new iframe
 TIMEOUT Navigating second iframe Test timed out
 

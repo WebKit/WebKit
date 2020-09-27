@@ -3,5 +3,5 @@
 Canvas patterns do not get flipped when painted
 
 
-PASS Canvas patterns do not get flipped when painted 
+PASS Canvas patterns do not get flipped when painted
 

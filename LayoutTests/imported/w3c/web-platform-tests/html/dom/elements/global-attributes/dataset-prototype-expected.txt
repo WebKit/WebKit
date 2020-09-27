@@ -1,6 +1,6 @@
 Dataset - element.dataset is an instance of DOMStringMap
 
 
-PASS An elements dataset property is an instance of a DOMStringMap 
-PASS Properties on Object.prototype should shine through. 
+PASS An elements dataset property is an instance of a DOMStringMap
+PASS Properties on Object.prototype should shine through.
 

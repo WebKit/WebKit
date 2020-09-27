@@ -1,5 +1,5 @@
 2d.path.closePath.empty
 
 
-PASS OffscreenCanvas test: 2d.path.closePath.empty 
+PASS OffscreenCanvas test: 2d.path.closePath.empty
 

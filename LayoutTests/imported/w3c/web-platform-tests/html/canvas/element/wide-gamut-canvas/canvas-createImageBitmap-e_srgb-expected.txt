@@ -6,11 +6,11 @@ FAIL createImageBitmap in e-sRGB from an opaque sRGB HTMLImageElement (BMP, GIF,
 FAIL createImageBitmap in e-sRGB from a transparent sRGB HTMLImageElement (BMP, ICO, PNG, WEBP) with resize. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'actual.length')"
 FAIL createImageBitmap in e-sRGB from a sRGB SVG image with resize. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'actual.length')"
 TIMEOUT createImageBitmap in e-sRGB from a sRGB HTMLVideoElement with resize. Test timed out
-NOTRUN createImageBitmap in e-sRGB from an opaque sRGB HTMLCanvasElement with resize. 
-NOTRUN createImageBitmap in e-sRGB from an opaque e-sRGB HTMLCanvasElement with resize. 
-NOTRUN createImageBitmap in e-sRGB from a transparent sRGB HTMLCanvasElement with resize. 
-NOTRUN createImageBitmap in e-sRGB from a transparent e-sRGB HTMLCanvasElement with resize. 
-NOTRUN createImageBitmap in e-sRGB from an opaque sRGB Blob with resize. 
-NOTRUN createImageBitmap in e-sRGB from a transparent sRGB Blob with resize. 
-NOTRUN createImageBitmap in e-sRGB from color managed Blob with resize. blobPixelFormat: uint8, transparency: false 
+NOTRUN createImageBitmap in e-sRGB from an opaque sRGB HTMLCanvasElement with resize.
+NOTRUN createImageBitmap in e-sRGB from an opaque e-sRGB HTMLCanvasElement with resize.
+NOTRUN createImageBitmap in e-sRGB from a transparent sRGB HTMLCanvasElement with resize.
+NOTRUN createImageBitmap in e-sRGB from a transparent e-sRGB HTMLCanvasElement with resize.
+NOTRUN createImageBitmap in e-sRGB from an opaque sRGB Blob with resize.
+NOTRUN createImageBitmap in e-sRGB from a transparent sRGB Blob with resize.
+NOTRUN createImageBitmap in e-sRGB from color managed Blob with resize. blobPixelFormat: uint8, transparency: false
 

@@ -4,5 +4,5 @@ main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 
-PASS history.forward() with session history 
+PASS history.forward() with session history
 

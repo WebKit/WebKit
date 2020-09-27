@@ -1,5 +1,5 @@
 2d.text.align.default
 Actual output:
 
-PASS Canvas test: 2d.text.align.default 
+PASS Canvas test: 2d.text.align.default
 

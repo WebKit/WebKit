@@ -1,10 +1,10 @@
 
-PASS document.forms 
-PASS document.forms.item with string arg 
-PASS document.forms with empty string 
-PASS document.forms iteration 
-PASS document.forms getOwnPropertyNames 
-PASS Document.forms should be a live collection 
-     
-     
+PASS document.forms
+PASS document.forms.item with string arg
+PASS document.forms with empty string
+PASS document.forms iteration
+PASS document.forms getOwnPropertyNames
+PASS Document.forms should be a live collection
+
+
 

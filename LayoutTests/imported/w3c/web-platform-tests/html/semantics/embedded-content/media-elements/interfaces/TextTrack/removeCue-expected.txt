@@ -1,4 +1,4 @@
 
-PASS TextTrack.removeCue(), two elementless tracks 
-PASS TextTrack.removeCue(), cue from track element 
+PASS TextTrack.removeCue(), two elementless tracks
+PASS TextTrack.removeCue(), cue from track element
 

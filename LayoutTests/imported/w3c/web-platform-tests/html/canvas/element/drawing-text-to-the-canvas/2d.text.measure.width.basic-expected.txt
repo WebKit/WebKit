@@ -2,5 +2,5 @@
 The width of character is same as font used
 Actual output:
 
-PASS The width of character is same as font used 
+PASS The width of character is same as font used
 

@@ -1,39 +1,39 @@
 
-PASS Service worker setup 
-PASS unhandledrejection: from Promise.reject 
-PASS unhandledrejection: from a synchronous rejection in new Promise 
-PASS unhandledrejection: from a task-delayed rejection 
-PASS unhandledrejection: from a setTimeout-delayed rejection 
-PASS unhandledrejection: from a throw in a rejection handler chained off of Promise.reject 
-PASS unhandledrejection: from a throw in a rejection handler chained off of a setTimeout-delayed rejection 
-PASS unhandledrejection: from a throw in a rejection handler attached one microtask after a setTimeout-delayed rejection 
-PASS unhandledrejection: from returning a Promise.reject-created rejection in a fulfillment handler 
-PASS unhandledrejection: from a throw in a fulfillment handler 
-PASS unhandledrejection: from returning a setTimeout-delayed rejection in a fulfillment handler 
-PASS unhandledrejection: from Promise.reject, indirected through Promise.all 
-PASS unhandledrejection: from createImageBitmap which is UA triggered 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise from Promise.reject 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise from Promise.reject, indirecting through Promise.all 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a synchronously-rejected promise created with new Promise 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from throwing in a fulfillment handler 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from returning a Promise.reject-created promise in a fulfillment handler 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from returning a setTimeout-delayed rejection in a fulfillment handler 
-PASS no unhandledrejection/rejectionhandled: all inside a queued task, a rejection handler attached synchronously to a promise created from returning a Promise.reject-created promise in a fulfillment handler 
-PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from createImageBitmap 
-PASS delayed handling: a microtask delay before attaching a handler prevents both events (Promise.reject-created promise) 
-PASS delayed handling: a microtask delay before attaching a handler prevents both events (immediately-rejected new Promise-created promise) 
-PASS delayed handling: a microtask delay before attaching the handler, and before rejecting the promise, indirected through Promise.all 
-PASS microtask nesting: attaching a handler inside a combination of mutationObserverMicrotask + promise microtasks 
-PASS microtask nesting: attaching a handler inside a combination of mutationObserverMicrotask + promise microtasks, all inside a queueTask 
-PASS microtask nesting: attaching a handler inside a combination of mutationObserverMicrotask + promise microtasks, all inside a setTimeout 
-PASS microtask nesting: attaching a handler inside a combination of promise microtasks + mutationObserverMicrotask 
-PASS microtask nesting: attaching a handler inside a combination of promise microtasks + mutationObserverMicrotask, all inside a queueTask 
-PASS microtask nesting: attaching a handler inside a combination of promise microtasks + mutationObserverMicrotask, all inside a setTimeout 
-PASS delayed handling: a nested-task delay before attaching a handler causes unhandledrejection 
-PASS delayed handling: a nested-queueTask after promise creation/rejection, plus promise microtasks, is too late to attach a rejection handler 
-PASS delayed handling: a nested-queueTask before promise creation/rejection, plus many promise microtasks, is too late to attach a rejection handler 
-PASS delayed handling: a nested-queueTask after promise creation/rejection, plus many promise microtasks, is too late to attach a rejection handler 
-PASS delayed handling: delaying handling by setTimeout(,10) will cause both events to fire 
-PASS delayed handling: delaying handling rejected promise created from createImageBitmap will cause both events to fire 
-PASS mutationObserverMicrotask vs. queueTask ordering is not disturbed inside unhandledrejection events 
+PASS Service worker setup
+PASS unhandledrejection: from Promise.reject
+PASS unhandledrejection: from a synchronous rejection in new Promise
+PASS unhandledrejection: from a task-delayed rejection
+PASS unhandledrejection: from a setTimeout-delayed rejection
+PASS unhandledrejection: from a throw in a rejection handler chained off of Promise.reject
+PASS unhandledrejection: from a throw in a rejection handler chained off of a setTimeout-delayed rejection
+PASS unhandledrejection: from a throw in a rejection handler attached one microtask after a setTimeout-delayed rejection
+PASS unhandledrejection: from returning a Promise.reject-created rejection in a fulfillment handler
+PASS unhandledrejection: from a throw in a fulfillment handler
+PASS unhandledrejection: from returning a setTimeout-delayed rejection in a fulfillment handler
+PASS unhandledrejection: from Promise.reject, indirected through Promise.all
+PASS unhandledrejection: from createImageBitmap which is UA triggered
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise from Promise.reject
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise from Promise.reject, indirecting through Promise.all
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a synchronously-rejected promise created with new Promise
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from throwing in a fulfillment handler
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from returning a Promise.reject-created promise in a fulfillment handler
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from returning a setTimeout-delayed rejection in a fulfillment handler
+PASS no unhandledrejection/rejectionhandled: all inside a queued task, a rejection handler attached synchronously to a promise created from returning a Promise.reject-created promise in a fulfillment handler
+PASS no unhandledrejection/rejectionhandled: rejection handler attached synchronously to a promise created from createImageBitmap
+PASS delayed handling: a microtask delay before attaching a handler prevents both events (Promise.reject-created promise)
+PASS delayed handling: a microtask delay before attaching a handler prevents both events (immediately-rejected new Promise-created promise)
+PASS delayed handling: a microtask delay before attaching the handler, and before rejecting the promise, indirected through Promise.all
+PASS microtask nesting: attaching a handler inside a combination of mutationObserverMicrotask + promise microtasks
+PASS microtask nesting: attaching a handler inside a combination of mutationObserverMicrotask + promise microtasks, all inside a queueTask
+PASS microtask nesting: attaching a handler inside a combination of mutationObserverMicrotask + promise microtasks, all inside a setTimeout
+PASS microtask nesting: attaching a handler inside a combination of promise microtasks + mutationObserverMicrotask
+PASS microtask nesting: attaching a handler inside a combination of promise microtasks + mutationObserverMicrotask, all inside a queueTask
+PASS microtask nesting: attaching a handler inside a combination of promise microtasks + mutationObserverMicrotask, all inside a setTimeout
+PASS delayed handling: a nested-task delay before attaching a handler causes unhandledrejection
+PASS delayed handling: a nested-queueTask after promise creation/rejection, plus promise microtasks, is too late to attach a rejection handler
+PASS delayed handling: a nested-queueTask before promise creation/rejection, plus many promise microtasks, is too late to attach a rejection handler
+PASS delayed handling: a nested-queueTask after promise creation/rejection, plus many promise microtasks, is too late to attach a rejection handler
+PASS delayed handling: delaying handling by setTimeout(,10) will cause both events to fire
+PASS delayed handling: delaying handling rejected promise created from createImageBitmap will cause both events to fire
+PASS mutationObserverMicrotask vs. queueTask ordering is not disturbed inside unhandledrejection events
 

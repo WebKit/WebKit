@@ -3,5 +3,5 @@
 strokeRect of negative sizes works
 
 
-PASS strokeRect of negative sizes works 
+PASS strokeRect of negative sizes works
 

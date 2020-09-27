@@ -1,5 +1,5 @@
 2d.shadow.attributes.shadowColor.initial
 Actual output:
 
-PASS Canvas test: 2d.shadow.attributes.shadowColor.initial 
+PASS Canvas test: 2d.shadow.attributes.shadowColor.initial
 

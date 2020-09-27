@@ -2,5 +2,5 @@ toDataURL.arguments.1
 toDataURL ignores extra arguments
 Actual output:
 
-PASS toDataURL ignores extra arguments 
+PASS toDataURL ignores extra arguments
 

@@ -1,4 +1,4 @@
 
 
-PASS Loading images should get a replaced box, even without specified size 
+PASS Loading images should get a replaced box, even without specified size
 

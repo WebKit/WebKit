@@ -1,3 +1,12 @@
+2020-09-26  Darin Adler  <darin@apple.com>
+
+        Remove trailing spaces from expected.txt files in web-platform-tests/html
+        https://bugs.webkit.org/show_bug.cgi?id=217019
+
+        Reviewed by Zalan Bujtas.
+
+        This affects many files, and it's not helpful to fill the change log with a list of them.
+
 2020-09-25  Chris Dumez  <cdumez@apple.com>
 
         visibilitychange:hidden doesn't fire during page navigations

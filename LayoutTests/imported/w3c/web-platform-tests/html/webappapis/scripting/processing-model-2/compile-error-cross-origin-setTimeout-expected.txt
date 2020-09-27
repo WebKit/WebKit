@@ -2,6 +2,6 @@ Blocked access to external URL http://www1.localhost:8800/html/webappapis/script
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN window.onerror - compile error in cross-origin setTimeout 
-NOTRUN window.onerror - compile error in cross-origin setTimeout (column) 
+NOTRUN window.onerror - compile error in cross-origin setTimeout
+NOTRUN window.onerror - compile error in cross-origin setTimeout (column)
 

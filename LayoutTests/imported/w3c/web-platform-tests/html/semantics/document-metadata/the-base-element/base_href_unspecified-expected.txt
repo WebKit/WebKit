@@ -1,4 +1,4 @@
 
-PASS The value of the href attribute must be the document's address if it is unspecified 
-PASS The src attribute of the img element must relative to document's address 
+PASS The value of the href attribute must be the document's address if it is unspecified
+PASS The src attribute of the img element must relative to document's address
 

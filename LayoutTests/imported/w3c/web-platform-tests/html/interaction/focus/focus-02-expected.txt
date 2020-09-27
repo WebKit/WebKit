@@ -3,6 +3,6 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: Error: element send_keys intercept
 Harness Error (FAIL), message = element send_keys intercepted error
 
 TIMEOUT The keydown event must be targeted at the body element Test timed out
-NOTRUN The keypress event must be targeted at the body element 
-NOTRUN The keyup event must be targeted at the body element 
+NOTRUN The keypress event must be targeted at the body element
+NOTRUN The keyup event must be targeted at the body element
 

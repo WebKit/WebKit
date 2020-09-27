@@ -1,5 +1,5 @@
 html5lib Parser Test
 
 
-PASS html5lib_scripted_ark.html b9a7cd0310cab4fd4eb77aed9149b966918e7ca2 
+PASS html5lib_scripted_ark.html b9a7cd0310cab4fd4eb77aed9149b966918e7ca2
 

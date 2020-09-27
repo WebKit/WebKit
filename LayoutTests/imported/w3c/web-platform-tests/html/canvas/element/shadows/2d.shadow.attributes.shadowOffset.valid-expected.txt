@@ -1,5 +1,5 @@
 2d.shadow.attributes.shadowOffset.valid
 Actual output:
 
-PASS Canvas test: 2d.shadow.attributes.shadowOffset.valid 
+PASS Canvas test: 2d.shadow.attributes.shadowOffset.valid
 

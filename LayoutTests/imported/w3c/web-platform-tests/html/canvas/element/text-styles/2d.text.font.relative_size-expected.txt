@@ -1,5 +1,5 @@
 2d.text.font.relative_size
 Actual output:
 
-PASS Canvas test: 2d.text.font.relative_size 
+PASS Canvas test: 2d.text.font.relative_size
 

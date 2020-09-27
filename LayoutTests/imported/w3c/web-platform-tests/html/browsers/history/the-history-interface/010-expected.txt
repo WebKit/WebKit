@@ -1,6 +1,6 @@
 
-PASS HTTP Referer should use the pushed state (before onload) 
-PASS document.referrer should use the pushed state (before onload) 
-PASS HTTP Referer should use the replaced state (before onload) 
-PASS document.referrer should use the replaced state (before onload) 
+PASS HTTP Referer should use the pushed state (before onload)
+PASS document.referrer should use the pushed state (before onload)
+PASS HTTP Referer should use the replaced state (before onload)
+PASS document.referrer should use the replaced state (before onload)
 

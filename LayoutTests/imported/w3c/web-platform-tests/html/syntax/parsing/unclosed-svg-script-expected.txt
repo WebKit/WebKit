@@ -1,7 +1,7 @@
-   
 
-PASS SVG scripts with end tag should run 
-PASS SVG scripts without end tag should not run 
-PASS SVG scripts with bogus end tag inside should run 
-PASS SVG scripts ended by HTML breakout should not run 
+
+PASS SVG scripts with end tag should run
+PASS SVG scripts without end tag should not run
+PASS SVG scripts with bogus end tag inside should run
+PASS SVG scripts ended by HTML breakout should not run
 

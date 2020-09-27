@@ -1,5 +1,5 @@
- 
 
-PASS multiple selected options exist, both set from markup 
-PASS multiple selected options exist, one set from script 
+
+PASS multiple selected options exist, both set from markup
+PASS multiple selected options exist, one set from script
 

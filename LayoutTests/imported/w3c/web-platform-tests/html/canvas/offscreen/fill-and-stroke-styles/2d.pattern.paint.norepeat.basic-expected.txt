@@ -1,5 +1,5 @@
 2d.pattern.paint.norepeat.basic
 
 
-PASS OffscreenCanvas test: 2d.pattern.paint.norepeat.basic 
+PASS OffscreenCanvas test: 2d.pattern.paint.norepeat.basic
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS lineTo() with Infinity/NaN for first arg still converts the second arg 
+PASS lineTo() with Infinity/NaN for first arg still converts the second arg
 

@@ -2,5 +2,5 @@
 createImageData(sw, sh) returns an ImageData object containing a Uint8ClampedArray object
 Actual output:
 
-PASS createImageData(sw, sh) returns an ImageData object containing a Uint8ClampedArray object 
+PASS createImageData(sw, sh) returns an ImageData object containing a Uint8ClampedArray object
 

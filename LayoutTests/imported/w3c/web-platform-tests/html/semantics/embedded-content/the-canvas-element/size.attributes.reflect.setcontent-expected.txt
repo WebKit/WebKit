@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Setting content attributes updates IDL and content attributes 
+PASS Setting content attributes updates IDL and content attributes
 

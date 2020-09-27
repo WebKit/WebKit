@@ -1,5 +1,5 @@
 
-PASS Template element as a descendant of the frameset element. Test loading from a file 
-PASS Template element as a descendant of the frameset element. Test template element is assigned to frameset's innerHTML) 
-PASS Template element as a descendant of the frameset element. Test template element appended to frameset by appendChild() 
+PASS Template element as a descendant of the frameset element. Test loading from a file
+PASS Template element as a descendant of the frameset element. Test template element is assigned to frameset's innerHTML)
+PASS Template element as a descendant of the frameset element. Test template element appended to frameset by appendChild()
 

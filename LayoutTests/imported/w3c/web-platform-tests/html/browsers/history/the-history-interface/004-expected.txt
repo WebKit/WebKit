@@ -1,6 +1,6 @@
 
-PASS .go commands should be queued until the thread has ended 
-PASS browser needs to support hashchange events for this testcase 
+PASS .go commands should be queued until the thread has ended
+PASS browser needs to support hashchange events for this testcase
 FAIL queued .go commands should all be executed when the queue is processed assert_equals: the wrong number of queued commands were executed expected 2 but got 1
 FAIL history position should be calculated when executing, not when calling the .go command assert_equals: expected "" but got "bar"
 

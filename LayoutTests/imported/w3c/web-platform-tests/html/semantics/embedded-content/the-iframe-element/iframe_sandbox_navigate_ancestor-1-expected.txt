@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with
 
 
 
-PASS Check that sandboxed iframe can not navigate their ancestors 
+PASS Check that sandboxed iframe can not navigate their ancestors
 

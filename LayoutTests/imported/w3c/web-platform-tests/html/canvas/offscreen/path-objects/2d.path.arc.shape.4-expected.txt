@@ -3,5 +3,5 @@
 arc() from 0 to -pi/2 draws stuff in the right quadrant
 
 
-PASS arc() from 0 to -pi/2 draws stuff in the right quadrant 
+PASS arc() from 0 to -pi/2 draws stuff in the right quadrant
 

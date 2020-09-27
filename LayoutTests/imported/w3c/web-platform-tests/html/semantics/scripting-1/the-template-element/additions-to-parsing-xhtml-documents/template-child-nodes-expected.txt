@@ -1,6 +1,6 @@
 
-PASS Child nodes of template element in XHTML documents must be appended to template content 
-PASS Child nodes of nested template element in XHTML documents must be appended to template content 
-PASS Child nodes of template element in XHTML documents must be appended to template content. Test loading XHTML document from a file 
-PASS Child nodes of nested template element in XHTML documents must be appended to template content. Test loading XHTML document from a file 
+PASS Child nodes of template element in XHTML documents must be appended to template content
+PASS Child nodes of nested template element in XHTML documents must be appended to template content
+PASS Child nodes of template element in XHTML documents must be appended to template content. Test loading XHTML document from a file
+PASS Child nodes of nested template element in XHTML documents must be appended to template content. Test loading XHTML document from a file
 

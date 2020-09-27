@@ -1,5 +1,5 @@
 
-PASS error event behaves normally (return true does not cancel; one arg) on a script element, with a 404 error 
-PASS error event behaves normally (return true does not cancel; one arg) on a script element, with a synthetic Event 
-PASS error event behaves normally (return true does not cancel; one arg) on a script element, with a synthetic ErrorEvent 
+PASS error event behaves normally (return true does not cancel; one arg) on a script element, with a 404 error
+PASS error event behaves normally (return true does not cancel; one arg) on a script element, with a synthetic Event
+PASS error event behaves normally (return true does not cancel; one arg) on a script element, with a synthetic ErrorEvent
 

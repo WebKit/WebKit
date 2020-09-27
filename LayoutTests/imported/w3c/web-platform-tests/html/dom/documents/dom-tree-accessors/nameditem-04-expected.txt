@@ -1,10 +1,10 @@
 
-PASS If there is one form, it should be returned (name) 
-PASS If there are two forms, a collection should be returned. (name) 
-PASS If there is one form, it should not be returned (id) 
-PASS If there are two forms, nothing should be returned. (id) 
-PASS If there are two forms, a collection should be returned. (name and id) 
-PASS If there are two forms, a collection should be returned. (id and name) 
-PASS A name shouldn't affect getting an form by id 
-PASS An id shouldn't affect getting an form by name 
+PASS If there is one form, it should be returned (name)
+PASS If there are two forms, a collection should be returned. (name)
+PASS If there is one form, it should not be returned (id)
+PASS If there are two forms, nothing should be returned. (id)
+PASS If there are two forms, a collection should be returned. (name and id)
+PASS If there are two forms, a collection should be returned. (id and name)
+PASS A name shouldn't affect getting an form by id
+PASS An id shouldn't affect getting an form by name
 

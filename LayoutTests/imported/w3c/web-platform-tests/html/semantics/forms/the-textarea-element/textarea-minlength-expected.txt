@@ -1,8 +1,8 @@
-       
 
-PASS Unset minlength is -1 
-PASS Negative minlength is always -1 
-PASS Non-numeric minlength is -1 
-PASS Assigning negative integer throws IndexSizeError 
-PASS Assigning non-numeric to minlength sets minlength to 0 
+
+PASS Unset minlength is -1
+PASS Negative minlength is always -1
+PASS Non-numeric minlength is -1
+PASS Assigning negative integer throws IndexSizeError
+PASS Assigning non-numeric to minlength sets minlength to 0
 

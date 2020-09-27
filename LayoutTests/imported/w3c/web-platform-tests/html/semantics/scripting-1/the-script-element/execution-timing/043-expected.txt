@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: DOM mutation events when adding external scripts: DOMNodeInserted  
+PASS  scheduler: DOM mutation events when adding external scripts: DOMNodeInserted
 

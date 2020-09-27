@@ -1,3 +1,3 @@
 
-PASS beforeunload event fires on history navigation back 
+PASS beforeunload event fires on history navigation back
 

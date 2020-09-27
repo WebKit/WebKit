@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS rotate() with Infinity/NaN is ignored 
+PASS rotate() with Infinity/NaN is ignored
 

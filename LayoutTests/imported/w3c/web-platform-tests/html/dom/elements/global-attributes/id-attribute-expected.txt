@@ -1,21 +1,21 @@
 The id attribute
 
 
-PASS User agents must associate the element with an id value for purposes of getElementById. 
-PASS Association is exact and therefore case-sensitive for getElementById. 
-PASS Spaces are allowed in an id and still make an association for getElementByID. 
-PASS Non-ASCII is allowed in an id and still make an association for getElementById. 
-PASS User agents must associate the element with an id value for purposes of CSS. 
-PASS Association for CSS is exact and therefore case-sensitive. 
-PASS Spaces are allowed in an id and still make an association. 
-PASS Non-ASCII is allowed in an id and still make an association for CSS. 
-PASS The id IDL attribute must reflect the id content attribute, for getting. 
-PASS The id IDL attribute must reflect the id content attribute, for setting via IDL attribute. 
-PASS After setting id via id attribute, getElementById find the element by the new id. 
-PASS After setting id via id attribute, getElementById doesn't find the element by the old id. 
-PASS After setting id via id attribute, CSS association is via the new ID. 
-PASS The id IDL attribute must reflect the id content attribute, for setting via setAttribute. 
-PASS After setting id via setAttribute attribute, getElementById find the element by the new id. 
-PASS After setting id via setAttribute attribute, getElementById doesn't find the element by the old id. 
-PASS After setting id via setAttribute attribute, CSS association is via the new ID. 
+PASS User agents must associate the element with an id value for purposes of getElementById.
+PASS Association is exact and therefore case-sensitive for getElementById.
+PASS Spaces are allowed in an id and still make an association for getElementByID.
+PASS Non-ASCII is allowed in an id and still make an association for getElementById.
+PASS User agents must associate the element with an id value for purposes of CSS.
+PASS Association for CSS is exact and therefore case-sensitive.
+PASS Spaces are allowed in an id and still make an association.
+PASS Non-ASCII is allowed in an id and still make an association for CSS.
+PASS The id IDL attribute must reflect the id content attribute, for getting.
+PASS The id IDL attribute must reflect the id content attribute, for setting via IDL attribute.
+PASS After setting id via id attribute, getElementById find the element by the new id.
+PASS After setting id via id attribute, getElementById doesn't find the element by the old id.
+PASS After setting id via id attribute, CSS association is via the new ID.
+PASS The id IDL attribute must reflect the id content attribute, for setting via setAttribute.
+PASS After setting id via setAttribute attribute, getElementById find the element by the new id.
+PASS After setting id via setAttribute attribute, getElementById doesn't find the element by the old id.
+PASS After setting id via setAttribute attribute, CSS association is via the new ID.
 

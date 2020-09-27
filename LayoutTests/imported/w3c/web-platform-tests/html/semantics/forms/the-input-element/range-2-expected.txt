@@ -1,7 +1,7 @@
 
-PASS range input value set to '' 
-PASS range input value set to an integer 
-PASS range input value equals 50 
-PASS range input value equals 100 
-PASS range input value equals 2 
+PASS range input value set to ''
+PASS range input value set to an integer
+PASS range input value equals 50
+PASS range input value equals 100
+PASS range input value equals 2
 

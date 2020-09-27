@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - readyState property during canplay 
-PASS audio.readyState should be >= HAVE_FUTURE_DATA during canplay event 
-PASS video events - readyState property during canplay 
-PASS video.readyState should be >= HAVE_FUTURE_DATA during canplay event 
+
+PASS audio events - readyState property during canplay
+PASS audio.readyState should be >= HAVE_FUTURE_DATA during canplay event
+PASS video events - readyState property during canplay
+PASS video.readyState should be >= HAVE_FUTURE_DATA during canplay event
 

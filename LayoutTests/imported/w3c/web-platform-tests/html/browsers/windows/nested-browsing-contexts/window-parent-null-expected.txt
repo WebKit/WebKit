@@ -1,4 +1,4 @@
 
-PASS `window.parent` is null when browsing context container element removed 
-PASS `window.parent` null when parent browsing context container removed 
- 
+PASS `window.parent` is null when browsing context container element removed
+PASS `window.parent` null when parent browsing context container removed
+

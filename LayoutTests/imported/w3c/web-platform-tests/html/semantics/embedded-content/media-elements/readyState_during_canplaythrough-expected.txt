@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - readyState property during canplaythrough 
-PASS audio.readyState should be HAVE_ENOUGH_DATA during canplaythrough event 
-PASS video events - readyState property during canplaythrough 
-PASS video.readyState should be HAVE_ENOUGH_DATA during canplaythrough event 
+
+PASS audio events - readyState property during canplaythrough
+PASS audio.readyState should be HAVE_ENOUGH_DATA during canplaythrough event
+PASS video events - readyState property during canplaythrough
+PASS video.readyState should be HAVE_ENOUGH_DATA during canplaythrough event
 

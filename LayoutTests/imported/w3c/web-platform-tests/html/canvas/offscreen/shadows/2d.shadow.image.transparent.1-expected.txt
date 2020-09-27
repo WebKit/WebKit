@@ -3,5 +3,5 @@
 Shadows are not drawn for transparent images
 
 
-PASS Shadows are not drawn for transparent images 
+PASS Shadows are not drawn for transparent images
 

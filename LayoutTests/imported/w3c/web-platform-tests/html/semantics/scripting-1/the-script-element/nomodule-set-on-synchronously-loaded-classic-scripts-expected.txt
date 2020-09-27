@@ -1,4 +1,4 @@
 
-PASS A synchronously loaded external classic script without nomodule content attribute must run 
-PASS A synchronously loaded external classic script with nomodule content attribute must not run 
+PASS A synchronously loaded external classic script without nomodule content attribute must run
+PASS A synchronously loaded external classic script with nomodule content attribute must not run
 

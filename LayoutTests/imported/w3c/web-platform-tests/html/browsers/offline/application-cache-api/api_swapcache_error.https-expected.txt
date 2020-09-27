@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
-PASS INVALID_STATE_ERR error test 
+PASS INVALID_STATE_ERR error test
 

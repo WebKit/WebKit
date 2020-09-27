@@ -3,5 +3,5 @@
 arc() wraps angles mod 2pi when anticlockwise and end > start+2pi
 
 
-PASS arc() wraps angles mod 2pi when anticlockwise and end > start+2pi 
+PASS arc() wraps angles mod 2pi when anticlockwise and end > start+2pi
 

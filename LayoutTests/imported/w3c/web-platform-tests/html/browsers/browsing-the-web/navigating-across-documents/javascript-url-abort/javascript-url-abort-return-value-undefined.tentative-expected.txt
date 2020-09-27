@@ -1,3 +1,3 @@
 
-PASS Not aborting fetch for javascript:undefined navigation 
+PASS Not aborting fetch for javascript:undefined navigation
 

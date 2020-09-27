@@ -1,3 +1,3 @@
 
-PASS Doctype with empty ids should trigger the standards mode. 
+PASS Doctype with empty ids should trigger the standards mode.
 

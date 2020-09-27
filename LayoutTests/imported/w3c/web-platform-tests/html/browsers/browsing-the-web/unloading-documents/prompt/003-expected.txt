@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'parent.events.push')
 
-PASS beforeunload event in child frame for parent navigation 
+PASS beforeunload event in child frame for parent navigation
 

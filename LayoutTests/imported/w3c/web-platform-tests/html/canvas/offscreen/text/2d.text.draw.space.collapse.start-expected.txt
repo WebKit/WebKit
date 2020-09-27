@@ -3,5 +3,5 @@
 Space characters at the start of a line are collapsed (per CSS)
 
 
-PASS Space characters at the start of a line are collapsed (per CSS) 
+PASS Space characters at the start of a line are collapsed (per CSS)
 

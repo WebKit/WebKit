@@ -1,7 +1,7 @@
 
-PASS id with digits only 
-PASS id start with digits 
-PASS id start with underscore 
-PASS id with punctuation only 
-PASS id with chinese character 
+PASS id with digits only
+PASS id start with digits
+PASS id start with underscore
+PASS id with punctuation only
+PASS id with chinese character
 

@@ -7,5 +7,5 @@ Before:
 After:
 
 
-PASS drawFocusIfNeeded draws a focus ring. 
+PASS drawFocusIfNeeded draws a focus ring.
 

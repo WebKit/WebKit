@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arc() draws a full circle when end = start + 2pi-e and clockwise 
+PASS arc() draws a full circle when end = start + 2pi-e and clockwise
 

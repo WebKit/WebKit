@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: document.write external + inline - multiple with doc.write 
+PASS  scheduler: document.write external + inline - multiple with doc.write
 

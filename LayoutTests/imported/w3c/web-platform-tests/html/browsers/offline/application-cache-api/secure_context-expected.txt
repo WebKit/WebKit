@@ -1,5 +1,5 @@
 
 FAIL window.applicationCache does not exist in non-secure contexts. assert_false: expected false got true
 FAIL ApplicationCache interface does not exist in non-secure contexts. assert_false: expected false got true
-PASS ApplicationCacheErrorEvent interface does not exist in non-secure contexts. 
+PASS ApplicationCacheErrorEvent interface does not exist in non-secure contexts.
 

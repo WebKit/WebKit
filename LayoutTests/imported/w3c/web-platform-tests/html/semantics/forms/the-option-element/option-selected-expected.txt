@@ -1,5 +1,5 @@
 
-PASS not dirty 
+PASS not dirty
 FAIL dirty, selected assert_equals: expected true but got false
 FAIL dirty, not selected assert_equals: expected false but got true
 

@@ -1,21 +1,21 @@
 
-PASS Checkbox must retain checked state. 
-PASS Checkbox must retain unchecked state. 
-PASS Radiobutton must retain checked state. 
-PASS Radiobutton must retain unchecked state. 
-PASS Hidden field must retain changed value. 
-PASS Text field must retain changed value. 
-PASS Search field must retain changed value. 
-PASS Phone number field must retain changed value. 
-PASS URL field must retain changed value. 
-PASS Email field must retain changed value. 
-PASS Password field must retain changed value. 
-PASS Date field must retain changed value. 
-PASS Month field must retain changed value. 
-PASS Week field must retain changed value. 
-PASS Time field must retain changed value. 
-PASS Datetime (local) field must retain changed value. 
-PASS Number field must retain changed value. 
-PASS Range control must retain changed value. 
-PASS Color picker must retain changed value. 
+PASS Checkbox must retain checked state.
+PASS Checkbox must retain unchecked state.
+PASS Radiobutton must retain checked state.
+PASS Radiobutton must retain unchecked state.
+PASS Hidden field must retain changed value.
+PASS Text field must retain changed value.
+PASS Search field must retain changed value.
+PASS Phone number field must retain changed value.
+PASS URL field must retain changed value.
+PASS Email field must retain changed value.
+PASS Password field must retain changed value.
+PASS Date field must retain changed value.
+PASS Month field must retain changed value.
+PASS Week field must retain changed value.
+PASS Time field must retain changed value.
+PASS Datetime (local) field must retain changed value.
+PASS Number field must retain changed value.
+PASS Range control must retain changed value.
+PASS Color picker must retain changed value.
 

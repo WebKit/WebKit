@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: document.write into IFRAME a script that creates new inline script in parent  
+PASS  scheduler: document.write into IFRAME a script that creates new inline script in parent
 

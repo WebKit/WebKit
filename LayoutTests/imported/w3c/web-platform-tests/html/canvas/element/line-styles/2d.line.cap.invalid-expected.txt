@@ -2,5 +2,5 @@
 Setting lineCap to invalid values is ignored
 Actual output:
 
-PASS Setting lineCap to invalid values is ignored 
+PASS Setting lineCap to invalid values is ignored
 

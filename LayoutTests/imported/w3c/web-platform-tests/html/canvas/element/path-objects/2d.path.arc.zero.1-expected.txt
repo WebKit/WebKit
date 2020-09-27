@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arc() draws nothing when startAngle = endAngle and anticlockwise 
+PASS arc() draws nothing when startAngle = endAngle and anticlockwise
 

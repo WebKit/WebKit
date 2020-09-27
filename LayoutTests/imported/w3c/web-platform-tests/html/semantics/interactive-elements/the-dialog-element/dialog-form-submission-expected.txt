@@ -1,4 +1,4 @@
-Confirm  
+Confirm
 
 
 FAIL click the form submission button should close the dialog assert_false: dialog should be closed now expected false got true

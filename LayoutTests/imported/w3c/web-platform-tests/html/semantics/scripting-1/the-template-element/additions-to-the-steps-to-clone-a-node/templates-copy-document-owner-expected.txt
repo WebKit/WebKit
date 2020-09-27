@@ -1,7 +1,7 @@
 
-PASS ownerDocument of cloned template content is set to template content owner. Test cloning with children 
-PASS ownerDocument of cloned template content is set to template content owner. Test cloning without children 
-PASS ownerDocument of cloned template content is set to template content owner. Test cloneNode() with no arguments (false by default) 
-PASS ownerDocument of cloned template content is set to template content owner. Test cloning nested template 
-PASS ownerDocument of cloned template content is set to template content owner. Test loading HTML document from file 
+PASS ownerDocument of cloned template content is set to template content owner. Test cloning with children
+PASS ownerDocument of cloned template content is set to template content owner. Test cloning without children
+PASS ownerDocument of cloned template content is set to template content owner. Test cloneNode() with no arguments (false by default)
+PASS ownerDocument of cloned template content is set to template content owner. Test cloning nested template
+PASS ownerDocument of cloned template content is set to template content owner. Test loading HTML document from file
 

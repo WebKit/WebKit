@@ -1,35 +1,35 @@
 
-PASS empty value 
-PASS value = 11 
-PASS value = 11.12 
-PASS value = -11111 
-PASS value = -11111.123 
-PASS value = 1e2 
-PASS value = 1E2 
-PASS value = 1e+2 
-PASS value = 1e-2 
-PASS value is not a valid floating-point number: 1d+2 
-PASS value not a valid floating-point number: random string 
-PASS Value >= min attribute 
-PASS Value < min attribute 
-PASS Value <= max attribute 
-PASS Value > max attribute 
-PASS value with a leading '.' 
+PASS empty value
+PASS value = 11
+PASS value = 11.12
+PASS value = -11111
+PASS value = -11111.123
+PASS value = 1e2
+PASS value = 1E2
+PASS value = 1e+2
+PASS value = 1e-2
+PASS value is not a valid floating-point number: 1d+2
+PASS value not a valid floating-point number: random string
+PASS Value >= min attribute
+PASS Value < min attribute
+PASS Value <= max attribute
+PASS Value > max attribute
+PASS value with a leading '.'
 FAIL value ending with '.' assert_equals: expected "" but got "1."
-PASS value = -0 
-PASS  value = Infinity 
-PASS value = -Infinity 
-PASS value = NaN 
-PASS value = 2^53+1 
-PASS value >= Number.MAX_VALUE 
-PASS value = 1e 
-PASS value = +1 
-PASS value = '+' 
-PASS value = '-' 
-PASS value with a leading tab 
-PASS value with a leading newline 
-PASS value with a leading form feed 
-PASS value with a leading carriage return 
-PASS value with a leading space 
-PASS value = 1trailing junk 
+PASS value = -0
+PASS  value = Infinity
+PASS value = -Infinity
+PASS value = NaN
+PASS value = 2^53+1
+PASS value >= Number.MAX_VALUE
+PASS value = 1e
+PASS value = +1
+PASS value = '+'
+PASS value = '-'
+PASS value with a leading tab
+PASS value with a leading newline
+PASS value with a leading form feed
+PASS value with a leading carriage return
+PASS value with a leading space
+PASS value = 1trailing junk
 

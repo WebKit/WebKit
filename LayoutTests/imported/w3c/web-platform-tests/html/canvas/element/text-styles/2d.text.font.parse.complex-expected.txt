@@ -1,5 +1,5 @@
 2d.text.font.parse.complex
 Actual output:
 
-PASS Canvas test: 2d.text.font.parse.complex 
+PASS Canvas test: 2d.text.font.parse.complex
 

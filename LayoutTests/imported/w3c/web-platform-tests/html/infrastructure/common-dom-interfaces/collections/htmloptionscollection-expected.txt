@@ -1,27 +1,27 @@
-  
 
-PASS Original length 
-PASS Setting length to original value has no effect 
-PASS Setting length to shorter value 
-PASS Setting length to longer value 
-PASS Insert <p><option>6</option></p> into <select> 
-PASS Insert <select><option>6</option></select> into <select> 
-PASS Insert <optgroup><option>6</option></optgroup> into <select> 
-PASS Insert <optgroup><optgroup><option>6</option></optgroup></optgroup> into <select> 
-PASS namedItem id attribute 
-PASS namedItem name attribute 
-PASS namedItem doesn't match anything 
-PASS namedItem multiple IDs 
-PASS namedItem multiple names 
-PASS namedItem multiple name and ID 
-PASS namedItem multiple name and ID with multiple attributes 
-PASS namedItem id attribute multiple attributes one element 
-PASS namedItem name attribute multiple attributes one element 
-PASS HTMLOptionsCollection [index] method return the item with index 
-PASS HTMLOptionsCollection [name] method return the item with name 
-PASS HTMLOptionsCollection.item(index) method return the item with index 
-PASS HTMLOptionsCollection.item(name) method return the item with index 0 
-PASS HTMLOptionsCollection.add method insert HTMLOptionElement Option element 
-PASS HTMLOptionsCollection.remove method remove Option element by index 
-PASS Add non-option to collection 
+
+PASS Original length
+PASS Setting length to original value has no effect
+PASS Setting length to shorter value
+PASS Setting length to longer value
+PASS Insert <p><option>6</option></p> into <select>
+PASS Insert <select><option>6</option></select> into <select>
+PASS Insert <optgroup><option>6</option></optgroup> into <select>
+PASS Insert <optgroup><optgroup><option>6</option></optgroup></optgroup> into <select>
+PASS namedItem id attribute
+PASS namedItem name attribute
+PASS namedItem doesn't match anything
+PASS namedItem multiple IDs
+PASS namedItem multiple names
+PASS namedItem multiple name and ID
+PASS namedItem multiple name and ID with multiple attributes
+PASS namedItem id attribute multiple attributes one element
+PASS namedItem name attribute multiple attributes one element
+PASS HTMLOptionsCollection [index] method return the item with index
+PASS HTMLOptionsCollection [name] method return the item with name
+PASS HTMLOptionsCollection.item(index) method return the item with index
+PASS HTMLOptionsCollection.item(name) method return the item with index 0
+PASS HTMLOptionsCollection.add method insert HTMLOptionElement Option element
+PASS HTMLOptionsCollection.remove method remove Option element by index
+PASS Add non-option to collection
 

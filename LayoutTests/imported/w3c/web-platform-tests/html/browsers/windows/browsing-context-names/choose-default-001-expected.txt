@@ -1,4 +1,4 @@
 
-PASS A embedded browsing context has empty-string default name 
-PASS A browsing context which is opened by window.open() method with '_blank' parameter has empty-string default name 
- 
+PASS A embedded browsing context has empty-string default name
+PASS A browsing context which is opened by window.open() method with '_blank' parameter has empty-string default name
+

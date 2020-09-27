@@ -1,4 +1,4 @@
 
-PASS TextTrackCue.track, script-created cue 
+PASS TextTrackCue.track, script-created cue
 FAIL TextTrackCue.track, parsed cue null is not an object (evaluating 't.track.cues[0]')
 

@@ -3,5 +3,5 @@
 strokeRect is affected by globalAlpha
 
 
-PASS strokeRect is affected by globalAlpha 
+PASS strokeRect is affected by globalAlpha
 

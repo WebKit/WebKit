@@ -3,5 +3,5 @@
 putImageData() does not accept non-ImageData objects
 
 
-PASS putImageData() does not accept non-ImageData objects 
+PASS putImageData() does not accept non-ImageData objects
 

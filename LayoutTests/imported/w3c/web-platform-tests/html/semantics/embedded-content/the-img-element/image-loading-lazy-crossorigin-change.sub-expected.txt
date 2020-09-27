@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/html/semantics/embedded-content/the-img-element/resources/image.png due to access control checks.
 
 
-PASS Test that when deferred image is loaded, it uses the latest crossorigin attribute. 
+PASS Test that when deferred image is loaded, it uses the latest crossorigin attribute.
 

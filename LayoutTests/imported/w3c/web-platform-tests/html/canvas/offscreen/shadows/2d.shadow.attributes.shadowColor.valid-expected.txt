@@ -1,5 +1,5 @@
 2d.shadow.attributes.shadowColor.valid
 
 
-PASS OffscreenCanvas test: 2d.shadow.attributes.shadowColor.valid 
+PASS OffscreenCanvas test: 2d.shadow.attributes.shadowColor.valid
 

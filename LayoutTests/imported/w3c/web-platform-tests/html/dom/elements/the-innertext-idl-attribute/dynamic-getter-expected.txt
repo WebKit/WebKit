@@ -1,10 +1,10 @@
 abcdef
 
-PASS text-transform applied to child element ("<div id='target'><div id='child'>abc") 
-PASS text-transform applied to parent element ("<div id='parent'><div id='target'>abc") 
-PASS display: none applied to child element ("<div id='target'>abc<div id='child'>def") 
-PASS display: none applied to parent element ("<div id='parent'>invisible<div id='target'>abc") 
-PASS insert node into sub-tree ("<div id='target'>abc") 
-PASS remove node from sub-tree ("<div id='target'>abc<div id='remove'>def") 
-PASS insert whole sub-tree ("<div id='target'>") 
+PASS text-transform applied to child element ("<div id='target'><div id='child'>abc")
+PASS text-transform applied to parent element ("<div id='parent'><div id='target'>abc")
+PASS display: none applied to child element ("<div id='target'>abc<div id='child'>def")
+PASS display: none applied to parent element ("<div id='parent'>invisible<div id='target'>abc")
+PASS insert node into sub-tree ("<div id='target'>abc")
+PASS remove node from sub-tree ("<div id='target'>abc<div id='remove'>def")
+PASS insert whole sub-tree ("<div id='target'>")
 

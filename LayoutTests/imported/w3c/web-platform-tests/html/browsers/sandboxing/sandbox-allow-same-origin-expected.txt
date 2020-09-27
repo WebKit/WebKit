@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/browser
 DOM access in sandbox="allow-same-origin" iframe
 
 
-PASS DOM access in sandbox='allow-same-origin' iframe is allowed 
+PASS DOM access in sandbox='allow-same-origin' iframe is allowed
 

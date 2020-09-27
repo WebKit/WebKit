@@ -1,14 +1,14 @@
 
-PASS No children, no label 
-PASS No children, empty label 
-PASS No children, label 
-PASS No children, namespaced label 
-PASS Single child, no label 
-PASS Single child, empty label 
-PASS Single child, label 
-PASS Single child, namespaced label 
-PASS Two children, no label 
-PASS Two children, empty label 
-PASS Two children, label 
-PASS Two children, namespaced label 
+PASS No children, no label
+PASS No children, empty label
+PASS No children, label
+PASS No children, namespaced label
+PASS Single child, no label
+PASS Single child, empty label
+PASS Single child, label
+PASS Single child, namespaced label
+PASS Two children, no label
+PASS Two children, empty label
+PASS Two children, label
+PASS Two children, namespaced label
 

@@ -2,10 +2,10 @@
 
 
 
-PASS horizontal-tb  
+PASS horizontal-tb
 FAIL vertical-lr  assert_equals: width expected "0px" but got "100px"
 FAIL vertical-rl  assert_equals: width expected "0px" but got "100px"
-PASS horizontal-tb override 
+PASS horizontal-tb override
 FAIL vertical-lr override assert_equals: width expected "0px" but got "100px"
 FAIL vertical-rl override assert_equals: width expected "0px" but got "100px"
 

@@ -1,5 +1,5 @@
 2d.pattern.basic.type
 Actual output:
 
-PASS Canvas test: 2d.pattern.basic.type 
+PASS Canvas test: 2d.pattern.basic.type
 

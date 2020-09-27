@@ -1,5 +1,5 @@
 2d.fillStyle.parse.invalid.hsla-3
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.invalid.hsla-3 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.invalid.hsla-3
 

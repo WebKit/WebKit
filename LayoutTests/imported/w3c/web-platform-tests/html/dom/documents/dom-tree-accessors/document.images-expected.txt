@@ -1,13 +1,13 @@
 
-PASS document.images should contain all HTML img elements 
-PASS img with id 
-PASS img with name 
-PASS img with id and name 
-PASS Two img elements with the same id 
-PASS Two img elements with the same name 
-PASS Unknown name should not be in the collection 
-PASS Foreign element should not be in the collection 
-PASS Input elements should not be in the collection 
-PASS The empty string should not be in the collections 
-PASS Document.images should be a live collection 
-     
+PASS document.images should contain all HTML img elements
+PASS img with id
+PASS img with name
+PASS img with id and name
+PASS Two img elements with the same id
+PASS Two img elements with the same name
+PASS Unknown name should not be in the collection
+PASS Foreign element should not be in the collection
+PASS Input elements should not be in the collection
+PASS The empty string should not be in the collections
+PASS Document.images should be a live collection
+

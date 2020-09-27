@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: Removing src of defer script before it runs  
+PASS  scheduler: Removing src of defer script before it runs
 

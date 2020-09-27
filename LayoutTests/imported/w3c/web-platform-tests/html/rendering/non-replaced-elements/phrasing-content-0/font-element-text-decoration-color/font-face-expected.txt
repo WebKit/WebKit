@@ -1,7 +1,7 @@
 
-PASS font face attribute serif is correct 
-PASS font face attribute sans-serif is correct 
-PASS font face attribute cursive is correct 
-PASS font face attribute fantasy is correct 
-PASS font face attribute monospace is correct 
+PASS font face attribute serif is correct
+PASS font face attribute sans-serif is correct
+PASS font face attribute cursive is correct
+PASS font face attribute fantasy is correct
+PASS font face attribute monospace is correct
 

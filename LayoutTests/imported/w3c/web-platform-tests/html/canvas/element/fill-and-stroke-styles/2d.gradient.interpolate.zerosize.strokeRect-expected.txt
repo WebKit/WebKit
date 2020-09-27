@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.gradient.interpolate.zerosize.strokeRect 
+PASS Canvas test: 2d.gradient.interpolate.zerosize.strokeRect
 

@@ -1,5 +1,5 @@
 2d.path.clip.empty
 
 
-PASS OffscreenCanvas test: 2d.path.clip.empty 
+PASS OffscreenCanvas test: 2d.path.clip.empty
 

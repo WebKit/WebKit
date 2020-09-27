@@ -1,7 +1,7 @@
 
 FAIL TextTrack.activeCues, empty list assert_not_equals: t2.activeCues should not be null got disallowed value null
-PASS TextTrack.activeCues, after addCue() 
-PASS TextTrack.activeCues, different modes 
+PASS TextTrack.activeCues, after addCue()
+PASS TextTrack.activeCues, different modes
 FAIL TextTrack.activeCues, video loading assert_equals: t1.activeCues.length before the video has started playing expected 0 but got 1
 FAIL TextTrack.activeCues, video playing assert_unreached: Reached unreachable code
 FAIL TextTrack.activeCues, adding cue during playback assert_unreached: Reached unreachable code

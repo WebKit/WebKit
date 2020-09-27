@@ -1,4 +1,4 @@
 
 
-PASS Test that images with loading='lazy' under multicol load once they enter the viewport. 
+PASS Test that images with loading='lazy' under multicol load once they enter the viewport.
 

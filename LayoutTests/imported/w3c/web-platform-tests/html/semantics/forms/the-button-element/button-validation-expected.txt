@@ -1,8 +1,8 @@
 
-PASS missing type attribute 
-PASS submit type attribute 
-PASS reset type attribute 
-PASS button type attribute 
-PASS historical menu type attribute 
-PASS invalid type attribute 
+PASS missing type attribute
+PASS submit type attribute
+PASS reset type attribute
+PASS button type attribute
+PASS historical menu type attribute
+PASS invalid type attribute
 button button button button button button

@@ -1,5 +1,5 @@
 
-PASS DOMParser 
-PASS createHTMLDocument 
-PASS <template> 
+PASS DOMParser
+PASS createHTMLDocument
+PASS <template>
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Pattern fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged. 
+PASS Pattern fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged.
 

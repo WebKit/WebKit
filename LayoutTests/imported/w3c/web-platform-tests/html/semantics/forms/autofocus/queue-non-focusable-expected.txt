@@ -1,4 +1,4 @@
- 
+
 
 FAIL If the first autofocus element is not focusable, but becomes focusable before a frame, it should be focused. assert_equals: expected Element node <textarea autofocus=""></textarea> but got Element node <select autofocus=""></select>
 

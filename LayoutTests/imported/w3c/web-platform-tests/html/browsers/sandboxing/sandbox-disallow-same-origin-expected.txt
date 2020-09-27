@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Blocked script execution in 'http://localhost:8800/html/browser
 Access to sandbox iframe
 
 
-PASS Access to sandbox iframe is disallowed 
+PASS Access to sandbox iframe is disallowed
 

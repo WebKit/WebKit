@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS toDataURL with JPEG uses the quality parameter 
+PASS toDataURL with JPEG uses the quality parameter
 

@@ -3,5 +3,5 @@
 createImageData(sw, sh) takes the absolute magnitude of the size arguments
 
 
-PASS createImageData(sw, sh) takes the absolute magnitude of the size arguments 
+PASS createImageData(sw, sh) takes the absolute magnitude of the size arguments
 

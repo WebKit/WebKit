@@ -1,7 +1,7 @@
 
-PASS No plugins 
-PASS One plugin 
-PASS Two plugins 
-PASS Document.embeds should be a live collection 
-PASS Document.plugins should be a live collection 
+PASS No plugins
+PASS One plugin
+PASS Two plugins
+PASS Document.embeds should be a live collection
+PASS Document.plugins should be a live collection
 

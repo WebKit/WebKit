@@ -3,5 +3,5 @@
 Default lineWidth strokes are affected by scale transformations
 
 
-PASS Default lineWidth strokes are affected by scale transformations 
+PASS Default lineWidth strokes are affected by scale transformations
 

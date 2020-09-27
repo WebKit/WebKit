@@ -5,5 +5,5 @@ A user agent must not consider the types text/plain and application/octet-stream
 
 Running test...
 
-PASS A user agent must not consider the type text/plain as having a registered plugin. 
+PASS A user agent must not consider the type text/plain as having a registered plugin.
 

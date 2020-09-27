@@ -1,8 +1,8 @@
 
-PASS Setting audio.volume to NaN should throw a TypeError 
-PASS Setting audio.volume to Infinity should throw a TypeError 
-PASS Setting audio.volume to -Infinity should throw a TypeError 
-PASS Setting video.volume to NaN should throw a TypeError 
-PASS Setting video.volume to Infinity should throw a TypeError 
-PASS Setting video.volume to -Infinity should throw a TypeError 
+PASS Setting audio.volume to NaN should throw a TypeError
+PASS Setting audio.volume to Infinity should throw a TypeError
+PASS Setting audio.volume to -Infinity should throw a TypeError
+PASS Setting video.volume to NaN should throw a TypeError
+PASS Setting video.volume to Infinity should throw a TypeError
+PASS Setting video.volume to -Infinity should throw a TypeError
 

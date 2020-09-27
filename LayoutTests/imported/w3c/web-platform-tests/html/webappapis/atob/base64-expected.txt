@@ -1,382 +1,382 @@
 
-PASS btoa("עברית") must raise INVALID_CHARACTER_ERR 
-PASS btoa("") == "" 
-PASS btoa("ab") == "YWI=" 
-PASS btoa("abc") == "YWJj" 
-PASS btoa("abcd") == "YWJjZA==" 
-PASS btoa("abcde") == "YWJjZGU=" 
-PASS btoa("ÿÿÀ") == "///A" 
-PASS btoa("\0a") == "AGE=" 
-PASS btoa("a\0b") == "YQBi" 
-PASS btoa(undefined) == "dW5kZWZpbmVk" 
-PASS btoa(null) == "bnVsbA==" 
-PASS btoa(7) == "Nw==" 
-PASS btoa(12) == "MTI=" 
-PASS btoa(1.5) == "MS41" 
-PASS btoa(true) == "dHJ1ZQ==" 
-PASS btoa(false) == "ZmFsc2U=" 
-PASS btoa(NaN) == "TmFO" 
-PASS btoa(Infinity) == "SW5maW5pdHk=" 
-PASS btoa(-Infinity) == "LUluZmluaXR5" 
-PASS btoa(0) == "MA==" 
-PASS btoa(-0) == "MA==" 
-PASS btoa(object "foo") == "Zm9v" 
-PASS btoa("\0") == "AA==" 
-PASS btoa("\x01") == "AQ==" 
-PASS btoa("\x02") == "Ag==" 
-PASS btoa("\x03") == "Aw==" 
-PASS btoa("\x04") == "BA==" 
-PASS btoa("\x05") == "BQ==" 
-PASS btoa("\x06") == "Bg==" 
-PASS btoa("\x07") == "Bw==" 
-PASS btoa("\b") == "CA==" 
-PASS btoa("\t") == "CQ==" 
-PASS btoa("\n") == "Cg==" 
-PASS btoa("\v") == "Cw==" 
-PASS btoa("\f") == "DA==" 
-PASS btoa("\r") == "DQ==" 
-PASS btoa("\x0e") == "Dg==" 
-PASS btoa("\x0f") == "Dw==" 
-PASS btoa("\x10") == "EA==" 
-PASS btoa("\x11") == "EQ==" 
-PASS btoa("\x12") == "Eg==" 
-PASS btoa("\x13") == "Ew==" 
-PASS btoa("\x14") == "FA==" 
-PASS btoa("\x15") == "FQ==" 
-PASS btoa("\x16") == "Fg==" 
-PASS btoa("\x17") == "Fw==" 
-PASS btoa("\x18") == "GA==" 
-PASS btoa("\x19") == "GQ==" 
-PASS btoa("\x1a") == "Gg==" 
-PASS btoa("\x1b") == "Gw==" 
-PASS btoa("\x1c") == "HA==" 
-PASS btoa("\x1d") == "HQ==" 
-PASS btoa("\x1e") == "Hg==" 
-PASS btoa("\x1f") == "Hw==" 
-PASS btoa(" ") == "IA==" 
-PASS btoa("!") == "IQ==" 
-PASS btoa("\"") == "Ig==" 
-PASS btoa("#") == "Iw==" 
-PASS btoa("$") == "JA==" 
-PASS btoa("%") == "JQ==" 
-PASS btoa("&") == "Jg==" 
-PASS btoa("'") == "Jw==" 
-PASS btoa("(") == "KA==" 
-PASS btoa(")") == "KQ==" 
-PASS btoa("*") == "Kg==" 
-PASS btoa("+") == "Kw==" 
-PASS btoa(",") == "LA==" 
-PASS btoa("-") == "LQ==" 
-PASS btoa(".") == "Lg==" 
-PASS btoa("/") == "Lw==" 
-PASS btoa("0") == "MA==" 
-PASS btoa("1") == "MQ==" 
-PASS btoa("2") == "Mg==" 
-PASS btoa("3") == "Mw==" 
-PASS btoa("4") == "NA==" 
-PASS btoa("5") == "NQ==" 
-PASS btoa("6") == "Ng==" 
-PASS btoa("7") == "Nw==" 
-PASS btoa("8") == "OA==" 
-PASS btoa("9") == "OQ==" 
-PASS btoa(":") == "Og==" 
-PASS btoa(";") == "Ow==" 
-PASS btoa("<") == "PA==" 
-PASS btoa("=") == "PQ==" 
-PASS btoa(">") == "Pg==" 
-PASS btoa("?") == "Pw==" 
-PASS btoa("@") == "QA==" 
-PASS btoa("A") == "QQ==" 
-PASS btoa("B") == "Qg==" 
-PASS btoa("C") == "Qw==" 
-PASS btoa("D") == "RA==" 
-PASS btoa("E") == "RQ==" 
-PASS btoa("F") == "Rg==" 
-PASS btoa("G") == "Rw==" 
-PASS btoa("H") == "SA==" 
-PASS btoa("I") == "SQ==" 
-PASS btoa("J") == "Sg==" 
-PASS btoa("K") == "Sw==" 
-PASS btoa("L") == "TA==" 
-PASS btoa("M") == "TQ==" 
-PASS btoa("N") == "Tg==" 
-PASS btoa("O") == "Tw==" 
-PASS btoa("P") == "UA==" 
-PASS btoa("Q") == "UQ==" 
-PASS btoa("R") == "Ug==" 
-PASS btoa("S") == "Uw==" 
-PASS btoa("T") == "VA==" 
-PASS btoa("U") == "VQ==" 
-PASS btoa("V") == "Vg==" 
-PASS btoa("W") == "Vw==" 
-PASS btoa("X") == "WA==" 
-PASS btoa("Y") == "WQ==" 
-PASS btoa("Z") == "Wg==" 
-PASS btoa("[") == "Ww==" 
-PASS btoa("\\") == "XA==" 
-PASS btoa("]") == "XQ==" 
-PASS btoa("^") == "Xg==" 
-PASS btoa("_") == "Xw==" 
-PASS btoa("`") == "YA==" 
-PASS btoa("a") == "YQ==" 
-PASS btoa("b") == "Yg==" 
-PASS btoa("c") == "Yw==" 
-PASS btoa("d") == "ZA==" 
-PASS btoa("e") == "ZQ==" 
-PASS btoa("f") == "Zg==" 
-PASS btoa("g") == "Zw==" 
-PASS btoa("h") == "aA==" 
-PASS btoa("i") == "aQ==" 
-PASS btoa("j") == "ag==" 
-PASS btoa("k") == "aw==" 
-PASS btoa("l") == "bA==" 
-PASS btoa("m") == "bQ==" 
-PASS btoa("n") == "bg==" 
-PASS btoa("o") == "bw==" 
-PASS btoa("p") == "cA==" 
-PASS btoa("q") == "cQ==" 
-PASS btoa("r") == "cg==" 
-PASS btoa("s") == "cw==" 
-PASS btoa("t") == "dA==" 
-PASS btoa("u") == "dQ==" 
-PASS btoa("v") == "dg==" 
-PASS btoa("w") == "dw==" 
-PASS btoa("x") == "eA==" 
-PASS btoa("y") == "eQ==" 
-PASS btoa("z") == "eg==" 
-PASS btoa("{") == "ew==" 
-PASS btoa("|") == "fA==" 
-PASS btoa("}") == "fQ==" 
-PASS btoa("~") == "fg==" 
-PASS btoa("") == "fw==" 
-PASS btoa("") == "gA==" 
-PASS btoa("") == "gQ==" 
-PASS btoa("") == "gg==" 
-PASS btoa("") == "gw==" 
-PASS btoa("") == "hA==" 
-PASS btoa("") == "hQ==" 
-PASS btoa("") == "hg==" 
-PASS btoa("") == "hw==" 
-PASS btoa("") == "iA==" 
-PASS btoa("") == "iQ==" 
-PASS btoa("") == "ig==" 
-PASS btoa("") == "iw==" 
-PASS btoa("") == "jA==" 
-PASS btoa("") == "jQ==" 
-PASS btoa("") == "jg==" 
-PASS btoa("") == "jw==" 
-PASS btoa("") == "kA==" 
-PASS btoa("") == "kQ==" 
-PASS btoa("") == "kg==" 
-PASS btoa("") == "kw==" 
-PASS btoa("") == "lA==" 
-PASS btoa("") == "lQ==" 
-PASS btoa("") == "lg==" 
-PASS btoa("") == "lw==" 
-PASS btoa("") == "mA==" 
-PASS btoa("") == "mQ==" 
-PASS btoa("") == "mg==" 
-PASS btoa("") == "mw==" 
-PASS btoa("") == "nA==" 
-PASS btoa("") == "nQ==" 
-PASS btoa("") == "ng==" 
-PASS btoa("") == "nw==" 
-PASS btoa(" ") == "oA==" 
-PASS btoa("¡") == "oQ==" 
-PASS btoa("¢") == "og==" 
-PASS btoa("£") == "ow==" 
-PASS btoa("¤") == "pA==" 
-PASS btoa("¥") == "pQ==" 
-PASS btoa("¦") == "pg==" 
-PASS btoa("§") == "pw==" 
-PASS btoa("¨") == "qA==" 
-PASS btoa("©") == "qQ==" 
-PASS btoa("ª") == "qg==" 
-PASS btoa("«") == "qw==" 
-PASS btoa("¬") == "rA==" 
-PASS btoa("­") == "rQ==" 
-PASS btoa("®") == "rg==" 
-PASS btoa("¯") == "rw==" 
-PASS btoa("°") == "sA==" 
-PASS btoa("±") == "sQ==" 
-PASS btoa("²") == "sg==" 
-PASS btoa("³") == "sw==" 
-PASS btoa("´") == "tA==" 
-PASS btoa("µ") == "tQ==" 
-PASS btoa("¶") == "tg==" 
-PASS btoa("·") == "tw==" 
-PASS btoa("¸") == "uA==" 
-PASS btoa("¹") == "uQ==" 
-PASS btoa("º") == "ug==" 
-PASS btoa("»") == "uw==" 
-PASS btoa("¼") == "vA==" 
-PASS btoa("½") == "vQ==" 
-PASS btoa("¾") == "vg==" 
-PASS btoa("¿") == "vw==" 
-PASS btoa("À") == "wA==" 
-PASS btoa("Á") == "wQ==" 
-PASS btoa("Â") == "wg==" 
-PASS btoa("Ã") == "ww==" 
-PASS btoa("Ä") == "xA==" 
-PASS btoa("Å") == "xQ==" 
-PASS btoa("Æ") == "xg==" 
-PASS btoa("Ç") == "xw==" 
-PASS btoa("È") == "yA==" 
-PASS btoa("É") == "yQ==" 
-PASS btoa("Ê") == "yg==" 
-PASS btoa("Ë") == "yw==" 
-PASS btoa("Ì") == "zA==" 
-PASS btoa("Í") == "zQ==" 
-PASS btoa("Î") == "zg==" 
-PASS btoa("Ï") == "zw==" 
-PASS btoa("Ð") == "0A==" 
-PASS btoa("Ñ") == "0Q==" 
-PASS btoa("Ò") == "0g==" 
-PASS btoa("Ó") == "0w==" 
-PASS btoa("Ô") == "1A==" 
-PASS btoa("Õ") == "1Q==" 
-PASS btoa("Ö") == "1g==" 
-PASS btoa("×") == "1w==" 
-PASS btoa("Ø") == "2A==" 
-PASS btoa("Ù") == "2Q==" 
-PASS btoa("Ú") == "2g==" 
-PASS btoa("Û") == "2w==" 
-PASS btoa("Ü") == "3A==" 
-PASS btoa("Ý") == "3Q==" 
-PASS btoa("Þ") == "3g==" 
-PASS btoa("ß") == "3w==" 
-PASS btoa("à") == "4A==" 
-PASS btoa("á") == "4Q==" 
-PASS btoa("â") == "4g==" 
-PASS btoa("ã") == "4w==" 
-PASS btoa("ä") == "5A==" 
-PASS btoa("å") == "5Q==" 
-PASS btoa("æ") == "5g==" 
-PASS btoa("ç") == "5w==" 
-PASS btoa("è") == "6A==" 
-PASS btoa("é") == "6Q==" 
-PASS btoa("ê") == "6g==" 
-PASS btoa("ë") == "6w==" 
-PASS btoa("ì") == "7A==" 
-PASS btoa("í") == "7Q==" 
-PASS btoa("î") == "7g==" 
-PASS btoa("ï") == "7w==" 
-PASS btoa("ð") == "8A==" 
-PASS btoa("ñ") == "8Q==" 
-PASS btoa("ò") == "8g==" 
-PASS btoa("ó") == "8w==" 
-PASS btoa("ô") == "9A==" 
-PASS btoa("õ") == "9Q==" 
-PASS btoa("ö") == "9g==" 
-PASS btoa("÷") == "9w==" 
-PASS btoa("ø") == "+A==" 
-PASS btoa("ù") == "+Q==" 
-PASS btoa("ú") == "+g==" 
-PASS btoa("û") == "+w==" 
-PASS btoa("ü") == "/A==" 
-PASS btoa("ý") == "/Q==" 
-PASS btoa("þ") == "/g==" 
-PASS btoa("ÿ") == "/w==" 
-PASS btoa("Ā") must raise INVALID_CHARACTER_ERR 
-PASS btoa("ā") must raise INVALID_CHARACTER_ERR 
-PASS btoa("✐") must raise INVALID_CHARACTER_ERR 
-PASS btoa("\ufffe") must raise INVALID_CHARACTER_ERR 
-PASS btoa("\uffff") must raise INVALID_CHARACTER_ERR 
-PASS btoa("𐀀") must raise INVALID_CHARACTER_ERR 
-PASS btoa(first 256 code points concatenated) 
-PASS atob() setup. 
-PASS atob("") 
-PASS atob("abcd") 
-PASS atob(" abcd") 
-PASS atob("abcd ") 
-PASS atob(" abcd===") 
-PASS atob("abcd=== ") 
-PASS atob("abcd ===") 
-PASS atob("a") 
-PASS atob("ab") 
-PASS atob("abc") 
-PASS atob("abcde") 
-PASS atob("𐀀") 
-PASS atob("=") 
-PASS atob("==") 
-PASS atob("===") 
-PASS atob("====") 
-PASS atob("=====") 
-PASS atob("a=") 
-PASS atob("a==") 
-PASS atob("a===") 
-PASS atob("a====") 
-PASS atob("a=====") 
-PASS atob("ab=") 
-PASS atob("ab==") 
-PASS atob("ab===") 
-PASS atob("ab====") 
-PASS atob("ab=====") 
-PASS atob("abc=") 
-PASS atob("abc==") 
-PASS atob("abc===") 
-PASS atob("abc====") 
-PASS atob("abc=====") 
-PASS atob("abcd=") 
-PASS atob("abcd==") 
-PASS atob("abcd===") 
-PASS atob("abcd====") 
-PASS atob("abcd=====") 
-PASS atob("abcde=") 
-PASS atob("abcde==") 
-PASS atob("abcde===") 
-PASS atob("abcde====") 
-PASS atob("abcde=====") 
-PASS atob("=a") 
-PASS atob("=a=") 
-PASS atob("a=b") 
-PASS atob("a=b=") 
-PASS atob("ab=c") 
-PASS atob("ab=c=") 
-PASS atob("abc=d") 
-PASS atob("abc=d=") 
-PASS atob("ab\vcd") 
-PASS atob("ab　cd") 
-PASS atob("ab、cd") 
-PASS atob("ab\tcd") 
-PASS atob("ab\ncd") 
-PASS atob("ab\fcd") 
-PASS atob("ab\rcd") 
-PASS atob("ab cd") 
-PASS atob("ab cd") 
-PASS atob("ab\t\n\f\r cd") 
-PASS atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") 
-PASS atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") 
-PASS atob("A") 
-PASS atob("/A") 
-PASS atob("//A") 
-PASS atob("///A") 
-PASS atob("////A") 
-PASS atob("/") 
-PASS atob("A/") 
-PASS atob("AA/") 
-PASS atob("AAAA/") 
-PASS atob("AAA/") 
-PASS atob("\0nonsense") 
-PASS atob("abcd\0nonsense") 
-PASS atob("YQ") 
-PASS atob("YR") 
-PASS atob("~~") 
-PASS atob("..") 
-PASS atob("--") 
-PASS atob("__") 
-PASS atob(undefined) 
-PASS atob(null) 
-PASS atob(7) 
-PASS atob(12) 
-PASS atob(1.5) 
-PASS atob(true) 
-PASS atob(false) 
-PASS atob(NaN) 
-PASS atob(Infinity) 
-PASS atob(-Infinity) 
-PASS atob(0) 
-PASS atob(-0) 
-PASS atob(object "foo") 
-PASS atob(object "abcd") 
+PASS btoa("עברית") must raise INVALID_CHARACTER_ERR
+PASS btoa("") == ""
+PASS btoa("ab") == "YWI="
+PASS btoa("abc") == "YWJj"
+PASS btoa("abcd") == "YWJjZA=="
+PASS btoa("abcde") == "YWJjZGU="
+PASS btoa("ÿÿÀ") == "///A"
+PASS btoa("\0a") == "AGE="
+PASS btoa("a\0b") == "YQBi"
+PASS btoa(undefined) == "dW5kZWZpbmVk"
+PASS btoa(null) == "bnVsbA=="
+PASS btoa(7) == "Nw=="
+PASS btoa(12) == "MTI="
+PASS btoa(1.5) == "MS41"
+PASS btoa(true) == "dHJ1ZQ=="
+PASS btoa(false) == "ZmFsc2U="
+PASS btoa(NaN) == "TmFO"
+PASS btoa(Infinity) == "SW5maW5pdHk="
+PASS btoa(-Infinity) == "LUluZmluaXR5"
+PASS btoa(0) == "MA=="
+PASS btoa(-0) == "MA=="
+PASS btoa(object "foo") == "Zm9v"
+PASS btoa("\0") == "AA=="
+PASS btoa("\x01") == "AQ=="
+PASS btoa("\x02") == "Ag=="
+PASS btoa("\x03") == "Aw=="
+PASS btoa("\x04") == "BA=="
+PASS btoa("\x05") == "BQ=="
+PASS btoa("\x06") == "Bg=="
+PASS btoa("\x07") == "Bw=="
+PASS btoa("\b") == "CA=="
+PASS btoa("\t") == "CQ=="
+PASS btoa("\n") == "Cg=="
+PASS btoa("\v") == "Cw=="
+PASS btoa("\f") == "DA=="
+PASS btoa("\r") == "DQ=="
+PASS btoa("\x0e") == "Dg=="
+PASS btoa("\x0f") == "Dw=="
+PASS btoa("\x10") == "EA=="
+PASS btoa("\x11") == "EQ=="
+PASS btoa("\x12") == "Eg=="
+PASS btoa("\x13") == "Ew=="
+PASS btoa("\x14") == "FA=="
+PASS btoa("\x15") == "FQ=="
+PASS btoa("\x16") == "Fg=="
+PASS btoa("\x17") == "Fw=="
+PASS btoa("\x18") == "GA=="
+PASS btoa("\x19") == "GQ=="
+PASS btoa("\x1a") == "Gg=="
+PASS btoa("\x1b") == "Gw=="
+PASS btoa("\x1c") == "HA=="
+PASS btoa("\x1d") == "HQ=="
+PASS btoa("\x1e") == "Hg=="
+PASS btoa("\x1f") == "Hw=="
+PASS btoa(" ") == "IA=="
+PASS btoa("!") == "IQ=="
+PASS btoa("\"") == "Ig=="
+PASS btoa("#") == "Iw=="
+PASS btoa("$") == "JA=="
+PASS btoa("%") == "JQ=="
+PASS btoa("&") == "Jg=="
+PASS btoa("'") == "Jw=="
+PASS btoa("(") == "KA=="
+PASS btoa(")") == "KQ=="
+PASS btoa("*") == "Kg=="
+PASS btoa("+") == "Kw=="
+PASS btoa(",") == "LA=="
+PASS btoa("-") == "LQ=="
+PASS btoa(".") == "Lg=="
+PASS btoa("/") == "Lw=="
+PASS btoa("0") == "MA=="
+PASS btoa("1") == "MQ=="
+PASS btoa("2") == "Mg=="
+PASS btoa("3") == "Mw=="
+PASS btoa("4") == "NA=="
+PASS btoa("5") == "NQ=="
+PASS btoa("6") == "Ng=="
+PASS btoa("7") == "Nw=="
+PASS btoa("8") == "OA=="
+PASS btoa("9") == "OQ=="
+PASS btoa(":") == "Og=="
+PASS btoa(";") == "Ow=="
+PASS btoa("<") == "PA=="
+PASS btoa("=") == "PQ=="
+PASS btoa(">") == "Pg=="
+PASS btoa("?") == "Pw=="
+PASS btoa("@") == "QA=="
+PASS btoa("A") == "QQ=="
+PASS btoa("B") == "Qg=="
+PASS btoa("C") == "Qw=="
+PASS btoa("D") == "RA=="
+PASS btoa("E") == "RQ=="
+PASS btoa("F") == "Rg=="
+PASS btoa("G") == "Rw=="
+PASS btoa("H") == "SA=="
+PASS btoa("I") == "SQ=="
+PASS btoa("J") == "Sg=="
+PASS btoa("K") == "Sw=="
+PASS btoa("L") == "TA=="
+PASS btoa("M") == "TQ=="
+PASS btoa("N") == "Tg=="
+PASS btoa("O") == "Tw=="
+PASS btoa("P") == "UA=="
+PASS btoa("Q") == "UQ=="
+PASS btoa("R") == "Ug=="
+PASS btoa("S") == "Uw=="
+PASS btoa("T") == "VA=="
+PASS btoa("U") == "VQ=="
+PASS btoa("V") == "Vg=="
+PASS btoa("W") == "Vw=="
+PASS btoa("X") == "WA=="
+PASS btoa("Y") == "WQ=="
+PASS btoa("Z") == "Wg=="
+PASS btoa("[") == "Ww=="
+PASS btoa("\\") == "XA=="
+PASS btoa("]") == "XQ=="
+PASS btoa("^") == "Xg=="
+PASS btoa("_") == "Xw=="
+PASS btoa("`") == "YA=="
+PASS btoa("a") == "YQ=="
+PASS btoa("b") == "Yg=="
+PASS btoa("c") == "Yw=="
+PASS btoa("d") == "ZA=="
+PASS btoa("e") == "ZQ=="
+PASS btoa("f") == "Zg=="
+PASS btoa("g") == "Zw=="
+PASS btoa("h") == "aA=="
+PASS btoa("i") == "aQ=="
+PASS btoa("j") == "ag=="
+PASS btoa("k") == "aw=="
+PASS btoa("l") == "bA=="
+PASS btoa("m") == "bQ=="
+PASS btoa("n") == "bg=="
+PASS btoa("o") == "bw=="
+PASS btoa("p") == "cA=="
+PASS btoa("q") == "cQ=="
+PASS btoa("r") == "cg=="
+PASS btoa("s") == "cw=="
+PASS btoa("t") == "dA=="
+PASS btoa("u") == "dQ=="
+PASS btoa("v") == "dg=="
+PASS btoa("w") == "dw=="
+PASS btoa("x") == "eA=="
+PASS btoa("y") == "eQ=="
+PASS btoa("z") == "eg=="
+PASS btoa("{") == "ew=="
+PASS btoa("|") == "fA=="
+PASS btoa("}") == "fQ=="
+PASS btoa("~") == "fg=="
+PASS btoa("") == "fw=="
+PASS btoa("") == "gA=="
+PASS btoa("") == "gQ=="
+PASS btoa("") == "gg=="
+PASS btoa("") == "gw=="
+PASS btoa("") == "hA=="
+PASS btoa("") == "hQ=="
+PASS btoa("") == "hg=="
+PASS btoa("") == "hw=="
+PASS btoa("") == "iA=="
+PASS btoa("") == "iQ=="
+PASS btoa("") == "ig=="
+PASS btoa("") == "iw=="
+PASS btoa("") == "jA=="
+PASS btoa("") == "jQ=="
+PASS btoa("") == "jg=="
+PASS btoa("") == "jw=="
+PASS btoa("") == "kA=="
+PASS btoa("") == "kQ=="
+PASS btoa("") == "kg=="
+PASS btoa("") == "kw=="
+PASS btoa("") == "lA=="
+PASS btoa("") == "lQ=="
+PASS btoa("") == "lg=="
+PASS btoa("") == "lw=="
+PASS btoa("") == "mA=="
+PASS btoa("") == "mQ=="
+PASS btoa("") == "mg=="
+PASS btoa("") == "mw=="
+PASS btoa("") == "nA=="
+PASS btoa("") == "nQ=="
+PASS btoa("") == "ng=="
+PASS btoa("") == "nw=="
+PASS btoa(" ") == "oA=="
+PASS btoa("¡") == "oQ=="
+PASS btoa("¢") == "og=="
+PASS btoa("£") == "ow=="
+PASS btoa("¤") == "pA=="
+PASS btoa("¥") == "pQ=="
+PASS btoa("¦") == "pg=="
+PASS btoa("§") == "pw=="
+PASS btoa("¨") == "qA=="
+PASS btoa("©") == "qQ=="
+PASS btoa("ª") == "qg=="
+PASS btoa("«") == "qw=="
+PASS btoa("¬") == "rA=="
+PASS btoa("­") == "rQ=="
+PASS btoa("®") == "rg=="
+PASS btoa("¯") == "rw=="
+PASS btoa("°") == "sA=="
+PASS btoa("±") == "sQ=="
+PASS btoa("²") == "sg=="
+PASS btoa("³") == "sw=="
+PASS btoa("´") == "tA=="
+PASS btoa("µ") == "tQ=="
+PASS btoa("¶") == "tg=="
+PASS btoa("·") == "tw=="
+PASS btoa("¸") == "uA=="
+PASS btoa("¹") == "uQ=="
+PASS btoa("º") == "ug=="
+PASS btoa("»") == "uw=="
+PASS btoa("¼") == "vA=="
+PASS btoa("½") == "vQ=="
+PASS btoa("¾") == "vg=="
+PASS btoa("¿") == "vw=="
+PASS btoa("À") == "wA=="
+PASS btoa("Á") == "wQ=="
+PASS btoa("Â") == "wg=="
+PASS btoa("Ã") == "ww=="
+PASS btoa("Ä") == "xA=="
+PASS btoa("Å") == "xQ=="
+PASS btoa("Æ") == "xg=="
+PASS btoa("Ç") == "xw=="
+PASS btoa("È") == "yA=="
+PASS btoa("É") == "yQ=="
+PASS btoa("Ê") == "yg=="
+PASS btoa("Ë") == "yw=="
+PASS btoa("Ì") == "zA=="
+PASS btoa("Í") == "zQ=="
+PASS btoa("Î") == "zg=="
+PASS btoa("Ï") == "zw=="
+PASS btoa("Ð") == "0A=="
+PASS btoa("Ñ") == "0Q=="
+PASS btoa("Ò") == "0g=="
+PASS btoa("Ó") == "0w=="
+PASS btoa("Ô") == "1A=="
+PASS btoa("Õ") == "1Q=="
+PASS btoa("Ö") == "1g=="
+PASS btoa("×") == "1w=="
+PASS btoa("Ø") == "2A=="
+PASS btoa("Ù") == "2Q=="
+PASS btoa("Ú") == "2g=="
+PASS btoa("Û") == "2w=="
+PASS btoa("Ü") == "3A=="
+PASS btoa("Ý") == "3Q=="
+PASS btoa("Þ") == "3g=="
+PASS btoa("ß") == "3w=="
+PASS btoa("à") == "4A=="
+PASS btoa("á") == "4Q=="
+PASS btoa("â") == "4g=="
+PASS btoa("ã") == "4w=="
+PASS btoa("ä") == "5A=="
+PASS btoa("å") == "5Q=="
+PASS btoa("æ") == "5g=="
+PASS btoa("ç") == "5w=="
+PASS btoa("è") == "6A=="
+PASS btoa("é") == "6Q=="
+PASS btoa("ê") == "6g=="
+PASS btoa("ë") == "6w=="
+PASS btoa("ì") == "7A=="
+PASS btoa("í") == "7Q=="
+PASS btoa("î") == "7g=="
+PASS btoa("ï") == "7w=="
+PASS btoa("ð") == "8A=="
+PASS btoa("ñ") == "8Q=="
+PASS btoa("ò") == "8g=="
+PASS btoa("ó") == "8w=="
+PASS btoa("ô") == "9A=="
+PASS btoa("õ") == "9Q=="
+PASS btoa("ö") == "9g=="
+PASS btoa("÷") == "9w=="
+PASS btoa("ø") == "+A=="
+PASS btoa("ù") == "+Q=="
+PASS btoa("ú") == "+g=="
+PASS btoa("û") == "+w=="
+PASS btoa("ü") == "/A=="
+PASS btoa("ý") == "/Q=="
+PASS btoa("þ") == "/g=="
+PASS btoa("ÿ") == "/w=="
+PASS btoa("Ā") must raise INVALID_CHARACTER_ERR
+PASS btoa("ā") must raise INVALID_CHARACTER_ERR
+PASS btoa("✐") must raise INVALID_CHARACTER_ERR
+PASS btoa("\ufffe") must raise INVALID_CHARACTER_ERR
+PASS btoa("\uffff") must raise INVALID_CHARACTER_ERR
+PASS btoa("𐀀") must raise INVALID_CHARACTER_ERR
+PASS btoa(first 256 code points concatenated)
+PASS atob() setup.
+PASS atob("")
+PASS atob("abcd")
+PASS atob(" abcd")
+PASS atob("abcd ")
+PASS atob(" abcd===")
+PASS atob("abcd=== ")
+PASS atob("abcd ===")
+PASS atob("a")
+PASS atob("ab")
+PASS atob("abc")
+PASS atob("abcde")
+PASS atob("𐀀")
+PASS atob("=")
+PASS atob("==")
+PASS atob("===")
+PASS atob("====")
+PASS atob("=====")
+PASS atob("a=")
+PASS atob("a==")
+PASS atob("a===")
+PASS atob("a====")
+PASS atob("a=====")
+PASS atob("ab=")
+PASS atob("ab==")
+PASS atob("ab===")
+PASS atob("ab====")
+PASS atob("ab=====")
+PASS atob("abc=")
+PASS atob("abc==")
+PASS atob("abc===")
+PASS atob("abc====")
+PASS atob("abc=====")
+PASS atob("abcd=")
+PASS atob("abcd==")
+PASS atob("abcd===")
+PASS atob("abcd====")
+PASS atob("abcd=====")
+PASS atob("abcde=")
+PASS atob("abcde==")
+PASS atob("abcde===")
+PASS atob("abcde====")
+PASS atob("abcde=====")
+PASS atob("=a")
+PASS atob("=a=")
+PASS atob("a=b")
+PASS atob("a=b=")
+PASS atob("ab=c")
+PASS atob("ab=c=")
+PASS atob("abc=d")
+PASS atob("abc=d=")
+PASS atob("ab\vcd")
+PASS atob("ab　cd")
+PASS atob("ab、cd")
+PASS atob("ab\tcd")
+PASS atob("ab\ncd")
+PASS atob("ab\fcd")
+PASS atob("ab\rcd")
+PASS atob("ab cd")
+PASS atob("ab cd")
+PASS atob("ab\t\n\f\r cd")
+PASS atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ")
+PASS atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ")
+PASS atob("A")
+PASS atob("/A")
+PASS atob("//A")
+PASS atob("///A")
+PASS atob("////A")
+PASS atob("/")
+PASS atob("A/")
+PASS atob("AA/")
+PASS atob("AAAA/")
+PASS atob("AAA/")
+PASS atob("\0nonsense")
+PASS atob("abcd\0nonsense")
+PASS atob("YQ")
+PASS atob("YR")
+PASS atob("~~")
+PASS atob("..")
+PASS atob("--")
+PASS atob("__")
+PASS atob(undefined)
+PASS atob(null)
+PASS atob(7)
+PASS atob(12)
+PASS atob(1.5)
+PASS atob(true)
+PASS atob(false)
+PASS atob(NaN)
+PASS atob(Infinity)
+PASS atob(-Infinity)
+PASS atob(0)
+PASS atob(-0)
+PASS atob(object "foo")
+PASS atob(object "abcd")
 

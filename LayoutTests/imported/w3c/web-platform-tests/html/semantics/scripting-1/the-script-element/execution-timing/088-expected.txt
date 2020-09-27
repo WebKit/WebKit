@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: multiple scripts with defer and async attributes 
+PASS  scheduler: multiple scripts with defer and async attributes
 

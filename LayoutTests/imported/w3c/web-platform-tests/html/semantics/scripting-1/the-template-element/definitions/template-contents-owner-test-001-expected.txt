@@ -1,4 +1,4 @@
 
-PASS Test the template contents owner document when enclosing document has no browsing content. Template element is created by createElement() 
-PASS Test the template contents owner document when enclosing document has no browsing content. Template element is created by innerHTML 
+PASS Test the template contents owner document when enclosing document has no browsing content. Template element is created by createElement()
+PASS Test the template contents owner document when enclosing document has no browsing content. Template element is created by innerHTML
 

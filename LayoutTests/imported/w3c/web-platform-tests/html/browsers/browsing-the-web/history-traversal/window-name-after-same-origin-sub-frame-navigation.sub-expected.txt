@@ -1,4 +1,4 @@
 
 
-PASS Test that the window name is correct 
+PASS Test that the window name is correct
 

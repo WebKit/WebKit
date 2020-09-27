@@ -1,9 +1,9 @@
 Nested caption
 
-PASS deleteCaption() delete only caption on table 
-PASS deleteCaption() returns undefined 
-PASS deleteCaption() 
-PASS deleteCaption() does not throw any exceptions when called on a table without a caption 
-PASS deleteCaption() does not delete captions in descendent tables 
-PASS deleteCaption() handles captions from different namespaces 
+PASS deleteCaption() delete only caption on table
+PASS deleteCaption() returns undefined
+PASS deleteCaption()
+PASS deleteCaption() does not throw any exceptions when called on a table without a caption
+PASS deleteCaption() does not delete captions in descendent tables
+PASS deleteCaption() handles captions from different namespaces
 

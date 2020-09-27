@@ -1,14 +1,14 @@
 
-PASS Resetting <input> by calling the reset() method 
-PASS Resetting <textarea> by calling the reset() method 
-PASS Resetting <output> by calling the reset() method 
-PASS Resetting <select> by calling the reset() method 
-PASS Resetting <input> by clicking the button in reset status 
-PASS Resetting <textarea> by clicking the button in reset status 
-PASS Resetting <output> by clicking the button in reset status 
-PASS Resetting <select> by clicking the button in reset status 
-PASS Resetting <input> by clicking the input in reset status 
-PASS Resetting <textarea> by clicking the input in reset status 
-PASS Resetting <output> by clicking the input in reset status 
-PASS Resetting <select> by clicking the input in reset status 
+PASS Resetting <input> by calling the reset() method
+PASS Resetting <textarea> by calling the reset() method
+PASS Resetting <output> by calling the reset() method
+PASS Resetting <select> by calling the reset() method
+PASS Resetting <input> by clicking the button in reset status
+PASS Resetting <textarea> by clicking the button in reset status
+PASS Resetting <output> by clicking the button in reset status
+PASS Resetting <select> by clicking the button in reset status
+PASS Resetting <input> by clicking the input in reset status
+PASS Resetting <textarea> by clicking the input in reset status
+PASS Resetting <output> by clicking the input in reset status
+PASS Resetting <select> by clicking the input in reset status
 

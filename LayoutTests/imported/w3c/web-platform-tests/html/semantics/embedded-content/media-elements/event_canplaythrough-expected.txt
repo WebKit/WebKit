@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - canplaythrough 
-PASS setting src attribute on autoplay audio should trigger canplaythrough event 
-PASS video events - canplaythrough 
-PASS setting src attribute on autoplay video should trigger canplaythrough event 
+
+PASS audio events - canplaythrough
+PASS setting src attribute on autoplay audio should trigger canplaythrough event
+PASS video events - canplaythrough
+PASS setting src attribute on autoplay video should trigger canplaythrough event
 

@@ -1,8 +1,8 @@
 
-PASS Check if the intial value of the video.volume is in the range 0.0 to 1.0 inclusive 
-PASS Check if video.volume is able to set to new value in the range 0.0 to 1.0 
-PASS Check if media.volume is able to set to new value 0.0 as silent 
-PASS Check if media.volume is able to set to new value 1.0 as loudest 
-PASS Check if media.volume is set to new value less than 0.0 that expecting an IndexSizeError exception is to be thrown 
-PASS Check if video.volume is set to new value greater than 1.0 that expecting an IndexSizeError exception is to be thrown 
+PASS Check if the intial value of the video.volume is in the range 0.0 to 1.0 inclusive
+PASS Check if video.volume is able to set to new value in the range 0.0 to 1.0
+PASS Check if media.volume is able to set to new value 0.0 as silent
+PASS Check if media.volume is able to set to new value 1.0 as loudest
+PASS Check if media.volume is set to new value less than 0.0 that expecting an IndexSizeError exception is to be thrown
+PASS Check if video.volume is set to new value greater than 1.0 that expecting an IndexSizeError exception is to be thrown
 

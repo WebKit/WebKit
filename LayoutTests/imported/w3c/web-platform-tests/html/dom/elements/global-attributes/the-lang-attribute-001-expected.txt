@@ -1,4 +1,4 @@
  
 
-PASS The browser will recognize a language declared in a lang attribute on the html tag. 
+PASS The browser will recognize a language declared in a lang attribute on the html tag.
 

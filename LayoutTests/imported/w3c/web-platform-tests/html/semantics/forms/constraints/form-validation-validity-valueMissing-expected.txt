@@ -1,53 +1,53 @@
 
-PASS [INPUT in TEXT status] The required attribute is not set 
-PASS [INPUT in TEXT status] The value is not empty and required is true 
-PASS [INPUT in TEXT status] The value is empty and required is true 
-PASS [INPUT in SEARCH status] The required attribute is not set 
-PASS [INPUT in SEARCH status] The value is not empty and required is true 
-PASS [INPUT in SEARCH status] The value is empty and required is true 
-PASS [INPUT in TEL status] The required attribute is not set 
-PASS [INPUT in TEL status] The value is not empty and required is true 
-PASS [INPUT in TEL status] The value is empty and required is true 
-PASS [INPUT in URL status] The required attribute is not set 
-PASS [INPUT in URL status] The value is not empty and required is true 
-PASS [INPUT in URL status] The value is empty and required is true 
-PASS [INPUT in EMAIL status] The required attribute is not set 
-PASS [INPUT in EMAIL status] The value is not empty and required is true 
-PASS [INPUT in EMAIL status] The value is empty and required is true 
-PASS [INPUT in PASSWORD status] The required attribute is not set 
-PASS [INPUT in PASSWORD status] The value is not empty and required is true 
-PASS [INPUT in PASSWORD status] The value is empty and required is true 
+PASS [INPUT in TEXT status] The required attribute is not set
+PASS [INPUT in TEXT status] The value is not empty and required is true
+PASS [INPUT in TEXT status] The value is empty and required is true
+PASS [INPUT in SEARCH status] The required attribute is not set
+PASS [INPUT in SEARCH status] The value is not empty and required is true
+PASS [INPUT in SEARCH status] The value is empty and required is true
+PASS [INPUT in TEL status] The required attribute is not set
+PASS [INPUT in TEL status] The value is not empty and required is true
+PASS [INPUT in TEL status] The value is empty and required is true
+PASS [INPUT in URL status] The required attribute is not set
+PASS [INPUT in URL status] The value is not empty and required is true
+PASS [INPUT in URL status] The value is empty and required is true
+PASS [INPUT in EMAIL status] The required attribute is not set
+PASS [INPUT in EMAIL status] The value is not empty and required is true
+PASS [INPUT in EMAIL status] The value is empty and required is true
+PASS [INPUT in PASSWORD status] The required attribute is not set
+PASS [INPUT in PASSWORD status] The value is not empty and required is true
+PASS [INPUT in PASSWORD status] The value is empty and required is true
 FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
 FAIL [INPUT in DATE status] The date type must be supported. assert_equals: The date type should be supported. expected "date" but got "text"
 FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: The month type should be supported. expected "month" but got "text"
 FAIL [INPUT in WEEK status] The week type must be supported. assert_equals: The week type should be supported. expected "week" but got "text"
 FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The time type should be supported. expected "time" but got "text"
-PASS [INPUT in NUMBER status] The required attribute is not set 
-PASS [INPUT in NUMBER status] Value is an integer with a leading symbol '+' 
-PASS [INPUT in NUMBER status] Value is a number with a '-' symbol 
-PASS [INPUT in NUMBER status] Value is a number in scientific notation form(e is in lowercase) 
-PASS [INPUT in NUMBER status] Value is a number in scientific notation form(E is in uppercase) 
-PASS [INPUT in NUMBER status] Value is -0 
-PASS [INPUT in NUMBER status] Value is a number with some white spaces 
-PASS [INPUT in NUMBER status] Value is Math.pow(2, 1024) 
-PASS [INPUT in NUMBER status] Value is Math.pow(-2, 1024) 
-PASS [INPUT in NUMBER status] Value is a string that cannot be converted to a number 
-PASS [INPUT in NUMBER status] The value attribute is empty string 
-PASS [INPUT in CHECKBOX status] The required attribute is not set 
-PASS [INPUT in CHECKBOX status] The checked attribute is true 
+PASS [INPUT in NUMBER status] The required attribute is not set
+PASS [INPUT in NUMBER status] Value is an integer with a leading symbol '+'
+PASS [INPUT in NUMBER status] Value is a number with a '-' symbol
+PASS [INPUT in NUMBER status] Value is a number in scientific notation form(e is in lowercase)
+PASS [INPUT in NUMBER status] Value is a number in scientific notation form(E is in uppercase)
+PASS [INPUT in NUMBER status] Value is -0
+PASS [INPUT in NUMBER status] Value is a number with some white spaces
+PASS [INPUT in NUMBER status] Value is Math.pow(2, 1024)
+PASS [INPUT in NUMBER status] Value is Math.pow(-2, 1024)
+PASS [INPUT in NUMBER status] Value is a string that cannot be converted to a number
+PASS [INPUT in NUMBER status] The value attribute is empty string
+PASS [INPUT in CHECKBOX status] The required attribute is not set
+PASS [INPUT in CHECKBOX status] The checked attribute is true
 FAIL [INPUT in CHECKBOX status] The checked attribute is false assert_true: The validity.valueMissing should be true, when control is disabled. expected true got false
-PASS [INPUT in RADIO status] The required attribute is not set 
-PASS [INPUT in RADIO status] The checked attribute is true 
+PASS [INPUT in RADIO status] The required attribute is not set
+PASS [INPUT in RADIO status] The checked attribute is true
 FAIL [INPUT in RADIO status] The checked attribute is false assert_true: The validity.valueMissing should be true. expected true got false
-PASS [INPUT in RADIO status] The checked attribute is false and the name attribute is empty 
-PASS [INPUT in FILE status] The required attribute is not set 
+PASS [INPUT in RADIO status] The checked attribute is false and the name attribute is empty
+PASS [INPUT in FILE status] The required attribute is not set
 FAIL [INPUT in FILE status] The Files attribute is null assert_true: The validity.valueMissing should be true, when control is disabled. expected true got false
-PASS [select]  The required attribute is not set 
-PASS [select]  Selected the option with value equals to 1 
+PASS [select]  The required attribute is not set
+PASS [select]  Selected the option with value equals to 1
 FAIL [select]  Selected the option with value equals to empty assert_true: The validity.valueMissing should be true, when control is disabled. expected true got false
-PASS [textarea]  The required attribute is not set 
-PASS [textarea]  The value is not empty 
-PASS [textarea]  The value is empty 
-PASS validationMessage should return empty string when willValidate is false and valueMissing is true 
+PASS [textarea]  The required attribute is not set
+PASS [textarea]  The value is not empty
+PASS [textarea]  The value is empty
+PASS validationMessage should return empty string when willValidate is false and valueMissing is true
 
 

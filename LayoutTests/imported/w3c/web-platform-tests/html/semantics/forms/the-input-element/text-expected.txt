@@ -1,22 +1,22 @@
 Text input element
 
 
-PASS Value returns the current value for text 
-PASS Setting value changes the current value for text 
-PASS Value sanitization algorithm should strip line breaks for text 
-PASS files attribute must return null for text 
-PASS valueAsDate attribute must return null for text 
-PASS valueAsNumber attribute must return NaN for text 
-PASS list attribute must return null for text 
-PASS stepDown does not apply for text 
-PASS stepUp does not apply for text 
-PASS Value returns the current value for search 
-PASS Setting value changes the current value for search 
-PASS Value sanitization algorithm should strip line breaks for search 
-PASS files attribute must return null for search 
-PASS valueAsDate attribute must return null for search 
-PASS valueAsNumber attribute must return NaN for search 
-PASS list attribute must return null for search 
-PASS stepDown does not apply for search 
-PASS stepUp does not apply for search 
+PASS Value returns the current value for text
+PASS Setting value changes the current value for text
+PASS Value sanitization algorithm should strip line breaks for text
+PASS files attribute must return null for text
+PASS valueAsDate attribute must return null for text
+PASS valueAsNumber attribute must return NaN for text
+PASS list attribute must return null for text
+PASS stepDown does not apply for text
+PASS stepUp does not apply for text
+PASS Value returns the current value for search
+PASS Setting value changes the current value for search
+PASS Value sanitization algorithm should strip line breaks for search
+PASS files attribute must return null for search
+PASS valueAsDate attribute must return null for search
+PASS valueAsNumber attribute must return NaN for search
+PASS list attribute must return null for search
+PASS stepDown does not apply for search
+PASS stepUp does not apply for search
 

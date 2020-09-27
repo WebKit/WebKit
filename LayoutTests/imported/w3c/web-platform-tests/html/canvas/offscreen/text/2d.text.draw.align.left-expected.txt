@@ -3,5 +3,5 @@
 textAlign left is the left of the first em square (not the bounding box)
 
 
-PASS textAlign left is the left of the first em square (not the bounding box) 
+PASS textAlign left is the left of the first em square (not the bounding box)
 

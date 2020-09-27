@@ -1,4 +1,4 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 
-PASS beforeunload and unload events do not fire after window.close() in script-uncloseable browsing context 
+PASS beforeunload and unload events do not fire after window.close() in script-uncloseable browsing context
 

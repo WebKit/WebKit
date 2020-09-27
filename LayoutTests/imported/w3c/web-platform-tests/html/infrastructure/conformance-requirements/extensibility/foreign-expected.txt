@@ -3,5 +3,5 @@ User agents must treat elements and attributes that they do not understand as se
 Foobar
 Running test...
 
-PASS foreign content 
+PASS foreign content
 

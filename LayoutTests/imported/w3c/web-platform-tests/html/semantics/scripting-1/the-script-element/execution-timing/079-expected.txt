@@ -1,4 +1,4 @@
 please wait...
 
-PASS  setting location to javascript URL from event handler  
+PASS  setting location to javascript URL from event handler
 

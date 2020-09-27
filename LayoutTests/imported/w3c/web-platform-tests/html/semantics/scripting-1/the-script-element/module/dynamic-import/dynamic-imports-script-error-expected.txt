@@ -1,13 +1,13 @@
 
-PASS import() must reject when there is a parse error 
-PASS import() must reject with the same error object for each import when there is a parse error 
-PASS import() must reject when there is a bad module specifier 
-PASS import() must reject with different error objects for each import when there is a bad module specifier 
-PASS import() must reject when there is a bad module specifier in a dependency 
-PASS import() must reject with the same error object for each import when there is a bad module specifier in a dependency 
-PASS import() must reject when there is a instantiation error 
+PASS import() must reject when there is a parse error
+PASS import() must reject with the same error object for each import when there is a parse error
+PASS import() must reject when there is a bad module specifier
+PASS import() must reject with different error objects for each import when there is a bad module specifier
+PASS import() must reject when there is a bad module specifier in a dependency
+PASS import() must reject with the same error object for each import when there is a bad module specifier in a dependency
+PASS import() must reject when there is a instantiation error
 FAIL import() must reject with different error objects for each import when there is a instantiation error assert_not_equals: The error objects must be different got disallowed value object "SyntaxError: Importing binding name 'default' cannot be resolved by star export entries."
-PASS import() must reject when there is a evaluation error 
+PASS import() must reject when there is a evaluation error
 FAIL import() must reject with the same error object for each import when there is a evaluation error assert_unreached: Should have rejected: It must reject the second time Reached unreachable code
-PASS import()ing a module with an evaluation error must stop evaluation 
+PASS import()ing a module with an evaluation error must stop evaluation
 

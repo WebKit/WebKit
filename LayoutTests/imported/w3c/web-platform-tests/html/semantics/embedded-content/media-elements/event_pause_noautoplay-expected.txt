@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - pause 
-PASS video events - pause 
-PASS calling play() then pause() on non-autoplay audio should trigger pause event 
-PASS calling play() then pause() on non-autoplay video should trigger pause event 
+
+PASS audio events - pause
+PASS video events - pause
+PASS calling play() then pause() on non-autoplay audio should trigger pause event
+PASS calling play() then pause() on non-autoplay video should trigger pause event
 

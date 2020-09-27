@@ -1,4 +1,4 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 
-PASS unload IDL attribute 
+PASS unload IDL attribute
 

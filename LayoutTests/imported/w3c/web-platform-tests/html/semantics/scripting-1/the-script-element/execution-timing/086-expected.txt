@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: async script and slow-loading async script 
+PASS  scheduler: async script and slow-loading async script
 

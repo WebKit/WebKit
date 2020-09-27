@@ -1,13 +1,13 @@
 
-PASS HTMLAnchorElement stringifier 
-PASS HTMLAnchorElement stringifier 1 
-PASS HTMLAnchorElement stringifier 2 
-PASS HTMLAnchorElement stringifier 3 
-PASS HTMLAnchorElement stringifier 4 
-PASS HTMLAnchorElement stringifier 5 
-PASS HTMLAnchorElement stringifier 6 
-PASS HTMLAnchorElement stringifier 7 
-PASS HTMLAnchorElement stringifier 8 
-PASS HTMLAnchorElement stringifier 9 
-PASS HTMLAnchorElement stringifier 10 
+PASS HTMLAnchorElement stringifier
+PASS HTMLAnchorElement stringifier 1
+PASS HTMLAnchorElement stringifier 2
+PASS HTMLAnchorElement stringifier 3
+PASS HTMLAnchorElement stringifier 4
+PASS HTMLAnchorElement stringifier 5
+PASS HTMLAnchorElement stringifier 6
+PASS HTMLAnchorElement stringifier 7
+PASS HTMLAnchorElement stringifier 8
+PASS HTMLAnchorElement stringifier 9
+PASS HTMLAnchorElement stringifier 10
 

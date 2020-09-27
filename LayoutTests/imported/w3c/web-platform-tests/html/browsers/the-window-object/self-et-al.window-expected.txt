@@ -1,10 +1,10 @@
 
-PASS iframeWindow.frames before and after removal 
-PASS popupWindow.frames before, after closing, and after discarding 
-PASS iframeWindow.globalThis before and after removal 
-PASS popupWindow.globalThis before, after closing, and after discarding 
-PASS iframeWindow.self before and after removal 
-PASS popupWindow.self before, after closing, and after discarding 
-PASS iframeWindow.window before and after removal 
-PASS popupWindow.window before, after closing, and after discarding 
+PASS iframeWindow.frames before and after removal
+PASS popupWindow.frames before, after closing, and after discarding
+PASS iframeWindow.globalThis before and after removal
+PASS popupWindow.globalThis before, after closing, and after discarding
+PASS iframeWindow.self before and after removal
+PASS popupWindow.self before, after closing, and after discarding
+PASS iframeWindow.window before and after removal
+PASS popupWindow.window before, after closing, and after discarding
 

@@ -3,5 +3,5 @@
 isPointInPath() works on unclosed arcs larger than 2pi
 
 
-PASS isPointInPath() works on unclosed arcs larger than 2pi 
+PASS isPointInPath() works on unclosed arcs larger than 2pi
 

@@ -1,7 +1,7 @@
 
-PASS Set location.protocol to x 
-PASS Set location.protocol to data 
-PASS Set location.protocol to file 
-PASS Set location.protocol to ftp 
-PASS Set location.protocol to http+x 
-     
+PASS Set location.protocol to x
+PASS Set location.protocol to data
+PASS Set location.protocol to file
+PASS Set location.protocol to ftp
+PASS Set location.protocol to http+x
+

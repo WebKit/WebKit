@@ -3,5 +3,5 @@
 textAlign end with rtl is the left edge
 
 
-PASS textAlign end with rtl is the left edge 
+PASS textAlign end with rtl is the left edge
 

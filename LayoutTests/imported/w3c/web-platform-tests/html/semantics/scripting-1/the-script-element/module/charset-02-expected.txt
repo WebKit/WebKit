@@ -1,5 +1,5 @@
 
-PASS UTF-8 module script with UTF-8 BOM 
+PASS UTF-8 module script with UTF-8 BOM
 FAIL UTF-16 module script with UTF-16BE BOM assert_equals: Should result in compile error because of UTF-16BE BOM expected (undefined) undefined but got (string) "三村かな子"
 FAIL UTF-16 module script with UTF-16LE BOM assert_equals: Should result in compile error because of UTF-16LE BOM expected (undefined) undefined but got (string) "三村かな子"
 

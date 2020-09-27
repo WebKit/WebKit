@@ -1,4 +1,4 @@
-  
 
-PASS Test that below-viewport invisible images that are not marked loading=lazy still load, and block the window load event 
+
+PASS Test that below-viewport invisible images that are not marked loading=lazy still load, and block the window load event
 

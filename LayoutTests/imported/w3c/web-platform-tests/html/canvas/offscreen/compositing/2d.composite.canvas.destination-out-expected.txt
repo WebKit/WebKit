@@ -1,5 +1,5 @@
 2d.composite.canvas.destination-out
 
 
-PASS OffscreenCanvas test: 2d.composite.canvas.destination-out 
+PASS OffscreenCanvas test: 2d.composite.canvas.destination-out
 

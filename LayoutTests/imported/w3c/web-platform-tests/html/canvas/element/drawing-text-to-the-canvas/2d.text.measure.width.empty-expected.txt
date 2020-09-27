@@ -2,5 +2,5 @@
 The empty string has zero width
 Actual output:
 
-PASS The empty string has zero width 
+PASS The empty string has zero width
 

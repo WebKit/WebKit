@@ -3,5 +3,5 @@
 strokeRect of Nx0 pixels draws a straight line
 
 
-PASS strokeRect of Nx0 pixels draws a straight line 
+PASS strokeRect of Nx0 pixels draws a straight line
 

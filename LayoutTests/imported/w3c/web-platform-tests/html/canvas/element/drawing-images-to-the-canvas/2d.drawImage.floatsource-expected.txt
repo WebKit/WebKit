@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.drawImage.floatsource 
+PASS Canvas test: 2d.drawImage.floatsource
 

@@ -3,5 +3,5 @@
 fillRect is affected by clipping regions
 
 
-PASS fillRect is affected by clipping regions 
+PASS fillRect is affected by clipping regions
 

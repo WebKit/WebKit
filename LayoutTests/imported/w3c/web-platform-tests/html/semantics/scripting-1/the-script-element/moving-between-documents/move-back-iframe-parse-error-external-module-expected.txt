@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: SyntaxError: Left side of assignment is not a reference.
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move parse-error external module script to iframe move-back 
-PASS <script> load: Move parse-error external module script to iframe move-back 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move parse-error external module script to iframe move-back
+PASS <script> load: Move parse-error external module script to iframe move-back
 FAIL <script> error: Move parse-error external module script to iframe move-back assert_unreached: Script error evennt fired unexpectedly Reached unreachable code
-PASS window error: Move parse-error external module script to iframe move-back 
+PASS window error: Move parse-error external module script to iframe move-back
 

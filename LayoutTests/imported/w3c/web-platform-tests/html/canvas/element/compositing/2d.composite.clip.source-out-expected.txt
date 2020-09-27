@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS fill() does not affect pixels outside the clip region. 
+PASS fill() does not affect pixels outside the clip region.
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS scheduler: external files added through DOM should not block further parsing while loading 
+PASS scheduler: external files added through DOM should not block further parsing while loading
 

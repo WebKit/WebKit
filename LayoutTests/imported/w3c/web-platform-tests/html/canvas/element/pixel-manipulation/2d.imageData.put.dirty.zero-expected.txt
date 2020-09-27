@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS putImageData() with zero-sized dirty rectangle puts nothing 
+PASS putImageData() with zero-sized dirty rectangle puts nothing
 

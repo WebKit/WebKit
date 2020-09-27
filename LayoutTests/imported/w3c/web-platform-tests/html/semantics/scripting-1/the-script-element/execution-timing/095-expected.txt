@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: slow-loading script added from defer blocking load event 
+PASS  scheduler: slow-loading script added from defer blocking load event
 

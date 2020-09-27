@@ -2,5 +2,5 @@
 createImageData(imgdata) returns an ImageData object containing a Uint8ClampedArray object
 Actual output:
 
-PASS createImageData(imgdata) returns an ImageData object containing a Uint8ClampedArray object 
+PASS createImageData(imgdata) returns an ImageData object containing a Uint8ClampedArray object
 

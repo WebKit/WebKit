@@ -2,5 +2,5 @@
 getImageData() returns an ImageData object containing a Uint8ClampedArray object
 Actual output:
 
-PASS getImageData() returns an ImageData object containing a Uint8ClampedArray object 
+PASS getImageData() returns an ImageData object containing a Uint8ClampedArray object
 

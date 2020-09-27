@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows are not drawn for transparent parts of fill patterns 
+PASS Shadows are not drawn for transparent parts of fill patterns
 

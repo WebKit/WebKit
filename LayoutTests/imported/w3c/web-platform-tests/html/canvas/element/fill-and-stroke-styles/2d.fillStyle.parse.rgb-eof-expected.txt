@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.fillStyle.parse.rgb-eof 
+PASS Canvas test: 2d.fillStyle.parse.rgb-eof
 

@@ -1,28 +1,28 @@
 
-PASS The disabled attribute, when specified, causes all the form control descendants of the fieldset element, excluding those that are descendants of the fieldset element's first legend element child, if any, to be disabled. 
-PASS The first 'legend' element is not a child of the disabled fieldset: Its descendants should be disabled. 
-PASS The <legend> element is not a child of the disabled fieldset: Its descendants should be disabled. 
-PASS The <legend> element is child of the disabled fieldset: Its descendants should be disabled. 
-PASS A <fieldset> element is in the <legend> element of another disabled <fieldset>: Its descendants should be disabled. 
-    
-
-Name on card: 
-
-Card number: 
+PASS The disabled attribute, when specified, causes all the form control descendants of the fieldset element, excluding those that are descendants of the fieldset element's first legend element child, if any, to be disabled.
+PASS The first 'legend' element is not a child of the disabled fieldset: Its descendants should be disabled.
+PASS The <legend> element is not a child of the disabled fieldset: Its descendants should be disabled.
+PASS The <legend> element is child of the disabled fieldset: Its descendants should be disabled.
+PASS A <fieldset> element is in the <legend> element of another disabled <fieldset>: Its descendants should be disabled.
 
 
+Name on card:
+
+Card number:
 
 
-Name on card: 
-
-Card number: 
 
 
-Name on card: 
+Name on card:
 
-Card number: 
+Card number:
 
 
-Name on card: 
+Name on card:
 
-Card number: 
+Card number:
+
+
+Name on card:
+
+Card number:

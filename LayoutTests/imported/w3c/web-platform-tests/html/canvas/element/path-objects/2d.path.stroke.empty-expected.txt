@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Empty subpaths are not stroked 
+PASS Empty subpaths are not stroked
 

@@ -1,6 +1,6 @@
 
-PASS The scrolldelay attribute is a string 
-PASS The scrolldelay attribute is a negative 
-PASS The scrolldelay attribute is less than 60 
-PASS The scrolldelay attribute is greater than 60 
+PASS The scrolldelay attribute is a string
+PASS The scrolldelay attribute is a negative
+PASS The scrolldelay attribute is less than 60
+PASS The scrolldelay attribute is greater than 60
 Test1 Test2 Test3 Test4

@@ -1,18 +1,18 @@
 
-PASS Returning a string must not cancel the event: CustomEvent, non-cancelable 
-PASS Returning a string must not cancel the event: CustomEvent, cancelable 
-PASS Returning false must not cancel the event, because it's coerced to the DOMString "false" which does not cancel CustomEvents: CustomEvent, cancelable 
-PASS Returning a string must not cancel the event: BeforeUnloadEvent with type "click", cancelable 
-PASS Returning null with a real iframe unloading 
-PASS Returning undefined with a real iframe unloading 
-PASS Returning  with a real iframe unloading 
-PASS Returning false with a real iframe unloading 
-PASS Returning true with a real iframe unloading 
-PASS Returning 0 with a real iframe unloading 
-PASS Returning null with a real iframe unloading; setting returnValue to foo 
-PASS Returning undefined with a real iframe unloading; setting returnValue to foo 
-PASS Returning  with a real iframe unloading; setting returnValue to foo 
-PASS Returning false with a real iframe unloading; setting returnValue to foo 
-PASS Returning true with a real iframe unloading; setting returnValue to foo 
-PASS Returning 0 with a real iframe unloading; setting returnValue to foo 
- 
+PASS Returning a string must not cancel the event: CustomEvent, non-cancelable
+PASS Returning a string must not cancel the event: CustomEvent, cancelable
+PASS Returning false must not cancel the event, because it's coerced to the DOMString "false" which does not cancel CustomEvents: CustomEvent, cancelable
+PASS Returning a string must not cancel the event: BeforeUnloadEvent with type "click", cancelable
+PASS Returning null with a real iframe unloading
+PASS Returning undefined with a real iframe unloading
+PASS Returning  with a real iframe unloading
+PASS Returning false with a real iframe unloading
+PASS Returning true with a real iframe unloading
+PASS Returning 0 with a real iframe unloading
+PASS Returning null with a real iframe unloading; setting returnValue to foo
+PASS Returning undefined with a real iframe unloading; setting returnValue to foo
+PASS Returning  with a real iframe unloading; setting returnValue to foo
+PASS Returning false with a real iframe unloading; setting returnValue to foo
+PASS Returning true with a real iframe unloading; setting returnValue to foo
+PASS Returning 0 with a real iframe unloading; setting returnValue to foo
+

@@ -1,10 +1,10 @@
 
-PASS HTML parsing should locate 4 time elements in this document 
-PASS HTMLTimeElement should be exposed for prototyping 
-PASS the time elements should be instanceof HTMLTimeElement 
-PASS the datetime attribute should be reflected by the .dateTime property 
-PASS the dateTime IDL property should default to an empty string 
-PASS the dateTime property should be read/write 
-PASS the datetime attribute should be reflected by the .dateTime property even if it is invalid 
-PASS the datetime attribute should not reflect the textContent 
+PASS HTML parsing should locate 4 time elements in this document
+PASS HTMLTimeElement should be exposed for prototyping
+PASS the time elements should be instanceof HTMLTimeElement
+PASS the datetime attribute should be reflected by the .dateTime property
+PASS the dateTime IDL property should default to an empty string
+PASS the dateTime property should be read/write
+PASS the datetime attribute should be reflected by the .dateTime property even if it is invalid
+PASS the datetime attribute should not reflect the textContent
 

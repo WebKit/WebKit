@@ -1,4 +1,4 @@
 
-PASS The href attribute of the base element is specified 
-PASS The src attribute of the img element must relative to the href attribute of the base element 
+PASS The href attribute of the base element is specified
+PASS The src attribute of the img element must relative to the href attribute of the base element
 

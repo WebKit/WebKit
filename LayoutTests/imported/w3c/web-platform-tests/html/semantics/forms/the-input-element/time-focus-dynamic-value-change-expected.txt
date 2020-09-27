@@ -1,4 +1,4 @@
- 
 
-PASS Time input handles focus correctly when value changes 
+
+PASS Time input handles focus correctly when value changes
 

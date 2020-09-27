@@ -2,5 +2,5 @@ toDataURL.jpeg.quality.notnumber
 toDataURL with JPEG handles non-numeric quality parameters
 Actual output:
 
-PASS toDataURL with JPEG handles non-numeric quality parameters 
+PASS toDataURL with JPEG handles non-numeric quality parameters
 

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set.
 
 
-PASS Frames without `allow-modals` should not be able to open modal dialogs 
+PASS Frames without `allow-modals` should not be able to open modal dialogs
 

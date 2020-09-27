@@ -1,4 +1,4 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 
-PASS unload event properties 
+PASS unload event properties
 

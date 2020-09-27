@@ -1,8 +1,8 @@
-       
 
-PASS Unset maxlength is -1 
-PASS Negative maxlength is always -1 
-PASS Non-numeric maxlength is -1 
-PASS Assigning negative integer throws IndexSizeError 
-PASS Assigning non-numeric to maxlength sets maxlength to 0 
+
+PASS Unset maxlength is -1
+PASS Negative maxlength is always -1
+PASS Non-numeric maxlength is -1
+PASS Assigning negative integer throws IndexSizeError
+PASS Assigning non-numeric to maxlength sets maxlength to 0
 

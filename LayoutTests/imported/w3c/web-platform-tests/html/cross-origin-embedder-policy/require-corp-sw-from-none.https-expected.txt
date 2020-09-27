@@ -5,16 +5,16 @@ CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-
 CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html.
 
-PASS setting up 
-PASS making a same-origin request for CORP: same-origin 
-PASS making a same-origin request for no CORP 
-PASS making a same-origin request for CORP: cross-origin 
-PASS making a cross-origin request for CORP: same-origin 
+PASS setting up
+PASS making a same-origin request for CORP: same-origin
+PASS making a same-origin request for no CORP
+PASS making a same-origin request for CORP: cross-origin
+PASS making a cross-origin request for CORP: same-origin
 FAIL making a cross-origin request for no CORP assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS making a cross-origin request for CORP: cross-origin 
-PASS making a cross-origin request for CORP: same-origin [PASS THROUGH] 
-PASS making a cross-origin request for no CORP [PASS THROUGH] 
-PASS making a cross-origin request for CORP: cross-origin [PASS THROUGH] 
-PASS making a cross-origin request with CORS without ACAO 
-PASS making a cross-origin request with CORS 
+PASS making a cross-origin request for CORP: cross-origin
+PASS making a cross-origin request for CORP: same-origin [PASS THROUGH]
+PASS making a cross-origin request for no CORP [PASS THROUGH]
+PASS making a cross-origin request for CORP: cross-origin [PASS THROUGH]
+PASS making a cross-origin request with CORS without ACAO
+PASS making a cross-origin request with CORS
 

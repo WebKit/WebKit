@@ -5,5 +5,5 @@ Actual output:
 Expected output:
 
 
-PASS Interface methods can be added 
+PASS Interface methods can be added
 

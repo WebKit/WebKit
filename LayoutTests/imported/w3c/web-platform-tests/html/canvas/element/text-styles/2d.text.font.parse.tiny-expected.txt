@@ -1,5 +1,5 @@
 2d.text.font.parse.tiny
 Actual output:
 
-PASS Canvas test: 2d.text.font.parse.tiny 
+PASS Canvas test: 2d.text.font.parse.tiny
 

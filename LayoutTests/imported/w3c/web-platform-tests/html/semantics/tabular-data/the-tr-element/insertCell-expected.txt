@@ -1,9 +1,9 @@
 
-PASS HTMLTableRowElement insertCell(0) 
-PASS HTMLTableRowElement insertCell(-1) 
-PASS HTMLTableRowElement insertCell(cells.length) 
-PASS HTMLTableRowElement insertCell() 
-PASS HTMLTableRowElement insertCell(-2) 
-PASS HTMLTableRowElement insertCell(cells.length + 1) 
-PASS HTMLTableRowElement insertCell will not copy table's prefix 
+PASS HTMLTableRowElement insertCell(0)
+PASS HTMLTableRowElement insertCell(-1)
+PASS HTMLTableRowElement insertCell(cells.length)
+PASS HTMLTableRowElement insertCell()
+PASS HTMLTableRowElement insertCell(-2)
+PASS HTMLTableRowElement insertCell(cells.length + 1)
+PASS HTMLTableRowElement insertCell will not copy table's prefix
 

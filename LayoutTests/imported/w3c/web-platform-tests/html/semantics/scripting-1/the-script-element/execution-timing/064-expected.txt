@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: cloneNode with external script 
+PASS  scheduler: cloneNode with external script
 

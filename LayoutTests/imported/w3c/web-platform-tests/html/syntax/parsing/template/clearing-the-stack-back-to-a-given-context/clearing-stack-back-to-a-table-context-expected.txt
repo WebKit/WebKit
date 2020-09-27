@@ -1,8 +1,8 @@
 
-PASS Clearing stack back to a table context. Test <caption> 
-PASS Clearing stack back to a table context. Test <colgroup> 
-PASS Clearing stack back to a table context. Test <tbody> 
-PASS Clearing stack back to a table context. Test <tfoot> 
-PASS Clearing stack back to a table context. Test <thead> 
-PASS Clearing stack back to a table context. Test <col> 
+PASS Clearing stack back to a table context. Test <caption>
+PASS Clearing stack back to a table context. Test <colgroup>
+PASS Clearing stack back to a table context. Test <tbody>
+PASS Clearing stack back to a table context. Test <tfoot>
+PASS Clearing stack back to a table context. Test <thead>
+PASS Clearing stack back to a table context. Test <col>
 

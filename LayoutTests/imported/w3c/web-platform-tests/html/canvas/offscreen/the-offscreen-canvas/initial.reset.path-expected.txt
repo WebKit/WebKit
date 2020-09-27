@@ -3,5 +3,5 @@ initial.reset.path
 Resetting the canvas state resets the current path
 
 
-PASS Resetting the canvas state resets the current path 
+PASS Resetting the canvas state resets the current path
 

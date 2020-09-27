@@ -1,24 +1,24 @@
 
-PASS Canvas support for supportsContext 
-PASS Canvas support for probablySupportsContext 
-PASS CanvasRenderingContext2D support for width 
-PASS CanvasRenderingContext2D support for height 
-PASS Canvas support for setContext 
-PASS Canvas support for transferControlToProxy 
-PASS Window support for CanvasProxy 
-PASS Canvas support for commit 
-PASS CanvasRenderingContext2D constructors 
-PASS Path2D support for addPathByStrokingPath 
-PASS Path2D support for addText 
-PASS Path2D support for addPathByStrokingText 
-PASS ImageBitmapRenderingContext support for transferImageBitmap 
-PASS Window support for Path 
-PASS Canvas support for toDataURLHD 
-PASS Canvas support for toBlobHD 
-PASS CanvasRenderingContext2D support for createImageDataHD 
-PASS CanvasRenderingContext2D support for getImageDataHD 
-PASS CanvasRenderingContext2D support for putImageDataHD 
-PASS ImageData support for resolution 
-PASS CanvasRenderingContext2D support for drawSystemFocusRing 
-PASS CanvasRenderingContext2D support for drawCustomFocusRing 
+PASS Canvas support for supportsContext
+PASS Canvas support for probablySupportsContext
+PASS CanvasRenderingContext2D support for width
+PASS CanvasRenderingContext2D support for height
+PASS Canvas support for setContext
+PASS Canvas support for transferControlToProxy
+PASS Window support for CanvasProxy
+PASS Canvas support for commit
+PASS CanvasRenderingContext2D constructors
+PASS Path2D support for addPathByStrokingPath
+PASS Path2D support for addText
+PASS Path2D support for addPathByStrokingText
+PASS ImageBitmapRenderingContext support for transferImageBitmap
+PASS Window support for Path
+PASS Canvas support for toDataURLHD
+PASS Canvas support for toBlobHD
+PASS CanvasRenderingContext2D support for createImageDataHD
+PASS CanvasRenderingContext2D support for getImageDataHD
+PASS CanvasRenderingContext2D support for putImageDataHD
+PASS ImageData support for resolution
+PASS CanvasRenderingContext2D support for drawSystemFocusRing
+PASS CanvasRenderingContext2D support for drawCustomFocusRing
 

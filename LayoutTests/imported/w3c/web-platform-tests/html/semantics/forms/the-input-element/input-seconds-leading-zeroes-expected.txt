@@ -2,13 +2,13 @@ input times and datetimes with leading zeroes in seconds/millis
 
 
 FAIL Expected valueAsNumber=946729801000 from 2000-01-01T12:30:01 assert_equals: expected 946729801000 but got NaN
-PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:01 
+PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:01
 FAIL Expected valueAsNumber=946729800500 from 2000-01-01T12:30:00.5 assert_equals: expected 946729800500 but got NaN
-PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:00.5 
+PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:00.5
 FAIL Expected valueAsNumber=946729800040 from 2000-01-01T12:30:00.04 assert_equals: expected 946729800040 but got NaN
-PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:00.04 
+PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:00.04
 FAIL Expected valueAsNumber=946729800003 from 2000-01-01T12:30:00.003 assert_equals: expected 946729800003 but got NaN
-PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:00.003 
+PASS Expected digits unchanged in round-trip of 2000-01-01T12:30:00.003
 FAIL Expected valueAsNumber=45001000 from 12:30:01 assert_equals: expected 45001000 but got NaN
 FAIL Expected valueAsNumber=45000500 from 12:30:00.5 assert_equals: expected 45000500 but got NaN
 FAIL Expected valueAsNumber=45000040 from 12:30:00.04 assert_equals: expected 45000040 but got NaN

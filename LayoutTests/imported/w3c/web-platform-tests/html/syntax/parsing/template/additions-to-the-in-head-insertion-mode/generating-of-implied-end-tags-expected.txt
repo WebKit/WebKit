@@ -1,8 +1,8 @@
 
-PASS Generating of implied end tags. Test table elements 
-PASS Generating of implied end tags. Test DIV element 
-PASS Generating of implied end tags. Test some text and DIV element 
-PASS Generating of implied end tags. Test wrong end tag 
-PASS Generating of implied end tags. Test table elements. Load HTML document from file 
-PASS Generating of implied end tags. Test div element. Load HTML document from file 
+PASS Generating of implied end tags. Test table elements
+PASS Generating of implied end tags. Test DIV element
+PASS Generating of implied end tags. Test some text and DIV element
+PASS Generating of implied end tags. Test wrong end tag
+PASS Generating of implied end tags. Test table elements. Load HTML document from file
+PASS Generating of implied end tags. Test div element. Load HTML document from file
 

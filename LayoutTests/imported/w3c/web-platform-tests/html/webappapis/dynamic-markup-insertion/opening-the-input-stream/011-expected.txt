@@ -1,3 +1,3 @@
 
-PASS Timeout after document.open 
+PASS Timeout after document.open
 

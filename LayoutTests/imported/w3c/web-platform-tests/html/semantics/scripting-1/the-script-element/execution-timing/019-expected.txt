@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: DOM added scripts and event handling  
+PASS  scheduler: DOM added scripts and event handling
 

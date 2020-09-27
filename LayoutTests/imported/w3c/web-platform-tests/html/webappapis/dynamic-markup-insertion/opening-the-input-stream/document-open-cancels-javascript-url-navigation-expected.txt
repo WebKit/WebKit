@@ -1,4 +1,4 @@
 
 
-PASS document-open-cancels-javascript-url-navigation 
+PASS document-open-cancels-javascript-url-navigation
 

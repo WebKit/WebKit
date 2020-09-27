@@ -1,8 +1,8 @@
 
-PASS features "innerwidth=-404" should NOT set "width=404" 
-PASS features "innerwidth=-404.5" should NOT set "width=404" 
-PASS features "innerwidth=-404e1" should NOT set "width=404" 
-PASS features "innerheight=-404" should NOT set "height=404" 
-PASS features "innerheight=-404.5" should NOT set "height=404" 
-PASS features "innerheight=-404e1" should NOT set "height=404" 
+PASS features "innerwidth=-404" should NOT set "width=404"
+PASS features "innerwidth=-404.5" should NOT set "width=404"
+PASS features "innerwidth=-404e1" should NOT set "width=404"
+PASS features "innerheight=-404" should NOT set "height=404"
+PASS features "innerheight=-404.5" should NOT set "height=404"
+PASS features "innerheight=-404e1" should NOT set "height=404"
 

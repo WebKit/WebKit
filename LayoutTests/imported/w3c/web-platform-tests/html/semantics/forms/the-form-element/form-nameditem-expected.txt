@@ -1,26 +1,26 @@
 
-PASS Forms should not have an item method 
-PASS Forms should not have a namedItem method 
-PASS Name for a single element should work 
-PASS Calling item() on the NodeList returned from the named getter should work 
-PASS Indexed getter on the NodeList returned from the named getter should work 
-PASS Invoking a legacycaller on the NodeList returned from the named getter should not work 
-PASS All listed elements except input type=image should be present in the form 
-PASS Named elements should override builtins 
-PASS Named items outside the form should not be returned (no children) 
-PASS Named items outside the form should not be returned (one child) 
-PASS The form attribute should be taken into account for named getters (single element) 
-PASS The form attribute should be taken into account for named getters (multiple elements) 
-PASS Input should only be a named property on the innermost form that contains it 
+PASS Forms should not have an item method
+PASS Forms should not have a namedItem method
+PASS Name for a single element should work
+PASS Calling item() on the NodeList returned from the named getter should work
+PASS Indexed getter on the NodeList returned from the named getter should work
+PASS Invoking a legacycaller on the NodeList returned from the named getter should not work
+PASS All listed elements except input type=image should be present in the form
+PASS Named elements should override builtins
+PASS Named items outside the form should not be returned (no children)
+PASS Named items outside the form should not be returned (one child)
+PASS The form attribute should be taken into account for named getters (single element)
+PASS The form attribute should be taken into account for named getters (multiple elements)
+PASS Input should only be a named property on the innermost form that contains it
 FAIL Trying to set an expando that would shadow an already-existing named property assert_equals: expected (object) Element node <button name="l1"></button> but got (number) 5
-PASS Trying to set an expando that shadows a named property that gets added later 
-PASS Trying to set a non-configurable expando that shadows a named property that gets added later 
-PASS Past names map should work correctly 
-   
-                             
-                             
+PASS Trying to set an expando that shadows a named property that gets added later
+PASS Trying to set a non-configurable expando that shadows a named property that gets added later
+PASS Past names map should work correctly
 
 
-  
- 
+
+
+
+
+
 

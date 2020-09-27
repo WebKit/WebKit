@@ -7,5 +7,5 @@ Before:
 After:
 
 
-PASS drawFocusIfNeeded does draw a focus ring if the element is in focus. 
+PASS drawFocusIfNeeded does draw a focus ring if the element is in focus.
 

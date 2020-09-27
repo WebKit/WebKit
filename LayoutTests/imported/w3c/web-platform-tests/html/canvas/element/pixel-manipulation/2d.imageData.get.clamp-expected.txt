@@ -2,5 +2,5 @@
 getImageData() clamps colours to the range [0, 255]
 Actual output:
 
-PASS getImageData() clamps colours to the range [0, 255] 
+PASS getImageData() clamps colours to the range [0, 255]
 

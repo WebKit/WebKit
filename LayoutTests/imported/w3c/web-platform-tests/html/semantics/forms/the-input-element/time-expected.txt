@@ -1,16 +1,16 @@
 Input Time
 
 
-PASS time element of default time value 
-PASS step attribute on default value check 
-PASS max  attribute on default value check 
-PASS min  attribute on default value check 
+PASS time element of default time value
+PASS step attribute on default value check
+PASS max  attribute on default value check
+PASS min  attribute on default value check
 FAIL type attribute support on input element assert_equals: expected "time" but got "text"
-PASS max attribute support on input element 
-PASS min attribute support on input element 
-PASS step attribute support on input element 
-PASS stepUp function support on input Element 
-PASS stepDown function support on input Element 
+PASS max attribute support on input element
+PASS min attribute support on input element
+PASS step attribute support on input element
+PASS stepUp function support on input Element
+PASS stepDown function support on input Element
 FAIL stepUp step value empty on default step value  The object is in an invalid state.
 FAIL stepDown step value empty default step value The object is in an invalid state.
 FAIL stepUp on step value minus The object is in an invalid state.

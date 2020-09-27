@@ -1,5 +1,5 @@
 
-PASS <a> in navigated away <iframe>'s document cannot follow hyperlinks 
-PASS <area> in navigated away <iframe>'s document cannot follow hyperlinks 
-PASS <link> in navigated away <iframe>'s document cannot follow hyperlinks 
+PASS <a> in navigated away <iframe>'s document cannot follow hyperlinks
+PASS <area> in navigated away <iframe>'s document cannot follow hyperlinks
+PASS <link> in navigated away <iframe>'s document cannot follow hyperlinks
 

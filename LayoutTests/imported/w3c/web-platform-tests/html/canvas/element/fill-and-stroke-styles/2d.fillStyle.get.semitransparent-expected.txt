@@ -1,5 +1,5 @@
 2d.fillStyle.get.semitransparent
 Actual output:
 
-PASS Canvas test: 2d.fillStyle.get.semitransparent 
+PASS Canvas test: 2d.fillStyle.get.semitransparent
 

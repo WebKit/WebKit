@@ -1,6 +1,6 @@
 I get focus
 I don't get focus.
-      
+
 I'm editable
 I'm tabindexed.
  Link

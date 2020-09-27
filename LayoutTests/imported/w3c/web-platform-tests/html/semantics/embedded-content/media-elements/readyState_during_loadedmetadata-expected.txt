@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - readyState property during loadedmetadata 
-PASS audio.readyState should be >= HAVE_METADATA during loadedmetadata event 
-PASS video events - readyState property during loadedmetadata 
-PASS video.readyState should be >= HAVE_METADATA during loadedmetadata event 
+
+PASS audio events - readyState property during loadedmetadata
+PASS audio.readyState should be >= HAVE_METADATA during loadedmetadata event
+PASS video events - readyState property during loadedmetadata
+PASS video.readyState should be >= HAVE_METADATA during loadedmetadata event
 

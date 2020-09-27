@@ -3,5 +3,5 @@
 getImageData() is not affected by context state
 
 
-PASS getImageData() is not affected by context state 
+PASS getImageData() is not affected by context state
 

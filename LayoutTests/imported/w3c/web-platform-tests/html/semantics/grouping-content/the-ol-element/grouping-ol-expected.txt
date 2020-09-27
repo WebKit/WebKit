@@ -3,31 +3,31 @@ Description
 This test validates the ol element.
 
 
-PASS The prototype for OL is HTMLOListElement.prototype 
-PASS 'reversed' property should be defined on OL. 
-PASS 'start' property should be defined on OL. 
-PASS 'type' property should be defined on OL. 
-PASS OL's 'reversed' IDL property reflects content attribute. 
-PASS OL's 'start' IDL property reflects content attribute. 
-PASS OL's 'type' IDL property reflects content attribute. 
-PASS IDL 'reversed' attribute value false when content attribute absent 
-PASS IDL 'reversed' attribute value true when content attribute exists 
-PASS Changing IDL 'reversed' property changes list's reversed property. 
-PASS Default start value for non-reversed list should be 1 
-PASS IDL and content attribute parse start of '.5' correctly. 
-PASS IDL and content attribute parse start of 'A' correctly. 
-PASS Default start value (if none provided) for reversed list = 1. 
-PASS Default start value (if failed to parse) for reversed list = 1. 
-PASS Default start value for reversed list = 1 (even with tons of other child elements). 
-PASS Adding child element to reversed list does not change start value 
-PASS Deleting child element from reversed list does not change start value 
-PASS IDL and content attribute parse start of '2' correctly. 
-PASS IDL and content attribute parse start of '-10' correctly. 
-PASS IDL and content attribute parse start of '4.03' correctly. 
-PASS IDL and content attribute parse start of '-4.03' correctly. 
-PASS IDL and content attribute parse start of '4.9' correctly. 
-PASS IDL and content attribute parse start of '-4.9' correctly. 
-PASS IDL and content attribute parse start of '7e2' correctly. 
+PASS The prototype for OL is HTMLOListElement.prototype
+PASS 'reversed' property should be defined on OL.
+PASS 'start' property should be defined on OL.
+PASS 'type' property should be defined on OL.
+PASS OL's 'reversed' IDL property reflects content attribute.
+PASS OL's 'start' IDL property reflects content attribute.
+PASS OL's 'type' IDL property reflects content attribute.
+PASS IDL 'reversed' attribute value false when content attribute absent
+PASS IDL 'reversed' attribute value true when content attribute exists
+PASS Changing IDL 'reversed' property changes list's reversed property.
+PASS Default start value for non-reversed list should be 1
+PASS IDL and content attribute parse start of '.5' correctly.
+PASS IDL and content attribute parse start of 'A' correctly.
+PASS Default start value (if none provided) for reversed list = 1.
+PASS Default start value (if failed to parse) for reversed list = 1.
+PASS Default start value for reversed list = 1 (even with tons of other child elements).
+PASS Adding child element to reversed list does not change start value
+PASS Deleting child element from reversed list does not change start value
+PASS IDL and content attribute parse start of '2' correctly.
+PASS IDL and content attribute parse start of '-10' correctly.
+PASS IDL and content attribute parse start of '4.03' correctly.
+PASS IDL and content attribute parse start of '-4.03' correctly.
+PASS IDL and content attribute parse start of '4.9' correctly.
+PASS IDL and content attribute parse start of '-4.9' correctly.
+PASS IDL and content attribute parse start of '7e2' correctly.
 Ordered List
 
 list item

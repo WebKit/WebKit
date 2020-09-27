@@ -1,8 +1,8 @@
 
-PASS Getter 
-PASS Setter (non-empty string) 
-PASS Setter (empty string) 
-PASS Setter (null) 
-PASS Setter (undefined) 
-PASS Setter (text node reuse) 
+PASS Getter
+PASS Setter (non-empty string)
+PASS Setter (empty string)
+PASS Setter (null)
+PASS Setter (undefined)
+PASS Setter (text node reuse)
 

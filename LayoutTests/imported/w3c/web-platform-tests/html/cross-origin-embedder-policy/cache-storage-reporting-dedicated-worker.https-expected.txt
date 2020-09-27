@@ -3,5 +3,5 @@ CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
 Harness Error (FAIL), message = ReferenceError: Can't find variable: ReportingObserver
 
 TIMEOUT COEP support on DedicatedWorker. Test timed out
-NOTRUN COEP-Report-Only support on DedicatedWorker. 
+NOTRUN COEP-Report-Only support on DedicatedWorker.
 

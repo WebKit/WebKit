@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.drawImage.9arg.basic 
+PASS Canvas test: 2d.drawImage.9arg.basic
 

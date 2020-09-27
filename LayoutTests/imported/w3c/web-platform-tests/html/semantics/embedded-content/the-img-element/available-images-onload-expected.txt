@@ -1,3 +1,3 @@
 
-PASS Ensure images from available images list can be drawn to a canvas 
+PASS Ensure images from available images list can be drawn to a canvas
 

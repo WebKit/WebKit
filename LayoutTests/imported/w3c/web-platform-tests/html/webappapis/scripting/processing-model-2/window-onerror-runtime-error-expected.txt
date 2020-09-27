@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.nonexistentproperty.oops')
 
-PASS correct url passed to window.onerror 
-PASS correct line number passed to window.onerror 
-PASS correct number of calls to window.onerror 
+PASS correct url passed to window.onerror
+PASS correct line number passed to window.onerror
+PASS correct number of calls to window.onerror
 

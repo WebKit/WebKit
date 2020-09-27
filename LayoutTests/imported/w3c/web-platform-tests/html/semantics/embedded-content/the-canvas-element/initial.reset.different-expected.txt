@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Changing size resets canvas to transparent black 
+PASS Changing size resets canvas to transparent black
 

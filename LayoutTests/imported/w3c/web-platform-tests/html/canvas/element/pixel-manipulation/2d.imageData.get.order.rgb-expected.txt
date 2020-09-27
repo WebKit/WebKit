@@ -2,5 +2,5 @@
 getImageData() returns R then G then B
 Actual output:
 
-PASS getImageData() returns R then G then B 
+PASS getImageData() returns R then G then B
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS If there is no subpath, the first control point is added 
+PASS If there is no subpath, the first control point is added
 

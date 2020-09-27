@@ -1,5 +1,5 @@
 2d.composite.globalAlpha.invalid
 Actual output:
 
-PASS Canvas test: 2d.composite.globalAlpha.invalid 
+PASS Canvas test: 2d.composite.globalAlpha.invalid
 

@@ -1,5 +1,5 @@
 
 
-PASS load event of blob URL 
-PASS load event of initial about:blank 
+PASS load event of blob URL
+PASS load event of initial about:blank
 

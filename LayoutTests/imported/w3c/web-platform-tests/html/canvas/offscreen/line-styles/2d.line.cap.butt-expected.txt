@@ -3,5 +3,5 @@
 lineCap 'butt' is rendered correctly
 
 
-PASS lineCap 'butt' is rendered correctly 
+PASS lineCap 'butt' is rendered correctly
 

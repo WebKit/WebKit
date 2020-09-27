@@ -1,7 +1,7 @@
 
-PASS Children of table 
-PASS Children of thead 
-PASS Children of tbody 
-PASS Children of tfoot 
-PASS Complicated case 
+PASS Children of table
+PASS Children of thead
+PASS Children of tbody
+PASS Children of tfoot
+PASS Complicated case
 

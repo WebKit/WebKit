@@ -1,14 +1,14 @@
- 
 
 
 
 
-        
-  
 
 
 
-PASS Passing an element which is not a submit button should throw 
+
+
+
+PASS Passing an element which is not a submit button should throw
 FAIL Passing a submit button not owned by the context object should throw assert_throws_dom: function "() => {
     form.requestSubmit(submitButton);
   }" threw object "TypeError: form.requestSubmit is not a function. (In 'form.requestSubmit(submitButton)', 'form.requestSubmit' is undefined)" that is not a DOMException NotFoundError: property "code" is equal to undefined, expected 8

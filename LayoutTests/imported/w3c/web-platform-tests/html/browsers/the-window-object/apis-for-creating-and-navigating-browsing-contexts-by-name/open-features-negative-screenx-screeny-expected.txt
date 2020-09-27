@@ -1,8 +1,8 @@
 
-PASS features "screeny=-204" should NOT set "top=204" 
-PASS features "screeny=-204.5" should NOT set "top=204" 
-PASS features "screeny=-0" should NOT set "top=204" 
-PASS features "screenx=-204" should NOT set "left=204" 
-PASS features "screenx=-204.5" should NOT set "left=204" 
-PASS features "screenx=-0" should NOT set "left=204" 
+PASS features "screeny=-204" should NOT set "top=204"
+PASS features "screeny=-204.5" should NOT set "top=204"
+PASS features "screeny=-0" should NOT set "top=204"
+PASS features "screenx=-204" should NOT set "left=204"
+PASS features "screenx=-204.5" should NOT set "left=204"
+PASS features "screenx=-0" should NOT set "left=204"
 

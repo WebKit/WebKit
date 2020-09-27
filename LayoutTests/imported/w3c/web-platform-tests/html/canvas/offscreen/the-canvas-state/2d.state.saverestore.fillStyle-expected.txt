@@ -3,5 +3,5 @@
 save()/restore() works for fillStyle
 
 
-PASS save()/restore() works for fillStyle 
+PASS save()/restore() works for fillStyle
 

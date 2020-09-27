@@ -1,5 +1,5 @@
 2d.composite.image.source-in
 
 
-PASS OffscreenCanvas test: 2d.composite.image.source-in 
+PASS OffscreenCanvas test: 2d.composite.image.source-in
 

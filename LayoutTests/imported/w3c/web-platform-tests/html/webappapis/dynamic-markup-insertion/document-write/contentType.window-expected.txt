@@ -1,6 +1,6 @@
 
 FAIL document.write(): video document null is not an object (evaluating 'frame.contentDocument.body.firstChild')
 FAIL document.write(): image document null is not an object (evaluating 'frame.contentDocument.body.firstChild')
-PASS document.write(): text document 
-PASS document.write(): HTML document 
+PASS document.write(): text document
+PASS document.write(): HTML document
 

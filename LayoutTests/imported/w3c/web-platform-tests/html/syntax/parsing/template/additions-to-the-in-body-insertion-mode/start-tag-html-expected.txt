@@ -1,3 +1,3 @@
 
-PASS In body insertion mode: html start tag should add only absent attributes 
+PASS In body insertion mode: html start tag should add only absent attributes
 

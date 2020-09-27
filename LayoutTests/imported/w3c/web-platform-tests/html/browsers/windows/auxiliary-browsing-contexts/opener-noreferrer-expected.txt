@@ -1,3 +1,3 @@
 
-PASS Auxiliary browsing context created with `rel="noreferrer"` should report `window.opener` `null` 
+PASS Auxiliary browsing context created with `rel="noreferrer"` should report `window.opener` `null`
 

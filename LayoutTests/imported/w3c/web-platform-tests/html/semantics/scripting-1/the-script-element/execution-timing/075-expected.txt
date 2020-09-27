@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS dispatchEvent from child frame during document.write :-o  
+PASS dispatchEvent from child frame during document.write :-o
 

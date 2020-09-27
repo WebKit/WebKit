@@ -1,3 +1,3 @@
 
-PASS rect() with Infinity/NaN is ignored 
+PASS rect() with Infinity/NaN is ignored
 

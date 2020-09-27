@@ -1,8 +1,8 @@
 input_stepDown
 
-      
 
-PASS Forms 
+
+PASS Forms
 FAIL Calling stepDown() on input - number - where value < min should not modify value. The object is in an invalid state.
 FAIL Calling stepDown() on input - date - where value < min should not modify value. The object is in an invalid state.
 FAIL Calling stepDown() on input - datetime-local - where value < min should not modify value. The object is in an invalid state.

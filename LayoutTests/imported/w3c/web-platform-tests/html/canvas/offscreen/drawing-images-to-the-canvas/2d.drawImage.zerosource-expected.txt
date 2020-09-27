@@ -3,5 +3,5 @@
 drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR
 
 
-PASS drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR 
+PASS drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR
 

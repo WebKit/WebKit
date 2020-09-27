@@ -1,5 +1,5 @@
 2d.composite.operation.clear
 
 
-PASS OffscreenCanvas test: 2d.composite.operation.clear 
+PASS OffscreenCanvas test: 2d.composite.operation.clear
 

@@ -4,5 +4,5 @@ This frame should navigate (to 404)
 
 submit
 
-PASS <button> should have the same double-submit protection as <input type=submit> 
+PASS <button> should have the same double-submit protection as <input type=submit>
 

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
 
 
-PASS <a download> triggered download in sandbox is allowed by allow-downloads. 
+PASS <a download> triggered download in sandbox is allowed by allow-downloads.
 

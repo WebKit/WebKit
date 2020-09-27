@@ -1,4 +1,4 @@
 
 
-PASS Check that popups from a sandboxed iframe do not escape the sandbox 
+PASS Check that popups from a sandboxed iframe do not escape the sandbox
 

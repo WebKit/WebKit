@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://localhost:8800" from accessing a frame at "http://localhost:8800".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 
-PASS Block parent content to access sandbox child iframe content when sandbox attribute exists 
+PASS Block parent content to access sandbox child iframe content when sandbox attribute exists
 

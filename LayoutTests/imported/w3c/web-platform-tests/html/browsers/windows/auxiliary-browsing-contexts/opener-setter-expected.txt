@@ -1,4 +1,4 @@
 
-PASS Auxiliary browsing context created via `window.open` and setting `window.opener` to `null` should report `window.opener` `null` 
-PASS Auxiliary browsing context created via `window.open` and setting `window.opener` to `test` should report `test` 
+PASS Auxiliary browsing context created via `window.open` and setting `window.opener` to `null` should report `window.opener` `null`
+PASS Auxiliary browsing context created via `window.open` and setting `window.opener` to `test` should report `test`
 

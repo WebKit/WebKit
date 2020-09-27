@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS lineCap 'square' is rendered correctly 
+PASS lineCap 'square' is rendered correctly
 

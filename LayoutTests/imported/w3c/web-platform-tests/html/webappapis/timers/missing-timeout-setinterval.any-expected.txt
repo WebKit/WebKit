@@ -1,4 +1,4 @@
 
-PASS Calling setInterval with no interval should be the same as if called with 0 interval 
-PASS Calling setInterval with undefined interval should be the same as if called with 0 interval 
+PASS Calling setInterval with no interval should be the same as if called with 0 interval
+PASS Calling setInterval with undefined interval should be the same as if called with 0 interval
 

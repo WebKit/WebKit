@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Radial gradient coordinates are relative to the coordinate space at the time of filling 
+PASS Radial gradient coordinates are relative to the coordinate space at the time of filling
 

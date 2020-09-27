@@ -3,5 +3,5 @@
 ImageData.data converts undefined to 0
 
 
-PASS ImageData.data converts undefined to 0 
+PASS ImageData.data converts undefined to 0
 

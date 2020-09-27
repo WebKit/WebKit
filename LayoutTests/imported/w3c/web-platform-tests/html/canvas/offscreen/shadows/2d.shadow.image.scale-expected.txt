@@ -3,5 +3,5 @@
 Shadows are drawn correctly for scaled images
 
 
-PASS Shadows are drawn correctly for scaled images 
+PASS Shadows are drawn correctly for scaled images
 

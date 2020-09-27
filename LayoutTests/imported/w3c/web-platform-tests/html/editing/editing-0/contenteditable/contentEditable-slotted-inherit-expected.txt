@@ -3,6 +3,6 @@ You should see the word PASS two times below and no FAIL.
 PASS
 PASS
 
-PASS Slotted child of contenteditable host should be editable - slot direct child of shadow root 
-PASS Slotted child of contenteditable host should be editable - slot wrapped in shadow tree ancestor 
+PASS Slotted child of contenteditable host should be editable - slot direct child of shadow root
+PASS Slotted child of contenteditable host should be editable - slot wrapped in shadow tree ancestor
 

@@ -1,4 +1,4 @@
  
 
-PASS A character encoding set in the HTTP header has lower precedence than the UTF-8 signature. 
+PASS A character encoding set in the HTTP header has lower precedence than the UTF-8 signature.
 

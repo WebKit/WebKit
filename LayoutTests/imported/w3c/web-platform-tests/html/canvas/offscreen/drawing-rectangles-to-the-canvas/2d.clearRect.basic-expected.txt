@@ -3,5 +3,5 @@
 clearRect clears to transparent black
 
 
-PASS clearRect clears to transparent black 
+PASS clearRect clears to transparent black
 

@@ -1,5 +1,5 @@
 
-PASS `window.parent` for top-level browsing context 
-PASS `window.parent` on single nested browsing context 
-PASS `window.parent` for multiple nested browsing contexts 
+PASS `window.parent` for top-level browsing context
+PASS `window.parent` on single nested browsing context
+PASS `window.parent` for multiple nested browsing contexts
 

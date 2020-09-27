@@ -1,3 +1,3 @@
 
-PASS IDL attributes for HTMLHeadingElement should not apply to h7. 
+PASS IDL attributes for HTMLHeadingElement should not apply to h7.
 

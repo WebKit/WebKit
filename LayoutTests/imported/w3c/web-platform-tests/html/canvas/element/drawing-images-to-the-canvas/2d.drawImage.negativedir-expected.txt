@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Negative dimensions do not affect the direction of the image 
+PASS Negative dimensions do not affect the direction of the image
 

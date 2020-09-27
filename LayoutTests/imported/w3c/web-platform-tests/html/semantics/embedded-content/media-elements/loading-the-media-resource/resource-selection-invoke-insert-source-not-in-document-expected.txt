@@ -1,3 +1,3 @@
 
-PASS invoking resource selection by inserting <source> in video not in a document 
+PASS invoking resource selection by inserting <source> in video not in a document
 

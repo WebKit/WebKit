@@ -1,20 +1,20 @@
 
-PASS audio.currentSrc initial value 
-PASS audio.currentSrc after setting src attribute "" 
-PASS audio.currentSrc after adding source element with src attribute "" 
-PASS audio.currentSrc after setting src attribute "." 
-PASS audio.currentSrc after adding source element with src attribute "." 
+PASS audio.currentSrc initial value
+PASS audio.currentSrc after setting src attribute ""
+PASS audio.currentSrc after adding source element with src attribute ""
+PASS audio.currentSrc after setting src attribute "."
+PASS audio.currentSrc after adding source element with src attribute "."
 FAIL audio.currentSrc after setting src attribute " " assert_equals: expected "http://localhost:8800/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html" but got ""
 FAIL audio.currentSrc after adding source element with src attribute " " assert_equals: expected "http://localhost:8800/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html" but got ""
-PASS audio.currentSrc after setting src attribute "data:," 
+PASS audio.currentSrc after setting src attribute "data:,"
 FAIL audio.currentSrc after adding source element with src attribute "data:," assert_equals: expected "data:," but got ""
-PASS video.currentSrc initial value 
-PASS video.currentSrc after setting src attribute "" 
-PASS video.currentSrc after adding source element with src attribute "" 
-PASS video.currentSrc after setting src attribute "." 
-PASS video.currentSrc after adding source element with src attribute "." 
+PASS video.currentSrc initial value
+PASS video.currentSrc after setting src attribute ""
+PASS video.currentSrc after adding source element with src attribute ""
+PASS video.currentSrc after setting src attribute "."
+PASS video.currentSrc after adding source element with src attribute "."
 FAIL video.currentSrc after setting src attribute " " assert_equals: expected "http://localhost:8800/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html" but got ""
 FAIL video.currentSrc after adding source element with src attribute " " assert_equals: expected "http://localhost:8800/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html" but got ""
-PASS video.currentSrc after setting src attribute "data:," 
+PASS video.currentSrc after setting src attribute "data:,"
 FAIL video.currentSrc after adding source element with src attribute "data:," assert_equals: expected "data:," but got ""
 

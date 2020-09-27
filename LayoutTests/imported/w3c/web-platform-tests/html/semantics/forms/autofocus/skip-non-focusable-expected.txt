@@ -1,4 +1,4 @@
- 
 
-PASS Non-focusable autofocus element is skipped. 
+
+PASS Non-focusable autofocus element is skipped.
 

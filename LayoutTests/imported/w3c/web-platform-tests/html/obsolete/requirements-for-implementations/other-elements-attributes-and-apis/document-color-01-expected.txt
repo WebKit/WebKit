@@ -1,8 +1,8 @@
 
-PASS getting document color attributes with no body 
-PASS setting document color attributes with no body 
-PASS document color attributes when the root element is a test element (iframe) 
-PASS document color attributes when the root element is a test element (createHTMLDocument) 
-PASS getting document color attributes when document.body is a frameset 
-PASS setting document color attributes when document.body is a frameset 
+PASS getting document color attributes with no body
+PASS setting document color attributes with no body
+PASS document color attributes when the root element is a test element (iframe)
+PASS document color attributes when the root element is a test element (createHTMLDocument)
+PASS getting document color attributes when document.body is a frameset
+PASS setting document color attributes when document.body is a frameset
 

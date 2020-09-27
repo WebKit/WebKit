@@ -3,5 +3,5 @@
 clearRect is affected by clipping regions
 
 
-PASS clearRect is affected by clipping regions 
+PASS clearRect is affected by clipping regions
 

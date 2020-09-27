@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS strokeRect of Nx0 pixels draws a closed line with no caps 
+PASS strokeRect of Nx0 pixels draws a closed line with no caps
 

@@ -1,7 +1,7 @@
 
-PASS It exists and is a function 
-PASS It throws when given non-functions 
-PASS It calls the callback asynchronously 
-PASS It does not pass any arguments 
-PASS It interleaves with promises as expected 
+PASS It exists and is a function
+PASS It throws when given non-functions
+PASS It calls the callback asynchronously
+PASS It does not pass any arguments
+PASS It interleaves with promises as expected
 

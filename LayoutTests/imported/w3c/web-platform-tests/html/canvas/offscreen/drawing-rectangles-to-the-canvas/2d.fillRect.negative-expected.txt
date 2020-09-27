@@ -3,5 +3,5 @@
 fillRect of negative sizes works
 
 
-PASS fillRect of negative sizes works 
+PASS fillRect of negative sizes works
 

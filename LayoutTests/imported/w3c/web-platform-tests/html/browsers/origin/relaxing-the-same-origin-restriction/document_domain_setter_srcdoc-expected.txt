@@ -1,6 +1,6 @@
 
 
-PASS srcdoc can access with no 'document.domain' modification. 
-PASS srcdoc can access with valid 'document.domain'. 
-PASS srcdoc can access when parent modifies 'document.domain'. 
+PASS srcdoc can access with no 'document.domain' modification.
+PASS srcdoc can access with valid 'document.domain'.
+PASS srcdoc can access when parent modifies 'document.domain'.
 

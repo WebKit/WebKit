@@ -1,9 +1,9 @@
 
 FAIL Contenteditable element should support autofocus assert_equals: expected "DIV" but got "BODY"
 FAIL Element with tabindex should support autofocus assert_equals: expected "SPAN" but got "BODY"
-PASS Non-HTMLElement should not support autofocus 
+PASS Non-HTMLElement should not support autofocus
 FAIL Host element with delegatesFocus should support autofocus assert_equals: expected Element node <div></div> but got Element node <body><div></div></body>
-PASS Host element with delegatesFocus including no focusable descendants should be skipped 
+PASS Host element with delegatesFocus including no focusable descendants should be skipped
 FAIL Area element should support autofocus assert_equals: expected Element node <area shape="rect" coords="1,1,99,99" href="/common/blank... but got Element node <body>
 <img src="/media/poster.png" usemap="#map">
 <map n...

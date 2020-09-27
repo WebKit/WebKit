@@ -1,5 +1,5 @@
 2d.fillStyle.parse.hsl-clamp-4
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.hsl-clamp-4 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.hsl-clamp-4
 

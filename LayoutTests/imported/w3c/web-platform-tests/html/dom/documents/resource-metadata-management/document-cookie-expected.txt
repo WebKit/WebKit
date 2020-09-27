@@ -1,7 +1,7 @@
 
-PASS document has no cookie 
-PASS document.cookie 
-PASS document.cookie 1 
-PASS document.cookie 2 
-PASS getting cookie for a cookie-averse document returns empty string, setting does nothing 
+PASS document has no cookie
+PASS document.cookie
+PASS document.cookie 1
+PASS document.cookie 2
+PASS getting cookie for a cookie-averse document returns empty string, setting does nothing
 

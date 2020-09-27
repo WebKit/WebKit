@@ -3,5 +3,5 @@
 clearRect is not affected by globalAlpha
 
 
-PASS clearRect is not affected by globalAlpha 
+PASS clearRect is not affected by globalAlpha
 

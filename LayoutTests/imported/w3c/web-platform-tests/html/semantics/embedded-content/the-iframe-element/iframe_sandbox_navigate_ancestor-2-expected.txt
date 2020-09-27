@@ -1,4 +1,4 @@
 
 
-PASS Check that unsandboxed iframe can navigate their ancestors 
+PASS Check that unsandboxed iframe can navigate their ancestors
 

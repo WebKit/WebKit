@@ -1,4 +1,4 @@
  
 
-PASS The UA will not recognize a language declaration in the Content-Language meta element when more than one language is declared. 
+PASS The UA will not recognize a language declaration in the Content-Language meta element when more than one language is declared.
 

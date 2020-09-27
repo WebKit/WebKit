@@ -1,5 +1,5 @@
 underlined text
 
 
-PASS HTML Test: Text in the ins element should be 'underline' 
+PASS HTML Test: Text in the ins element should be 'underline'
 

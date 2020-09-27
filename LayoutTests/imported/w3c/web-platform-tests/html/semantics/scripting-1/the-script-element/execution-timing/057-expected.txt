@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: appending code to initially non-empty SCRIPT tag in DOM (whitespace only)  
+PASS  scheduler: appending code to initially non-empty SCRIPT tag in DOM (whitespace only)
 

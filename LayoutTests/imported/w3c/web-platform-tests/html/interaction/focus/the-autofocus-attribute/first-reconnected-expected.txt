@@ -1,4 +1,4 @@
 
 
-PASS The second autofocus element wins if the first autofocus element was disconnected and reconnected before flushing the autofocus candidates. 
+PASS The second autofocus element wins if the first autofocus element was disconnected and reconnected before flushing the autofocus candidates.
 

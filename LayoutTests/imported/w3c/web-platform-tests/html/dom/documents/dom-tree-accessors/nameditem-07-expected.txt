@@ -1,10 +1,10 @@
 
-PASS If there is one object, it should be returned (name) 
-PASS If there are two objects, a collection should be returned. (name) 
-PASS If there is one object, it should be returned (id) 
-PASS If there are two objects, a collection should be returned. (id) 
-PASS If there are two objects, a collection should be returned. (name and id) 
-PASS If there are two objects, a collection should be returned. (id and name) 
-PASS A name shouldn't affect getting an object by id 
-PASS An id shouldn't affect getting an object by name 
-              
+PASS If there is one object, it should be returned (name)
+PASS If there are two objects, a collection should be returned. (name)
+PASS If there is one object, it should be returned (id)
+PASS If there are two objects, a collection should be returned. (id)
+PASS If there are two objects, a collection should be returned. (name and id)
+PASS If there are two objects, a collection should be returned. (id and name)
+PASS A name shouldn't affect getting an object by id
+PASS An id shouldn't affect getting an object by name
+

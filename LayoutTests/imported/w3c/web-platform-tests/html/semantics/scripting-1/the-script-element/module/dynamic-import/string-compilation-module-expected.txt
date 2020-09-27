@@ -1,7 +1,7 @@
 
-PASS eval should successfully import 
-PASS setTimeout should successfully import 
-PASS the Function constructor should successfully import 
-PASS reflected inline event handlers should successfully import 
-PASS inline event handlers triggered via UA code should successfully import 
+PASS eval should successfully import
+PASS setTimeout should successfully import
+PASS the Function constructor should successfully import
+PASS reflected inline event handlers should successfully import
+PASS inline event handlers triggered via UA code should successfully import
 

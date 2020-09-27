@@ -1,6 +1,6 @@
 
-PASS An inline classic script without nomodule content attribute must run 
-PASS An inline classic script with nomodule content attribute must not run 
-PASS An inline classic script element dynamically inserted after noModule was set to false must run. 
-PASS An inline classic script element dynamically inserted after noModule was set to true must not run. 
+PASS An inline classic script without nomodule content attribute must run
+PASS An inline classic script with nomodule content attribute must not run
+PASS An inline classic script element dynamically inserted after noModule was set to false must run.
+PASS An inline classic script element dynamically inserted after noModule was set to true must not run.
 

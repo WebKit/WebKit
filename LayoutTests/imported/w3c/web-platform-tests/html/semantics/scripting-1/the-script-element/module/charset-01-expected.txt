@@ -1,8 +1,8 @@
 
-PASS UTF-8 module script 
+PASS UTF-8 module script
 FAIL UTF-8 module script with wrong charset in attribute assert_equals: Should be decoded as UTF-8 expected "śćążź" but got "Ĺ›Ä‡Ä…ĹĽĹş"
 FAIL UTF-8 module script with wrong charset in Content-Type assert_equals: Should be decoded as UTF-8 expected "śćążź" but got "Ĺ›Ä‡Ä…ĹĽĹş"
-PASS Non-UTF-8 module script 
+PASS Non-UTF-8 module script
 FAIL Non-UTF-8 module script with charset in attribute assert_not_equals: Should be decoded as UTF-8 got disallowed value "śćążź"
 FAIL Non-UTF-8 module script with charset in Content-Type assert_not_equals: Should be decoded as UTF-8 got disallowed value "śćążź"
 

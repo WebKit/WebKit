@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8800" from accessing a frame with origin "http://localhost:8800". Protocols, domains, and ports must match.
-        
 
-PASS The window's frameElement attribute must return null if it is not a nested browsing context 
-PASS The window's frameElement attribute must return its container element if it is a nested browsing context 
-PASS The SecurityError must be thrown if the window accesses to frameElement attribute of a Window which does not have the same effective script origin 
-PASS The window's frameElement attribute must return null if the container's document does not have the same effective script origin 
+
+PASS The window's frameElement attribute must return null if it is not a nested browsing context
+PASS The window's frameElement attribute must return its container element if it is a nested browsing context
+PASS The SecurityError must be thrown if the window accesses to frameElement attribute of a Window which does not have the same effective script origin
+PASS The window's frameElement attribute must return null if the container's document does not have the same effective script origin
 

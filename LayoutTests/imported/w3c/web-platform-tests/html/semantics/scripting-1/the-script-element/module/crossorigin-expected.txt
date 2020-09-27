@@ -12,14 +12,14 @@ Blocked access to external URL http://www2.localhost:8800/html/semantics/scripti
 Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/crossorigin-scripterror.js
 html-script-module-crossOrigin
 
-           
+
 
 FAIL Root module, Error in CORS-same-origin script assert_equals: Unexpected _log value expected "running,8-1" but got ""
-PASS Root module, Blocked script download, missing CORS ACAO header 
-PASS Root module, Blocked script download, crossorigin attribute with missing CORS ACAO header 
-PASS Root module, Blocked script download, mismatched CORS ACAO header 
+PASS Root module, Blocked script download, missing CORS ACAO header
+PASS Root module, Blocked script download, crossorigin attribute with missing CORS ACAO header
+PASS Root module, Blocked script download, mismatched CORS ACAO header
 FAIL Imported module, Error in CORS-same-origin script assert_equals: Unexpected _log value expected "running,8-1" but got ""
-PASS Imported module, Blocked script download, missing CORS ACAO header 
-PASS Imported module, Blocked script download, crossorigin attribute with missing CORS ACAO header 
-PASS Imported module, Blocked script download, mismatched CORS ACAO header 
+PASS Imported module, Blocked script download, missing CORS ACAO header
+PASS Imported module, Blocked script download, crossorigin attribute with missing CORS ACAO header
+PASS Imported module, Blocked script download, mismatched CORS ACAO header
 

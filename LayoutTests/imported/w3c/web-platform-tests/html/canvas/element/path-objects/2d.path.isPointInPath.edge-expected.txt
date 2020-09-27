@@ -2,5 +2,5 @@
 isPointInPath() counts points on the path as being inside
 Actual output:
 
-PASS isPointInPath() counts points on the path as being inside 
+PASS isPointInPath() counts points on the path as being inside
 

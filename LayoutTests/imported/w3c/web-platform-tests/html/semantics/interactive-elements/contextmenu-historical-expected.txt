@@ -1,14 +1,14 @@
 Text Checked Disabled Default
 
-PASS HTMLMenuItemElement must not be not present 
-PASS onshow must not be present on the GlobalEventHandlers locations 
-PASS RelatedEvent must not be present 
-PASS el.contextMenu must not be present 
-PASS menu.type must not exist or reflect the content attribute 
-PASS menu.label must not exist or reflect the content attribute 
-PASS :enabled must not match menuitems 
-PASS :disabled must not match menuitems 
-PASS :checked must not match menuitems 
-PASS :default must not match menuitems 
-PASS The user-agent stylesheet must leave type="context" menus as block display like other menus 
+PASS HTMLMenuItemElement must not be not present
+PASS onshow must not be present on the GlobalEventHandlers locations
+PASS RelatedEvent must not be present
+PASS el.contextMenu must not be present
+PASS menu.type must not exist or reflect the content attribute
+PASS menu.label must not exist or reflect the content attribute
+PASS :enabled must not match menuitems
+PASS :disabled must not match menuitems
+PASS :checked must not match menuitems
+PASS :default must not match menuitems
+PASS The user-agent stylesheet must leave type="context" menus as block display like other menus
 

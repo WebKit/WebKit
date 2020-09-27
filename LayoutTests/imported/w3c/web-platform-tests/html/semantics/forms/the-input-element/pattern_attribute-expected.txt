@@ -1,5 +1,5 @@
 Pattern Attribute
 
 
-PASS pattern attribute support on input element 
+PASS pattern attribute support on input element
 

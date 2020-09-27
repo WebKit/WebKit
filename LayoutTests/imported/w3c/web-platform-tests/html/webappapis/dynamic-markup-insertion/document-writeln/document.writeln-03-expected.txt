@@ -1,3 +1,3 @@
 
-PASS Calling document.writeln with multiple arguments 
+PASS Calling document.writeln with multiple arguments
 

@@ -3,5 +3,5 @@ Description
 This test validates the dd element.
 
 
-PASS The prototype for dd is HTMLElement.prototype 
+PASS The prototype for dd is HTMLElement.prototype
 

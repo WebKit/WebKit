@@ -1,4 +1,4 @@
- 
 
-PASS The element is not focused during the initial parsing task 
+
+PASS The element is not focused during the initial parsing task
 

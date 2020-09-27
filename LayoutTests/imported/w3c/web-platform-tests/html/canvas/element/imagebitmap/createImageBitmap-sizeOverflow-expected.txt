@@ -1,7 +1,7 @@
 
-PASS createImageBitmap does not crash or reject the promise when passing very large sx 
-PASS createImageBitmap does not crash or reject the promise when passing very large sy 
-PASS createImageBitmap does not crash or reject the promise when passing very large sw 
-PASS createImageBitmap does not crash or reject the promise when passing very large sh 
-PASS createImageBitmap does not crash or reject the promise when passing very large sx, sy, sw and sh 
+PASS createImageBitmap does not crash or reject the promise when passing very large sx
+PASS createImageBitmap does not crash or reject the promise when passing very large sy
+PASS createImageBitmap does not crash or reject the promise when passing very large sw
+PASS createImageBitmap does not crash or reject the promise when passing very large sh
+PASS createImageBitmap does not crash or reject the promise when passing very large sx, sy, sw and sh
 

@@ -1,26 +1,26 @@
 
-PASS same-origin <frame> 
-PASS cross-origin <frame> 
-PASS same-origin <frame name=> 
-PASS cross-origin <frame name=> 
-PASS same-origin <frame name=initialvalue> 
-PASS cross-origin <frame name=initialvalue> 
-PASS same-origin <iframe> 
-PASS cross-origin <iframe> 
-PASS same-origin <iframe name=> 
-PASS cross-origin <iframe name=> 
-PASS same-origin <iframe name=initialvalue> 
-PASS cross-origin <iframe name=initialvalue> 
-PASS same-origin <object> 
-PASS cross-origin <object> 
-PASS same-origin <object name=> 
-PASS cross-origin <object name=> 
-PASS same-origin <object name=initialvalue> 
-PASS cross-origin <object name=initialvalue> 
-PASS same-origin <embed> 
-PASS cross-origin <embed> 
-PASS same-origin <embed name=> 
-PASS cross-origin <embed name=> 
-PASS same-origin <embed name=initialvalue> 
-PASS cross-origin <embed name=initialvalue> 
+PASS same-origin <frame>
+PASS cross-origin <frame>
+PASS same-origin <frame name=>
+PASS cross-origin <frame name=>
+PASS same-origin <frame name=initialvalue>
+PASS cross-origin <frame name=initialvalue>
+PASS same-origin <iframe>
+PASS cross-origin <iframe>
+PASS same-origin <iframe name=>
+PASS cross-origin <iframe name=>
+PASS same-origin <iframe name=initialvalue>
+PASS cross-origin <iframe name=initialvalue>
+PASS same-origin <object>
+PASS cross-origin <object>
+PASS same-origin <object name=>
+PASS cross-origin <object name=>
+PASS same-origin <object name=initialvalue>
+PASS cross-origin <object name=initialvalue>
+PASS same-origin <embed>
+PASS cross-origin <embed>
+PASS same-origin <embed name=>
+PASS cross-origin <embed name=>
+PASS same-origin <embed name=initialvalue>
+PASS cross-origin <embed name=initialvalue>
 

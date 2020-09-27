@@ -3,5 +3,5 @@
 createImageData(imgdata) returns transparent black data of the right size
 
 
-PASS createImageData(imgdata) returns transparent black data of the right size 
+PASS createImageData(imgdata) returns transparent black data of the right size
 

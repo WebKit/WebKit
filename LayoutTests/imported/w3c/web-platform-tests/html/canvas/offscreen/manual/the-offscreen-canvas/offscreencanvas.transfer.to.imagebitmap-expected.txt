@@ -1,8 +1,8 @@
 
-PASS Test that transferToImageBitmap returns an ImageBitmap with correct width and height 
+PASS Test that transferToImageBitmap returns an ImageBitmap with correct width and height
 FAIL Test that transferToImageBitmap returns an ImageBitmap with correct color assert_equals: Alpha channel of the pixel at (50, 25) expected 255 but got 0
-PASS Test that transferToImageBitmap won't change context's property 
+PASS Test that transferToImageBitmap won't change context's property
 FAIL Test that transferToImageBitmap preserves transform assert_equals: Green channel of the pixel at (23, 25) expected 255 but got 0
-PASS Test that call transferToImageBitmap on a detached OffscreenCanvas throws an exception 
-PASS Test that transferToImageBitmap without a context throws an exception 
+PASS Test that call transferToImageBitmap on a detached OffscreenCanvas throws an exception
+PASS Test that transferToImageBitmap without a context throws an exception
 

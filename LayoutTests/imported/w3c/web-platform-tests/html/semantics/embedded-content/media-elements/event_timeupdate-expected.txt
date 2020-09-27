@@ -1,7 +1,7 @@
 spec reference
 
-  
 
-PASS setting src attribute on a sufficiently long autoplay audio should trigger timeupdate event 
-PASS setting src attribute on a sufficiently long autoplay video should trigger timeupdate event 
+
+PASS setting src attribute on a sufficiently long autoplay audio should trigger timeupdate event
+PASS setting src attribute on a sufficiently long autoplay video should trigger timeupdate event
 

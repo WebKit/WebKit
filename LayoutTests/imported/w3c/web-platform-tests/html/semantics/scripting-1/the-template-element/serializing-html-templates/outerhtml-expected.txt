@@ -1,5 +1,5 @@
 
-PASS Template contents should be serialized instead of template element if serializing template element 
-PASS Template contents should be serialized instead of template element if serializing template element. Test nested template 
-PASS Template contents should be serialized instead of template element if serializing template element. Test serializing whole document 
+PASS Template contents should be serialized instead of template element if serializing template element
+PASS Template contents should be serialized instead of template element if serializing template element. Test nested template
+PASS Template contents should be serialized instead of template element if serializing template element. Test serializing whole document
 

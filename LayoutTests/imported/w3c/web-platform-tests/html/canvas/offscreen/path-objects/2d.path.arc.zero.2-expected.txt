@@ -3,5 +3,5 @@
 arc() draws nothing when startAngle = endAngle and clockwise
 
 
-PASS arc() draws nothing when startAngle = endAngle and clockwise 
+PASS arc() draws nothing when startAngle = endAngle and clockwise
 

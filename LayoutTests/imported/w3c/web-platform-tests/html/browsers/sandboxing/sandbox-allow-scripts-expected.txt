@@ -1,5 +1,5 @@
 Script execution in sandbox="allow-scripts" iframe
 
 
-PASS Running script from sandbox='allow-scripts' iframe is allowed 
+PASS Running script from sandbox='allow-scripts' iframe is allowed
 

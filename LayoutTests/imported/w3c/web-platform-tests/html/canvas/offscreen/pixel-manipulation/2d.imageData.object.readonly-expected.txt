@@ -3,5 +3,5 @@
 ImageData objects properties are read-only
 
 
-PASS ImageData objects properties are read-only 
+PASS ImageData objects properties are read-only
 

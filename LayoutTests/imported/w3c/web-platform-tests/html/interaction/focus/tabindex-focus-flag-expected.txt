@@ -1,46 +1,46 @@
-     
-  
- 
- 
- 
- 
- 
-  
- 
 
-PASS a should not be focusable by default. 
-PASS a[href] should be focusable by default. 
-PASS button should be focusable by default. 
-PASS input[type="hidden"] should not be focusable by default. 
-PASS input[type="button"] should be focusable by default. 
-PASS select should be focusable by default. 
-PASS textarea should be focusable by default. 
-PASS #summary-out should not be focusable by default. 
-PASS #summary-first should be focusable by default. 
-PASS #summary-second should not be focusable by default. 
-PASS [contenteditable] should be focusable by default. 
-PASS iframe should be focusable by default. 
-PASS #svg-a should not be focusable by default. 
-PASS #svg-text should not be focusable by default. 
-PASS img should not be focusable by default. 
-PASS A with tabindex=0 should be focusable. 
-PASS a with tabindex=0 should be focusable. 
-PASS text with tabindex=0 should be focusable. 
+
+
+
+
+
+
+
+
+
+PASS a should not be focusable by default.
+PASS a[href] should be focusable by default.
+PASS button should be focusable by default.
+PASS input[type="hidden"] should not be focusable by default.
+PASS input[type="button"] should be focusable by default.
+PASS select should be focusable by default.
+PASS textarea should be focusable by default.
+PASS #summary-out should not be focusable by default.
+PASS #summary-first should be focusable by default.
+PASS #summary-second should not be focusable by default.
+PASS [contenteditable] should be focusable by default.
+PASS iframe should be focusable by default.
+PASS #svg-a should not be focusable by default.
+PASS #svg-text should not be focusable by default.
+PASS img should not be focusable by default.
+PASS A with tabindex=0 should be focusable.
+PASS a with tabindex=0 should be focusable.
+PASS text with tabindex=0 should be focusable.
 FAIL SUMMARY#summary-out-tabindex0 with tabindex=0 should be focusable. assert_equals: expected Element node <summary tabindex="0" id="summary-out-tabindex0"></summary> but got Element node <text tabindex="0"></text>
 FAIL SUMMARY#summary-second-tabindex0 with tabindex=0 should be focusable. assert_equals: expected Element node <summary tabindex="0" id="summary-second-tabindex0"></sum... but got Element node <text tabindex="0"></text>
-PASS IMG with tabindex=0 should be focusable. 
-PASS A with tabindex=-1 should be focusable. 
-PASS a with tabindex=-1 should be focusable. 
-PASS text with tabindex=-1 should be focusable. 
+PASS IMG with tabindex=0 should be focusable.
+PASS A with tabindex=-1 should be focusable.
+PASS a with tabindex=-1 should be focusable.
+PASS text with tabindex=-1 should be focusable.
 FAIL SUMMARY#summary-out-tabindex-negative with tabindex=-1 should be focusable. assert_equals: expected Element node <summary tabindex="-1" id="summary-out-tabindex-negative"... but got Element node <text tabindex="-1"></text>
 FAIL SUMMARY#summary-second-tabindex-negative with tabindex=-1 should be focusable. assert_equals: expected Element node <summary tabindex="0" id="summary-second-tabindex-negativ... but got Element node <text tabindex="-1"></text>
-PASS IMG with tabindex=-1 should be focusable. 
-PASS A with tabindex=invalid should not be focusable. 
-PASS A#with-href with tabindex=invalid should be focusable. 
-PASS a with tabindex=invalid should not be focusable. 
-PASS a#with-href with tabindex=invalid should be focusable. 
-PASS text with tabindex=invalid should not be focusable. 
-PASS DIV with tabindex=invalid should not be focusable. 
-PASS SUMMARY#summary-out-tabindex-invalid with tabindex=invalid should not be focusable. 
-PASS IMG with tabindex=invalid should not be focusable. 
+PASS IMG with tabindex=-1 should be focusable.
+PASS A with tabindex=invalid should not be focusable.
+PASS A#with-href with tabindex=invalid should be focusable.
+PASS a with tabindex=invalid should not be focusable.
+PASS a#with-href with tabindex=invalid should be focusable.
+PASS text with tabindex=invalid should not be focusable.
+PASS DIV with tabindex=invalid should not be focusable.
+PASS SUMMARY#summary-out-tabindex-invalid with tabindex=invalid should not be focusable.
+PASS IMG with tabindex=invalid should not be focusable.
 

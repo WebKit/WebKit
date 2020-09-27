@@ -4,12 +4,12 @@ FAIL [INPUT in DATE status] The date type must be supported. assert_equals: The 
 FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: The month type should be supported. expected "month" but got "text"
 FAIL [INPUT in WEEK status] The week type must be supported. assert_equals: The week type should be supported. expected "week" but got "text"
 FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The time type should be supported. expected "time" but got "text"
-PASS [INPUT in NUMBER status] The min attribute is not set 
-PASS [INPUT in NUMBER status] Value is empty string 
-PASS [INPUT in NUMBER status] The min is less than value(integer) 
-PASS [INPUT in NUMBER status] The min is less than value(floating number) 
-PASS [INPUT in NUMBER status] The min equals to value 
-PASS [INPUT in NUMBER status] The value is not a number 
+PASS [INPUT in NUMBER status] The min attribute is not set
+PASS [INPUT in NUMBER status] Value is empty string
+PASS [INPUT in NUMBER status] The min is less than value(integer)
+PASS [INPUT in NUMBER status] The min is less than value(floating number)
+PASS [INPUT in NUMBER status] The min equals to value
+PASS [INPUT in NUMBER status] The value is not a number
 FAIL [INPUT in NUMBER status] The value is less than min(integer) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
 FAIL [INPUT in NUMBER status] The value is less than min(floating number) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false
 FAIL [INPUT in NUMBER status] The value is less than min(special floating number) assert_true: The validity.rangeUnderflow should be true, when control is disabled. expected true got false

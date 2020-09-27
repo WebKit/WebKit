@@ -1,4 +1,4 @@
 
 
-PASS Navigating forward after replace() should still trigger hashchange 
+PASS Navigating forward after replace() should still trigger hashchange
 

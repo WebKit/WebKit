@@ -1,10 +1,10 @@
 
-PASS If there is one embed, it should be returned (name) 
-PASS If there are two embeds, a collection should be returned. (name) 
-PASS If there is one embed, it should not be returned (id) 
-PASS If there are two embeds, nothing should be returned. (id) 
-PASS If there are two embeds, a collection should be returned. (name and id) 
-PASS If there are two embeds, a collection should be returned. (id and name) 
-PASS A name shouldn't affect getting an embed by id 
-PASS An id shouldn't affect getting an embed by name 
+PASS If there is one embed, it should be returned (name)
+PASS If there are two embeds, a collection should be returned. (name)
+PASS If there is one embed, it should not be returned (id)
+PASS If there are two embeds, nothing should be returned. (id)
+PASS If there are two embeds, a collection should be returned. (name and id)
+PASS If there are two embeds, a collection should be returned. (id and name)
+PASS A name shouldn't affect getting an embed by id
+PASS An id shouldn't affect getting an embed by name
 

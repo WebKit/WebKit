@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows of shapes with alpha components are drawn correctly 
+PASS Shadows of shapes with alpha components are drawn correctly
 

@@ -1,5 +1,5 @@
 
-PASS img with empty src 
-PASS img with empty srcset 
-PASS img with picture parent 
-  
+PASS img with empty src
+PASS img with empty srcset
+PASS img with picture parent
+

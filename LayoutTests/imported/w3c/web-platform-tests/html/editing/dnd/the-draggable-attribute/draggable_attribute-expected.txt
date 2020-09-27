@@ -1,296 +1,296 @@
 
-PASS Element a should have draggable property 
-PASS Element abbr should have draggable property 
-PASS Element acronym should have draggable property 
-PASS Element address should have draggable property 
-PASS Element applet should have draggable property 
-PASS Element area should have draggable property 
-PASS Element article should have draggable property 
-PASS Element aside should have draggable property 
-PASS Element audio should have draggable property 
-PASS Element b should have draggable property 
-PASS Element base should have draggable property 
-PASS Element basefont should have draggable property 
-PASS Element bdi should have draggable property 
-PASS Element bdo should have draggable property 
-PASS Element bgsound should have draggable property 
-PASS Element big should have draggable property 
-PASS Element blink should have draggable property 
-PASS Element blockquote should have draggable property 
-PASS Element body should have draggable property 
-PASS Element br should have draggable property 
-PASS Element button should have draggable property 
-PASS Element canvas should have draggable property 
-PASS Element caption should have draggable property 
-PASS Element center should have draggable property 
-PASS Element cite should have draggable property 
-PASS Element code should have draggable property 
-PASS Element col should have draggable property 
-PASS Element colgroup should have draggable property 
-PASS Element command should have draggable property 
-PASS Element data should have draggable property 
-PASS Element datalist should have draggable property 
-PASS Element dd should have draggable property 
-PASS Element del should have draggable property 
-PASS Element details should have draggable property 
-PASS Element dfn should have draggable property 
-PASS Element dialog should have draggable property 
-PASS Element dir should have draggable property 
-PASS Element directory should have draggable property 
-PASS Element div should have draggable property 
-PASS Element dl should have draggable property 
-PASS Element dt should have draggable property 
-PASS Element em should have draggable property 
-PASS Element embed should have draggable property 
-PASS Element fieldset should have draggable property 
-PASS Element figcaption should have draggable property 
-PASS Element figure should have draggable property 
-PASS Element font should have draggable property 
-PASS Element foo-BAR should have draggable property 
-PASS Element foo-bar should have draggable property 
-PASS Element foo should have draggable property 
-PASS Element footer should have draggable property 
-PASS Element form should have draggable property 
-PASS Element frame should have draggable property 
-PASS Element frameset should have draggable property 
-PASS Element h1 should have draggable property 
-PASS Element h2 should have draggable property 
-PASS Element h3 should have draggable property 
-PASS Element h4 should have draggable property 
-PASS Element h5 should have draggable property 
-PASS Element h6 should have draggable property 
-PASS Element head should have draggable property 
-PASS Element header should have draggable property 
-PASS Element hgroup should have draggable property 
-PASS Element hr should have draggable property 
-PASS Element html should have draggable property 
-PASS Element i should have draggable property 
-PASS Element iframe should have draggable property 
-PASS Element image should have draggable property 
-PASS Element img should have draggable property 
-PASS Element input should have draggable property 
-PASS Element ins should have draggable property 
-PASS Element isindex should have draggable property 
-PASS Element kbd should have draggable property 
-PASS Element keygen should have draggable property 
-PASS Element label should have draggable property 
-PASS Element legend should have draggable property 
-PASS Element li should have draggable property 
-PASS Element link should have draggable property 
-PASS Element listing should have draggable property 
-PASS Element main should have draggable property 
-PASS Element map should have draggable property 
-PASS Element mark should have draggable property 
-PASS Element marquee should have draggable property 
-PASS Element menu should have draggable property 
-PASS Element meta should have draggable property 
-PASS Element meter should have draggable property 
-PASS Element mod should have draggable property 
-PASS Element multicol should have draggable property 
-PASS Element nav should have draggable property 
-PASS Element nextid should have draggable property 
-PASS Element nobr should have draggable property 
-PASS Element noembed should have draggable property 
-PASS Element noframes should have draggable property 
-PASS Element noscript should have draggable property 
-PASS Element object should have draggable property 
-PASS Element ol should have draggable property 
-PASS Element optgroup should have draggable property 
-PASS Element option should have draggable property 
-PASS Element output should have draggable property 
-PASS Element p should have draggable property 
-PASS Element param should have draggable property 
-PASS Element picture should have draggable property 
-PASS Element plaintext should have draggable property 
-PASS Element pre should have draggable property 
-PASS Element progress should have draggable property 
-PASS Element q should have draggable property 
-PASS Element quasit should have draggable property 
-PASS Element rb should have draggable property 
-PASS Element rp should have draggable property 
-PASS Element rt should have draggable property 
-PASS Element rtc should have draggable property 
-PASS Element ruby should have draggable property 
-PASS Element s should have draggable property 
-PASS Element samp should have draggable property 
-PASS Element script should have draggable property 
-PASS Element section should have draggable property 
-PASS Element select should have draggable property 
-PASS Element slot should have draggable property 
-PASS Element small should have draggable property 
-PASS Element source should have draggable property 
-PASS Element spacer should have draggable property 
-PASS Element span should have draggable property 
-PASS Element strike should have draggable property 
-PASS Element strong should have draggable property 
-PASS Element style should have draggable property 
-PASS Element sub should have draggable property 
-PASS Element summary should have draggable property 
-PASS Element sup should have draggable property 
-PASS Element table should have draggable property 
-PASS Element tbody should have draggable property 
-PASS Element td should have draggable property 
-PASS Element textarea should have draggable property 
-PASS Element tfoot should have draggable property 
-PASS Element th should have draggable property 
-PASS Element thead should have draggable property 
-PASS Element time should have draggable property 
-PASS Element title should have draggable property 
-PASS Element tr should have draggable property 
-PASS Element track should have draggable property 
-PASS Element tt should have draggable property 
-PASS Element u should have draggable property 
-PASS Element ul should have draggable property 
-PASS Element var should have draggable property 
-PASS Element video should have draggable property 
-PASS Element wbr should have draggable property 
-PASS Element xmp should have draggable property 
-PASS Element å-bar should have draggable property 
-PASS Element a draggable attribute test 
-PASS Element abbr draggable attribute test 
-PASS Element acronym draggable attribute test 
-PASS Element address draggable attribute test 
-PASS Element applet draggable attribute test 
-PASS Element area draggable attribute test 
-PASS Element article draggable attribute test 
-PASS Element aside draggable attribute test 
-PASS Element audio draggable attribute test 
-PASS Element b draggable attribute test 
-PASS Element base draggable attribute test 
-PASS Element basefont draggable attribute test 
-PASS Element bdi draggable attribute test 
-PASS Element bdo draggable attribute test 
-PASS Element bgsound draggable attribute test 
-PASS Element big draggable attribute test 
-PASS Element blink draggable attribute test 
-PASS Element blockquote draggable attribute test 
-PASS Element body draggable attribute test 
-PASS Element br draggable attribute test 
-PASS Element button draggable attribute test 
-PASS Element canvas draggable attribute test 
-PASS Element caption draggable attribute test 
-PASS Element center draggable attribute test 
-PASS Element cite draggable attribute test 
-PASS Element code draggable attribute test 
-PASS Element col draggable attribute test 
-PASS Element colgroup draggable attribute test 
-PASS Element command draggable attribute test 
-PASS Element data draggable attribute test 
-PASS Element datalist draggable attribute test 
-PASS Element dd draggable attribute test 
-PASS Element del draggable attribute test 
-PASS Element details draggable attribute test 
-PASS Element dfn draggable attribute test 
-PASS Element dialog draggable attribute test 
-PASS Element dir draggable attribute test 
-PASS Element directory draggable attribute test 
-PASS Element div draggable attribute test 
-PASS Element dl draggable attribute test 
-PASS Element dt draggable attribute test 
-PASS Element em draggable attribute test 
-PASS Element embed draggable attribute test 
-PASS Element fieldset draggable attribute test 
-PASS Element figcaption draggable attribute test 
-PASS Element figure draggable attribute test 
-PASS Element font draggable attribute test 
-PASS Element foo-BAR draggable attribute test 
-PASS Element foo-bar draggable attribute test 
-PASS Element foo draggable attribute test 
-PASS Element footer draggable attribute test 
-PASS Element form draggable attribute test 
-PASS Element frame draggable attribute test 
-PASS Element frameset draggable attribute test 
-PASS Element h1 draggable attribute test 
-PASS Element h2 draggable attribute test 
-PASS Element h3 draggable attribute test 
-PASS Element h4 draggable attribute test 
-PASS Element h5 draggable attribute test 
-PASS Element h6 draggable attribute test 
-PASS Element head draggable attribute test 
-PASS Element header draggable attribute test 
-PASS Element hgroup draggable attribute test 
-PASS Element hr draggable attribute test 
-PASS Element html draggable attribute test 
-PASS Element i draggable attribute test 
-PASS Element iframe draggable attribute test 
-PASS Element image draggable attribute test 
-PASS Element img draggable attribute test 
-PASS Element input draggable attribute test 
-PASS Element ins draggable attribute test 
-PASS Element isindex draggable attribute test 
-PASS Element kbd draggable attribute test 
-PASS Element keygen draggable attribute test 
-PASS Element label draggable attribute test 
-PASS Element legend draggable attribute test 
-PASS Element li draggable attribute test 
-PASS Element link draggable attribute test 
-PASS Element listing draggable attribute test 
-PASS Element main draggable attribute test 
-PASS Element map draggable attribute test 
-PASS Element mark draggable attribute test 
-PASS Element marquee draggable attribute test 
-PASS Element menu draggable attribute test 
-PASS Element meta draggable attribute test 
-PASS Element meter draggable attribute test 
-PASS Element mod draggable attribute test 
-PASS Element multicol draggable attribute test 
-PASS Element nav draggable attribute test 
-PASS Element nextid draggable attribute test 
-PASS Element nobr draggable attribute test 
-PASS Element noembed draggable attribute test 
-PASS Element noframes draggable attribute test 
-PASS Element noscript draggable attribute test 
-PASS Element object draggable attribute test 
-PASS Element ol draggable attribute test 
-PASS Element optgroup draggable attribute test 
-PASS Element option draggable attribute test 
-PASS Element output draggable attribute test 
-PASS Element p draggable attribute test 
-PASS Element param draggable attribute test 
-PASS Element picture draggable attribute test 
-PASS Element plaintext draggable attribute test 
-PASS Element pre draggable attribute test 
-PASS Element progress draggable attribute test 
-PASS Element q draggable attribute test 
-PASS Element quasit draggable attribute test 
-PASS Element rb draggable attribute test 
-PASS Element rp draggable attribute test 
-PASS Element rt draggable attribute test 
-PASS Element rtc draggable attribute test 
-PASS Element ruby draggable attribute test 
-PASS Element s draggable attribute test 
-PASS Element samp draggable attribute test 
-PASS Element script draggable attribute test 
-PASS Element section draggable attribute test 
-PASS Element select draggable attribute test 
-PASS Element slot draggable attribute test 
-PASS Element small draggable attribute test 
-PASS Element source draggable attribute test 
-PASS Element spacer draggable attribute test 
-PASS Element span draggable attribute test 
-PASS Element strike draggable attribute test 
-PASS Element strong draggable attribute test 
-PASS Element style draggable attribute test 
-PASS Element sub draggable attribute test 
-PASS Element summary draggable attribute test 
-PASS Element sup draggable attribute test 
-PASS Element table draggable attribute test 
-PASS Element tbody draggable attribute test 
-PASS Element td draggable attribute test 
-PASS Element textarea draggable attribute test 
-PASS Element tfoot draggable attribute test 
-PASS Element th draggable attribute test 
-PASS Element thead draggable attribute test 
-PASS Element time draggable attribute test 
-PASS Element title draggable attribute test 
-PASS Element tr draggable attribute test 
-PASS Element track draggable attribute test 
-PASS Element tt draggable attribute test 
-PASS Element u draggable attribute test 
-PASS Element ul draggable attribute test 
-PASS Element var draggable attribute test 
-PASS Element video draggable attribute test 
-PASS Element wbr draggable attribute test 
-PASS Element xmp draggable attribute test 
-PASS Element å-bar draggable attribute test 
+PASS Element a should have draggable property
+PASS Element abbr should have draggable property
+PASS Element acronym should have draggable property
+PASS Element address should have draggable property
+PASS Element applet should have draggable property
+PASS Element area should have draggable property
+PASS Element article should have draggable property
+PASS Element aside should have draggable property
+PASS Element audio should have draggable property
+PASS Element b should have draggable property
+PASS Element base should have draggable property
+PASS Element basefont should have draggable property
+PASS Element bdi should have draggable property
+PASS Element bdo should have draggable property
+PASS Element bgsound should have draggable property
+PASS Element big should have draggable property
+PASS Element blink should have draggable property
+PASS Element blockquote should have draggable property
+PASS Element body should have draggable property
+PASS Element br should have draggable property
+PASS Element button should have draggable property
+PASS Element canvas should have draggable property
+PASS Element caption should have draggable property
+PASS Element center should have draggable property
+PASS Element cite should have draggable property
+PASS Element code should have draggable property
+PASS Element col should have draggable property
+PASS Element colgroup should have draggable property
+PASS Element command should have draggable property
+PASS Element data should have draggable property
+PASS Element datalist should have draggable property
+PASS Element dd should have draggable property
+PASS Element del should have draggable property
+PASS Element details should have draggable property
+PASS Element dfn should have draggable property
+PASS Element dialog should have draggable property
+PASS Element dir should have draggable property
+PASS Element directory should have draggable property
+PASS Element div should have draggable property
+PASS Element dl should have draggable property
+PASS Element dt should have draggable property
+PASS Element em should have draggable property
+PASS Element embed should have draggable property
+PASS Element fieldset should have draggable property
+PASS Element figcaption should have draggable property
+PASS Element figure should have draggable property
+PASS Element font should have draggable property
+PASS Element foo-BAR should have draggable property
+PASS Element foo-bar should have draggable property
+PASS Element foo should have draggable property
+PASS Element footer should have draggable property
+PASS Element form should have draggable property
+PASS Element frame should have draggable property
+PASS Element frameset should have draggable property
+PASS Element h1 should have draggable property
+PASS Element h2 should have draggable property
+PASS Element h3 should have draggable property
+PASS Element h4 should have draggable property
+PASS Element h5 should have draggable property
+PASS Element h6 should have draggable property
+PASS Element head should have draggable property
+PASS Element header should have draggable property
+PASS Element hgroup should have draggable property
+PASS Element hr should have draggable property
+PASS Element html should have draggable property
+PASS Element i should have draggable property
+PASS Element iframe should have draggable property
+PASS Element image should have draggable property
+PASS Element img should have draggable property
+PASS Element input should have draggable property
+PASS Element ins should have draggable property
+PASS Element isindex should have draggable property
+PASS Element kbd should have draggable property
+PASS Element keygen should have draggable property
+PASS Element label should have draggable property
+PASS Element legend should have draggable property
+PASS Element li should have draggable property
+PASS Element link should have draggable property
+PASS Element listing should have draggable property
+PASS Element main should have draggable property
+PASS Element map should have draggable property
+PASS Element mark should have draggable property
+PASS Element marquee should have draggable property
+PASS Element menu should have draggable property
+PASS Element meta should have draggable property
+PASS Element meter should have draggable property
+PASS Element mod should have draggable property
+PASS Element multicol should have draggable property
+PASS Element nav should have draggable property
+PASS Element nextid should have draggable property
+PASS Element nobr should have draggable property
+PASS Element noembed should have draggable property
+PASS Element noframes should have draggable property
+PASS Element noscript should have draggable property
+PASS Element object should have draggable property
+PASS Element ol should have draggable property
+PASS Element optgroup should have draggable property
+PASS Element option should have draggable property
+PASS Element output should have draggable property
+PASS Element p should have draggable property
+PASS Element param should have draggable property
+PASS Element picture should have draggable property
+PASS Element plaintext should have draggable property
+PASS Element pre should have draggable property
+PASS Element progress should have draggable property
+PASS Element q should have draggable property
+PASS Element quasit should have draggable property
+PASS Element rb should have draggable property
+PASS Element rp should have draggable property
+PASS Element rt should have draggable property
+PASS Element rtc should have draggable property
+PASS Element ruby should have draggable property
+PASS Element s should have draggable property
+PASS Element samp should have draggable property
+PASS Element script should have draggable property
+PASS Element section should have draggable property
+PASS Element select should have draggable property
+PASS Element slot should have draggable property
+PASS Element small should have draggable property
+PASS Element source should have draggable property
+PASS Element spacer should have draggable property
+PASS Element span should have draggable property
+PASS Element strike should have draggable property
+PASS Element strong should have draggable property
+PASS Element style should have draggable property
+PASS Element sub should have draggable property
+PASS Element summary should have draggable property
+PASS Element sup should have draggable property
+PASS Element table should have draggable property
+PASS Element tbody should have draggable property
+PASS Element td should have draggable property
+PASS Element textarea should have draggable property
+PASS Element tfoot should have draggable property
+PASS Element th should have draggable property
+PASS Element thead should have draggable property
+PASS Element time should have draggable property
+PASS Element title should have draggable property
+PASS Element tr should have draggable property
+PASS Element track should have draggable property
+PASS Element tt should have draggable property
+PASS Element u should have draggable property
+PASS Element ul should have draggable property
+PASS Element var should have draggable property
+PASS Element video should have draggable property
+PASS Element wbr should have draggable property
+PASS Element xmp should have draggable property
+PASS Element å-bar should have draggable property
+PASS Element a draggable attribute test
+PASS Element abbr draggable attribute test
+PASS Element acronym draggable attribute test
+PASS Element address draggable attribute test
+PASS Element applet draggable attribute test
+PASS Element area draggable attribute test
+PASS Element article draggable attribute test
+PASS Element aside draggable attribute test
+PASS Element audio draggable attribute test
+PASS Element b draggable attribute test
+PASS Element base draggable attribute test
+PASS Element basefont draggable attribute test
+PASS Element bdi draggable attribute test
+PASS Element bdo draggable attribute test
+PASS Element bgsound draggable attribute test
+PASS Element big draggable attribute test
+PASS Element blink draggable attribute test
+PASS Element blockquote draggable attribute test
+PASS Element body draggable attribute test
+PASS Element br draggable attribute test
+PASS Element button draggable attribute test
+PASS Element canvas draggable attribute test
+PASS Element caption draggable attribute test
+PASS Element center draggable attribute test
+PASS Element cite draggable attribute test
+PASS Element code draggable attribute test
+PASS Element col draggable attribute test
+PASS Element colgroup draggable attribute test
+PASS Element command draggable attribute test
+PASS Element data draggable attribute test
+PASS Element datalist draggable attribute test
+PASS Element dd draggable attribute test
+PASS Element del draggable attribute test
+PASS Element details draggable attribute test
+PASS Element dfn draggable attribute test
+PASS Element dialog draggable attribute test
+PASS Element dir draggable attribute test
+PASS Element directory draggable attribute test
+PASS Element div draggable attribute test
+PASS Element dl draggable attribute test
+PASS Element dt draggable attribute test
+PASS Element em draggable attribute test
+PASS Element embed draggable attribute test
+PASS Element fieldset draggable attribute test
+PASS Element figcaption draggable attribute test
+PASS Element figure draggable attribute test
+PASS Element font draggable attribute test
+PASS Element foo-BAR draggable attribute test
+PASS Element foo-bar draggable attribute test
+PASS Element foo draggable attribute test
+PASS Element footer draggable attribute test
+PASS Element form draggable attribute test
+PASS Element frame draggable attribute test
+PASS Element frameset draggable attribute test
+PASS Element h1 draggable attribute test
+PASS Element h2 draggable attribute test
+PASS Element h3 draggable attribute test
+PASS Element h4 draggable attribute test
+PASS Element h5 draggable attribute test
+PASS Element h6 draggable attribute test
+PASS Element head draggable attribute test
+PASS Element header draggable attribute test
+PASS Element hgroup draggable attribute test
+PASS Element hr draggable attribute test
+PASS Element html draggable attribute test
+PASS Element i draggable attribute test
+PASS Element iframe draggable attribute test
+PASS Element image draggable attribute test
+PASS Element img draggable attribute test
+PASS Element input draggable attribute test
+PASS Element ins draggable attribute test
+PASS Element isindex draggable attribute test
+PASS Element kbd draggable attribute test
+PASS Element keygen draggable attribute test
+PASS Element label draggable attribute test
+PASS Element legend draggable attribute test
+PASS Element li draggable attribute test
+PASS Element link draggable attribute test
+PASS Element listing draggable attribute test
+PASS Element main draggable attribute test
+PASS Element map draggable attribute test
+PASS Element mark draggable attribute test
+PASS Element marquee draggable attribute test
+PASS Element menu draggable attribute test
+PASS Element meta draggable attribute test
+PASS Element meter draggable attribute test
+PASS Element mod draggable attribute test
+PASS Element multicol draggable attribute test
+PASS Element nav draggable attribute test
+PASS Element nextid draggable attribute test
+PASS Element nobr draggable attribute test
+PASS Element noembed draggable attribute test
+PASS Element noframes draggable attribute test
+PASS Element noscript draggable attribute test
+PASS Element object draggable attribute test
+PASS Element ol draggable attribute test
+PASS Element optgroup draggable attribute test
+PASS Element option draggable attribute test
+PASS Element output draggable attribute test
+PASS Element p draggable attribute test
+PASS Element param draggable attribute test
+PASS Element picture draggable attribute test
+PASS Element plaintext draggable attribute test
+PASS Element pre draggable attribute test
+PASS Element progress draggable attribute test
+PASS Element q draggable attribute test
+PASS Element quasit draggable attribute test
+PASS Element rb draggable attribute test
+PASS Element rp draggable attribute test
+PASS Element rt draggable attribute test
+PASS Element rtc draggable attribute test
+PASS Element ruby draggable attribute test
+PASS Element s draggable attribute test
+PASS Element samp draggable attribute test
+PASS Element script draggable attribute test
+PASS Element section draggable attribute test
+PASS Element select draggable attribute test
+PASS Element slot draggable attribute test
+PASS Element small draggable attribute test
+PASS Element source draggable attribute test
+PASS Element spacer draggable attribute test
+PASS Element span draggable attribute test
+PASS Element strike draggable attribute test
+PASS Element strong draggable attribute test
+PASS Element style draggable attribute test
+PASS Element sub draggable attribute test
+PASS Element summary draggable attribute test
+PASS Element sup draggable attribute test
+PASS Element table draggable attribute test
+PASS Element tbody draggable attribute test
+PASS Element td draggable attribute test
+PASS Element textarea draggable attribute test
+PASS Element tfoot draggable attribute test
+PASS Element th draggable attribute test
+PASS Element thead draggable attribute test
+PASS Element time draggable attribute test
+PASS Element title draggable attribute test
+PASS Element tr draggable attribute test
+PASS Element track draggable attribute test
+PASS Element tt draggable attribute test
+PASS Element u draggable attribute test
+PASS Element ul draggable attribute test
+PASS Element var draggable attribute test
+PASS Element video draggable attribute test
+PASS Element wbr draggable attribute test
+PASS Element xmp draggable attribute test
+PASS Element å-bar draggable attribute test
 

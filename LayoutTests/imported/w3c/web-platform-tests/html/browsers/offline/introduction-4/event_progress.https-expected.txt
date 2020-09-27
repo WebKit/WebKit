@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
-PASS progress event test 
+PASS progress event test
 

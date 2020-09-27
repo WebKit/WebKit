@@ -1,10 +1,10 @@
 
-PASS formAction on button support 
-PASS formAction on input support 
-PASS formaction absolute URL value on input reflects correct value after being updated by the DOM 
-PASS formAction absolute URL value is correct using getAttribute 
-PASS formAction relative URL value on input reflects correct value after being updated by the DOM 
-PASS formAction relative URL value is correct using getAttribute 
-PASS On getting, when formaction is missing, the document's address must be returned 
-PASS On getting, when formaction value is the empty string, the document's address must be returned 
+PASS formAction on button support
+PASS formAction on input support
+PASS formaction absolute URL value on input reflects correct value after being updated by the DOM
+PASS formAction absolute URL value is correct using getAttribute
+PASS formAction relative URL value on input reflects correct value after being updated by the DOM
+PASS formAction relative URL value is correct using getAttribute
+PASS On getting, when formaction is missing, the document's address must be returned
+PASS On getting, when formaction value is the empty string, the document's address must be returned
 

@@ -1,6 +1,6 @@
 
-PASS non-error event handler 
-PASS error event handler not on body 
+PASS non-error event handler
+PASS error event handler not on body
 FAIL error event handler on disconnected body assert_equals: expected "function onerror(event, source, lineno, colno, error) {\nfoo\n}" but got "function onerror(event) {\nfoo\n}"
 FAIL error event handler on disconnected frameset assert_equals: expected "function onerror(event, source, lineno, colno, error) {\nfoo\n}" but got "function onerror(event) {\nfoo\n}"
 FAIL error event handler on connected body, reflected to Window assert_equals: expected "function onerror(event, source, lineno, colno, error) {\nfoo\n}" but got "function onerror(event) {\nfoo\n}"

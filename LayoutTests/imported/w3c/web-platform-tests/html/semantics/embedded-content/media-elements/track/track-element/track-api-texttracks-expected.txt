@@ -1,7 +1,7 @@
 Track element and API Test
 
 
-PASS Check the track elements 
-PASS Check getTrackById method 
-PASS Count track list 
+PASS Check the track elements
+PASS Check getTrackById method
+PASS Count track list
 

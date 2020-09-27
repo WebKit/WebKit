@@ -3,4 +3,4 @@ FAIL postMessaging to a same-origin iframe via MessageChannel allows them to see
 FAIL postMessaging to a same-site iframe via MessageChannel allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
 FAIL postMessaging to a cross-site iframe via MessageChannel should fail Can't find variable: SharedArrayBuffer
 FAIL postMessaging with a MessageChannel that's been cross-site should succeed Can't find variable: SharedArrayBuffer
- 
+

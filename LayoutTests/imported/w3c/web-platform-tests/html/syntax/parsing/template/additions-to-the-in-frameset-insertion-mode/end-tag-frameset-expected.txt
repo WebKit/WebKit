@@ -1,3 +1,3 @@
 
-PASS <template> tag should be ignored in "in frameset" insertion mode 
+PASS <template> tag should be ignored in "in frameset" insertion mode
 

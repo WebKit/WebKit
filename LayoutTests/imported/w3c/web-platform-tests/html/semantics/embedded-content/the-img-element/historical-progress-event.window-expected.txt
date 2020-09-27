@@ -1,4 +1,4 @@
 
-PASS <img> does not support ProgressEvent or loadstart/progress/loadend 
-PASS onloadend is not exposed 
+PASS <img> does not support ProgressEvent or loadstart/progress/loadend
+PASS onloadend is not exposed
 

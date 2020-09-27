@@ -1,16 +1,16 @@
 
-PASS "innerwidth=401" should set width of opened window 
-PASS " innerwidth = 401" should set width of opened window 
-PASS "innerwidth==401" should set width of opened window 
-PASS "\ninnerwidth= 401" should set width of opened window 
-PASS ",innerwidth=401,," should set width of opened window 
-PASS "INNERWIDTH=401" should set width of opened window 
-PASS "innerWidth=401" should set width of opened window 
-PASS "innerheight=402" should set height of opened window 
-PASS " innerheight = 402" should set height of opened window 
-PASS "innerheight==402" should set height of opened window 
-PASS "\ninnerheight= 402" should set height of opened window 
-PASS ",innerheight=402,," should set height of opened window 
-PASS "INNERHEIGHT=402" should set height of opened window 
-PASS "innerHeight=402" should set height of opened window 
+PASS "innerwidth=401" should set width of opened window
+PASS " innerwidth = 401" should set width of opened window
+PASS "innerwidth==401" should set width of opened window
+PASS "\ninnerwidth= 401" should set width of opened window
+PASS ",innerwidth=401,," should set width of opened window
+PASS "INNERWIDTH=401" should set width of opened window
+PASS "innerWidth=401" should set width of opened window
+PASS "innerheight=402" should set height of opened window
+PASS " innerheight = 402" should set height of opened window
+PASS "innerheight==402" should set height of opened window
+PASS "\ninnerheight= 402" should set height of opened window
+PASS ",innerheight=402,," should set height of opened window
+PASS "INNERHEIGHT=402" should set height of opened window
+PASS "innerHeight=402" should set height of opened window
 

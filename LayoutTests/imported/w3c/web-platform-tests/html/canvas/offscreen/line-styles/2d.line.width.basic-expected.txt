@@ -3,5 +3,5 @@
 lineWidth determines the width of line strokes
 
 
-PASS lineWidth determines the width of line strokes 
+PASS lineWidth determines the width of line strokes
 

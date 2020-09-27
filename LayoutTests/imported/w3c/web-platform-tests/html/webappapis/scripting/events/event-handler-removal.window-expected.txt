@@ -1,7 +1,7 @@
 
-PASS Event handler set through content attribute should be removed when they are set to null. 
-PASS Event handler set through content attribute should be re-activated even if content is the same. 
-PASS Event handler set through content attribute should be deactivated when the content attribute is removed. 
-PASS Event handler set through IDL should be deactivated when the IDL attribute is set to null. 
-PASS Event handler set through IDL should NOT be deactivated when the content attribute is removed. 
+PASS Event handler set through content attribute should be removed when they are set to null.
+PASS Event handler set through content attribute should be re-activated even if content is the same.
+PASS Event handler set through content attribute should be deactivated when the content attribute is removed.
+PASS Event handler set through IDL should be deactivated when the IDL attribute is set to null.
+PASS Event handler set through IDL should NOT be deactivated when the content attribute is removed.
 

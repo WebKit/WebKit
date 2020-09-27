@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: document.write scripts that write scripts 
+PASS  scheduler: document.write scripts that write scripts
 

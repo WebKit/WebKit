@@ -3,5 +3,5 @@
 fillRect does not affect the current path
 
 
-PASS fillRect does not affect the current path 
+PASS fillRect does not affect the current path
 

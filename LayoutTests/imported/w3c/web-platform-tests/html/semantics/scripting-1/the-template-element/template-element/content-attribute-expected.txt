@@ -1,9 +1,9 @@
 
-PASS Content attribute of template element is read-only. Test empty template 
-PASS Content attribute of template element is read-only. Test not empty template populated by appendchild() 
-PASS Content attribute of template element is read-only. Test not empty template populated by innerHTML 
-PASS Content attribute of template element is read-only. Test that custom content attribute named 'content' doesn't make content IDL attribute writable 
-PASS Content attribute of template element is read-only. Test that custom content attribute named 'content' doesn't affect content IDL attribute 
-PASS Content attribute of template element is read-only. Text value of content attribute of template tag should be ignored, when loading document from a file 
-PASS Content attribute of template element is read-only. Test content attribute of a document loaded from a file 
+PASS Content attribute of template element is read-only. Test empty template
+PASS Content attribute of template element is read-only. Test not empty template populated by appendchild()
+PASS Content attribute of template element is read-only. Test not empty template populated by innerHTML
+PASS Content attribute of template element is read-only. Test that custom content attribute named 'content' doesn't make content IDL attribute writable
+PASS Content attribute of template element is read-only. Test that custom content attribute named 'content' doesn't affect content IDL attribute
+PASS Content attribute of template element is read-only. Text value of content attribute of template tag should be ignored, when loading document from a file
+PASS Content attribute of template element is read-only. Test content attribute of a document loaded from a file
 

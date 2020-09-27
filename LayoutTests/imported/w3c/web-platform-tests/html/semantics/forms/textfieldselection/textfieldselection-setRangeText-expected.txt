@@ -1,50 +1,50 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS text setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments 
-PASS text selectionMode missing 
-PASS text selectionMode 'select' 
-PASS text selectionMode 'start' 
-PASS text selectionMode 'end' 
-PASS text selectionMode 'preserve' 
-PASS text setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS text setRangeText without argument throws a type error 
+PASS text setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS text selectionMode missing
+PASS text selectionMode 'select'
+PASS text selectionMode 'start'
+PASS text selectionMode 'end'
+PASS text selectionMode 'preserve'
+PASS text setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS text setRangeText without argument throws a type error
 TIMEOUT text setRangeText fires a select event Test timed out
-PASS search setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments 
-PASS search selectionMode missing 
-PASS search selectionMode 'select' 
-PASS search selectionMode 'start' 
-PASS search selectionMode 'end' 
-PASS search selectionMode 'preserve' 
-PASS search setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS search setRangeText without argument throws a type error 
+PASS search setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS search selectionMode missing
+PASS search selectionMode 'select'
+PASS search selectionMode 'start'
+PASS search selectionMode 'end'
+PASS search selectionMode 'preserve'
+PASS search setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS search setRangeText without argument throws a type error
 TIMEOUT search setRangeText fires a select event Test timed out
-PASS tel setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments 
-PASS tel selectionMode missing 
-PASS tel selectionMode 'select' 
-PASS tel selectionMode 'start' 
-PASS tel selectionMode 'end' 
-PASS tel selectionMode 'preserve' 
-PASS tel setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS tel setRangeText without argument throws a type error 
+PASS tel setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS tel selectionMode missing
+PASS tel selectionMode 'select'
+PASS tel selectionMode 'start'
+PASS tel selectionMode 'end'
+PASS tel selectionMode 'preserve'
+PASS tel setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS tel setRangeText without argument throws a type error
 TIMEOUT tel setRangeText fires a select event Test timed out
-PASS url setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments 
-PASS url selectionMode missing 
-PASS url selectionMode 'select' 
-PASS url selectionMode 'start' 
-PASS url selectionMode 'end' 
-PASS url selectionMode 'preserve' 
-PASS url setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS url setRangeText without argument throws a type error 
+PASS url setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS url selectionMode missing
+PASS url selectionMode 'select'
+PASS url selectionMode 'start'
+PASS url selectionMode 'end'
+PASS url selectionMode 'preserve'
+PASS url setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS url setRangeText without argument throws a type error
 TIMEOUT url setRangeText fires a select event Test timed out
-PASS password setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments 
-PASS password selectionMode missing 
-PASS password selectionMode 'select' 
-PASS password selectionMode 'start' 
-PASS password selectionMode 'end' 
-PASS password selectionMode 'preserve' 
-PASS password setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS password setRangeText without argument throws a type error 
+PASS password setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS password selectionMode missing
+PASS password selectionMode 'select'
+PASS password selectionMode 'start'
+PASS password selectionMode 'end'
+PASS password selectionMode 'preserve'
+PASS password setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS password setRangeText without argument throws a type error
 TIMEOUT password setRangeText fires a select event Test timed out
 FAIL display_none setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments assert_equals: expected "foobar2bar" but got "foobar"
 FAIL display_none selectionMode missing assert_equals: expected "foobar2bar" but got "foobar"
@@ -52,17 +52,17 @@ FAIL display_none selectionMode 'select' assert_equals: expected "foofoo" but go
 FAIL display_none selectionMode 'start' assert_equals: expected "foofoo" but got "foobar"
 FAIL display_none selectionMode 'end' assert_equals: expected "foofoobar" but got "foobar"
 FAIL display_none selectionMode 'preserve' assert_equals: expected "foo" but got "foobar"
-PASS display_none setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS display_none setRangeText without argument throws a type error 
+PASS display_none setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS display_none setRangeText without argument throws a type error
 TIMEOUT display_none setRangeText fires a select event Test timed out
-PASS textarea setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments 
-PASS textarea selectionMode missing 
-PASS textarea selectionMode 'select' 
-PASS textarea selectionMode 'start' 
-PASS textarea selectionMode 'end' 
-PASS textarea selectionMode 'preserve' 
-PASS textarea setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS textarea setRangeText without argument throws a type error 
+PASS textarea setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS textarea selectionMode missing
+PASS textarea selectionMode 'select'
+PASS textarea selectionMode 'start'
+PASS textarea selectionMode 'end'
+PASS textarea selectionMode 'preserve'
+PASS textarea setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS textarea setRangeText without argument throws a type error
 TIMEOUT textarea setRangeText fires a select event Test timed out
 FAIL input_not_in_doc setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments assert_equals: expected "foobar2bar" but got "foobar"
 FAIL input_not_in_doc selectionMode missing assert_equals: expected "foobar2bar" but got "foobar"
@@ -70,7 +70,7 @@ FAIL input_not_in_doc selectionMode 'select' assert_equals: expected "foofoo" bu
 FAIL input_not_in_doc selectionMode 'start' assert_equals: expected "foofoo" but got "foobar"
 FAIL input_not_in_doc selectionMode 'end' assert_equals: expected "foofoobar" but got "foobar"
 FAIL input_not_in_doc selectionMode 'preserve' assert_equals: expected "foo" but got "foobar"
-PASS input_not_in_doc setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception 
-PASS input_not_in_doc setRangeText without argument throws a type error 
+PASS input_not_in_doc setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
+PASS input_not_in_doc setRangeText without argument throws a type error
 TIMEOUT input_not_in_doc setRangeText fires a select event Test timed out
-      
+

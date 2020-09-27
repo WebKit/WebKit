@@ -2,5 +2,5 @@ toDataURL.zeroheight
 toDataURL on zero-size canvas returns 'data:,'
 Actual output:
 
-PASS toDataURL on zero-size canvas returns 'data:,' 
+PASS toDataURL on zero-size canvas returns 'data:,'
 

@@ -1,3 +1,3 @@
 
-PASS history.{push,replace}State retain scroll restoration mode and navigation in the same document respects it 
+PASS history.{push,replace}State retain scroll restoration mode and navigation in the same document respects it
 

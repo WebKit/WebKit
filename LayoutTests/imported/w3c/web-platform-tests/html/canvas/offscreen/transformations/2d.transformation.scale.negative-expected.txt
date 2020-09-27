@@ -3,5 +3,5 @@
 scale() with negative scale factors works
 
 
-PASS scale() with negative scale factors works 
+PASS scale() with negative scale factors works
 

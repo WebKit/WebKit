@@ -3,5 +3,5 @@ createImageData() throws TypeError if arguments are not finite
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS createImageData() throws TypeError if arguments are not finite 
+PASS createImageData() throws TypeError if arguments are not finite
 

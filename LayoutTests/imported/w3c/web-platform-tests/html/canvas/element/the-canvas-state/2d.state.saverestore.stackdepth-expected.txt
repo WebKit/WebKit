@@ -2,5 +2,5 @@
 save()/restore() stack depth is not unreasonably limited
 Actual output:
 
-PASS save()/restore() stack depth is not unreasonably limited 
+PASS save()/restore() stack depth is not unreasonably limited
 

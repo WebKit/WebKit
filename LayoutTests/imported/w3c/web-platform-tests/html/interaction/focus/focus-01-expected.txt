@@ -2,6 +2,6 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT The keydown event must be targeted at the input element Test timed out
-NOTRUN The keypress event must be targeted at the input element 
-NOTRUN The keyup event must be targeted at the input element 
+NOTRUN The keypress event must be targeted at the input element
+NOTRUN The keyup event must be targeted at the input element
 

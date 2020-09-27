@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Non-uniformly scaled arcs are the right shape 
+PASS Non-uniformly scaled arcs are the right shape
 

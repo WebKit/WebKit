@@ -1,8 +1,8 @@
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move parse-error external module script to createHTMLDocument move-back 
-PASS <script> load: Move parse-error external module script to createHTMLDocument move-back 
-PASS <script> error: Move parse-error external module script to createHTMLDocument move-back 
-PASS window error: Move parse-error external module script to createHTMLDocument move-back 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move parse-error external module script to createHTMLDocument move-back
+PASS <script> load: Move parse-error external module script to createHTMLDocument move-back
+PASS <script> error: Move parse-error external module script to createHTMLDocument move-back
+PASS window error: Move parse-error external module script to createHTMLDocument move-back
 

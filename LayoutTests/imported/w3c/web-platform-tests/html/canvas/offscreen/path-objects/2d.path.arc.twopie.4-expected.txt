@@ -3,5 +3,5 @@
 arc() draws nothing when end = start + 2pi+e and clockwise
 
 
-PASS arc() draws nothing when end = start + 2pi+e and clockwise 
+PASS arc() draws nothing when end = start + 2pi+e and clockwise
 

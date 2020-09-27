@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arc() draws -3pi/2 .. -pi anticlockwise correctly 
+PASS arc() draws -3pi/2 .. -pi anticlockwise correctly
 

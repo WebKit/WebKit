@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS fillText works on @font-face fonts 
+PASS fillText works on @font-face fonts
 

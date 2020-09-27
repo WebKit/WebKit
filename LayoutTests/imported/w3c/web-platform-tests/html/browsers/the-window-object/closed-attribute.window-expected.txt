@@ -1,8 +1,8 @@
 
-PASS closed and same-origin nested browsing context 
-PASS closed/close() and same-origin auxiliary browsing context 
-PASS closed and cross-origin nested browsing context 
-PASS closed/close() and cross-origin auxiliary browsing context 
-PASS closed and cross-site nested browsing context 
-PASS closed/close() and cross-site auxiliary browsing context 
+PASS closed and same-origin nested browsing context
+PASS closed/close() and same-origin auxiliary browsing context
+PASS closed and cross-origin nested browsing context
+PASS closed/close() and cross-origin auxiliary browsing context
+PASS closed and cross-site nested browsing context
+PASS closed/close() and cross-site auxiliary browsing context
 

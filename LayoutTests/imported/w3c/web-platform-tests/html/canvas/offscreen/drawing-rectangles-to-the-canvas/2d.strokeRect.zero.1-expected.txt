@@ -3,5 +3,5 @@
 strokeRect of 0x0 pixels draws nothing
 
 
-PASS strokeRect of 0x0 pixels draws nothing 
+PASS strokeRect of 0x0 pixels draws nothing
 

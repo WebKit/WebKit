@@ -3,5 +3,5 @@
 clearRect of zero pixels has no effect
 
 
-PASS clearRect of zero pixels has no effect 
+PASS clearRect of zero pixels has no effect
 

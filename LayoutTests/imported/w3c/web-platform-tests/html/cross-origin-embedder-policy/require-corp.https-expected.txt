@@ -6,11 +6,11 @@ FAIL "require-corp" top-level: creating a "none" popup should succeed. Can't fin
 FAIL "require-corp" top-level (as popup): navigating to "none" should succeed Can't find variable: BroadcastChannel
 FAIL "require-corp" top-level (as noopener popup): navigating to "none" should succeed Can't find variable: BroadcastChannel
 FAIL "require-corp" top-level (as popup with opener set to null): navigating to "none" should succeed Can't find variable: BroadcastChannel
-PASS "require-corp" top-level: fetch() to CORP: cross-origin response should succeed 
+PASS "require-corp" top-level: fetch() to CORP: cross-origin response should succeed
 FAIL "require-corp" top-level: fetch() to response without CORP should fail assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL "require-corp" top-level: fetch() to response without CORP through a WindowProxy should fail assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL "require-corp" top-level: navigating an iframe to a page without CORP, through a WindowProxy, should fail wait_for: Timed out waiting on condition
-PASS CORP: same-site is checked and allowed. 
+PASS CORP: same-site is checked and allowed.
 FAIL CORP: same-site is checked and blocked. assert_false: expected false got true
 FAIL navigation CORP is checked with the parent frame, not the navigation source - to be allowed Can't find variable: BroadcastChannel
 FAIL navigation CORP is checked with the parent frame, not the navigation source - to be blocked Can't find variable: BroadcastChannel

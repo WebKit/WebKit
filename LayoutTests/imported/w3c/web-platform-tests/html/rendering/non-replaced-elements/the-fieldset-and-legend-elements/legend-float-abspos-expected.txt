@@ -2,8 +2,8 @@
 div
 legend1legend2legend3legend4legend5
 
-PASS no dynamic changes 
-PASS inserting a new legend and removing it again 
-PASS dynamic changes to float 
-PASS dynamic changes to position 
+PASS no dynamic changes
+PASS inserting a new legend and removing it again
+PASS dynamic changes to float
+PASS dynamic changes to position
 

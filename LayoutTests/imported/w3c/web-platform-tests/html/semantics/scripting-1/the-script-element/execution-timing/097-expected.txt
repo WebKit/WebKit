@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: slow-loading async script added from document.write 
+PASS  scheduler: slow-loading async script added from document.write
 

@@ -1,3 +1,3 @@
 
-PASS Default width/height when attributes are missing 
+PASS Default width/height when attributes are missing
 

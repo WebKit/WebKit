@@ -1,7 +1,7 @@
 
-PASS table.onsort should not be supported 
-PASS table.sortable should not be supported 
-PASS table.stopSorting should not be supported 
-PASS th.sorted should not be supported 
-PASS th.sort should not be supported 
+PASS table.onsort should not be supported
+PASS table.sortable should not be supported
+PASS table.stopSorting should not be supported
+PASS th.sorted should not be supported
+PASS th.sort should not be supported
 

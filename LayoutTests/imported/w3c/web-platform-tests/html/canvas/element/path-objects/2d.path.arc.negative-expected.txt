@@ -2,5 +2,5 @@
 arc() with negative radius throws INDEX_SIZE_ERR
 Actual output:
 
-PASS arc() with negative radius throws INDEX_SIZE_ERR 
+PASS arc() with negative radius throws INDEX_SIZE_ERR
 

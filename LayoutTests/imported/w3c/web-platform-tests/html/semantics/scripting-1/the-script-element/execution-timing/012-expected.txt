@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: document.write external and onload events  
+PASS  scheduler: document.write external and onload events
 

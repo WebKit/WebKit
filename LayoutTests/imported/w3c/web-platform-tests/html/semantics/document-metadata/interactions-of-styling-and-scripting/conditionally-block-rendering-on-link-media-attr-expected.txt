@@ -1,6 +1,6 @@
 Dominic Farolino
 
 
-PASS Only the style sheet loaded via a link element whose media attribute matches the environment should block following script execution 
-PASS Both style sheets loaded via the link elements should be registered as style sheets for the document after 2 seconds 
+PASS Only the style sheet loaded via a link element whose media attribute matches the environment should block following script execution
+PASS Both style sheets loaded via the link elements should be registered as style sheets for the document after 2 seconds
 

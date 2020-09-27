@@ -2,5 +2,5 @@ toDataURL.lowercase.ascii
 toDataURL type is case-insensitive
 Actual output:
 
-PASS toDataURL type is case-insensitive 
+PASS toDataURL type is case-insensitive
 

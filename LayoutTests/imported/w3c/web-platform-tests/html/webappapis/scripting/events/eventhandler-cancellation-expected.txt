@@ -1,17 +1,17 @@
 
-PASS event handler cancellation behavior 
-PASS Returning true from [object Window]'s onerror event handler while ErrorEvent is firing should cancel the event 
-PASS Returning false from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning "" from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning "abc" from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning [object Object] from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning 0 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning 1 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning -1 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning null from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning undefined from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning 2.5 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning NaN from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning Infinity from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
-PASS Returning Symbol(Symbol.toStringTag) from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event 
+PASS event handler cancellation behavior
+PASS Returning true from [object Window]'s onerror event handler while ErrorEvent is firing should cancel the event
+PASS Returning false from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning "" from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning "abc" from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning [object Object] from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning 0 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning 1 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning -1 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning null from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning undefined from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning 2.5 from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning NaN from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning Infinity from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
+PASS Returning Symbol(Symbol.toStringTag) from [object Window]'s onerror event handler while ErrorEvent is firing should not cancel the event
 

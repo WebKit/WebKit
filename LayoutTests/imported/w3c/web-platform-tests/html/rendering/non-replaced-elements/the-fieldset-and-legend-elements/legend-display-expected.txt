@@ -1,7 +1,7 @@
 x
 x
 
-PASS rendered legend with display: block 
+PASS rendered legend with display: block
 FAIL rendered legend with display: table assert_equals: display: table is not supported expected "table" but got "block"
 FAIL rendered legend with display: table-row-group assert_equals: display: table-row-group is not supported expected "table-row-group" but got "block"
 FAIL rendered legend with display: table-header-group assert_equals: display: table-header-group is not supported expected "table-header-group" but got "block"

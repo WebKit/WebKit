@@ -1,14 +1,14 @@
 Dataset - Get
 
 
-PASS Getting element.dataset['foo'] should return the value of element.getAttribute('data-foo')' 
-PASS Getting element.dataset['fooBar'] should return the value of element.getAttribute('data-foo-bar')' 
-PASS Getting element.dataset['-'] should return the value of element.getAttribute('data--')' 
-PASS Getting element.dataset['Foo'] should return the value of element.getAttribute('data--foo')' 
-PASS Getting element.dataset['-Foo'] should return the value of element.getAttribute('data---foo')' 
-PASS Getting element.dataset['foo'] should return the value of element.getAttribute('data-Foo')' 
-PASS Getting element.dataset[''] should return the value of element.getAttribute('data-')' 
-PASS Getting element.dataset['à'] should return the value of element.getAttribute('data-à')' 
-PASS Getting element.dataset['toString'] should return the value of element.getAttribute('data-to-string')' 
-PASS Tests that an attribute named dataFoo does not make an entry in the dataset DOMStringMap. 
+PASS Getting element.dataset['foo'] should return the value of element.getAttribute('data-foo')'
+PASS Getting element.dataset['fooBar'] should return the value of element.getAttribute('data-foo-bar')'
+PASS Getting element.dataset['-'] should return the value of element.getAttribute('data--')'
+PASS Getting element.dataset['Foo'] should return the value of element.getAttribute('data--foo')'
+PASS Getting element.dataset['-Foo'] should return the value of element.getAttribute('data---foo')'
+PASS Getting element.dataset['foo'] should return the value of element.getAttribute('data-Foo')'
+PASS Getting element.dataset[''] should return the value of element.getAttribute('data-')'
+PASS Getting element.dataset['à'] should return the value of element.getAttribute('data-à')'
+PASS Getting element.dataset['toString'] should return the value of element.getAttribute('data-to-string')'
+PASS Tests that an attribute named dataFoo does not make an entry in the dataset DOMStringMap.
 

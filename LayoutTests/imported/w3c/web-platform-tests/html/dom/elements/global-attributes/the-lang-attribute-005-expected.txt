@@ -1,4 +1,4 @@
  
 
-PASS If there is a conflict between the language declarations in the HTTP header and the html element using lang, the browser will recognize the language declared in the html element. 
+PASS If there is a conflict between the language declarations in the HTTP header and the html element using lang, the browser will recognize the language declared in the html element.
 

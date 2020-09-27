@@ -3,5 +3,5 @@
 U+0020 is rendered the correct size (1em wide)
 
 
-PASS U+0020 is rendered the correct size (1em wide) 
+PASS U+0020 is rendered the correct size (1em wide)
 

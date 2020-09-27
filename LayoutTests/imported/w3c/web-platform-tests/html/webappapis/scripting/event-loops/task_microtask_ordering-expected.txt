@@ -1,4 +1,4 @@
 
-PASS Basic task and microtask ordering 
-PASS Level 1 bossfight (synthetic click) 
+PASS Basic task and microtask ordering
+PASS Level 1 bossfight (synthetic click)
 

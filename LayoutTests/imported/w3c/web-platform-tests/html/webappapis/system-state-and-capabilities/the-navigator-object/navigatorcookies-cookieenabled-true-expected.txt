@@ -1,3 +1,3 @@
 
-PASS navigator.cookieEnabled is true when cookies are enabled 
+PASS navigator.cookieEnabled is true when cookies are enabled
 

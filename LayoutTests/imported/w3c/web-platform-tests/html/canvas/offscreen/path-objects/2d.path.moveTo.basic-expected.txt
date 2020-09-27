@@ -1,5 +1,5 @@
 2d.path.moveTo.basic
 
 
-PASS OffscreenCanvas test: 2d.path.moveTo.basic 
+PASS OffscreenCanvas test: 2d.path.moveTo.basic
 

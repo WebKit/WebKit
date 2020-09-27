@@ -3,5 +3,5 @@
 Setting lineCap to valid values works
 
 
-PASS Setting lineCap to valid values works 
+PASS Setting lineCap to valid values works
 

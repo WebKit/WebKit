@@ -1,4 +1,4 @@
 
 
-PASS Do not navigate or execute JS when redirecting a download to 'javascript:..' 
+PASS Do not navigate or execute JS when redirecting a download to 'javascript:..'
 

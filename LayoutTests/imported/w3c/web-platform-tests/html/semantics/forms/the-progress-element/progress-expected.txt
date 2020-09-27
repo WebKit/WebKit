@@ -1,13 +1,13 @@
 
-PASS Indeterminate progress bar should have position -1 
-PASS Revoming the value attribute makes an intermediate progress bar, which should have position -1 
-PASS Determinate progress bar should have fractional position 
-PASS Indeterminate progress bar should have value 0 
-PASS Value must equal max if the parsed value is larger than max 
-PASS Max must be 1 by default 
-PASS Max must be 1 by default, even if value is specified 
-PASS Max must be 1 if max value is invalid 
-PASS Max must be 1 if the parsed max value is less than or equal to zero 
-PASS Value must be 0 if value is invalid 
-PASS Value must be 0 if the parsed value is less than or equal to zero 
-             
+PASS Indeterminate progress bar should have position -1
+PASS Revoming the value attribute makes an intermediate progress bar, which should have position -1
+PASS Determinate progress bar should have fractional position
+PASS Indeterminate progress bar should have value 0
+PASS Value must equal max if the parsed value is larger than max
+PASS Max must be 1 by default
+PASS Max must be 1 by default, even if value is specified
+PASS Max must be 1 if max value is invalid
+PASS Max must be 1 if the parsed max value is less than or equal to zero
+PASS Value must be 0 if value is invalid
+PASS Value must be 0 if the parsed value is less than or equal to zero
+

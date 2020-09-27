@@ -1,4 +1,4 @@
 FAILED (test did not run)
 
-PASS javascript: URL creating a document in an about:blank iframe 
-     
+PASS javascript: URL creating a document in an about:blank iframe
+

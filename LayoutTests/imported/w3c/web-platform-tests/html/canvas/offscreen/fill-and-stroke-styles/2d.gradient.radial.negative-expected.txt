@@ -3,5 +3,5 @@
 createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative
 
 
-PASS createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative 
+PASS createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative
 

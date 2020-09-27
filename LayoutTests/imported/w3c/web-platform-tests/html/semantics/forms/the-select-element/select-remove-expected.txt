@@ -1,6 +1,6 @@
 
-PASS select.remove(n) should work 
-PASS select.options.remove(n) should work 
-PASS remove() should work on select elements. 
-PASS Element#remove() should work on select elements. 
+PASS select.remove(n) should work
+PASS select.options.remove(n) should work
+PASS remove() should work on select elements.
+PASS Element#remove() should work on select elements.
 

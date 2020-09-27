@@ -2,5 +2,5 @@ fallback.multiple
 Fallback content with multiple elements
 Actual output:
 
-PASS Fallback content with multiple elements 
+PASS Fallback content with multiple elements
 

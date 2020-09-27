@@ -1,5 +1,5 @@
 2d.fillStyle.parse.hex4
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.hex4 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.hex4
 

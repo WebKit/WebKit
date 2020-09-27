@@ -1,4 +1,4 @@
 
-PASS The nested browsing context must be navigated to the resource specified by the data attribute. 
-PASS The object.data must not be updated if the browsing context gets further navigated. 
+PASS The nested browsing context must be navigated to the resource specified by the data attribute.
+PASS The object.data must not be updated if the browsing context gets further navigated.
 

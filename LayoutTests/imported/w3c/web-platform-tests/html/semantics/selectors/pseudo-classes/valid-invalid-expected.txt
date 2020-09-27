@@ -1,41 +1,41 @@
 
-PASS ':valid' matches elements that satisfy their constraints 
-PASS ':valid' matches form elements that are not the form owner of any elements that themselves are candidates for constraint validation but do not satisfy their constraints 
-PASS ':valid' matches fieldset elements that have no descendant elements that themselves are candidates for constraint validation but do not satisfy their constraints 
-PASS ':valid' matches elements that satisfy their pattern constraints 
-PASS ':valid' matches elements that satisfy their number constraints 
-PASS ':invalid' matches elements that do not satisfy their simple text  constraints 
-PASS ':invalid' matches form elements that are the form owner of one or more elements that themselves are candidates for constraint validation but do not satisfy their constraints 
-PASS ':invalid' matches fieldset elements that have of one or more descendant elements that themselves are candidates for constraint validation but do not satisfy their constraints 
-PASS ':invalid' matches elements that do not satisfy their pattern constraints 
-PASS ':invalid' matches elements that do not satisfy their number constraints 
-PASS ':valid' matches new elements that satisfy their constraints 
-PASS ':invalid' doesn't match new elements that satisfy their constraints 
-PASS ':valid' doesn't match new elements that do not satisfy their constraints 
-PASS ':invalid' matches new elements that do not satisfy their constraints 
-PASS :valid/:invalid styling for <form> 
-PASS empty form correctly styled on page-load 
-PASS valid form correctly styled on page-load 
-PASS invalid form correctly styled on page-load 
-PASS programmatically adding valid to empty form results in correct style 
-PASS programmatically adding invalid to empty form results in correct style 
-PASS programmatically-invalidated form correctly styled 
-PASS programmatically-validated form correctly styled 
-PASS :valid/:invalid styling for <fieldset> 
-PASS empty fieldset correctly styled on page-load 
-PASS valid fieldset correctly styled on page-load 
-PASS invalid fieldset correctly styled on page-load 
-PASS programmatically adding valid to empty fieldset results in correct style 
-PASS programmatically adding invalid to empty fieldset results in correct style 
-PASS programmatically-invalidated fieldset correctly styled 
-PASS programmatically-validated fieldset correctly styled 
-  
+PASS ':valid' matches elements that satisfy their constraints
+PASS ':valid' matches form elements that are not the form owner of any elements that themselves are candidates for constraint validation but do not satisfy their constraints
+PASS ':valid' matches fieldset elements that have no descendant elements that themselves are candidates for constraint validation but do not satisfy their constraints
+PASS ':valid' matches elements that satisfy their pattern constraints
+PASS ':valid' matches elements that satisfy their number constraints
+PASS ':invalid' matches elements that do not satisfy their simple text  constraints
+PASS ':invalid' matches form elements that are the form owner of one or more elements that themselves are candidates for constraint validation but do not satisfy their constraints
+PASS ':invalid' matches fieldset elements that have of one or more descendant elements that themselves are candidates for constraint validation but do not satisfy their constraints
+PASS ':invalid' matches elements that do not satisfy their pattern constraints
+PASS ':invalid' matches elements that do not satisfy their number constraints
+PASS ':valid' matches new elements that satisfy their constraints
+PASS ':invalid' doesn't match new elements that satisfy their constraints
+PASS ':valid' doesn't match new elements that do not satisfy their constraints
+PASS ':invalid' matches new elements that do not satisfy their constraints
+PASS :valid/:invalid styling for <form>
+PASS empty form correctly styled on page-load
+PASS valid form correctly styled on page-load
+PASS invalid form correctly styled on page-load
+PASS programmatically adding valid to empty form results in correct style
+PASS programmatically adding invalid to empty form results in correct style
+PASS programmatically-invalidated form correctly styled
+PASS programmatically-validated form correctly styled
+PASS :valid/:invalid styling for <fieldset>
+PASS empty fieldset correctly styled on page-load
+PASS valid fieldset correctly styled on page-load
+PASS invalid fieldset correctly styled on page-load
+PASS programmatically adding valid to empty fieldset results in correct style
+PASS programmatically adding invalid to empty fieldset results in correct style
+PASS programmatically-invalidated fieldset correctly styled
+PASS programmatically-validated fieldset correctly styled
 
 
 
 
-  
-  
+
+
+
 
 
 

@@ -1,11 +1,11 @@
 
-PASS click on mutable radio fires click event, then input event, then change event 
-PASS click on non-mutable radio doesn't fire the input event 
-PASS click on non-mutable radio doesn't fire the change event 
-PASS canceled activation steps on unchecked radio 
-PASS only one control of a radio button group can have its checkedness set to true 
-PASS radio inputs with non-ASCII name attributes belong to the same radio button group 
-PASS changing the name of a radio input element and setting its checkedness to true makes all the other elements' checkedness in the same radio button group be set to false 
-PASS moving radio input element out of or into a form should still work as expected 
+PASS click on mutable radio fires click event, then input event, then change event
+PASS click on non-mutable radio doesn't fire the input event
+PASS click on non-mutable radio doesn't fire the change event
+PASS canceled activation steps on unchecked radio
+PASS only one control of a radio button group can have its checkedness set to true
+PASS radio inputs with non-ASCII name attributes belong to the same radio button group
+PASS changing the name of a radio input element and setting its checkedness to true makes all the other elements' checkedness in the same radio button group be set to false
+PASS moving radio input element out of or into a form should still work as expected
 FAIL Radio buttons in an orphan tree should make a group assert_false: The second radio should be unchecked after setting checked expected false got true
-                  
+

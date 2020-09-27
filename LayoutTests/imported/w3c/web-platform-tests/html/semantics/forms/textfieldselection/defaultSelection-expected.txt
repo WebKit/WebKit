@@ -1,9 +1,9 @@
- 
 
-PASS Default selectionStart and selectionEnd for [object HTMLTextAreaElement] 
-PASS selectionStart and selectionEnd do not change when same value set again for [object HTMLTextAreaElement] 
+
+PASS Default selectionStart and selectionEnd for [object HTMLTextAreaElement]
+PASS selectionStart and selectionEnd do not change when same value set again for [object HTMLTextAreaElement]
 FAIL selectionStart and selectionEnd change when value changed to upper case for [object HTMLTextAreaElement] assert_equals: expected 3 but got 0
-PASS Default selectionStart and selectionEnd for [object HTMLInputElement] 
+PASS Default selectionStart and selectionEnd for [object HTMLInputElement]
 FAIL selectionStart and selectionEnd do not change when same value set again for [object HTMLInputElement] assert_equals: expected 0 but got 3
-PASS selectionStart and selectionEnd change when value changed to upper case for [object HTMLInputElement] 
+PASS selectionStart and selectionEnd change when value changed to upper case for [object HTMLInputElement]
 

@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - loadstart 
-PASS setting src attribute on autoplay audio should trigger loadstart event 
-PASS video events - loadstart 
-PASS setting src attribute on autoplay video should trigger loadstart event 
+
+PASS audio events - loadstart
+PASS setting src attribute on autoplay audio should trigger loadstart event
+PASS video events - loadstart
+PASS setting src attribute on autoplay video should trigger loadstart event
 

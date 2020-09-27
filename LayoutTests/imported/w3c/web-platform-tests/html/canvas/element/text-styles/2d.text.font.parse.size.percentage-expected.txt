@@ -1,5 +1,5 @@
 2d.text.font.parse.size.percentage
 Actual output:
 
-PASS Canvas test: 2d.text.font.parse.size.percentage 
+PASS Canvas test: 2d.text.font.parse.size.percentage
 

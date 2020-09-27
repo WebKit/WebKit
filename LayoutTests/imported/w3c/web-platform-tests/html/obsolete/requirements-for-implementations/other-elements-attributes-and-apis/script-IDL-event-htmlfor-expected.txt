@@ -1,7 +1,7 @@
 
-PASS event and htmlFor IDL attributes of HTMLScriptElement 
-PASS event and htmlFor IDL attributes of HTMLScriptElement 1 
-PASS event and htmlFor IDL attributes of HTMLScriptElement 2 
-PASS event and htmlFor IDL attributes of HTMLScriptElement 3 
-PASS event and htmlFor IDL attributes of HTMLScriptElement 4 
+PASS event and htmlFor IDL attributes of HTMLScriptElement
+PASS event and htmlFor IDL attributes of HTMLScriptElement 1
+PASS event and htmlFor IDL attributes of HTMLScriptElement 2
+PASS event and htmlFor IDL attributes of HTMLScriptElement 3
+PASS event and htmlFor IDL attributes of HTMLScriptElement 4
 

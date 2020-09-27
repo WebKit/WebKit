@@ -2,5 +2,5 @@
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS Canvas test: 2d.pattern.image.null 
+PASS Canvas test: 2d.pattern.image.null
 

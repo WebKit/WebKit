@@ -1,4 +1,4 @@
 
-PASS Upper-case font 
-PASS Lower-case font 
+PASS Upper-case font
+PASS Lower-case font
 

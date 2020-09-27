@@ -1,3 +1,3 @@
 
-PASS Test that a module is evaluated only once, and that 'this' is undefined (because of strict mode). 
+PASS Test that a module is evaluated only once, and that 'this' is undefined (because of strict mode).
 

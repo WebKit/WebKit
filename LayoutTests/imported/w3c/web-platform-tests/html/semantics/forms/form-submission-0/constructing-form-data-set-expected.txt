@@ -6,9 +6,9 @@
 
   close  button  reset  submit
 
-PASS FormData constructor always produces UTF-8 _charset_ value. 
-PASS _charset_ control sets the expected encoding name. 
-PASS The button cannot be setted if it is not a submitter. 
+PASS FormData constructor always produces UTF-8 _charset_ value.
+PASS _charset_ control sets the expected encoding name.
+PASS The button cannot be setted if it is not a submitter.
 FAIL "formdata" event bubbles, and is not cancelable. assert_true: expected true got false
 FAIL "formdata" event bubbles in an orphan tree. assert_true: expected true got false
 FAIL "formData" IDL attribute should have entries for form-associated elements in the first event handler, and the second handler can read entries set by the first handler. assert_true: expected true got false

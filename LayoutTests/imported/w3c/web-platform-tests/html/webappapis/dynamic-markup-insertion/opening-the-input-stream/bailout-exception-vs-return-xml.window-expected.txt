@@ -1,8 +1,8 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS document.open should throw an InvalidStateError with XML document even when there is an active parser executing script 
+PASS document.open should throw an InvalidStateError with XML document even when there is an active parser executing script
 TIMEOUT document.open should throw an InvalidStateError with XML document even when the ignore-opens-during-unload counter is greater than 0 (during beforeunload event) Test timed out
-PASS document.open should throw an InvalidStateError with XML document even when the ignore-opens-during-unload counter is greater than 0 (during pagehide event) 
-PASS document.open should throw an InvalidStateError with XML document even when the ignore-opens-during-unload counter is greater than 0 (during unload event) 
+PASS document.open should throw an InvalidStateError with XML document even when the ignore-opens-during-unload counter is greater than 0 (during pagehide event)
+PASS document.open should throw an InvalidStateError with XML document even when the ignore-opens-during-unload counter is greater than 0 (during unload event)
 

@@ -1,14 +1,14 @@
 
 
-PASS form submission from form should navigate to url with x-www-form-urlencoded 
-PASS form submission from form should navigate to url with multipart/form-data 
+PASS form submission from form should navigate to url with x-www-form-urlencoded
+PASS form submission from form should navigate to url with multipart/form-data
 FAIL form submission from form should navigate to url with text/plain assert_equals: expected "OK" but got "FAIL"
-PASS form submission from button should navigate to url with x-www-form-urlencoded 
-PASS form submission from button should navigate to url with multipart/form-data 
+PASS form submission from button should navigate to url with x-www-form-urlencoded
+PASS form submission from button should navigate to url with multipart/form-data
 FAIL form submission from button should navigate to url with text/plain assert_equals: expected "OK" but got "FAIL"
-PASS form submission from input should navigate to url with x-www-form-urlencoded 
-PASS form submission from input should navigate to url with multipart/form-data 
+PASS form submission from input should navigate to url with x-www-form-urlencoded
+PASS form submission from input should navigate to url with multipart/form-data
 FAIL form submission from input should navigate to url with text/plain assert_equals: expected "OK" but got "FAIL"
-PASS form submission from submit input should contain submit button value 
-PASS form submission from submit button should contain submit button value 
+PASS form submission from submit input should contain submit button value
+PASS form submission from submit button should contain submit button value
 

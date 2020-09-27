@@ -1,4 +1,4 @@
 Filler Text
 
-PASS document.write 
+PASS document.write
 

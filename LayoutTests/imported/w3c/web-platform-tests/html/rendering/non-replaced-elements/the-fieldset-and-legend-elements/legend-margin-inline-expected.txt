@@ -3,8 +3,8 @@ center
 right
 10px
 
-PASS left 
-PASS center 
-PASS right 
-PASS 10px 
+PASS left
+PASS center
+PASS right
+PASS 10px
 

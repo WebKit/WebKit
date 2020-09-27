@@ -1,6 +1,6 @@
 
-PASS Timeout on original window, scope 
-PASS Timeout on original window, this object 
-PASS Timeout on new window, scope 
-PASS Timeout on new window, this object 
+PASS Timeout on original window, scope
+PASS Timeout on original window, this object
+PASS Timeout on new window, scope
+PASS Timeout on new window, this object
 

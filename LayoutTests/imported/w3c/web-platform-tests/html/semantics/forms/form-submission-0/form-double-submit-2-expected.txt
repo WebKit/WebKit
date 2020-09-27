@@ -4,5 +4,5 @@ This frame should navigate (to 404)
 
 
 
-PASS preventDefault should allow onclick submit() to succeed 
+PASS preventDefault should allow onclick submit() to succeed
 

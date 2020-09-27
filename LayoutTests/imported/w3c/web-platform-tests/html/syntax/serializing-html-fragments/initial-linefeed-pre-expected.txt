@@ -1,17 +1,17 @@
 x
 
 x
- 
-x
 
 x
 
-PASS outer div 
-PASS inner div 
-PASS pre1 
-PASS pre2 
-PASS textarea1 
-PASS textarea2 
-PASS listing1 
-PASS listing2 
+x
+
+PASS outer div
+PASS inner div
+PASS pre1
+PASS pre2
+PASS textarea1
+PASS textarea2
+PASS listing1
+PASS listing2
 

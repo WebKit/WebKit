@@ -3,5 +3,5 @@
 Shadows with alpha components are correctly affected by globalAlpha
 
 
-PASS Shadows with alpha components are correctly affected by globalAlpha 
+PASS Shadows with alpha components are correctly affected by globalAlpha
 

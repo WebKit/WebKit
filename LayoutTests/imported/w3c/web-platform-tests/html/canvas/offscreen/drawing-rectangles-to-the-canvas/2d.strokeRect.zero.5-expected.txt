@@ -3,5 +3,5 @@
 strokeRect of Nx0 pixels draws a closed line with joins
 
 
-PASS strokeRect of Nx0 pixels draws a closed line with joins 
+PASS strokeRect of Nx0 pixels draws a closed line with joins
 

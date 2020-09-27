@@ -1,5 +1,5 @@
 
-PASS Default value is "auto" 
-PASS It is writable 
-PASS Invalid values are ignored 
+PASS Default value is "auto"
+PASS It is writable
+PASS Invalid values are ignored
 

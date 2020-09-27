@@ -2,5 +2,5 @@
 save()/restore() works for shadowOffsetX
 Actual output:
 
-PASS save()/restore() works for shadowOffsetX 
+PASS save()/restore() works for shadowOffsetX
 

@@ -1,4 +1,4 @@
  
 
-PASS The browser will NOT recognize a language declared in an xml:lang attribute on the html tag. 
+PASS The browser will NOT recognize a language declared in an xml:lang attribute on the html tag.
 

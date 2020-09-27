@@ -1,5 +1,5 @@
 main frame - has 1 onunload handler(s)
 frame "<!--frame1-->" - has 1 onunload handler(s)
 
-PASS document.open in pagehide in iframe 
+PASS document.open in pagehide in iframe
 

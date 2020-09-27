@@ -1,5 +1,5 @@
 2d.fillStyle.parse.css-color-4-hsla-2
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.css-color-4-hsla-2 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.css-color-4-hsla-2
 

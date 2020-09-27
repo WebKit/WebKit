@@ -3,5 +3,5 @@
 Zero-length line segments from arcTo and arc are removed before stroking
 
 
-PASS Zero-length line segments from arcTo and arc are removed before stroking 
+PASS Zero-length line segments from arcTo and arc are removed before stroking
 

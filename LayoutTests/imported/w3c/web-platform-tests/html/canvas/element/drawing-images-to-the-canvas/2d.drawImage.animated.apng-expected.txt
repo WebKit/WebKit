@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS drawImage() of an APNG with no poster frame draws the first frame 
+PASS drawImage() of an APNG with no poster frame draws the first frame
 

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 
-PASS If the sandboxed automatic features browsing context flag is set, autofocus in the browsing context should not be handled. 
+PASS If the sandboxed automatic features browsing context flag is set, autofocus in the browsing context should not be handled.
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arc() from 0 to pi draws stuff in the right half 
+PASS arc() from 0 to pi draws stuff in the right half
 

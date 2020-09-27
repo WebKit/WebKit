@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS currentColor is solid black when the canvas element is not in a document 
+PASS currentColor is solid black when the canvas element is not in a document
 

@@ -1,4 +1,4 @@
    
 
-PASS If the translate attribute is set to yes on an element inside an element with the translate attribute set to no, javascript will detect the translation mode of text in the inner element as translate-enabled. 
+PASS If the translate attribute is set to yes on an element inside an element with the translate attribute set to no, javascript will detect the translation mode of text in the inner element as translate-enabled.
 

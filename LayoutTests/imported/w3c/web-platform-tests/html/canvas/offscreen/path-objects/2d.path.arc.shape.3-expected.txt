@@ -3,5 +3,5 @@
 arc() from 0 to -pi/2 does not draw anything in the wrong quadrant
 
 
-PASS arc() from 0 to -pi/2 does not draw anything in the wrong quadrant 
+PASS arc() from 0 to -pi/2 does not draw anything in the wrong quadrant
 

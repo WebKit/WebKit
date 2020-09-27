@@ -1,10 +1,10 @@
-  
 
-  
 
-PASS MathML annotation-xml with encoding=text/html should be an HTML integration point 
-PASS MathML annotation-xml with encoding=application/xhtml+xml should be an HTML integration point 
-PASS SVG foreignObject should be an HTML integration point 
-PASS SVG desc should be an HTML integration point 
-PASS SVG title should be an HTML integration point 
+
+
+PASS MathML annotation-xml with encoding=text/html should be an HTML integration point
+PASS MathML annotation-xml with encoding=application/xhtml+xml should be an HTML integration point
+PASS SVG foreignObject should be an HTML integration point
+PASS SVG desc should be an HTML integration point
+PASS SVG title should be an HTML integration point
 

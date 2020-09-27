@@ -2,5 +2,5 @@
 Testing actualBoundingBox
 Actual output:
 
-PASS Testing actualBoundingBox 
+PASS Testing actualBoundingBox
 

@@ -1,4 +1,4 @@
-legend  
+legend
 
 
 FAIL legend assert_unreached: input in legend was focused Reached unreachable code

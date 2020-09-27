@@ -1,5 +1,5 @@
 
-PASS Invalid percent-encoded UTF-8 byte should decode as U+FFFD 
-PASS Percent-encoded UTF-8 BOM followed by invalid UTF-8 byte should decode as U+FEFF U+FFFD 
-PASS Percent-encoded UTF-8 byte sequence for U+FFFD should decode as U+FFFD 
+PASS Invalid percent-encoded UTF-8 byte should decode as U+FFFD
+PASS Percent-encoded UTF-8 BOM followed by invalid UTF-8 byte should decode as U+FEFF U+FFFD
+PASS Percent-encoded UTF-8 byte sequence for U+FFFD should decode as U+FFFD
 

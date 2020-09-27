@@ -7,5 +7,5 @@ Before:
 After:
 
 
-PASS drawFocusIfNeeded does not draw a focus ring if the element is not a descendant of the context. 
+PASS drawFocusIfNeeded does not draw a focus ring if the element is not a descendant of the context.
 

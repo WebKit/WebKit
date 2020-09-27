@@ -3,5 +3,5 @@ security.drawImage.image
 drawImage of different-origin image makes the canvas origin-unclean
 Actual output:
 
-PASS drawImage of different-origin image makes the canvas origin-unclean 
+PASS drawImage of different-origin image makes the canvas origin-unclean
 

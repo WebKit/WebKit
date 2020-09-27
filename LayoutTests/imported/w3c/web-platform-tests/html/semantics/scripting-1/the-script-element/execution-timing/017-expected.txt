@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: multiple DOM added scripts later in document 
+PASS  scheduler: multiple DOM added scripts later in document
 

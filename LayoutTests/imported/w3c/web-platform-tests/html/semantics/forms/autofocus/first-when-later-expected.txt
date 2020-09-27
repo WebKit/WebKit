@@ -1,4 +1,4 @@
-  
+
 
 FAIL The first autofocus in the document wins, even if elements are inserted later. assert_equals: expected Element node <input autofocus=""></input> but got Element node <input autofocus=""></input>
 

@@ -1,4 +1,4 @@
 
-PASS TextTrackCue.endTime, script-created cue 
+PASS TextTrackCue.endTime, script-created cue
 FAIL TextTrackCue.endTime, parsed cue null is not an object (evaluating 'c[0]')
 

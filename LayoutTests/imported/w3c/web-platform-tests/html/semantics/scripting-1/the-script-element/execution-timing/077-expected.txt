@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  adding several types of scripts through the DOM and removing some of them confuses scheduler  
+PASS  adding several types of scripts through the DOM and removing some of them confuses scheduler
 

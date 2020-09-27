@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: bar
 
-PASS correct url passed to window.onerror 
-PASS correct line number passed to window.onerror 
-PASS correct number of calls to window.onerror 
+PASS correct url passed to window.onerror
+PASS correct line number passed to window.onerror
+PASS correct number of calls to window.onerror
 

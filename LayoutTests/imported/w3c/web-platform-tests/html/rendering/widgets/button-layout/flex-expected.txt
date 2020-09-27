@@ -3,23 +3,23 @@
 2
 3
 4
- 
-1
-2
-3
-4
 
 1
 2
 3
 4
- 
-abc
+
+1
+2
+3
+4
 
 abc
 
-PASS inline-flex 
-PASS flex 
-PASS align-items:flex-start should work 
-PASS align-items:stretch should work 
+abc
+
+PASS inline-flex
+PASS flex
+PASS align-items:flex-start should work
+PASS align-items:stretch should work
 

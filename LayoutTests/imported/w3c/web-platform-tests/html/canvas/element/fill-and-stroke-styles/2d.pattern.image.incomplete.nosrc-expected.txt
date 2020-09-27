@@ -1,5 +1,5 @@
 2d.pattern.image.incomplete.nosrc
 Actual output:
 
-PASS Canvas test: 2d.pattern.image.incomplete.nosrc 
+PASS Canvas test: 2d.pattern.image.incomplete.nosrc
 

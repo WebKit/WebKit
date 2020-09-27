@@ -3,5 +3,5 @@ The 2D context interface is a property of 'window'
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS The 2D context interface is a property of 'window' 
+PASS The 2D context interface is a property of 'window'
 

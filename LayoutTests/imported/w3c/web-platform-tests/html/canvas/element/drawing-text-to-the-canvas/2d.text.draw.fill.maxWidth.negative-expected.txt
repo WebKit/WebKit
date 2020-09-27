@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS fillText handles maxWidth correctly 
+PASS fillText handles maxWidth correctly
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS drawImage() with Infinity/NaN is ignored 
+PASS drawImage() with Infinity/NaN is ignored
 

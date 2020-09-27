@@ -1,5 +1,5 @@
 crossed-off text
 
 
-PASS HTML Test: Text in the del element should be 'line-through' 
+PASS HTML Test: Text in the del element should be 'line-through'
 

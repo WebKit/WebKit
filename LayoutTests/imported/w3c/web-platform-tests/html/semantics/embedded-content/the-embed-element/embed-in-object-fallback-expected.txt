@@ -1,5 +1,5 @@
-    
 
-PASS We have the right embed element 
-PASS Check that the right things loaded 
+
+PASS We have the right embed element
+PASS Check that the right things loaded
 

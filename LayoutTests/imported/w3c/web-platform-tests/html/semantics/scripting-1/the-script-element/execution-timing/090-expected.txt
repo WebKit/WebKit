@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: defer attribute on inline script 
+PASS  scheduler: defer attribute on inline script
 

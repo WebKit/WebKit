@@ -1,23 +1,23 @@
 
-PASS The length attribute must return the number of elements in the form 
-PASS HTMLFormControlsCollection.item(index) must return the indexed item 
-PASS HTMLFormControlsCollection[index] must return the indexed item 
-PASS HTMLFormControlsCollection is not callable 
-PASS HTMLFormControlsCollection[name] must return the named item 
-PASS HTMLFormControlsCollection.namedItem(name) must return the named item 
-PASS The namedItem(name) must return an Element 
-PASS The namedItem(name) must return RadioNodeList 
-PASS The namedItem(name) must return null if the name is empty 
-PASS The namedItem(name) must return null if there is no matched element 
-PASS Controls can be indexed by id or name attribute 
-PASS Keygen controls do not show up at all 
-PASS The namedItem(name) must return the items with id or name attribute 
-PASS The HTMLFormControlsCollection interface is used for collections of listed elements in form element 
-PASS The HTMLFormControlsCollection interface is used for collections of listed elements in fieldset element 
-PASS The controls in the form element must be sorted in tree order 
- 
+PASS The length attribute must return the number of elements in the form
+PASS HTMLFormControlsCollection.item(index) must return the indexed item
+PASS HTMLFormControlsCollection[index] must return the indexed item
+PASS HTMLFormControlsCollection is not callable
+PASS HTMLFormControlsCollection[name] must return the named item
+PASS HTMLFormControlsCollection.namedItem(name) must return the named item
+PASS The namedItem(name) must return an Element
+PASS The namedItem(name) must return RadioNodeList
+PASS The namedItem(name) must return null if the name is empty
+PASS The namedItem(name) must return null if there is no matched element
+PASS Controls can be indexed by id or name attribute
+PASS Keygen controls do not show up at all
+PASS The namedItem(name) must return the items with id or name attribute
+PASS The HTMLFormControlsCollection interface is used for collections of listed elements in form element
+PASS The HTMLFormControlsCollection interface is used for collections of listed elements in fieldset element
+PASS The controls in the form element must be sorted in tree order
 
-  
-  
+
+
+
 
 

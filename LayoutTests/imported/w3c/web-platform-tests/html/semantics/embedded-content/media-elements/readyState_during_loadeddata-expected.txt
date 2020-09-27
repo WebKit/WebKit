@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - readyState property during loadeddata 
-PASS audio.readyState should be >= HAVE_CURRENT_DATA during loadeddata event 
-PASS video events - readyState property during loadeddata 
-PASS video.readyState should be >= HAVE_CURRENT_DATA during loadeddata event 
+
+PASS audio events - readyState property during loadeddata
+PASS audio.readyState should be >= HAVE_CURRENT_DATA during loadeddata event
+PASS video events - readyState property during loadeddata
+PASS video.readyState should be >= HAVE_CURRENT_DATA during loadeddata event
 

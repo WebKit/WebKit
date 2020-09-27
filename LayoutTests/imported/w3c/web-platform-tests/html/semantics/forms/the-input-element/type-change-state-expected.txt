@@ -15,17 +15,17 @@ FAIL change state from hidden to range Type error
 FAIL change state from hidden to color Type error
 FAIL change state from hidden to checkbox Type error
 FAIL change state from hidden to radio Type error
-PASS change state from hidden to file 
+PASS change state from hidden to file
 FAIL change state from hidden to submit Type error
 FAIL change state from hidden to image Type error
 FAIL change state from hidden to reset Type error
 FAIL change state from hidden to button Type error
 FAIL change state from text to hidden Type error
-PASS change state from text to search 
-PASS change state from text to tel 
+PASS change state from text to search
+PASS change state from text to tel
 FAIL change state from text to url assert_equals: selectionStart should be unchanged expected 2 but got 6
 FAIL change state from text to email assert_equals: selectionStart should be unchanged expected 2 but got 6
-PASS change state from text to password 
+PASS change state from text to password
 FAIL change state from text to datetime-local assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from text to date assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from text to month assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -36,17 +36,17 @@ FAIL change state from text to range Type error
 FAIL change state from text to color Type error
 FAIL change state from text to checkbox Type error
 FAIL change state from text to radio Type error
-PASS change state from text to file 
+PASS change state from text to file
 FAIL change state from text to submit Type error
 FAIL change state from text to image Type error
 FAIL change state from text to reset Type error
 FAIL change state from text to button Type error
 FAIL change state from search to hidden Type error
-PASS change state from search to text 
-PASS change state from search to tel 
+PASS change state from search to text
+PASS change state from search to tel
 FAIL change state from search to url assert_equals: selectionStart should be unchanged expected 2 but got 6
 FAIL change state from search to email assert_equals: selectionStart should be unchanged expected 2 but got 6
-PASS change state from search to password 
+PASS change state from search to password
 FAIL change state from search to datetime-local assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from search to date assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from search to month assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -57,17 +57,17 @@ FAIL change state from search to range Type error
 FAIL change state from search to color Type error
 FAIL change state from search to checkbox Type error
 FAIL change state from search to radio Type error
-PASS change state from search to file 
+PASS change state from search to file
 FAIL change state from search to submit Type error
 FAIL change state from search to image Type error
 FAIL change state from search to reset Type error
 FAIL change state from search to button Type error
 FAIL change state from tel to hidden Type error
-PASS change state from tel to text 
-PASS change state from tel to search 
+PASS change state from tel to text
+PASS change state from tel to search
 FAIL change state from tel to url assert_equals: selectionStart should be unchanged expected 2 but got 6
 FAIL change state from tel to email assert_equals: selectionStart should be unchanged expected 2 but got 6
-PASS change state from tel to password 
+PASS change state from tel to password
 FAIL change state from tel to datetime-local assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from tel to date assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from tel to month assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -78,7 +78,7 @@ FAIL change state from tel to range Type error
 FAIL change state from tel to color Type error
 FAIL change state from tel to checkbox Type error
 FAIL change state from tel to radio Type error
-PASS change state from tel to file 
+PASS change state from tel to file
 FAIL change state from tel to submit Type error
 FAIL change state from tel to image Type error
 FAIL change state from tel to reset Type error
@@ -87,7 +87,7 @@ FAIL change state from url to hidden Type error
 FAIL change state from url to text assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
 FAIL change state from url to search assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
 FAIL change state from url to tel assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
-PASS change state from url to email 
+PASS change state from url to email
 FAIL change state from url to password assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
 FAIL change state from url to datetime-local assert_equals: input.value should be '' after change of state expected "" but got "foobar"
 FAIL change state from url to date assert_equals: input.value should be '' after change of state expected "" but got "foobar"
@@ -99,7 +99,7 @@ FAIL change state from url to range Type error
 FAIL change state from url to color Type error
 FAIL change state from url to checkbox Type error
 FAIL change state from url to radio Type error
-PASS change state from url to file 
+PASS change state from url to file
 FAIL change state from url to submit Type error
 FAIL change state from url to image Type error
 FAIL change state from url to reset Type error
@@ -108,7 +108,7 @@ FAIL change state from email to hidden Type error
 FAIL change state from email to text assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
 FAIL change state from email to search assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
 FAIL change state from email to tel assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
-PASS change state from email to url 
+PASS change state from email to url
 FAIL change state from email to password assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
 FAIL change state from email to datetime-local assert_equals: input.value should be '' after change of state expected "" but got "foobar"
 FAIL change state from email to date assert_equals: input.value should be '' after change of state expected "" but got "foobar"
@@ -120,15 +120,15 @@ FAIL change state from email to range Type error
 FAIL change state from email to color Type error
 FAIL change state from email to checkbox Type error
 FAIL change state from email to radio Type error
-PASS change state from email to file 
+PASS change state from email to file
 FAIL change state from email to submit Type error
 FAIL change state from email to image Type error
 FAIL change state from email to reset Type error
 FAIL change state from email to button Type error
 FAIL change state from password to hidden Type error
-PASS change state from password to text 
-PASS change state from password to search 
-PASS change state from password to tel 
+PASS change state from password to text
+PASS change state from password to search
+PASS change state from password to tel
 FAIL change state from password to url assert_equals: selectionStart should be unchanged expected 2 but got 6
 FAIL change state from password to email assert_equals: selectionStart should be unchanged expected 2 but got 6
 FAIL change state from password to datetime-local assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -141,7 +141,7 @@ FAIL change state from password to range Type error
 FAIL change state from password to color Type error
 FAIL change state from password to checkbox Type error
 FAIL change state from password to radio Type error
-PASS change state from password to file 
+PASS change state from password to file
 FAIL change state from password to submit Type error
 FAIL change state from password to image Type error
 FAIL change state from password to reset Type error
@@ -162,7 +162,7 @@ FAIL change state from datetime-local to range Type error
 FAIL change state from datetime-local to color Type error
 FAIL change state from datetime-local to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
 FAIL change state from datetime-local to radio assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
-PASS change state from datetime-local to file 
+PASS change state from datetime-local to file
 FAIL change state from datetime-local to submit assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from datetime-local to image assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from datetime-local to reset assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -183,7 +183,7 @@ FAIL change state from date to range Type error
 FAIL change state from date to color Type error
 FAIL change state from date to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
 FAIL change state from date to radio assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
-PASS change state from date to file 
+PASS change state from date to file
 FAIL change state from date to submit assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from date to image assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from date to reset assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -204,7 +204,7 @@ FAIL change state from month to range Type error
 FAIL change state from month to color Type error
 FAIL change state from month to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
 FAIL change state from month to radio assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
-PASS change state from month to file 
+PASS change state from month to file
 FAIL change state from month to submit assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from month to image assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from month to reset assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -225,7 +225,7 @@ FAIL change state from week to range Type error
 FAIL change state from week to color Type error
 FAIL change state from week to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
 FAIL change state from week to radio assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
-PASS change state from week to file 
+PASS change state from week to file
 FAIL change state from week to submit assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from week to image assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from week to reset assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -246,7 +246,7 @@ FAIL change state from time to range Type error
 FAIL change state from time to color Type error
 FAIL change state from time to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
 FAIL change state from time to radio assert_equals: input.value should be 'on' after change of state expected "on" but got "  foobar  "
-PASS change state from time to file 
+PASS change state from time to file
 FAIL change state from time to submit assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from time to image assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
 FAIL change state from time to reset assert_equals: input.value should be '' after change of state expected "" but got "  foobar  "
@@ -267,7 +267,7 @@ FAIL change state from number to range Type error
 FAIL change state from number to color Type error
 FAIL change state from number to checkbox assert_equals: input.value should be 'on' after change of state expected "on" but got ""
 FAIL change state from number to radio assert_equals: input.value should be 'on' after change of state expected "on" but got ""
-PASS change state from number to file 
+PASS change state from number to file
 FAIL change state from number to submit Type error
 FAIL change state from number to image Type error
 FAIL change state from number to reset Type error
@@ -288,7 +288,7 @@ FAIL change state from range to number Type error
 FAIL change state from range to color Type error
 FAIL change state from range to checkbox Type error
 FAIL change state from range to radio Type error
-PASS change state from range to file 
+PASS change state from range to file
 FAIL change state from range to submit Type error
 FAIL change state from range to image Type error
 FAIL change state from range to reset Type error
@@ -309,7 +309,7 @@ FAIL change state from color to number Type error
 FAIL change state from color to range Type error
 FAIL change state from color to checkbox Type error
 FAIL change state from color to radio Type error
-PASS change state from color to file 
+PASS change state from color to file
 FAIL change state from color to submit Type error
 FAIL change state from color to image Type error
 FAIL change state from color to reset Type error
@@ -330,7 +330,7 @@ FAIL change state from checkbox to number Type error
 FAIL change state from checkbox to range Type error
 FAIL change state from checkbox to color Type error
 FAIL change state from checkbox to radio Type error
-PASS change state from checkbox to file 
+PASS change state from checkbox to file
 FAIL change state from checkbox to submit Type error
 FAIL change state from checkbox to image Type error
 FAIL change state from checkbox to reset Type error
@@ -351,32 +351,32 @@ FAIL change state from radio to number Type error
 FAIL change state from radio to range Type error
 FAIL change state from radio to color Type error
 FAIL change state from radio to checkbox Type error
-PASS change state from radio to file 
+PASS change state from radio to file
 FAIL change state from radio to submit Type error
 FAIL change state from radio to image Type error
 FAIL change state from radio to reset Type error
 FAIL change state from radio to button Type error
-PASS change state from file to hidden 
-PASS change state from file to text 
-PASS change state from file to search 
-PASS change state from file to tel 
-PASS change state from file to url 
-PASS change state from file to email 
-PASS change state from file to password 
-PASS change state from file to datetime-local 
-PASS change state from file to date 
-PASS change state from file to month 
-PASS change state from file to week 
-PASS change state from file to time 
-PASS change state from file to number 
-PASS change state from file to range 
-PASS change state from file to color 
-PASS change state from file to checkbox 
-PASS change state from file to radio 
-PASS change state from file to submit 
-PASS change state from file to image 
-PASS change state from file to reset 
-PASS change state from file to button 
+PASS change state from file to hidden
+PASS change state from file to text
+PASS change state from file to search
+PASS change state from file to tel
+PASS change state from file to url
+PASS change state from file to email
+PASS change state from file to password
+PASS change state from file to datetime-local
+PASS change state from file to date
+PASS change state from file to month
+PASS change state from file to week
+PASS change state from file to time
+PASS change state from file to number
+PASS change state from file to range
+PASS change state from file to color
+PASS change state from file to checkbox
+PASS change state from file to radio
+PASS change state from file to submit
+PASS change state from file to image
+PASS change state from file to reset
+PASS change state from file to button
 FAIL change state from submit to hidden Type error
 FAIL change state from submit to text Type error
 FAIL change state from submit to search Type error
@@ -394,7 +394,7 @@ FAIL change state from submit to range Type error
 FAIL change state from submit to color Type error
 FAIL change state from submit to checkbox Type error
 FAIL change state from submit to radio Type error
-PASS change state from submit to file 
+PASS change state from submit to file
 FAIL change state from submit to image Type error
 FAIL change state from submit to reset Type error
 FAIL change state from submit to button Type error
@@ -415,7 +415,7 @@ FAIL change state from image to range Type error
 FAIL change state from image to color Type error
 FAIL change state from image to checkbox Type error
 FAIL change state from image to radio Type error
-PASS change state from image to file 
+PASS change state from image to file
 FAIL change state from image to submit Type error
 FAIL change state from image to reset Type error
 FAIL change state from image to button Type error
@@ -436,7 +436,7 @@ FAIL change state from reset to range Type error
 FAIL change state from reset to color Type error
 FAIL change state from reset to checkbox Type error
 FAIL change state from reset to radio Type error
-PASS change state from reset to file 
+PASS change state from reset to file
 FAIL change state from reset to submit Type error
 FAIL change state from reset to image Type error
 FAIL change state from reset to button Type error
@@ -457,7 +457,7 @@ FAIL change state from button to range Type error
 FAIL change state from button to color Type error
 FAIL change state from button to checkbox Type error
 FAIL change state from button to radio Type error
-PASS change state from button to file 
+PASS change state from button to file
 FAIL change state from button to submit Type error
 FAIL change state from button to image Type error
 FAIL change state from button to reset Type error

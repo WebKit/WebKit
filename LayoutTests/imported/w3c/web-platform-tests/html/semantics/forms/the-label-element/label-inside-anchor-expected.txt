@@ -1,4 +1,4 @@
-peas?  
+peas?
 
-PASS click on inline element inside a label that's placed inside a anchor should trigger default label behavior 
+PASS click on inline element inside a label that's placed inside a anchor should trigger default label behavior
 

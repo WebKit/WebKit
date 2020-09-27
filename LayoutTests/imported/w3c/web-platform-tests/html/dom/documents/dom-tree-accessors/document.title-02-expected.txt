@@ -1,6 +1,6 @@
 
-PASS document.title with head blown away 
-PASS document.title with head blown away 1 
-PASS document 2 
-PASS PASS 3 
+PASS document.title with head blown away
+PASS document.title with head blown away 1
+PASS document 2
+PASS PASS 3
 

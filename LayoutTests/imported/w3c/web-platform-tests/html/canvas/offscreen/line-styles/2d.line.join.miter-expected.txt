@@ -3,5 +3,5 @@
 lineJoin 'miter' is rendered correctly
 
 
-PASS lineJoin 'miter' is rendered correctly 
+PASS lineJoin 'miter' is rendered correctly
 

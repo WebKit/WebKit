@@ -1,15 +1,15 @@
 
 
-PASS Same-origin (for now): the prototype is accessible 
-PASS Became cross-origin via document.domain: the prototype is now null 
-PASS Became cross-origin via document.domain: setting the prototype to an empty object via Object.setPrototypeOf should throw a TypeError 
-PASS Became cross-origin via document.domain: setting the prototype to an empty object via __proto__ should throw a "SecurityError" DOMException 
-PASS Became cross-origin via document.domain: setting the prototype to an empty object via Reflect.setPrototypeOf should return false 
-PASS Became cross-origin via document.domain: the prototype must still be null 
-PASS Became cross-origin via document.domain: setting the prototype to null via Object.setPrototypeOf should not throw 
-PASS Became cross-origin via document.domain: setting the prototype to null via __proto__ should throw a "SecurityError" since it ends up in CrossOriginGetOwnProperty 
-PASS Became cross-origin via document.domain: setting the prototype to null via Reflect.setPrototypeOf should return true 
-PASS Became cross-origin via document.domain: setting the prototype to the original value from before going cross-origin via Object.setPrototypeOf should throw a TypeError 
-PASS Became cross-origin via document.domain: setting the prototype to the original value from before going cross-origin via __proto__ should throw a "SecurityError" DOMException 
-PASS Became cross-origin via document.domain: setting the prototype to the original value from before going cross-origin via Reflect.setPrototypeOf should return false 
+PASS Same-origin (for now): the prototype is accessible
+PASS Became cross-origin via document.domain: the prototype is now null
+PASS Became cross-origin via document.domain: setting the prototype to an empty object via Object.setPrototypeOf should throw a TypeError
+PASS Became cross-origin via document.domain: setting the prototype to an empty object via __proto__ should throw a "SecurityError" DOMException
+PASS Became cross-origin via document.domain: setting the prototype to an empty object via Reflect.setPrototypeOf should return false
+PASS Became cross-origin via document.domain: the prototype must still be null
+PASS Became cross-origin via document.domain: setting the prototype to null via Object.setPrototypeOf should not throw
+PASS Became cross-origin via document.domain: setting the prototype to null via __proto__ should throw a "SecurityError" since it ends up in CrossOriginGetOwnProperty
+PASS Became cross-origin via document.domain: setting the prototype to null via Reflect.setPrototypeOf should return true
+PASS Became cross-origin via document.domain: setting the prototype to the original value from before going cross-origin via Object.setPrototypeOf should throw a TypeError
+PASS Became cross-origin via document.domain: setting the prototype to the original value from before going cross-origin via __proto__ should throw a "SecurityError" DOMException
+PASS Became cross-origin via document.domain: setting the prototype to the original value from before going cross-origin via Reflect.setPrototypeOf should return false
 

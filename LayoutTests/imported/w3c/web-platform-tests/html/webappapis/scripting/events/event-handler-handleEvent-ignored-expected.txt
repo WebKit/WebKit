@@ -1,4 +1,4 @@
 
-PASS plain object "mouseenter" handler 
-PASS non-callable "message" handler that is instance of Function 
+PASS plain object "mouseenter" handler
+PASS non-callable "message" handler that is instance of Function
 

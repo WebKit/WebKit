@@ -1,17 +1,17 @@
 
-PASS Test that convertToBlob with default arguments produces correct result in a worker 
-PASS Test that convertToBlob with default type/1.0 quality produces correct result in a worker 
-PASS Test that convertToBlob with default type/0.2 quality produces correct result in a worker 
-PASS Test that convertToBlob with png/default quality produces correct result in a worker 
-PASS Test that convertToBlob with png/1.0 quality produces correct result in a worker 
-PASS Test that convertToBlob with png/0.2 quality produces correct result in a worker 
-PASS Test that convertToBlob with jpeg/default quality produces correct result in a worker 
-PASS Test that convertToBlob with jpeg/1.0 quality produces correct result in a worker 
-PASS Test that convertToBlob with jpeg/0.2 quality produces correct result in a worker 
-PASS Test that convertToBlob with webp/default quality produces correct result in a worker 
-PASS Test that convertToBlob with webp/1.0 quality produces correct result in a worker 
-PASS Test that convertToBlob with webp/0.2 quality produces correct result in a worker 
-PASS Test that call convertToBlob on a detached OffscreenCanvas throws exception in a worker 
-PASS Test that call convertToBlob on a OffscreenCanvas with size 0 throws exception in a worker 
-PASS Test that call convertToBlob on a OffscreenCanvas with tainted origin throws exception in a worker 
+PASS Test that convertToBlob with default arguments produces correct result in a worker
+PASS Test that convertToBlob with default type/1.0 quality produces correct result in a worker
+PASS Test that convertToBlob with default type/0.2 quality produces correct result in a worker
+PASS Test that convertToBlob with png/default quality produces correct result in a worker
+PASS Test that convertToBlob with png/1.0 quality produces correct result in a worker
+PASS Test that convertToBlob with png/0.2 quality produces correct result in a worker
+PASS Test that convertToBlob with jpeg/default quality produces correct result in a worker
+PASS Test that convertToBlob with jpeg/1.0 quality produces correct result in a worker
+PASS Test that convertToBlob with jpeg/0.2 quality produces correct result in a worker
+PASS Test that convertToBlob with webp/default quality produces correct result in a worker
+PASS Test that convertToBlob with webp/1.0 quality produces correct result in a worker
+PASS Test that convertToBlob with webp/0.2 quality produces correct result in a worker
+PASS Test that call convertToBlob on a detached OffscreenCanvas throws exception in a worker
+PASS Test that call convertToBlob on a OffscreenCanvas with size 0 throws exception in a worker
+PASS Test that call convertToBlob on a OffscreenCanvas with tainted origin throws exception in a worker
 

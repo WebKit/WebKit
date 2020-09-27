@@ -1,8 +1,8 @@
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move success empty-src classic script to iframe before-prepare 
-PASS <script> load: Move success empty-src classic script to iframe before-prepare 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move success empty-src classic script to iframe before-prepare
+PASS <script> load: Move success empty-src classic script to iframe before-prepare
 FAIL <script> error: Move success empty-src classic script to iframe before-prepare assert_unreached: Script error evennt fired unexpectedly Reached unreachable code
-PASS window error: Move success empty-src classic script to iframe before-prepare 
+PASS window error: Move success empty-src classic script to iframe before-prepare
 

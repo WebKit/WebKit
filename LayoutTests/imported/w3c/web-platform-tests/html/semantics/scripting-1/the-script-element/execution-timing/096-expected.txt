@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: defer script added from document.write relative to DOMContentLoaded 
+PASS  scheduler: defer script added from document.write relative to DOMContentLoaded
 

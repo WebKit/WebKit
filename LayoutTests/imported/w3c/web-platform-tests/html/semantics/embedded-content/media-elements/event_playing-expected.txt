@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - playing 
-PASS setting src attribute on autoplay audio should trigger playing event 
-PASS video events - playing 
-PASS setting src attribute on autoplay video should trigger playing event 
+
+PASS audio events - playing
+PASS setting src attribute on autoplay audio should trigger playing event
+PASS video events - playing
+PASS setting src attribute on autoplay video should trigger playing event
 

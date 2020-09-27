@@ -1,5 +1,5 @@
 2d.pattern.paint.repeatx.outside
 
 
-PASS OffscreenCanvas test: 2d.pattern.paint.repeatx.outside 
+PASS OffscreenCanvas test: 2d.pattern.paint.repeatx.outside
 

@@ -1,6 +1,6 @@
 
-PASS Template child nodes must be appended to template content node 
-PASS Template child nodes must be appended to template content. Test nested template 
-PASS Template child nodes must be appended to template content node. Load HTML document from a file 
-PASS Template child nodes must be appended to nested template content node. Load HTML document from a file 
+PASS Template child nodes must be appended to template content node
+PASS Template child nodes must be appended to template content. Test nested template
+PASS Template child nodes must be appended to template content node. Load HTML document from a file
+PASS Template child nodes must be appended to nested template content node. Load HTML document from a file
 

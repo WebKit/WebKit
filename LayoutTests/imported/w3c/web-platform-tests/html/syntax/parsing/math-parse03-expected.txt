@@ -1,25 +1,25 @@
 math in html: parsing
 
 
-PASS MATH element name should be lowercased 
-PASS MI element name and mathvariant attribute name should be lowercased, attribute value unchanged 
-PASS DEFINITIONurl attribute markup should produce a definitionURL attribute, attribute value unchanged 
-PASS html Span in mtext produces SPAN nodename in XHTML namespace 
-PASS html Span in mi produces SPAN nodename in XHTML namespace 
-PASS html Span in mrow produces SPAN nodename in XHTML namespace 
-PASS html P in mtext produces P nodename in XHTML namespace 
-PASS html P in mi produces P nodename in XHTML namespace 
-PASS html P in mrow terminates the math: mrow,P,MI children of div 
-PASS html P in mrow terminates the math: mrow child of math 
-PASS html P in mrow terminates the math: mrow empty 
-PASS html P in mrow terminates the math: math,P,MI children of div 
-PASS Undefinedelement in mtext produces UNDEFINEDELEMENT nodename in XHTML namespace 
-PASS mi in mtext produces MI nodename in XHTML namespace 
-PASS p in annotation-xml moves to be child of DIV 
-PASS p in annotation-xml encoding=text/html stays as child of annotation-xml 
-PASS p in annotation-xml encoding=TEXT/HTML stays as child of annotation-xml 
-PASS p in annotation-xml encoding=application/xhtml+xml stays as child of annotation-xml 
-PASS p in annotation-xml encoding=foo moves to be child of DIV 
+PASS MATH element name should be lowercased
+PASS MI element name and mathvariant attribute name should be lowercased, attribute value unchanged
+PASS DEFINITIONurl attribute markup should produce a definitionURL attribute, attribute value unchanged
+PASS html Span in mtext produces SPAN nodename in XHTML namespace
+PASS html Span in mi produces SPAN nodename in XHTML namespace
+PASS html Span in mrow produces SPAN nodename in XHTML namespace
+PASS html P in mtext produces P nodename in XHTML namespace
+PASS html P in mi produces P nodename in XHTML namespace
+PASS html P in mrow terminates the math: mrow,P,MI children of div
+PASS html P in mrow terminates the math: mrow child of math
+PASS html P in mrow terminates the math: mrow empty
+PASS html P in mrow terminates the math: math,P,MI children of div
+PASS Undefinedelement in mtext produces UNDEFINEDELEMENT nodename in XHTML namespace
+PASS mi in mtext produces MI nodename in XHTML namespace
+PASS p in annotation-xml moves to be child of DIV
+PASS p in annotation-xml encoding=text/html stays as child of annotation-xml
+PASS p in annotation-xml encoding=TEXT/HTML stays as child of annotation-xml
+PASS p in annotation-xml encoding=application/xhtml+xml stays as child of annotation-xml
+PASS p in annotation-xml encoding=foo moves to be child of DIV
 a
 x
 x

@@ -1,5 +1,5 @@
 2d.composite.operation.get
 Actual output:
 
-PASS Canvas test: 2d.composite.operation.get 
+PASS Canvas test: 2d.composite.operation.get
 

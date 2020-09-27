@@ -3,5 +3,5 @@
 ImageData.data converts NaN to 0
 
 
-PASS ImageData.data converts NaN to 0 
+PASS ImageData.data converts NaN to 0
 

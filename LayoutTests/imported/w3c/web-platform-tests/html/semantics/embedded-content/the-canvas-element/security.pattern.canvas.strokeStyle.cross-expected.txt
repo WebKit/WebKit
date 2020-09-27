@@ -3,5 +3,5 @@ security.pattern.canvas.strokeStyle.cross
 Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean
 Actual output:
 
-PASS Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean 
+PASS Setting strokeStyle to a pattern of an unclean canvas makes the canvas origin-unclean
 

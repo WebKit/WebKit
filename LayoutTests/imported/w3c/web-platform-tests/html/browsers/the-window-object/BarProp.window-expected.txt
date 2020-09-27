@@ -1,4 +1,4 @@
 
-PASS BarBrop objects of a nested Window 
-PASS BarProp objects of an auxiliary Window 
+PASS BarBrop objects of a nested Window
+PASS BarProp objects of an auxiliary Window
 

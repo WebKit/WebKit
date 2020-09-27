@@ -1,5 +1,5 @@
 2d.fillStyle.parse.invalid.rgba-3
 
 
-PASS OffscreenCanvas test: 2d.fillStyle.parse.invalid.rgba-3 
+PASS OffscreenCanvas test: 2d.fillStyle.parse.invalid.rgba-3
 

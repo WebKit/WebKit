@@ -12,7 +12,7 @@ Blocked access to external URL http://www2.localhost:8800/html/semantics/scripti
 Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py?iframe
 
 
-PASS Errors for same-origin script shouldn't be muted 
+PASS Errors for same-origin script shouldn't be muted
 FAIL Errors for cross-origin script should be muted assert_unreached: Reached unreachable code
 FAIL Errors for cross-origin script should be muted even if the script is once loaded as same-origin assert_unreached: Reached unreachable code
 FAIL Errors for same-origin scripts redirected to a cross-origin url and redirected back to same-origin should be muted assert_unreached: Reached unreachable code

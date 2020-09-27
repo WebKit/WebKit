@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: adding inline script which sets its own .src  
+PASS  scheduler: adding inline script which sets its own .src
 

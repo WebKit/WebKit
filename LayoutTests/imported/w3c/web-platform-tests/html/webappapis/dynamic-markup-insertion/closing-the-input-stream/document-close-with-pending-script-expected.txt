@@ -1,4 +1,4 @@
 
 
-PASS document.close called while a script is pending 
+PASS document.close called while a script is pending
 

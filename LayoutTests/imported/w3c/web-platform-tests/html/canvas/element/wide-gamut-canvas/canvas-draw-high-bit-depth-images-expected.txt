@@ -1,5 +1,5 @@
 
-PASS Overall test 
+PASS Overall test
 FAIL Canvas color params: srgb, uint8. Testing 2x2_8bit_sRGB_opaque.png vs 2x2_16bit_sRGB_opaque.png undefined is not an object (evaluating 'actual.length')
 FAIL Canvas color params: srgb, uint8. Testing 2x2_8bit_sRGB_opaque.png vs 2x2_16bit_interlaced_sRGB_opaque.png undefined is not an object (evaluating 'actual.length')
 FAIL Canvas color params: srgb, uint8. Testing 2x2_8bit_sRGB_transparent.png vs 2x2_16bit_sRGB_transparent.png undefined is not an object (evaluating 'actual.length')

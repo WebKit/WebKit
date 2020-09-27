@@ -1,4 +1,4 @@
 ¬abc
 
-PASS document.write entity 
+PASS document.write entity
 

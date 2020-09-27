@@ -1,5 +1,5 @@
  This text should be green.  This text should be green.
 
-PASS Evaluation of :in-range changes for input type change. 
-PASS Evaluation of :out-of-range changes for input type change. 
+PASS Evaluation of :in-range changes for input type change.
+PASS Evaluation of :out-of-range changes for input type change.
 

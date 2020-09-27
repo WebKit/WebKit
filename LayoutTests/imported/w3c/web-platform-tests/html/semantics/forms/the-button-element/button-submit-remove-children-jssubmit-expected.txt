@@ -1,5 +1,5 @@
 
 
 
-PASS This test will pass if a form navigation successfully occurs when clicking a child element of a <button type=submit> element with a onclick event handler which removes the button's child and then calls form.submit(). 
+PASS This test will pass if a form navigation successfully occurs when clicking a child element of a <button type=submit> element with a onclick event handler which removes the button's child and then calls form.submit().
 

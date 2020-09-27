@@ -1,4 +1,4 @@
 
-PASS error event is weird (return true cancels; many args) on WorkerGlobalScope, with a runtime error 
-PASS error event has the right 5 args on WorkerGlobalScope, with a runtime error 
+PASS error event is weird (return true cancels; many args) on WorkerGlobalScope, with a runtime error
+PASS error event has the right 5 args on WorkerGlobalScope, with a runtime error
 

@@ -1,4 +1,4 @@
 
-PASS If the style is loaded successfully, the 'load' event must be fired 
-PASS If the style is loaded unsuccessfully, the 'error' event must be fired 
+PASS If the style is loaded successfully, the 'load' event must be fired
+PASS If the style is loaded unsuccessfully, the 'error' event must be fired
 

@@ -2,5 +2,5 @@ context.emptystring
 getContext with empty string returns null
 Actual output:
 
-PASS getContext with empty string returns null 
+PASS getContext with empty string returns null
 

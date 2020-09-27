@@ -1,4 +1,4 @@
 
 
-PASS document.write external script into iframe write back into parent 
+PASS document.write external script into iframe write back into parent
 

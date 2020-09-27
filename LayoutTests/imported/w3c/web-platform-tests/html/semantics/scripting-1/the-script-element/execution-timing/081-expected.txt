@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: slow loading external script added with DOM (appendChild) 
+PASS  scheduler: slow loading external script added with DOM (appendChild)
 

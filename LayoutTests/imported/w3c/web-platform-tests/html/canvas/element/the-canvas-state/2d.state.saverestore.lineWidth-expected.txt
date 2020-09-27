@@ -2,5 +2,5 @@
 save()/restore() works for lineWidth
 Actual output:
 
-PASS save()/restore() works for lineWidth 
+PASS save()/restore() works for lineWidth
 

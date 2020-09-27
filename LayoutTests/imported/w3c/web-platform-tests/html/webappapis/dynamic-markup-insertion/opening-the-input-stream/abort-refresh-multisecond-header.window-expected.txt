@@ -1,5 +1,5 @@
 
-PASS document.open() does NOT abort documents that are queued for navigation through Refresh header with 1-sec timeout (XMLHttpRequest) 
-PASS document.open() does NOT abort documents that are queued for navigation through Refresh header with 1-sec timeout (fetch()) 
-PASS document.open() does NOT abort documents that are queued for navigation through Refresh header with 4-sec timeout (image loading) 
+PASS document.open() does NOT abort documents that are queued for navigation through Refresh header with 1-sec timeout (XMLHttpRequest)
+PASS document.open() does NOT abort documents that are queued for navigation through Refresh header with 1-sec timeout (fetch())
+PASS document.open() does NOT abort documents that are queued for navigation through Refresh header with 4-sec timeout (image loading)
 

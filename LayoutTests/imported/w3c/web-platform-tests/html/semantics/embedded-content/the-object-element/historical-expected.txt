@@ -1,5 +1,5 @@
 
-PASS object legacycaller should not be supported 
-PASS object's typeMustMatch IDL attribute should not be supported 
-PASS object's typemustmatch content attribute should not be supported 
+PASS object legacycaller should not be supported
+PASS object's typeMustMatch IDL attribute should not be supported
+PASS object's typemustmatch content attribute should not be supported
 

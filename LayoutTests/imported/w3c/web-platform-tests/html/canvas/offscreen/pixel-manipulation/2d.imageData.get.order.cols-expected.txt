@@ -3,5 +3,5 @@
 getImageData() returns leftmost columns first
 
 
-PASS getImageData() returns leftmost columns first 
+PASS getImageData() returns leftmost columns first
 

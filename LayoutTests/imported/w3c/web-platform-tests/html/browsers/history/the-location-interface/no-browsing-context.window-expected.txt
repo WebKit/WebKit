@@ -1,48 +1,48 @@
 
-PASS Window and Location are 1:1 after browsing context removal 
-PASS Setting `href` to `https://example.com/` of a `Location` object sans browsing context is a no-op 
-PASS Setting `href` to `/` of a `Location` object sans browsing context is a no-op 
-PASS Setting `href` to `http://test:test/` of a `Location` object sans browsing context is a no-op 
-PASS Setting `href` to `test test` of a `Location` object sans browsing context is a no-op 
-PASS Setting `href` to `test:test` of a `Location` object sans browsing context is a no-op 
-PASS Setting `href` to `chrome:fail` of a `Location` object sans browsing context is a no-op 
-PASS Setting `protocol` to `http` of a `Location` object sans browsing context is a no-op 
-PASS Setting `protocol` to `about` of a `Location` object sans browsing context is a no-op 
-PASS Setting `protocol` to `test` of a `Location` object sans browsing context is a no-op 
-PASS Setting `host` to `example.com` of a `Location` object sans browsing context is a no-op 
-PASS Setting `host` to `test test` of a `Location` object sans browsing context is a no-op 
-PASS Setting `host` to `()` of a `Location` object sans browsing context is a no-op 
-PASS Setting `hostname` to `example.com` of a `Location` object sans browsing context is a no-op 
-PASS Setting `port` to `80` of a `Location` object sans browsing context is a no-op 
-PASS Setting `port` to `` of a `Location` object sans browsing context is a no-op 
-PASS Setting `port` to `443` of a `Location` object sans browsing context is a no-op 
-PASS Setting `port` to `notaport` of a `Location` object sans browsing context is a no-op 
-PASS Setting `pathname` to `/` of a `Location` object sans browsing context is a no-op 
-PASS Setting `pathname` to `x` of a `Location` object sans browsing context is a no-op 
-PASS Setting `search` to `test` of a `Location` object sans browsing context is a no-op 
-PASS Setting `hash` to `test` of a `Location` object sans browsing context is a no-op 
-PASS Setting `hash` to `#` of a `Location` object sans browsing context is a no-op 
-PASS Getting `origin` of a `Location` object sans browsing context should be "null" 
-PASS Invoking `assign` with `about:blank` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `assign` with `https://example.com/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `assign` with `/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `assign` with `http://test:test/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `assign` with `test test` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `assign` with `test:test` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `assign` with `chrome:fail` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `about:blank` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `https://example.com/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `http://test:test/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `test test` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `test:test` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `replace` with `chrome:fail` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `about:blank` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `https://example.com/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `http://test:test/` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `test test` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `test:test` on a `Location` object sans browsing context is a no-op 
-PASS Invoking `reload` with `chrome:fail` on a `Location` object sans browsing context is a no-op 
-PASS Getting `ancestorOrigins` of a `Location` object sans browsing context should be [] 
+PASS Window and Location are 1:1 after browsing context removal
+PASS Setting `href` to `https://example.com/` of a `Location` object sans browsing context is a no-op
+PASS Setting `href` to `/` of a `Location` object sans browsing context is a no-op
+PASS Setting `href` to `http://test:test/` of a `Location` object sans browsing context is a no-op
+PASS Setting `href` to `test test` of a `Location` object sans browsing context is a no-op
+PASS Setting `href` to `test:test` of a `Location` object sans browsing context is a no-op
+PASS Setting `href` to `chrome:fail` of a `Location` object sans browsing context is a no-op
+PASS Setting `protocol` to `http` of a `Location` object sans browsing context is a no-op
+PASS Setting `protocol` to `about` of a `Location` object sans browsing context is a no-op
+PASS Setting `protocol` to `test` of a `Location` object sans browsing context is a no-op
+PASS Setting `host` to `example.com` of a `Location` object sans browsing context is a no-op
+PASS Setting `host` to `test test` of a `Location` object sans browsing context is a no-op
+PASS Setting `host` to `()` of a `Location` object sans browsing context is a no-op
+PASS Setting `hostname` to `example.com` of a `Location` object sans browsing context is a no-op
+PASS Setting `port` to `80` of a `Location` object sans browsing context is a no-op
+PASS Setting `port` to `` of a `Location` object sans browsing context is a no-op
+PASS Setting `port` to `443` of a `Location` object sans browsing context is a no-op
+PASS Setting `port` to `notaport` of a `Location` object sans browsing context is a no-op
+PASS Setting `pathname` to `/` of a `Location` object sans browsing context is a no-op
+PASS Setting `pathname` to `x` of a `Location` object sans browsing context is a no-op
+PASS Setting `search` to `test` of a `Location` object sans browsing context is a no-op
+PASS Setting `hash` to `test` of a `Location` object sans browsing context is a no-op
+PASS Setting `hash` to `#` of a `Location` object sans browsing context is a no-op
+PASS Getting `origin` of a `Location` object sans browsing context should be "null"
+PASS Invoking `assign` with `about:blank` on a `Location` object sans browsing context is a no-op
+PASS Invoking `assign` with `https://example.com/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `assign` with `/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `assign` with `http://test:test/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `assign` with `test test` on a `Location` object sans browsing context is a no-op
+PASS Invoking `assign` with `test:test` on a `Location` object sans browsing context is a no-op
+PASS Invoking `assign` with `chrome:fail` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `about:blank` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `https://example.com/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `http://test:test/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `test test` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `test:test` on a `Location` object sans browsing context is a no-op
+PASS Invoking `replace` with `chrome:fail` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `about:blank` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `https://example.com/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `http://test:test/` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `test test` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `test:test` on a `Location` object sans browsing context is a no-op
+PASS Invoking `reload` with `chrome:fail` on a `Location` object sans browsing context is a no-op
+PASS Getting `ancestorOrigins` of a `Location` object sans browsing context should be []
 

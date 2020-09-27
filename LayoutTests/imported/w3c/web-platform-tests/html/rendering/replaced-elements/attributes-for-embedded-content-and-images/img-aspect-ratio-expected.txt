@@ -1,4 +1,4 @@
-     
+
 
 FAIL Image width and height attributes are used to infer aspect-ratio assert_approx_equals: expected 4 +/- 0.001 but got 4.166666666666667
 

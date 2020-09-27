@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: interaction of parsing and script execution - external script  
+PASS  scheduler: interaction of parsing and script execution - external script
 

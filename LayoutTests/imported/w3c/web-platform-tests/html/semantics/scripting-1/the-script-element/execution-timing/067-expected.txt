@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'script'. Expected ')' to end an argument list.
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: is a script with syntax error marked as "has run"?  
+PASS  scheduler: is a script with syntax error marked as "has run"?
 

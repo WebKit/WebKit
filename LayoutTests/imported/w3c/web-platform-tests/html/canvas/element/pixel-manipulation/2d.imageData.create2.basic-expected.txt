@@ -2,5 +2,5 @@
 createImageData(sw, sh) exists and returns something
 Actual output:
 
-PASS createImageData(sw, sh) exists and returns something 
+PASS createImageData(sw, sh) exists and returns something
 

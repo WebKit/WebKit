@@ -1,9 +1,9 @@
 input_labels
 
 
-PASS Forms 
+PASS Forms
 Full name:(name) Format: First Last
 
-Age: 
+Age:
 
 Post code:  Format: AB12 3CD

@@ -3,5 +3,5 @@
 putImageData() puts modified image data correctly
 
 
-PASS putImageData() puts modified image data correctly 
+PASS putImageData() puts modified image data correctly
 

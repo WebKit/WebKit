@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 
-PASS window.onerror - compile error in attribute 
-PASS window.onerror - compile error in attribute (column) 
+PASS window.onerror - compile error in attribute
+PASS window.onerror - compile error in attribute (column)
 

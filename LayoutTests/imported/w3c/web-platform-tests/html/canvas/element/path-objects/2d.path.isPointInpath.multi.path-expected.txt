@@ -2,5 +2,5 @@
 Verify the winding rule in isPointInPath works for path object.
 Actual output:
 
-PASS Verify the winding rule in isPointInPath works for path object. 
+PASS Verify the winding rule in isPointInPath works for path object.
 

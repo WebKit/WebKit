@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.composite.transparent.xor 
+PASS Canvas test: 2d.composite.transparent.xor
 

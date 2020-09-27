@@ -1,9 +1,9 @@
 
-PASS A script with no children bails early, before setting already-started, so can be executed when adding text 
-PASS A script with a whitespace child executes, setting already-started, so adding text is a no-op 
-PASS A script with an empty element inserted bails early, before setting already-started, so can be executed when adding text 
-PASS A script with an empty text node inserted bails early, before setting already-started, so can be executed when adding text 
-PASS A script with a text child inserted executes, setting already-started, so adding text is a no-op 
-PASS A script with a comment child inserted bails early, before setting already-started, so can be executed when adding text 
-PASS A script with an element containing text inserted bails early, before setting already-started, so can be executed when adding text 
+PASS A script with no children bails early, before setting already-started, so can be executed when adding text
+PASS A script with a whitespace child executes, setting already-started, so adding text is a no-op
+PASS A script with an empty element inserted bails early, before setting already-started, so can be executed when adding text
+PASS A script with an empty text node inserted bails early, before setting already-started, so can be executed when adding text
+PASS A script with a text child inserted executes, setting already-started, so adding text is a no-op
+PASS A script with a comment child inserted bails early, before setting already-started, so can be executed when adding text
+PASS A script with an element containing text inserted bails early, before setting already-started, so can be executed when adding text
 

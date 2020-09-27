@@ -3,5 +3,5 @@
 strokeRect works
 
 
-PASS strokeRect works 
+PASS strokeRect works
 

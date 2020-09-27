@@ -2,5 +2,5 @@ security.pattern.create.cross
 Creating an unclean pattern does not make the canvas origin-unclean
 Actual output:
 
-PASS Creating an unclean pattern does not make the canvas origin-unclean 
+PASS Creating an unclean pattern does not make the canvas origin-unclean
 

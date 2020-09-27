@@ -4,6 +4,6 @@ CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
 
 
 FAIL A CSS Module should load assert_equals: CSS module import should succeed expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
-PASS An @import CSS Module should not load, but should not throw an exception 
-PASS Malformed CSS should not load 
+PASS An @import CSS Module should not load, but should not throw an exception
+PASS Malformed CSS should not load
 

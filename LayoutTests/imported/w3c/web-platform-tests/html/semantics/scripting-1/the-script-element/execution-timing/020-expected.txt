@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: DOM added script with data: URL  
+PASS  scheduler: DOM added script with data: URL
 

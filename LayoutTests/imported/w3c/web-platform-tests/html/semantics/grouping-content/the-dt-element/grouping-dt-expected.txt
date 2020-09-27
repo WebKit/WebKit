@@ -3,5 +3,5 @@ Description
 This test validates the dt element.
 
 
-PASS The prototype for dt is HTMLElement.prototype 
+PASS The prototype for dt is HTMLElement.prototype
 

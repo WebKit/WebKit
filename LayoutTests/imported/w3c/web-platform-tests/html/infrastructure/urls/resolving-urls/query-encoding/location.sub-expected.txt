@@ -1,7 +1,7 @@
 
-PASS location [PutForwards] 
-PASS location.assign() 
-PASS location.replace() 
-PASS location.href 
+PASS location [PutForwards]
+PASS location.assign()
+PASS location.replace()
+PASS location.href
 FAIL location.search assert_equals: expected "?%FF" but got "?%C3%BF"
 

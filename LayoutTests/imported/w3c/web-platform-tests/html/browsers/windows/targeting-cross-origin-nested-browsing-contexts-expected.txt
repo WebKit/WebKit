@@ -3,5 +3,5 @@ CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with
 CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://localhost:8800/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
 
 
-PASS Targeting nested browsing contexts 
+PASS Targeting nested browsing contexts
 

@@ -1,7 +1,7 @@
 
-PASS The value attribute should be empty if no element is checked 
-PASS The RadioNodeList.value must be the first checked radio button's value 
-PASS Check the RadioNodeList.value on getting 
-PASS Check the RadioNodeList.value on setting 
-PASS Check the RadioNodeList.value on setting to 'on' 
-    
+PASS The value attribute should be empty if no element is checked
+PASS The RadioNodeList.value must be the first checked radio button's value
+PASS Check the RadioNodeList.value on getting
+PASS Check the RadioNodeList.value on setting
+PASS Check the RadioNodeList.value on setting to 'on'
+

@@ -3,5 +3,5 @@
 @font-face fonts should work even if they are not used in the page
 
 
-PASS @font-face fonts should work even if they are not used in the page 
+PASS @font-face fonts should work even if they are not used in the page
 

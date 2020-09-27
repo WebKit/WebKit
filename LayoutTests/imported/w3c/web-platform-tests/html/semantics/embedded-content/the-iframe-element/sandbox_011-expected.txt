@@ -1,11 +1,11 @@
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'ALLOW-SANDBOX' is an invalid sandbox flag.
 
-PASS DOMTokenList length 
-PASS DOMTokenList item(index) 
-PASS DOMTokenList contains(DomString) 
-PASS DOMTokenList add(DomString) 
-PASS DOMTokenList remove(DomString) 
-PASS DOMTokenList toggle(DomString) - Returns true if token is now present (it was added); returns false if it is not (it was removed). 
-PASS DOMTokenList sandbox.toString() 
-PASS DOMTokenList case sensitivity 
+PASS DOMTokenList length
+PASS DOMTokenList item(index)
+PASS DOMTokenList contains(DomString)
+PASS DOMTokenList add(DomString)
+PASS DOMTokenList remove(DomString)
+PASS DOMTokenList toggle(DomString) - Returns true if token is now present (it was added); returns false if it is not (it was removed).
+PASS DOMTokenList sandbox.toString()
+PASS DOMTokenList case sensitivity
 

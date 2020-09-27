@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Highly scaled arcs are the right shape 
+PASS Highly scaled arcs are the right shape
 

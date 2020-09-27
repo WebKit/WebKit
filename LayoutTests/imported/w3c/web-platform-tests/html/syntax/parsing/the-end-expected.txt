@@ -1,6 +1,6 @@
 
-PASS DOMContentLoaded 
-PASS load 
+PASS DOMContentLoaded
+PASS load
 FAIL pageshow assert_false: bubbles should be false expected false got true
-PASS order 
+PASS order
 

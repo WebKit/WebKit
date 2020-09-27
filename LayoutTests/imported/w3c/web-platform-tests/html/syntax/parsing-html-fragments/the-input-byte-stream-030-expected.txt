@@ -1,4 +1,4 @@
  
 
-PASS An encoding declaration in a meta charset attribute has a higher precedence than a following encoding declaration in a meta charset attribute. 
+PASS An encoding declaration in a meta charset attribute has a higher precedence than a following encoding declaration in a meta charset attribute.
 

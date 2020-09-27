@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: removing async attribute at runtime, script also has defer attribute 
+PASS  scheduler: removing async attribute at runtime, script also has defer attribute
 

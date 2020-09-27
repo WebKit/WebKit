@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - paused property 
-PASS audio.paused should be false during play event 
-PASS video events - paused property 
-PASS video.paused should be false during play event 
+
+PASS audio events - paused property
+PASS audio.paused should be false during play event
+PASS video events - paused property
+PASS video.paused should be false during play event
 

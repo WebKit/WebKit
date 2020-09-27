@@ -1,7 +1,7 @@
 
-PASS default behavior 
-PASS empty value attribute 
-PASS label value 
-PASS mutable element's activation behavior is to do nothing. 
-PASS immutable element has no activation behavior. 
+PASS default behavior
+PASS empty value attribute
+PASS label value
+PASS mutable element's activation behavior is to do nothing.
+PASS immutable element has no activation behavior.
 

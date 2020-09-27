@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows are drawn for fill patterns 
+PASS Shadows are drawn for fill patterns
 

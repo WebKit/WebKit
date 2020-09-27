@@ -3,5 +3,5 @@
 quadraticCurveTo() with Infinity/NaN is ignored
 
 
-PASS quadraticCurveTo() with Infinity/NaN is ignored 
+PASS quadraticCurveTo() with Infinity/NaN is ignored
 

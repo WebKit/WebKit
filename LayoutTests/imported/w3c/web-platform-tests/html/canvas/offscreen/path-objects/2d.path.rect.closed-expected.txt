@@ -1,5 +1,5 @@
 2d.path.rect.closed
 
 
-PASS OffscreenCanvas test: 2d.path.rect.closed 
+PASS OffscreenCanvas test: 2d.path.rect.closed
 

@@ -4,5 +4,5 @@ This tests that an iframe in sandbox with 'allow-top-navigation-by-user-activati
 
 
 
-PASS The sandboxed iframe should post a message saying the test was in the state of 'PASS'. 
+PASS The sandboxed iframe should post a message saying the test was in the state of 'PASS'.
 

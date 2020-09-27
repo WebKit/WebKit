@@ -1,13 +1,13 @@
 
-PASS HTMLAreaElement stringifier 
-PASS HTMLAreaElement stringifier 1 
-PASS HTMLAreaElement stringifier 2 
-PASS HTMLAreaElement stringifier 3 
-PASS HTMLAreaElement stringifier 4 
-PASS HTMLAreaElement stringifier 5 
-PASS HTMLAreaElement stringifier 6 
-PASS HTMLAreaElement stringifier 7 
-PASS HTMLAreaElement stringifier 8 
-PASS HTMLAreaElement stringifier 9 
-PASS HTMLAreaElement stringifier 10 
+PASS HTMLAreaElement stringifier
+PASS HTMLAreaElement stringifier 1
+PASS HTMLAreaElement stringifier 2
+PASS HTMLAreaElement stringifier 3
+PASS HTMLAreaElement stringifier 4
+PASS HTMLAreaElement stringifier 5
+PASS HTMLAreaElement stringifier 6
+PASS HTMLAreaElement stringifier 7
+PASS HTMLAreaElement stringifier 8
+PASS HTMLAreaElement stringifier 9
+PASS HTMLAreaElement stringifier 10
 

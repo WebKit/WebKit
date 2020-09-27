@@ -1,4 +1,4 @@
 
 
-PASS Check that sandboxed iframe can navigate itself 
+PASS Check that sandboxed iframe can navigate itself
 

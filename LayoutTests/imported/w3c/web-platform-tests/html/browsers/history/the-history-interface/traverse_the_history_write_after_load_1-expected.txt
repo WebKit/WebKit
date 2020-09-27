@@ -2,5 +2,5 @@ main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 
-PASS Traverse the history after document.write after the load event 
+PASS Traverse the history after document.write after the load event
 

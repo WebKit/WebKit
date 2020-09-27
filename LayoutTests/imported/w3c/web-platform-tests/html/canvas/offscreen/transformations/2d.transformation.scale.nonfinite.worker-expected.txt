@@ -1,3 +1,3 @@
 
-PASS scale() with Infinity/NaN is ignored 
+PASS scale() with Infinity/NaN is ignored
 

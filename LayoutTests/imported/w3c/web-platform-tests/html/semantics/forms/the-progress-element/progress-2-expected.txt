@@ -1,6 +1,6 @@
 
-PASS progress position equals -1 
-PASS progress value equals 0 
-PASS progress value equals .5 
-PASS progress position equals 0 
+PASS progress position equals -1
+PASS progress value equals 0
+PASS progress value equals .5
+PASS progress position equals 0
 

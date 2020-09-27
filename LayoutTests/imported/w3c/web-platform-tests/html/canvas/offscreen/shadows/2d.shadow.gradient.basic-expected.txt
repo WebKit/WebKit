@@ -3,5 +3,5 @@
 Shadows are drawn for gradient fills
 
 
-PASS Shadows are drawn for gradient fills 
+PASS Shadows are drawn for gradient fills
 

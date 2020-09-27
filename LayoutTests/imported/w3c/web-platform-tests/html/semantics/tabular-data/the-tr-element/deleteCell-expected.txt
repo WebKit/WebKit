@@ -1,8 +1,8 @@
 
-PASS HTMLTableRowElement deleteCell(0) 
-PASS HTMLTableRowElement deleteCell(-1) 
-PASS HTMLTableRowElement deleteCell(-2) 
-PASS HTMLTableRowElement deleteCell(cells.length) 
-PASS HTMLTableRowElement deleteCell(-1) with no cells 
-PASS HTMLTableRowElement deleteCell(0) with no cells 
+PASS HTMLTableRowElement deleteCell(0)
+PASS HTMLTableRowElement deleteCell(-1)
+PASS HTMLTableRowElement deleteCell(-2)
+PASS HTMLTableRowElement deleteCell(cells.length)
+PASS HTMLTableRowElement deleteCell(-1) with no cells
+PASS HTMLTableRowElement deleteCell(0) with no cells
 

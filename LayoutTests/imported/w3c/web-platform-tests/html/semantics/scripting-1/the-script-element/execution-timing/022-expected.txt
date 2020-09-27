@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: DOM added script, late .src  
+PASS  scheduler: DOM added script, late .src
 

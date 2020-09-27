@@ -3,5 +3,5 @@
 textAlign end with ltr is the right edge
 
 
-PASS textAlign end with ltr is the right edge 
+PASS textAlign end with ltr is the right edge
 

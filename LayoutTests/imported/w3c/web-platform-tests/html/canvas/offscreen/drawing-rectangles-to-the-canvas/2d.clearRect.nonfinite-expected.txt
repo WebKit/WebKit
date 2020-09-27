@@ -3,5 +3,5 @@
 clearRect() with Infinity/NaN is ignored
 
 
-PASS clearRect() with Infinity/NaN is ignored 
+PASS clearRect() with Infinity/NaN is ignored
 

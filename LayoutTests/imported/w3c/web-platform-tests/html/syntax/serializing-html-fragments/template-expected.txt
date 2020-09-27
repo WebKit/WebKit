@@ -1,4 +1,4 @@
 
-PASS Template element content is correctly serialized 
+PASS Template element content is correctly serialized
 FAIL HTML fragment serialization algorithm should be applied to the template content assert_equals: expected "<div xml:lang=\"en-us\" p:attr=\"v\"></div>" but got "<div xmlns=\"xx\" xml:lang=\"en-us\" p:attr=\"v\" xmlns:p=\"uri2\"/>"
 

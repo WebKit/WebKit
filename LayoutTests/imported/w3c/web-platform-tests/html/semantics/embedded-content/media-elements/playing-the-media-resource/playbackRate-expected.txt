@@ -1,9 +1,9 @@
 
-PASS playbackRate initial value 
-PASS playbackRate set to small positive value 
-PASS playbackRate set to large positive value 
-PASS playbackRate set to small negative value 
-PASS playbackRate set to large negative value 
-PASS playbackRate set to 0 
-PASS playbackRate set to -1 
+PASS playbackRate initial value
+PASS playbackRate set to small positive value
+PASS playbackRate set to large positive value
+PASS playbackRate set to small negative value
+PASS playbackRate set to large negative value
+PASS playbackRate set to 0
+PASS playbackRate set to -1
 

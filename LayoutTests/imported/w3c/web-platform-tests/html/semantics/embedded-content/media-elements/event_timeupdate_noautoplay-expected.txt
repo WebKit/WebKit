@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - timeupdate 
-PASS calling play() on a sufficiently long audio should trigger timeupdate event 
-PASS video events - timeupdate 
-PASS calling play() on a sufficiently long video should trigger timeupdate event 
+
+PASS audio events - timeupdate
+PASS calling play() on a sufficiently long audio should trigger timeupdate event
+PASS video events - timeupdate
+PASS calling play() on a sufficiently long video should trigger timeupdate event
 

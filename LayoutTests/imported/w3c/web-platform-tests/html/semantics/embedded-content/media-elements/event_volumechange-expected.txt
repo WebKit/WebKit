@@ -1,10 +1,10 @@
 
-PASS setting audio.volume fires volumechange 
-PASS setting audio.muted fires volumechange 
-PASS setting audio.volume/muted to the same value does not fire volumechange 
-PASS setting audio.volume/muted repeatedly fires volumechange repeatedly 
-PASS setting video.volume fires volumechange 
-PASS setting video.muted fires volumechange 
-PASS setting video.volume/muted to the same value does not fire volumechange 
-PASS setting video.volume/muted repeatedly fires volumechange repeatedly 
+PASS setting audio.volume fires volumechange
+PASS setting audio.muted fires volumechange
+PASS setting audio.volume/muted to the same value does not fire volumechange
+PASS setting audio.volume/muted repeatedly fires volumechange repeatedly
+PASS setting video.volume fires volumechange
+PASS setting video.muted fires volumechange
+PASS setting video.volume/muted to the same value does not fire volumechange
+PASS setting video.volume/muted repeatedly fires volumechange repeatedly
 

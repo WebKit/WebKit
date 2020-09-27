@@ -1,10 +1,10 @@
 
-PASS input1 has the focus 
-PASS tabindex attribute makes the element focusable 
-PASS editable elements are focusable 
-PASS ':focus' matches focussed body with tabindex 
-PASS ':focus' doesn't match focused elements in iframe 
-button1          
+PASS input1 has the focus
+PASS tabindex attribute makes the element focusable
+PASS editable elements are focusable
+PASS ':focus' matches focussed body with tabindex
+PASS ':focus' doesn't match focused elements in iframe
+button1
 hello
 content
 

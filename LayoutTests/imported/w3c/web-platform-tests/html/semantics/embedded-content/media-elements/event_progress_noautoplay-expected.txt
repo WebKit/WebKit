@@ -1,9 +1,9 @@
 spec reference
 
-  
 
-PASS audio events - progress 
-PASS setting src attribute on non-autoplay audio should trigger progress event 
-PASS video events - progress 
-PASS setting src attribute on non-autoplay video should trigger progress event 
+
+PASS audio events - progress
+PASS setting src attribute on non-autoplay audio should trigger progress event
+PASS video events - progress
+PASS setting src attribute on non-autoplay video should trigger progress event
 

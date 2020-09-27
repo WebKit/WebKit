@@ -1,8 +1,8 @@
 
-PASS Script @type: unknown parameters 
-PASS Script @type: unknown parameters 1 
-PASS Script @type: unknown parameters 2 
-PASS Script @type: unknown parameters 3 
-PASS Script @type: unknown parameters 4 
-PASS Script @type: unknown parameters 5 
+PASS Script @type: unknown parameters
+PASS Script @type: unknown parameters 1
+PASS Script @type: unknown parameters 2
+PASS Script @type: unknown parameters 3
+PASS Script @type: unknown parameters 4
+PASS Script @type: unknown parameters 5
 

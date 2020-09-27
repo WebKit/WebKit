@@ -1,8 +1,8 @@
 
-PASS cellIndex should exist. 
-PASS For cells without a parent, cellIndex should be -1. 
-PASS For cells whose parent is not a tr, cellIndex should be -1. 
-PASS For cells whose parent is not a HTML tr, cellIndex should be -1. 
-PASS For cells whose parent is a tr, cellIndex should be the index. 
-PASS For cells whose parent is a tr with non td/th sibling, cellIndex should skip those non td/th siblings. 
+PASS cellIndex should exist.
+PASS For cells without a parent, cellIndex should be -1.
+PASS For cells whose parent is not a tr, cellIndex should be -1.
+PASS For cells whose parent is not a HTML tr, cellIndex should be -1.
+PASS For cells whose parent is a tr, cellIndex should be the index.
+PASS For cells whose parent is a tr with non td/th sibling, cellIndex should skip those non td/th siblings.
 

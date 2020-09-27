@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: ReferenceError: Can't find variable: thereIsNoSuchCallable
- 
+
 
 FAIL The error event from an event listener should fire on that listener's global assert_true: expected true got false
 

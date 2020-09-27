@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS drawImage() of an animated GIF draws the first frame 
+PASS drawImage() of an animated GIF draws the first frame
 

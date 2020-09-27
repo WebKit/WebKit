@@ -1,5 +1,5 @@
 2d.composite.operation.get
 
 
-PASS OffscreenCanvas test: 2d.composite.operation.get 
+PASS OffscreenCanvas test: 2d.composite.operation.get
 

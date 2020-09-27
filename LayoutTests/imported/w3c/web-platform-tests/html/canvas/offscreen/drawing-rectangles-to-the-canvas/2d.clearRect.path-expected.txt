@@ -3,5 +3,5 @@
 clearRect does not affect the current path
 
 
-PASS clearRect does not affect the current path 
+PASS clearRect does not affect the current path
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows are drawn for stroke caps 
+PASS Shadows are drawn for stroke caps
 

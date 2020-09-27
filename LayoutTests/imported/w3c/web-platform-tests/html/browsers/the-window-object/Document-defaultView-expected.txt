@@ -1,8 +1,8 @@
 
-PASS Document in a browsing context 
-PASS Document created with the Document constructor 
-PASS Document created with createDocument 
-PASS Document created with createHTMLDocument 
-PASS Document created with XML DOMParser 
-PASS Document created with HTML DOMParser 
+PASS Document in a browsing context
+PASS Document created with the Document constructor
+PASS Document created with createDocument
+PASS Document created with createHTMLDocument
+PASS Document created with XML DOMParser
+PASS Document created with HTML DOMParser
 

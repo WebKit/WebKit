@@ -1,5 +1,5 @@
 
-PASS The window's length must return the number of child browsing contexts(in iframe) 
-PASS The window's length must return zero if it has no child browsing context 
-PASS The window's length must return the number of child browsing contexts 
+PASS The window's length must return the number of child browsing contexts(in iframe)
+PASS The window's length must return zero if it has no child browsing context
+PASS The window's length must return the number of child browsing contexts
 

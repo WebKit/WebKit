@@ -1,5 +1,5 @@
 
-PASS insertRow should not copy prefixes 
-PASS insertRow should insert into a tbody, not into a thead, if table.rows is empty 
-PASS insertRow should insert into a tbody, not into a tfoot, if table.rows is empty 
+PASS insertRow should not copy prefixes
+PASS insertRow should insert into a tbody, not into a thead, if table.rows is empty
+PASS insertRow should insert into a tbody, not into a tfoot, if table.rows is empty
 

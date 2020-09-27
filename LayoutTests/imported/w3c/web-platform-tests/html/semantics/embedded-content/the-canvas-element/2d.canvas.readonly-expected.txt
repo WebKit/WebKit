@@ -2,5 +2,5 @@
 CanvasRenderingContext2D.canvas is readonly
 Actual output:
 
-PASS CanvasRenderingContext2D.canvas is readonly 
+PASS CanvasRenderingContext2D.canvas is readonly
 

@@ -2,5 +2,5 @@
 save()/restore() works for textBaseline
 Actual output:
 
-PASS save()/restore() works for textBaseline 
+PASS save()/restore() works for textBaseline
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Negative destination width/height represents the correct rectangle 
+PASS Negative destination width/height represents the correct rectangle
 

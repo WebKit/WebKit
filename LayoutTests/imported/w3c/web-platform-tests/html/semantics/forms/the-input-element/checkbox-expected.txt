@@ -1,8 +1,8 @@
 
-PASS click on mutable checkbox fires a click event, then an input event, then a change event 
-PASS click on non-mutable checkbox doesn't fire the input or change event 
-PASS pre-activation steps on unchecked checkbox 
-PASS pre-activation steps on checked checkbox 
-PASS canceled activation steps on unchecked checkbox 
-PASS canceled activation steps on unchecked checkbox (indeterminate=true in onclick) 
-     
+PASS click on mutable checkbox fires a click event, then an input event, then a change event
+PASS click on non-mutable checkbox doesn't fire the input or change event
+PASS pre-activation steps on unchecked checkbox
+PASS pre-activation steps on checked checkbox
+PASS canceled activation steps on unchecked checkbox
+PASS canceled activation steps on unchecked checkbox (indeterminate=true in onclick)
+

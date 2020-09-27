@@ -1,5 +1,5 @@
 
-PASS readyState equals 'complete' when the document has loaded 
-PASS readyState equals 'interactive' when the document is finished parsing 
-PASS readystatechange event is fired each time document.readyState changes 
+PASS readyState equals 'complete' when the document has loaded
+PASS readyState equals 'interactive' when the document is finished parsing
+PASS readystatechange event is fired each time document.readyState changes
 

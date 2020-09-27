@@ -6,9 +6,9 @@ Tests that user activation consumption resets the transient states in all cross-
 
 Click anywhere on the yellow area.
 Click anywhere on the green area (child frame).
-  
+
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Consumption test 
+NOTRUN Consumption test
 

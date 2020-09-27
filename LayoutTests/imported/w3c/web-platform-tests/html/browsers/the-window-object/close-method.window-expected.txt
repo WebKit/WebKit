@@ -1,4 +1,4 @@
 
-PASS window.close() queues a task to discard, but window.closed knows immediately 
-PASS window.close() affects name targeting immediately 
+PASS window.close() queues a task to discard, but window.closed knows immediately
+PASS window.close() affects name targeting immediately
 

@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: defer script and slow-loading non-async external script 
+PASS  scheduler: defer script and slow-loading non-async external script
 

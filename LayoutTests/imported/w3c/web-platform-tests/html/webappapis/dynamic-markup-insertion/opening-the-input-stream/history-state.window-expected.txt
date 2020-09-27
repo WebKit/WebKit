@@ -1,4 +1,4 @@
 
-PASS history.state is kept by document.open() 
-PASS history.state is kept by document.open() (with historical replace parameter set) 
+PASS history.state is kept by document.open()
+PASS history.state is kept by document.open() (with historical replace parameter set)
 

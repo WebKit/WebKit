@@ -1,4 +1,4 @@
 
-PASS history.back() handles top level page timer correctly 
-PASS history.back() handles nested iframe timer correctly 
+PASS history.back() handles top level page timer correctly
+PASS history.back() handles nested iframe timer correctly
 

@@ -1,5 +1,5 @@
 
-PASS Node document of the template content attribute must be template contents owner. Nested template element created by createElement 
-PASS Node document of the template content attribute must be template contents owner. Nested template element created by innerHTML 
-PASS Node document of the template content attribute must be template contents owner. Load HTML file with multiple template elements 
+PASS Node document of the template content attribute must be template contents owner. Nested template element created by createElement
+PASS Node document of the template content attribute must be template contents owner. Nested template element created by innerHTML
+PASS Node document of the template content attribute must be template contents owner. Load HTML file with multiple template elements
 

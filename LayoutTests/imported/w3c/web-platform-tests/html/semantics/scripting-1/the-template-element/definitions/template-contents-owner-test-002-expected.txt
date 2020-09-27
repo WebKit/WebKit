@@ -1,5 +1,5 @@
 
-PASS The template contents owner document must be different from template owner document, which has browsing context. Template element is created by createElement() 
-PASS The template contents owner document must be different from template owner document, which has browsing context. Template element is created via innerHTML 
-PASS The template contents owner document must be different from template owner document, which has browsing context. Template element is created by HTML parser 
+PASS The template contents owner document must be different from template owner document, which has browsing context. Template element is created by createElement()
+PASS The template contents owner document must be different from template owner document, which has browsing context. Template element is created via innerHTML
+PASS The template contents owner document must be different from template owner document, which has browsing context. Template element is created by HTML parser
 

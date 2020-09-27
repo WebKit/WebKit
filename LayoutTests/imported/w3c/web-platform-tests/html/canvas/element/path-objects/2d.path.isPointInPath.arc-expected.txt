@@ -2,5 +2,5 @@
 isPointInPath() works on arcs
 Actual output:
 
-PASS isPointInPath() works on arcs 
+PASS isPointInPath() works on arcs
 

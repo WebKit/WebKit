@@ -1,9 +1,9 @@
 
-PASS Static name 
-PASS Static id 
+PASS Static name
+PASS Static id
 FAIL Static name on the prototype assert_equals: expected true but got false
-PASS constructor 
+PASS constructor
 FAIL duplicate property names assert_equals: expected 1 but got 0
-PASS Dynamic name 
-PASS Ghost name 
-    
+PASS Dynamic name
+PASS Ghost name
+

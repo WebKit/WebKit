@@ -3,5 +3,5 @@
 Non-space characters are not converted to U+0020 and collapsed
 
 
-PASS Non-space characters are not converted to U+0020 and collapsed 
+PASS Non-space characters are not converted to U+0020 and collapsed
 

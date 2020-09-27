@@ -3,5 +3,5 @@
 isPointInPath() works on unclosed subpaths
 
 
-PASS isPointInPath() works on unclosed subpaths 
+PASS isPointInPath() works on unclosed subpaths
 

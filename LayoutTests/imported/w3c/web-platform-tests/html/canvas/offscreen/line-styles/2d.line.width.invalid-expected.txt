@@ -3,5 +3,5 @@
 Setting lineWidth to invalid values is ignored
 
 
-PASS Setting lineWidth to invalid values is ignored 
+PASS Setting lineWidth to invalid values is ignored
 

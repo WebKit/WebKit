@@ -1,8 +1,8 @@
 
-PASS Ignore HEAD token. Test empty HEAD element assigned to template innerHTML 
-PASS Ignore HEAD token. Test not empty HEAD element assigned to template innerHTML 
-PASS Ignore HEAD token. Test HEAD element and some valid element before it, assigned to template innerHTML 
-PASS Ignore HEAD token. Test HEAD element and some valid element after it, assigned to template innerHTML 
-PASS Ignore HEAD token. Test HEAD tag inside template tag assigned to another template's innerHTML 
-PASS Ignore HEAD token. Test loading a HTML file with HEAD tag inside template 
+PASS Ignore HEAD token. Test empty HEAD element assigned to template innerHTML
+PASS Ignore HEAD token. Test not empty HEAD element assigned to template innerHTML
+PASS Ignore HEAD token. Test HEAD element and some valid element before it, assigned to template innerHTML
+PASS Ignore HEAD token. Test HEAD element and some valid element after it, assigned to template innerHTML
+PASS Ignore HEAD token. Test HEAD tag inside template tag assigned to another template's innerHTML
+PASS Ignore HEAD token. Test loading a HTML file with HEAD tag inside template
 

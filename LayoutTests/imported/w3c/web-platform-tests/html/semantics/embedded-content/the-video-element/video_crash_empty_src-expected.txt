@@ -1,4 +1,4 @@
 
-PASS src="about:blank" does not crash. 
-PASS src="" does not crash. 
+PASS src="about:blank" does not crash.
+PASS src="" does not crash.
 

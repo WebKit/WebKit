@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Discarding the browsing context must not change window.location 
+PASS Discarding the browsing context must not change window.location
 FAIL Navigating from the initial about:blank must not replace window.location assert_equals: expected [stringifying object threw SecurityError: The operation is insecure. with type object] but got object "http://localhost:8800/common/blank.html"
 FAIL document.open() must replace window.location assert_not_equals: got disallowed value object "http://localhost:8800/html/browsers/history/the-location-interface/per-global.window.html"
 

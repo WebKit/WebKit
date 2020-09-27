@@ -1,5 +1,5 @@
 
 
 PASS Test that removing the src attribute of an iframe loads about:blank
-  instead of whatever was loaded previously. 
+  instead of whatever was loaded previously.
 

@@ -1,5 +1,5 @@
 2d.drawImage.9arg.sourcesize
 
 
-PASS OffscreenCanvas test: 2d.drawImage.9arg.sourcesize 
+PASS OffscreenCanvas test: 2d.drawImage.9arg.sourcesize
 

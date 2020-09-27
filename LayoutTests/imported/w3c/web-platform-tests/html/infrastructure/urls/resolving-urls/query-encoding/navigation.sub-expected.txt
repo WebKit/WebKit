@@ -1,8 +1,8 @@
 
-PASS follow hyperlink <a href> 
-PASS follow hyperlink <area href> 
-PASS follow hyperlink <link href> 
-PASS hyperlink auditing <a ping> 
-PASS hyperlink auditing <area ping> 
-PASS meta refresh 
+PASS follow hyperlink <a href>
+PASS follow hyperlink <area href>
+PASS follow hyperlink <link href>
+PASS hyperlink auditing <a ping>
+PASS hyperlink auditing <area ping>
+PASS meta refresh
 

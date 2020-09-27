@@ -3,5 +3,5 @@
 lineTo() with Infinity/NaN is ignored
 
 
-PASS lineTo() with Infinity/NaN is ignored 
+PASS lineTo() with Infinity/NaN is ignored
 

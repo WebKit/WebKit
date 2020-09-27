@@ -1,5 +1,5 @@
 
-PASS Markup attribute 
-PASS Setting the idl attribute to a garbage value 
-PASS Setting the idl attribute to the empty string 
+PASS Markup attribute
+PASS Setting the idl attribute to a garbage value
+PASS Setting the idl attribute to the empty string
 

@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
 FAIL same-origin, same-window location cycle cyclic __proto__ value
-PASS cross-origin location has null prototype 
+PASS cross-origin location has null prototype
 FAIL same-origin, different-window location cycle cyclic __proto__ value
 FAIL cross-origin, but joined via document.domain, location cycle Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
- 
+

@@ -1,5 +1,5 @@
 2d.composite.canvas.lighter
 
 
-PASS OffscreenCanvas test: 2d.composite.canvas.lighter 
+PASS OffscreenCanvas test: 2d.composite.canvas.lighter
 

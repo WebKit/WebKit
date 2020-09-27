@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Shadows are not drawn outside the clipping region 
+PASS Shadows are not drawn outside the clipping region
 

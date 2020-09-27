@@ -1,5 +1,5 @@
 
-PASS A script with a charset param in its type should not run 
-PASS A script with an x-test param in its type should not run 
-PASS A script with a charset param in its type should not run, even with language=javascript 
+PASS A script with a charset param in its type should not run
+PASS A script with an x-test param in its type should not run
+PASS A script with a charset param in its type should not run, even with language=javascript
 

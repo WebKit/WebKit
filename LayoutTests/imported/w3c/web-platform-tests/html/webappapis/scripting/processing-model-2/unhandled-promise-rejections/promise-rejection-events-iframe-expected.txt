@@ -2,7 +2,7 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT unhandledrejection: promise is created in iframe and being rejected elsewhere Test timed out
-PASS no unhandledrejection/rejectionhandled: promise is created in iframe and being rejected elsewhere 
+PASS no unhandledrejection/rejectionhandled: promise is created in iframe and being rejected elsewhere
 TIMEOUT delayed handling: promise is created in iframe and being rejected elsewhere Test timed out
 
 

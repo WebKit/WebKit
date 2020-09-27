@@ -3,5 +3,5 @@
 strokeRect() with Infinity/NaN is ignored
 
 
-PASS strokeRect() with Infinity/NaN is ignored 
+PASS strokeRect() with Infinity/NaN is ignored
 

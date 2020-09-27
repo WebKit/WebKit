@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS clearRect is not affected by globalCompositeOperation 
+PASS clearRect is not affected by globalCompositeOperation
 

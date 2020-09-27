@@ -1,4 +1,4 @@
 
-PASS document.open() after parser is aborted 
-PASS async document.open() after parser is aborted 
+PASS document.open() after parser is aborted
+PASS async document.open() after parser is aborted
 

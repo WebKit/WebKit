@@ -5,20 +5,20 @@ Blocked access to external URL http://www2.localhost:8800/html/semantics/scripti
 Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-b.js
 Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-b.js
 
-PASS import() must reject when there is a wrong MIME type 
-PASS import() must reject with a different error object for each import when there is a wrong MIME type 
-PASS import() must reject when there is a wrong MIME type of a dependency 
-PASS import() must reject with a different error object for each import when there is a wrong MIME type of a dependency 
-PASS import() must reject when there is a 404 
-PASS import() must reject with a different error object for each import when there is a 404 
-PASS import() must reject when there is a 404 of a dependency 
-PASS import() must reject with a different error object for each import when there is a 404 of a dependency 
-PASS import() must reject when there is a 500 
-PASS import() must reject with a different error object for each import when there is a 500 
-PASS import() must reject when there is a 500 of a dependency 
-PASS import() must reject with a different error object for each import when there is a 500 of a dependency 
-PASS import() must reject when there is a cross-origin module (without CORS) 
-PASS import() must reject with a different error object for each import when there is a cross-origin module (without CORS) 
-PASS import() must reject when there is a cross-origin module dependency (without CORS) 
-PASS import() must reject with a different error object for each import when there is a cross-origin module dependency (without CORS) 
+PASS import() must reject when there is a wrong MIME type
+PASS import() must reject with a different error object for each import when there is a wrong MIME type
+PASS import() must reject when there is a wrong MIME type of a dependency
+PASS import() must reject with a different error object for each import when there is a wrong MIME type of a dependency
+PASS import() must reject when there is a 404
+PASS import() must reject with a different error object for each import when there is a 404
+PASS import() must reject when there is a 404 of a dependency
+PASS import() must reject with a different error object for each import when there is a 404 of a dependency
+PASS import() must reject when there is a 500
+PASS import() must reject with a different error object for each import when there is a 500
+PASS import() must reject when there is a 500 of a dependency
+PASS import() must reject with a different error object for each import when there is a 500 of a dependency
+PASS import() must reject when there is a cross-origin module (without CORS)
+PASS import() must reject with a different error object for each import when there is a cross-origin module (without CORS)
+PASS import() must reject when there is a cross-origin module dependency (without CORS)
+PASS import() must reject with a different error object for each import when there is a cross-origin module dependency (without CORS)
 

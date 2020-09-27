@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.path.lineTo.nextpoint 
+PASS Canvas test: 2d.path.lineTo.nextpoint
 

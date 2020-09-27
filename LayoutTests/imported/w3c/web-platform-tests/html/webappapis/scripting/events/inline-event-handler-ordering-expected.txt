@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected token '}'
 CONSOLE MESSAGE: SyntaxError: Unexpected token '}'
 
-PASS Inline event handlers retain their ordering when invalid and force-compiled 
-PASS Inline event handlers retain their ordering when invalid and force-compiled via dispatch 
-PASS Inline event handlers retain their ordering when invalid and lazy-compiled 
+PASS Inline event handlers retain their ordering when invalid and force-compiled
+PASS Inline event handlers retain their ordering when invalid and force-compiled via dispatch
+PASS Inline event handlers retain their ordering when invalid and lazy-compiled
 

@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arcTo joins up to the last subpath point correctly 
+PASS arcTo joins up to the last subpath point correctly
 

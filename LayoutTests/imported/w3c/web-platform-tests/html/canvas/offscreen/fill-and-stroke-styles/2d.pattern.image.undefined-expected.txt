@@ -1,5 +1,5 @@
 2d.pattern.image.undefined
 
 
-PASS OffscreenCanvas test: 2d.pattern.image.undefined 
+PASS OffscreenCanvas test: 2d.pattern.image.undefined
 

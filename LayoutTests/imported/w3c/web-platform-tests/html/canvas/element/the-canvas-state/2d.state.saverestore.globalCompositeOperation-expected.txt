@@ -2,5 +2,5 @@
 save()/restore() works for globalCompositeOperation
 Actual output:
 
-PASS save()/restore() works for globalCompositeOperation 
+PASS save()/restore() works for globalCompositeOperation
 

@@ -3,5 +3,5 @@
 strokeRect is not affected by globalCompositeOperation
 
 
-PASS strokeRect is not affected by globalCompositeOperation 
+PASS strokeRect is not affected by globalCompositeOperation
 

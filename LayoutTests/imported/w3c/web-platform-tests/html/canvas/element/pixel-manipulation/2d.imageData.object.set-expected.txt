@@ -2,5 +2,5 @@
 ImageData.data can be modified
 Actual output:
 
-PASS ImageData.data can be modified 
+PASS ImageData.data can be modified
 

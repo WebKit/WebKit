@@ -1,5 +1,5 @@
 2d.path.fill.closed.unaffected
 
 
-PASS OffscreenCanvas test: 2d.path.fill.closed.unaffected 
+PASS OffscreenCanvas test: 2d.path.fill.closed.unaffected
 

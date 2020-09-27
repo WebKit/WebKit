@@ -1,8 +1,8 @@
- 
-   
 
-PASS Test that the loading=lazy <picture> element below viewport was deferred, on document load. 
-PASS Test that in viewport <picture> element was loaded 
-PASS Test that eager <picture> element was loaded 
-PASS Test that deferred <picture> element was loaded-in as well, after scrolled down 
+
+
+PASS Test that the loading=lazy <picture> element below viewport was deferred, on document load.
+PASS Test that in viewport <picture> element was loaded
+PASS Test that eager <picture> element was loaded
+PASS Test that deferred <picture> element was loaded-in as well, after scrolled down
 

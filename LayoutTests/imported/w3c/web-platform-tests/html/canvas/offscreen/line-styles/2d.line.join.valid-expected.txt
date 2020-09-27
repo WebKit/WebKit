@@ -3,5 +3,5 @@
 Setting lineJoin to valid values works
 
 
-PASS Setting lineJoin to valid values works 
+PASS Setting lineJoin to valid values works
 

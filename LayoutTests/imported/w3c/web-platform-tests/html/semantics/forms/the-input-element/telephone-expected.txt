@@ -1,18 +1,18 @@
 Input tel
 
-      
 
-PASS tel type supported on input element 
-PASS User agents must not allow users to insert "LF" (U+000A) 
-PASS User agents must not allow users to insert "CR" (U+000D) 
-PASS The value attribute, if specified, must have a value that contains no "LF" (U+000A) 
-PASS The value attribute, if specified, must have a value that contains no "CR" (U+000D) 
-PASS The value sanitization algorithm is as follows: Strip line breaks from the value 
-PASS Element can accept the phone number with plus sign(country code) 
-PASS Element can accept the phone number with hash mark(extension number) 
-PASS Element can accept the phone number with hyphen 
-PASS Element can accept the phone number with dots 
-PASS Element can accept the phone number with whitespace 
-PASS Element can accept the phone number with leading & following whitespaces 
-PASS Element can accept the phone number with parentheses(area code) 
+
+PASS tel type supported on input element
+PASS User agents must not allow users to insert "LF" (U+000A)
+PASS User agents must not allow users to insert "CR" (U+000D)
+PASS The value attribute, if specified, must have a value that contains no "LF" (U+000A)
+PASS The value attribute, if specified, must have a value that contains no "CR" (U+000D)
+PASS The value sanitization algorithm is as follows: Strip line breaks from the value
+PASS Element can accept the phone number with plus sign(country code)
+PASS Element can accept the phone number with hash mark(extension number)
+PASS Element can accept the phone number with hyphen
+PASS Element can accept the phone number with dots
+PASS Element can accept the phone number with whitespace
+PASS Element can accept the phone number with leading & following whitespaces
+PASS Element can accept the phone number with parentheses(area code)
 

@@ -1,6 +1,6 @@
 Dataset - Enumeration
 
 
-PASS A dataset should be enumeratable. 
-PASS Only attributes who qualify as dataset properties should be enumeratable in the dataset. 
+PASS A dataset should be enumeratable.
+PASS Only attributes who qualify as dataset properties should be enumeratable in the dataset.
 

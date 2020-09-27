@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.composite.image.lighter 
+PASS Canvas test: 2d.composite.image.lighter
 

@@ -1,3 +1,3 @@
 
-PASS img elements that have a name and id attribute, should be accessible by both values. 
+PASS img elements that have a name and id attribute, should be accessible by both values.
 

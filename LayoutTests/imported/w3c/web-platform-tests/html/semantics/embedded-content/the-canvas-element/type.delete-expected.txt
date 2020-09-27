@@ -3,5 +3,5 @@ window.HTMLCanvasElement interface object is [[Configurable]]
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS window.HTMLCanvasElement interface object is [[Configurable]] 
+PASS window.HTMLCanvasElement interface object is [[Configurable]]
 

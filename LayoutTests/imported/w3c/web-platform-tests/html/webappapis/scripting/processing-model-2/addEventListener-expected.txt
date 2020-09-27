@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: ReferenceError: Can't find variable: undefined_variable
 CONSOLE MESSAGE: SyntaxError: Unexpected token ')'
 
-PASS window.onerror - addEventListener 
+PASS window.onerror - addEventListener
 

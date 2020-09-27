@@ -1,8 +1,8 @@
 
-PASS ':progress' matches <input>s radio buttons whose radio button group contains no checked input and <progress> elements without value attribute 
-PASS dynamically check a radio input in a radio button group 
-PASS click on radio4 which is in the indeterminate state 
-PASS adding a value to progress1 should put it in a determinate state 
-PASS removing progress2's value should put it in an indeterminate state 
-PASS ':progress' also matches <input> checkbox whose indeterminate IDL is set to true 
-        
+PASS ':progress' matches <input>s radio buttons whose radio button group contains no checked input and <progress> elements without value attribute
+PASS dynamically check a radio input in a radio button group
+PASS click on radio4 which is in the indeterminate state
+PASS adding a value to progress1 should put it in a determinate state
+PASS removing progress2's value should put it in an indeterminate state
+PASS ':progress' also matches <input> checkbox whose indeterminate IDL is set to true
+

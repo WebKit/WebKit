@@ -1,5 +1,5 @@
 2d.text.align.invalid
 Actual output:
 
-PASS Canvas test: 2d.text.align.invalid 
+PASS Canvas test: 2d.text.align.invalid
 

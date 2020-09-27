@@ -3,5 +3,5 @@ Description
 This test validates the figure element.
 
 
-PASS The prototype for figure is HTMLElement.prototype 
+PASS The prototype for figure is HTMLElement.prototype
 

@@ -1,6 +1,6 @@
 
-PASS Getting property descriptor for key 9 
-PASS Setting property for key 9 with accessor property on prototype 
-PASS Getting property descriptor for key x 
-PASS Setting property for key x with accessor property on prototype 
+PASS Getting property descriptor for key 9
+PASS Setting property for key 9 with accessor property on prototype
+PASS Getting property descriptor for key x
+PASS Setting property for key x with accessor property on prototype
 

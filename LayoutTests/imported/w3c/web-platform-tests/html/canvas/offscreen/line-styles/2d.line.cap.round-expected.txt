@@ -3,5 +3,5 @@
 lineCap 'round' is rendered correctly
 
 
-PASS lineCap 'round' is rendered correctly 
+PASS lineCap 'round' is rendered correctly
 

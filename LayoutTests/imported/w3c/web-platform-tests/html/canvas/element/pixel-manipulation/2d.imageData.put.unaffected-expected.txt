@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS putImageData() is not affected by context state 
+PASS putImageData() is not affected by context state
 

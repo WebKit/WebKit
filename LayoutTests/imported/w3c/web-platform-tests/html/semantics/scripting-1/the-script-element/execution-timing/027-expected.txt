@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: doc write added script with content, .src set later 
+PASS  scheduler: doc write added script with content, .src set later
 

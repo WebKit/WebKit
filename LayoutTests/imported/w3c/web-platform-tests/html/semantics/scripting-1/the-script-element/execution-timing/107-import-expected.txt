@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: stylesheets blocking scripts document.write 
+PASS  scheduler: stylesheets blocking scripts document.write
 Test

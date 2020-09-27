@@ -1,5 +1,5 @@
 
-PASS <form> not connected to a document cannot navigate 
-PASS <form> not connected to a document after submit event cannot navigate 
-PASS <form> in a navigated document cannot navigate 
+PASS <form> not connected to a document cannot navigate
+PASS <form> not connected to a document after submit event cannot navigate
+PASS <form> in a navigated document cannot navigate
 

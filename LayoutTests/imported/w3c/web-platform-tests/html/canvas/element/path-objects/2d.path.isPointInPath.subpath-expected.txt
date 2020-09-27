@@ -2,5 +2,5 @@
 isPointInPath() uses the current path, not just the subpath
 Actual output:
 
-PASS isPointInPath() uses the current path, not just the subpath 
+PASS isPointInPath() uses the current path, not just the subpath
 

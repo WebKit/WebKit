@@ -3,5 +3,5 @@
 arc() with lineWidth > 2*radius is drawn sensibly
 
 
-PASS arc() with lineWidth > 2*radius is drawn sensibly 
+PASS arc() with lineWidth > 2*radius is drawn sensibly
 

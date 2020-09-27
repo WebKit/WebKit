@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: adding and removing external script  
+PASS  scheduler: adding and removing external script
 

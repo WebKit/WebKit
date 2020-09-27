@@ -1,8 +1,8 @@
 
-PASS audio.error initial value 
-PASS audio.error after successful load 
+PASS audio.error initial value
+PASS audio.error after successful load
 FAIL audio.error after setting src to the empty string assert_equals: error.message type expected "string" but got "undefined"
-PASS video.error initial value 
-PASS video.error after successful load 
+PASS video.error initial value
+PASS video.error after successful load
 FAIL video.error after setting src to the empty string assert_equals: error.message type expected "string" but got "undefined"
 

@@ -1,4 +1,4 @@
 
-PASS error event is weird (return true cancels; many args) on Window, with a synthetic ErrorEvent 
-PASS error event has the right 5 args on Window, with a synthetic ErrorEvent 
+PASS error event is weird (return true cancels; many args) on Window, with a synthetic ErrorEvent
+PASS error event has the right 5 args on Window, with a synthetic ErrorEvent
 

@@ -2,11 +2,11 @@
 FAIL audio.autoplay assert_array_equals: property 1, expected "play" but got "canplaythrough"
 FAIL audio.autoplay and load() assert_array_equals: property 1, expected "play" but got "canplaythrough"
 FAIL audio.autoplay and play() assert_array_equals: property 2, expected "playing" but got "canplaythrough"
-PASS audio.autoplay and pause() 
-PASS audio.autoplay and internal pause steps 
+PASS audio.autoplay and pause()
+PASS audio.autoplay and internal pause steps
 FAIL video.autoplay assert_array_equals: property 1, expected "play" but got "canplaythrough"
 FAIL video.autoplay and load() assert_array_equals: property 1, expected "play" but got "canplaythrough"
 FAIL video.autoplay and play() assert_array_equals: property 2, expected "playing" but got "canplaythrough"
-PASS video.autoplay and pause() 
-PASS video.autoplay and internal pause steps 
+PASS video.autoplay and pause()
+PASS video.autoplay and internal pause steps
 

@@ -1,4 +1,4 @@
-    
+
 
 FAIL Images without alt attribute or with an empty alt attribute render as replaced elements regardless of src assert_equals: width: <img src="broken" alt=""> expected 100 but got 0
 

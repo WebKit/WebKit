@@ -1,14 +1,14 @@
 
-PASS defaultValue and value are the empty string by default 
-PASS defaultValue and value are affected by setting textContent 
-PASS defaultValue and value are affected by setting nodeValue on a child text node 
-PASS defaultValue and value are affected by setting data on a child text node 
-PASS defaultValue and value are affected by textContent in combination with appending a text node 
-PASS defaultValue and value are affected by textContent in combination with appending a DocumentFragment 
-PASS defaultValue and value reflect child text content, not textContent 
-PASS Setting defaultValue wipes out any children, including elements (just like setting textContent) 
-PASS defaultValue and value treat CRLF differently 
-PASS value normalizes CRLF even spread over multiple text nodes 
-PASS tests for the value setter 
-PASS tests for U+0000 NULL 
+PASS defaultValue and value are the empty string by default
+PASS defaultValue and value are affected by setting textContent
+PASS defaultValue and value are affected by setting nodeValue on a child text node
+PASS defaultValue and value are affected by setting data on a child text node
+PASS defaultValue and value are affected by textContent in combination with appending a text node
+PASS defaultValue and value are affected by textContent in combination with appending a DocumentFragment
+PASS defaultValue and value reflect child text content, not textContent
+PASS Setting defaultValue wipes out any children, including elements (just like setting textContent)
+PASS defaultValue and value treat CRLF differently
+PASS value normalizes CRLF even spread over multiple text nodes
+PASS tests for the value setter
+PASS tests for U+0000 NULL
 

@@ -1,5 +1,5 @@
 
-PASS The legend.form return null when it has no fieldset parent 
-PASS The legend.form must be same value as fieldset.form 
-PASS Interface HTMLLegendElement 
+PASS The legend.form return null when it has no fieldset parent
+PASS The legend.form must be same value as fieldset.form
+PASS Interface HTMLLegendElement
 

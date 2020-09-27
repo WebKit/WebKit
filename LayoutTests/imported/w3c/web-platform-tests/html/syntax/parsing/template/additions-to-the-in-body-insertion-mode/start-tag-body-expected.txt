@@ -1,6 +1,6 @@
 
-PASS In body insertion mode: Template contains a start tag whose tag name is body.Test <body> tag only 
-PASS In body insertion mode: Template contains a start tag whose tag name is body. Test <body> tag containing some text 
-PASS In body insertion mode: Template contains a start tag whose tag name is body. Test <body> tag containing some other elements 
-PASS In body insertion mode: Template contains a start tag whose tag name is body. Test nested template tag containing <body> tag with some other elements 
+PASS In body insertion mode: Template contains a start tag whose tag name is body.Test <body> tag only
+PASS In body insertion mode: Template contains a start tag whose tag name is body. Test <body> tag containing some text
+PASS In body insertion mode: Template contains a start tag whose tag name is body. Test <body> tag containing some other elements
+PASS In body insertion mode: Template contains a start tag whose tag name is body. Test nested template tag containing <body> tag with some other elements
 

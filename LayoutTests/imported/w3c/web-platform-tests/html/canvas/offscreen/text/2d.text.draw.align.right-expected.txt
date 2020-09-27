@@ -3,5 +3,5 @@
 textAlign right is the right of the last em square (not the bounding box)
 
 
-PASS textAlign right is the right of the last em square (not the bounding box) 
+PASS textAlign right is the right of the last em square (not the bounding box)
 

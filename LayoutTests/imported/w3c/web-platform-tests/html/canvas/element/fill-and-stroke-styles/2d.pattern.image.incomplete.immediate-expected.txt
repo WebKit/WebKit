@@ -1,5 +1,5 @@
 2d.pattern.image.incomplete.immediate
 Actual output:
 
-PASS Canvas test: 2d.pattern.image.incomplete.immediate 
+PASS Canvas test: 2d.pattern.image.incomplete.immediate
 

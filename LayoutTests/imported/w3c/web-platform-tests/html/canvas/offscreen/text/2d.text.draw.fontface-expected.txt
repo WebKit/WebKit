@@ -1,5 +1,5 @@
 2d.text.draw.fontface
 
 
-PASS OffscreenCanvas test: 2d.text.draw.fontface 
+PASS OffscreenCanvas test: 2d.text.draw.fontface
 

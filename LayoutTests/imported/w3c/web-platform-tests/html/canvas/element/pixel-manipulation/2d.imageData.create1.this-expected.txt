@@ -3,5 +3,5 @@ createImageData(imgdata) should throw when called with the wrong |this|
 Defined in "Web IDL" (draft)
 Actual output:
 
-PASS createImageData(imgdata) should throw when called with the wrong |this| 
+PASS createImageData(imgdata) should throw when called with the wrong |this|
 

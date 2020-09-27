@@ -1,4 +1,4 @@
 
-PASS Create a document, adopt the node 
-PASS Create a stylesheet in innerHTML document 
+PASS Create a document, adopt the node
+PASS Create a stylesheet in innerHTML document
 

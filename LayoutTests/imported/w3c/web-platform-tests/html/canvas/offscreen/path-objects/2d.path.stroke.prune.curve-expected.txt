@@ -3,5 +3,5 @@
 Zero-length line segments from quadraticCurveTo and bezierCurveTo are removed before stroking
 
 
-PASS Zero-length line segments from quadraticCurveTo and bezierCurveTo are removed before stroking 
+PASS Zero-length line segments from quadraticCurveTo and bezierCurveTo are removed before stroking
 

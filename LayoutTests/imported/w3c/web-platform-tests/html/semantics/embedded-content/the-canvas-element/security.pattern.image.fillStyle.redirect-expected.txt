@@ -3,5 +3,5 @@ security.pattern.image.fillStyle.redirect
 Setting fillStyle to a pattern of a different-origin image makes the canvas origin-unclean
 Actual output:
 
-PASS Setting fillStyle to a pattern of a different-origin image makes the canvas origin-unclean 
+PASS Setting fillStyle to a pattern of a different-origin image makes the canvas origin-unclean
 

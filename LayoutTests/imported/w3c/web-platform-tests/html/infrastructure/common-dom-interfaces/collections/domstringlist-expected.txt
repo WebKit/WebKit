@@ -1,6 +1,6 @@
 
-PASS DOMStringList: length attribute 
-PASS DOMStringList: item() method 
-PASS DOMStringList: indexed getter 
-PASS DOMStringList: contains() method 
+PASS DOMStringList: length attribute
+PASS DOMStringList: item() method
+PASS DOMStringList: indexed getter
+PASS DOMStringList: contains() method
 

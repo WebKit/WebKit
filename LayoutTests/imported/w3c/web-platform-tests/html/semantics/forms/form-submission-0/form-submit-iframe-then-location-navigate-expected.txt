@@ -1,4 +1,4 @@
 
 
-PASS Verifies that location navigations take precedence when following form submissions. 
+PASS Verifies that location navigations take precedence when following form submissions.
 

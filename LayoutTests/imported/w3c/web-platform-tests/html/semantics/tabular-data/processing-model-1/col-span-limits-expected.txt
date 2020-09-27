@@ -1,6 +1,6 @@
 
-PASS col span of 1000 must work 
-PASS col span of 1001 must be treated as 1000 
+PASS col span of 1000 must work
+PASS col span of 1001 must be treated as 1000
 
 These two must look the same, each having 2 cells in one row:
 

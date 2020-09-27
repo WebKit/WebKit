@@ -1,8 +1,8 @@
 
-PASS features "top=-204" should NOT set "top=204" 
-PASS features "top=-204.5" should NOT set "top=204" 
-PASS features "top=-0" should NOT set "top=204" 
-PASS features "left=-204" should NOT set "left=204" 
-PASS features "left=-204.5" should NOT set "left=204" 
-PASS features "left=-0" should NOT set "left=204" 
+PASS features "top=-204" should NOT set "top=204"
+PASS features "top=-204.5" should NOT set "top=204"
+PASS features "top=-0" should NOT set "top=204"
+PASS features "left=-204" should NOT set "left=204"
+PASS features "left=-204.5" should NOT set "left=204"
+PASS features "left=-0" should NOT set "left=204"
 

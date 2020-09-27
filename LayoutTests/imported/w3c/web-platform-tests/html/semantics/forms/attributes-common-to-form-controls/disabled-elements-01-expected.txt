@@ -1,18 +1,18 @@
 
-PASS Test [button]: default behaviour is NOT disabled 
-PASS Test [button]: verify disabled acts as boolean attribute 
-PASS Test [button]: synthetic click events should be dispatched 
-PASS Test [button]: click() should not dispatch a click event 
-PASS Test [input]: default behaviour is NOT disabled 
-PASS Test [input]: verify disabled acts as boolean attribute 
-PASS Test [input]: synthetic click events should be dispatched 
-PASS Test [input]: click() should not dispatch a click event 
-PASS Test [select]: default behaviour is NOT disabled 
-PASS Test [select]: verify disabled acts as boolean attribute 
-PASS Test [select]: synthetic click events should be dispatched 
-PASS Test [select]: click() should not dispatch a click event 
-PASS Test [textarea]: default behaviour is NOT disabled 
-PASS Test [textarea]: verify disabled acts as boolean attribute 
-PASS Test [textarea]: synthetic click events should be dispatched 
-PASS Test [textarea]: click() should not dispatch a click event 
+PASS Test [button]: default behaviour is NOT disabled
+PASS Test [button]: verify disabled acts as boolean attribute
+PASS Test [button]: synthetic click events should be dispatched
+PASS Test [button]: click() should not dispatch a click event
+PASS Test [input]: default behaviour is NOT disabled
+PASS Test [input]: verify disabled acts as boolean attribute
+PASS Test [input]: synthetic click events should be dispatched
+PASS Test [input]: click() should not dispatch a click event
+PASS Test [select]: default behaviour is NOT disabled
+PASS Test [select]: verify disabled acts as boolean attribute
+PASS Test [select]: synthetic click events should be dispatched
+PASS Test [select]: click() should not dispatch a click event
+PASS Test [textarea]: default behaviour is NOT disabled
+PASS Test [textarea]: verify disabled acts as boolean attribute
+PASS Test [textarea]: synthetic click events should be dispatched
+PASS Test [textarea]: click() should not dispatch a click event
 

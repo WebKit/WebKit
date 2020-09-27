@@ -3,5 +3,5 @@
 Shadows are affected by globalAlpha
 
 
-PASS Shadows are affected by globalAlpha 
+PASS Shadows are affected by globalAlpha
 

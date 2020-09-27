@@ -1,8 +1,8 @@
 
 
-PASS eval should successfully import 
+PASS eval should successfully import
 FAIL setTimeout should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
-PASS the Function constructor should successfully import 
-PASS reflected inline event handlers should successfully import 
-PASS inline event handlers triggered by JS should successfully import 
+PASS the Function constructor should successfully import
+PASS reflected inline event handlers should successfully import
+PASS inline event handlers triggered by JS should successfully import
 

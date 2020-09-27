@@ -3,5 +3,5 @@
 putImageData() only modifies areas inside the dirty rectangle, using width and height
 
 
-PASS putImageData() only modifies areas inside the dirty rectangle, using width and height 
+PASS putImageData() only modifies areas inside the dirty rectangle, using width and height
 

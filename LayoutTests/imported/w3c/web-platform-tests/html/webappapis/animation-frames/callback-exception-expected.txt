@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Error: requestAnimationFrameException
 
-PASS requestAnimationFrame callback exceptions are reported to error handler 
+PASS requestAnimationFrame callback exceptions are reported to error handler
 

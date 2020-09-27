@@ -1,124 +1,124 @@
 
-PASS primitive undefined 
-PASS primitive null 
-PASS primitive true 
-PASS primitive false 
-PASS primitive string, empty string 
-PASS primitive string, lone high surrogate 
-PASS primitive string, lone low surrogate 
-PASS primitive string, NUL 
-PASS primitive string, astral character 
-PASS primitive number, 0.2 
-PASS primitive number, 0 
-PASS primitive number, -0 
-PASS primitive number, NaN 
-PASS primitive number, Infinity 
-PASS primitive number, -Infinity 
-PASS primitive number, 9007199254740992 
-PASS primitive number, -9007199254740992 
-PASS primitive number, 9007199254740994 
-PASS primitive number, -9007199254740994 
-PASS primitive BigInt, 0n 
-PASS primitive BigInt, -0n 
-PASS primitive BigInt, -9007199254740994000n 
-PASS primitive BigInt, -9007199254740994000900719925474099400090071992547409940009007199254740994000n 
-PASS Array primitives 
-PASS Object primitives 
-PASS Boolean true 
-PASS Boolean false 
-PASS Array Boolean objects 
-PASS Object Boolean objects 
-PASS String empty string 
-PASS String lone high surrogate 
-PASS String lone low surrogate 
-PASS String NUL 
-PASS String astral character 
-PASS Array String objects 
-PASS Object String objects 
-PASS Number 0.2 
-PASS Number 0 
-PASS Number -0 
-PASS Number NaN 
-PASS Number Infinity 
-PASS Number -Infinity 
-PASS Number 9007199254740992 
-PASS Number -9007199254740992 
-PASS Number 9007199254740994 
-PASS Number -9007199254740994 
-PASS BigInt -9007199254740994n 
-PASS Array Number objects 
-PASS Object Number objects 
-PASS Date 0 
-PASS Date -0 
-PASS Date -8.64e15 
-PASS Date 8.64e15 
-PASS Array Date objects 
-PASS Object Date objects 
-PASS RegExp flags and lastIndex 
+PASS primitive undefined
+PASS primitive null
+PASS primitive true
+PASS primitive false
+PASS primitive string, empty string
+PASS primitive string, lone high surrogate
+PASS primitive string, lone low surrogate
+PASS primitive string, NUL
+PASS primitive string, astral character
+PASS primitive number, 0.2
+PASS primitive number, 0
+PASS primitive number, -0
+PASS primitive number, NaN
+PASS primitive number, Infinity
+PASS primitive number, -Infinity
+PASS primitive number, 9007199254740992
+PASS primitive number, -9007199254740992
+PASS primitive number, 9007199254740994
+PASS primitive number, -9007199254740994
+PASS primitive BigInt, 0n
+PASS primitive BigInt, -0n
+PASS primitive BigInt, -9007199254740994000n
+PASS primitive BigInt, -9007199254740994000900719925474099400090071992547409940009007199254740994000n
+PASS Array primitives
+PASS Object primitives
+PASS Boolean true
+PASS Boolean false
+PASS Array Boolean objects
+PASS Object Boolean objects
+PASS String empty string
+PASS String lone high surrogate
+PASS String lone low surrogate
+PASS String NUL
+PASS String astral character
+PASS Array String objects
+PASS Object String objects
+PASS Number 0.2
+PASS Number 0
+PASS Number -0
+PASS Number NaN
+PASS Number Infinity
+PASS Number -Infinity
+PASS Number 9007199254740992
+PASS Number -9007199254740992
+PASS Number 9007199254740994
+PASS Number -9007199254740994
+PASS BigInt -9007199254740994n
+PASS Array Number objects
+PASS Object Number objects
+PASS Date 0
+PASS Date -0
+PASS Date -8.64e15
+PASS Date 8.64e15
+PASS Array Date objects
+PASS Object Date objects
+PASS RegExp flags and lastIndex
 FAIL RegExp sticky flag assert_equals: sticky expected true but got false
 FAIL RegExp unicode flag assert_equals: unicode expected true but got false
-PASS RegExp empty 
-PASS RegExp slash 
-PASS RegExp new line 
-PASS Array RegExp object, RegExp flags and lastIndex 
+PASS RegExp empty
+PASS RegExp slash
+PASS RegExp new line
+PASS Array RegExp object, RegExp flags and lastIndex
 FAIL Array RegExp object, RegExp sticky flag assert_equals: sticky expected true but got false
 FAIL Array RegExp object, RegExp unicode flag assert_equals: unicode expected true but got false
-PASS Array RegExp object, RegExp empty 
-PASS Array RegExp object, RegExp slash 
-PASS Array RegExp object, RegExp new line 
-PASS Object RegExp object, RegExp flags and lastIndex 
+PASS Array RegExp object, RegExp empty
+PASS Array RegExp object, RegExp slash
+PASS Array RegExp object, RegExp new line
+PASS Object RegExp object, RegExp flags and lastIndex
 FAIL Object RegExp object, RegExp sticky flag assert_equals: sticky expected true but got false
 FAIL Object RegExp object, RegExp unicode flag assert_equals: unicode expected true but got false
-PASS Object RegExp object, RegExp empty 
-PASS Object RegExp object, RegExp slash 
-PASS Object RegExp object, RegExp new line 
-PASS Blob basic 
-PASS Blob unpaired high surrogate (invalid utf-8) 
-PASS Blob unpaired low surrogate (invalid utf-8) 
-PASS Blob paired surrogates (invalid utf-8) 
-PASS Blob empty 
-PASS Blob NUL 
-PASS Array Blob object, Blob basic 
-PASS Array Blob object, Blob unpaired high surrogate (invalid utf-8) 
-PASS Array Blob object, Blob unpaired low surrogate (invalid utf-8) 
-PASS Array Blob object, Blob paired surrogates (invalid utf-8) 
-PASS Array Blob object, Blob empty 
-PASS Array Blob object, Blob NUL 
-PASS Array Blob object, two Blobs 
-PASS Object Blob object, Blob basic 
-PASS Object Blob object, Blob unpaired high surrogate (invalid utf-8) 
-PASS Object Blob object, Blob unpaired low surrogate (invalid utf-8) 
-PASS Object Blob object, Blob paired surrogates (invalid utf-8) 
-PASS Object Blob object, Blob empty 
-PASS Object Blob object, Blob NUL 
-PASS File basic 
-PASS FileList empty 
-PASS Array FileList object, FileList empty 
-PASS Object FileList object, FileList empty 
-PASS ImageData 1x1 transparent black 
-PASS ImageData 1x1 non-transparent non-black 
-PASS Array ImageData object, ImageData 1x1 transparent black 
-PASS Array ImageData object, ImageData 1x1 non-transparent non-black 
-PASS Object ImageData object, ImageData 1x1 transparent black 
-PASS Object ImageData object, ImageData 1x1 non-transparent non-black 
-PASS Array sparse 
-PASS Array with non-index property 
-PASS Object with index property and length 
-PASS Array with circular reference 
-PASS Object with circular reference 
-PASS Array with identical property values 
-PASS Object with identical property values 
-PASS Object with property on prototype 
-PASS Object with non-enumerable property 
-PASS Object with non-writable property 
-PASS Object with non-configurable property 
-PASS ImageBitmap 1x1 transparent black 
-PASS ImageBitmap 1x1 non-transparent non-black 
-PASS Array ImageBitmap object, ImageBitmap 1x1 transparent black 
-PASS Array ImageBitmap object, ImageBitmap 1x1 transparent non-black 
-PASS Object ImageBitmap object, ImageBitmap 1x1 transparent black 
-PASS Object ImageBitmap object, ImageBitmap 1x1 transparent non-black 
+PASS Object RegExp object, RegExp empty
+PASS Object RegExp object, RegExp slash
+PASS Object RegExp object, RegExp new line
+PASS Blob basic
+PASS Blob unpaired high surrogate (invalid utf-8)
+PASS Blob unpaired low surrogate (invalid utf-8)
+PASS Blob paired surrogates (invalid utf-8)
+PASS Blob empty
+PASS Blob NUL
+PASS Array Blob object, Blob basic
+PASS Array Blob object, Blob unpaired high surrogate (invalid utf-8)
+PASS Array Blob object, Blob unpaired low surrogate (invalid utf-8)
+PASS Array Blob object, Blob paired surrogates (invalid utf-8)
+PASS Array Blob object, Blob empty
+PASS Array Blob object, Blob NUL
+PASS Array Blob object, two Blobs
+PASS Object Blob object, Blob basic
+PASS Object Blob object, Blob unpaired high surrogate (invalid utf-8)
+PASS Object Blob object, Blob unpaired low surrogate (invalid utf-8)
+PASS Object Blob object, Blob paired surrogates (invalid utf-8)
+PASS Object Blob object, Blob empty
+PASS Object Blob object, Blob NUL
+PASS File basic
+PASS FileList empty
+PASS Array FileList object, FileList empty
+PASS Object FileList object, FileList empty
+PASS ImageData 1x1 transparent black
+PASS ImageData 1x1 non-transparent non-black
+PASS Array ImageData object, ImageData 1x1 transparent black
+PASS Array ImageData object, ImageData 1x1 non-transparent non-black
+PASS Object ImageData object, ImageData 1x1 transparent black
+PASS Object ImageData object, ImageData 1x1 non-transparent non-black
+PASS Array sparse
+PASS Array with non-index property
+PASS Object with index property and length
+PASS Array with circular reference
+PASS Object with circular reference
+PASS Array with identical property values
+PASS Object with identical property values
+PASS Object with property on prototype
+PASS Object with non-enumerable property
+PASS Object with non-writable property
+PASS Object with non-configurable property
+PASS ImageBitmap 1x1 transparent black
+PASS ImageBitmap 1x1 non-transparent non-black
+PASS Array ImageBitmap object, ImageBitmap 1x1 transparent black
+PASS Array ImageBitmap object, ImageBitmap 1x1 transparent non-black
+PASS Object ImageBitmap object, ImageBitmap 1x1 transparent black
+PASS Object ImageBitmap object, ImageBitmap 1x1 transparent non-black
 FAIL ObjectPrototype must lose its exotic-ness when cloned promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-PASS ArrayBuffer 
-PASS MessagePort 
+PASS ArrayBuffer
+PASS MessagePort
 

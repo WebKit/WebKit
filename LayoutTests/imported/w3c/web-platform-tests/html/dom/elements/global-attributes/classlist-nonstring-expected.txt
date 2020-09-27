@@ -1,9 +1,9 @@
 
-PASS classList: non-string contains 
-PASS classList: non-string contains 1 
-PASS classList: non-string contains 2 
-PASS classList: non-string contains 3 
-PASS classList: non-string contains 4 
-PASS classList: non-string contains 5 
-PASS classList: non-string contains 6 
+PASS classList: non-string contains
+PASS classList: non-string contains 1
+PASS classList: non-string contains 2
+PASS classList: non-string contains 3
+PASS classList: non-string contains 4
+PASS classList: non-string contains 5
+PASS classList: non-string contains 6
 

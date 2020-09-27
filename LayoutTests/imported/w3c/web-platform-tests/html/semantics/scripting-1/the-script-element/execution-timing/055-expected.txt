@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-PASS  scheduler: removing newly inserted script from DOMNodeInserted handler - inline script  
+PASS  scheduler: removing newly inserted script from DOMNodeInserted handler - inline script
 

@@ -1,23 +1,23 @@
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: EventSource cannot load ws://www.example.com/socketserve%EF%BF%BD/ due to access control checks.
 
-PASS location.hash : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS location.href : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS window.open : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS document.open : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS anchor : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS area : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS base : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS EventSource : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS frame : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS iframe : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS link : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS source : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS storage event : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS websocket url : unpaired surrogate codepoint should be replaced with U+FFFD 
-PASS sendBeacon URL: unpaired surrogate codepoint should not make any exceptions. 
+PASS location.hash : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS location.href : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS window.open : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS document.open : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS anchor : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS area : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS base : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS EventSource : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS frame : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS iframe : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS link : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS source : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS storage event : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS websocket url : unpaired surrogate codepoint should be replaced with U+FFFD
+PASS sendBeacon URL: unpaired surrogate codepoint should not make any exceptions.
 FAIL RegisterProtocolHandler URL: unpaired surrogate codepoint should not make any exceptions. window.navigator.registerProtocolHandler is not a function. (In 'window.navigator.registerProtocolHandler('web+myprotocol', "custom-scheme\uD800/url=%s", "title")', 'window.navigator.registerProtocolHandler' is undefined)
 FAIL UnregisterProtocolHandler URL: unpaired surrogate codepoint should not make any exceptions. window.navigator.unregisterProtocolHandler is not a function. (In 'window.navigator.unregisterProtocolHandler('web+myprotocol', "custom-scheme\uD800/url=%s")', 'window.navigator.unregisterProtocolHandler' is undefined)
-PASS Document URLs: unpaired surrogate codepoint should be replaced with U+FFFD 
+PASS Document URLs: unpaired surrogate codepoint should be replaced with U+FFFD
 FAIL RTCDataChannel.send: unpaired surrogate codepoint should be replaced with U+FFFD. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'options.negotiated')"
 

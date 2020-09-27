@@ -1,4 +1,4 @@
 
-PASS Newly-created auxiliary browsing context should report `window.opener` 
-PASS Browsing context created with `window.open` should report `window.opener` 
+PASS Newly-created auxiliary browsing context should report `window.opener`
+PASS Browsing context created with `window.open` should report `window.opener`
 

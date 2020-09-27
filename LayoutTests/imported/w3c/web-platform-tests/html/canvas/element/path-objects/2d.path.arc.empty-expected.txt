@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS arc() with an empty path does not draw a straight line to the start point 
+PASS arc() with an empty path does not draw a straight line to the start point
 

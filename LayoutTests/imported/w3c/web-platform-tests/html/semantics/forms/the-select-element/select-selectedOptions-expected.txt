@@ -1,10 +1,10 @@
 
-PASS .selectedOptions with no selected option 
-PASS .selectedOptions with one selected option 
-PASS .selectedOptions using the 'multiple' attribute with no selected options 
-PASS .selectedOptions using the 'multiple' attribute with two selected options 
-PASS .selectedOptions without the 'multiple' attribute but more than one selected option should return the last one 
-PASS .selectedOptions should return `HTMLCollection` instance 
-PASS .selectedOptions should always return the same value - [SameObject] 
-PASS .selectedOptions should return the same object after selection changes - [SameObject] 
-              
+PASS .selectedOptions with no selected option
+PASS .selectedOptions with one selected option
+PASS .selectedOptions using the 'multiple' attribute with no selected options
+PASS .selectedOptions using the 'multiple' attribute with two selected options
+PASS .selectedOptions without the 'multiple' attribute but more than one selected option should return the last one
+PASS .selectedOptions should return `HTMLCollection` instance
+PASS .selectedOptions should always return the same value - [SameObject]
+PASS .selectedOptions should return the same object after selection changes - [SameObject]
+

@@ -1,10 +1,10 @@
 
-PASS disconnected frame element .tabIndex should return 0 by default 
-PASS disconnected frame element .tabIndex should return -1 when set to -1 
-PASS disconnected frame element .tabIndex should return 0 when set to 0 
-PASS disconnected frame element .tabIndex should return 1 when set to 1 
-PASS connected frame element inside frameset .tabIndex should return 0 by default 
-PASS connected frame element inside frameset .tabIndex should return -1 when set to -1 
-PASS connected frame element inside frameset .tabIndex should return 0 when set to 0 
-PASS connected frame element inside frameset .tabIndex should return 1 when set to 1 
+PASS disconnected frame element .tabIndex should return 0 by default
+PASS disconnected frame element .tabIndex should return -1 when set to -1
+PASS disconnected frame element .tabIndex should return 0 when set to 0
+PASS disconnected frame element .tabIndex should return 1 when set to 1
+PASS connected frame element inside frameset .tabIndex should return 0 by default
+PASS connected frame element inside frameset .tabIndex should return -1 when set to -1
+PASS connected frame element inside frameset .tabIndex should return 0 when set to 0
+PASS connected frame element inside frameset .tabIndex should return 1 when set to 1
 

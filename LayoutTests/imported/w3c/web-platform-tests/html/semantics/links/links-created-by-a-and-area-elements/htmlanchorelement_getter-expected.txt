@@ -1,13 +1,13 @@
 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10
 
-PASS Getter for attribute of anchor element(0):search 
-PASS Getter for attribute of anchor element(1):hash 
-PASS Getter for attribute of anchor element(2):host 
-PASS Getter for attribute of anchor element(3):hostname 
-PASS Getter for attribute of anchor element(4):href 
-PASS Getter for attribute of anchor element(5):password 
-PASS Getter for attribute of anchor element(6):pathname 
-PASS Getter for attribute of anchor element(7):port 
-PASS Getter for attribute of anchor element(8):protocol 
-PASS Getter for attribute of anchor element(9):username 
+PASS Getter for attribute of anchor element(0):search
+PASS Getter for attribute of anchor element(1):hash
+PASS Getter for attribute of anchor element(2):host
+PASS Getter for attribute of anchor element(3):hostname
+PASS Getter for attribute of anchor element(4):href
+PASS Getter for attribute of anchor element(5):password
+PASS Getter for attribute of anchor element(6):pathname
+PASS Getter for attribute of anchor element(7):port
+PASS Getter for attribute of anchor element(8):protocol
+PASS Getter for attribute of anchor element(9):username
 

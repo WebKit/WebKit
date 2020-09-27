@@ -1,20 +1,20 @@
 
-PASS Standard event listeners are to be removed 
-PASS Custom event listeners are to be removed 
-PASS Standard event listeners are to be removed from Window 
-PASS Standard event listeners are to be removed from Window for an active but not fully active document 
-PASS Standard event listeners are to be removed from Window for a non-active document that is the associated Document of a Window (frame is removed) 
-PASS Standard event listeners are NOT to be removed from Window for a Window-less document (createHTMLDocument) 
-PASS Standard event listeners are NOT to be removed from Window for a Window-less document (DOMParser) 
-PASS Standard event listeners are NOT to be removed from Window for a Window-less document (XMLHttpRequest) 
-PASS Custom event listeners are to be removed from Window 
-PASS Custom event listeners are to be removed from Window for an active but not fully active document 
-PASS Custom event listeners are to be removed from Window for a non-active document that is the associated Document of a Window (frame is removed) 
-PASS Custom event listeners are NOT to be removed from Window for a Window-less document (createHTMLDocument) 
-PASS Custom event listeners are NOT to be removed from Window for a Window-less document (DOMParser) 
-PASS Custom event listeners are NOT to be removed from Window for a Window-less document (XMLHttpRequest) 
-PASS IDL attribute event handlers are to be deactivated 
-PASS Content attribute event handlers are to be deactivated 
-PASS Event listeners are to be removed with immediate effect 
-PASS Event listeners are to be removed from shadow trees as well 
+PASS Standard event listeners are to be removed
+PASS Custom event listeners are to be removed
+PASS Standard event listeners are to be removed from Window
+PASS Standard event listeners are to be removed from Window for an active but not fully active document
+PASS Standard event listeners are to be removed from Window for a non-active document that is the associated Document of a Window (frame is removed)
+PASS Standard event listeners are NOT to be removed from Window for a Window-less document (createHTMLDocument)
+PASS Standard event listeners are NOT to be removed from Window for a Window-less document (DOMParser)
+PASS Standard event listeners are NOT to be removed from Window for a Window-less document (XMLHttpRequest)
+PASS Custom event listeners are to be removed from Window
+PASS Custom event listeners are to be removed from Window for an active but not fully active document
+PASS Custom event listeners are to be removed from Window for a non-active document that is the associated Document of a Window (frame is removed)
+PASS Custom event listeners are NOT to be removed from Window for a Window-less document (createHTMLDocument)
+PASS Custom event listeners are NOT to be removed from Window for a Window-less document (DOMParser)
+PASS Custom event listeners are NOT to be removed from Window for a Window-less document (XMLHttpRequest)
+PASS IDL attribute event handlers are to be deactivated
+PASS Content attribute event handlers are to be deactivated
+PASS Event listeners are to be removed with immediate effect
+PASS Event listeners are to be removed from shadow trees as well
 

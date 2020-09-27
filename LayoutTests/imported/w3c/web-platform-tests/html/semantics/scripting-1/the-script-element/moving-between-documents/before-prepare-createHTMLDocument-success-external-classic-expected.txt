@@ -1,8 +1,8 @@
- 
 
-PASS Sanity check around top-level Window 
-PASS Eval: Move success external classic script to createHTMLDocument before-prepare 
-PASS <script> load: Move success external classic script to createHTMLDocument before-prepare 
-PASS <script> error: Move success external classic script to createHTMLDocument before-prepare 
-PASS window error: Move success external classic script to createHTMLDocument before-prepare 
+
+PASS Sanity check around top-level Window
+PASS Eval: Move success external classic script to createHTMLDocument before-prepare
+PASS <script> load: Move success external classic script to createHTMLDocument before-prepare
+PASS <script> error: Move success external classic script to createHTMLDocument before-prepare
+PASS window error: Move success external classic script to createHTMLDocument before-prepare
 

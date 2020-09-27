@@ -3,5 +3,5 @@
 clearRect does not draw shadows
 
 
-PASS clearRect does not draw shadows 
+PASS clearRect does not draw shadows
 

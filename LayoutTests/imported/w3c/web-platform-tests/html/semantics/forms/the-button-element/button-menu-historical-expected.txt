@@ -1,5 +1,5 @@
 button
 
-PASS button.menu, the potentially-reflecting IDL attribute, does not exist 
-PASS button.type reflects properly 
+PASS button.menu, the potentially-reflecting IDL attribute, does not exist
+PASS button.type reflects properly
 

@@ -1,5 +1,5 @@
 
-PASS marquee_loop_string 
-PASS marquee_loop_less_than_1 
-PASS marquee_loop_normal 
+PASS marquee_loop_string
+PASS marquee_loop_less_than_1
+PASS marquee_loop_normal
 Test1 Test2 Test3

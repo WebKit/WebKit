@@ -9,12 +9,12 @@
 Harness Error (TIMEOUT), message = null
 
 FAIL If constructing entry list flag of form is true, then return assert_equals: expected 1 but got 0
-PASS If firing submission events flag of form is true, then return 
-PASS If form's firing submission events is true, then return; 'invalid' event 
-PASS If form's firing submission events is true, then return; 'submit' event 
+PASS If firing submission events flag of form is true, then return
+PASS If form's firing submission events is true, then return; 'invalid' event
+PASS If form's firing submission events is true, then return; 'submit' event
 TIMEOUT firing an event named submit; clicking a submit button Test timed out
-NOTRUN firing an event named submit; form.requestSubmit() 
-NOTRUN firing an event named submit; form.requestSubmit(null) 
-NOTRUN firing an event named submit; form.requestSubmit(submitter) 
-PASS Cannot navigate (after constructing the entry list) 
+NOTRUN firing an event named submit; form.requestSubmit()
+NOTRUN firing an event named submit; form.requestSubmit(null)
+NOTRUN firing an event named submit; form.requestSubmit(submitter)
+PASS Cannot navigate (after constructing the entry list)
 

@@ -1,4 +1,4 @@
 
 
-PASS UTF-8 encoded characters are recognized properly and different encodings (iconv) are not recognized as a WebVTT file 
+PASS UTF-8 encoded characters are recognized properly and different encodings (iconv) are not recognized as a WebVTT file
 

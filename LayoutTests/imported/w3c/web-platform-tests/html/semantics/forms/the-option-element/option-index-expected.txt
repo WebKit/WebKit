@@ -1,7 +1,7 @@
 
 
-PASS option index should work inside the document 
-PASS option index should always be 0 for options in datalists 
-PASS option index should always be 0 for options with no container 
-PASS option index should always be 0 for options not even in the document 
+PASS option index should work inside the document
+PASS option index should always be 0 for options in datalists
+PASS option index should always be 0 for options with no container
+PASS option index should always be 0 for options not even in the document
 

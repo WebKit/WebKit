@@ -1,4 +1,4 @@
 
-PASS a button's type should be submit by default 
-PASS a button's type should stay within the range of valid values 
+PASS a button's type should be submit by default
+PASS a button's type should stay within the range of valid values
 

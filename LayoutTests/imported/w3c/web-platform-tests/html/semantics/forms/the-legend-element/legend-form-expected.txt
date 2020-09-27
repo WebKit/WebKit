@@ -1,4 +1,4 @@
 
-PASS Check if legend.form returns its parent when it's inside a fieldset 
-PASS Check if legend.form return null when legend has no fieldset element as its parent 
+PASS Check if legend.form returns its parent when it's inside a fieldset
+PASS Check if legend.form return null when legend has no fieldset element as its parent
 
