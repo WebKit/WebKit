@@ -83,9 +83,12 @@ public:
     // FIXME: use ScrollClamping to collapse these to one.
     virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
+    
     virtual void willStartRubberBandSnapAnimation() { }
     virtual void didStopRubberbandSnapAnimation() { }
-    
+
+    virtual void rubberBandingStateChanged(bool) { }
+
     // If the current scroll position is within the overhang area, this function will cause
     // the page to scroll to the nearest boundary point.
     virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
@@ -142,6 +145,8 @@ public:
     bool isUserScrollInProgress() const;
     bool isRubberBandInProgress() const;
     bool isScrollSnapInProgress() const;
+    
+    void scrollPositionChanged();
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
@@ -175,6 +180,9 @@ private:
 
     bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&) const;
     bool shouldRubberBandInDirection(ScrollDirection) const;
+
+    bool isRubberBandInProgressInternal() const;
+    void updateRubberBandingState();
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -223,6 +231,7 @@ private:
     bool m_inScrollGesture { false };
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
+    bool m_isRubberBanding { false };
 #endif
 
 #if ASSERT_ENABLED
