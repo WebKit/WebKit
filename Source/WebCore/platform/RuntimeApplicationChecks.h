@@ -112,6 +112,7 @@ WEBCORE_EXPORT bool isFIFACompanion();
 WEBCORE_EXPORT bool isNoggin();
 WEBCORE_EXPORT bool isOKCupid();
 WEBCORE_EXPORT bool isJWLibrary();
+WEBCORE_EXPORT bool isPaperIO();
 
 } // IOSApplication
 
