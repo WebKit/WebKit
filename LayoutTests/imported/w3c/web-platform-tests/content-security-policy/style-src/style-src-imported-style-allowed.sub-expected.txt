@@ -1,4 +1,4 @@
 Blocked access to external URL http://www1.localhost:8800/content-security-policy/style-src/style-src.css
 
-PASS Imported style that violates policy should not load 
+PASS Imported style that violates policy should not load
 Lorem ipsum

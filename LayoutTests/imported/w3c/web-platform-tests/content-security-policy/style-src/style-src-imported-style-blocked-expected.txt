@@ -1,4 +1,4 @@
 
-PASS @import stylesheet should not load because it does not match style-src 
+PASS @import stylesheet should not load because it does not match style-src
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'self'" but got "style-src-elem"
 Lorem ipsum

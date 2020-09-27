@@ -1,40 +1,40 @@
 
-PASS Append U+0020 to 'white-space: normal' 
-PASS Append U+0009 to 'white-space: normal' 
-PASS Append U+000A to 'white-space: normal' 
-PASS Append U+000C to 'white-space: normal' 
-PASS Append U+000D to 'white-space: normal' 
-PASS Append U+0020 to 'white-space: pre' 
-PASS Append U+0009 to 'white-space: pre' 
-PASS Append U+000A to 'white-space: pre' 
-PASS Append U+000C to 'white-space: pre' 
-PASS Append U+000D to 'white-space: pre' 
-PASS Append U+0020 to 'white-space: nowrap' 
-PASS Append U+0009 to 'white-space: nowrap' 
-PASS Append U+000A to 'white-space: nowrap' 
-PASS Append U+000C to 'white-space: nowrap' 
-PASS Append U+000D to 'white-space: nowrap' 
-PASS Append U+0020 to 'white-space: pre-wrap' 
-PASS Append U+0009 to 'white-space: pre-wrap' 
-PASS Append U+000A to 'white-space: pre-wrap' 
-PASS Append U+000C to 'white-space: pre-wrap' 
-PASS Append U+000D to 'white-space: pre-wrap' 
-PASS Append U+0020 to 'white-space: break-spaces' 
-PASS Append U+0009 to 'white-space: break-spaces' 
-PASS Append U+000A to 'white-space: break-spaces' 
-PASS Append U+000C to 'white-space: break-spaces' 
-PASS Append U+000D to 'white-space: break-spaces' 
-PASS Append U+0020 to 'white-space: pre-line' 
-PASS Append U+0009 to 'white-space: pre-line' 
-PASS Append U+000A to 'white-space: pre-line' 
-PASS Append U+000C to 'white-space: pre-line' 
-PASS Append U+000D to 'white-space: pre-line' 
+PASS Append U+0020 to 'white-space: normal'
+PASS Append U+0009 to 'white-space: normal'
+PASS Append U+000A to 'white-space: normal'
+PASS Append U+000C to 'white-space: normal'
+PASS Append U+000D to 'white-space: normal'
+PASS Append U+0020 to 'white-space: pre'
+PASS Append U+0009 to 'white-space: pre'
+PASS Append U+000A to 'white-space: pre'
+PASS Append U+000C to 'white-space: pre'
+PASS Append U+000D to 'white-space: pre'
+PASS Append U+0020 to 'white-space: nowrap'
+PASS Append U+0009 to 'white-space: nowrap'
+PASS Append U+000A to 'white-space: nowrap'
+PASS Append U+000C to 'white-space: nowrap'
+PASS Append U+000D to 'white-space: nowrap'
+PASS Append U+0020 to 'white-space: pre-wrap'
+PASS Append U+0009 to 'white-space: pre-wrap'
+PASS Append U+000A to 'white-space: pre-wrap'
+PASS Append U+000C to 'white-space: pre-wrap'
+PASS Append U+000D to 'white-space: pre-wrap'
+PASS Append U+0020 to 'white-space: break-spaces'
+PASS Append U+0009 to 'white-space: break-spaces'
+PASS Append U+000A to 'white-space: break-spaces'
+PASS Append U+000C to 'white-space: break-spaces'
+PASS Append U+000D to 'white-space: break-spaces'
+PASS Append U+0020 to 'white-space: pre-line'
+PASS Append U+0009 to 'white-space: pre-line'
+PASS Append U+000A to 'white-space: pre-line'
+PASS Append U+000C to 'white-space: pre-line'
+PASS Append U+000D to 'white-space: pre-line'
 test
 test
 test
 test
 test
-test 
+test
 test	
 test
 test
@@ -44,18 +44,18 @@ test
 test
 test
 test
-test 
-test	
 test
-test
-test
-test 
 test	
 test
 test
 test
 test
+test	
 test
-test 
+test
+test
+test
+test
+test
 test
 test

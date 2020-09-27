@@ -1,5 +1,18 @@
 2020-09-27  Darin Adler  <darin@apple.com>
 
+        Remove trailing spaces from the last few expected.txt files that have them
+        https://bugs.webkit.org/show_bug.cgi?id=217040
+
+        Reviewed by Zalan Bujtas.
+
+        * web-platform-tests/content-security-policy/style-src/style-src-imported-style-allowed.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-imported-style-blocked-expected.txt:
+        * web-platform-tests/css/css-text/white-space/append-whitespace-only-node-crash-001-expected.txt:
+        * web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_on_chorded_mouse_button_when_locked-expected.txt:
+        Remove trailing spaces.
+
+2020-09-27  Darin Adler  <darin@apple.com>
+
         Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp
         https://bugs.webkit.org/show_bug.cgi?id=217037
 
