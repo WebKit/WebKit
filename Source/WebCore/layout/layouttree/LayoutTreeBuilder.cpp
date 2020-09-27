@@ -383,15 +383,13 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
     auto& lines = inlineFormattingState.lines();
 
-    unsigned printedCharacters = 0;
-    while (++printedCharacters <= depth * 2)
-        stream << " ";
-    stream << "  ";
-
-    stream << "lines are -> ";
-    for (auto& line : lines)
-        stream << "[" << line.logicalLeft() << "," << line.logicalTop() << " " << line.logicalWidth() << "x" << line.logicalHeight() << "][baseline: " << line.baseline() << "]";
-    stream.nextLine();
+    for (auto& line : lines) {
+        size_t printedCharacters = 0;
+        while (++printedCharacters <= depth * 2)
+            stream << " ";
+        stream << "    line at (" << line.logicalLeft() << "," << line.logicalTop() << ") size " << line.logicalWidth() << "x" << line.logicalHeight() << " baseline at (" << line.baseline() << ")";
+        stream.nextLine();
+    }
 
     for (auto& run : inlineFormattingState.lineRuns()) {
         unsigned printedCharacters = 0;
@@ -399,9 +397,9 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
             stream << " ";
         stream << "  ";
         if (run.text())
-            stream << "inline text box";
+            stream << "text run";
         else
-            stream << "inline box";
+            stream << "box run";
         stream << " at (" << run.logicalLeft() << "," << run.logicalTop() << ") size " << run.logicalWidth() << "x" << run.logicalHeight();
         if (run.text())
             stream << " run(" << run.text()->start() << ", " << run.text()->end() << ")";
@@ -453,14 +451,14 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
             stream << "anonymous inline box";
         else if (layoutBox.isInlineBlockBox())
             stream << "inline-block box";
-        else if (layoutBox.isInlineBox())
-            stream << "inline box";
+        else if (layoutBox.isLineBreakBox())
+            stream << (downcast<LineBreakBox>(layoutBox).isOptional() ? "word break opportunity" : "line break");
         else if (layoutBox.isAtomicInlineLevelBox())
             stream << "atomic inline level box";
         else if (layoutBox.isReplacedBox())
             stream << "replaced inline box";
-        else if (layoutBox.isLineBreakBox())
-            stream << "line break";
+        else if (layoutBox.isInlineBox())
+            stream << "inline box";
         else
             stream << "other inline level box";
     } else if (layoutBox.isBlockLevelBox())

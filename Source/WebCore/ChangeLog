@@ -1,3 +1,27 @@
+2020-09-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add <wbr> to showLayoutTree
+        https://bugs.webkit.org/show_bug.cgi?id=217025
+
+        Reviewed by Darin Adler.
+
+        This patch also tweaks the inline tree output (one line geometry output per line, different output format).
+
+        <div style="width: 100px;">first_line<wbr>second_line</div>
+
+        block box at (0,10) size 100x20
+            line at (0.00,0.00) size 100.00x10.00 baseline at (8.00)
+            line at (0.00,10.00) size 100.00x10.00 baseline at (8.00)
+          text run at (0.00,0.00) size 100.00x10.00 run(0, 10)
+          text run at (0.00,0.00) size 110.00x10.00 run(0, 11)
+        anonymous inline box (0x495583d20) length->(10) "first_line"
+        word break opportunity at (100,8) size 0x0 (0x4967c0680)
+        anonymous inline box (0x495591e00) length->(11) "second_line"
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+        (WebCore::Layout::outputLayoutBox):
+
 2020-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove support for setting CMYKA fill and stroke colors in 2D canvas
