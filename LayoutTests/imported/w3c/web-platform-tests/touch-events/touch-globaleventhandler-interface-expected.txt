@@ -1,5 +1,5 @@
 
-PASS Touch events in GlobalEventHandlers 
-PASS Touch events are GlobalEventHandlers' own property 
-PASS Touch events not in Element.prototype 
+PASS Touch events in GlobalEventHandlers
+PASS Touch events are GlobalEventHandlers' own property
+PASS Touch events not in Element.prototype
 

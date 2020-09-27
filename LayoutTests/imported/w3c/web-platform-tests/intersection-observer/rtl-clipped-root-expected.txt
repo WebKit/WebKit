@@ -1,6 +1,6 @@
 start
 end
 
-PASS Explicit rtl root with overflow clipping 
-PASS First rAF 
+PASS Explicit rtl root with overflow clipping
+PASS First rAF
 

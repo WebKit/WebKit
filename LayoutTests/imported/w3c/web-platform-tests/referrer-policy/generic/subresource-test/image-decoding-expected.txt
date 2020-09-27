@@ -17,5 +17,5 @@ http://127.0.0.1:8800/common/security-features/subresource/image.py?cache_destro
 
 
 
-PASS Image is encoding headers as JSON. 
+PASS Image is encoding headers as JSON.
 

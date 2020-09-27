@@ -1,6 +1,6 @@
 
-PASS Touch constructor with insufficient properties 
-PASS Touch constructor with non-EventTarget target 
+PASS Touch constructor with insufficient properties
+PASS Touch constructor with non-EventTarget target
 FAIL Touch constructor exists and creates a Touch object with minimum properties Illegal constructor
 FAIL Touch constructor exists and creates a Touch object with requested properties Illegal constructor
 FAIL TouchEvent constructor exists and creates a TouchEvent object with requested properties Illegal constructor

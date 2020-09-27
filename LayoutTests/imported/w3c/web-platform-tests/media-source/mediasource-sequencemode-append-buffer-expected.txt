@@ -1,5 +1,5 @@
 
-PASS Test sequence AppendMode appendBuffer(first media segment) 
-PASS Test sequence AppendMode appendBuffer(second media segment) 
-PASS Test sequence AppendMode appendBuffer(second media segment, then first media segment) 
+PASS Test sequence AppendMode appendBuffer(first media segment)
+PASS Test sequence AppendMode appendBuffer(second media segment)
+PASS Test sequence AppendMode appendBuffer(second media segment, then first media segment)
 

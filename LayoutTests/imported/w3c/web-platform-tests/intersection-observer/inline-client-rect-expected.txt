@@ -1,6 +1,6 @@
 1 2 3 4 5
 
-PASS Inline target 
-PASS First rAF 
-PASS scroller.scrollLeft = 90 
+PASS Inline target
+PASS First rAF
+PASS scroller.scrollLeft = 90
 

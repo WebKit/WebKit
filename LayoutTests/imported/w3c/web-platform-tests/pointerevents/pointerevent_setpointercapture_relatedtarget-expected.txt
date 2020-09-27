@@ -21,6 +21,6 @@ The following events were logged: pointerover@target1, pointerover@target0, gotp
 Refresh the page to run the tests again with a different pointer type.
 
 
-PASS pointerover shouldn't trigger for the purple rectangle while the black rectangle has capture 
-PASS relatedTarget should not be null even when the capture is set. 
+PASS pointerover shouldn't trigger for the purple rectangle while the black rectangle has capture
+PASS relatedTarget should not be null even when the capture is set.
 

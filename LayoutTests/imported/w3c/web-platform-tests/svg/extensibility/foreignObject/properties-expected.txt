@@ -1,6 +1,6 @@
 
-PASS width and height default to auto (which computes to "0px") 
+PASS width and height default to auto (which computes to "0px")
 FAIL style rules are applied assert_equals: expected "30px" but got "0px"
-PASS attributes set properties 
+PASS attributes set properties
 FAIL style rules override attributes assert_equals: expected "30px" but got "70px"
 

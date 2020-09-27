@@ -1,22 +1,22 @@
 
-PASS Global setup 
-PASS Fetch importScripts tests from service worker 
-PASS Importing script with no MIME type  
-PASS Importing script with bad MIME type text/plain 
-PASS Importing script with valid JavaScript MIME type application/ecmascript 
-PASS Importing script with valid JavaScript MIME type application/javascript 
-PASS Importing script with valid JavaScript MIME type application/x-ecmascript 
-PASS Importing script with valid JavaScript MIME type application/x-javascript 
-PASS Importing script with valid JavaScript MIME type text/ecmascript 
-PASS Importing script with valid JavaScript MIME type text/javascript 
-PASS Importing script with valid JavaScript MIME type text/javascript1.0 
-PASS Importing script with valid JavaScript MIME type text/javascript1.1 
-PASS Importing script with valid JavaScript MIME type text/javascript1.2 
-PASS Importing script with valid JavaScript MIME type text/javascript1.3 
-PASS Importing script with valid JavaScript MIME type text/javascript1.4 
-PASS Importing script with valid JavaScript MIME type text/javascript1.5 
-PASS Importing script with valid JavaScript MIME type text/jscript 
-PASS Importing script with valid JavaScript MIME type text/livescript 
-PASS Importing script with valid JavaScript MIME type text/x-ecmascript 
-PASS Importing script with valid JavaScript MIME type text/x-javascript 
+PASS Global setup
+PASS Fetch importScripts tests from service worker
+PASS Importing script with no MIME type
+PASS Importing script with bad MIME type text/plain
+PASS Importing script with valid JavaScript MIME type application/ecmascript
+PASS Importing script with valid JavaScript MIME type application/javascript
+PASS Importing script with valid JavaScript MIME type application/x-ecmascript
+PASS Importing script with valid JavaScript MIME type application/x-javascript
+PASS Importing script with valid JavaScript MIME type text/ecmascript
+PASS Importing script with valid JavaScript MIME type text/javascript
+PASS Importing script with valid JavaScript MIME type text/javascript1.0
+PASS Importing script with valid JavaScript MIME type text/javascript1.1
+PASS Importing script with valid JavaScript MIME type text/javascript1.2
+PASS Importing script with valid JavaScript MIME type text/javascript1.3
+PASS Importing script with valid JavaScript MIME type text/javascript1.4
+PASS Importing script with valid JavaScript MIME type text/javascript1.5
+PASS Importing script with valid JavaScript MIME type text/jscript
+PASS Importing script with valid JavaScript MIME type text/livescript
+PASS Importing script with valid JavaScript MIME type text/x-ecmascript
+PASS Importing script with valid JavaScript MIME type text/x-javascript
 

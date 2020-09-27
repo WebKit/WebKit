@@ -3,14 +3,14 @@ Description
 This test validates all exception scenarios of method window.performance.measure in User Timing API
 
 
-PASS Invocation of performance.measure() should throw TypeError Exception. 
-PASS Invocation of performance.measure("Exception1", "NonExistMark1") should throw SYNTAX_ERR Exception. 
-PASS Invocation of performance.measure("Exception2", "NonExistMark1", "navigationStart") should throw SYNTAX_ERR Exception. 
-PASS Invocation of performance.measure("Exception3", "navigationStart", "NonExistMark1") should throw SYNTAX_ERR Exception. 
-PASS Invocation of performance.measure("Exception4", "NonExistMark1", "ExistMark") should throw SYNTAX_ERR Exception. 
-PASS Invocation of performance.measure("Exception5", "ExistMark", "NonExistMark1") should throw SYNTAX_ERR Exception. 
-PASS Invocation of performance.measure("Exception6", "NonExistMark1", "NonExistMark2") should throw SYNTAX_ERR Exception. 
-PASS Invocation of performance.measure("Exception7", "redirectStart") should throw INVALID_ACCESS_ERR Exception. 
-PASS Invocation of performance.measure("Exception8", {"detail": "non-empty"}) should throw TypeError Exception. 
-PASS Invocation of performance.measure("Exception9", {"start": 1, "duration": 2, "end": 3}) should throw TypeError Exception. 
+PASS Invocation of performance.measure() should throw TypeError Exception.
+PASS Invocation of performance.measure("Exception1", "NonExistMark1") should throw SYNTAX_ERR Exception.
+PASS Invocation of performance.measure("Exception2", "NonExistMark1", "navigationStart") should throw SYNTAX_ERR Exception.
+PASS Invocation of performance.measure("Exception3", "navigationStart", "NonExistMark1") should throw SYNTAX_ERR Exception.
+PASS Invocation of performance.measure("Exception4", "NonExistMark1", "ExistMark") should throw SYNTAX_ERR Exception.
+PASS Invocation of performance.measure("Exception5", "ExistMark", "NonExistMark1") should throw SYNTAX_ERR Exception.
+PASS Invocation of performance.measure("Exception6", "NonExistMark1", "NonExistMark2") should throw SYNTAX_ERR Exception.
+PASS Invocation of performance.measure("Exception7", "redirectStart") should throw INVALID_ACCESS_ERR Exception.
+PASS Invocation of performance.measure("Exception8", {"detail": "non-empty"}) should throw TypeError Exception.
+PASS Invocation of performance.measure("Exception9", {"start": 1, "duration": 2, "end": 3}) should throw TypeError Exception.
 

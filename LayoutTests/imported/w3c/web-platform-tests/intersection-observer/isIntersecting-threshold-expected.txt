@@ -1,5 +1,5 @@
 
-PASS At initial scroll position 
-PASS Scrolled to half way through target element 
-PASS Scrolled to target element completely off screen 
+PASS At initial scroll position
+PASS Scrolled to half way through target element
+PASS Scrolled to target element completely off screen
 

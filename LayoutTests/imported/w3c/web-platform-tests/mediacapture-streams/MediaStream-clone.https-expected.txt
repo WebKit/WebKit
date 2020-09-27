@@ -5,6 +5,6 @@ Description
 This test checks that cloning MediaStreams and MediaStreamTracks works as expected.
 
 
-PASS Tests that cloning MediaStream objects works as expected 
-PASS Tests that cloning MediaStreamTrack objects works as expected 
+PASS Tests that cloning MediaStream objects works as expected
+PASS Tests that cloning MediaStreamTrack objects works as expected
 

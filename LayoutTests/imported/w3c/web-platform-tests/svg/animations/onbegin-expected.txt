@@ -1,3 +1,3 @@
 
-PASS 'onbegin' event handler content attribute 
+PASS 'onbegin' event handler content attribute
 

@@ -1,5 +1,5 @@
 
-PASS Mouse down and capture to green. 
-PASS Mouse down at green and capture to blue. 
-PASS Mouse down and capture to green, move to blue and release capture 
+PASS Mouse down and capture to green.
+PASS Mouse down at green and capture to blue.
+PASS Mouse down and capture to green, move to blue and release capture
 

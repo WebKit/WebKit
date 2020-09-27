@@ -1,11 +1,11 @@
 
-PASS A new events composed value should be set to false by default. 
-PASS Users should be able to set a composed value. 
-PASS An event should be scoped by default 
-PASS An event should not be scoped if composed is specified 
-PASS A synthetic MouseEvent should be scoped by default 
-PASS A synthetic MouseEvent with composed=true should not be scoped 
-PASS A synthetic FocusEvent should be scoped by default 
-PASS A synthetic FocusEvent with composed=true should not be scoped 
-PASS A UA click event should not be scoped 
+PASS A new events composed value should be set to false by default.
+PASS Users should be able to set a composed value.
+PASS An event should be scoped by default
+PASS An event should not be scoped if composed is specified
+PASS A synthetic MouseEvent should be scoped by default
+PASS A synthetic MouseEvent with composed=true should not be scoped
+PASS A synthetic FocusEvent should be scoped by default
+PASS A synthetic FocusEvent with composed=true should not be scoped
+PASS A UA click event should not be scoped
 

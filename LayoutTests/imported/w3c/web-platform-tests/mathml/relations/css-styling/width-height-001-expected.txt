@@ -1,50 +1,50 @@
 
 FAIL width and height properties on maction assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL inline-size and block-size properties on maction assert_approx_equals: height expected 0 +/- 1 but got 400
-PASS width and height properties on menclose 
-PASS inline-size and block-size properties on menclose 
+PASS width and height properties on menclose
+PASS inline-size and block-size properties on menclose
 FAIL width and height properties on merror assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL inline-size and block-size properties on merror assert_approx_equals: height expected 0 +/- 1 but got 400
-PASS width and height properties on mfrac 
-PASS inline-size and block-size properties on mfrac 
+PASS width and height properties on mfrac
+PASS inline-size and block-size properties on mfrac
 FAIL width and height properties on mi assert_approx_equals: width expected 0 +/- 1 but got 500
 FAIL inline-size and block-size properties on mi assert_approx_equals: width expected 0 +/- 1 but got 500
-PASS width and height properties on mmultiscripts 
-PASS inline-size and block-size properties on mmultiscripts 
+PASS width and height properties on mmultiscripts
+PASS inline-size and block-size properties on mmultiscripts
 FAIL width and height properties on mn assert_approx_equals: width expected 0 +/- 1 but got 500
 FAIL inline-size and block-size properties on mn assert_approx_equals: width expected 0 +/- 1 but got 500
 FAIL width and height properties on mo assert_approx_equals: width expected 0 +/- 1 but got 491.125
 FAIL inline-size and block-size properties on mo assert_approx_equals: width expected 0 +/- 1 but got 491.125
-PASS width and height properties on mover 
-PASS inline-size and block-size properties on mover 
-PASS width and height properties on mpadded 
-PASS inline-size and block-size properties on mpadded 
+PASS width and height properties on mover
+PASS inline-size and block-size properties on mover
+PASS width and height properties on mpadded
+PASS inline-size and block-size properties on mpadded
 FAIL width and height properties on mphantom assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL inline-size and block-size properties on mphantom assert_approx_equals: height expected 0 +/- 1 but got 400
-PASS width and height properties on mroot 
-PASS inline-size and block-size properties on mroot 
+PASS width and height properties on mroot
+PASS inline-size and block-size properties on mroot
 FAIL width and height properties on mrow assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL inline-size and block-size properties on mrow assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL width and height properties on ms assert_approx_equals: width expected 0 +/- 1 but got 500
 FAIL inline-size and block-size properties on ms assert_approx_equals: width expected 0 +/- 1 but got 500
-PASS width and height properties on mspace 
-PASS inline-size and block-size properties on mspace 
-PASS width and height properties on msqrt 
-PASS inline-size and block-size properties on msqrt 
+PASS width and height properties on mspace
+PASS inline-size and block-size properties on mspace
+PASS width and height properties on msqrt
+PASS inline-size and block-size properties on msqrt
 FAIL width and height properties on mstyle assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL inline-size and block-size properties on mstyle assert_approx_equals: height expected 0 +/- 1 but got 400
-PASS width and height properties on msub 
-PASS inline-size and block-size properties on msub 
-PASS width and height properties on msubsup 
-PASS inline-size and block-size properties on msubsup 
-PASS width and height properties on msup 
-PASS inline-size and block-size properties on msup 
+PASS width and height properties on msub
+PASS inline-size and block-size properties on msub
+PASS width and height properties on msubsup
+PASS inline-size and block-size properties on msubsup
+PASS width and height properties on msup
+PASS inline-size and block-size properties on msup
 FAIL width and height properties on mtext assert_approx_equals: width expected 0 +/- 1 but got 500
 FAIL inline-size and block-size properties on mtext assert_approx_equals: width expected 0 +/- 1 but got 500
-PASS width and height properties on munder 
-PASS inline-size and block-size properties on munder 
-PASS width and height properties on munderover 
-PASS inline-size and block-size properties on munderover 
+PASS width and height properties on munder
+PASS inline-size and block-size properties on munder
+PASS width and height properties on munderover
+PASS inline-size and block-size properties on munderover
 FAIL width and height properties on semantics assert_approx_equals: height expected 0 +/- 1 but got 400
 FAIL inline-size and block-size properties on semantics assert_approx_equals: height expected 0 +/- 1 but got 400
 

@@ -1,5 +1,5 @@
 
-PASS default scope 
-PASS undefined scope 
-PASS null scope 
+PASS default scope
+PASS undefined scope
+PASS null scope
 

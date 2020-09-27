@@ -1,8 +1,8 @@
 
-PASS global setup 
-PASS XHR responseURL should be the response URL 
-PASS XHR responseURL should be the response URL (generated response) 
-PASS XHR Document should use the response URL 
-PASS XHR Document should use the response URL (generated response) 
-PASS global cleanup 
+PASS global setup
+PASS XHR responseURL should be the response URL
+PASS XHR responseURL should be the response URL (generated response)
+PASS XHR Document should use the response URL
+PASS XHR Document should use the response URL (generated response)
+PASS global cleanup
 

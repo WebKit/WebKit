@@ -1,15 +1,15 @@
 
-PASS Set duration to 2^31 - 1 
-PASS Set duration to 1 
-PASS Set duration to Number.MAX_VALUE 
-PASS Set duration to Number.MIN_VALUE 
-PASS Set duration to Number.MAX_VALUE - 1 
-PASS Set duration to Number.MIN_VALUE - 1 
-PASS Set duration to Number.POSITIVE_INFINITY 
-PASS Set duration to Number.NEGATIVE_INFINITY 
-PASS Set duration to lowest value. 
-PASS Set duration to a negative double. 
-PASS Set duration to a positive double. 
-PASS Set duration to zero 
-PASS Set duration to NaN 
+PASS Set duration to 2^31 - 1
+PASS Set duration to 1
+PASS Set duration to Number.MAX_VALUE
+PASS Set duration to Number.MIN_VALUE
+PASS Set duration to Number.MAX_VALUE - 1
+PASS Set duration to Number.MIN_VALUE - 1
+PASS Set duration to Number.POSITIVE_INFINITY
+PASS Set duration to Number.NEGATIVE_INFINITY
+PASS Set duration to lowest value.
+PASS Set duration to a negative double.
+PASS Set duration to a positive double.
+PASS Set duration to zero
+PASS Set duration to NaN
 

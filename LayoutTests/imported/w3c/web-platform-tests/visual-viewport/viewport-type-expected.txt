@@ -5,6 +5,6 @@ Test Description: This test checks that window.visualViewport is an object of ty
 window.visualViewport is of type: object.
 
 
-PASS window.visualViewport is an object 
-PASS window.visualViewport has type `VisualViewport` 
+PASS window.visualViewport is an object
+PASS window.visualViewport has type `VisualViewport`
 

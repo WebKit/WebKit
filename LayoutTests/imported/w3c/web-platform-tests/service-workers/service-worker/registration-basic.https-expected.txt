@@ -1,5 +1,5 @@
 
-PASS Registering normal scope 
-PASS Registering scope with fragment 
-PASS Registering same scope as the script directory 
+PASS Registering normal scope
+PASS Registering scope with fragment
+PASS Registering same scope as the script directory
 

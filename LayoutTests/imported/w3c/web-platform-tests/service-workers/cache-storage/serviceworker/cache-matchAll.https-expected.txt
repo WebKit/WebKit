@@ -1,17 +1,17 @@
 
-PASS Cache.matchAll 
-PASS Cache.matchAll with no matching entries 
-PASS Cache.matchAll with URL 
-PASS Cache.matchAll with Request 
-PASS Cache.matchAll with new Request 
-PASS Cache.matchAll with HEAD 
-PASS Cache.matchAll with ignoreSearch option (request with no search parameters) 
-PASS Cache.matchAll with ignoreSearch option (request with search parameters) 
-PASS Cache.matchAll supports ignoreMethod 
-PASS Cache.matchAll supports ignoreVary 
-PASS Cache.matchAll with URL containing fragment 
-PASS Cache.matchAll with string fragment "http" as query 
-PASS Cache.matchAll without parameters 
-PASS Cache.matchAll with responses containing "Vary" header 
-PASS Cache.matchAll with multiple vary pairs 
+PASS Cache.matchAll
+PASS Cache.matchAll with no matching entries
+PASS Cache.matchAll with URL
+PASS Cache.matchAll with Request
+PASS Cache.matchAll with new Request
+PASS Cache.matchAll with HEAD
+PASS Cache.matchAll with ignoreSearch option (request with no search parameters)
+PASS Cache.matchAll with ignoreSearch option (request with search parameters)
+PASS Cache.matchAll supports ignoreMethod
+PASS Cache.matchAll supports ignoreVary
+PASS Cache.matchAll with URL containing fragment
+PASS Cache.matchAll with string fragment "http" as query
+PASS Cache.matchAll without parameters
+PASS Cache.matchAll with responses containing "Vary" header
+PASS Cache.matchAll with multiple vary pairs
 

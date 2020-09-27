@@ -1,8 +1,8 @@
 
-PASS Check the existence of Element.attachShadow 
-PASS Nodes other than Element should not have attachShadow 
-PASS Element.attachShadow must throw a TypeError if mode is not "open" or "closed" 
-PASS Element.attachShadow must create an instance of ShadowRoot 
-PASS Element.attachShadow must throw a NotSupportedError if the context object already hosts a shadow tree 
-PASS Element.attachShadow must throw a NotSupportedError for non-safelisted elements 
+PASS Check the existence of Element.attachShadow
+PASS Nodes other than Element should not have attachShadow
+PASS Element.attachShadow must throw a TypeError if mode is not "open" or "closed"
+PASS Element.attachShadow must create an instance of ShadowRoot
+PASS Element.attachShadow must throw a NotSupportedError if the context object already hosts a shadow tree
+PASS Element.attachShadow must throw a NotSupportedError for non-safelisted elements
 

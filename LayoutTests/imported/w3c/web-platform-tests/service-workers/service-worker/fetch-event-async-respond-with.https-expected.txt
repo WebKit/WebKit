@@ -1,6 +1,6 @@
 
-PASS global setup 
-PASS respondWith in a task throws InvalidStateError 
-PASS respondWith in a microtask does not throw 
-PASS global cleanup 
+PASS global setup
+PASS respondWith in a task throws InvalidStateError
+PASS respondWith in a microtask does not throw
+PASS global cleanup
 

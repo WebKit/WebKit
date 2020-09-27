@@ -1,4 +1,4 @@
 ABCD
 
-PASS Test 'to' animation of SVGLengthList with LengthType number. 
+PASS Test 'to' animation of SVGLengthList with LengthType number.
 

@@ -1,5 +1,5 @@
 
-PASS Inheritance of CSS writing-mode and direction (id='horizontal-tb_rtl') 
-PASS Layout of mrow (id='horizontal-tb_rtl') 
+PASS Inheritance of CSS writing-mode and direction (id='horizontal-tb_rtl')
+PASS Layout of mrow (id='horizontal-tb_rtl')
 
 

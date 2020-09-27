@@ -1,3 +1,3 @@
 
-PASS Test skipWaiting with both active and waiting workers 
+PASS Test skipWaiting with both active and waiting workers
 

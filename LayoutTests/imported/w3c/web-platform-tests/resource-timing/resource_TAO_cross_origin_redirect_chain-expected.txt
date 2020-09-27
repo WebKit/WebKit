@@ -1,10 +1,10 @@
 
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByName is defined 
-PASS There should be one entry. 
-PASS redirectStart > 0 in timing allowed cross-origin redirect. 
-PASS redirectStart == startTime in timing allowed cross-origin redirect. 
-PASS redirectEnd > redirectStart in timing allowed cross-origin redirect. 
-PASS fetchStart >= redirectEnd in timing allowed cross-origin redirect. 
+PASS window.performance is defined
+PASS window.performance.getEntriesByName is defined
+PASS There should be one entry.
+PASS redirectStart > 0 in timing allowed cross-origin redirect.
+PASS redirectStart == startTime in timing allowed cross-origin redirect.
+PASS redirectEnd > redirectStart in timing allowed cross-origin redirect.
+PASS fetchStart >= redirectEnd in timing allowed cross-origin redirect.
 

@@ -1,4 +1,4 @@
 
-PASS Must have a methodName IDL attribute, which is initialized with to the methodName dictionary value 
-PASS When no dictionary is passed, the methodName member defaults to the empty string 
+PASS Must have a methodName IDL attribute, which is initialized with to the methodName dictionary value
+PASS When no dictionary is passed, the methodName member defaults to the empty string
 

@@ -8,8 +8,8 @@ frames[0].window.visualViewport's offsetLeft and offsetTop is (0, 0).
 frames[0].window.visualViewport's pageLeft and pageTop is (1000, 1200).
 
 
-PASS offsetLeft must be 0. 
-PASS offsetTop must be 0. 
-PASS pageLeft must reflect location of viewport in document. 
-PASS pageTop must reflect location of viewport in document. 
+PASS offsetLeft must be 0.
+PASS offsetTop must be 0.
+PASS pageLeft must reflect location of viewport in document.
+PASS pageTop must reflect location of viewport in document.
 

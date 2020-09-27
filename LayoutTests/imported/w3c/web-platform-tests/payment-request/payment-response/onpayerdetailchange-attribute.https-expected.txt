@@ -1,4 +1,4 @@
 
-PASS PaymentResponse inherits from EventTarget 
-PASS PaymentResponse has an onpayerdetailchange in the prototype chain 
+PASS PaymentResponse inherits from EventTarget
+PASS PaymentResponse has an onpayerdetailchange in the prototype chain
 

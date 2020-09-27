@@ -1,13 +1,13 @@
 
-PASS e.style['pointer-events'] = "auto" should set the property value 
-PASS e.style['pointer-events'] = "bounding-box" should set the property value 
+PASS e.style['pointer-events'] = "auto" should set the property value
+PASS e.style['pointer-events'] = "bounding-box" should set the property value
 FAIL e.style['pointer-events'] = "visiblePainted" should set the property value assert_equals: serialization should be canonical expected "visiblepainted" but got "visiblePainted"
 FAIL e.style['pointer-events'] = "visibleFill" should set the property value assert_equals: serialization should be canonical expected "visiblefill" but got "visibleFill"
 FAIL e.style['pointer-events'] = "visibleStroke" should set the property value assert_equals: serialization should be canonical expected "visiblestroke" but got "visibleStroke"
-PASS e.style['pointer-events'] = "visible" should set the property value 
-PASS e.style['pointer-events'] = "painted" should set the property value 
-PASS e.style['pointer-events'] = "fill" should set the property value 
-PASS e.style['pointer-events'] = "stroke" should set the property value 
-PASS e.style['pointer-events'] = "all" should set the property value 
-PASS e.style['pointer-events'] = "none" should set the property value 
+PASS e.style['pointer-events'] = "visible" should set the property value
+PASS e.style['pointer-events'] = "painted" should set the property value
+PASS e.style['pointer-events'] = "fill" should set the property value
+PASS e.style['pointer-events'] = "stroke" should set the property value
+PASS e.style['pointer-events'] = "all" should set the property value
+PASS e.style['pointer-events'] = "none" should set the property value
 

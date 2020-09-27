@@ -1,5 +1,5 @@
 slotted
 outside
 
-PASS click on host with delegatesFocus, all tabindex=0 except spacer 
+PASS click on host with delegatesFocus, all tabindex=0 except spacer
 

@@ -15,5 +15,5 @@ CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/foo.vtt
 CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 
-PASS Makes sure that preload requests respect CSP 
+PASS Makes sure that preload requests respect CSP
 

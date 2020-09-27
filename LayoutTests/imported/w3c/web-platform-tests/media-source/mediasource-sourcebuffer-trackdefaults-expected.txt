@@ -1,7 +1,7 @@
 
-PASS Test round-trip of empty SourceBuffer.trackDefaults 
-PASS Test round-trip of non-empty SourceBuffer.trackDefaults 
-PASS Test setting trackDefaults on an already-removed SourceBuffer 
-PASS Test setting trackDefaults on a SourceBuffer that is updating 
-PASS Test setting null SourceBuffer.trackDefaults 
+PASS Test round-trip of empty SourceBuffer.trackDefaults
+PASS Test round-trip of non-empty SourceBuffer.trackDefaults
+PASS Test setting trackDefaults on an already-removed SourceBuffer
+PASS Test setting trackDefaults on a SourceBuffer that is updating
+PASS Test setting null SourceBuffer.trackDefaults
 

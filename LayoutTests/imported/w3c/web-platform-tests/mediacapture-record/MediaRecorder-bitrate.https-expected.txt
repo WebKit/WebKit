@@ -1,5 +1,5 @@
 
-PASS Passing no bitrate config results in defaults 
+PASS Passing no bitrate config results in defaults
 FAIL Passing bitsPerSecond:0 results in targets close to 0 assert_approx_equals: expected 0 +/- 100000 but got NaN
 FAIL Passing only audioBitsPerSecond:0 results in 0 for audio, default for video assert_equals: expected (number) 0 but got (undefined) undefined
 FAIL Passing only videoBitsPerSecond:0 results in 0 for video, default for audio assert_equals: expected (number) 0 but got (undefined) undefined
@@ -10,11 +10,11 @@ FAIL Passing only audioBitsPerSecond results in default for video assert_equals:
 FAIL Passing only videoBitsPerSecond results in default for audio assert_equals: expected (number) 1000000 but got (undefined) undefined
 FAIL Passing videoBitsPerSecond for audio-only stream still results in something for video assert_equals: expected (number) 1000000 but got (undefined) undefined
 FAIL Passing audioBitsPerSecond for video-only stream still results in something for audio assert_equals: expected (number) 100000 but got (undefined) undefined
-PASS Passing bitsPerSecond for audio-only stream still results in something for video 
-PASS Passing bitsPerSecond for video-only stream still results in something for audio 
-PASS Selected default track bitrates are not changed by start() 
-PASS Passed-in track bitrates are not changed by start() 
-PASS Passing bitsPerSecond for audio/video stream does not change track bitrates in start() 
+PASS Passing bitsPerSecond for audio-only stream still results in something for video
+PASS Passing bitsPerSecond for video-only stream still results in something for audio
+PASS Selected default track bitrates are not changed by start()
+PASS Passed-in track bitrates are not changed by start()
+PASS Passing bitsPerSecond for audio/video stream does not change track bitrates in start()
 FAIL Passing bitsPerSecond for audio stream sets video track bitrate to 0 in start() assert_approx_equals: expected a number but got a "undefined"
 FAIL Passing bitsPerSecond for video stream sets audio track bitrate to 0 in start() assert_equals: expected (number) 0 but got (undefined) undefined
 

@@ -1,11 +1,11 @@
 
-PASS IntersectionObserver constructor with { threshold: [1.1] } 
-PASS IntersectionObserver constructor with { threshold: ["foo"] } 
-PASS IntersectionObserver constructor with { rootMargin: "1" } 
-PASS IntersectionObserver constructor with { rootMargin: "2em" } 
-PASS IntersectionObserver constructor with { rootMargin: "auto" } 
-PASS IntersectionObserver constructor with { rootMargin: "calc(1px + 2px)" } 
-PASS IntersectionObserver constructor with { rootMargin: "1px !important" } 
-PASS IntersectionObserver constructor with { rootMargin: "1px 1px 1px 1px 1px" } 
-PASS IntersectionObserver.observe("foo") 
+PASS IntersectionObserver constructor with { threshold: [1.1] }
+PASS IntersectionObserver constructor with { threshold: ["foo"] }
+PASS IntersectionObserver constructor with { rootMargin: "1" }
+PASS IntersectionObserver constructor with { rootMargin: "2em" }
+PASS IntersectionObserver constructor with { rootMargin: "auto" }
+PASS IntersectionObserver constructor with { rootMargin: "calc(1px + 2px)" }
+PASS IntersectionObserver constructor with { rootMargin: "1px !important" }
+PASS IntersectionObserver constructor with { rootMargin: "1px 1px 1px 1px 1px" }
+PASS IntersectionObserver.observe("foo")
 

@@ -1,8 +1,8 @@
 
-PASS e.style['stroke-opacity'] = "-1" should set the property value 
-PASS e.style['stroke-opacity'] = "0.5" should set the property value 
-PASS e.style['stroke-opacity'] = "3" should set the property value 
-PASS e.style['stroke-opacity'] = "-100%" should set the property value 
-PASS e.style['stroke-opacity'] = "50%" should set the property value 
-PASS e.style['stroke-opacity'] = "300%" should set the property value 
+PASS e.style['stroke-opacity'] = "-1" should set the property value
+PASS e.style['stroke-opacity'] = "0.5" should set the property value
+PASS e.style['stroke-opacity'] = "3" should set the property value
+PASS e.style['stroke-opacity'] = "-100%" should set the property value
+PASS e.style['stroke-opacity'] = "50%" should set the property value
+PASS e.style['stroke-opacity'] = "300%" should set the property value
 

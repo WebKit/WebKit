@@ -1,4 +1,4 @@
 
-PASS Must have a methodDetails IDL attribute, which is initialized with to the methodName dictionary value 
-PASS The methodDetails member defaults to null 
+PASS Must have a methodDetails IDL attribute, which is initialized with to the methodName dictionary value
+PASS The methodDetails member defaults to null
 

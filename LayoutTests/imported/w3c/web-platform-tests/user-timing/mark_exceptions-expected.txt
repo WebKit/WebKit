@@ -3,26 +3,26 @@ Description
 This test validates that the performance.mark() method throws a SYNTAX_ERR exception whenever a navigation timing attribute is provided for the name parameter.
 
 
-PASS window.performance.mark() throws a TypeError exception. 
-PASS window.performance.mark("navigationStart") throws a SyntaxError exception. 
-PASS window.performance.mark("unloadEventStart") throws a SyntaxError exception. 
-PASS window.performance.mark("unloadEventEnd") throws a SyntaxError exception. 
-PASS window.performance.mark("redirectStart") throws a SyntaxError exception. 
-PASS window.performance.mark("redirectEnd") throws a SyntaxError exception. 
-PASS window.performance.mark("fetchStart") throws a SyntaxError exception. 
-PASS window.performance.mark("domainLookupStart") throws a SyntaxError exception. 
-PASS window.performance.mark("domainLookupEnd") throws a SyntaxError exception. 
-PASS window.performance.mark("connectStart") throws a SyntaxError exception. 
-PASS window.performance.mark("connectEnd") throws a SyntaxError exception. 
-PASS window.performance.mark("secureConnectionStart") throws a SyntaxError exception. 
-PASS window.performance.mark("requestStart") throws a SyntaxError exception. 
-PASS window.performance.mark("responseStart") throws a SyntaxError exception. 
-PASS window.performance.mark("responseEnd") throws a SyntaxError exception. 
-PASS window.performance.mark("domLoading") throws a SyntaxError exception. 
-PASS window.performance.mark("domInteractive") throws a SyntaxError exception. 
-PASS window.performance.mark("domContentLoadedEventStart") throws a SyntaxError exception. 
-PASS window.performance.mark("domContentLoadedEventEnd") throws a SyntaxError exception. 
-PASS window.performance.mark("domComplete") throws a SyntaxError exception. 
-PASS window.performance.mark("loadEventStart") throws a SyntaxError exception. 
-PASS window.performance.mark("loadEventEnd") throws a SyntaxError exception. 
+PASS window.performance.mark() throws a TypeError exception.
+PASS window.performance.mark("navigationStart") throws a SyntaxError exception.
+PASS window.performance.mark("unloadEventStart") throws a SyntaxError exception.
+PASS window.performance.mark("unloadEventEnd") throws a SyntaxError exception.
+PASS window.performance.mark("redirectStart") throws a SyntaxError exception.
+PASS window.performance.mark("redirectEnd") throws a SyntaxError exception.
+PASS window.performance.mark("fetchStart") throws a SyntaxError exception.
+PASS window.performance.mark("domainLookupStart") throws a SyntaxError exception.
+PASS window.performance.mark("domainLookupEnd") throws a SyntaxError exception.
+PASS window.performance.mark("connectStart") throws a SyntaxError exception.
+PASS window.performance.mark("connectEnd") throws a SyntaxError exception.
+PASS window.performance.mark("secureConnectionStart") throws a SyntaxError exception.
+PASS window.performance.mark("requestStart") throws a SyntaxError exception.
+PASS window.performance.mark("responseStart") throws a SyntaxError exception.
+PASS window.performance.mark("responseEnd") throws a SyntaxError exception.
+PASS window.performance.mark("domLoading") throws a SyntaxError exception.
+PASS window.performance.mark("domInteractive") throws a SyntaxError exception.
+PASS window.performance.mark("domContentLoadedEventStart") throws a SyntaxError exception.
+PASS window.performance.mark("domContentLoadedEventEnd") throws a SyntaxError exception.
+PASS window.performance.mark("domComplete") throws a SyntaxError exception.
+PASS window.performance.mark("loadEventStart") throws a SyntaxError exception.
+PASS window.performance.mark("loadEventEnd") throws a SyntaxError exception.
 

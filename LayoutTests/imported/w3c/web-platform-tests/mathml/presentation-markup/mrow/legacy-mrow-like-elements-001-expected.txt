@@ -1,33 +1,33 @@
 
-PASS Element is laid out as an mrow with only first child displayed (id=semantics) 
+PASS Element is laid out as an mrow with only first child displayed (id=semantics)
 FAIL Computed display of children (id=semantics) assert_equals: First child has display: math expected "math" but got "block"
-PASS Element is laid out as an mrow with only first child displayed (id=semantics-annotations) 
+PASS Element is laid out as an mrow with only first child displayed (id=semantics-annotations)
 FAIL Computed display of children (id=semantics-annotations) assert_equals: First child has display: math expected "math" but got "block"
-PASS Element is laid out as an mrow with only first child displayed (id=maction) 
+PASS Element is laid out as an mrow with only first child displayed (id=maction)
 FAIL Computed display of children (id=maction) assert_equals: First child has display: math expected "math" but got "block"
-PASS Element is laid out as an mrow with only first child displayed (id=maction-toggle) 
+PASS Element is laid out as an mrow with only first child displayed (id=maction-toggle)
 FAIL Computed display of children (id=maction-toggle) assert_equals: First child has display: math expected "math" but got "block"
 FAIL Element is laid out as an mrow with only first child displayed (id=maction-toggle-selection) assert_approx_equals: block size expected 10 +/- 1 but got 20
 FAIL Computed display of children (id=maction-toggle-selection) assert_equals: First child has display: math expected "math" but got "block"
-PASS Element is laid out as an mrow with only first child displayed (id=maction-statusline) 
+PASS Element is laid out as an mrow with only first child displayed (id=maction-statusline)
 FAIL Computed display of children (id=maction-statusline) assert_equals: First child has display: math expected "math" but got "block"
-PASS Element is laid out as an mrow with only first child displayed (id=maction-tooltip) 
+PASS Element is laid out as an mrow with only first child displayed (id=maction-tooltip)
 FAIL Computed display of children (id=maction-tooltip) assert_equals: First child has display: math expected "math" but got "block"
-PASS Element is laid out as an mrow with only first child displayed (id=maction-input) 
+PASS Element is laid out as an mrow with only first child displayed (id=maction-input)
 FAIL Computed display of children (id=maction-input) assert_equals: First child has display: math expected "math" but got "block"
- 
 
- 
 
- 
 
- 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
+
+
+
+
 

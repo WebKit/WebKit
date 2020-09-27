@@ -8,7 +8,7 @@ This test validates that for a cross origin resource, the timing allow check alg
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByType is defined 
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
 FAIL The iframe should have one resource timing entry. assert_equals: The iframe should have one resource timing entry. expected 1 but got 0
 

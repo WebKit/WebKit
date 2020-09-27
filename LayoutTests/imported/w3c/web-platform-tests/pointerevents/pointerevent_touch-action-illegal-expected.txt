@@ -7,7 +7,7 @@ touch-action: none
 The following pointer types were detected: (none).
 
 
-PASS 'pan-x none' is corrected properly 
-PASS 'pan-y none' is corrected properly 
-PASS 'auto none' is corrected properly 
+PASS 'pan-x none' is corrected properly
+PASS 'pan-y none' is corrected properly
+PASS 'auto none' is corrected properly
 

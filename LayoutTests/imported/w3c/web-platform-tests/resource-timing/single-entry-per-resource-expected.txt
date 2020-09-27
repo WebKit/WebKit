@@ -4,5 +4,5 @@ One resource when reusing data
 If the user agent is to reuse the data from another existing or completed fetch initiated from the current document, abort the remaining steps.
 
 
-PASS Only one resource entry per resource 
+PASS Only one resource entry per resource
 

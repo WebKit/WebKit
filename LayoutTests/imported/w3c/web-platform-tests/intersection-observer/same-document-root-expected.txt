@@ -1,9 +1,9 @@
 
-PASS IntersectionObserver in a single document with explicit root. 
-PASS First rAF 
-PASS document.scrollingElement.scrollTop = window.innerHeight. 
-PASS root.scrollTop = 150 with root scrolled into view. 
-PASS document.scrollingElement.scrollTop = 0. 
-PASS root.scrollTop = 0 
-PASS root.scrollTop = 150 with root scrolled out of view. 
+PASS IntersectionObserver in a single document with explicit root.
+PASS First rAF
+PASS document.scrollingElement.scrollTop = window.innerHeight.
+PASS root.scrollTop = 150 with root scrolled into view.
+PASS document.scrollingElement.scrollTop = 0.
+PASS root.scrollTop = 0
+PASS root.scrollTop = 150 with root scrolled out of view.
 

@@ -3,5 +3,5 @@ slotted below
 slotted above
 belowHost
 
-PASS Order when all elements in shadow tree has negative tabindex 
+PASS Order when all elements in shadow tree has negative tabindex
 

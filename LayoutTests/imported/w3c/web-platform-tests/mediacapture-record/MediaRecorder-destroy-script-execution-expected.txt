@@ -1,4 +1,4 @@
 
-PASS MediaRecorder will not fire the stop event when stop() is called and the script execution context is going away 
-PASS MediaRecorder will not fire the stop event when all tracks are ended and the script execution context is going away 
+PASS MediaRecorder will not fire the stop event when stop() is called and the script execution context is going away
+PASS MediaRecorder will not fire the stop event when all tracks are ended and the script execution context is going away
 

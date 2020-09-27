@@ -1,5 +1,5 @@
 
-PASS First observation with a threshold. 
-PASS First rAF 
-PASS root.scrollTop = 20 
+PASS First observation with a threshold.
+PASS First rAF
+PASS root.scrollTop = 20
 

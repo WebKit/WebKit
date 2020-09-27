@@ -1,10 +1,10 @@
 
-PASS underlying sink's write should not be called until start finishes 
-PASS underlying sink's close should not be called until start finishes 
-PASS underlying sink's write or close should not be called if start throws 
-PASS underlying sink's write or close should not be invoked if the promise returned by start is rejected 
-PASS returning a thenable from start() should work 
-PASS controller.error() during start should cause writes to fail 
-PASS controller.error() during async start should cause existing writes to fail 
-PASS when start() rejects, writer promises should reject in standard order 
+PASS underlying sink's write should not be called until start finishes
+PASS underlying sink's close should not be called until start finishes
+PASS underlying sink's write or close should not be called if start throws
+PASS underlying sink's write or close should not be invoked if the promise returned by start is rejected
+PASS returning a thenable from start() should work
+PASS controller.error() during start should cause writes to fail
+PASS controller.error() during async start should cause existing writes to fail
+PASS when start() rejects, writer promises should reject in standard order
 

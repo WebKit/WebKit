@@ -1,12 +1,12 @@
 
-PASS ready returns the same Promise object 
-PASS ready returns a Promise object in the context of the related document 
-PASS ready on a controlled document 
-PASS ready on a potential controlled document 
-PASS ready on an iframe whose parent registers a new service worker 
-PASS ready on an iframe that installs a new service worker 
-PASS ready after a longer matched registration registered 
-PASS access ready after it has been resolved 
-PASS resolve ready after unregistering and reregistering 
+PASS ready returns the same Promise object
+PASS ready returns a Promise object in the context of the related document
+PASS ready on a controlled document
+PASS ready on a potential controlled document
+PASS ready on an iframe whose parent registers a new service worker
+PASS ready on an iframe that installs a new service worker
+PASS ready after a longer matched registration registered
+PASS access ready after it has been resolved
+PASS resolve ready after unregistering and reregistering
 FAIL resolve ready before unregistering and reregistering assert_equals: Resolves with the first registration expected "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js" but got "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js?2"
 

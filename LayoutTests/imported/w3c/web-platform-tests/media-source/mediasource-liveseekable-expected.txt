@@ -1,12 +1,12 @@
 
-PASS setLiveSeekableRange throws an InvalidStateError exception if the readyState attribute is not 'open' 
-PASS clearLiveSeekableRange throws an InvalidStateError exception if the readyState attribute is not 'open' 
-PASS setLiveSeekableRange does not restrict to not currently updating 
-PASS clearLiveSeekableRange does not restrict to not currently updating 
-PASS setLiveSeekableRange throws a TypeError if start is negative 
-PASS setLiveSeekableRange throws a TypeError if start is greater than end 
-PASS setLiveSeekableRange returns with no error when conditions are correct 
-PASS clearLiveSeekableRange returns with no error when conditions are correct 
-PASS HTMLMediaElement.seekable returns the live seekable range or an empty range if that range was cleared when nothing is buffered 
-PASS HTMLMediaElement.seekable returns the union of the buffered range and the live seekable range, when set 
+PASS setLiveSeekableRange throws an InvalidStateError exception if the readyState attribute is not 'open'
+PASS clearLiveSeekableRange throws an InvalidStateError exception if the readyState attribute is not 'open'
+PASS setLiveSeekableRange does not restrict to not currently updating
+PASS clearLiveSeekableRange does not restrict to not currently updating
+PASS setLiveSeekableRange throws a TypeError if start is negative
+PASS setLiveSeekableRange throws a TypeError if start is greater than end
+PASS setLiveSeekableRange returns with no error when conditions are correct
+PASS clearLiveSeekableRange returns with no error when conditions are correct
+PASS HTMLMediaElement.seekable returns the live seekable range or an empty range if that range was cleared when nothing is buffered
+PASS HTMLMediaElement.seekable returns the union of the buffered range and the live seekable range, when set
 

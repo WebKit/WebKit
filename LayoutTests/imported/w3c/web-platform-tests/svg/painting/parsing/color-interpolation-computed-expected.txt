@@ -1,5 +1,5 @@
 
-PASS Property color-interpolation value 'auto' 
+PASS Property color-interpolation value 'auto'
 FAIL Property color-interpolation value 'srgb' assert_equals: expected "srgb" but got "sRGB"
 FAIL Property color-interpolation value 'linearrgb' assert_equals: expected "linearrgb" but got "linearRGB"
 

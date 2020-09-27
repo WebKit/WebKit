@@ -1,5 +1,5 @@
 
-PASS SVGAElement.text getting 
+PASS SVGAElement.text getting
 FAIL Test for anchor 0 assert_equals: expected (string) "a b c " but got (undefined) undefined
 FAIL Test for anchor 1 assert_equals: expected (string) "a b c " but got (undefined) undefined
 FAIL Test for anchor 2 assert_equals: expected (string) "a b c " but got (undefined) undefined

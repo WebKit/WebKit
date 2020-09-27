@@ -4,5 +4,5 @@ When a captured pointer is implicitly released after a click, the boundary event
 
 Click on the black box with mouse and do not move the mouse after or during the click.
 
-PASS mouse Event sequence at implicit release on click 
+PASS mouse Event sequence at implicit release on click
 

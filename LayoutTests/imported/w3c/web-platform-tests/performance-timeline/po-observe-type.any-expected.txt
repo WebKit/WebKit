@@ -1,8 +1,8 @@
 
-PASS Calling observe() without 'type' or 'entryTypes' throws a TypeError 
-PASS Calling observe() with entryTypes and then type should throw an InvalidModificationError 
-PASS Calling observe() with type and then entryTypes should throw an InvalidModificationError 
-PASS Calling observe() with type and entryTypes should throw a TypeError 
-PASS Passing in unknown values to type does throw an exception. 
-PASS observe() with different type values stacks. 
+PASS Calling observe() without 'type' or 'entryTypes' throws a TypeError
+PASS Calling observe() with entryTypes and then type should throw an InvalidModificationError
+PASS Calling observe() with type and then entryTypes should throw an InvalidModificationError
+PASS Calling observe() with type and entryTypes should throw a TypeError
+PASS Passing in unknown values to type does throw an exception.
+PASS observe() with different type values stacks.
 

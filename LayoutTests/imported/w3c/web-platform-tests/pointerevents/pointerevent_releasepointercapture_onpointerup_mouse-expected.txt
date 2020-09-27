@@ -16,5 +16,5 @@ The following pointer types were detected: mouse.
 The following events were logged: gotpointercapture@target0, pointerup@target0, lostpointercapture@target0.
 
 
-PASS pointerup was received before lostpointercapture 
+PASS pointerup was received before lostpointercapture
 

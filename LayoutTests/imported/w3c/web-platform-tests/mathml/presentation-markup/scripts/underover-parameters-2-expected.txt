@@ -1,8 +1,8 @@
 
-PASS StretchStackBottomShiftDown 
-PASS StretchStackGapBelowMin 
-PASS StretchStackTopShiftUp 
-PASS StretchStackGapAboveMin 
+PASS StretchStackBottomShiftDown
+PASS StretchStackGapBelowMin
+PASS StretchStackTopShiftUp
+PASS StretchStackGapAboveMin
 →
 →
 

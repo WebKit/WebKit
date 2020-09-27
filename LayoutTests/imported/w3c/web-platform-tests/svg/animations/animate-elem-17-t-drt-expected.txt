@@ -7,5 +7,5 @@ Time (s):
 8
 $Revision: 1.6 $
 
-PASS A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times 
+PASS A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times
 

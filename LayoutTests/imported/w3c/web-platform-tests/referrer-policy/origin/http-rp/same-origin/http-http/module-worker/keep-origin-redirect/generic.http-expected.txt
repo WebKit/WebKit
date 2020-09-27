@@ -3,5 +3,5 @@ PASS The referrer URL is origin when a
                                  document served over http requires an http
                                  sub-resource via module-worker using the http-rp
                                  delivery method with keep-origin-redirect and when
-                                 the target request is same-origin. 
+                                 the target request is same-origin.
 

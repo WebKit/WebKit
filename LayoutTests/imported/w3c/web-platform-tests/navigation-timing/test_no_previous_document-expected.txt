@@ -3,10 +3,10 @@ Description
 This test validates the unload event times are 0 when there is no previous document.
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS timing.navigation.type is TYPE_NAVIGATE 
-PASS timing.unloadEventStart == 0 on navigation with no previous document 
-PASS timing.unloadEventEnd == 0 navigation with no previous document 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS timing.navigation.type is TYPE_NAVIGATE
+PASS timing.unloadEventStart == 0 on navigation with no previous document
+PASS timing.unloadEventEnd == 0 navigation with no previous document
 
 

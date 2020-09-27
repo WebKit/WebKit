@@ -6,5 +6,5 @@ CONSOLE MESSAGE: The resource http://localhost:8800/preload/resources/sound_5.og
 CONSOLE MESSAGE: The resource http://localhost:8800/preload/resources/foo.vtt?single-download-preload was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
   PASS - this text is here just so that the browser will download the font.
 
-PASS Makes sure that preloaded resources are not downloaded again when used 
+PASS Makes sure that preloaded resources are not downloaded again when used
 

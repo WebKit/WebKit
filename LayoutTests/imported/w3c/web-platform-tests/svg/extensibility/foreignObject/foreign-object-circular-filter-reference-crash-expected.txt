@@ -1,4 +1,4 @@
- 
 
-PASS Should not crash on circular filter reference containing a foreignObject. 
+
+PASS Should not crash on circular filter reference containing a foreignObject.
 

@@ -9,5 +9,5 @@ Pointer Events setPointerCapture Tests
 The following pointer types were detected: mouse.
 
 
-PASS setPointerCapture + inactive button state 
+PASS setPointerCapture + inactive button state
 

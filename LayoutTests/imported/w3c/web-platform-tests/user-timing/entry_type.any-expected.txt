@@ -1,4 +1,4 @@
 
-PASS Validate the user timing entry type PerformanceMark 
-PASS Validate the user timing entry type PerformanceMeasure 
+PASS Validate the user timing entry type PerformanceMark
+PASS Validate the user timing entry type PerformanceMeasure
 

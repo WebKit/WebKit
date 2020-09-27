@@ -73,6 +73,6 @@ touch-action: auto to none
 The following pointer types were detected: touch.
 
 
-PASS touch-action was changed 
-PASS scroll should be received before the test finishes 
+PASS touch-action was changed
+PASS scroll should be received before the test finishes
 

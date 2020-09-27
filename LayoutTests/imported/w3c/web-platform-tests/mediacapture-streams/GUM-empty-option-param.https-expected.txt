@@ -3,5 +3,5 @@ Description
 This test checks that getUserMedia with no value in the options parameter raises a NOT_SUPPORTED_ERR exception.
 
 
-PASS Tests that getUserMedia is rejected with a TypeError when used with an empty options parameter 
+PASS Tests that getUserMedia is rejected with a TypeError when used with an empty options parameter
 

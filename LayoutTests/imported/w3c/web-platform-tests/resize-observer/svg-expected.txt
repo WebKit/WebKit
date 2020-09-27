@@ -4,20 +4,20 @@ Here is a paragraph that requires word wrap
 
 svg text tag
 
-PASS ResizeObserver implemented 
-PASS guard 
-PASS test0: observe svg:circle 
-PASS test1: observe svg:ellipse 
-PASS test2: observe svg:foreignObject 
-PASS test3: observe svg:image 
-PASS test4: observe svg:line 
-PASS test5: observe svg:path 
-PASS test6: observe svg:polygon 
-PASS test7: observe svg:polyline 
-PASS test8: observe svg:rect 
-PASS test9: observe svg:text 
-PASS test10: observe svg:svg, top/left is 0 even with padding 
-PASS test11: observe svg non-displayable element 
+PASS ResizeObserver implemented
+PASS guard
+PASS test0: observe svg:circle
+PASS test1: observe svg:ellipse
+PASS test2: observe svg:foreignObject
+PASS test3: observe svg:image
+PASS test4: observe svg:line
+PASS test5: observe svg:path
+PASS test6: observe svg:polygon
+PASS test7: observe svg:polyline
+PASS test8: observe svg:rect
+PASS test9: observe svg:text
+PASS test10: observe svg:svg, top/left is 0 even with padding
+PASS test11: observe svg non-displayable element
 FAIL test12: observe svg:rect content box undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
 FAIL test13: observe svg:rect border box undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
 FAIL test14: observe g:rect content and border box undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')

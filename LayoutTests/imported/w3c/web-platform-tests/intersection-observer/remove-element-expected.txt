@@ -1,8 +1,8 @@
 
-PASS Verify that not-intersecting notifications are sent when a target is removed from the DOM tree. 
-PASS First rAF 
-PASS root.scrollTop = 150 
-PASS root.removeChild(target). 
-PASS root.insertBefore(target, trailingSpace). 
-PASS root.scrollTop = 150 after reinserting target. 
+PASS Verify that not-intersecting notifications are sent when a target is removed from the DOM tree.
+PASS First rAF
+PASS root.scrollTop = 150
+PASS root.removeChild(target).
+PASS root.insertBefore(target, trailingSpace).
+PASS root.scrollTop = 150 after reinserting target.
 

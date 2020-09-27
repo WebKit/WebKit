@@ -3,34 +3,34 @@ PointerEvent: Dispatch custom event
 Test Description: This test checks if on pointer event handlers through attributes works properly using synthetic pointerevents. For valid results, this test must be run without generating real (trusted) events on the black rectangle below.
 
 
-PASS The default value of onpointerdown is always null 
-PASS The onpointerdown content attribute must be compiled into the onpointerdown property 
-PASS dispatching a pointerdown event must trigger element.onpointerdown 
-PASS The default value of onpointerup is always null 
-PASS The onpointerup content attribute must be compiled into the onpointerup property 
-PASS dispatching a pointerup event must trigger element.onpointerup 
-PASS The default value of onpointercancel is always null 
-PASS The onpointercancel content attribute must be compiled into the onpointercancel property 
-PASS dispatching a pointercancel event must trigger element.onpointercancel 
-PASS The default value of onpointermove is always null 
-PASS The onpointermove content attribute must be compiled into the onpointermove property 
-PASS dispatching a pointermove event must trigger element.onpointermove 
-PASS The default value of onpointerover is always null 
-PASS The onpointerover content attribute must be compiled into the onpointerover property 
-PASS dispatching a pointerover event must trigger element.onpointerover 
-PASS The default value of onpointerout is always null 
-PASS The onpointerout content attribute must be compiled into the onpointerout property 
-PASS dispatching a pointerout event must trigger element.onpointerout 
-PASS The default value of onpointerenter is always null 
-PASS The onpointerenter content attribute must be compiled into the onpointerenter property 
-PASS dispatching a pointerenter event must trigger element.onpointerenter 
-PASS The default value of onpointerleave is always null 
-PASS The onpointerleave content attribute must be compiled into the onpointerleave property 
-PASS dispatching a pointerleave event must trigger element.onpointerleave 
-PASS The default value of ongotpointercapture is always null 
-PASS The ongotpointercapture content attribute must be compiled into the ongotpointercapture property 
-PASS dispatching a gotpointercapture event must trigger element.ongotpointercapture 
-PASS The default value of onlostpointercapture is always null 
-PASS The onlostpointercapture content attribute must be compiled into the onlostpointercapture property 
-PASS dispatching a lostpointercapture event must trigger element.onlostpointercapture 
+PASS The default value of onpointerdown is always null
+PASS The onpointerdown content attribute must be compiled into the onpointerdown property
+PASS dispatching a pointerdown event must trigger element.onpointerdown
+PASS The default value of onpointerup is always null
+PASS The onpointerup content attribute must be compiled into the onpointerup property
+PASS dispatching a pointerup event must trigger element.onpointerup
+PASS The default value of onpointercancel is always null
+PASS The onpointercancel content attribute must be compiled into the onpointercancel property
+PASS dispatching a pointercancel event must trigger element.onpointercancel
+PASS The default value of onpointermove is always null
+PASS The onpointermove content attribute must be compiled into the onpointermove property
+PASS dispatching a pointermove event must trigger element.onpointermove
+PASS The default value of onpointerover is always null
+PASS The onpointerover content attribute must be compiled into the onpointerover property
+PASS dispatching a pointerover event must trigger element.onpointerover
+PASS The default value of onpointerout is always null
+PASS The onpointerout content attribute must be compiled into the onpointerout property
+PASS dispatching a pointerout event must trigger element.onpointerout
+PASS The default value of onpointerenter is always null
+PASS The onpointerenter content attribute must be compiled into the onpointerenter property
+PASS dispatching a pointerenter event must trigger element.onpointerenter
+PASS The default value of onpointerleave is always null
+PASS The onpointerleave content attribute must be compiled into the onpointerleave property
+PASS dispatching a pointerleave event must trigger element.onpointerleave
+PASS The default value of ongotpointercapture is always null
+PASS The ongotpointercapture content attribute must be compiled into the ongotpointercapture property
+PASS dispatching a gotpointercapture event must trigger element.ongotpointercapture
+PASS The default value of onlostpointercapture is always null
+PASS The onlostpointercapture content attribute must be compiled into the onlostpointercapture property
+PASS dispatching a lostpointercapture event must trigger element.onlostpointercapture
 

@@ -1,17 +1,17 @@
 
-PASS no sizing attributes set 
-PASS specified width 
-PASS modified specified width 
-PASS specified width and height 
-PASS specified width and modified specified height 
-PASS specified height 
-PASS modified specified height 
-PASS no specified sizing attrs (after setting & removing them) 
-PASS set a 10x8 viewBox 
-PASS modified viewBox to 50x20 
-PASS adding specified width, in presence of specified viewBox 
-PASS modifiying specified viewBox, in presence of specified width 
-PASS removing specified width, in presence of specified viewBox 
-PASS adding specified height, in presence of specified viewBox 
+PASS no sizing attributes set
+PASS specified width
+PASS modified specified width
+PASS specified width and height
+PASS specified width and modified specified height
+PASS specified height
+PASS modified specified height
+PASS no specified sizing attrs (after setting & removing them)
+PASS set a 10x8 viewBox
+PASS modified viewBox to 50x20
+PASS adding specified width, in presence of specified viewBox
+PASS modifiying specified viewBox, in presence of specified width
+PASS removing specified width, in presence of specified viewBox
+PASS adding specified height, in presence of specified viewBox
 FAIL modifiying specified viewBox, in presence of specified height assert_equals: checking width. expected 50 but got 80
 

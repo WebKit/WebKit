@@ -1,7 +1,7 @@
 
-PASS Create a mark "existing_mark" 
-PASS self.performance.measure("measure", "mark"), where "mark" is a non-existent mark, throws a SyntaxError exception. 
-PASS self.performance.measure("measure", "mark", "existing_mark"), where "mark" is a non-existent mark, throws a SyntaxError exception. 
-PASS self.performance.measure("measure", "existing_mark", "mark"), where "mark" is a non-existent mark, throws a SyntaxError exception. 
-PASS self.performance.measure("measure", "mark", "mark"), where "mark" is a non-existent mark, throws a SyntaxError exception. 
+PASS Create a mark "existing_mark"
+PASS self.performance.measure("measure", "mark"), where "mark" is a non-existent mark, throws a SyntaxError exception.
+PASS self.performance.measure("measure", "mark", "existing_mark"), where "mark" is a non-existent mark, throws a SyntaxError exception.
+PASS self.performance.measure("measure", "existing_mark", "mark"), where "mark" is a non-existent mark, throws a SyntaxError exception.
+PASS self.performance.measure("measure", "mark", "mark"), where "mark" is a non-existent mark, throws a SyntaxError exception.
 

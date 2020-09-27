@@ -1,6 +1,6 @@
 
-PASS global setup 
+PASS global setup
 FAIL base URL when service worker does respondWith(fetch(responseUrl)). assert_equals: referrer expected "https://localhost:9443/service-workers/service-worker/resources/fetch-request-css-base-url-style.css?fetch" but got "https://localhost:9443/service-workers/service-worker/resources/fetch-request-css-base-url-iframe.html?fetch"
 FAIL base URL when service worker does respondWith(new Response()). assert_equals: referrer expected "https://localhost:9443/service-workers/service-worker/resources/request-url-path/fetch-request-css-base-url-style.css?newResponse" but got "https://localhost:9443/service-workers/service-worker/resources/fetch-request-css-base-url-iframe.html?newResponse"
-PASS cleanup global state 
+PASS cleanup global state
 

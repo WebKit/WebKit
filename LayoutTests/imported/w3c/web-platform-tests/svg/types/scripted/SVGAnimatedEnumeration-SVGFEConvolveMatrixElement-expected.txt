@@ -1,3 +1,3 @@
 
-PASS Use of SVGAnimatedEnumeration within SVGFEConvolveMatrixElement 
+PASS Use of SVGAnimatedEnumeration within SVGFEConvolveMatrixElement
 

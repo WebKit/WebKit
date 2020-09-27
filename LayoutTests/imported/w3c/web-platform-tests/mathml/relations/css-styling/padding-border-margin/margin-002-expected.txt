@@ -57,8 +57,8 @@ FAIL Margin properties on msubsup (no margin-collapsing) assert_approx_equals: b
 FAIL Margin properties on msup assert_approx_equals: top margin expected 50 +/- 1 but got 0
 FAIL Margin properties on msup (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
 FAIL Margin properties on msup (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
-PASS Margin properties on mtable 
-PASS Margin properties on mtable (rtl) 
+PASS Margin properties on mtable
+PASS Margin properties on mtable (rtl)
 FAIL Margin properties on mtable (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 150
 FAIL Margin properties on mtext assert_approx_equals: top margin expected 50 +/- 1 but got 100
 FAIL Margin properties on mtext (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100

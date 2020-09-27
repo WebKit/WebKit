@@ -1,27 +1,27 @@
 
 Harness Error (FAIL), message = Unhandled rejection: error1
 
-PASS a signal argument 'null' should cause pipeTo() to reject 
-PASS a signal argument 'AbortSignal' should cause pipeTo() to reject 
-PASS a signal argument 'true' should cause pipeTo() to reject 
-PASS a signal argument '-1' should cause pipeTo() to reject 
+PASS a signal argument 'null' should cause pipeTo() to reject
+PASS a signal argument 'AbortSignal' should cause pipeTo() to reject
+PASS a signal argument 'true' should cause pipeTo() to reject
+PASS a signal argument '-1' should cause pipeTo() to reject
 FAIL a signal argument '[object AbortSignal]' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-PASS an aborted signal should cause the writable stream to reject with an AbortError 
-PASS all the AbortError objects should be the same object 
-PASS preventCancel should prevent canceling the readable 
-PASS preventAbort should prevent aborting the readable 
-PASS preventCancel and preventAbort should prevent canceling the readable and aborting the readable 
-PASS abort should prevent further reads 
-PASS all pending writes should complete on abort 
-PASS a rejection from underlyingSource.cancel() should be returned by pipeTo() 
-PASS a rejection from underlyingSink.abort() should be returned by pipeTo() 
-PASS a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel() 
-PASS abort signal takes priority over closed readable 
-PASS abort signal takes priority over errored readable 
-PASS abort signal takes priority over closed writable 
-PASS abort signal takes priority over errored writable 
-PASS abort should do nothing after the readable is closed 
-PASS abort should do nothing after the readable is errored 
-PASS abort should do nothing after the readable is errored, even with pending writes 
-PASS abort should do nothing after the writable is errored 
+PASS an aborted signal should cause the writable stream to reject with an AbortError
+PASS all the AbortError objects should be the same object
+PASS preventCancel should prevent canceling the readable
+PASS preventAbort should prevent aborting the readable
+PASS preventCancel and preventAbort should prevent canceling the readable and aborting the readable
+PASS abort should prevent further reads
+PASS all pending writes should complete on abort
+PASS a rejection from underlyingSource.cancel() should be returned by pipeTo()
+PASS a rejection from underlyingSink.abort() should be returned by pipeTo()
+PASS a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel()
+PASS abort signal takes priority over closed readable
+PASS abort signal takes priority over errored readable
+PASS abort signal takes priority over closed writable
+PASS abort signal takes priority over errored writable
+PASS abort should do nothing after the readable is closed
+PASS abort should do nothing after the readable is errored
+PASS abort should do nothing after the readable is errored, even with pending writes
+PASS abort should do nothing after the writable is errored
 

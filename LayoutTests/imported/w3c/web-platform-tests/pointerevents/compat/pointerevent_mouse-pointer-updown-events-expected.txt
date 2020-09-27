@@ -1,5 +1,5 @@
 Verifies that pointerup/down are fired correctly for corresponding mouse events
 
 
-PASS pointerup/down events are fired correctly for corresponding mouse events 
+PASS pointerup/down events are fired correctly for corresponding mouse events
 

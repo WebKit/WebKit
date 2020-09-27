@@ -1,4 +1,4 @@
-  
 
-PASS Claim works after redirection to another origin 
+
+PASS Claim works after redirection to another origin
 

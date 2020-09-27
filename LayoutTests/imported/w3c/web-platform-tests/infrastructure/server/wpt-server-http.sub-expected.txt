@@ -18,8 +18,8 @@ Blocked access to external URL https://xn--n8j6ds53lwwkrqhv28a.localhost:9443/me
 Blocked access to external URL https://nonexistent.localhost:8800/media/1x1-green.png
 Blocked access to external URL https://nonexistent.localhost:8801/media/1x1-green.png
 
-PASS HTTP protocol, no subdomain, port #1 
-PASS HTTP protocol, no subdomain, port #2 
+PASS HTTP protocol, no subdomain, port #1
+PASS HTTP protocol, no subdomain, port #2
 FAIL HTTP protocol, www subdomain #1, port #1 assert_true: expected true got false
 FAIL HTTP protocol, www subdomain #1, port #2 assert_true: expected true got false
 FAIL HTTP protocol, www subdomain #2, port #1 assert_true: expected true got false
@@ -30,14 +30,14 @@ FAIL HTTP protocol, punycode subdomain #1, port #1 assert_true: expected true go
 FAIL HTTP protocol, punycode subdomain #1, port #2 assert_true: expected true got false
 FAIL HTTP protocol, punycode subdomain #2, port #1 assert_true: expected true got false
 FAIL HTTP protocol, punycode subdomain #2, port #2 assert_true: expected true got false
-PASS HTTP protocol, non-existent domain, port #1 
-PASS HTTP protocol, non-existent domain, port #2 
-PASS HTTPS protocol, no subdomain 
+PASS HTTP protocol, non-existent domain, port #1
+PASS HTTP protocol, non-existent domain, port #2
+PASS HTTPS protocol, no subdomain
 FAIL HTTPS protocol, www subdomain #1 assert_true: expected true got false
 FAIL HTTPS protocol, www subdomain #2 assert_true: expected true got false
 FAIL HTTPS protocol, www subdomain #3 assert_true: expected true got false
 FAIL HTTPS protocol, punycode subdomain #1 assert_true: expected true got false
 FAIL HTTPS protocol, punycode subdomain #2 assert_true: expected true got false
-PASS HTTPS protocol, non-existent domain, port #1 
-PASS HTTPS protocol, non-existent domain, port #2 
+PASS HTTPS protocol, non-existent domain, port #1
+PASS HTTPS protocol, non-existent domain, port #2
 

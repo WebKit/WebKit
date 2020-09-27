@@ -3,26 +3,26 @@ Description
 This test validates that all of the window.performance.timing attributes exist (but does not validate that their values are correct).
 
 
-PASS window.performance is defined 
-PASS window.performance.timing is defined 
-PASS window.performance.timing.connectEnd is defined. 
-PASS window.performance.timing.connectStart is defined. 
-PASS window.performance.timing.domComplete is defined. 
-PASS window.performance.timing.domContentLoadedEventEnd is defined. 
-PASS window.performance.timing.domContentLoadedEventStart is defined. 
-PASS window.performance.timing.domInteractive is defined. 
-PASS window.performance.timing.domLoading is defined. 
-PASS window.performance.timing.domainLookupEnd is defined. 
-PASS window.performance.timing.domainLookupStart is defined. 
-PASS window.performance.timing.fetchStart is defined. 
-PASS window.performance.timing.loadEventEnd is defined. 
-PASS window.performance.timing.loadEventStart is defined. 
-PASS window.performance.timing.navigationStart is defined. 
-PASS window.performance.timing.redirectEnd is defined. 
-PASS window.performance.timing.redirectStart is defined. 
-PASS window.performance.timing.requestStart is defined. 
-PASS window.performance.timing.responseEnd is defined. 
-PASS window.performance.timing.responseStart is defined. 
-PASS window.performance.timing.unloadEventEnd is defined. 
-PASS window.performance.timing.unloadEventStart is defined. 
+PASS window.performance is defined
+PASS window.performance.timing is defined
+PASS window.performance.timing.connectEnd is defined.
+PASS window.performance.timing.connectStart is defined.
+PASS window.performance.timing.domComplete is defined.
+PASS window.performance.timing.domContentLoadedEventEnd is defined.
+PASS window.performance.timing.domContentLoadedEventStart is defined.
+PASS window.performance.timing.domInteractive is defined.
+PASS window.performance.timing.domLoading is defined.
+PASS window.performance.timing.domainLookupEnd is defined.
+PASS window.performance.timing.domainLookupStart is defined.
+PASS window.performance.timing.fetchStart is defined.
+PASS window.performance.timing.loadEventEnd is defined.
+PASS window.performance.timing.loadEventStart is defined.
+PASS window.performance.timing.navigationStart is defined.
+PASS window.performance.timing.redirectEnd is defined.
+PASS window.performance.timing.redirectStart is defined.
+PASS window.performance.timing.requestStart is defined.
+PASS window.performance.timing.responseEnd is defined.
+PASS window.performance.timing.responseStart is defined.
+PASS window.performance.timing.unloadEventEnd is defined.
+PASS window.performance.timing.unloadEventStart is defined.
 

@@ -3,5 +3,5 @@
 Harness Error (FAIL), message = Error: assert_array_equals: property 1, expected false but got true
 
 TIMEOUT Verify matchAll() with windows respect includeUncontrolled Test timed out
-NOTRUN Verify matchAll() with shared workers respect includeUncontrolled 
+NOTRUN Verify matchAll() with shared workers respect includeUncontrolled
 

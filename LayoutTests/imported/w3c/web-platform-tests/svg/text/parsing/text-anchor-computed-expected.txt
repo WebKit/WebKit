@@ -1,5 +1,5 @@
 
-PASS Property text-anchor value 'start' 
-PASS Property text-anchor value 'middle' 
-PASS Property text-anchor value 'end' 
+PASS Property text-anchor value 'start'
+PASS Property text-anchor value 'middle'
+PASS Property text-anchor value 'end'
 

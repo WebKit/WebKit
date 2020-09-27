@@ -1,4 +1,4 @@
 
-PASS Event.composedPath() should return the same result even if DOM is mutated (1/2) 
-PASS Event.composedPath() should return the same result even if DOM is mutated (2/2) 
+PASS Event.composedPath() should return the same result even if DOM is mutated (1/2)
+PASS Event.composedPath() should return the same result even if DOM is mutated (2/2)
 

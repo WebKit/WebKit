@@ -1,5 +1,5 @@
 
-PASS Verify Indexed DB operation in a Service Worker 
-PASS clean up: registration 
-PASS clean up: database 
+PASS Verify Indexed DB operation in a Service Worker
+PASS clean up: registration
+PASS clean up: database
 

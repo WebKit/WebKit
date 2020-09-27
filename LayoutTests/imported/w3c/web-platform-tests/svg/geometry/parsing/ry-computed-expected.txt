@@ -1,9 +1,9 @@
 
-PASS Property ry value 'auto' 
-PASS Property ry value '10px' 
-PASS Property ry value '0.5em' 
-PASS Property ry value 'calc(10px + 0.5em)' 
-PASS Property ry value 'calc(10px - 0.5em)' 
-PASS Property ry value '40%' 
-PASS Property ry value 'calc(50% + 60px)' 
+PASS Property ry value 'auto'
+PASS Property ry value '10px'
+PASS Property ry value '0.5em'
+PASS Property ry value 'calc(10px + 0.5em)'
+PASS Property ry value 'calc(10px - 0.5em)'
+PASS Property ry value '40%'
+PASS Property ry value 'calc(50% + 60px)'
 

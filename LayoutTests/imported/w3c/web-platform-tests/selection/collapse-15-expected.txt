@@ -1,37 +1,37 @@
 
-PASS Set up range 15 [document.documentElement, 0, document.documentElement, 1] 
-PASS Set up range 16 [document.documentElement, 0, document.documentElement, 2] 
-PASS Set up range 17 [document.documentElement, 1, document.documentElement, 2] 
-PASS Set up range 18 [document.head, 1, document.head, 1] 
-PASS Set up range 19 [document.body, 0, document.body, 1] 
-PASS Set up range 20 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] 
-PASS Set up range 21 [foreignDoc.head, 1, foreignDoc.head, 1] 
-PASS Set up range 22 [foreignDoc.body, 0, foreignDoc.body, 0] 
-PASS Set up range 23 [paras[0], 0, paras[0], 0] 
-PASS Set up range 24 [paras[0], 0, paras[0], 1] 
-PASS Set up range 25 [detachedPara1, 0, detachedPara1, 0] 
-PASS Set up range 26 [detachedPara1, 0, detachedPara1, 1] 
-PASS Set up range 27 [paras[0].firstChild, 0, paras[1].firstChild, 0] 
-PASS Set up range 28 [paras[0].firstChild, 0, paras[1].firstChild, 8] 
-PASS Set up range 29 [paras[0].firstChild, 3, paras[3], 1] 
+PASS Set up range 15 [document.documentElement, 0, document.documentElement, 1]
+PASS Set up range 16 [document.documentElement, 0, document.documentElement, 2]
+PASS Set up range 17 [document.documentElement, 1, document.documentElement, 2]
+PASS Set up range 18 [document.head, 1, document.head, 1]
+PASS Set up range 19 [document.body, 0, document.body, 1]
+PASS Set up range 20 [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1]
+PASS Set up range 21 [foreignDoc.head, 1, foreignDoc.head, 1]
+PASS Set up range 22 [foreignDoc.body, 0, foreignDoc.body, 0]
+PASS Set up range 23 [paras[0], 0, paras[0], 0]
+PASS Set up range 24 [paras[0], 0, paras[0], 1]
+PASS Set up range 25 [detachedPara1, 0, detachedPara1, 0]
+PASS Set up range 26 [detachedPara1, 0, detachedPara1, 1]
+PASS Set up range 27 [paras[0].firstChild, 0, paras[1].firstChild, 0]
+PASS Set up range 28 [paras[0].firstChild, 0, paras[1].firstChild, 8]
+PASS Set up range 29 [paras[0].firstChild, 3, paras[3], 1]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 2]
+PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -324,18 +324,18 @@ FAIL collapse() on [document.documentElement, 0, document.documentElement, 2] to
 FAIL setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 0] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 0] 
+PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 0]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 0]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 2] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 2] 
-PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 8] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 8] 
+PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 2]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 2]
+PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 8]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 8]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 10] 
-PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 10] 
+PASS collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 10]
+PASS setPosition() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 10]
 FAIL collapse() on [document.documentElement, 0, document.documentElement, 2] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -860,18 +860,18 @@ FAIL collapse() on [document.documentElement, 1, document.documentElement, 2] to
 FAIL setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 0] 
-PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 0] 
+PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 0]
+PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 0]
 FAIL collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 2] 
-PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 2] 
-PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 8] 
-PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 8] 
+PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 2]
+PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 2]
+PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 8]
+PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 8]
 FAIL collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 10] 
-PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 10] 
+PASS collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 10]
+PASS setPosition() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 10]
 FAIL collapse() on [document.documentElement, 1, document.documentElement, 2] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -1396,18 +1396,18 @@ FAIL collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild,
 FAIL setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 2]
+PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [document.head, 1, document.head, 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -1700,18 +1700,18 @@ FAIL collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild,
 FAIL setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 2]
+PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [document.body, 0, document.body, 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2236,18 +2236,18 @@ FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 2]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2292,24 +2292,24 @@ FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[1].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 1] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 8] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 8] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 1]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 8]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 8]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 1] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 8] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 8] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 1]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 8]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 8]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2346,14 +2346,14 @@ FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1
 </p><p id... but got Text node "Qrstuvwx"
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [document.body, 3] assert_equals: focusNode must equal the node we setPosition()d to expected Element node <body><div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id... but got Text node "Qrstuvwx"
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 1] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.head, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.head, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.body, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.body, 1] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.documentElement, 1]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.head, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.head, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.body, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc.body, 1]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[0], 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -2386,10 +2386,10 @@ FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [paras[1], 2] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 1] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedPara1, 1]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [testDiv, 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -2438,72 +2438,72 @@ FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [comment, 96] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 1] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignComment, 2] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignComment, 2] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 36] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 36] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDoc, 1]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignComment, 2]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignComment, 2]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 36]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignTextNode, 36]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 1] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 1] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 1]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 1]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 4] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 4] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 5] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 5] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 9] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 9] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 8] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 8] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 8] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 8] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 8] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 8] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedProcessingInstruction, 12] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedProcessingInstruction, 12] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 3] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 3] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 5] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 5] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 4] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 4] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlComment, 2] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlComment, 2] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [docfrag, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [docfrag, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDocfrag, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDocfrag, 0] 
-PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDocfrag, 0] 
-PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDocfrag, 0] 
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 4]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlComment, 4]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 5]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 5]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 9]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [processingInstruction, 9]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 8]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedTextNode, 8]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 8]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignTextNode, 8]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 8]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlTextNode, 8]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedProcessingInstruction, 12]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedProcessingInstruction, 12]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 3]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 3]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 5]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedComment, 5]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 4]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedForeignComment, 4]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlComment, 2]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [detachedXmlComment, 2]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [docfrag, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [docfrag, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDocfrag, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [foreignDocfrag, 0]
+PASS collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDocfrag, 0]
+PASS setPosition() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [xmlDocfrag, 0]
 FAIL collapse() on [foreignDoc.documentElement, 0, foreignDoc.documentElement, 1] to [doctype, 0] assert_throws_dom: Must throw INVALID_NODE_TYPE_ERR when collapse()ing if the node is a DocumentType function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2540,18 +2540,18 @@ FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstCh
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 2]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2596,24 +2596,24 @@ FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[1].firstCh
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[1].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 1] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 8] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 8] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 1]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 8]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 8]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 1] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 8] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 8] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 1]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 8]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 8]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2650,14 +2650,14 @@ FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [document.body, 3
 </p><p id... but got Text node "Qrstuvwx"
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [document.body, 3] assert_equals: focusNode must equal the node we setPosition()d to expected Element node <body><div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id... but got Text node "Qrstuvwx"
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 1] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.head, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.head, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.body, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.body, 1] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.documentElement, 1]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.head, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.head, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.body, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc.body, 1]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[0], 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -2690,10 +2690,10 @@ FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[1], 2] ass
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [paras[1], 2] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 1] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedPara1, 1]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [testDiv, 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -2742,72 +2742,72 @@ FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [comment, 96] ass
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [comment, 96] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 1] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignComment, 2] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignComment, 2] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 36] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 36] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDoc, 1]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignComment, 2]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignComment, 2]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 36]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignTextNode, 36]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 1] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 1] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 1]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 1]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 4] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 4] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 5] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 5] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 9] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 9] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 8] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 8] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 8] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 8] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 8] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 8] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedProcessingInstruction, 12] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedProcessingInstruction, 12] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 3] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 3] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 5] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 5] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 4] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 4] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlComment, 2] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlComment, 2] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [docfrag, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [docfrag, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDocfrag, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDocfrag, 0] 
-PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDocfrag, 0] 
-PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDocfrag, 0] 
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 4]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlComment, 4]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 5]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 5]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 9]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [processingInstruction, 9]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 8]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedTextNode, 8]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 8]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignTextNode, 8]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 8]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlTextNode, 8]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedProcessingInstruction, 12]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedProcessingInstruction, 12]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 3]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 3]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 5]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedComment, 5]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 4]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedForeignComment, 4]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlComment, 2]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [detachedXmlComment, 2]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [docfrag, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [docfrag, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDocfrag, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [foreignDocfrag, 0]
+PASS collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDocfrag, 0]
+PASS setPosition() on [foreignDoc.head, 1, foreignDoc.head, 1] to [xmlDocfrag, 0]
 FAIL collapse() on [foreignDoc.head, 1, foreignDoc.head, 1] to [doctype, 0] assert_throws_dom: Must throw INVALID_NODE_TYPE_ERR when collapse()ing if the node is a DocumentType function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2844,18 +2844,18 @@ FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstCh
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 0] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 0]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 2] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 2] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 8] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 8] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 2]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 2]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 8]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 8]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 10] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 10] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 10]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 10]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2900,24 +2900,24 @@ FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[1].firstCh
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[1].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 1] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 8] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 8] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 1]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 8]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 8]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 1] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 8] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 8] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 1]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 8]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 8]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -2954,14 +2954,14 @@ FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [document.body, 3
 </p><p id... but got Text node "Qrstuvwx"
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [document.body, 3] assert_equals: focusNode must equal the node we setPosition()d to expected Element node <body><div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id... but got Text node "Qrstuvwx"
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 1] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.head, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.head, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.body, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.body, 1] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.documentElement, 1]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.head, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.head, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.body, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc.body, 1]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[0], 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -2994,10 +2994,10 @@ FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[1], 2] ass
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [paras[1], 2] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 1] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedPara1, 1]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [testDiv, 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -3046,72 +3046,72 @@ FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [comment, 96] ass
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [comment, 96] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 1] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignComment, 2] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignComment, 2] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 36] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 36] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDoc, 1]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignComment, 2]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignComment, 2]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 36]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignTextNode, 36]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 1] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 1] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 1]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 1]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 4] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 4] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 5] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 5] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 9] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 9] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 8] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 8] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 8] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 8] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 8] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 8] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedProcessingInstruction, 12] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedProcessingInstruction, 12] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 3] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 3] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 5] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 5] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 4] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 4] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlComment, 2] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlComment, 2] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [docfrag, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [docfrag, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDocfrag, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDocfrag, 0] 
-PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDocfrag, 0] 
-PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDocfrag, 0] 
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 4]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlComment, 4]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 5]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 5]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 9]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [processingInstruction, 9]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 8]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedTextNode, 8]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 8]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignTextNode, 8]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 8]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlTextNode, 8]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedProcessingInstruction, 12]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedProcessingInstruction, 12]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 3]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 3]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 5]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedComment, 5]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 4]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedForeignComment, 4]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlComment, 2]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [detachedXmlComment, 2]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [docfrag, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [docfrag, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDocfrag, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [foreignDocfrag, 0]
+PASS collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDocfrag, 0]
+PASS setPosition() on [foreignDoc.body, 0, foreignDoc.body, 0] to [xmlDocfrag, 0]
 FAIL collapse() on [foreignDoc.body, 0, foreignDoc.body, 0] to [doctype, 0] assert_throws_dom: Must throw INVALID_NODE_TYPE_ERR when collapse()ing if the node is a DocumentType function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -3148,18 +3148,18 @@ FAIL collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, -1] asser
 FAIL setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 0] 
-PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 0] 
+PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 0]
+PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 0]
 FAIL collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 2] 
-PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 2] 
-PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 8] 
-PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 8] 
+PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 2]
+PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 2]
+PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 8]
+PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 8]
 FAIL collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 10] 
-PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 10] 
+PASS collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 10]
+PASS setPosition() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 10]
 FAIL collapse() on [paras[0], 0, paras[0], 0] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -3452,18 +3452,18 @@ FAIL collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, -1] asser
 FAIL setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 2]
+PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [paras[0], 0, paras[0], 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -3756,18 +3756,18 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild,
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 0] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 0]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 2] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 2] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 8] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 2]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 2]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 8]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 10] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 10] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 10]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 10]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -3812,24 +3812,24 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[1].firstChild,
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[1].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 8] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 8]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 8] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 8]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -3866,14 +3866,14 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [document.body, 3] as
 </p><p id... but got Text node "Qrstuvwx"
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [document.body, 3] assert_equals: focusNode must equal the node we setPosition()d to expected Element node <body><div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id... but got Text node "Qrstuvwx"
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.head, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.head, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.body, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.body, 1] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.documentElement, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.head, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.head, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.body, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc.body, 1]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[0], 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -3906,10 +3906,10 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [paras[1], 2] assert_
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [paras[1], 2] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 1] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedPara1, 1]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [testDiv, 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -3958,72 +3958,72 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [comment, 96] assert_
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [comment, 96] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignComment, 2] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignComment, 2] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 36] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 36] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDoc, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignComment, 2]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignComment, 2]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 36]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignTextNode, 36]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 1] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 1]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 4] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 4] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 5] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 5] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 9] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 9] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 8] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 8] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 8] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedProcessingInstruction, 12] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedProcessingInstruction, 12] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 3] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 3] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 5] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 5] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 4] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 4] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlComment, 2] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlComment, 2] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [docfrag, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [docfrag, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDocfrag, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDocfrag, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDocfrag, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDocfrag, 0] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 4]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlComment, 4]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 5]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 5]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 9]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [processingInstruction, 9]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedTextNode, 8]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignTextNode, 8]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlTextNode, 8]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedProcessingInstruction, 12]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedProcessingInstruction, 12]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 3]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 3]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 5]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedComment, 5]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 4]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedForeignComment, 4]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlComment, 2]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [detachedXmlComment, 2]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [docfrag, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [docfrag, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [foreignDocfrag, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [foreignDocfrag, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 0] to [xmlDocfrag, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 0] to [xmlDocfrag, 0]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 0] to [doctype, 0] assert_throws_dom: Must throw INVALID_NODE_TYPE_ERR when collapse()ing if the node is a DocumentType function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -4060,18 +4060,18 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild,
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 2]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -4116,24 +4116,24 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[1].firstChild,
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[1].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 8] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 8]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 8] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 8]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignPara1.firstChild, 9] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -4170,14 +4170,14 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [document.body, 3] as
 </p><p id... but got Text node "Qrstuvwx"
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [document.body, 3] assert_equals: focusNode must equal the node we setPosition()d to expected Element node <body><div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id... but got Text node "Qrstuvwx"
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.head, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.head, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.body, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.body, 1] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.documentElement, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.head, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.head, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.body, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc.body, 1]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[0], 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -4210,10 +4210,10 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [paras[1], 2] assert_
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [paras[1], 2] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 1] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedPara1, 1]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [testDiv, 0] assert_equals: focusNode must equal the node we collapse()d to expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -4262,72 +4262,72 @@ FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [comment, 96] assert_
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [comment, 96] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 1] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignComment, 2] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignComment, 2] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 36] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 36] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDoc, 1]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignComment, 2]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignComment, 2]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 36]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignTextNode, 36]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 1] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 1] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 1]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 1]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
 FAIL setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDoc, 5] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 4] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 4] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 5] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 5] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 9] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 9] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 8] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 8] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 8] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 8] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedProcessingInstruction, 12] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedProcessingInstruction, 12] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 3] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 3] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 5] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 5] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 4] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 4] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlComment, 2] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlComment, 2] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [docfrag, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [docfrag, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDocfrag, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDocfrag, 0] 
-PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDocfrag, 0] 
-PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDocfrag, 0] 
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 4]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlComment, 4]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 5]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 5]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 9]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [processingInstruction, 9]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedTextNode, 8]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignTextNode, 8]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 8]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlTextNode, 8]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedProcessingInstruction, 12]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedProcessingInstruction, 12]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 3]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 3]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 5]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedComment, 5]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 4]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedForeignComment, 4]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlComment, 2]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [detachedXmlComment, 2]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [docfrag, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [docfrag, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [foreignDocfrag, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [foreignDocfrag, 0]
+PASS collapse() on [detachedPara1, 0, detachedPara1, 1] to [xmlDocfrag, 0]
+PASS setPosition() on [detachedPara1, 0, detachedPara1, 1] to [xmlDocfrag, 0]
 FAIL collapse() on [detachedPara1, 0, detachedPara1, 1] to [doctype, 0] assert_throws_dom: Must throw INVALID_NODE_TYPE_ERR when collapse()ing if the node is a DocumentType function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -4364,18 +4364,18 @@ FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0]
 FAIL setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 0] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 0] 
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 0]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 0]
 FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 2] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 2] 
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 8] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 8] 
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 2]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 2]
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 8]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 8]
 FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 10] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 10] 
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 10]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 10]
 FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 0] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -4900,18 +4900,18 @@ FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0]
 FAIL setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 0] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 0] 
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 0]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 0]
 FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 2] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 2] 
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 8] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 8] 
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 2]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 2]
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 8]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 8]
 FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 10] 
-PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 10] 
+PASS collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 10]
+PASS setPosition() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 10]
 FAIL collapse() on [paras[0].firstChild, 0, paras[1].firstChild, 8] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
@@ -5436,18 +5436,18 @@ FAIL collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild
 FAIL setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, -1] assert_throws_dom: Must throw INDEX_SIZE_ERR when setPosition()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw
-PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 0] 
-PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 0] 
+PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 0]
+PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 0]
 FAIL collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we collapse()d to expected 1 but got 2
 FAIL setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 1] assert_equals: focusOffset must equal the offset we setPosition()d to expected 1 but got 2
-PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 2] 
-PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 2] 
-PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 8] 
-PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 8] 
+PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 2]
+PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 2]
+PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 8]
+PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 8]
 FAIL collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we collapse()d to expected 9 but got 10
 FAIL setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 9] assert_equals: focusOffset must equal the offset we setPosition()d to expected 9 but got 10
-PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 10] 
-PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 10] 
+PASS collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 10]
+PASS setPosition() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 10]
 FAIL collapse() on [paras[0].firstChild, 3, paras[3], 1] to [paras[0].firstChild, 65535] assert_throws_dom: Must throw INDEX_SIZE_ERR when collapse()ing if the offset is negative or greater than the node's length function "function () {
             selection[method](point[0], point[1]);
         }" did not throw

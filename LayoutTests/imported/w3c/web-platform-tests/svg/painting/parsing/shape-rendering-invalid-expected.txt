@@ -1,4 +1,4 @@
 
-PASS e.style['shape-rendering'] = "optimizelegibility" should not set the property value 
-PASS e.style['shape-rendering'] = "auto optimizespeed" should not set the property value 
+PASS e.style['shape-rendering'] = "optimizelegibility" should not set the property value
+PASS e.style['shape-rendering'] = "auto optimizespeed" should not set the property value
 

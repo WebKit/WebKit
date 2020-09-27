@@ -1,8 +1,8 @@
 
-PASS e.style['fill-opacity'] = "-1" should set the property value 
-PASS e.style['fill-opacity'] = "0.5" should set the property value 
-PASS e.style['fill-opacity'] = "3" should set the property value 
-PASS e.style['fill-opacity'] = "-100%" should set the property value 
-PASS e.style['fill-opacity'] = "50%" should set the property value 
-PASS e.style['fill-opacity'] = "300%" should set the property value 
+PASS e.style['fill-opacity'] = "-1" should set the property value
+PASS e.style['fill-opacity'] = "0.5" should set the property value
+PASS e.style['fill-opacity'] = "3" should set the property value
+PASS e.style['fill-opacity'] = "-100%" should set the property value
+PASS e.style['fill-opacity'] = "50%" should set the property value
+PASS e.style['fill-opacity'] = "300%" should set the property value
 

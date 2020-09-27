@@ -7,6 +7,6 @@ This test validates that for a cross origin resource, the timing allow check alg
 
 Harness Error (FAIL), message = Error: assert_greater_than: The iframe should have at least one resource timing entry. expected a number greater than 0 but got 0
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByType is defined 
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
 

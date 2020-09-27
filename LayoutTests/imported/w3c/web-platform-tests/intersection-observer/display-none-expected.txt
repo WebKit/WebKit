@@ -1,6 +1,6 @@
 
-PASS IntersectionObserver should send a not-intersecting notification for a target that gets display:none. 
-PASS Intersecting notification after first rAF. 
-PASS Not-intersecting notification after setting display:none on target. 
-PASS Intersecting notification after removing display:none on target. 
+PASS IntersectionObserver should send a not-intersecting notification for a target that gets display:none.
+PASS Intersecting notification after first rAF.
+PASS Not-intersecting notification after setting display:none on target.
+PASS Intersecting notification after removing display:none on target.
 

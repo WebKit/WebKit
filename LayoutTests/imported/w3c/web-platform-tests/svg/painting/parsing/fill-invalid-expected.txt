@@ -1,7 +1,7 @@
 
-PASS e.style['fill'] = "auto" should not set the property value 
-PASS e.style['fill'] = "none red" should not set the property value 
-PASS e.style['fill'] = "none url(\"https://example.com/\")" should not set the property value 
-PASS e.style['fill'] = "red url(\"https://example.com/\")" should not set the property value 
-PASS e.style['fill'] = "url(\"https://example.com/\") none red" should not set the property value 
+PASS e.style['fill'] = "auto" should not set the property value
+PASS e.style['fill'] = "none red" should not set the property value
+PASS e.style['fill'] = "none url(\"https://example.com/\")" should not set the property value
+PASS e.style['fill'] = "red url(\"https://example.com/\")" should not set the property value
+PASS e.style['fill'] = "url(\"https://example.com/\") none red" should not set the property value
 

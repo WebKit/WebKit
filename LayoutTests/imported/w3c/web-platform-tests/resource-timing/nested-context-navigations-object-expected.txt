@@ -7,8 +7,8 @@ Harness Error (TIMEOUT), message = null
 
 FAIL Test that object navigations are not observable by the parent, even after history navigations by the parent promise_test: Unhandled rejection with value: "FAIL - first document not exposed. navigated_back is true"
 FAIL Test that crossorigin object navigations are not observable by the parent, even after history navigations by the parent promise_test: Unhandled rejection with value: "FAIL - first document not exposed. navigated_back is true"
-PASS Test that object navigations are not observable by the parent 
-PASS Test that crossorigin object navigations are not observable by the parent 
+PASS Test that object navigations are not observable by the parent
+PASS Test that crossorigin object navigations are not observable by the parent
 TIMEOUT Test that object refreshes are not observable by the parent Test timed out
-NOTRUN Test that crossorigin object refreshes are not observable by the parent 
+NOTRUN Test that crossorigin object refreshes are not observable by the parent
 

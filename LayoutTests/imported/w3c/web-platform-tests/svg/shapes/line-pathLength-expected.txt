@@ -1,3 +1,3 @@
 
-PASS line supports pathLength attribute 
+PASS line supports pathLength attribute
 

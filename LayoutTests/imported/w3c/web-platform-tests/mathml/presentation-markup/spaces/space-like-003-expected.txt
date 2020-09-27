@@ -1,21 +1,21 @@
 
-PASS merror is not space-like 
-PASS mroot is not space-like 
-PASS menclose is not space-like 
-PASS mfrac is not space-like 
-PASS mi is not space-like 
-PASS mmultiscripts is not space-like 
-PASS mn is not space-like 
-PASS mo is not space-like 
-PASS mover is not space-like 
-PASS munder is not space-like 
-PASS ms is not space-like 
-PASS munderover is not space-like 
-PASS msup is not space-like 
-PASS msub is not space-like 
-PASS msubsup is not space-like 
-PASS msqrt is not space-like 
-PASS mtable is not space-like 
+PASS merror is not space-like
+PASS mroot is not space-like
+PASS menclose is not space-like
+PASS mfrac is not space-like
+PASS mi is not space-like
+PASS mmultiscripts is not space-like
+PASS mn is not space-like
+PASS mo is not space-like
+PASS mover is not space-like
+PASS munder is not space-like
+PASS ms is not space-like
+PASS munderover is not space-like
+PASS msup is not space-like
+PASS msub is not space-like
+PASS msubsup is not space-like
+PASS msqrt is not space-like
+PASS mtable is not space-like
 X
 X
 X
@@ -109,7 +109,7 @@ X
 X
 
 X
-X 
+X
 X
 X
 

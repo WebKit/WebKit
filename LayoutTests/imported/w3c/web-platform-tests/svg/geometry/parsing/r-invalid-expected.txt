@@ -1,7 +1,7 @@
 
-PASS e.style['r'] = "10" should not set the property value 
-PASS e.style['r'] = "auto" should not set the property value 
-PASS e.style['r'] = "10px 20px" should not set the property value 
-PASS e.style['r'] = "-1px" should not set the property value 
-PASS e.style['r'] = "-10%" should not set the property value 
+PASS e.style['r'] = "10" should not set the property value
+PASS e.style['r'] = "auto" should not set the property value
+PASS e.style['r'] = "10px 20px" should not set the property value
+PASS e.style['r'] = "-1px" should not set the property value
+PASS e.style['r'] = "-10%" should not set the property value
 

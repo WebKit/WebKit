@@ -3,5 +3,5 @@ Viewport: Resize Event On Load Overflowing Page
 Test Description: This test ensures that we fire a resize event against window.visualViewport if the page has overflow (since this creates a scrollbar and thus changes the viewport size).
 
 
-PASS Resize event fired exactly once against window.visualViewport if scrollbars affect layout. 
+PASS Resize event fired exactly once against window.visualViewport if scrollbars affect layout.
 

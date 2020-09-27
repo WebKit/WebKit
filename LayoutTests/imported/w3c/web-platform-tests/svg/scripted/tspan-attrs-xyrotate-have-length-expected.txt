@@ -1,4 +1,4 @@
 Her socks were stained with blood.
 
-PASS tspan-attrs-xyrotate-have-length 
+PASS tspan-attrs-xyrotate-have-length
 

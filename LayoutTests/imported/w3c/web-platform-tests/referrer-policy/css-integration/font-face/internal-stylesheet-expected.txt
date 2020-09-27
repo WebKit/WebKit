@@ -1,5 +1,5 @@
 Check that resources from internal stylesheets are loaded with the referrer and referrer policy from the document.
 
 
-PASS Font from internal stylesheet. 
+PASS Font from internal stylesheet.
 

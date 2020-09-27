@@ -1,6 +1,6 @@
 
-PASS Unregister then register resolves to a new value 
-PASS Unregister then register does not resolve to the original value even if the registration is in use. 
-PASS Unregister then register does not affect existing controllee 
-PASS Unregister then register does not resurrect the registration 
+PASS Unregister then register resolves to a new value
+PASS Unregister then register does not resolve to the original value even if the registration is in use.
+PASS Unregister then register does not affect existing controllee
+PASS Unregister then register does not resurrect the registration
 

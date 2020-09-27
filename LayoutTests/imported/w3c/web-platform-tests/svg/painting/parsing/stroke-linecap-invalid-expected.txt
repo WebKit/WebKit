@@ -1,4 +1,4 @@
 
-PASS e.style['stroke-linecap'] = "auto" should not set the property value 
-PASS e.style['stroke-linecap'] = "butt round" should not set the property value 
+PASS e.style['stroke-linecap'] = "auto" should not set the property value
+PASS e.style['stroke-linecap'] = "butt round" should not set the property value
 

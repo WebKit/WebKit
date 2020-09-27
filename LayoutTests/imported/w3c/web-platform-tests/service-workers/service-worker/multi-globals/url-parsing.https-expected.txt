@@ -1,6 +1,6 @@
 
 
-PASS register should use the relevant global of the object it was called on to resolve the script URL and the default scope URL 
-PASS register should use the relevant global of the object it was called on to resolve the script URL and the given scope URL 
-PASS getRegistration should use the relevant global of the object it was called on to resolve the script URL 
+PASS register should use the relevant global of the object it was called on to resolve the script URL and the default scope URL
+PASS register should use the relevant global of the object it was called on to resolve the script URL and the given scope URL
+PASS getRegistration should use the relevant global of the object it was called on to resolve the script URL
 

@@ -1,128 +1,128 @@
 
-PASS Simplest possible test 
-PASS Simplest possible test, detached 
-PASS Newlines convert to <br> in non-white-space:pre elements 
-PASS Newlines convert to <br> in non-white-space:pre elements, detached 
+PASS Simplest possible test
+PASS Simplest possible test, detached
+PASS Newlines convert to <br> in non-white-space:pre elements
+PASS Newlines convert to <br> in non-white-space:pre elements, detached
 FAIL Newlines convert to <br> in <pre> element assert_equals: expected "abc<br>def" but got "abc\ndef"
-PASS Newlines convert to <br> in <pre> element, detached 
+PASS Newlines convert to <br> in <pre> element, detached
 FAIL Newlines convert to <br> in <textarea> element assert_equals: expected "abc<br>def" but got "abc\ndef"
-PASS Newlines convert to <br> in <textarea> element, detached 
+PASS Newlines convert to <br> in <textarea> element, detached
 FAIL Newlines convert to <br> in white-space:pre element assert_equals: expected "abc<br>def" but got "abc\ndef"
-PASS Newlines convert to <br> in white-space:pre element, detached 
-PASS CRs convert to <br> in non-white-space:pre elements 
-PASS CRs convert to <br> in non-white-space:pre elements, detached 
+PASS Newlines convert to <br> in white-space:pre element, detached
+PASS CRs convert to <br> in non-white-space:pre elements
+PASS CRs convert to <br> in non-white-space:pre elements, detached
 FAIL CRs convert to <br> in <pre> element assert_equals: expected "abc<br>def" but got "abc\ndef"
-PASS CRs convert to <br> in <pre> element, detached 
-PASS Newline/CR pair converts to <br> in non-white-space:pre element 
-PASS Newline/CR pair converts to <br> in non-white-space:pre element, detached 
-PASS Newline/newline pair converts to two <br>s in non-white-space:pre element 
-PASS Newline/newline pair converts to two <br>s in non-white-space:pre element, detached 
-PASS CR/CR pair converts to two <br>s in non-white-space:pre element 
-PASS CR/CR pair converts to two <br>s in non-white-space:pre element, detached 
+PASS CRs convert to <br> in <pre> element, detached
+PASS Newline/CR pair converts to <br> in non-white-space:pre element
+PASS Newline/CR pair converts to <br> in non-white-space:pre element, detached
+PASS Newline/newline pair converts to two <br>s in non-white-space:pre element
+PASS Newline/newline pair converts to two <br>s in non-white-space:pre element, detached
+PASS CR/CR pair converts to two <br>s in non-white-space:pre element
+PASS CR/CR pair converts to two <br>s in non-white-space:pre element, detached
 FAIL CRs convert to <br> in white-space:pre element assert_equals: expected "abc<br>def" but got "abc\ndef"
-PASS CRs convert to <br> in white-space:pre element, detached 
-PASS < preserved 
-PASS < preserved, detached 
-PASS > preserved 
-PASS > preserved, detached 
-PASS & preserved 
-PASS & preserved, detached 
-PASS " preserved 
-PASS " preserved, detached 
-PASS ' preserved 
-PASS ' preserved, detached 
-PASS innerText not supported on SVG elements 
-PASS innerText not supported on SVG elements, detached 
-PASS innerText not supported on MathML elements 
-PASS innerText not supported on MathML elements, detached 
-PASS Null characters preserved 
-PASS Null characters preserved, detached 
-PASS Tabs preserved 
-PASS Tabs preserved, detached 
-PASS Leading whitespace preserved 
-PASS Leading whitespace preserved, detached 
-PASS Trailing whitespace preserved 
-PASS Trailing whitespace preserved, detached 
-PASS Whitespace not compressed 
-PASS Whitespace not compressed, detached 
-PASS Existing text deleted 
-PASS Existing text deleted, detached 
-PASS Existing <br> deleted 
-PASS Existing <br> deleted, detached 
-PASS Assigning the empty string 
-PASS Assigning the empty string, detached 
-PASS Assigning null 
-PASS Assigning null, detached 
-PASS Assigning undefined 
-PASS Assigning undefined, detached 
-PASS Start with CR 
-PASS Start with CR, detached 
-PASS Start with LF 
-PASS Start with LF, detached 
-PASS Start with CRLF 
-PASS Start with CRLF, detached 
-PASS End with CR 
-PASS End with CR, detached 
-PASS End with LF 
-PASS End with LF, detached 
-PASS End with CRLF 
-PASS End with CRLF, detached 
-PASS innerText on <area> element 
-PASS innerText on <area> element, detached 
-PASS innerText on <base> element 
-PASS innerText on <base> element, detached 
-PASS innerText on <basefont> element 
-PASS innerText on <basefont> element, detached 
-PASS innerText on <bgsound> element 
-PASS innerText on <bgsound> element, detached 
-PASS innerText on <br> element 
-PASS innerText on <br> element, detached 
-PASS innerText on <col> element 
-PASS innerText on <col> element, detached 
-PASS innerText on <embed> element 
-PASS innerText on <embed> element, detached 
-PASS innerText on <frame> element 
-PASS innerText on <frame> element, detached 
-PASS innerText on <hr> element 
-PASS innerText on <hr> element, detached 
-PASS innerText on <image> element 
-PASS innerText on <image> element, detached 
-PASS innerText on <img> element 
-PASS innerText on <img> element, detached 
-PASS innerText on <input> element 
-PASS innerText on <input> element, detached 
-PASS innerText on <keygen> element 
-PASS innerText on <keygen> element, detached 
-PASS innerText on <link> element 
-PASS innerText on <link> element, detached 
-PASS innerText on <menuitem> element 
-PASS innerText on <menuitem> element, detached 
-PASS innerText on <meta> element 
-PASS innerText on <meta> element, detached 
-PASS innerText on <param> element 
-PASS innerText on <param> element, detached 
-PASS innerText on <source> element 
-PASS innerText on <source> element, detached 
-PASS innerText on <track> element 
-PASS innerText on <track> element, detached 
-PASS innerText on <wbr> element 
-PASS innerText on <wbr> element, detached 
-PASS innerText on <colgroup> element 
-PASS innerText on <colgroup> element, detached 
-PASS innerText on <frameset> element 
-PASS innerText on <frameset> element, detached 
-PASS innerText on <head> element 
-PASS innerText on <head> element, detached 
-PASS innerText on <html> element 
-PASS innerText on <html> element, detached 
-PASS innerText on <table> element 
-PASS innerText on <table> element, detached 
-PASS innerText on <tbody> element 
-PASS innerText on <tbody> element, detached 
-PASS innerText on <tfoot> element 
-PASS innerText on <tfoot> element, detached 
-PASS innerText on <thead> element 
-PASS innerText on <thead> element, detached 
-PASS innerText on <tr> element 
-PASS innerText on <tr> element, detached 
+PASS CRs convert to <br> in white-space:pre element, detached
+PASS < preserved
+PASS < preserved, detached
+PASS > preserved
+PASS > preserved, detached
+PASS & preserved
+PASS & preserved, detached
+PASS " preserved
+PASS " preserved, detached
+PASS ' preserved
+PASS ' preserved, detached
+PASS innerText not supported on SVG elements
+PASS innerText not supported on SVG elements, detached
+PASS innerText not supported on MathML elements
+PASS innerText not supported on MathML elements, detached
+PASS Null characters preserved
+PASS Null characters preserved, detached
+PASS Tabs preserved
+PASS Tabs preserved, detached
+PASS Leading whitespace preserved
+PASS Leading whitespace preserved, detached
+PASS Trailing whitespace preserved
+PASS Trailing whitespace preserved, detached
+PASS Whitespace not compressed
+PASS Whitespace not compressed, detached
+PASS Existing text deleted
+PASS Existing text deleted, detached
+PASS Existing <br> deleted
+PASS Existing <br> deleted, detached
+PASS Assigning the empty string
+PASS Assigning the empty string, detached
+PASS Assigning null
+PASS Assigning null, detached
+PASS Assigning undefined
+PASS Assigning undefined, detached
+PASS Start with CR
+PASS Start with CR, detached
+PASS Start with LF
+PASS Start with LF, detached
+PASS Start with CRLF
+PASS Start with CRLF, detached
+PASS End with CR
+PASS End with CR, detached
+PASS End with LF
+PASS End with LF, detached
+PASS End with CRLF
+PASS End with CRLF, detached
+PASS innerText on <area> element
+PASS innerText on <area> element, detached
+PASS innerText on <base> element
+PASS innerText on <base> element, detached
+PASS innerText on <basefont> element
+PASS innerText on <basefont> element, detached
+PASS innerText on <bgsound> element
+PASS innerText on <bgsound> element, detached
+PASS innerText on <br> element
+PASS innerText on <br> element, detached
+PASS innerText on <col> element
+PASS innerText on <col> element, detached
+PASS innerText on <embed> element
+PASS innerText on <embed> element, detached
+PASS innerText on <frame> element
+PASS innerText on <frame> element, detached
+PASS innerText on <hr> element
+PASS innerText on <hr> element, detached
+PASS innerText on <image> element
+PASS innerText on <image> element, detached
+PASS innerText on <img> element
+PASS innerText on <img> element, detached
+PASS innerText on <input> element
+PASS innerText on <input> element, detached
+PASS innerText on <keygen> element
+PASS innerText on <keygen> element, detached
+PASS innerText on <link> element
+PASS innerText on <link> element, detached
+PASS innerText on <menuitem> element
+PASS innerText on <menuitem> element, detached
+PASS innerText on <meta> element
+PASS innerText on <meta> element, detached
+PASS innerText on <param> element
+PASS innerText on <param> element, detached
+PASS innerText on <source> element
+PASS innerText on <source> element, detached
+PASS innerText on <track> element
+PASS innerText on <track> element, detached
+PASS innerText on <wbr> element
+PASS innerText on <wbr> element, detached
+PASS innerText on <colgroup> element
+PASS innerText on <colgroup> element, detached
+PASS innerText on <frameset> element
+PASS innerText on <frameset> element, detached
+PASS innerText on <head> element
+PASS innerText on <head> element, detached
+PASS innerText on <html> element
+PASS innerText on <html> element, detached
+PASS innerText on <table> element
+PASS innerText on <table> element, detached
+PASS innerText on <tbody> element
+PASS innerText on <tbody> element, detached
+PASS innerText on <tfoot> element
+PASS innerText on <tfoot> element, detached
+PASS innerText on <thead> element
+PASS innerText on <thead> element, detached
+PASS innerText on <tr> element
+PASS innerText on <tr> element, detached
 

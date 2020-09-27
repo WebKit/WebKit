@@ -1,5 +1,5 @@
 
-PASS Check revoking behavior of URL.revokeObjectURL(url). 
-PASS Check referenced MediaSource can open after URL.revokeObjectURL(url). 
-PASS Check auto-revoking behavior with URL.createObjectURL(MediaSource). 
+PASS Check revoking behavior of URL.revokeObjectURL(url).
+PASS Check referenced MediaSource can open after URL.revokeObjectURL(url).
+PASS Check auto-revoking behavior with URL.createObjectURL(MediaSource).
 

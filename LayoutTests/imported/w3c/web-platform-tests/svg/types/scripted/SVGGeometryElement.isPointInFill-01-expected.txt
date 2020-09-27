@@ -1,8 +1,8 @@
 
-PASS SVGGeometryElement.prototype.isPointInFill, no arguments. 
-PASS SVGGeometryElement.prototype.isPointInFill, non-finite argument. 
-PASS SVGGeometryElement.prototype.isPointInFill, functional test. 
-PASS SVGGeometryElement.prototype.isPointInFill, 'fill-rule'. 
-PASS SVGGeometryElement.prototype.isPointInFill, 'visibility' and 'pointer-events' have no effect. 
-PASS SVGGeometryElement.prototype.isPointInFill, 'clip-rule' never overrides 'fill-rule'. 
+PASS SVGGeometryElement.prototype.isPointInFill, no arguments.
+PASS SVGGeometryElement.prototype.isPointInFill, non-finite argument.
+PASS SVGGeometryElement.prototype.isPointInFill, functional test.
+PASS SVGGeometryElement.prototype.isPointInFill, 'fill-rule'.
+PASS SVGGeometryElement.prototype.isPointInFill, 'visibility' and 'pointer-events' have no effect.
+PASS SVGGeometryElement.prototype.isPointInFill, 'clip-rule' never overrides 'fill-rule'.
 

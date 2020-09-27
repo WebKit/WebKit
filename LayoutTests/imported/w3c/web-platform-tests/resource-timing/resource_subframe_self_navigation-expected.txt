@@ -1,6 +1,6 @@
 
-PASS Subsequent <iframe> navigations don't appear in the resource-timing buffer. 
-PASS Subsequent <frame> navigations don't appear in the resource-timing buffer. 
-PASS Subsequent <embed> navigations don't appear in the resource-timing buffer. 
-PASS Subsequent <object> navigations don't appear in the resource-timing buffer. 
+PASS Subsequent <iframe> navigations don't appear in the resource-timing buffer.
+PASS Subsequent <frame> navigations don't appear in the resource-timing buffer.
+PASS Subsequent <embed> navigations don't appear in the resource-timing buffer.
+PASS Subsequent <object> navigations don't appear in the resource-timing buffer.
 

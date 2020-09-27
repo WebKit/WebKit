@@ -1,8 +1,8 @@
 
-PASS Property stop-opacity value '-1' 
-PASS Property stop-opacity value '0.5' 
-PASS Property stop-opacity value '3' 
-PASS Property stop-opacity value '-100%' 
-PASS Property stop-opacity value '50%' 
-PASS Property stop-opacity value '300%' 
+PASS Property stop-opacity value '-1'
+PASS Property stop-opacity value '0.5'
+PASS Property stop-opacity value '3'
+PASS Property stop-opacity value '-100%'
+PASS Property stop-opacity value '50%'
+PASS Property stop-opacity value '300%'
 

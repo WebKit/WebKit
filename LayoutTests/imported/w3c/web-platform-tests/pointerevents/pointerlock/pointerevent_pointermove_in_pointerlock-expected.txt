@@ -10,6 +10,6 @@ Move your mouse.
 
 Harness Error (TIMEOUT), message = null
 
-PASS pointermove event received 
-NOTRUN pointermove event received inner frame 
+PASS pointermove event received
+NOTRUN pointermove event received inner frame
 

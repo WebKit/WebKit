@@ -3,5 +3,5 @@ Description
 This test validates that redirects do not alter the URL.
 
 
-PASS Testing resource entries 
+PASS Testing resource entries
 

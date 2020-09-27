@@ -1,28 +1,28 @@
 
-PASS Slots: Basic. 
-PASS Slots: Basic, elements only. 
-PASS Slots: Slots in closed. 
-PASS Slots: Slots in closed, elements only. 
-PASS Slots: Slots not in a shadow tree. 
-PASS Slots: Slots not in a shadow tree, elements only. 
-PASS Slots: Distributed nodes for Slots not in a shadow tree. 
-PASS Slots: Name matching 
-PASS Slots: No direct host child. 
-PASS Slots: Default Slot. 
-PASS Slots: Slot in Slot does not matter in assignment. 
-PASS Slots: Slot is assigned to another slot 
-PASS Slots: Open > Closed. 
-PASS Slots: Closed > Closed. 
-PASS Slots: Closed > Open. 
-PASS Slots: Complex case: Basi line. 
-PASS Slots: Mutation: appendChild. 
-PASS Slots: Mutation: Change slot= attribute 1. 
-PASS Slots: Mutation: Change slot= attribute 2. 
-PASS Slots: Mutation: Change slot= attribute 3. 
-PASS Slots: Mutation: Remove a child. 
-PASS Slots: Mutation: Add a slot: after. 
-PASS Slots: Mutation: Add a slot: before. 
-PASS Slots: Mutation: Remove a slot. 
-PASS Slots: Mutation: Change slot name= attribute. 
-PASS Slots: Mutation: Change slot slot= attribute. 
+PASS Slots: Basic.
+PASS Slots: Basic, elements only.
+PASS Slots: Slots in closed.
+PASS Slots: Slots in closed, elements only.
+PASS Slots: Slots not in a shadow tree.
+PASS Slots: Slots not in a shadow tree, elements only.
+PASS Slots: Distributed nodes for Slots not in a shadow tree.
+PASS Slots: Name matching
+PASS Slots: No direct host child.
+PASS Slots: Default Slot.
+PASS Slots: Slot in Slot does not matter in assignment.
+PASS Slots: Slot is assigned to another slot
+PASS Slots: Open > Closed.
+PASS Slots: Closed > Closed.
+PASS Slots: Closed > Open.
+PASS Slots: Complex case: Basi line.
+PASS Slots: Mutation: appendChild.
+PASS Slots: Mutation: Change slot= attribute 1.
+PASS Slots: Mutation: Change slot= attribute 2.
+PASS Slots: Mutation: Change slot= attribute 3.
+PASS Slots: Mutation: Remove a child.
+PASS Slots: Mutation: Add a slot: after.
+PASS Slots: Mutation: Add a slot: before.
+PASS Slots: Mutation: Remove a slot.
+PASS Slots: Mutation: Change slot name= attribute.
+PASS Slots: Mutation: Change slot slot= attribute.
 

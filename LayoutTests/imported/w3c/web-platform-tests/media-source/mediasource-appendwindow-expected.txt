@@ -1,9 +1,9 @@
 
-PASS Test correctly reset appendWindowStart and appendWindowEnd values 
-PASS Test set wrong values to appendWindowStart and appendWindowEnd. 
-PASS Test set correct values to appendWindowStart and appendWindowEnd. 
-PASS Test appendwindow throw error when mediasource object is not associated with a sourebuffer. 
-PASS Test set appendWindowStart and appendWindowEnd when source buffer updating. 
-PASS Test appendWindowStart and appendWindowEnd value after a sourceBuffer.abort(). 
-PASS Test read appendWindowStart and appendWindowEnd initial values. 
+PASS Test correctly reset appendWindowStart and appendWindowEnd values
+PASS Test set wrong values to appendWindowStart and appendWindowEnd.
+PASS Test set correct values to appendWindowStart and appendWindowEnd.
+PASS Test appendwindow throw error when mediasource object is not associated with a sourebuffer.
+PASS Test set appendWindowStart and appendWindowEnd when source buffer updating.
+PASS Test appendWindowStart and appendWindowEnd value after a sourceBuffer.abort().
+PASS Test read appendWindowStart and appendWindowEnd initial values.
 

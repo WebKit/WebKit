@@ -3,5 +3,5 @@ PASS The referrer URL is stripped-referrer when a
                                  document served over http requires an https
                                  sub-resource via xhr-request using the meta-referrer
                                  delivery method with no-redirect and when
-                                 the target request is same-origin. 
+                                 the target request is same-origin.
 

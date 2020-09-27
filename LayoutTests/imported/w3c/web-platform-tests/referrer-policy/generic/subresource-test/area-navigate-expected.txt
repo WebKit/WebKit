@@ -17,5 +17,5 @@ http://127.0.0.1:8800/common/security-features/subresource/document.py:
 
 
 
-PASS Area is responding with HTTP headers 
+PASS Area is responding with HTTP headers
 

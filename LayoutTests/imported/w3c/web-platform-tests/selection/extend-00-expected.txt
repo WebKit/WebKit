@@ -1,13 +1,13 @@
 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 0 [paras[0].firstChild, -1] 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 1 [paras[0].firstChild, 0] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 0 [paras[0].firstChild, -1]
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 1 [paras[0].firstChild, 0]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 2 [paras[0].firstChild, 1] assert_equals: focusOffset must be the offset passed to extend() expected 1 but got 2
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 3 [paras[0].firstChild, 2] 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 4 [paras[0].firstChild, 8] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 3 [paras[0].firstChild, 2]
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 4 [paras[0].firstChild, 8]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 5 [paras[0].firstChild, 9] assert_equals: focusOffset must be the offset passed to extend() expected 9 but got 10
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 6 [paras[0].firstChild, 10] 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 7 [paras[0].firstChild, 65535] 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 8 [paras[1].firstChild, -1] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 6 [paras[0].firstChild, 10]
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 7 [paras[0].firstChild, 65535]
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 8 [paras[1].firstChild, -1]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 9 [paras[1].firstChild, 0] assert_equals: focusNode must be the node passed to extend() expected Text node "Ijklmnop
 " but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 10 [paras[1].firstChild, 1] assert_equals: focusNode must be the node passed to extend() expected Text node "Ijklmnop
@@ -18,8 +18,8 @@ FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and 
 " but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 13 [paras[1].firstChild, 9] assert_equals: focusNode must be the node passed to extend() expected Text node "Ijklmnop
 " but got Element node <p id="c">Qrstuvwx</p>
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 14 [paras[1].firstChild, 10] 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 15 [paras[1].firstChild, 65535] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 14 [paras[1].firstChild, 10]
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 15 [paras[1].firstChild, 65535]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 16 [detachedPara1.firstChild, 0] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 17 [detachedPara1.firstChild, 1] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 18 [detachedPara1.firstChild, 8] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
@@ -28,7 +28,7 @@ FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and 
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 21 [foreignPara1.firstChild, 1] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 22 [foreignPara1.firstChild, 8] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 23 [foreignPara1.firstChild, 9] The index is not in the allowed range.
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 24 [document.documentElement, -1] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 24 [document.documentElement, -1]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 25 [document.documentElement, 0] assert_equals: focusNode must be the node passed to extend() expected Element node <html><head><title>Selection extend() tests</title>
 <meta... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -37,7 +37,7 @@ FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and 
 "
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 27 [document.documentElement, 2] assert_equals: focusNode must be the node passed to extend() expected Element node <html><head><title>Selection extend() tests</title>
 <meta... but got Text node "Qrstuvwx"
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 28 [document.documentElement, 7] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 28 [document.documentElement, 7]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 29 [document.head, 1] assert_equals: focusNode must be the node passed to extend() expected Element node <head><title>Selection extend() tests</title>
 <meta chars... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -53,12 +53,12 @@ FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and 
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 36 [paras[0], 1] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 37 [paras[0], 2] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 37 [paras[0], 2]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 38 [paras[1], 0] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="b" style="display:none">Ijklmnop
 </p> but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 39 [paras[1], 1] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="b" style="display:none">Ijklmnop
 </p> but got Element node <p id="c">Qrstuvwx</p>
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 40 [paras[1], 2] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 40 [paras[1], 2]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 41 [detachedPara1, 0] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 42 [detachedPara1, 1] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 43 [testDiv, 0] assert_equals: focusNode must be the node passed to extend() expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
@@ -66,17 +66,17 @@ FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and 
 "
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 44 [testDiv, 3] assert_equals: focusNode must be the node passed to extend() expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Qrstuvwx"
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 45 [document, -1] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 45 [document, -1]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 46 [document, 0] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 47 [document, 1] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 48 [document, 2] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Qrstuvwx"
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 49 [document, 3] 
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 50 [comment, -1] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 49 [document, 3]
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 50 [comment, -1]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 51 [comment, 0] assert_equals: focusNode must be the node passed to extend() expected Comment node <!--Alphabet soup?--> but got Text node "Qrstuvwx"
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 52 [comment, 4] assert_equals: focusNode must be the node passed to extend() expected Comment node <!--Alphabet soup?--> but got Text node "Qrstuvwx"
-PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 53 [comment, 96] 
+PASS extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 53 [comment, 96]
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 54 [foreignDoc, 0] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 55 [foreignDoc, 1] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
 FAIL extend() with range 1 [paras[0].firstChild, 0, paras[0].firstChild, 0] and point 56 [foreignComment, 2] assert_equals: The operation should not replace a registered Range expected object "" but got object ""
@@ -293,24 +293,24 @@ FAIL extend() forwards with range 2 [paras[0].firstChild, 0, paras[0].firstChild
 FAIL extend() backwards with range 2 [paras[0].firstChild, 0, paras[0].firstChild, 1] and point 86 [foreignDoctype, 0] assert_equals: The operation should not replace a registered Range expected object "Ä" but got object "Ä"
 FAIL extend() forwards with range 2 [paras[0].firstChild, 0, paras[0].firstChild, 1] and point 87 [xmlDoctype, 0] assert_equals: The operation should not replace a registered Range expected object "Ä" but got object "Ä"
 FAIL extend() backwards with range 2 [paras[0].firstChild, 0, paras[0].firstChild, 1] and point 87 [xmlDoctype, 0] assert_equals: The operation should not replace a registered Range expected object "Ä" but got object "Ä"
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 0 [paras[0].firstChild, -1] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 0 [paras[0].firstChild, -1] 
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 1 [paras[0].firstChild, 0] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 1 [paras[0].firstChild, 0] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 0 [paras[0].firstChild, -1]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 0 [paras[0].firstChild, -1]
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 1 [paras[0].firstChild, 0]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 1 [paras[0].firstChild, 0]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 2 [paras[0].firstChild, 1] assert_equals: focusOffset must be the offset passed to extend() expected 1 but got 2
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 2 [paras[0].firstChild, 1] assert_equals: focusOffset must be the offset passed to extend() expected 1 but got 2
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 3 [paras[0].firstChild, 2] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 3 [paras[0].firstChild, 2] 
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 4 [paras[0].firstChild, 8] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 4 [paras[0].firstChild, 8] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 3 [paras[0].firstChild, 2]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 3 [paras[0].firstChild, 2]
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 4 [paras[0].firstChild, 8]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 4 [paras[0].firstChild, 8]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 5 [paras[0].firstChild, 9] assert_equals: focusOffset must be the offset passed to extend() expected 9 but got 10
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 5 [paras[0].firstChild, 9] assert_equals: focusOffset must be the offset passed to extend() expected 9 but got 10
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 6 [paras[0].firstChild, 10] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 6 [paras[0].firstChild, 10] 
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 7 [paras[0].firstChild, 65535] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 7 [paras[0].firstChild, 65535] 
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 8 [paras[1].firstChild, -1] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 8 [paras[1].firstChild, -1] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 6 [paras[0].firstChild, 10]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 6 [paras[0].firstChild, 10]
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 7 [paras[0].firstChild, 65535]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 7 [paras[0].firstChild, 65535]
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 8 [paras[1].firstChild, -1]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 8 [paras[1].firstChild, -1]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 9 [paras[1].firstChild, 0] assert_equals: focusNode must be the node passed to extend() expected Text node "Ijklmnop
 " but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 9 [paras[1].firstChild, 0] assert_equals: focusNode must be the node passed to extend() expected Text node "Ijklmnop
@@ -331,10 +331,10 @@ FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild
 " but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 13 [paras[1].firstChild, 9] assert_equals: focusNode must be the node passed to extend() expected Text node "Ijklmnop
 " but got Element node <p id="c">Qrstuvwx</p>
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 14 [paras[1].firstChild, 10] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 14 [paras[1].firstChild, 10] 
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 15 [paras[1].firstChild, 65535] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 15 [paras[1].firstChild, 65535] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 14 [paras[1].firstChild, 10]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 14 [paras[1].firstChild, 10]
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 15 [paras[1].firstChild, 65535]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 15 [paras[1].firstChild, 65535]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 16 [detachedPara1.firstChild, 0] assert_equals: The operation should not update focusOffset expected 8 but got 2
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 16 [detachedPara1.firstChild, 0] assert_equals: The operation should not update focusOffset expected 2 but got 8
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 17 [detachedPara1.firstChild, 1] assert_equals: The operation should not update focusOffset expected 8 but got 2
@@ -351,8 +351,8 @@ FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 22 [foreignPara1.firstChild, 8] assert_equals: The operation should not replace a registered Range expected object "b̈c̈d̈" but got object "b̈c̈d̈"
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 23 [foreignPara1.firstChild, 9] The index is not in the allowed range.
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 23 [foreignPara1.firstChild, 9] The index is not in the allowed range.
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 24 [document.documentElement, -1] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 24 [document.documentElement, -1] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 24 [document.documentElement, -1]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 24 [document.documentElement, -1]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 25 [document.documentElement, 0] assert_equals: focusNode must be the node passed to extend() expected Element node <html><head><title>Selection extend() tests</title>
 <meta... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -369,8 +369,8 @@ FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild
 <meta... but got Text node "Qrstuvwx"
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 27 [document.documentElement, 2] assert_equals: focusNode must be the node passed to extend() expected Element node <html><head><title>Selection extend() tests</title>
 <meta... but got Text node "Qrstuvwx"
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 28 [document.documentElement, 7] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 28 [document.documentElement, 7] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 28 [document.documentElement, 7]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 28 [document.documentElement, 7]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 29 [document.head, 1] assert_equals: focusNode must be the node passed to extend() expected Element node <head><title>Selection extend() tests</title>
 <meta chars... but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
@@ -401,8 +401,8 @@ FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 36 [paras[0], 1] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p> but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 37 [paras[0], 2] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 37 [paras[0], 2] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 37 [paras[0], 2]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 37 [paras[0], 2]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 38 [paras[1], 0] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="b" style="display:none">Ijklmnop
 </p> but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 38 [paras[1], 0] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="b" style="display:none">Ijklmnop
@@ -411,8 +411,8 @@ FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild
 </p> but got Element node <p id="c">Qrstuvwx</p>
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 39 [paras[1], 1] assert_equals: focusNode must be the node passed to extend() expected Element node <p id="b" style="display:none">Ijklmnop
 </p> but got Element node <p id="c">Qrstuvwx</p>
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 40 [paras[1], 2] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 40 [paras[1], 2] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 40 [paras[1], 2]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 40 [paras[1], 2]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 41 [detachedPara1, 0] assert_equals: The operation should not update focusOffset expected 8 but got 2
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 41 [detachedPara1, 0] assert_equals: The operation should not update focusOffset expected 2 but got 8
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 42 [detachedPara1, 1] assert_equals: The operation should not update focusOffset expected 8 but got 2
@@ -427,8 +427,8 @@ FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild
 </p><p id="b" s... but got Text node "Qrstuvwx"
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 44 [testDiv, 3] assert_equals: focusNode must be the node passed to extend() expected Element node <div id="test"><p id="a">Äb̈c̈d̈ëf̈g̈ḧ
 </p><p id="b" s... but got Text node "Qrstuvwx"
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 45 [document, -1] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 45 [document, -1] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 45 [document, -1]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 45 [document, -1]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 46 [document, 0] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 "
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 46 [document, 0] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Äb̈c̈d̈ëf̈g̈ḧ
@@ -439,16 +439,16 @@ FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChil
 "
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 48 [document, 2] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Qrstuvwx"
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 48 [document, 2] assert_equals: focusNode must be the node passed to extend() expected Document node with 2 children but got Text node "Qrstuvwx"
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 49 [document, 3] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 49 [document, 3] 
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 50 [comment, -1] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 50 [comment, -1] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 49 [document, 3]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 49 [document, 3]
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 50 [comment, -1]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 50 [comment, -1]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 51 [comment, 0] assert_equals: focusNode must be the node passed to extend() expected Comment node <!--Alphabet soup?--> but got Text node "Qrstuvwx"
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 51 [comment, 0] assert_equals: focusNode must be the node passed to extend() expected Comment node <!--Alphabet soup?--> but got Text node "Qrstuvwx"
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 52 [comment, 4] assert_equals: focusNode must be the node passed to extend() expected Comment node <!--Alphabet soup?--> but got Text node "Qrstuvwx"
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 52 [comment, 4] assert_equals: focusNode must be the node passed to extend() expected Comment node <!--Alphabet soup?--> but got Text node "Qrstuvwx"
-PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 53 [comment, 96] 
-PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 53 [comment, 96] 
+PASS extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 53 [comment, 96]
+PASS extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 53 [comment, 96]
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 54 [foreignDoc, 0] assert_equals: The operation should not replace a registered Range expected object "b̈c̈d̈" but got object "b̈c̈d̈"
 FAIL extend() backwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 54 [foreignDoc, 0] assert_equals: The operation should not replace a registered Range expected object "b̈c̈d̈" but got object "b̈c̈d̈"
 FAIL extend() forwards with range 3 [paras[0].firstChild, 2, paras[0].firstChild, 8] and point 55 [foreignDoc, 1] assert_equals: The operation should not replace a registered Range expected object "b̈c̈d̈" but got object "b̈c̈d̈"

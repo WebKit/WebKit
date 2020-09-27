@@ -1,4 +1,4 @@
 
-PASS Test that calling cancelWatchAvailability() with an id does remove the callback. 
-PASS Test that calling cancelWatchAvailability() without an id removes all the callbacks. 
+PASS Test that calling cancelWatchAvailability() with an id does remove the callback.
+PASS Test that calling cancelWatchAvailability() without an id removes all the callbacks.
 

@@ -1,4 +1,4 @@
 
-PASS Post loopback messages 
-PASS Post messages among service workers 
+PASS Post loopback messages
+PASS Post messages among service workers
 

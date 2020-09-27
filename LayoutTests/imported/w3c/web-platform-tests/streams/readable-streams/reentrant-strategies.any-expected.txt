@@ -1,12 +1,12 @@
 
-PASS enqueue() inside size() should work 
-PASS close() inside size() should not crash 
-PASS close request inside size() should work 
-PASS error() inside size() should work 
-PASS desiredSize inside size() should work 
-PASS cancel() inside size() should work 
-PASS pipeTo() inside size() should behave as expected 
-PASS read() inside of size() should behave as expected 
-PASS getReader() inside size() should work 
-PASS tee() inside size() should work 
+PASS enqueue() inside size() should work
+PASS close() inside size() should not crash
+PASS close request inside size() should work
+PASS error() inside size() should work
+PASS desiredSize inside size() should work
+PASS cancel() inside size() should work
+PASS pipeTo() inside size() should behave as expected
+PASS read() inside of size() should behave as expected
+PASS getReader() inside size() should work
+PASS tee() inside size() should work
 

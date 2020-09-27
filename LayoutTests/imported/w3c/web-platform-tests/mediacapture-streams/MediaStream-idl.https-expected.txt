@@ -5,5 +5,5 @@ Description
 This test checks that the MediaStream constructor follows the algorithm set in the spec.
 
 
-PASS Tests that a MediaStream constructor follows the algorithm set in the spec 
+PASS Tests that a MediaStream constructor follows the algorithm set in the spec
 

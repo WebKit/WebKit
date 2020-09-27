@@ -1,6 +1,6 @@
 
-PASS Number should be rejected as the mark-options. 
-PASS NaN should be rejected as the mark-options. 
-PASS Infinity should be rejected as the mark-options. 
-PASS String should be rejected as the mark-options. 
+PASS Number should be rejected as the mark-options.
+PASS NaN should be rejected as the mark-options.
+PASS Infinity should be rejected as the mark-options.
+PASS String should be rejected as the mark-options.
 

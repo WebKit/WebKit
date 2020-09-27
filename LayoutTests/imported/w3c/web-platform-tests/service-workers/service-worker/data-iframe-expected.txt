@@ -1,4 +1,4 @@
 
 
-PASS navigator.serviceWorker is not available in a data: iframe 
+PASS navigator.serviceWorker is not available in a data: iframe
 

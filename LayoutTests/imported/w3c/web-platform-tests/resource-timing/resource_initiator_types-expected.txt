@@ -3,33 +3,33 @@ Description
 This test validates that all of the initiator types are represented.
 
 
-PASS http://localhost:8800/fonts/Ahem.ttf is expected to have initiatorType css 
-PASS http://localhost:8800/fonts/Ahem.ttf?id=n1 is expected to have initiatorType css 
-PASS http://localhost:8800/resource-timing/resources/blank_page_green.htm is expected to have initiatorType iframe 
-PASS http://localhost:8800/resource-timing/resources/blank_page_green.htm?id=frame is expected to have initiatorType frame 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=1 is expected to have initiatorType css 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=2 is expected to have initiatorType css 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=async_xhr is expected to have initiatorType xmlhttprequest 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=body is expected to have initiatorType body 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=cursor is expected to have initiatorType css 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=input is expected to have initiatorType input 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=n1 is expected to have initiatorType css 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=object is expected to have initiatorType object 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-99x-img-src is expected to have initiatorType img 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-img-srcset is expected to have initiatorType img 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-notsupported-img is expected to have initiatorType img 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-source is expected to have initiatorType img 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=svg-image is expected to have initiatorType image 
-PASS http://localhost:8800/resource-timing/resources/blue.png?id=video-poster is expected to have initiatorType video 
-PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-source-mpeg is expected to have initiatorType audio 
-PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-source-wav is expected to have initiatorType audio 
-PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-src is expected to have initiatorType audio 
-PASS http://localhost:8800/resource-timing/resources/empty.py?id=fetch is expected to have initiatorType fetch 
-PASS http://localhost:8800/resource-timing/resources/empty_script.js is expected to have initiatorType script 
+PASS http://localhost:8800/fonts/Ahem.ttf is expected to have initiatorType css
+PASS http://localhost:8800/fonts/Ahem.ttf?id=n1 is expected to have initiatorType css
+PASS http://localhost:8800/resource-timing/resources/blank_page_green.htm is expected to have initiatorType iframe
+PASS http://localhost:8800/resource-timing/resources/blank_page_green.htm?id=frame is expected to have initiatorType frame
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=1 is expected to have initiatorType css
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=2 is expected to have initiatorType css
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=async_xhr is expected to have initiatorType xmlhttprequest
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=body is expected to have initiatorType body
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=cursor is expected to have initiatorType css
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=input is expected to have initiatorType input
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=n1 is expected to have initiatorType css
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=object is expected to have initiatorType object
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-99x-img-src is expected to have initiatorType img
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-img-srcset is expected to have initiatorType img
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-notsupported-img is expected to have initiatorType img
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=picture-source is expected to have initiatorType img
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=svg-image is expected to have initiatorType image
+PASS http://localhost:8800/resource-timing/resources/blue.png?id=video-poster is expected to have initiatorType video
+PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-source-mpeg is expected to have initiatorType audio
+PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-source-wav is expected to have initiatorType audio
+PASS http://localhost:8800/resource-timing/resources/empty.py?id=audio-src is expected to have initiatorType audio
+PASS http://localhost:8800/resource-timing/resources/empty.py?id=fetch is expected to have initiatorType fetch
+PASS http://localhost:8800/resource-timing/resources/empty_script.js is expected to have initiatorType script
 FAIL http://localhost:8800/resource-timing/resources/eventsource.py?id=eventsource is expected to have initiatorType other assert_equals: http://localhost:8800/resource-timing/resources/eventsource.py?id=eventsource is expected to have initiatorType other expected "other" but got "eventsource"
-PASS http://localhost:8800/resource-timing/resources/nested.css is expected to have initiatorType link 
-PASS http://localhost:8800/resource-timing/resources/nested.css?id=preload is expected to have initiatorType link 
-PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.css?id=n1 is expected to have initiatorType css 
-PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.png is expected to have initiatorType img 
-PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.png?id=srcset-srcset is expected to have initiatorType img 
- 
+PASS http://localhost:8800/resource-timing/resources/nested.css is expected to have initiatorType link
+PASS http://localhost:8800/resource-timing/resources/nested.css?id=preload is expected to have initiatorType link
+PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.css?id=n1 is expected to have initiatorType css
+PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.png is expected to have initiatorType img
+PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.png?id=srcset-srcset is expected to have initiatorType img
+

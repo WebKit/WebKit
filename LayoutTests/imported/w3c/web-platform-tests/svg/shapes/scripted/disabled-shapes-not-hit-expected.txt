@@ -2,7 +2,7 @@ CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-10"
 CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute height="-10"
 CONSOLE MESSAGE: Error: Invalid negative value for <circle> attribute r="-10"
 
-PASS Disabled shapes are not rendered and cannot be hit: <rect> 
-PASS Disabled shapes are not rendered and cannot be hit: <circle> 
-PASS Disabled shapes are not rendered and cannot be hit: <ellipse> 
+PASS Disabled shapes are not rendered and cannot be hit: <rect>
+PASS Disabled shapes are not rendered and cannot be hit: <circle>
+PASS Disabled shapes are not rendered and cannot be hit: <ellipse>
 

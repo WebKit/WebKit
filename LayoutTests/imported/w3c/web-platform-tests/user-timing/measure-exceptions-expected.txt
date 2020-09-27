@@ -1,16 +1,16 @@
 This tests that 'performance.measure' throws exceptions with reasonable messages.
 
-PASS Passing 'unloadEventStart' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'unloadEventEnd' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'redirectStart' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'redirectEnd' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'secureConnectionStart' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'domInteractive' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'domContentLoadedEventStart' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'domContentLoadedEventEnd' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'domComplete' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'loadEventStart' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 'loadEventEnd' as a mark to measure API should cause error when the mark is empty. 
-PASS Passing 51.15 as a mark to measure API should cause error. 
-PASS Passing DoesNotExist as a mark to measure API should cause error. 
+PASS Passing 'unloadEventStart' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'unloadEventEnd' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'redirectStart' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'redirectEnd' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'secureConnectionStart' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'domInteractive' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'domContentLoadedEventStart' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'domContentLoadedEventEnd' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'domComplete' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'loadEventStart' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 'loadEventEnd' as a mark to measure API should cause error when the mark is empty.
+PASS Passing 51.15 as a mark to measure API should cause error.
+PASS Passing DoesNotExist as a mark to measure API should cause error.
 

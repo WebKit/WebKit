@@ -1,5 +1,5 @@
 
-PASS Smoke test. 
-PASS Tries to convert data member during Payment Request construction, irrespective of PMI. 
-PASS Converts PaymentMethodData's data to mandated IDL type during PaymentRequest construction. 
+PASS Smoke test.
+PASS Tries to convert data member during Payment Request construction, irrespective of PMI.
+PASS Converts PaymentMethodData's data to mandated IDL type during PaymentRequest construction.
 

@@ -9,5 +9,5 @@ There should be a message stating Pointer was released by Shadow DOM!
 Pointer was captured by Shadow DOM!
 Pointer was released by Shadow DOM!
 
-PASS PointerCapture works for Shadow DOM element. 
+PASS PointerCapture works for Shadow DOM element.
 

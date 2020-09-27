@@ -3,7 +3,7 @@ Description
 This test validates that the window.performance object is read/write.
 
 
-PASS window.performance is defined 
-PASS window.performance is read/write 
-PASS var performance is read/write 
+PASS window.performance is defined
+PASS window.performance is read/write
+PASS var performance is read/write
 

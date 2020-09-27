@@ -1,11 +1,11 @@
 
-PASS Cache.delete 
-PASS Cache.delete with no arguments 
-PASS Cache.delete called with a string URL 
-PASS Cache.delete called with a Request object 
-PASS Cache.delete called with a HEAD request 
-PASS Cache.delete supports ignoreVary 
-PASS Cache.delete with a non-existent entry 
-PASS Cache.delete with ignoreSearch option (request with search parameters) 
-PASS Cache.delete with ignoreSearch option (when it is specified as false) 
+PASS Cache.delete
+PASS Cache.delete with no arguments
+PASS Cache.delete called with a string URL
+PASS Cache.delete called with a Request object
+PASS Cache.delete called with a HEAD request
+PASS Cache.delete supports ignoreVary
+PASS Cache.delete with a non-existent entry
+PASS Cache.delete with ignoreSearch option (request with search parameters)
+PASS Cache.delete with ignoreSearch option (when it is specified as false)
 

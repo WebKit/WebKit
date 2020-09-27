@@ -1,3 +1,3 @@
 
-PASS Test transferFromImageBitmap(image) with a detached image should throw InvalidStateError 
+PASS Test transferFromImageBitmap(image) with a detached image should throw InvalidStateError
 

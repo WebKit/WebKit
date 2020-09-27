@@ -3,7 +3,7 @@ Description
 This test validates that initiator types are represented even when dynamically inserted.
 
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByType is defined 
-PASS Testing resource entries 
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
+PASS Testing resource entries
 

@@ -1,17 +1,17 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1 message
 
-PASS backpressure allows no transforms with a default identity transform and no reader 
-PASS backpressure only allows one transform() with a identity transform with a readable HWM of 1 and no reader 
-PASS transform() should keep being called as long as there is no backpressure 
-PASS writes should resolve as soon as transform completes 
-PASS calling pull() before the first write() with backpressure should work 
-PASS transform() should be able to read the chunk it just enqueued 
-PASS blocking transform() should cause backpressure 
-PASS writer.closed should resolve after readable is canceled during start 
-PASS writer.closed should resolve after readable is canceled with backpressure 
-PASS writer.closed should resolve after readable is canceled with no backpressure 
-PASS cancelling the readable should cause a pending write to resolve 
-PASS cancelling the readable side of a TransformStream should abort an empty pipe 
-PASS cancelling the readable side of a TransformStream should abort an empty pipe after startup 
-PASS cancelling the readable side of a TransformStream should abort a full pipe 
+PASS backpressure allows no transforms with a default identity transform and no reader
+PASS backpressure only allows one transform() with a identity transform with a readable HWM of 1 and no reader
+PASS transform() should keep being called as long as there is no backpressure
+PASS writes should resolve as soon as transform completes
+PASS calling pull() before the first write() with backpressure should work
+PASS transform() should be able to read the chunk it just enqueued
+PASS blocking transform() should cause backpressure
+PASS writer.closed should resolve after readable is canceled during start
+PASS writer.closed should resolve after readable is canceled with backpressure
+PASS writer.closed should resolve after readable is canceled with no backpressure
+PASS cancelling the readable should cause a pending write to resolve
+PASS cancelling the readable side of a TransformStream should abort an empty pipe
+PASS cancelling the readable side of a TransformStream should abort an empty pipe after startup
+PASS cancelling the readable side of a TransformStream should abort a full pipe
 

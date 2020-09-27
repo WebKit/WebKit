@@ -1,3 +1,3 @@
 
-PASS Verify SyncXHR on Worker is intercepted 
+PASS Verify SyncXHR on Worker is intercepted
 

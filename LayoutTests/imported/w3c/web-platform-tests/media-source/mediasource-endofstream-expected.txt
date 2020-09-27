@@ -1,6 +1,6 @@
 
-PASS MediaSource.endOfStream(): duration truncated to 0 when there are no buffered coded frames 
-PASS MediaSource.endOfStream(): media element notified that it now has all of the media data 
-PASS MediaSource.endOfStream(): buffered data not modified when endOfStream is called 
-PASS MediaSource.endOfStream(): duration set to the highest end time reported by the buffered attribute 
+PASS MediaSource.endOfStream(): duration truncated to 0 when there are no buffered coded frames
+PASS MediaSource.endOfStream(): media element notified that it now has all of the media data
+PASS MediaSource.endOfStream(): buffered data not modified when endOfStream is called
+PASS MediaSource.endOfStream(): duration set to the highest end time reported by the buffered attribute
 

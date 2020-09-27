@@ -1,14 +1,14 @@
 
-PASS CacheStorage.match 
-PASS CacheStorageMatch with no cache name provided 
-PASS CacheStorageMatch from one of many caches 
-PASS CacheStorageMatch from one of many caches by name 
-PASS CacheStorageMatch a string request 
-PASS CacheStorageMatch a HEAD request 
-PASS CacheStorageMatch with no cached entry 
-PASS CacheStorageMatch with no caches available but name provided 
-PASS CacheStorageMatch with empty cache name provided 
-PASS CacheStorageMatch supports ignoreSearch 
-PASS Cache.match supports ignoreMethod 
-PASS CacheStorageMatch supports ignoreVary 
+PASS CacheStorage.match
+PASS CacheStorageMatch with no cache name provided
+PASS CacheStorageMatch from one of many caches
+PASS CacheStorageMatch from one of many caches by name
+PASS CacheStorageMatch a string request
+PASS CacheStorageMatch a HEAD request
+PASS CacheStorageMatch with no cached entry
+PASS CacheStorageMatch with no caches available but name provided
+PASS CacheStorageMatch with empty cache name provided
+PASS CacheStorageMatch supports ignoreSearch
+PASS Cache.match supports ignoreMethod
+PASS CacheStorageMatch supports ignoreVary
 

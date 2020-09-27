@@ -1,31 +1,31 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface Window: original interface defined 
-PASS Partial interface Window: member names are unique 
-PASS Partial interface Window[2]: member names are unique 
-PASS Window includes GlobalEventHandlers: member names are unique 
-PASS Window includes WindowEventHandlers: member names are unique 
-PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
-PASS Window includes AnimationFrameProvider: member names are unique 
-PASS Window includes WindowSessionStorage: member names are unique 
-PASS Window includes WindowLocalStorage: member names are unique 
-PASS IdleDeadline interface: existence and properties of interface object 
-PASS IdleDeadline interface object length 
-PASS IdleDeadline interface object name 
-PASS IdleDeadline interface: existence and properties of interface prototype object 
-PASS IdleDeadline interface: existence and properties of interface prototype object's "constructor" property 
-PASS IdleDeadline interface: existence and properties of interface prototype object's @@unscopables property 
-PASS IdleDeadline interface: operation timeRemaining() 
-PASS IdleDeadline interface: attribute didTimeout 
-PASS IdleDeadline must be primary interface of deadline 
-PASS Stringification of deadline 
-PASS IdleDeadline interface: deadline must inherit property "timeRemaining()" with the proper type 
-PASS IdleDeadline interface: deadline must inherit property "didTimeout" with the proper type 
-PASS Window interface: operation requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions) 
-PASS Window interface: operation cancelIdleCallback(unsigned long) 
-PASS Window interface: window must inherit property "requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions)" with the proper type 
-PASS Window interface: calling requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "cancelIdleCallback(unsigned long)" with the proper type 
-PASS Window interface: calling cancelIdleCallback(unsigned long) on window with too few arguments must throw TypeError 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Window: original interface defined
+PASS Partial interface Window: member names are unique
+PASS Partial interface Window[2]: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+PASS IdleDeadline interface: existence and properties of interface object
+PASS IdleDeadline interface object length
+PASS IdleDeadline interface object name
+PASS IdleDeadline interface: existence and properties of interface prototype object
+PASS IdleDeadline interface: existence and properties of interface prototype object's "constructor" property
+PASS IdleDeadline interface: existence and properties of interface prototype object's @@unscopables property
+PASS IdleDeadline interface: operation timeRemaining()
+PASS IdleDeadline interface: attribute didTimeout
+PASS IdleDeadline must be primary interface of deadline
+PASS Stringification of deadline
+PASS IdleDeadline interface: deadline must inherit property "timeRemaining()" with the proper type
+PASS IdleDeadline interface: deadline must inherit property "didTimeout" with the proper type
+PASS Window interface: operation requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions)
+PASS Window interface: operation cancelIdleCallback(unsigned long)
+PASS Window interface: window must inherit property "requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions)" with the proper type
+PASS Window interface: calling requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions) on window with too few arguments must throw TypeError
+PASS Window interface: window must inherit property "cancelIdleCallback(unsigned long)" with the proper type
+PASS Window interface: calling cancelIdleCallback(unsigned long) on window with too few arguments must throw TypeError
 

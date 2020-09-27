@@ -1,6 +1,6 @@
 
-PASS Accessing navigator.serviceWorker in normal iframe should not throw. 
-PASS Accessing navigator.serviceWorker in sandboxed iframe should throw. 
-PASS Accessing navigator.serviceWorker in sandboxed iframe with allow-same-origin flag should not throw. 
+PASS Accessing navigator.serviceWorker in normal iframe should not throw.
+PASS Accessing navigator.serviceWorker in sandboxed iframe should throw.
+PASS Accessing navigator.serviceWorker in sandboxed iframe with allow-same-origin flag should not throw.
 FAIL Switching iframe sandbox attribute while loading the iframe promise_test: Unhandled rejection with value: object "TypeError: msg.startsWith is not a function. (In 'msg.startsWith('no msg back')', 'msg.startsWith' is undefined)"
 

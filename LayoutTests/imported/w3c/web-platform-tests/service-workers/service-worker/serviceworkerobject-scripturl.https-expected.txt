@@ -1,6 +1,6 @@
 
-PASS Verify the scriptURL property: relative 
-PASS Verify the scriptURL property: with-fragment 
-PASS Verify the scriptURL property: with-query 
-PASS Verify the scriptURL property: absolute 
+PASS Verify the scriptURL property: relative
+PASS Verify the scriptURL property: with-fragment
+PASS Verify the scriptURL property: with-query
+PASS Verify the scriptURL property: absolute
 

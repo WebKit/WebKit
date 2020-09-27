@@ -1,7 +1,7 @@
 
-PASS Clients.matchAll() returns non-focused controlled windows in creation order. 
+PASS Clients.matchAll() returns non-focused controlled windows in creation order.
 FAIL Clients.matchAll() returns controlled windows in focus order.  Case 1. assert_equals: expected URL index 0 expected "https://localhost:9443/service-workers/service-worker/resources/empty.html?name=focus-controlled-windows-1&q=2" but got "https://localhost:9443/service-workers/service-worker/resources/empty.html?name=focus-controlled-windows-1&q=0"
-PASS Clients.matchAll() returns controlled windows in focus order.  Case 2. 
+PASS Clients.matchAll() returns controlled windows in focus order.  Case 2.
 FAIL Clients.matchAll() returns non-focused uncontrolled windows in creation order. assert_equals: expected 6 but got 5
 FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 1. assert_equals: expected 6 but got 5
 FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 2. assert_equals: expected 6 but got 5

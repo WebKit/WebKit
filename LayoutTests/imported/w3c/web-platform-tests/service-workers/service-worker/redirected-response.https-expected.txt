@@ -1,11 +1,11 @@
 
-PASS initialize global state (service worker registration and caches) 
-PASS mode: "follow", non-intercepted request, no server redirect 
-PASS mode: "follow", non-intercepted request 
-PASS mode: "manual", non-intercepted request 
-PASS mode: "error", non-intercepted request 
-PASS mode: "follow", no mode change, no server redirect 
-PASS mode: "follow", no mode change 
+PASS initialize global state (service worker registration and caches)
+PASS mode: "follow", non-intercepted request, no server redirect
+PASS mode: "follow", non-intercepted request
+PASS mode: "manual", non-intercepted request
+PASS mode: "error", non-intercepted request
+PASS mode: "follow", no mode change, no server redirect
+PASS mode: "follow", no mode change
 FAIL mode: "error", mode change: "follow" promise_rejects_js: The redirected response from the service worker should be treated as an error when the redirect flag of request was 'error'. function "function () { throw e }" threw object "TypeError: Response served by service worker has redirections" ("TypeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
@@ -18,17 +18,17 @@ FAIL mode: "follow", mode change: "manual" promise_rejects_js: The opaqueredirec
 FAIL mode: "error", mode change: "manual" promise_rejects_js: The opaqueredirect response from the service worker should be treated as an error when the redirect flag of request was 'error'. function "function () { throw e }" threw object "TypeError: Response served by service worker is opaque redirect" ("TypeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-PASS mode: "manual", no mode change 
-PASS mode: "follow", generated redirect response 
+PASS mode: "manual", no mode change
+PASS mode: "follow", generated redirect response
 FAIL mode: "error", generated redirect response promise_rejects_js: The generated redirect response from the service worker should be treated as an error when the redirect flag of request was 'error'. function "function () { throw e }" threw object "TypeError: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/dummy?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt%3F&original-redirect-mode=error&sw=gen" ("TypeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-PASS mode: "manual", generated redirect response 
-PASS Fetch should follow the redirect response 20 times 
+PASS mode: "manual", generated redirect response
+PASS Fetch should follow the redirect response 20 times
 FAIL Fetch should not follow the redirect response 21 times. promise_rejects_js: Fetch should not follow the redirect response 21 times. function "function () { throw e }" threw object "TypeError: Too many redirections" ("TypeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-PASS The URL for the service worker redirected request should be propagated to response. 
-PASS restore global state (service worker registration) 
-PASS restore global state (caches) 
+PASS The URL for the service worker redirected request should be propagated to response.
+PASS restore global state (service worker registration)
+PASS restore global state (caches)
 

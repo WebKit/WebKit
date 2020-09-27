@@ -9,5 +9,5 @@ Click purple rectangle
 The following pointer types were detected: mouse.
 
 
-PASS hasPointerCapture 
+PASS hasPointerCapture
 

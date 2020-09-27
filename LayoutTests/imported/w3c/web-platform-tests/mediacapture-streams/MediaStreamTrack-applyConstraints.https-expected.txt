@@ -1,9 +1,9 @@
 When prompted, accept to share your video stream.
 
 
-PASS applyConstraints rejects invalid groupID 
-PASS applyConstraints accepts invalid ideal groupID, does not change setting 
-PASS applyConstraints rejects attempt to switch device using groupId 
+PASS applyConstraints rejects invalid groupID
+PASS applyConstraints accepts invalid ideal groupID, does not change setting
+PASS applyConstraints rejects attempt to switch device using groupId
 FAIL applyConstraints rejects invalid resizeMode assert_unreached: applyConstraints() must fail with invalid resizeMode Reached unreachable code
-PASS applyConstraints accepts invalid ideal resizeMode, does not change setting 
+PASS applyConstraints accepts invalid ideal resizeMode, does not change setting
 

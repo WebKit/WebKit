@@ -1,146 +1,146 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface Navigator: original interface defined 
-PASS Partial interface Navigator: member names are unique 
-PASS Partial interface Navigator[2]: original interface defined 
-PASS Partial interface Navigator[2]: member names are unique 
-PASS Partial interface MediaDevices: original interface defined 
-PASS Partial interface MediaDevices: member names are unique 
-PASS Partial interface mixin NavigatorID: member names are unique 
-PASS Navigator includes NavigatorID: member names are unique 
-PASS Navigator includes NavigatorLanguage: member names are unique 
-PASS Navigator includes NavigatorOnLine: member names are unique 
-PASS Navigator includes NavigatorContentUtils: member names are unique 
-PASS Navigator includes NavigatorCookies: member names are unique 
-PASS Navigator includes NavigatorPlugins: member names are unique 
-PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
-PASS MediaStream interface: existence and properties of interface object 
-PASS MediaStream interface object length 
-PASS MediaStream interface object name 
-PASS MediaStream interface: existence and properties of interface prototype object 
-PASS MediaStream interface: existence and properties of interface prototype object's "constructor" property 
-PASS MediaStream interface: existence and properties of interface prototype object's @@unscopables property 
-PASS MediaStream interface: attribute id 
-PASS MediaStream interface: operation getAudioTracks() 
-PASS MediaStream interface: operation getVideoTracks() 
-PASS MediaStream interface: operation getTracks() 
-PASS MediaStream interface: operation getTrackById(DOMString) 
-PASS MediaStream interface: operation addTrack(MediaStreamTrack) 
-PASS MediaStream interface: operation removeTrack(MediaStreamTrack) 
-PASS MediaStream interface: operation clone() 
-PASS MediaStream interface: attribute active 
-PASS MediaStream interface: attribute onaddtrack 
-PASS MediaStream interface: attribute onremovetrack 
-PASS MediaStream must be primary interface of stream 
-PASS Stringification of stream 
-PASS MediaStream interface: stream must inherit property "id" with the proper type 
-PASS MediaStream interface: stream must inherit property "getAudioTracks()" with the proper type 
-PASS MediaStream interface: stream must inherit property "getVideoTracks()" with the proper type 
-PASS MediaStream interface: stream must inherit property "getTracks()" with the proper type 
-PASS MediaStream interface: stream must inherit property "getTrackById(DOMString)" with the proper type 
-PASS MediaStream interface: calling getTrackById(DOMString) on stream with too few arguments must throw TypeError 
-PASS MediaStream interface: stream must inherit property "addTrack(MediaStreamTrack)" with the proper type 
-PASS MediaStream interface: calling addTrack(MediaStreamTrack) on stream with too few arguments must throw TypeError 
-PASS MediaStream interface: stream must inherit property "removeTrack(MediaStreamTrack)" with the proper type 
-PASS MediaStream interface: calling removeTrack(MediaStreamTrack) on stream with too few arguments must throw TypeError 
-PASS MediaStream interface: stream must inherit property "clone()" with the proper type 
-PASS MediaStream interface: stream must inherit property "active" with the proper type 
-PASS MediaStream interface: stream must inherit property "onaddtrack" with the proper type 
-PASS MediaStream interface: stream must inherit property "onremovetrack" with the proper type 
-PASS MediaStream must be primary interface of new MediaStream() 
-PASS Stringification of new MediaStream() 
-PASS MediaStream interface: new MediaStream() must inherit property "id" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "getAudioTracks()" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "getVideoTracks()" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "getTracks()" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "getTrackById(DOMString)" with the proper type 
-PASS MediaStream interface: calling getTrackById(DOMString) on new MediaStream() with too few arguments must throw TypeError 
-PASS MediaStream interface: new MediaStream() must inherit property "addTrack(MediaStreamTrack)" with the proper type 
-PASS MediaStream interface: calling addTrack(MediaStreamTrack) on new MediaStream() with too few arguments must throw TypeError 
-PASS MediaStream interface: new MediaStream() must inherit property "removeTrack(MediaStreamTrack)" with the proper type 
-PASS MediaStream interface: calling removeTrack(MediaStreamTrack) on new MediaStream() with too few arguments must throw TypeError 
-PASS MediaStream interface: new MediaStream() must inherit property "clone()" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "active" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "onaddtrack" with the proper type 
-PASS MediaStream interface: new MediaStream() must inherit property "onremovetrack" with the proper type 
-PASS MediaStreamTrack interface: existence and properties of interface object 
-PASS MediaStreamTrack interface object length 
-PASS MediaStreamTrack interface object name 
-PASS MediaStreamTrack interface: existence and properties of interface prototype object 
-PASS MediaStreamTrack interface: existence and properties of interface prototype object's "constructor" property 
-PASS MediaStreamTrack interface: existence and properties of interface prototype object's @@unscopables property 
-PASS MediaStreamTrack interface: attribute kind 
-PASS MediaStreamTrack interface: attribute id 
-PASS MediaStreamTrack interface: attribute label 
-PASS MediaStreamTrack interface: attribute enabled 
-PASS MediaStreamTrack interface: attribute muted 
-PASS MediaStreamTrack interface: attribute onmute 
-PASS MediaStreamTrack interface: attribute onunmute 
-PASS MediaStreamTrack interface: attribute readyState 
-PASS MediaStreamTrack interface: attribute onended 
-PASS MediaStreamTrack interface: operation clone() 
-PASS MediaStreamTrack interface: operation stop() 
-PASS MediaStreamTrack interface: operation getCapabilities() 
-PASS MediaStreamTrack interface: operation getConstraints() 
-PASS MediaStreamTrack interface: operation getSettings() 
-PASS MediaStreamTrack interface: operation applyConstraints(optional MediaTrackConstraints) 
-PASS MediaStreamTrack must be primary interface of track 
-PASS Stringification of track 
-PASS MediaStreamTrack interface: track must inherit property "kind" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "id" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "label" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "enabled" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "muted" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "onmute" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "onunmute" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "readyState" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "onended" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "clone()" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "stop()" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "getCapabilities()" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "getConstraints()" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "getSettings()" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "applyConstraints(optional MediaTrackConstraints)" with the proper type 
-PASS MediaStreamTrack interface: calling applyConstraints(optional MediaTrackConstraints) on track with too few arguments must throw TypeError 
-PASS MediaStreamTrackEvent interface: existence and properties of interface object 
-PASS MediaStreamTrackEvent interface object length 
-PASS MediaStreamTrackEvent interface object name 
-PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object 
-PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object's "constructor" property 
-PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object's @@unscopables property 
-PASS MediaStreamTrackEvent interface: attribute track 
-PASS MediaStreamTrackEvent must be primary interface of trackEvent 
-PASS Stringification of trackEvent 
-PASS MediaStreamTrackEvent interface: trackEvent must inherit property "track" with the proper type 
-PASS MediaDevices interface: existence and properties of interface object 
-PASS MediaDevices interface object length 
-PASS MediaDevices interface object name 
-PASS MediaDevices interface: existence and properties of interface prototype object 
-PASS MediaDevices interface: existence and properties of interface prototype object's "constructor" property 
-PASS MediaDevices interface: existence and properties of interface prototype object's @@unscopables property 
-PASS MediaDevices interface: attribute ondevicechange 
-PASS MediaDevices interface: operation enumerateDevices() 
-PASS MediaDevices interface: operation getSupportedConstraints() 
-PASS MediaDevices interface: operation getUserMedia(optional MediaStreamConstraints) 
-PASS MediaDevices must be primary interface of navigator.mediaDevices 
-PASS Stringification of navigator.mediaDevices 
-PASS MediaDevices interface: navigator.mediaDevices must inherit property "ondevicechange" with the proper type 
-PASS MediaDevices interface: navigator.mediaDevices must inherit property "enumerateDevices()" with the proper type 
-PASS MediaDevices interface: navigator.mediaDevices must inherit property "getSupportedConstraints()" with the proper type 
-PASS MediaDevices interface: navigator.mediaDevices must inherit property "getUserMedia(optional MediaStreamConstraints)" with the proper type 
-PASS MediaDevices interface: calling getUserMedia(optional MediaStreamConstraints) on navigator.mediaDevices with too few arguments must throw TypeError 
-PASS MediaDeviceInfo interface: existence and properties of interface object 
-PASS MediaDeviceInfo interface object length 
-PASS MediaDeviceInfo interface object name 
-PASS MediaDeviceInfo interface: existence and properties of interface prototype object 
-PASS MediaDeviceInfo interface: existence and properties of interface prototype object's "constructor" property 
-PASS MediaDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property 
-PASS MediaDeviceInfo interface: attribute deviceId 
-PASS MediaDeviceInfo interface: attribute kind 
-PASS MediaDeviceInfo interface: attribute label 
-PASS MediaDeviceInfo interface: attribute groupId 
-PASS MediaDeviceInfo interface: operation toJSON() 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface Navigator[2]: original interface defined
+PASS Partial interface Navigator[2]: member names are unique
+PASS Partial interface MediaDevices: original interface defined
+PASS Partial interface MediaDevices: member names are unique
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS MediaStream interface: existence and properties of interface object
+PASS MediaStream interface object length
+PASS MediaStream interface object name
+PASS MediaStream interface: existence and properties of interface prototype object
+PASS MediaStream interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaStream interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaStream interface: attribute id
+PASS MediaStream interface: operation getAudioTracks()
+PASS MediaStream interface: operation getVideoTracks()
+PASS MediaStream interface: operation getTracks()
+PASS MediaStream interface: operation getTrackById(DOMString)
+PASS MediaStream interface: operation addTrack(MediaStreamTrack)
+PASS MediaStream interface: operation removeTrack(MediaStreamTrack)
+PASS MediaStream interface: operation clone()
+PASS MediaStream interface: attribute active
+PASS MediaStream interface: attribute onaddtrack
+PASS MediaStream interface: attribute onremovetrack
+PASS MediaStream must be primary interface of stream
+PASS Stringification of stream
+PASS MediaStream interface: stream must inherit property "id" with the proper type
+PASS MediaStream interface: stream must inherit property "getAudioTracks()" with the proper type
+PASS MediaStream interface: stream must inherit property "getVideoTracks()" with the proper type
+PASS MediaStream interface: stream must inherit property "getTracks()" with the proper type
+PASS MediaStream interface: stream must inherit property "getTrackById(DOMString)" with the proper type
+PASS MediaStream interface: calling getTrackById(DOMString) on stream with too few arguments must throw TypeError
+PASS MediaStream interface: stream must inherit property "addTrack(MediaStreamTrack)" with the proper type
+PASS MediaStream interface: calling addTrack(MediaStreamTrack) on stream with too few arguments must throw TypeError
+PASS MediaStream interface: stream must inherit property "removeTrack(MediaStreamTrack)" with the proper type
+PASS MediaStream interface: calling removeTrack(MediaStreamTrack) on stream with too few arguments must throw TypeError
+PASS MediaStream interface: stream must inherit property "clone()" with the proper type
+PASS MediaStream interface: stream must inherit property "active" with the proper type
+PASS MediaStream interface: stream must inherit property "onaddtrack" with the proper type
+PASS MediaStream interface: stream must inherit property "onremovetrack" with the proper type
+PASS MediaStream must be primary interface of new MediaStream()
+PASS Stringification of new MediaStream()
+PASS MediaStream interface: new MediaStream() must inherit property "id" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "getAudioTracks()" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "getVideoTracks()" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "getTracks()" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "getTrackById(DOMString)" with the proper type
+PASS MediaStream interface: calling getTrackById(DOMString) on new MediaStream() with too few arguments must throw TypeError
+PASS MediaStream interface: new MediaStream() must inherit property "addTrack(MediaStreamTrack)" with the proper type
+PASS MediaStream interface: calling addTrack(MediaStreamTrack) on new MediaStream() with too few arguments must throw TypeError
+PASS MediaStream interface: new MediaStream() must inherit property "removeTrack(MediaStreamTrack)" with the proper type
+PASS MediaStream interface: calling removeTrack(MediaStreamTrack) on new MediaStream() with too few arguments must throw TypeError
+PASS MediaStream interface: new MediaStream() must inherit property "clone()" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "active" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "onaddtrack" with the proper type
+PASS MediaStream interface: new MediaStream() must inherit property "onremovetrack" with the proper type
+PASS MediaStreamTrack interface: existence and properties of interface object
+PASS MediaStreamTrack interface object length
+PASS MediaStreamTrack interface object name
+PASS MediaStreamTrack interface: existence and properties of interface prototype object
+PASS MediaStreamTrack interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaStreamTrack interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaStreamTrack interface: attribute kind
+PASS MediaStreamTrack interface: attribute id
+PASS MediaStreamTrack interface: attribute label
+PASS MediaStreamTrack interface: attribute enabled
+PASS MediaStreamTrack interface: attribute muted
+PASS MediaStreamTrack interface: attribute onmute
+PASS MediaStreamTrack interface: attribute onunmute
+PASS MediaStreamTrack interface: attribute readyState
+PASS MediaStreamTrack interface: attribute onended
+PASS MediaStreamTrack interface: operation clone()
+PASS MediaStreamTrack interface: operation stop()
+PASS MediaStreamTrack interface: operation getCapabilities()
+PASS MediaStreamTrack interface: operation getConstraints()
+PASS MediaStreamTrack interface: operation getSettings()
+PASS MediaStreamTrack interface: operation applyConstraints(optional MediaTrackConstraints)
+PASS MediaStreamTrack must be primary interface of track
+PASS Stringification of track
+PASS MediaStreamTrack interface: track must inherit property "kind" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "id" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "label" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "enabled" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "muted" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "onmute" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "onunmute" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "readyState" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "onended" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "clone()" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "stop()" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "getCapabilities()" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "getConstraints()" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "getSettings()" with the proper type
+PASS MediaStreamTrack interface: track must inherit property "applyConstraints(optional MediaTrackConstraints)" with the proper type
+PASS MediaStreamTrack interface: calling applyConstraints(optional MediaTrackConstraints) on track with too few arguments must throw TypeError
+PASS MediaStreamTrackEvent interface: existence and properties of interface object
+PASS MediaStreamTrackEvent interface object length
+PASS MediaStreamTrackEvent interface object name
+PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object
+PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaStreamTrackEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaStreamTrackEvent interface: attribute track
+PASS MediaStreamTrackEvent must be primary interface of trackEvent
+PASS Stringification of trackEvent
+PASS MediaStreamTrackEvent interface: trackEvent must inherit property "track" with the proper type
+PASS MediaDevices interface: existence and properties of interface object
+PASS MediaDevices interface object length
+PASS MediaDevices interface object name
+PASS MediaDevices interface: existence and properties of interface prototype object
+PASS MediaDevices interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaDevices interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaDevices interface: attribute ondevicechange
+PASS MediaDevices interface: operation enumerateDevices()
+PASS MediaDevices interface: operation getSupportedConstraints()
+PASS MediaDevices interface: operation getUserMedia(optional MediaStreamConstraints)
+PASS MediaDevices must be primary interface of navigator.mediaDevices
+PASS Stringification of navigator.mediaDevices
+PASS MediaDevices interface: navigator.mediaDevices must inherit property "ondevicechange" with the proper type
+PASS MediaDevices interface: navigator.mediaDevices must inherit property "enumerateDevices()" with the proper type
+PASS MediaDevices interface: navigator.mediaDevices must inherit property "getSupportedConstraints()" with the proper type
+PASS MediaDevices interface: navigator.mediaDevices must inherit property "getUserMedia(optional MediaStreamConstraints)" with the proper type
+PASS MediaDevices interface: calling getUserMedia(optional MediaStreamConstraints) on navigator.mediaDevices with too few arguments must throw TypeError
+PASS MediaDeviceInfo interface: existence and properties of interface object
+PASS MediaDeviceInfo interface object length
+PASS MediaDeviceInfo interface object name
+PASS MediaDeviceInfo interface: existence and properties of interface prototype object
+PASS MediaDeviceInfo interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaDeviceInfo interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaDeviceInfo interface: attribute deviceId
+PASS MediaDeviceInfo interface: attribute kind
+PASS MediaDeviceInfo interface: attribute label
+PASS MediaDeviceInfo interface: attribute groupId
+PASS MediaDeviceInfo interface: operation toJSON()
 FAIL InputDeviceInfo interface: existence and properties of interface object assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface object length assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL InputDeviceInfo interface object name assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
@@ -151,24 +151,24 @@ FAIL InputDeviceInfo interface: operation getCapabilities() assert_own_property:
 FAIL InputDeviceInfo must be primary interface of audioinput assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL Stringification of audioinput assert_class_string: class string of audioinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
 FAIL InputDeviceInfo interface: audioinput must inherit property "getCapabilities()" with the proper type assert_inherits: property "getCapabilities" not found in prototype chain
-PASS MediaDeviceInfo interface: audioinput must inherit property "deviceId" with the proper type 
-PASS MediaDeviceInfo interface: audioinput must inherit property "kind" with the proper type 
-PASS MediaDeviceInfo interface: audioinput must inherit property "label" with the proper type 
-PASS MediaDeviceInfo interface: audioinput must inherit property "groupId" with the proper type 
-PASS MediaDeviceInfo interface: audioinput must inherit property "toJSON()" with the proper type 
-PASS MediaDeviceInfo interface: default toJSON operation on audioinput 
+PASS MediaDeviceInfo interface: audioinput must inherit property "deviceId" with the proper type
+PASS MediaDeviceInfo interface: audioinput must inherit property "kind" with the proper type
+PASS MediaDeviceInfo interface: audioinput must inherit property "label" with the proper type
+PASS MediaDeviceInfo interface: audioinput must inherit property "groupId" with the proper type
+PASS MediaDeviceInfo interface: audioinput must inherit property "toJSON()" with the proper type
+PASS MediaDeviceInfo interface: default toJSON operation on audioinput
 FAIL InputDeviceInfo must be primary interface of videoinput assert_own_property: self does not have own property "InputDeviceInfo" expected property "InputDeviceInfo" missing
 FAIL Stringification of videoinput assert_class_string: class string of videoinput expected "[object InputDeviceInfo]" but got "[object MediaDeviceInfo]"
 FAIL InputDeviceInfo interface: videoinput must inherit property "getCapabilities()" with the proper type assert_inherits: property "getCapabilities" not found in prototype chain
-PASS MediaDeviceInfo interface: videoinput must inherit property "deviceId" with the proper type 
-PASS MediaDeviceInfo interface: videoinput must inherit property "kind" with the proper type 
-PASS MediaDeviceInfo interface: videoinput must inherit property "label" with the proper type 
-PASS MediaDeviceInfo interface: videoinput must inherit property "groupId" with the proper type 
-PASS MediaDeviceInfo interface: videoinput must inherit property "toJSON()" with the proper type 
-PASS MediaDeviceInfo interface: default toJSON operation on videoinput 
-PASS Navigator interface: attribute mediaDevices 
+PASS MediaDeviceInfo interface: videoinput must inherit property "deviceId" with the proper type
+PASS MediaDeviceInfo interface: videoinput must inherit property "kind" with the proper type
+PASS MediaDeviceInfo interface: videoinput must inherit property "label" with the proper type
+PASS MediaDeviceInfo interface: videoinput must inherit property "groupId" with the proper type
+PASS MediaDeviceInfo interface: videoinput must inherit property "toJSON()" with the proper type
+PASS MediaDeviceInfo interface: default toJSON operation on videoinput
+PASS Navigator interface: attribute mediaDevices
 FAIL Navigator interface: operation getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) assert_own_property: interface prototype object missing non-static operation expected property "getUserMedia" missing
-PASS Navigator interface: navigator must inherit property "mediaDevices" with the proper type 
+PASS Navigator interface: navigator must inherit property "mediaDevices" with the proper type
 FAIL Navigator interface: navigator must inherit property "getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback)" with the proper type assert_inherits: property "getUserMedia" not found in prototype chain
 FAIL Navigator interface: calling getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) on navigator with too few arguments must throw TypeError assert_inherits: property "getUserMedia" not found in prototype chain
 

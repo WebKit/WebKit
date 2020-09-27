@@ -1,3 +1,3 @@
 
-PASS calcMode spline with 'to' animation 
+PASS calcMode spline with 'to' animation
 

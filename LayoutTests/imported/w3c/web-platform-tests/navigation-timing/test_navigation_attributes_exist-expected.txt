@@ -3,8 +3,8 @@ Description
 This test validates that all of the window.performance.navigation attributes exist (but does not validate that their values are correct).
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS window.performance.navigation.type is defined. 
-PASS window.performance.navigation.redirectCount is defined. 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS window.performance.navigation.type is defined.
+PASS window.performance.navigation.redirectCount is defined.
 

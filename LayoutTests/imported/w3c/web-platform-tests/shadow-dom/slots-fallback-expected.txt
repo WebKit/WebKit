@@ -1,15 +1,15 @@
 
-PASS Slots fallback: Basic. 
-PASS Slots fallback: Basic, elements only. 
-PASS Slots fallback: Slots in Slots. 
-PASS Slots fallback: Slots in Slots, elements only. 
-PASS Slots fallback: Fallback contents should not be used if a node is assigned. 
-PASS Slots fallback: Slots in Slots: Assigned nodes should be used as fallback contents of another slot 
-PASS Slots fallback: Complex case. 
-PASS Slots fallback: Complex case, elements only. 
-PASS Slots fallback: Mutation. Append fallback contents. 
-PASS Slots fallback: Mutation. Remove fallback contents. 
-PASS Slots fallback: Mutation. Assign a node to a slot so that fallback contens are no longer used. 
-PASS Slots fallback: Mutation. Remove an assigned node from a slot so that fallback contens will be used. 
-PASS Slots fallback: Mutation.  Remove a slot which is a fallback content of another slot. 
+PASS Slots fallback: Basic.
+PASS Slots fallback: Basic, elements only.
+PASS Slots fallback: Slots in Slots.
+PASS Slots fallback: Slots in Slots, elements only.
+PASS Slots fallback: Fallback contents should not be used if a node is assigned.
+PASS Slots fallback: Slots in Slots: Assigned nodes should be used as fallback contents of another slot
+PASS Slots fallback: Complex case.
+PASS Slots fallback: Complex case, elements only.
+PASS Slots fallback: Mutation. Append fallback contents.
+PASS Slots fallback: Mutation. Remove fallback contents.
+PASS Slots fallback: Mutation. Assign a node to a slot so that fallback contens are no longer used.
+PASS Slots fallback: Mutation. Remove an assigned node from a slot so that fallback contens will be used.
+PASS Slots fallback: Mutation.  Remove a slot which is a fallback content of another slot.
 

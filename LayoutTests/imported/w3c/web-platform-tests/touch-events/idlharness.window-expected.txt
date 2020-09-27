@@ -1,45 +1,45 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface mixin GlobalEventHandlers: original interface mixin defined 
-PASS Partial interface mixin GlobalEventHandlers: member names are unique 
-PASS Partial interface UIEvent: member names are unique 
-PASS Partial interface Document: member names are unique 
-PASS Partial interface Document[2]: member names are unique 
-PASS Partial interface Window: member names are unique 
-PASS Document includes GlobalEventHandlers: member names are unique 
-PASS Document includes DocumentAndElementEventHandlers: member names are unique 
-PASS Document includes NonElementParentNode: member names are unique 
-PASS Document includes ParentNode: member names are unique 
-PASS Document includes XPathEvaluatorBase: member names are unique 
-PASS HTMLElement includes GlobalEventHandlers: member names are unique 
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 
-PASS HTMLElement includes ElementContentEditable: member names are unique 
-PASS HTMLElement includes HTMLOrSVGElement: member names are unique 
-PASS Window includes GlobalEventHandlers: member names are unique 
-PASS Window includes WindowEventHandlers: member names are unique 
-PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
-PASS Window includes AnimationFrameProvider: member names are unique 
-PASS Window includes WindowSessionStorage: member names are unique 
-PASS Window includes WindowLocalStorage: member names are unique 
-PASS Element includes ParentNode: member names are unique 
-PASS Element includes NonDocumentTypeChildNode: member names are unique 
-PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slottable: member names are unique 
-PASS Touch interface: existence and properties of interface object 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface mixin GlobalEventHandlers: original interface mixin defined
+PASS Partial interface mixin GlobalEventHandlers: member names are unique
+PASS Partial interface UIEvent: member names are unique
+PASS Partial interface Document: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Window: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Touch interface: existence and properties of interface object
 FAIL Touch interface object length assert_equals: wrong value for Touch.length expected 1 but got 0
-PASS Touch interface object name 
-PASS Touch interface: existence and properties of interface prototype object 
-PASS Touch interface: existence and properties of interface prototype object's "constructor" property 
-PASS Touch interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Touch interface: attribute identifier 
-PASS Touch interface: attribute target 
-PASS Touch interface: attribute screenX 
-PASS Touch interface: attribute screenY 
-PASS Touch interface: attribute clientX 
-PASS Touch interface: attribute clientY 
-PASS Touch interface: attribute pageX 
-PASS Touch interface: attribute pageY 
+PASS Touch interface object name
+PASS Touch interface: existence and properties of interface prototype object
+PASS Touch interface: existence and properties of interface prototype object's "constructor" property
+PASS Touch interface: existence and properties of interface prototype object's @@unscopables property
+PASS Touch interface: attribute identifier
+PASS Touch interface: attribute target
+PASS Touch interface: attribute screenX
+PASS Touch interface: attribute screenY
+PASS Touch interface: attribute clientX
+PASS Touch interface: attribute clientY
+PASS Touch interface: attribute pageX
+PASS Touch interface: attribute pageY
 FAIL Touch interface: attribute radiusX assert_true: The prototype object must have a property "radiusX" expected true got false
 FAIL Touch interface: attribute radiusY assert_true: The prototype object must have a property "radiusY" expected true got false
 FAIL Touch interface: attribute rotationAngle assert_true: The prototype object must have a property "rotationAngle" expected true got false
@@ -64,27 +64,27 @@ FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit 
 FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "altitudeAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
 FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "azimuthAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
 FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "touchType" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-PASS TouchList interface: existence and properties of interface object 
-PASS TouchList interface object length 
-PASS TouchList interface object name 
-PASS TouchList interface: existence and properties of interface prototype object 
-PASS TouchList interface: existence and properties of interface prototype object's "constructor" property 
-PASS TouchList interface: existence and properties of interface prototype object's @@unscopables property 
-PASS TouchList interface: attribute length 
-PASS TouchList interface: operation item(unsigned long) 
-PASS TouchEvent interface: existence and properties of interface object 
+PASS TouchList interface: existence and properties of interface object
+PASS TouchList interface object length
+PASS TouchList interface object name
+PASS TouchList interface: existence and properties of interface prototype object
+PASS TouchList interface: existence and properties of interface prototype object's "constructor" property
+PASS TouchList interface: existence and properties of interface prototype object's @@unscopables property
+PASS TouchList interface: attribute length
+PASS TouchList interface: operation item(unsigned long)
+PASS TouchEvent interface: existence and properties of interface object
 FAIL TouchEvent interface object length assert_equals: wrong value for TouchEvent.length expected 1 but got 0
-PASS TouchEvent interface object name 
-PASS TouchEvent interface: existence and properties of interface prototype object 
-PASS TouchEvent interface: existence and properties of interface prototype object's "constructor" property 
-PASS TouchEvent interface: existence and properties of interface prototype object's @@unscopables property 
-PASS TouchEvent interface: attribute touches 
-PASS TouchEvent interface: attribute targetTouches 
-PASS TouchEvent interface: attribute changedTouches 
-PASS TouchEvent interface: attribute altKey 
-PASS TouchEvent interface: attribute metaKey 
-PASS TouchEvent interface: attribute ctrlKey 
-PASS TouchEvent interface: attribute shiftKey 
+PASS TouchEvent interface object name
+PASS TouchEvent interface: existence and properties of interface prototype object
+PASS TouchEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS TouchEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS TouchEvent interface: attribute touches
+PASS TouchEvent interface: attribute targetTouches
+PASS TouchEvent interface: attribute changedTouches
+PASS TouchEvent interface: attribute altKey
+PASS TouchEvent interface: attribute metaKey
+PASS TouchEvent interface: attribute ctrlKey
+PASS TouchEvent interface: attribute shiftKey
 FAIL TouchEvent must be primary interface of new TouchEvent("name") assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
 FAIL Stringification of new TouchEvent("name") assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
 FAIL TouchEvent interface: new TouchEvent("name") must inherit property "touches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
@@ -106,20 +106,20 @@ FAIL GlobalEventHandlers interface: window must inherit property "ontouchstart" 
 FAIL GlobalEventHandlers interface: window must inherit property "ontouchend" with the proper type assert_inherits: property "ontouchend" found on object expected in prototype chain
 FAIL GlobalEventHandlers interface: window must inherit property "ontouchmove" with the proper type assert_inherits: property "ontouchmove" found on object expected in prototype chain
 FAIL GlobalEventHandlers interface: window must inherit property "ontouchcancel" with the proper type assert_inherits: property "ontouchcancel" found on object expected in prototype chain
-PASS GlobalEventHandlers interface: document must inherit property "ontouchstart" with the proper type 
-PASS GlobalEventHandlers interface: document must inherit property "ontouchend" with the proper type 
-PASS GlobalEventHandlers interface: document must inherit property "ontouchmove" with the proper type 
-PASS GlobalEventHandlers interface: document must inherit property "ontouchcancel" with the proper type 
-PASS GlobalEventHandlers interface: document.body must inherit property "ontouchstart" with the proper type 
-PASS GlobalEventHandlers interface: document.body must inherit property "ontouchend" with the proper type 
-PASS GlobalEventHandlers interface: document.body must inherit property "ontouchmove" with the proper type 
-PASS GlobalEventHandlers interface: document.body must inherit property "ontouchcancel" with the proper type 
+PASS GlobalEventHandlers interface: document must inherit property "ontouchstart" with the proper type
+PASS GlobalEventHandlers interface: document must inherit property "ontouchend" with the proper type
+PASS GlobalEventHandlers interface: document must inherit property "ontouchmove" with the proper type
+PASS GlobalEventHandlers interface: document must inherit property "ontouchcancel" with the proper type
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchstart" with the proper type
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchend" with the proper type
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchmove" with the proper type
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchcancel" with the proper type
 FAIL Document interface: attribute ontouchstart assert_true: property should be enumerable expected true got false
 FAIL Document interface: attribute ontouchend assert_true: property should be enumerable expected true got false
 FAIL Document interface: attribute ontouchmove assert_true: property should be enumerable expected true got false
 FAIL Document interface: attribute ontouchcancel assert_true: property should be enumerable expected true got false
-PASS Document interface: document must inherit property "ontouchstart" with the proper type 
-PASS Document interface: document must inherit property "ontouchend" with the proper type 
-PASS Document interface: document must inherit property "ontouchmove" with the proper type 
-PASS Document interface: document must inherit property "ontouchcancel" with the proper type 
+PASS Document interface: document must inherit property "ontouchstart" with the proper type
+PASS Document interface: document must inherit property "ontouchend" with the proper type
+PASS Document interface: document must inherit property "ontouchmove" with the proper type
+PASS Document interface: document must inherit property "ontouchcancel" with the proper type
 

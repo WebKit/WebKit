@@ -7,5 +7,5 @@ CSP used to have a 'referrer' directive to set a Referrer Policy. This directive
 Running...
 
 
-PASS Image has a referrer despite CSP 'referrer' directive 
+PASS Image has a referrer despite CSP 'referrer' directive
 

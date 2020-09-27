@@ -1,7 +1,7 @@
 
-PASS CSP test for script-src in ServiceWorkerGlobalScope 
-PASS importScripts test for script-src 
-PASS eval test for script-src 
-PASS Fetch test for script-src 
-PASS Redirected fetch test for script-src 
+PASS CSP test for script-src in ServiceWorkerGlobalScope
+PASS importScripts test for script-src
+PASS eval test for script-src
+PASS Fetch test for script-src
+PASS Redirected fetch test for script-src
 

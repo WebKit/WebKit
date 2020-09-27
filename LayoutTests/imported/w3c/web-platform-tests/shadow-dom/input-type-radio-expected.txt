@@ -1,4 +1,4 @@
- 
 
-PASS input type=radio elements should form a group inside shadow DOM. 
+
+PASS input type=radio elements should form a group inside shadow DOM.
 

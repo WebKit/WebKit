@@ -3,46 +3,46 @@ Description
 This test validates exception scenarios of invoking mark() and measure() with timing attributes as value.
 
 
-PASS performance.mark should throw if used with timing attribute navigationStart 
-PASS performance.mark should throw if used with timing attribute unloadEventStart 
-PASS performance.mark should throw if used with timing attribute unloadEventEnd 
-PASS performance.mark should throw if used with timing attribute redirectStart 
-PASS performance.mark should throw if used with timing attribute redirectEnd 
-PASS performance.mark should throw if used with timing attribute fetchStart 
-PASS performance.mark should throw if used with timing attribute domainLookupStart 
-PASS performance.mark should throw if used with timing attribute domainLookupEnd 
-PASS performance.mark should throw if used with timing attribute connectStart 
-PASS performance.mark should throw if used with timing attribute connectEnd 
-PASS performance.mark should throw if used with timing attribute secureConnectionStart 
-PASS performance.mark should throw if used with timing attribute requestStart 
-PASS performance.mark should throw if used with timing attribute responseStart 
-PASS performance.mark should throw if used with timing attribute responseEnd 
-PASS performance.mark should throw if used with timing attribute domLoading 
-PASS performance.mark should throw if used with timing attribute domInteractive 
-PASS performance.mark should throw if used with timing attribute domContentLoadedEventStart 
-PASS performance.mark should throw if used with timing attribute domContentLoadedEventEnd 
-PASS performance.mark should throw if used with timing attribute domComplete 
-PASS performance.mark should throw if used with timing attribute loadEventStart 
-PASS performance.mark should throw if used with timing attribute loadEventEnd 
-PASS performance.measure should not throw if used with timing attribute navigationStart 
-PASS performance.measure should not throw if used with timing attribute unloadEventStart 
-PASS performance.measure should not throw if used with timing attribute unloadEventEnd 
-PASS performance.measure should not throw if used with timing attribute redirectStart 
-PASS performance.measure should not throw if used with timing attribute redirectEnd 
-PASS performance.measure should not throw if used with timing attribute fetchStart 
-PASS performance.measure should not throw if used with timing attribute domainLookupStart 
-PASS performance.measure should not throw if used with timing attribute domainLookupEnd 
-PASS performance.measure should not throw if used with timing attribute connectStart 
-PASS performance.measure should not throw if used with timing attribute connectEnd 
-PASS performance.measure should not throw if used with timing attribute secureConnectionStart 
-PASS performance.measure should not throw if used with timing attribute requestStart 
-PASS performance.measure should not throw if used with timing attribute responseStart 
-PASS performance.measure should not throw if used with timing attribute responseEnd 
-PASS performance.measure should not throw if used with timing attribute domLoading 
-PASS performance.measure should not throw if used with timing attribute domInteractive 
-PASS performance.measure should not throw if used with timing attribute domContentLoadedEventStart 
-PASS performance.measure should not throw if used with timing attribute domContentLoadedEventEnd 
-PASS performance.measure should not throw if used with timing attribute domComplete 
-PASS performance.measure should not throw if used with timing attribute loadEventStart 
-PASS performance.measure should not throw if used with timing attribute loadEventEnd 
+PASS performance.mark should throw if used with timing attribute navigationStart
+PASS performance.mark should throw if used with timing attribute unloadEventStart
+PASS performance.mark should throw if used with timing attribute unloadEventEnd
+PASS performance.mark should throw if used with timing attribute redirectStart
+PASS performance.mark should throw if used with timing attribute redirectEnd
+PASS performance.mark should throw if used with timing attribute fetchStart
+PASS performance.mark should throw if used with timing attribute domainLookupStart
+PASS performance.mark should throw if used with timing attribute domainLookupEnd
+PASS performance.mark should throw if used with timing attribute connectStart
+PASS performance.mark should throw if used with timing attribute connectEnd
+PASS performance.mark should throw if used with timing attribute secureConnectionStart
+PASS performance.mark should throw if used with timing attribute requestStart
+PASS performance.mark should throw if used with timing attribute responseStart
+PASS performance.mark should throw if used with timing attribute responseEnd
+PASS performance.mark should throw if used with timing attribute domLoading
+PASS performance.mark should throw if used with timing attribute domInteractive
+PASS performance.mark should throw if used with timing attribute domContentLoadedEventStart
+PASS performance.mark should throw if used with timing attribute domContentLoadedEventEnd
+PASS performance.mark should throw if used with timing attribute domComplete
+PASS performance.mark should throw if used with timing attribute loadEventStart
+PASS performance.mark should throw if used with timing attribute loadEventEnd
+PASS performance.measure should not throw if used with timing attribute navigationStart
+PASS performance.measure should not throw if used with timing attribute unloadEventStart
+PASS performance.measure should not throw if used with timing attribute unloadEventEnd
+PASS performance.measure should not throw if used with timing attribute redirectStart
+PASS performance.measure should not throw if used with timing attribute redirectEnd
+PASS performance.measure should not throw if used with timing attribute fetchStart
+PASS performance.measure should not throw if used with timing attribute domainLookupStart
+PASS performance.measure should not throw if used with timing attribute domainLookupEnd
+PASS performance.measure should not throw if used with timing attribute connectStart
+PASS performance.measure should not throw if used with timing attribute connectEnd
+PASS performance.measure should not throw if used with timing attribute secureConnectionStart
+PASS performance.measure should not throw if used with timing attribute requestStart
+PASS performance.measure should not throw if used with timing attribute responseStart
+PASS performance.measure should not throw if used with timing attribute responseEnd
+PASS performance.measure should not throw if used with timing attribute domLoading
+PASS performance.measure should not throw if used with timing attribute domInteractive
+PASS performance.measure should not throw if used with timing attribute domContentLoadedEventStart
+PASS performance.measure should not throw if used with timing attribute domContentLoadedEventEnd
+PASS performance.measure should not throw if used with timing attribute domComplete
+PASS performance.measure should not throw if used with timing attribute loadEventStart
+PASS performance.measure should not throw if used with timing attribute loadEventEnd
 

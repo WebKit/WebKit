@@ -1,4 +1,4 @@
 
-PASS Test exactly one succeeds when two MediaElements attach to same MediaSource 
-PASS Test that MediaSource can reattach if closed first 
+PASS Test exactly one succeeds when two MediaElements attach to same MediaSource
+PASS Test that MediaSource can reattach if closed first
 

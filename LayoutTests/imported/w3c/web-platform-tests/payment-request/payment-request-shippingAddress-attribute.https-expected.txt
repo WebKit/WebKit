@@ -1,4 +1,4 @@
 
-PASS Must have a .shippingAddress IDL attribute. 
-PASS .shippingAddress attribute must default to null. 
+PASS Must have a .shippingAddress IDL attribute.
+PASS .shippingAddress attribute must default to null.
 

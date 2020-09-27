@@ -1,5 +1,5 @@
 
-PASS e.style['pointer-events'] = "markers" should not set the property value 
-PASS e.style['pointer-events'] = "0" should not set the property value 
-PASS e.style['pointer-events'] = "visiblePainted visibleFill" should not set the property value 
+PASS e.style['pointer-events'] = "markers" should not set the property value
+PASS e.style['pointer-events'] = "0" should not set the property value
+PASS e.style['pointer-events'] = "visiblePainted visibleFill" should not set the property value
 

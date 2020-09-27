@@ -1,5 +1,5 @@
 
-PASS Test that an ImageBitmapRenderingContext with alpha disabled makes the canvas opaque 
-PASS Test that an ImageBitmapRenderingContext with alpha enabled preserves the alpha 
-PASS Test that the 'alpha' context creation attribute is true by default 
+PASS Test that an ImageBitmapRenderingContext with alpha disabled makes the canvas opaque
+PASS Test that an ImageBitmapRenderingContext with alpha enabled preserves the alpha
+PASS Test that the 'alpha' context creation attribute is true by default
 

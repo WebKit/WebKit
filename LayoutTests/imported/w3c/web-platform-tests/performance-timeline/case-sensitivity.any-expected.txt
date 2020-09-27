@@ -1,5 +1,5 @@
 
-PASS getEntriesByType values are case sensitive 
-PASS getEntriesByName values are case sensitive 
-PASS observe() and case sensitivity for types/entryTypes and buffered. 
+PASS getEntriesByType values are case sensitive
+PASS getEntriesByName values are case sensitive
+PASS observe() and case sensitivity for types/entryTypes and buffered.
 

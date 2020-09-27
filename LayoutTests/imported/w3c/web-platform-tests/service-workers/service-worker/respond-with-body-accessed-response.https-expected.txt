@@ -1,22 +1,22 @@
 
-PASS initialize global state 
-PASS test: type=basic 
-PASS test: type=opaque 
-PASS test: type=default 
-PASS test: type=basic&clone=1 
-PASS test: type=opaque&clone=1 
-PASS test: type=default&clone=1 
-PASS test: type=basic&clone=2 
-PASS test: type=opaque&clone=2 
-PASS test: type=default&clone=2 
-PASS test: type=basic&passThroughCache=true 
-PASS test: type=opaque&passThroughCache=true 
-PASS test: type=default&passThroughCache=true 
-PASS test: type=basic&clone=1&passThroughCache=true 
-PASS test: type=opaque&clone=1&passThroughCache=true 
-PASS test: type=default&clone=1&passThroughCache=true 
-PASS test: type=basic&clone=2&passThroughCache=true 
-PASS test: type=opaque&clone=2&passThroughCache=true 
-PASS test: type=default&clone=2&passThroughCache=true 
-PASS restore global state 
+PASS initialize global state
+PASS test: type=basic
+PASS test: type=opaque
+PASS test: type=default
+PASS test: type=basic&clone=1
+PASS test: type=opaque&clone=1
+PASS test: type=default&clone=1
+PASS test: type=basic&clone=2
+PASS test: type=opaque&clone=2
+PASS test: type=default&clone=2
+PASS test: type=basic&passThroughCache=true
+PASS test: type=opaque&passThroughCache=true
+PASS test: type=default&passThroughCache=true
+PASS test: type=basic&clone=1&passThroughCache=true
+PASS test: type=opaque&clone=1&passThroughCache=true
+PASS test: type=default&clone=1&passThroughCache=true
+PASS test: type=basic&clone=2&passThroughCache=true
+PASS test: type=opaque&clone=2&passThroughCache=true
+PASS test: type=default&clone=2&passThroughCache=true
+PASS restore global state
 

@@ -1,9 +1,9 @@
 
-PASS Root margin with explicit root. 
-PASS First rAF 
-PASS document.scrollingElement.scrollTop = window.innerHeight. 
-PASS root.scrollTop = 50, putting target into root margin 
-PASS document.scrollingElement.scrollTop = 0. 
-PASS root.scrollTop = 0 
-PASS root.scrollTop = 50 with root scrolled out of view. 
+PASS Root margin with explicit root.
+PASS First rAF
+PASS document.scrollingElement.scrollTop = window.innerHeight.
+PASS root.scrollTop = 50, putting target into root margin
+PASS document.scrollingElement.scrollTop = 0.
+PASS root.scrollTop = 0
+PASS root.scrollTop = 50 with root scrolled out of view.
 

@@ -5,5 +5,5 @@ Description
 This test checks that adding a track to an inactive MediaStream is allowed.
 
 
-PASS Tests that adding a track to an inactive MediaStream is allowed 
+PASS Tests that adding a track to an inactive MediaStream is allowed
 

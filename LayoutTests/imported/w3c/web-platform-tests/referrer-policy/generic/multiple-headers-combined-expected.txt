@@ -3,5 +3,5 @@ Referrer Policy: multiple Referrer-Policy header values are allowed
 Running...
 
 
-PASS Image uses the last recognized Referrer-Policy header value 
+PASS Image uses the last recognized Referrer-Policy header value
 

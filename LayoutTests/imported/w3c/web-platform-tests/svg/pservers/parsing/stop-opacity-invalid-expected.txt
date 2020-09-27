@@ -1,4 +1,4 @@
 
-PASS e.style['stop-opacity'] = "1." should not set the property value 
-PASS e.style['stop-opacity'] = "2 3" should not set the property value 
+PASS e.style['stop-opacity'] = "1." should not set the property value
+PASS e.style['stop-opacity'] = "2 3" should not set the property value
 

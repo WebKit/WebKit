@@ -1,5 +1,5 @@
 
-PASS Update should be triggered after a navigation (no fetch event worker). 
-PASS Update should be triggered after a navigation (fetch event worker). 
-PASS Update should be triggered after a navigation (network error). 
+PASS Update should be triggered after a navigation (no fetch event worker).
+PASS Update should be triggered after a navigation (fetch event worker).
+PASS Update should be triggered after a navigation (network error).
 

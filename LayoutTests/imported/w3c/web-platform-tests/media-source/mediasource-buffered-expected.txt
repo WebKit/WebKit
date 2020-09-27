@@ -1,9 +1,9 @@
 
-PASS Demuxed content with different lengths 
-PASS Muxed content with different lengths 
-PASS Demuxed content with an empty buffered range on one SourceBuffer 
-PASS Muxed content empty buffered ranges. 
-PASS Get buffered range when sourcebuffer is empty. 
-PASS Get buffered range when only init segment is appended. 
-PASS Get buffered range after removing sourcebuffer. 
+PASS Demuxed content with different lengths
+PASS Muxed content with different lengths
+PASS Demuxed content with an empty buffered range on one SourceBuffer
+PASS Muxed content empty buffered ranges.
+PASS Get buffered range when sourcebuffer is empty.
+PASS Get buffered range when only init segment is appended.
+PASS Get buffered range after removing sourcebuffer.
 

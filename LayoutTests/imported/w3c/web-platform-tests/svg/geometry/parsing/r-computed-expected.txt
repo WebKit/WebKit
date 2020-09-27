@@ -1,8 +1,8 @@
 
-PASS Property r value '10px' 
-PASS Property r value '0.5em' 
-PASS Property r value 'calc(10px + 0.5em)' 
-PASS Property r value 'calc(10px - 0.5em)' 
-PASS Property r value '40%' 
-PASS Property r value 'calc(50% + 60px)' 
+PASS Property r value '10px'
+PASS Property r value '0.5em'
+PASS Property r value 'calc(10px + 0.5em)'
+PASS Property r value 'calc(10px - 0.5em)'
+PASS Property r value '40%'
+PASS Property r value 'calc(50% + 60px)'
 

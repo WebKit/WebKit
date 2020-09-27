@@ -1,10 +1,10 @@
 
-PASS Padding properties on mrow 
-PASS Padding properties on mrow (rtl) 
-PASS Padding properties on mrow (shorthand) 
-PASS Padding properties on mrow (logical) 
-PASS Padding properties on mrow (logical, rtl) 
-PASS Padding properties on mrow (logical, shorthand) 
+PASS Padding properties on mrow
+PASS Padding properties on mrow (rtl)
+PASS Padding properties on mrow (shorthand)
+PASS Padding properties on mrow (logical)
+PASS Padding properties on mrow (logical, rtl)
+PASS Padding properties on mrow (logical, shorthand)
 
 
 

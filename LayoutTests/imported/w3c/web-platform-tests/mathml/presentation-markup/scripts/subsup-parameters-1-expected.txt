@@ -1,17 +1,17 @@
 
-PASS SpaceAfterScript 
-PASS SuperscriptShiftUp 
+PASS SpaceAfterScript
+PASS SuperscriptShiftUp
 FAIL SuperscriptShiftUpCramped assert_approx_equals: msup: Superscript shift expected 50 +/- 1 but got 20
-PASS SubscriptShiftDown 
-PASS SubSuperscriptGapMin 
-PASS SuperscriptBottomMaxWithSubscript 
-PASS SubscriptTopMax 
-PASS SuperscriptBottomMin 
-PASS SubscriptBaselineDrop 
-PASS SuperscriptBaselineDrop 
- 
- 
- 
+PASS SubscriptShiftDown
+PASS SubSuperscriptGapMin
+PASS SuperscriptBottomMaxWithSubscript
+PASS SubscriptTopMax
+PASS SuperscriptBottomMin
+PASS SubscriptBaselineDrop
+PASS SuperscriptBaselineDrop
+
+
+
 
 
 

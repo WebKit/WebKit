@@ -1,4 +1,4 @@
 
-PASS active is set 
-PASS The ServiceWorker objects returned from active attribute getter that represent the same service worker are the same objects 
+PASS active is set
+PASS The ServiceWorker objects returned from active attribute getter that represent the same service worker are the same objects
 

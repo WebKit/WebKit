@@ -1,5 +1,5 @@
 
-PASS e.style['stroke-linecap'] = "butt" should set the property value 
-PASS e.style['stroke-linecap'] = "round" should set the property value 
-PASS e.style['stroke-linecap'] = "square" should set the property value 
+PASS e.style['stroke-linecap'] = "butt" should set the property value
+PASS e.style['stroke-linecap'] = "round" should set the property value
+PASS e.style['stroke-linecap'] = "square" should set the property value
 

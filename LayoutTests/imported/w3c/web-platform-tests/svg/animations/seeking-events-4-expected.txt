@@ -1,3 +1,3 @@
 
-PASS Seeking forwards dispatches 'endEvent' if the element is not active at the seeked-to time 
+PASS Seeking forwards dispatches 'endEvent' if the element is not active at the seeked-to time
 

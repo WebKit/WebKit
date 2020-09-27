@@ -9,5 +9,5 @@ Pointer Events pointerout tests
 The following pointer types were detected: touch.
 
 
-PASS pointerout event received 
+PASS pointerout event received
 

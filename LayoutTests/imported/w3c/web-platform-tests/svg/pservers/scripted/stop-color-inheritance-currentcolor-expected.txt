@@ -1,3 +1,3 @@
 
-PASS "currentcolor" is inherited as a keyword 
+PASS "currentcolor" is inherited as a keyword
 

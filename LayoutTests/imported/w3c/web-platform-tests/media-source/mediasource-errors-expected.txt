@@ -1,8 +1,8 @@
 
-PASS Appending media segment before the first initialization segment. 
-PASS Signaling 'decode' error via endOfStream() before initialization segment has been appended. 
-PASS Signaling 'network' error via endOfStream() before initialization segment has been appended. 
-PASS Signaling 'decode' error via endOfStream() after initialization segment has been appended and the HTMLMediaElement has reached HAVE_METADATA. 
-PASS Signaling 'network' error via endOfStream() after initialization segment has been appended and the HTMLMediaElement has reached HAVE_METADATA. 
-PASS Signaling 'decode' error via segment parser loop algorithm after initialization segment and partial media segment has been appended. 
+PASS Appending media segment before the first initialization segment.
+PASS Signaling 'decode' error via endOfStream() before initialization segment has been appended.
+PASS Signaling 'network' error via endOfStream() before initialization segment has been appended.
+PASS Signaling 'decode' error via endOfStream() after initialization segment has been appended and the HTMLMediaElement has reached HAVE_METADATA.
+PASS Signaling 'network' error via endOfStream() after initialization segment has been appended and the HTMLMediaElement has reached HAVE_METADATA.
+PASS Signaling 'decode' error via segment parser loop algorithm after initialization segment and partial media segment has been appended.
 

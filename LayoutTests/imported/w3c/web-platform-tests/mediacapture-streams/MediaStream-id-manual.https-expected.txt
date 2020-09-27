@@ -5,5 +5,5 @@ Description
 This test checks that the MediaStream object returned by the success callback in getUserMedia has a correct id.
 
 
-PASS Tests that a MediaStream with a correct id is returned 
+PASS Tests that a MediaStream with a correct id is returned
 

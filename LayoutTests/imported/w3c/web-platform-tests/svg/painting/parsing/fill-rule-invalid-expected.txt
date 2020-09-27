@@ -1,4 +1,4 @@
 
-PASS e.style['fill-rule'] = "auto" should not set the property value 
-PASS e.style['fill-rule'] = "nonzero evenodd" should not set the property value 
+PASS e.style['fill-rule'] = "auto" should not set the property value
+PASS e.style['fill-rule'] = "nonzero evenodd" should not set the property value
 

@@ -4,7 +4,7 @@ This test validates that the window.performance object exists in an object eleme
 
 
 
-PASS window.performance is defined 
-PASS window.performance.timing is defined 
-PASS window.performance.navigation is defined 
+PASS window.performance is defined
+PASS window.performance.timing is defined
+PASS window.performance.navigation is defined
 

@@ -1,31 +1,31 @@
 
-PASS child of non-cramped element 
+PASS child of non-cramped element
 FAIL child of cramped element assert_greater_than: mrow-002 should be cramped expected a number greater than 25 but got 20
 FAIL child of msqrt assert_greater_than: msqrt-001 should be cramped expected a number greater than 25 but got 20
 FAIL child of parent assert_greater_than: mroot-001 should be cramped expected a number greater than 25 but got 20
 FAIL child of mfrac assert_greater_than: denominator should be cramped expected a number greater than 25 but got 20
 FAIL child of msub assert_greater_than: subscript should be cramped expected a number greater than 25 but got 20
-PASS child of msup 
+PASS child of msup
 FAIL child of msubsup assert_greater_than: subscript should be cramped expected a number greater than 25 but got 20
 FAIL child of munder assert_greater_than: underscript should be cramped expected a number greater than 25 but got 20
-PASS child of mover 
+PASS child of mover
 FAIL child of munderover assert_greater_than: underscript should be cramped expected a number greater than 25 but got 20
 FAIL accent child of mover assert_greater_than: accent overscript should be cramped expected a number greater than 25 but got 20
 FAIL accent child of munderover assert_greater_than: accent overscript should be cramped expected a number greater than 25 but got 20
-PASS child of non-cramped element, from in-flow children 
+PASS child of non-cramped element, from in-flow children
 FAIL child of cramped element, from in-flow children assert_greater_than: mrow-012 should be cramped expected a number greater than 25 but got 10
 FAIL child of msqrt, from in-flow children assert_greater_than: msqrt-011 should be cramped expected a number greater than 25 but got 10
 FAIL child of parent, from in-flow children assert_greater_than: mroot-011 should be cramped expected a number greater than 25 but got 10
 FAIL child of mfrac, from in-flow children assert_greater_than: denominator should be cramped expected a number greater than 25 but got 10
 FAIL child of msub, from in-flow children assert_greater_than: subscript should be cramped expected a number greater than 25 but got 10
-PASS child of msup, from in-flow children 
+PASS child of msup, from in-flow children
 FAIL child of msubsup, from in-flow children assert_greater_than: subscript should be cramped expected a number greater than 25 but got 10
 FAIL child of munder, from in-flow children assert_greater_than: underscript should be cramped expected a number greater than 25 but got 10
-PASS child of mover, from in-flow children 
+PASS child of mover, from in-flow children
 FAIL child of munderover, from in-flow children assert_greater_than: underscript should be cramped expected a number greater than 25 but got 12
 FAIL accent child of mover, from in-flow children assert_greater_than: accent overscript should be cramped expected a number greater than 25 but got 12
 FAIL accent child of munderover, from in-flow children assert_greater_than: accent overscript should be cramped expected a number greater than 25 but got 12
- 
+
 
 
 0

@@ -1,9 +1,9 @@
 
-PASS update() should succeed when new script is available. 
-PASS update() should fail when mime type is invalid. 
+PASS update() should succeed when new script is available.
+PASS update() should fail when mime type is invalid.
 FAIL update() should fail when a response for the main script is redirect. assert_throws: function "function () { throw e }" threw object "SecurityError: Script https://localhost:9443/service-workers/service-worker/resources/update-worker.py?Key=53187c6b-e588-48ee-ad9b-272fe38aa9b8&Mode=redirect load failed" ("SecurityError") expected object "TypeError" ("TypeError")
-PASS update() should fail when a new script contains a syntax error. 
-PASS update() should resolve when the install event throws. 
-PASS update() should fail when the pending uninstall flag is set. 
-PASS update() should succeed when the script shrinks. 
+PASS update() should fail when a new script contains a syntax error.
+PASS update() should resolve when the install event throws.
+PASS update() should fail when the pending uninstall flag is set.
+PASS update() should succeed when the script shrinks.
 

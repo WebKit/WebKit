@@ -1,62 +1,62 @@
 
-PASS mtable element (lowercase) 
-PASS mfrac element (lowercase) 
-PASS mroot element (lowercase) 
-PASS msub element (lowercase) 
-PASS msup element (lowercase) 
-PASS msubsup element (lowercase) 
-PASS munder element (lowercase) 
-PASS mover element (lowercase) 
-PASS munderover element (lowercase) 
-PASS mtable element (uppercase) 
-PASS mfrac element (uppercase) 
-PASS mroot element (uppercase) 
-PASS msub element (uppercase) 
-PASS msup element (uppercase) 
-PASS msubsup element (uppercase) 
-PASS munder element (uppercase) 
-PASS mover element (uppercase) 
-PASS munderover element (uppercase) 
-PASS mtable element (alternate_case) 
-PASS mfrac element (alternate_case) 
-PASS mroot element (alternate_case) 
-PASS msub element (alternate_case) 
-PASS msup element (alternate_case) 
-PASS msubsup element (alternate_case) 
-PASS munder element (alternate_case) 
-PASS mover element (alternate_case) 
-PASS munderover element (alternate_case) 
+PASS mtable element (lowercase)
+PASS mfrac element (lowercase)
+PASS mroot element (lowercase)
+PASS msub element (lowercase)
+PASS msup element (lowercase)
+PASS msubsup element (lowercase)
+PASS munder element (lowercase)
+PASS mover element (lowercase)
+PASS munderover element (lowercase)
+PASS mtable element (uppercase)
+PASS mfrac element (uppercase)
+PASS mroot element (uppercase)
+PASS msub element (uppercase)
+PASS msup element (uppercase)
+PASS msubsup element (uppercase)
+PASS munder element (uppercase)
+PASS mover element (uppercase)
+PASS munderover element (uppercase)
+PASS mtable element (alternate_case)
+PASS mfrac element (alternate_case)
+PASS mroot element (alternate_case)
+PASS msub element (alternate_case)
+PASS msup element (alternate_case)
+PASS msubsup element (alternate_case)
+PASS munder element (alternate_case)
+PASS mover element (alternate_case)
+PASS munderover element (alternate_case)
 ⫿
 ⫿
-  
+
 ⫿
 ⫿
- 
+
 ⫿
 ⫿
- 
+
 ⫿
 ⫿
- 
+
 ⫿
 ⫿
- 
-⫿
-⫿
-⫿
- 
+
 ⫿
 ⫿
 ⫿
+
 ⫿
 ⫿
- 
 ⫿
 ⫿
- 
+⫿
+
 ⫿
 ⫿
- 
+
+⫿
+⫿
+
 ⫿
 ⫿
 ⫿

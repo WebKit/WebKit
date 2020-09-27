@@ -1,5 +1,5 @@
 
-PASS Get seekable time ranges when the sourcebuffer is empty. 
-PASS Get seekable time ranges after init segment received. 
-PASS Get seekable time ranges on an infinite stream. 
+PASS Get seekable time ranges when the sourcebuffer is empty.
+PASS Get seekable time ranges after init segment received.
+PASS Get seekable time ranges on an infinite stream.
 

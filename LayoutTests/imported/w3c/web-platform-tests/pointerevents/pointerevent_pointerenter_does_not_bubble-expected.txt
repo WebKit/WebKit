@@ -10,44 +10,44 @@ The following pointer types were detected: mouse.
 Refresh the page to run the tests again with a different pointer type.
 
 
-PASS pointerEnter event does not bubble 
-PASS  mouse pointerenter event is a PointerEvent event 
-PASS  mouse pointerenter.pointerId attribute exists 
-PASS  mouse pointerenter.pointerId is readonly 
-PASS  mouse pointerenter.pointerId IDL type long (JS type was number) 
-PASS  mouse pointerenter.width attribute exists 
-PASS  mouse pointerenter.width is readonly 
-PASS  mouse pointerenter.width IDL type float (JS type was number) 
-PASS  mouse pointerenter.height attribute exists 
-PASS  mouse pointerenter.height is readonly 
-PASS  mouse pointerenter.height IDL type float (JS type was number) 
-PASS  mouse pointerenter.pressure attribute exists 
-PASS  mouse pointerenter.pressure is readonly 
-PASS  mouse pointerenter.pressure IDL type float (JS type was number) 
-PASS  mouse pointerenter.tiltX attribute exists 
-PASS  mouse pointerenter.tiltX is readonly 
-PASS  mouse pointerenter.tiltX IDL type long (JS type was number) 
-PASS  mouse pointerenter.tiltY attribute exists 
-PASS  mouse pointerenter.tiltY is readonly 
-PASS  mouse pointerenter.tiltY IDL type long (JS type was number) 
-PASS  mouse pointerenter.pointerType attribute exists 
-PASS  mouse pointerenter.pointerType is readonly 
-PASS  mouse pointerenter.pointerType IDL type string (JS type was string) 
-PASS  mouse pointerenter.isPrimary attribute exists 
-PASS  mouse pointerenter.isPrimary is readonly 
-PASS  mouse pointerenter.isPrimary IDL type boolean (JS type was boolean) 
-PASS  mouse pointerenter.detail attribute exists 
-PASS  mouse pointerenter.detail is readonly 
-PASS  mouse pointerenter.detail IDL type long (JS type was number) 
-PASS  mouse pointerenter.detail value is 0. 
-PASS  mouse pointerenter.fromElement attribute exists 
-PASS  mouse pointerenter.fromElement is readonly 
-PASS  mouse pointerenter.fromElement IDL type object (JS type was object) 
-PASS  mouse pointerenter.fromElement value is null. 
-PASS  mouse pointerenter.toElement attribute exists 
-PASS  mouse pointerenter.toElement is readonly 
-PASS  mouse pointerenter.toElement IDL type object (JS type was object) 
-PASS  mouse pointerenter.toElement value is null. 
-PASS  mouse pointerenter.pressure value is valid 
-PASS  mouse pointerenter properties for pointerType = mouse 
+PASS pointerEnter event does not bubble
+PASS  mouse pointerenter event is a PointerEvent event
+PASS  mouse pointerenter.pointerId attribute exists
+PASS  mouse pointerenter.pointerId is readonly
+PASS  mouse pointerenter.pointerId IDL type long (JS type was number)
+PASS  mouse pointerenter.width attribute exists
+PASS  mouse pointerenter.width is readonly
+PASS  mouse pointerenter.width IDL type float (JS type was number)
+PASS  mouse pointerenter.height attribute exists
+PASS  mouse pointerenter.height is readonly
+PASS  mouse pointerenter.height IDL type float (JS type was number)
+PASS  mouse pointerenter.pressure attribute exists
+PASS  mouse pointerenter.pressure is readonly
+PASS  mouse pointerenter.pressure IDL type float (JS type was number)
+PASS  mouse pointerenter.tiltX attribute exists
+PASS  mouse pointerenter.tiltX is readonly
+PASS  mouse pointerenter.tiltX IDL type long (JS type was number)
+PASS  mouse pointerenter.tiltY attribute exists
+PASS  mouse pointerenter.tiltY is readonly
+PASS  mouse pointerenter.tiltY IDL type long (JS type was number)
+PASS  mouse pointerenter.pointerType attribute exists
+PASS  mouse pointerenter.pointerType is readonly
+PASS  mouse pointerenter.pointerType IDL type string (JS type was string)
+PASS  mouse pointerenter.isPrimary attribute exists
+PASS  mouse pointerenter.isPrimary is readonly
+PASS  mouse pointerenter.isPrimary IDL type boolean (JS type was boolean)
+PASS  mouse pointerenter.detail attribute exists
+PASS  mouse pointerenter.detail is readonly
+PASS  mouse pointerenter.detail IDL type long (JS type was number)
+PASS  mouse pointerenter.detail value is 0.
+PASS  mouse pointerenter.fromElement attribute exists
+PASS  mouse pointerenter.fromElement is readonly
+PASS  mouse pointerenter.fromElement IDL type object (JS type was object)
+PASS  mouse pointerenter.fromElement value is null.
+PASS  mouse pointerenter.toElement attribute exists
+PASS  mouse pointerenter.toElement is readonly
+PASS  mouse pointerenter.toElement IDL type object (JS type was object)
+PASS  mouse pointerenter.toElement value is null.
+PASS  mouse pointerenter.pressure value is valid
+PASS  mouse pointerenter properties for pointerType = mouse
 

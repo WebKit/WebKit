@@ -1,12 +1,12 @@
 
-PASS CacheStorage.open 
-PASS CacheStorage.delete dooms, but does not delete immediately 
-PASS CacheStorage.open with an empty name 
-PASS CacheStorage.open with no arguments 
-PASS CacheStorage.has with existing cache 
-PASS CacheStorage.has with nonexistent cache 
-PASS CacheStorage.open with existing cache 
-PASS CacheStorage.delete with existing cache 
-PASS CacheStorage.delete with nonexistent cache 
-PASS CacheStorage names are DOMStrings not USVStrings 
+PASS CacheStorage.open
+PASS CacheStorage.delete dooms, but does not delete immediately
+PASS CacheStorage.open with an empty name
+PASS CacheStorage.open with no arguments
+PASS CacheStorage.has with existing cache
+PASS CacheStorage.has with nonexistent cache
+PASS CacheStorage.open with existing cache
+PASS CacheStorage.delete with existing cache
+PASS CacheStorage.delete with nonexistent cache
+PASS CacheStorage names are DOMStrings not USVStrings
 

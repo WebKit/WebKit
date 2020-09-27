@@ -1,5 +1,5 @@
 Check that resources from internal stylesheets are loaded with the referrer and referrer policy from the document.
 
 
-PASS Image from internal stylesheet. 
+PASS Image from internal stylesheet.
 

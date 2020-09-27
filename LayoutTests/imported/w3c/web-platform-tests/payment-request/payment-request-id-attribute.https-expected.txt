@@ -1,4 +1,4 @@
 
-PASS PaymentRequest's id attribute's value can be set via PaymentDetailsInit dictionary 
-PASS PaymentRequest's id attribute must be a UUID when PaymentDetailsInit.id is missing 
+PASS PaymentRequest's id attribute's value can be set via PaymentDetailsInit dictionary
+PASS PaymentRequest's id attribute must be a UUID when PaymentDetailsInit.id is missing
 

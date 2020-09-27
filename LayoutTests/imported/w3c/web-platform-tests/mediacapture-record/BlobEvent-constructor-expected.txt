@@ -1,5 +1,5 @@
 
-PASS The BlobEventInit dictionary is required 
-PASS The BlobEventInit dictionary's data member is required. 
-PASS The BlobEvent instance's data attribute is set. 
+PASS The BlobEventInit dictionary is required
+PASS The BlobEventInit dictionary's data member is required.
+PASS The BlobEvent instance's data attribute is set.
 

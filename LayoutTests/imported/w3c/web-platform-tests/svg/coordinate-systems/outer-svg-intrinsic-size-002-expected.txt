@@ -1,13 +1,13 @@
 
 
-PASS no sizing attributes set 
+PASS no sizing attributes set
 FAIL specified width assert_equals: checking width. expected 100 but got 300
 FAIL modified specified width assert_equals: checking width. expected 400 but got 300
 FAIL specified width and height assert_equals: checking width. expected 400 but got 300
 FAIL specified width and modified specified height assert_equals: checking width. expected 400 but got 300
 FAIL specified height assert_equals: checking height. expected 200 but got 150
 FAIL modified specified height assert_equals: checking height. expected 250 but got 150
-PASS no specified sizing attrs (after setting & removing them) 
+PASS no specified sizing attrs (after setting & removing them)
 FAIL set a 10x8 viewBox assert_equals: checking width. expected 500 but got 300
 FAIL modified viewBox to 50x20 assert_equals: checking width. expected 500 but got 300
 FAIL adding specified width, in presence of specified viewBox assert_equals: checking width. expected 100 but got 300

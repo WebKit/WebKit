@@ -1,4 +1,4 @@
 
-PASS Clients.matchAll() should not show an old window as controlled after it navigates. 
+PASS Clients.matchAll() should not show an old window as controlled after it navigates.
 FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: assert_equals: expected number of clients expected 3 but got 2 Reached unreachable code
 

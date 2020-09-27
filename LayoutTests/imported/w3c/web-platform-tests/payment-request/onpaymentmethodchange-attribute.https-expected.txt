@@ -1,6 +1,6 @@
 
-PASS Must have a onpaymentmethodchange IDL attribute 
-PASS onpaymentmethodchange attribute is a generic handler for "paymentmethodchange" 
-PASS onpaymentmethodchange attribute is a handler for PaymentMethodChangeEvent 
-PASS onpaymentmethodchange attribute and listeners both work 
+PASS Must have a onpaymentmethodchange IDL attribute
+PASS onpaymentmethodchange attribute is a generic handler for "paymentmethodchange"
+PASS onpaymentmethodchange attribute is a handler for PaymentMethodChangeEvent
+PASS onpaymentmethodchange attribute and listeners both work
 

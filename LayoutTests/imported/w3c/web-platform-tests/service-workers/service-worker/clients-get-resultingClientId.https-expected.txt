@@ -1,8 +1,8 @@
 
-PASS global setup 
+PASS global setup
 FAIL get(resultingClientId) for same-origin document assert_equals: promiseValue expected "client" but got "undefinedValue"
-PASS get(resultingClientId) on cross-origin redirect 
-PASS get(resultingClientId) for document sandboxed by CSP header 
+PASS get(resultingClientId) on cross-origin redirect
+PASS get(resultingClientId) for document sandboxed by CSP header
 FAIL get(resultingClientId) for document sandboxed by CSP header with allow-same-origin assert_equals: promiseValue expected "client" but got "undefinedValue"
-PASS global cleanup 
+PASS global cleanup
 

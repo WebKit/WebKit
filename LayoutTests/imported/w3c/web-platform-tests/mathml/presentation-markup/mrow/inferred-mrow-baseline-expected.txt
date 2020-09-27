@@ -1,17 +1,17 @@
 
-PASS baseline alignment inside Mrow 
-PASS baseline alignment inside Sqrt 
-PASS baseline alignment inside Style 
-PASS baseline alignment inside Error 
-PASS baseline alignment inside Phantom 
-PASS baseline alignment inside Math 
-PASS baseline alignment inside Menclose 
-PASS baseline alignment inside Mpadded 
- 
- 
- 
- 
- 
- 
- 
+PASS baseline alignment inside Mrow
+PASS baseline alignment inside Sqrt
+PASS baseline alignment inside Style
+PASS baseline alignment inside Error
+PASS baseline alignment inside Phantom
+PASS baseline alignment inside Math
+PASS baseline alignment inside Menclose
+PASS baseline alignment inside Mpadded
+
+
+
+
+
+
+
 

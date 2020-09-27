@@ -1,9 +1,9 @@
 
-PASS Observer attribute getters. 
-PASS observer.root 
-PASS observer.thresholds 
-PASS observer.rootMargin 
-PASS set observer.root 
-PASS set observer.thresholds 
-PASS set observer.rootMargin 
+PASS Observer attribute getters.
+PASS observer.root
+PASS observer.thresholds
+PASS observer.rootMargin
+PASS set observer.root
+PASS set observer.thresholds
+PASS set observer.rootMargin
 

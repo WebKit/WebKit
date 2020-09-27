@@ -14,5 +14,5 @@ The following pointer types were detected: touch.
 The following events were logged: gotpointercapture@target0, pointercancel@target0, lostpointercapture@target0.
 
 
-PASS pointer capture is released on pointercancel 
+PASS pointer capture is released on pointercancel
 

@@ -1,3 +1,3 @@
 
-PASS Test SVGLength animation on LengthModeWidth. 
+PASS Test SVGLength animation on LengthModeWidth.
 

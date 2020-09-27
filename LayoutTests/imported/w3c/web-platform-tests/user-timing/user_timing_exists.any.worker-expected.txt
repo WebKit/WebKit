@@ -1,6 +1,6 @@
 
-PASS self.performance.mark is defined. 
-PASS self.performance.clearMarks is defined. 
-PASS self.performance.measure is defined. 
-PASS self.performance.clearMeasures is defined. 
+PASS self.performance.mark is defined.
+PASS self.performance.clearMarks is defined.
+PASS self.performance.measure is defined.
+PASS self.performance.clearMeasures is defined.
 

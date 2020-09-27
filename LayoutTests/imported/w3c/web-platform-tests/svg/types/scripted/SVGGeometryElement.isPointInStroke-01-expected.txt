@@ -1,13 +1,13 @@
 
-PASS SVGGeometryElement.prototype.isPointInStroke, no arguments. 
-PASS SVGGeometryElement.prototype.isPointInStroke, non-finite argument. 
-PASS SVGGeometryElement.prototype.isPointInStroke, functional test. 
-PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-dasharray'. 
-PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-dashoffset'. 
-PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-miterlimit'. 
-PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-linejoin'. 
-PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-linecap'. 
-PASS SVGGeometryElement.prototype.isPointInStroke, 'pathLength'. 
+PASS SVGGeometryElement.prototype.isPointInStroke, no arguments.
+PASS SVGGeometryElement.prototype.isPointInStroke, non-finite argument.
+PASS SVGGeometryElement.prototype.isPointInStroke, functional test.
+PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-dasharray'.
+PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-dashoffset'.
+PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-miterlimit'.
+PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-linejoin'.
+PASS SVGGeometryElement.prototype.isPointInStroke, 'stroke-linecap'.
+PASS SVGGeometryElement.prototype.isPointInStroke, 'pathLength'.
 FAIL SVGGeometryElement.prototype.isPointInStroke, 'vector-effect'. assert_false: expected false got true
-PASS SVGGeometryElement.prototype.isPointInStroke, 'visibility' and 'pointer-events' have no effect. 
+PASS SVGGeometryElement.prototype.isPointInStroke, 'visibility' and 'pointer-events' have no effect.
 

@@ -31,5 +31,5 @@ FAIL removeRange() with Range 36 selection.removeRange is not a function. (In 's
 FAIL removeRange() with Range 37 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
 FAIL removeRange() with Range 38 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
 FAIL removeRange() with Range 39 selection.removeRange is not a function. (In 'selection.removeRange(range)', 'selection.removeRange' is undefined)
-PASS removeRange() argument is non-optional Range 
+PASS removeRange() argument is non-optional Range
 

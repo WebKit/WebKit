@@ -14,5 +14,5 @@ PASS The referrer URL is omitted when a
                                  document served over http requires an http
                                  sub-resource via img-tag using the attr-referrer
                                  delivery method with swap-origin-redirect and when
-                                 the target request is same-origin. (overridden by srcdoc iframe) 
+                                 the target request is same-origin. (overridden by srcdoc iframe)
 

@@ -1,4 +1,4 @@
 
 FAIL Lack of .https file name flag implies non-secure context assert_false: expected false got true
-PASS Lack of .https file name flag implies HTTP scheme 
+PASS Lack of .https file name flag implies HTTP scheme
 

@@ -1,10 +1,10 @@
 
-PASS Registering same scope as the script directory without the last slash 
-PASS Registration scope outside the script directory 
-PASS Registering scope outside domain 
-PASS Registering script outside domain 
-PASS Registering redirected script 
-PASS Scope including parent-reference and not under the script directory 
-PASS Script URL including consecutive slashes 
-PASS Script URL is same-origin filesystem: URL 
+PASS Registering same scope as the script directory without the last slash
+PASS Registration scope outside the script directory
+PASS Registering scope outside domain
+PASS Registering script outside domain
+PASS Registering redirected script
+PASS Scope including parent-reference and not under the script directory
+PASS Script URL including consecutive slashes
+PASS Script URL is same-origin filesystem: URL
 

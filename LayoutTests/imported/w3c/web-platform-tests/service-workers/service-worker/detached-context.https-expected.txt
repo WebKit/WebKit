@@ -1,7 +1,7 @@
 
-PASS accessing a ServiceWorkerRegistration from a removed iframe 
-PASS accessing a ServiceWorker object from a removed iframe 
-PASS accessing navigator.serviceWorker on a detached iframe 
+PASS accessing a ServiceWorkerRegistration from a removed iframe
+PASS accessing a ServiceWorker object from a removed iframe
+PASS accessing navigator.serviceWorker on a detached iframe
 FAIL accessing navigator on a removed frame assert_throws_js: function "() => get_navigator()" did not throw
 FAIL accessing navigator.serviceWorker on a removed about:blank frame assert_equals: expected null but got object "[object ServiceWorkerContainer]"
 

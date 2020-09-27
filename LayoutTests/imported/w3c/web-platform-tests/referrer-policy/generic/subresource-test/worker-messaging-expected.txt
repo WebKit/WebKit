@@ -15,5 +15,5 @@ http://localhost:8800/common/security-features/subresource/worker.py:
 }
 
 
-PASS Worker is responding with HTTP headers 
+PASS Worker is responding with HTTP headers
 

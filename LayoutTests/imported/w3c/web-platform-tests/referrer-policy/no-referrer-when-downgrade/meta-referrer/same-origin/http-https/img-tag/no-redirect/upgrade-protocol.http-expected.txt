@@ -4,15 +4,15 @@ PASS The referrer URL is stripped-referrer when a
                                  document served over http requires an https
                                  sub-resource via img-tag using the meta-referrer
                                  delivery method with no-redirect and when
-                                 the target request is same-origin. 
+                                 the target request is same-origin.
 PASS The referrer URL is stripped-referrer when a
                                  document served over http requires an https
                                  sub-resource via img-tag using the meta-referrer
                                  delivery method with no-redirect and when
-                                 the target request is same-origin. (srcdoc iframe inherits parent) 
+                                 the target request is same-origin. (srcdoc iframe inherits parent)
 PASS The referrer URL is stripped-referrer when a
                                  document served over http requires an https
                                  sub-resource via img-tag using the meta-referrer
                                  delivery method with no-redirect and when
-                                 the target request is same-origin. (overridden by srcdoc iframe) 
+                                 the target request is same-origin. (overridden by srcdoc iframe)
 

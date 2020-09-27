@@ -1,10 +1,10 @@
 
-PASS Property stroke-dasharray value 'none' 
-PASS Property stroke-dasharray value '10' 
+PASS Property stroke-dasharray value 'none'
+PASS Property stroke-dasharray value '10'
 FAIL Property stroke-dasharray value 'calc(10px + 0.5em)' assert_equals: expected "30px" but got "10px"
 FAIL Property stroke-dasharray value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "10px"
-PASS Property stroke-dasharray value '40%' 
+PASS Property stroke-dasharray value '40%'
 FAIL Property stroke-dasharray value 'calc(50% + 60px)' assert_equals: expected "calc(50% + 60px)" but got "0"
-PASS Property stroke-dasharray value '10px 20% 30px' 
-PASS Property stroke-dasharray value '0, 5' 
+PASS Property stroke-dasharray value '10px 20% 30px'
+PASS Property stroke-dasharray value '0, 5'
 

@@ -1,5 +1,5 @@
 
-PASS Alignment on the baseline with different and large script heights 
-PASS Tall subscripts/superscripts are not placed too high/low 
-PASS No collisions for tall subscripts and superscripts 
+PASS Alignment on the baseline with different and large script heights
+PASS Tall subscripts/superscripts are not placed too high/low
+PASS No collisions for tall subscripts and superscripts
 

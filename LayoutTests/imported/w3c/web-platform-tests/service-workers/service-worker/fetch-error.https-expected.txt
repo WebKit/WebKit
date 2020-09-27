@@ -1,5 +1,5 @@
 
-PASS Setup service worker 
-PASS Make sure a load that makes progress does not time out 
-PASS Unregister service worker 
+PASS Setup service worker
+PASS Make sure a load that makes progress does not time out
+PASS Unregister service worker
 

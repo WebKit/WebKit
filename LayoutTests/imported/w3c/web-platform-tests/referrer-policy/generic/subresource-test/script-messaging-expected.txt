@@ -15,5 +15,5 @@ http://127.0.0.1:8800/common/security-features/subresource/script.py:
 }
 
 
-PASS Script is responding with HTTP headers 
+PASS Script is responding with HTTP headers
 

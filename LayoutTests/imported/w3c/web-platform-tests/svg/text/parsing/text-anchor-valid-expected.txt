@@ -1,5 +1,5 @@
 
-PASS e.style['text-anchor'] = "start" should set the property value 
-PASS e.style['text-anchor'] = "middle" should set the property value 
-PASS e.style['text-anchor'] = "end" should set the property value 
+PASS e.style['text-anchor'] = "start" should set the property value
+PASS e.style['text-anchor'] = "middle" should set the property value
+PASS e.style['text-anchor'] = "end" should set the property value
 

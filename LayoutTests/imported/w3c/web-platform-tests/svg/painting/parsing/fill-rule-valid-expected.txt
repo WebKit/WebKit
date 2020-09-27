@@ -1,4 +1,4 @@
 
-PASS e.style['fill-rule'] = "nonzero" should set the property value 
-PASS e.style['fill-rule'] = "evenodd" should set the property value 
+PASS e.style['fill-rule'] = "nonzero" should set the property value
+PASS e.style['fill-rule'] = "evenodd" should set the property value
 

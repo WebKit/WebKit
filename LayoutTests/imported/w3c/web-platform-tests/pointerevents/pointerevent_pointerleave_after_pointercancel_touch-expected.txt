@@ -9,5 +9,5 @@ Pointer Events pointerleave tests
 The following pointer types were detected: touch.
 
 
-PASS pointerleave event received 
+PASS pointerleave event received
 

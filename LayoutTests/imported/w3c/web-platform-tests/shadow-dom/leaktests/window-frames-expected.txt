@@ -1,4 +1,4 @@
 
-PASS window.frames should not leak frames in Shadow DOM. 
+PASS window.frames should not leak frames in Shadow DOM.
 
 

@@ -1,10 +1,10 @@
 
-PASS "a" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "applet" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "area" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "embed" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "form" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "frameset" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "img" element with name attribute in a shadow tree should not be accessible from window object's named property. 
-PASS "object" element with name attribute in a shadow tree should not be accessible from window object's named property. 
+PASS "a" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "applet" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "area" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "embed" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "form" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "frameset" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "img" element with name attribute in a shadow tree should not be accessible from window object's named property.
+PASS "object" element with name attribute in a shadow tree should not be accessible from window object's named property.
 

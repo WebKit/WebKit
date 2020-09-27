@@ -1,4 +1,4 @@
 
-PASS PerformanceObserver with buffered flag sees previous marks 
-PASS PerformanceObserver with buffered flag sees previous measures 
+PASS PerformanceObserver with buffered flag sees previous marks
+PASS PerformanceObserver with buffered flag sees previous measures
 

@@ -1,4 +1,4 @@
 Stretched text
 
-PASS Test SVGLengthAdjustType enumeration animations 
+PASS Test SVGLengthAdjustType enumeration animations
 

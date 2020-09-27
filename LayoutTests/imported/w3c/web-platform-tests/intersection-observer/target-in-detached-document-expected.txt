@@ -1,5 +1,5 @@
 
-PASS IntersectionObserver in a single document using the implicit root. 
-PASS First rAF. 
-PASS Adopt target. 
+PASS IntersectionObserver in a single document using the implicit root.
+PASS First rAF.
+PASS Adopt target.
 

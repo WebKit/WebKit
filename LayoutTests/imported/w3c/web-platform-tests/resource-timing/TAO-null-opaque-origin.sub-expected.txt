@@ -3,5 +3,5 @@ Description
 This test validates that for a cross origin resource, the timing allow check algorithm will succeed when the value of Timing-Allow-Origin is null and the origin is an opaque origin.
 
 
-PASS Test null TAO value with opaque origins 
+PASS Test null TAO value with opaque origins
 

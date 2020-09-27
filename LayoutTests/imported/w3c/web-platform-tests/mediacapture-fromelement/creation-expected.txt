@@ -4,10 +4,10 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
 
 Harness Error (FAIL), message = The operation is not supported.
 
-PASS video-only 
+PASS video-only
 FAIL Untitled assert_true: expected true got false
-PASS audio-only 
+PASS audio-only
 FAIL Untitled 1 assert_true: expected true got false
-PASS video+audio 
+PASS video+audio
 FAIL Untitled 2 assert_true: expected true got false
 

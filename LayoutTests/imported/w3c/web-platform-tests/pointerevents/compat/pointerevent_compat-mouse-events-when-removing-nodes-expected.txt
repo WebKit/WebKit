@@ -1,7 +1,7 @@
 Verifies the compatibility mouse events are sent correctly when the node is deleted on pointer event handler.
 
 
-PASS Compat mouse events with no node removal 
+PASS Compat mouse events with no node removal
 FAIL Compat mouse events with node removal on pointermove assert_array_equals: expected property 1 to be "mousemove@grey" but got "mousemove@green" (expected array ["pointermove@green", "mousemove@grey", "pointerdown@grey", "mousedown@grey", "pointerup@grey", "mouseup@grey"] got ["pointermove@green", "mousemove@green", "pointerdown@grey", "mousedown@grey", "pointerup@grey", "mouseup@grey"])
 FAIL Compat mouse events with node removal on pointerdown assert_array_equals: expected property 3 to be "mousedown@grey" but got "mousedown@green" (expected array ["pointermove@green", "mousemove@green", "pointerdown@green", "mousedown@grey", "pointerup@grey", "mouseup@grey"] got ["pointermove@green", "mousemove@green", "pointerdown@green", "mousedown@green", "pointerup@grey", "mouseup@grey"])
 FAIL Compat mouse events with node removal on pointerup assert_array_equals: expected property 5 to be "mouseup@grey" but got "mouseup@green" (expected array ["pointermove@green", "mousemove@green", "pointerdown@green", "mousedown@green", "pointerup@green", "mouseup@grey"] got ["pointermove@green", "mousemove@green", "pointerdown@green", "mousedown@green", "pointerup@green", "mouseup@green"])

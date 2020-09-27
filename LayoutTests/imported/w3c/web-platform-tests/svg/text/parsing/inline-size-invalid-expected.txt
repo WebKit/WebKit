@@ -1,7 +1,7 @@
 
-PASS e.style['inline-size'] = "none" should not set the property value 
-PASS e.style['inline-size'] = "-10px" should not set the property value 
-PASS e.style['inline-size'] = "20" should not set the property value 
-PASS e.style['inline-size'] = "30deg" should not set the property value 
-PASS e.style['inline-size'] = "40px 50%" should not set the property value 
+PASS e.style['inline-size'] = "none" should not set the property value
+PASS e.style['inline-size'] = "-10px" should not set the property value
+PASS e.style['inline-size'] = "20" should not set the property value
+PASS e.style['inline-size'] = "30deg" should not set the property value
+PASS e.style['inline-size'] = "40px 50%" should not set the property value
 

@@ -1,3 +1,3 @@
 
-PASS supportedEntryTypes exists and returns entries in alphabetical order 
+PASS supportedEntryTypes exists and returns entries in alphabetical order
 

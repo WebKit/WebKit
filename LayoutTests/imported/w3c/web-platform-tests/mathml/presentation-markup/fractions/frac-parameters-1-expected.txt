@@ -1,24 +1,24 @@
 
-PASS AxisHeight 
-PASS DenominatorDisplayStyleGapMin 
-PASS DenominatorDisplayStyleShiftDown 
-PASS DenominatorDisplayStyleGapMin Displaystyle 
-PASS DenominatorDisplayStyleShiftDown Displaystyle 
-PASS DenominatorDisplayStyleGapMin Displaystyle on fraction 
-PASS DenominatorDisplayStyleShiftDown Displaystyle on fraction 
-PASS DenominatorGapMin 
-PASS DenominatorShiftDown 
-PASS DenominatorGapMin Displaystyle on fraction 
-PASS DenominatorShiftDown Displaystyle on fraction 
-PASS NumeratorDisplayStyleGapMin 
-PASS NumeratorDisplayStyleShiftDown 
-PASS NumeratorDisplayStyleGapMin Displaystyle 
-PASS NumeratorDisplayStyleShiftDown Displaystyle 
-PASS NumeratorDisplayStyleGapMin Displaystyle on fraction 
-PASS NumeratorDisplayStyleShiftDown Displaystyle on fraction 
-PASS NumeratorGapMin 
-PASS NumeratorShiftDown 
-PASS FractionRuleThickness 
+PASS AxisHeight
+PASS DenominatorDisplayStyleGapMin
+PASS DenominatorDisplayStyleShiftDown
+PASS DenominatorDisplayStyleGapMin Displaystyle
+PASS DenominatorDisplayStyleShiftDown Displaystyle
+PASS DenominatorDisplayStyleGapMin Displaystyle on fraction
+PASS DenominatorDisplayStyleShiftDown Displaystyle on fraction
+PASS DenominatorGapMin
+PASS DenominatorShiftDown
+PASS DenominatorGapMin Displaystyle on fraction
+PASS DenominatorShiftDown Displaystyle on fraction
+PASS NumeratorDisplayStyleGapMin
+PASS NumeratorDisplayStyleShiftDown
+PASS NumeratorDisplayStyleGapMin Displaystyle
+PASS NumeratorDisplayStyleShiftDown Displaystyle
+PASS NumeratorDisplayStyleGapMin Displaystyle on fraction
+PASS NumeratorDisplayStyleShiftDown Displaystyle on fraction
+PASS NumeratorGapMin
+PASS NumeratorShiftDown
+PASS FractionRuleThickness
 
 
 

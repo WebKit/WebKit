@@ -1,12 +1,12 @@
 
-PASS copy: dispatching an Event at a <math> element must trigger element.oncopy 
-PASS oncopy: the content attribute must be compiled into a function as the corresponding property 
-PASS oncopy: dynamic changes on the attribute 
-PASS cut: dispatching an Event at a <math> element must trigger element.oncut 
-PASS oncut: the content attribute must be compiled into a function as the corresponding property 
-PASS oncut: dynamic changes on the attribute 
-PASS paste: dispatching an Event at a <math> element must trigger element.onpaste 
-PASS onpaste: the content attribute must be compiled into a function as the corresponding property 
-PASS onpaste: dynamic changes on the attribute 
+PASS copy: dispatching an Event at a <math> element must trigger element.oncopy
+PASS oncopy: the content attribute must be compiled into a function as the corresponding property
+PASS oncopy: dynamic changes on the attribute
+PASS cut: dispatching an Event at a <math> element must trigger element.oncut
+PASS oncut: the content attribute must be compiled into a function as the corresponding property
+PASS oncut: dynamic changes on the attribute
+PASS paste: dispatching an Event at a <math> element must trigger element.onpaste
+PASS onpaste: the content attribute must be compiled into a function as the corresponding property
+PASS onpaste: dynamic changes on the attribute
 E
 

@@ -1,4 +1,4 @@
 
-PASS e.style['marker-end'] = "none" should set the property value 
-PASS e.style['marker-end'] = "url(\"https://example.com/\")" should set the property value 
+PASS e.style['marker-end'] = "none" should set the property value
+PASS e.style['marker-end'] = "url(\"https://example.com/\")" should set the property value
 

@@ -1,4 +1,4 @@
 
-PASS IntersectionObserverV2 observing an iframe element. 
-PASS First rAF. 
+PASS IntersectionObserverV2 observing an iframe element.
+PASS First rAF.
 

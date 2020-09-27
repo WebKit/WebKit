@@ -1,14 +1,14 @@
 
-PASS Legacy mstyle attributes do not apply to mspace 
-PASS Legacy mstyle attributes do not apply to mfrac 
-PASS Legacy mstyle attributes do not apply to mo 
-PASS Legacy mstyle attributes do not apply to menclose 
-PASS Legacy mstyle attributes do not apply to ms 
- 
+PASS Legacy mstyle attributes do not apply to mspace
+PASS Legacy mstyle attributes do not apply to mfrac
+PASS Legacy mstyle attributes do not apply to mo
+PASS Legacy mstyle attributes do not apply to menclose
+PASS Legacy mstyle attributes do not apply to ms
+
 
 1
 2
- 
+
 1
 2
 
@@ -22,7 +22,7 @@ A
 |
 |
 4
- 
+
 1
 A
 2
@@ -35,10 +35,10 @@ A
 4
 
 1
- 
+
 1
 
 1
- 
+
 1
 

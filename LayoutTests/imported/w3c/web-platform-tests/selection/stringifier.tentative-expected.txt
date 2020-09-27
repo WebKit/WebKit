@@ -1,5 +1,5 @@
 foo bar
 
 
-PASS Selection: stringifier 
+PASS Selection: stringifier
 

@@ -1,4 +1,4 @@
 
-PASS piping should not be observable 
-PASS tee should not be observable 
+PASS piping should not be observable
+PASS tee should not be observable
 

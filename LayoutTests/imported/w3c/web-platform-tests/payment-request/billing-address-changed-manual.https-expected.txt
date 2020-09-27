@@ -11,5 +11,5 @@ If you find a buggy test, please file a bug and tag one of the suggested reviewe
 
 Harness Error (TIMEOUT), message = null
 
-PASS onpaymentmethodchange is in prototype 
+PASS onpaymentmethodchange is in prototype
 

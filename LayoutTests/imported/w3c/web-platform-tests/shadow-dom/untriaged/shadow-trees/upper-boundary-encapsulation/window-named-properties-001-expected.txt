@@ -1,3 +1,3 @@
 
-PASS An iframe element in a shadow tree should not be accessible from window's named properties with its "name" attribute value. 
+PASS An iframe element in a shadow tree should not be accessible from window's named properties with its "name" attribute value.
 

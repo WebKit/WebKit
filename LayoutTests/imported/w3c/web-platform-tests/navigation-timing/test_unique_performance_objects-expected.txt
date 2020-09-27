@@ -3,7 +3,7 @@ Description
 This test validates that each window has a unique window.performance object.
 
 
-PASS window.performance is defined 
-PASS window.performance.timing is defined 
-PASS Different window objects have unique performance objects 
+PASS window.performance is defined
+PASS window.performance.timing is defined
+PASS Different window objects have unique performance objects
 

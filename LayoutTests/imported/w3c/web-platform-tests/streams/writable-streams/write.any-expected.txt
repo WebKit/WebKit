@@ -1,15 +1,15 @@
 
-PASS WritableStream should complete asynchronous writes before close resolves 
-PASS WritableStream should complete synchronous writes before close resolves 
-PASS fulfillment value of ws.write() call should be undefined even if the underlying sink returns a non-undefined value 
-PASS WritableStream should transition to waiting until write is acknowledged 
-PASS when write returns a rejected promise, queued writes and close should be cleared 
-PASS when sink's write throws an error, the stream should become errored and the promise should reject 
-PASS writer.write(), ready and closed reject with the error passed to controller.error() made before sink.write rejection 
-PASS a large queue of writes should be processed completely 
-PASS WritableStreamDefaultWriter should work when manually constructed 
-PASS returning a thenable from write() should work 
-PASS failing DefaultWriter constructor should not release an existing writer 
-PASS write() on a stream with HWM 0 should not cause the ready Promise to resolve 
-PASS writing to a released writer should reject the returned promise 
+PASS WritableStream should complete asynchronous writes before close resolves
+PASS WritableStream should complete synchronous writes before close resolves
+PASS fulfillment value of ws.write() call should be undefined even if the underlying sink returns a non-undefined value
+PASS WritableStream should transition to waiting until write is acknowledged
+PASS when write returns a rejected promise, queued writes and close should be cleared
+PASS when sink's write throws an error, the stream should become errored and the promise should reject
+PASS writer.write(), ready and closed reject with the error passed to controller.error() made before sink.write rejection
+PASS a large queue of writes should be processed completely
+PASS WritableStreamDefaultWriter should work when manually constructed
+PASS returning a thenable from write() should work
+PASS failing DefaultWriter constructor should not release an existing writer
+PASS write() on a stream with HWM 0 should not cause the ready Promise to resolve
+PASS writing to a released writer should reject the returned promise
 

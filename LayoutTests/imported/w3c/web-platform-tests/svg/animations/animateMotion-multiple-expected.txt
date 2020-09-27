@@ -1,3 +1,3 @@
 
-PASS Test for checking position of the svg element when multiple animateMotion are acting on it 
+PASS Test for checking position of the svg element when multiple animateMotion are acting on it
 

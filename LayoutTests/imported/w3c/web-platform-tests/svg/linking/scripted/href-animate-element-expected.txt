@@ -2,7 +2,7 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Test for animate element when setting both href and xlink:href Test timed out
-NOTRUN Test for animateTransform element when setting both href and xlink:href 
-NOTRUN Test for animate element when removing href but we still have xlink:href 
-NOTRUN Test for animate element when removing xlink:href but we still have href 
+NOTRUN Test for animateTransform element when setting both href and xlink:href
+NOTRUN Test for animate element when removing href but we still have xlink:href
+NOTRUN Test for animate element when removing xlink:href but we still have href
 

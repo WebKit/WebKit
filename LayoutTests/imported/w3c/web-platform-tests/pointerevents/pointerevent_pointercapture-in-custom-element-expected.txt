@@ -9,5 +9,5 @@ There should be a message stating Pointer was released by custom element's Shado
 Pointer was captured by custom element's Shadow DOM!
 Pointer was released by custom element's Shadow DOM!
 
-PASS PointerCapture works for custom element Shadow DOM. 
+PASS PointerCapture works for custom element Shadow DOM.
 

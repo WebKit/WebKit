@@ -1,6 +1,6 @@
 
-PASS Floating point arithmetic must manifest near NUMBER.MAX_SAFE_INTEGER (total ends up positive) 
-PASS Floating point arithmetic must manifest near 0 (total ends up positive, but clamped) 
-PASS Floating point arithmetic must manifest near 0 (total ends up positive, and not clamped) 
-PASS Floating point arithmetic must manifest near 0 (total ends up zero) 
+PASS Floating point arithmetic must manifest near NUMBER.MAX_SAFE_INTEGER (total ends up positive)
+PASS Floating point arithmetic must manifest near 0 (total ends up positive, but clamped)
+PASS Floating point arithmetic must manifest near 0 (total ends up positive, and not clamped)
+PASS Floating point arithmetic must manifest near 0 (total ends up zero)
 

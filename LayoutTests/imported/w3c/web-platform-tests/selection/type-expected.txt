@@ -3,33 +3,33 @@ Äb̈c̈d̈ëf̈g̈ḧ
 Qrstuvwx
 
 
-PASS Empty selection 
-PASS [paras[0].firstChild, 0, paras[0].firstChild, 0] 
-PASS [paras[0].firstChild, 0, paras[0].firstChild, 1] 
-PASS [paras[0].firstChild, 2, paras[0].firstChild, 8] 
-PASS [paras[0].firstChild, 2, paras[0].firstChild, 9] 
-PASS [paras[1].firstChild, 0, paras[1].firstChild, 0] 
+PASS Empty selection
+PASS [paras[0].firstChild, 0, paras[0].firstChild, 0]
+PASS [paras[0].firstChild, 0, paras[0].firstChild, 1]
+PASS [paras[0].firstChild, 2, paras[0].firstChild, 8]
+PASS [paras[0].firstChild, 2, paras[0].firstChild, 9]
+PASS [paras[1].firstChild, 0, paras[1].firstChild, 0]
 FAIL [paras[1].firstChild, 0, paras[1].firstChild, 1] assert_equals: expected "Range" but got "Caret"
 FAIL [paras[1].firstChild, 2, paras[1].firstChild, 8] assert_equals: expected "Range" but got "Caret"
 FAIL [paras[1].firstChild, 2, paras[1].firstChild, 9] assert_equals: expected "Range" but got "Caret"
 FAIL [document.documentElement, 0, document.documentElement, 1] assert_equals: expected "Range" but got "Caret"
-PASS [document.documentElement, 0, document.documentElement, 2] 
-PASS [document.documentElement, 1, document.documentElement, 2] 
-PASS [document.head, 1, document.head, 1] 
-PASS [document.body, 0, document.body, 1] 
-PASS [paras[0], 0, paras[0], 0] 
-PASS [paras[0], 0, paras[0], 1] 
-PASS [paras[0].firstChild, 0, paras[1].firstChild, 0] 
-PASS [paras[0].firstChild, 0, paras[1].firstChild, 8] 
-PASS [paras[0].firstChild, 3, paras[3], 1] 
-PASS [paras[0], 0, paras[0].firstChild, 7] 
-PASS [testDiv, 2, paras[4], 1] 
-PASS [testDiv, 1, paras[2].firstChild, 5] 
+PASS [document.documentElement, 0, document.documentElement, 2]
+PASS [document.documentElement, 1, document.documentElement, 2]
+PASS [document.head, 1, document.head, 1]
+PASS [document.body, 0, document.body, 1]
+PASS [paras[0], 0, paras[0], 0]
+PASS [paras[0], 0, paras[0], 1]
+PASS [paras[0].firstChild, 0, paras[1].firstChild, 0]
+PASS [paras[0].firstChild, 0, paras[1].firstChild, 8]
+PASS [paras[0].firstChild, 3, paras[3], 1]
+PASS [paras[0], 0, paras[0].firstChild, 7]
+PASS [testDiv, 2, paras[4], 1]
+PASS [testDiv, 1, paras[2].firstChild, 5]
 FAIL [document.documentElement, 1, document.body, 0] assert_equals: expected "Range" but got "Caret"
 FAIL [document, 0, document, 1] assert_equals: expected "Range" but got "Caret"
-PASS [document, 0, document, 2] 
-PASS [document, 1, document, 2] 
-PASS [testDiv, 0, comment, 5] 
-PASS [paras[2].firstChild, 4, comment, 2] 
+PASS [document, 0, document, 2]
+PASS [document, 1, document, 2]
+PASS [testDiv, 0, comment, 5]
+PASS [paras[2].firstChild, 4, comment, 2]
 FAIL [paras[3], 1, comment, 8] assert_equals: expected "Range" but got "Caret"
 

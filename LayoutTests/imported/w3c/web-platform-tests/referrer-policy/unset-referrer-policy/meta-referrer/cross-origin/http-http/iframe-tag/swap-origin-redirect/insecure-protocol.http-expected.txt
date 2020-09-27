@@ -4,5 +4,5 @@ PASS The referrer URL is stripped-referrer when a
                                  document served over http requires an http
                                  sub-resource via iframe-tag using the meta-referrer
                                  delivery method with swap-origin-redirect and when
-                                 the target request is cross-origin. 
+                                 the target request is cross-origin.
 

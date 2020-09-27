@@ -1,4 +1,4 @@
 
-PASS e.style['marker-mid'] = "auto" should not set the property value 
-PASS e.style['marker-mid'] = "none url(\"https://example.com/\")" should not set the property value 
+PASS e.style['marker-mid'] = "auto" should not set the property value
+PASS e.style['marker-mid'] = "none url(\"https://example.com/\")" should not set the property value
 

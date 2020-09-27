@@ -1,5 +1,5 @@
 Check that resources from presentation attributes are loaded with the referrer and referrer policy from the document.
 
 
-PASS Image from presentation attributes. 
+PASS Image from presentation attributes.
 

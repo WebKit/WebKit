@@ -3,22 +3,22 @@ Description
 This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a same-origin server side redirect navigation.
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS timing.navigation.type is TYPE_NAVIGATE 
-PASS navigation.redirectCount == 1 on an server redirected navigation 
-PASS window.performance.timing.navigationStart > 0 
-PASS window.performance.timing.redirectStart > 0 
-PASS window.performance.timing.redirectStart >= window.performance.timing.navigationStart 
-PASS window.performance.timing.redirectStart difference with window.performance.timing.navigationStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.redirectEnd > 0 
-PASS window.performance.timing.redirectEnd >= window.performance.timing.redirectStart 
-PASS window.performance.timing.redirectEnd difference with window.performance.timing.redirectStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.fetchStart > 0 
-PASS window.performance.timing.fetchStart >= window.performance.timing.redirectEnd 
-PASS window.performance.timing.fetchStart difference with window.performance.timing.redirectEnd is 0 or at least 5 microseconds 
-PASS window.performance.timing.requestStart > 0 
-PASS window.performance.timing.requestStart >= window.performance.timing.fetchStart 
-PASS window.performance.timing.requestStart difference with window.performance.timing.fetchStart is 0 or at least 5 microseconds 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS timing.navigation.type is TYPE_NAVIGATE
+PASS navigation.redirectCount == 1 on an server redirected navigation
+PASS window.performance.timing.navigationStart > 0
+PASS window.performance.timing.redirectStart > 0
+PASS window.performance.timing.redirectStart >= window.performance.timing.navigationStart
+PASS window.performance.timing.redirectStart difference with window.performance.timing.navigationStart is 0 or at least 5 microseconds
+PASS window.performance.timing.redirectEnd > 0
+PASS window.performance.timing.redirectEnd >= window.performance.timing.redirectStart
+PASS window.performance.timing.redirectEnd difference with window.performance.timing.redirectStart is 0 or at least 5 microseconds
+PASS window.performance.timing.fetchStart > 0
+PASS window.performance.timing.fetchStart >= window.performance.timing.redirectEnd
+PASS window.performance.timing.fetchStart difference with window.performance.timing.redirectEnd is 0 or at least 5 microseconds
+PASS window.performance.timing.requestStart > 0
+PASS window.performance.timing.requestStart >= window.performance.timing.fetchStart
+PASS window.performance.timing.requestStart difference with window.performance.timing.fetchStart is 0 or at least 5 microseconds
 
 

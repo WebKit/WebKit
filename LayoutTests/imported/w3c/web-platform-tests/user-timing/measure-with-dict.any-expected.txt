@@ -1,4 +1,4 @@
 
-PASS measure entries' detail and start/end are customizable 
-PASS measure should throw a TypeError when passed an invalid argument combination 
+PASS measure entries' detail and start/end are customizable
+PASS measure should throw a TypeError when passed an invalid argument combination
 

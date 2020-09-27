@@ -1,6 +1,6 @@
 
-PASS Delete basics 
-PASS Deleting appended multiple 
-PASS Deleting all params removes ? from URL 
-PASS Removing non-existent param removes ? from URL 
+PASS Delete basics
+PASS Deleting appended multiple
+PASS Deleting all params removes ? from URL
+PASS Removing non-existent param removes ? from URL
 

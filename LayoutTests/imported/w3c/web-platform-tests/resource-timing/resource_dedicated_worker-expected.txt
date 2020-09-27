@@ -3,5 +3,5 @@ Description
 This test validates that resources requested by dedicated workers don't appear in the main document.
 
 
-PASS There should be six entries: 4 scripts, 1 stylesheet, and the worker itself 
+PASS There should be six entries: 4 scripts, 1 stylesheet, and the worker itself
 

@@ -1,4 +1,4 @@
 
-PASS Has basics 
-PASS has() following delete() 
+PASS Has basics
+PASS has() following delete()
 

@@ -1,4 +1,4 @@
 
-PASS IntersectionObserverV2 in a single document using the implicit root, with an animated occluding element. 
-PASS First rAF. 
+PASS IntersectionObserverV2 in a single document using the implicit root, with an animated occluding element.
+PASS First rAF.
 

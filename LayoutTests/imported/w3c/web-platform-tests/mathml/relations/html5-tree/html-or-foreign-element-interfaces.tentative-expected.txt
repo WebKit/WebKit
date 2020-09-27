@@ -1,9 +1,9 @@
-This tests the presence and functionality of features of `HTMLOrForeignElement` (currently `HTMLOrSVGElement`) 
+This tests the presence and functionality of features of `HTMLOrForeignElement` (currently `HTMLOrSVGElement`)
 E
 
-PASS MathML elements should have a .dataset 
-PASS The dataset property should be present and be functional. 
-PASS MathML elements should have a tabIndex property 
-PASS MathML elements should work with focus predictably 
-PASS MathML elements should work with blur predictably 
+PASS MathML elements should have a .dataset
+PASS The dataset property should be present and be functional.
+PASS MathML elements should have a tabIndex property
+PASS MathML elements should work with focus predictably
+PASS MathML elements should work with blur predictably
 

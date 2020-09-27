@@ -1,3 +1,3 @@
 
-PASS Test for SVGNumber animation with different exponents. 
+PASS Test for SVGNumber animation with different exponents.
 

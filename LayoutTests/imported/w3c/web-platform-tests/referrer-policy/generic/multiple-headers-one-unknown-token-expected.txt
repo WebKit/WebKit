@@ -3,5 +3,5 @@ Referrer Policy: multiple Referrer-Policy headers with one invalid
 Running...
 
 
-PASS Image uses last recognized referrer policy token from Referrer-Policy headers 
+PASS Image uses last recognized referrer policy token from Referrer-Policy headers
 

@@ -1,161 +1,161 @@
 
-PASS maction preferred width calculation is not affected by children with "display: none" style 
-PASS maction layout is not affected by children with "display: none" style 
-PASS maction preferred width calculation is not affected by children with "position: absolute" style 
-PASS maction layout is not affected by children with "position: absolute" style 
-PASS maction preferred width calculation is not affected by children with "position: fixed" style 
-PASS maction layout is not affected by children with "position: fixed" style 
-PASS menclose preferred width calculation is not affected by children with "display: none" style 
-PASS menclose layout is not affected by children with "display: none" style 
-PASS menclose preferred width calculation is not affected by children with "display: contents" style 
-PASS menclose layout is not affected by children with "display: contents" style 
-PASS menclose preferred width calculation is not affected by children with "position: absolute" style 
-PASS menclose layout is not affected by children with "position: absolute" style 
-PASS menclose preferred width calculation is not affected by children with "position: fixed" style 
-PASS menclose layout is not affected by children with "position: fixed" style 
-PASS merror preferred width calculation is not affected by children with "display: none" style 
-PASS merror layout is not affected by children with "display: none" style 
-PASS merror preferred width calculation is not affected by children with "display: contents" style 
-PASS merror layout is not affected by children with "display: contents" style 
-PASS merror preferred width calculation is not affected by children with "position: absolute" style 
-PASS merror layout is not affected by children with "position: absolute" style 
-PASS merror preferred width calculation is not affected by children with "position: fixed" style 
-PASS merror layout is not affected by children with "position: fixed" style 
-PASS mfrac preferred width calculation is not affected by children with "display: none" style 
-PASS mfrac layout is not affected by children with "display: none" style 
-PASS mfrac preferred width calculation is not affected by children with "position: absolute" style 
+PASS maction preferred width calculation is not affected by children with "display: none" style
+PASS maction layout is not affected by children with "display: none" style
+PASS maction preferred width calculation is not affected by children with "position: absolute" style
+PASS maction layout is not affected by children with "position: absolute" style
+PASS maction preferred width calculation is not affected by children with "position: fixed" style
+PASS maction layout is not affected by children with "position: fixed" style
+PASS menclose preferred width calculation is not affected by children with "display: none" style
+PASS menclose layout is not affected by children with "display: none" style
+PASS menclose preferred width calculation is not affected by children with "display: contents" style
+PASS menclose layout is not affected by children with "display: contents" style
+PASS menclose preferred width calculation is not affected by children with "position: absolute" style
+PASS menclose layout is not affected by children with "position: absolute" style
+PASS menclose preferred width calculation is not affected by children with "position: fixed" style
+PASS menclose layout is not affected by children with "position: fixed" style
+PASS merror preferred width calculation is not affected by children with "display: none" style
+PASS merror layout is not affected by children with "display: none" style
+PASS merror preferred width calculation is not affected by children with "display: contents" style
+PASS merror layout is not affected by children with "display: contents" style
+PASS merror preferred width calculation is not affected by children with "position: absolute" style
+PASS merror layout is not affected by children with "position: absolute" style
+PASS merror preferred width calculation is not affected by children with "position: fixed" style
+PASS merror layout is not affected by children with "position: fixed" style
+PASS mfrac preferred width calculation is not affected by children with "display: none" style
+PASS mfrac layout is not affected by children with "display: none" style
+PASS mfrac preferred width calculation is not affected by children with "position: absolute" style
 FAIL mfrac layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 4.78125 +/- 1 but got 0
-PASS mfrac preferred width calculation is not affected by children with "position: fixed" style 
+PASS mfrac preferred width calculation is not affected by children with "position: fixed" style
 FAIL mfrac layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 4.78125 +/- 1 but got 0
-PASS mi preferred width calculation is not affected by children with "display: none" style 
-PASS mi layout is not affected by children with "display: none" style 
-PASS mi preferred width calculation is not affected by children with "position: absolute" style 
-PASS mi layout is not affected by children with "position: absolute" style 
-PASS mi preferred width calculation is not affected by children with "position: fixed" style 
-PASS mi layout is not affected by children with "position: fixed" style 
-PASS mmultiscripts preferred width calculation is not affected by children with "display: none" style 
-PASS mmultiscripts layout is not affected by children with "display: none" style 
-PASS mmultiscripts preferred width calculation is not affected by children with "position: absolute" style 
+PASS mi preferred width calculation is not affected by children with "display: none" style
+PASS mi layout is not affected by children with "display: none" style
+PASS mi preferred width calculation is not affected by children with "position: absolute" style
+PASS mi layout is not affected by children with "position: absolute" style
+PASS mi preferred width calculation is not affected by children with "position: fixed" style
+PASS mi layout is not affected by children with "position: fixed" style
+PASS mmultiscripts preferred width calculation is not affected by children with "display: none" style
+PASS mmultiscripts layout is not affected by children with "display: none" style
+PASS mmultiscripts preferred width calculation is not affected by children with "position: absolute" style
 FAIL mmultiscripts layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS mmultiscripts preferred width calculation is not affected by children with "position: fixed" style 
+PASS mmultiscripts preferred width calculation is not affected by children with "position: fixed" style
 FAIL mmultiscripts layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS mn preferred width calculation is not affected by children with "display: none" style 
-PASS mn layout is not affected by children with "display: none" style 
-PASS mn preferred width calculation is not affected by children with "position: absolute" style 
-PASS mn layout is not affected by children with "position: absolute" style 
-PASS mn preferred width calculation is not affected by children with "position: fixed" style 
-PASS mn layout is not affected by children with "position: fixed" style 
-PASS mo preferred width calculation is not affected by children with "display: none" style 
-PASS mo layout is not affected by children with "display: none" style 
-PASS mo preferred width calculation is not affected by children with "position: absolute" style 
-PASS mo layout is not affected by children with "position: absolute" style 
-PASS mo preferred width calculation is not affected by children with "position: fixed" style 
-PASS mo layout is not affected by children with "position: fixed" style 
-PASS mover preferred width calculation is not affected by children with "display: none" style 
-PASS mover layout is not affected by children with "display: none" style 
-PASS mover preferred width calculation is not affected by children with "position: absolute" style 
+PASS mn preferred width calculation is not affected by children with "display: none" style
+PASS mn layout is not affected by children with "display: none" style
+PASS mn preferred width calculation is not affected by children with "position: absolute" style
+PASS mn layout is not affected by children with "position: absolute" style
+PASS mn preferred width calculation is not affected by children with "position: fixed" style
+PASS mn layout is not affected by children with "position: fixed" style
+PASS mo preferred width calculation is not affected by children with "display: none" style
+PASS mo layout is not affected by children with "display: none" style
+PASS mo preferred width calculation is not affected by children with "position: absolute" style
+PASS mo layout is not affected by children with "position: absolute" style
+PASS mo preferred width calculation is not affected by children with "position: fixed" style
+PASS mo layout is not affected by children with "position: fixed" style
+PASS mover preferred width calculation is not affected by children with "display: none" style
+PASS mover layout is not affected by children with "display: none" style
+PASS mover preferred width calculation is not affected by children with "position: absolute" style
 FAIL mover layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
-PASS mover preferred width calculation is not affected by children with "position: fixed" style 
+PASS mover preferred width calculation is not affected by children with "position: fixed" style
 FAIL mover layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
-PASS mpadded preferred width calculation is not affected by children with "display: none" style 
-PASS mpadded layout is not affected by children with "display: none" style 
-PASS mpadded preferred width calculation is not affected by children with "display: contents" style 
-PASS mpadded layout is not affected by children with "display: contents" style 
-PASS mpadded preferred width calculation is not affected by children with "position: absolute" style 
-PASS mpadded layout is not affected by children with "position: absolute" style 
-PASS mpadded preferred width calculation is not affected by children with "position: fixed" style 
-PASS mpadded layout is not affected by children with "position: fixed" style 
-PASS mphantom preferred width calculation is not affected by children with "display: none" style 
-PASS mphantom layout is not affected by children with "display: none" style 
-PASS mphantom preferred width calculation is not affected by children with "display: contents" style 
-PASS mphantom layout is not affected by children with "display: contents" style 
-PASS mphantom preferred width calculation is not affected by children with "position: absolute" style 
-PASS mphantom layout is not affected by children with "position: absolute" style 
-PASS mphantom preferred width calculation is not affected by children with "position: fixed" style 
-PASS mphantom layout is not affected by children with "position: fixed" style 
-PASS mroot preferred width calculation is not affected by children with "display: none" style 
-PASS mroot layout is not affected by children with "display: none" style 
-PASS mroot preferred width calculation is not affected by children with "position: absolute" style 
+PASS mpadded preferred width calculation is not affected by children with "display: none" style
+PASS mpadded layout is not affected by children with "display: none" style
+PASS mpadded preferred width calculation is not affected by children with "display: contents" style
+PASS mpadded layout is not affected by children with "display: contents" style
+PASS mpadded preferred width calculation is not affected by children with "position: absolute" style
+PASS mpadded layout is not affected by children with "position: absolute" style
+PASS mpadded preferred width calculation is not affected by children with "position: fixed" style
+PASS mpadded layout is not affected by children with "position: fixed" style
+PASS mphantom preferred width calculation is not affected by children with "display: none" style
+PASS mphantom layout is not affected by children with "display: none" style
+PASS mphantom preferred width calculation is not affected by children with "display: contents" style
+PASS mphantom layout is not affected by children with "display: contents" style
+PASS mphantom preferred width calculation is not affected by children with "position: absolute" style
+PASS mphantom layout is not affected by children with "position: absolute" style
+PASS mphantom preferred width calculation is not affected by children with "position: fixed" style
+PASS mphantom layout is not affected by children with "position: fixed" style
+PASS mroot preferred width calculation is not affected by children with "display: none" style
+PASS mroot layout is not affected by children with "display: none" style
+PASS mroot preferred width calculation is not affected by children with "position: absolute" style
 FAIL mroot layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 10.40625 +/- 1 but got 0
-PASS mroot preferred width calculation is not affected by children with "position: fixed" style 
+PASS mroot preferred width calculation is not affected by children with "position: fixed" style
 FAIL mroot layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 10.40625 +/- 1 but got 0
-PASS mrow preferred width calculation is not affected by children with "display: none" style 
-PASS mrow layout is not affected by children with "display: none" style 
-PASS mrow preferred width calculation is not affected by children with "display: contents" style 
-PASS mrow layout is not affected by children with "display: contents" style 
-PASS mrow preferred width calculation is not affected by children with "position: absolute" style 
-PASS mrow layout is not affected by children with "position: absolute" style 
-PASS mrow preferred width calculation is not affected by children with "position: fixed" style 
-PASS mrow layout is not affected by children with "position: fixed" style 
-PASS ms preferred width calculation is not affected by children with "display: none" style 
-PASS ms layout is not affected by children with "display: none" style 
-PASS ms preferred width calculation is not affected by children with "position: absolute" style 
-PASS ms layout is not affected by children with "position: absolute" style 
-PASS ms preferred width calculation is not affected by children with "position: fixed" style 
-PASS ms layout is not affected by children with "position: fixed" style 
-PASS msqrt preferred width calculation is not affected by children with "display: none" style 
-PASS msqrt layout is not affected by children with "display: none" style 
-PASS msqrt preferred width calculation is not affected by children with "display: contents" style 
-PASS msqrt layout is not affected by children with "display: contents" style 
-PASS msqrt preferred width calculation is not affected by children with "position: absolute" style 
-PASS msqrt layout is not affected by children with "position: absolute" style 
-PASS msqrt preferred width calculation is not affected by children with "position: fixed" style 
-PASS msqrt layout is not affected by children with "position: fixed" style 
-PASS mstyle preferred width calculation is not affected by children with "display: none" style 
-PASS mstyle layout is not affected by children with "display: none" style 
-PASS mstyle preferred width calculation is not affected by children with "display: contents" style 
-PASS mstyle layout is not affected by children with "display: contents" style 
-PASS mstyle preferred width calculation is not affected by children with "position: absolute" style 
-PASS mstyle layout is not affected by children with "position: absolute" style 
-PASS mstyle preferred width calculation is not affected by children with "position: fixed" style 
-PASS mstyle layout is not affected by children with "position: fixed" style 
-PASS msub preferred width calculation is not affected by children with "display: none" style 
-PASS msub layout is not affected by children with "display: none" style 
-PASS msub preferred width calculation is not affected by children with "position: absolute" style 
+PASS mrow preferred width calculation is not affected by children with "display: none" style
+PASS mrow layout is not affected by children with "display: none" style
+PASS mrow preferred width calculation is not affected by children with "display: contents" style
+PASS mrow layout is not affected by children with "display: contents" style
+PASS mrow preferred width calculation is not affected by children with "position: absolute" style
+PASS mrow layout is not affected by children with "position: absolute" style
+PASS mrow preferred width calculation is not affected by children with "position: fixed" style
+PASS mrow layout is not affected by children with "position: fixed" style
+PASS ms preferred width calculation is not affected by children with "display: none" style
+PASS ms layout is not affected by children with "display: none" style
+PASS ms preferred width calculation is not affected by children with "position: absolute" style
+PASS ms layout is not affected by children with "position: absolute" style
+PASS ms preferred width calculation is not affected by children with "position: fixed" style
+PASS ms layout is not affected by children with "position: fixed" style
+PASS msqrt preferred width calculation is not affected by children with "display: none" style
+PASS msqrt layout is not affected by children with "display: none" style
+PASS msqrt preferred width calculation is not affected by children with "display: contents" style
+PASS msqrt layout is not affected by children with "display: contents" style
+PASS msqrt preferred width calculation is not affected by children with "position: absolute" style
+PASS msqrt layout is not affected by children with "position: absolute" style
+PASS msqrt preferred width calculation is not affected by children with "position: fixed" style
+PASS msqrt layout is not affected by children with "position: fixed" style
+PASS mstyle preferred width calculation is not affected by children with "display: none" style
+PASS mstyle layout is not affected by children with "display: none" style
+PASS mstyle preferred width calculation is not affected by children with "display: contents" style
+PASS mstyle layout is not affected by children with "display: contents" style
+PASS mstyle preferred width calculation is not affected by children with "position: absolute" style
+PASS mstyle layout is not affected by children with "position: absolute" style
+PASS mstyle preferred width calculation is not affected by children with "position: fixed" style
+PASS mstyle layout is not affected by children with "position: fixed" style
+PASS msub preferred width calculation is not affected by children with "display: none" style
+PASS msub layout is not affected by children with "display: none" style
+PASS msub preferred width calculation is not affected by children with "position: absolute" style
 FAIL msub layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS msub preferred width calculation is not affected by children with "position: fixed" style 
+PASS msub preferred width calculation is not affected by children with "position: fixed" style
 FAIL msub layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS msubsup preferred width calculation is not affected by children with "display: none" style 
-PASS msubsup layout is not affected by children with "display: none" style 
-PASS msubsup preferred width calculation is not affected by children with "position: absolute" style 
+PASS msubsup preferred width calculation is not affected by children with "display: none" style
+PASS msubsup layout is not affected by children with "display: none" style
+PASS msubsup preferred width calculation is not affected by children with "position: absolute" style
 FAIL msubsup layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS msubsup preferred width calculation is not affected by children with "position: fixed" style 
+PASS msubsup preferred width calculation is not affected by children with "position: fixed" style
 FAIL msubsup layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS msup preferred width calculation is not affected by children with "display: none" style 
-PASS msup layout is not affected by children with "display: none" style 
-PASS msup preferred width calculation is not affected by children with "position: absolute" style 
+PASS msup preferred width calculation is not affected by children with "display: none" style
+PASS msup layout is not affected by children with "display: none" style
+PASS msup preferred width calculation is not affected by children with "position: absolute" style
 FAIL msup layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS msup preferred width calculation is not affected by children with "position: fixed" style 
+PASS msup preferred width calculation is not affected by children with "position: fixed" style
 FAIL msup layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
-PASS mtable preferred width calculation is not affected by children with "display: none" style 
-PASS mtable layout is not affected by children with "display: none" style 
-PASS mtable preferred width calculation is not affected by children with "position: absolute" style 
-PASS mtable layout is not affected by children with "position: absolute" style 
-PASS mtable preferred width calculation is not affected by children with "position: fixed" style 
-PASS mtable layout is not affected by children with "position: fixed" style 
-PASS mtext preferred width calculation is not affected by children with "display: none" style 
-PASS mtext layout is not affected by children with "display: none" style 
-PASS mtext preferred width calculation is not affected by children with "position: absolute" style 
-PASS mtext layout is not affected by children with "position: absolute" style 
-PASS mtext preferred width calculation is not affected by children with "position: fixed" style 
-PASS mtext layout is not affected by children with "position: fixed" style 
-PASS munder preferred width calculation is not affected by children with "display: none" style 
-PASS munder layout is not affected by children with "display: none" style 
-PASS munder preferred width calculation is not affected by children with "position: absolute" style 
+PASS mtable preferred width calculation is not affected by children with "display: none" style
+PASS mtable layout is not affected by children with "display: none" style
+PASS mtable preferred width calculation is not affected by children with "position: absolute" style
+PASS mtable layout is not affected by children with "position: absolute" style
+PASS mtable preferred width calculation is not affected by children with "position: fixed" style
+PASS mtable layout is not affected by children with "position: fixed" style
+PASS mtext preferred width calculation is not affected by children with "display: none" style
+PASS mtext layout is not affected by children with "display: none" style
+PASS mtext preferred width calculation is not affected by children with "position: absolute" style
+PASS mtext layout is not affected by children with "position: absolute" style
+PASS mtext preferred width calculation is not affected by children with "position: fixed" style
+PASS mtext layout is not affected by children with "position: fixed" style
+PASS munder preferred width calculation is not affected by children with "display: none" style
+PASS munder layout is not affected by children with "display: none" style
+PASS munder preferred width calculation is not affected by children with "position: absolute" style
 FAIL munder layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
-PASS munder preferred width calculation is not affected by children with "position: fixed" style 
+PASS munder preferred width calculation is not affected by children with "position: fixed" style
 FAIL munder layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
-PASS munderover preferred width calculation is not affected by children with "display: none" style 
-PASS munderover layout is not affected by children with "display: none" style 
-PASS munderover preferred width calculation is not affected by children with "position: absolute" style 
+PASS munderover preferred width calculation is not affected by children with "display: none" style
+PASS munderover layout is not affected by children with "display: none" style
+PASS munderover preferred width calculation is not affected by children with "position: absolute" style
 FAIL munderover layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 6.375 +/- 1 but got 0
-PASS munderover preferred width calculation is not affected by children with "position: fixed" style 
+PASS munderover preferred width calculation is not affected by children with "position: fixed" style
 FAIL munderover layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 6.375 +/- 1 but got 0
-PASS semantics preferred width calculation is not affected by children with "display: none" style 
-PASS semantics layout is not affected by children with "display: none" style 
-PASS semantics preferred width calculation is not affected by children with "position: absolute" style 
-PASS semantics layout is not affected by children with "position: absolute" style 
-PASS semantics preferred width calculation is not affected by children with "position: fixed" style 
-PASS semantics layout is not affected by children with "position: fixed" style 
-   
+PASS semantics preferred width calculation is not affected by children with "display: none" style
+PASS semantics layout is not affected by children with "display: none" style
+PASS semantics preferred width calculation is not affected by children with "position: absolute" style
+PASS semantics layout is not affected by children with "position: absolute" style
+PASS semantics preferred width calculation is not affected by children with "position: fixed" style
+PASS semantics layout is not affected by children with "position: fixed" style
+
 

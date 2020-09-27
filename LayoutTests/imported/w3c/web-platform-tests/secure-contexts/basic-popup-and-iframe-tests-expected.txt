@@ -1,20 +1,20 @@
 
 FAIL Test Window.isSecureContext for HTTP creator assert_false: http: creator should not be a Secure Context expected false got true
 FAIL Test Window.isSecureContext in an iframe loading an http: URI assert_false: an http: URI in an iframe should not create a Secure Context expected false got true
-PASS Test Window.isSecureContext in an iframe loading an https: URI 
-PASS Test Window.isSecureContext in an iframe loading a blob: URI 
-PASS Test Window.isSecureContext in an iframe loading a srcdoc 
-PASS Test Window.isSecureContext in an iframe loading a javascript: URI 
-PASS Test Window.isSecureContext in an iframe loading about:blank 
-PASS Test Window.isSecureContext in an iframe loading initial about:blank 
+PASS Test Window.isSecureContext in an iframe loading an https: URI
+PASS Test Window.isSecureContext in an iframe loading a blob: URI
+PASS Test Window.isSecureContext in an iframe loading a srcdoc
+PASS Test Window.isSecureContext in an iframe loading a javascript: URI
+PASS Test Window.isSecureContext in an iframe loading about:blank
+PASS Test Window.isSecureContext in an iframe loading initial about:blank
 FAIL Test Window.isSecureContext in a sandboxed iframe loading an http: URI assert_false: an http: URI in a sandboxed iframe should not create a Secure Context expected false got true
-PASS Test Window.isSecureContext in a sandboxed iframe loading an https: URI 
-PASS Test Window.isSecureContext in a sandboxed iframe loading a blob: URI 
-PASS Test Window.isSecureContext in a sandboxed iframe loading a srcdoc 
+PASS Test Window.isSecureContext in a sandboxed iframe loading an https: URI
+PASS Test Window.isSecureContext in a sandboxed iframe loading a blob: URI
+PASS Test Window.isSecureContext in a sandboxed iframe loading a srcdoc
 FAIL Test Window.isSecureContext in a popup loading an http: URI assert_false: an http: URI in a popup should not create a Secure Context expected false got true
-PASS Test Window.isSecureContext in a popup loading an https: URI 
-PASS Test Window.isSecureContext in a popup loading a blob: URI 
-PASS Test Window.isSecureContext in a popup loading a javascript: URI 
-PASS Test Window.isSecureContext in a popup loading about:blank 
-PASS Test Window.isSecureContext in a popup loading initial about:blank 
+PASS Test Window.isSecureContext in a popup loading an https: URI
+PASS Test Window.isSecureContext in a popup loading a blob: URI
+PASS Test Window.isSecureContext in a popup loading a javascript: URI
+PASS Test Window.isSecureContext in a popup loading about:blank
+PASS Test Window.isSecureContext in a popup loading initial about:blank
 

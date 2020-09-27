@@ -1,6 +1,6 @@
 
-PASS iframe 
-PASS frame 
-PASS object 
-PASS embed 
+PASS iframe
+PASS frame
+PASS object
+PASS embed
 

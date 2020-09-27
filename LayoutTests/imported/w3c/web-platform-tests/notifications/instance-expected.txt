@@ -1,14 +1,14 @@
 
-PASS Notification instance exists. 
-PASS Attribute exists: close 
-PASS Attribute exists: onclick 
-PASS Attribute exists: onshow 
-PASS Attribute exists: onerror 
-PASS Attribute exists: onclose 
-PASS Attribute exists with expected value: title 
-PASS Attribute exists with expected value: dir 
-PASS Attribute exists with expected value: lang 
-PASS Attribute exists with expected value: body 
-PASS Attribute exists with expected value: tag 
-PASS Attribute exists with expected value: icon 
+PASS Notification instance exists.
+PASS Attribute exists: close
+PASS Attribute exists: onclick
+PASS Attribute exists: onshow
+PASS Attribute exists: onerror
+PASS Attribute exists: onclose
+PASS Attribute exists with expected value: title
+PASS Attribute exists with expected value: dir
+PASS Attribute exists with expected value: lang
+PASS Attribute exists with expected value: body
+PASS Attribute exists with expected value: tag
+PASS Attribute exists with expected value: icon
 

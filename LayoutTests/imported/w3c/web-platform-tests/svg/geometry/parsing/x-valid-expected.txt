@@ -1,7 +1,7 @@
 
-PASS e.style['x'] = "0" should set the property value 
-PASS e.style['x'] = "-1px" should set the property value 
-PASS e.style['x'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['x'] = "4%" should set the property value 
-PASS e.style['x'] = "5cm" should set the property value 
+PASS e.style['x'] = "0" should set the property value
+PASS e.style['x'] = "-1px" should set the property value
+PASS e.style['x'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['x'] = "4%" should set the property value
+PASS e.style['x'] = "5cm" should set the property value
 

@@ -1,6 +1,6 @@
 
-PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], less than zero (SVGLineElement). 
-PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], less than zero (SVGPathElement). 
-PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], greater than 'length' (SVGLineElement). 
-PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], greater than 'length' (SVGPathElement). 
+PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], less than zero (SVGLineElement).
+PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], less than zero (SVGPathElement).
+PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], greater than 'length' (SVGLineElement).
+PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], greater than 'length' (SVGPathElement).
 

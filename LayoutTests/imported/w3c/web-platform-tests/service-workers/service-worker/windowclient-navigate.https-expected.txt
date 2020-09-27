@@ -1,14 +1,14 @@
 
-PASS normal 
-PASS blank url 
-PASS in scope but not controlled test on installing worker 
-PASS in scope but not controlled test on active worker 
-PASS out of scope 
-PASS cross orgin url 
-PASS invalid url (http://[example.com]) 
-PASS invalid url (view-source://example.com) 
-PASS invalid url (file:///) 
-PASS invalid url (about:blank) 
+PASS normal
+PASS blank url
+PASS in scope but not controlled test on installing worker
+PASS in scope but not controlled test on active worker
+PASS out of scope
+PASS cross orgin url
+PASS invalid url (http://[example.com])
+PASS invalid url (view-source://example.com)
+PASS invalid url (file:///)
+PASS invalid url (about:blank)
 FAIL normal worker side promise_test: Unhandled rejection with value: object "NotSupportedError: windowClient.navigate() is not yet supported"
 FAIL blank url worker side promise_test: Unhandled rejection with value: object "NotSupportedError: windowClient.navigate() is not yet supported"
 FAIL in scope but not controlled test on installing worker worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {

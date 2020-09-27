@@ -1,4 +1,4 @@
 
-PASS Navigation fetch events should wait for the activate event to complete. 
-PASS Subresource fetch events should wait for the activate event to complete. 
+PASS Navigation fetch events should wait for the activate event to complete.
+PASS Subresource fetch events should wait for the activate event to complete.
 

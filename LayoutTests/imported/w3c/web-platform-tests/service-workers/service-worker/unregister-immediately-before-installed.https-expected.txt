@@ -2,5 +2,5 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Clear-Site-Data must abort service worker registration. Test timed out
-NOTRUN Clear-Site-Data must unregister a registration with a worker in the "installing" state. 
+NOTRUN Clear-Site-Data must unregister a registration with a worker in the "installing" state.
 

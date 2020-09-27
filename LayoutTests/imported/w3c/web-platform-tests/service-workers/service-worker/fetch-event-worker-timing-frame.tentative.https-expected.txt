@@ -2,10 +2,10 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Set up an active service worker 
+PASS Set up an active service worker
 TIMEOUT workerTiming for navigation in a frame with network fallback Test timed out
-NOTRUN workerTiming for navigation in a frame for a response from a fetch handler 
-NOTRUN workerTiming for subresources in a frame with network fallback 
-NOTRUN workerTiming for subresources in a frame for a response from a fetchhandler 
-NOTRUN Unregister service worker 
+NOTRUN workerTiming for navigation in a frame for a response from a fetch handler
+NOTRUN workerTiming for subresources in a frame with network fallback
+NOTRUN workerTiming for subresources in a frame for a response from a fetchhandler
+NOTRUN Unregister service worker
 

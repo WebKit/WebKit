@@ -1,6 +1,6 @@
 
 
-PASS Unregister does not affect existing controller 
-PASS Unregister prevents control of subsequent navigations 
-PASS Unregister prevents new controllee even if registration is still in use 
+PASS Unregister does not affect existing controller
+PASS Unregister prevents control of subsequent navigations
+PASS Unregister prevents new controllee even if registration is still in use
 

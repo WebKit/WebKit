@@ -1,7 +1,7 @@
 
-PASS Test that the target's border bounding box is used to calculate intersection. 
-PASS First rAF. 
-PASS target.style.transform = 'translateY(195px)' 
-PASS target.style.transform = 'translateY(300px)' 
-PASS target.style.zoom = 2 
+PASS Test that the target's border bounding box is used to calculate intersection.
+PASS First rAF.
+PASS target.style.transform = 'translateY(195px)'
+PASS target.style.transform = 'translateY(300px)'
+PASS target.style.zoom = 2
 

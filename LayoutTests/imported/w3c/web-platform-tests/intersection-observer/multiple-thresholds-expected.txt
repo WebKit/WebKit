@@ -1,12 +1,12 @@
 
-PASS Observer with multiple thresholds. 
-PASS First rAF. 
-PASS document.scrollingElement.scrollTop = 120 
-PASS document.scrollingElement.scrollTop = 160 
-PASS document.scrollingElement.scrollTop = 200 
-PASS document.scrollingElement.scrollTop = 240 
-PASS document.scrollingElement.scrollTop = window.innerHeight + 140 
-PASS document.scrollingElement.scrollTop = window.innerHeight + 160 
-PASS document.scrollingElement.scrollTop = window.innerHeight + 200 
-PASS document.scrollingElement.scrollTop = window.innerHeight + 220 
+PASS Observer with multiple thresholds.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 120
+PASS document.scrollingElement.scrollTop = 160
+PASS document.scrollingElement.scrollTop = 200
+PASS document.scrollingElement.scrollTop = 240
+PASS document.scrollingElement.scrollTop = window.innerHeight + 140
+PASS document.scrollingElement.scrollTop = window.innerHeight + 160
+PASS document.scrollingElement.scrollTop = window.innerHeight + 200
+PASS document.scrollingElement.scrollTop = window.innerHeight + 220
 

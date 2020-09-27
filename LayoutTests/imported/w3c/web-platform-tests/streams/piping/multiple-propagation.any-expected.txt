@@ -1,13 +1,13 @@
 
 Harness Error (FAIL), message = Unhandled rejection: error1!
 
-PASS Piping from an errored readable stream to an erroring writable stream 
-PASS Piping from an errored readable stream to an errored writable stream 
-PASS Piping from an errored readable stream to an erroring writable stream; preventAbort = true 
-PASS Piping from an errored readable stream to an errored writable stream; preventAbort = true 
-PASS Piping from an errored readable stream to a closing writable stream 
-PASS Piping from an errored readable stream to a closed writable stream 
-PASS Piping from a closed readable stream to an erroring writable stream 
-PASS Piping from a closed readable stream to an errored writable stream 
-PASS Piping from a closed readable stream to a closed writable stream 
+PASS Piping from an errored readable stream to an erroring writable stream
+PASS Piping from an errored readable stream to an errored writable stream
+PASS Piping from an errored readable stream to an erroring writable stream; preventAbort = true
+PASS Piping from an errored readable stream to an errored writable stream; preventAbort = true
+PASS Piping from an errored readable stream to a closing writable stream
+PASS Piping from an errored readable stream to a closed writable stream
+PASS Piping from a closed readable stream to an erroring writable stream
+PASS Piping from a closed readable stream to an errored writable stream
+PASS Piping from a closed readable stream to a closed writable stream
 

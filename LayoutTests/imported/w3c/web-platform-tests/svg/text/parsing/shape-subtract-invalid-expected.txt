@@ -1,6 +1,6 @@
 
-PASS e.style['shape-subtract'] = "none" should not set the property value 
-PASS e.style['shape-subtract'] = "auto circle(10px at 20px -30px)" should not set the property value 
-PASS e.style['shape-subtract'] = "url(\"https://example.com/\") auto" should not set the property value 
-PASS e.style['shape-subtract'] = "inset(25%)" should not set the property value 
+PASS e.style['shape-subtract'] = "none" should not set the property value
+PASS e.style['shape-subtract'] = "auto circle(10px at 20px -30px)" should not set the property value
+PASS e.style['shape-subtract'] = "url(\"https://example.com/\") auto" should not set the property value
+PASS e.style['shape-subtract'] = "inset(25%)" should not set the property value
 

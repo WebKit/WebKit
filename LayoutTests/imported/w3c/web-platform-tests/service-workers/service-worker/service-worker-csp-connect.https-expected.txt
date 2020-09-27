@@ -1,7 +1,7 @@
 
-PASS CSP test for connect-src in ServiceWorkerGlobalScope 
-PASS importScripts test for connect-src 
-PASS eval test for connect-src 
-PASS Fetch test for connect-src 
-PASS Redirected fetch test for connect-src 
+PASS CSP test for connect-src in ServiceWorkerGlobalScope
+PASS importScripts test for connect-src
+PASS eval test for connect-src
+PASS Fetch test for connect-src
+PASS Redirected fetch test for connect-src
 

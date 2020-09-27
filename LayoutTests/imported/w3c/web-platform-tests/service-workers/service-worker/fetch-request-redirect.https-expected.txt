@@ -1,37 +1,37 @@
 
-PASS Verify redirect mode of Fetch API and ServiceWorker FetchEvent. 
-PASS Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. 
-PASS Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. 
-PASS Normal XHR should succeed. - default 
-PASS Redirected XHR should succeed. - default 
-PASS Redirected XHR with Request.redirect=follow should succeed. - default 
-PASS Redirected XHR with Request.redirect=error should fail. - default 
-PASS Redirected XHR with Request.redirect=manual should fail. - default 
-PASS Normal image resource should be loaded. - default 
-PASS Redirected image resource should be loaded. - default 
-PASS Loading redirected image with Request.redirect=follow should succeed. - default 
-PASS Loading redirected image with Request.redirect=error should fail. - default 
-PASS Loading redirected image with Request.redirect=manual should fail. - default 
-PASS Normal audio resource should be loaded. - default 
-PASS Redirected audio resource should be loaded. - default 
-PASS Loading redirected audio with Request.redirect=follow should succeed. - default 
-PASS Loading redirected audio with Request.redirect=error should fail. - default 
-PASS Loading redirected audio with Request.redirect=manual should fail. - default 
-PASS Normal iframe loading should succeed. - default 
-PASS Normal redirected iframe loading should succeed. - default 
-PASS Redirected iframe loading with Request.redirect=follow should fail. - default 
-PASS Redirected iframe loading with Request.redirect=error should fail. - default 
-PASS Redirected iframe loading with Request.redirect=manual should succeed. - default 
-PASS Normal XHR should be resolved and response should not be redirected. - redirected 
-PASS Redirected XHR should be resolved and response should be redirected. - redirected 
-PASS Normal XHR should be resolved and response should not be redirected even with CORS mode. - redirected 
-PASS Redirected XHR should be resolved and response.redirected should be redirected with CORS mode. - redirected 
-PASS Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual. - redirected 
-PASS Redirected CORS image should be reject and response should not be redirected with NO-CORS mode. - redirected 
-PASS Normal XHR should be resolved and response should not be redirected. - cache 
-PASS Redirected XHR should be resolved and response should be redirected. - cache 
-PASS Normal XHR should be resolved and response should not be redirected even with CORS mode. - cache 
-PASS Redirected XHR should be resolved and response.redirected should be redirected with CORS mode. - cache 
-PASS Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual. - cache 
-PASS Redirected CORS image should be reject and response should not be redirected with NO-CORS mode. - cache 
+PASS Verify redirect mode of Fetch API and ServiceWorker FetchEvent.
+PASS Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent.
+PASS Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent.
+PASS Normal XHR should succeed. - default
+PASS Redirected XHR should succeed. - default
+PASS Redirected XHR with Request.redirect=follow should succeed. - default
+PASS Redirected XHR with Request.redirect=error should fail. - default
+PASS Redirected XHR with Request.redirect=manual should fail. - default
+PASS Normal image resource should be loaded. - default
+PASS Redirected image resource should be loaded. - default
+PASS Loading redirected image with Request.redirect=follow should succeed. - default
+PASS Loading redirected image with Request.redirect=error should fail. - default
+PASS Loading redirected image with Request.redirect=manual should fail. - default
+PASS Normal audio resource should be loaded. - default
+PASS Redirected audio resource should be loaded. - default
+PASS Loading redirected audio with Request.redirect=follow should succeed. - default
+PASS Loading redirected audio with Request.redirect=error should fail. - default
+PASS Loading redirected audio with Request.redirect=manual should fail. - default
+PASS Normal iframe loading should succeed. - default
+PASS Normal redirected iframe loading should succeed. - default
+PASS Redirected iframe loading with Request.redirect=follow should fail. - default
+PASS Redirected iframe loading with Request.redirect=error should fail. - default
+PASS Redirected iframe loading with Request.redirect=manual should succeed. - default
+PASS Normal XHR should be resolved and response should not be redirected. - redirected
+PASS Redirected XHR should be resolved and response should be redirected. - redirected
+PASS Normal XHR should be resolved and response should not be redirected even with CORS mode. - redirected
+PASS Redirected XHR should be resolved and response.redirected should be redirected with CORS mode. - redirected
+PASS Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual. - redirected
+PASS Redirected CORS image should be reject and response should not be redirected with NO-CORS mode. - redirected
+PASS Normal XHR should be resolved and response should not be redirected. - cache
+PASS Redirected XHR should be resolved and response should be redirected. - cache
+PASS Normal XHR should be resolved and response should not be redirected even with CORS mode. - cache
+PASS Redirected XHR should be resolved and response.redirected should be redirected with CORS mode. - cache
+PASS Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual. - cache
+PASS Redirected CORS image should be reject and response should not be redirected with NO-CORS mode. - cache
 

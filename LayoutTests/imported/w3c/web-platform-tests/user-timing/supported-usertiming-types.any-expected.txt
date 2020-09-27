@@ -1,5 +1,5 @@
 
-PASS supportedEntryTypes contains 'mark' and 'measure'. 
-PASS 'mark' entries should be observable. 
-PASS 'measure' entries should be observable. 
+PASS supportedEntryTypes contains 'mark' and 'measure'.
+PASS 'mark' entries should be observable.
+PASS 'measure' entries should be observable.
 

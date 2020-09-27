@@ -1,10 +1,10 @@
 
-PASS Test changeType with an empty type. 
-PASS Test changeType after SourceBuffer removed from mediaSource. 
-PASS Test changeType while update pending. 
-PASS Test changeType with null type. 
-PASS Test changeType with unsupported type. 
-PASS Test changeType transitioning readyState from 'ended' to 'open'. 
-PASS Test changeType sets mode to sequence for change to type that generates timestamps 
-PASS Test changeType retains previous mode when changing to type that doesn't generate timestamps 
+PASS Test changeType with an empty type.
+PASS Test changeType after SourceBuffer removed from mediaSource.
+PASS Test changeType while update pending.
+PASS Test changeType with null type.
+PASS Test changeType with unsupported type.
+PASS Test changeType transitioning readyState from 'ended' to 'open'.
+PASS Test changeType sets mode to sequence for change to type that generates timestamps
+PASS Test changeType retains previous mode when changing to type that doesn't generate timestamps
 

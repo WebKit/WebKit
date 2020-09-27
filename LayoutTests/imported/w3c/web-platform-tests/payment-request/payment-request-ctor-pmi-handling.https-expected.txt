@@ -1,6 +1,6 @@
 
-PASS Must support valid standard URL PMIs 
-PASS Must not throw on syntactically valid standardized payment method identifiers, even if they are not supported 
-PASS Must throw on syntactically invalid standardized payment method identifiers 
-PASS Constructor MUST throw if given an invalid URL-based payment method identifier 
+PASS Must support valid standard URL PMIs
+PASS Must not throw on syntactically valid standardized payment method identifiers, even if they are not supported
+PASS Must throw on syntactically invalid standardized payment method identifiers
+PASS Constructor MUST throw if given an invalid URL-based payment method identifier
 

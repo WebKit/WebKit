@@ -1,17 +1,17 @@
 
-PASS BottomDisplayStyleShiftDown 
-PASS BottomDisplayStyleShiftDown Displaystyle 
-PASS BottomDisplayStyleShiftDown Displaystyle om fraction 
-PASS BottomShiftDown 
-PASS DisplayStyleGapMin 
-PASS DisplayStyleGapMin Dsiplaystyle 
-PASS DisplayStyleGapMin Dsiplaystyle on fraction 
-PASS GapMin 
-PASS TopDisplayStyleShiftUp 
-PASS TopDisplayStyleShiftUp Displaystyle 
-PASS TopDisplayStyleShiftUp Displaystyle on fraction 
-PASS ToShiftUp 
-PASS ToShiftUp with Displaystyle on fraction 
+PASS BottomDisplayStyleShiftDown
+PASS BottomDisplayStyleShiftDown Displaystyle
+PASS BottomDisplayStyleShiftDown Displaystyle om fraction
+PASS BottomShiftDown
+PASS DisplayStyleGapMin
+PASS DisplayStyleGapMin Dsiplaystyle
+PASS DisplayStyleGapMin Dsiplaystyle on fraction
+PASS GapMin
+PASS TopDisplayStyleShiftUp
+PASS TopDisplayStyleShiftUp Displaystyle
+PASS TopDisplayStyleShiftUp Displaystyle on fraction
+PASS ToShiftUp
+PASS ToShiftUp with Displaystyle on fraction
 
 
 

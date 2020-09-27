@@ -1,4 +1,4 @@
 
 
-PASS rootBounds in a same-origin iframe in the case where there is a cross-origin iframe in between the top document and the same origin iframe 
+PASS rootBounds in a same-origin iframe in the case where there is a cross-origin iframe in between the top document and the same origin iframe
 

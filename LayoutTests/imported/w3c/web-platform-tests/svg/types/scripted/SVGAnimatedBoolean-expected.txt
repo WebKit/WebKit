@@ -1,3 +1,3 @@
 
-PASS SVGAnimatedBoolean interface - utilizing the preserveAlpha property of SVGFEConvolveMatrixElement 
+PASS SVGAnimatedBoolean interface - utilizing the preserveAlpha property of SVGFEConvolveMatrixElement
 

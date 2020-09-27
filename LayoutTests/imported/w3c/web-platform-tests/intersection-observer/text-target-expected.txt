@@ -1,7 +1,7 @@
 
 
-PASS IntersectionObserver observing a br element. 
-PASS First rAF. 
-PASS document.scrollingElement.scrollTop = 300 
-PASS document.scrollingElement.scrollTop = 100 
+PASS IntersectionObserver observing a br element.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 300
+PASS document.scrollingElement.scrollTop = 100
 

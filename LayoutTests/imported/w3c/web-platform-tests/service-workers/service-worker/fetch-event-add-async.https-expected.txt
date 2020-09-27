@@ -1,4 +1,4 @@
 
-PASS Service Worker: Fetch event added asynchronously doesn't throw 
-PASS fetch event added asynchronously does not throw 
+PASS Service Worker: Fetch event added asynchronously doesn't throw
+PASS fetch event added asynchronously does not throw
 

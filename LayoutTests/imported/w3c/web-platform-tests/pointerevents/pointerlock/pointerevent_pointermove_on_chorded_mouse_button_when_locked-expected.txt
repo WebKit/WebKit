@@ -16,5 +16,5 @@ Refresh the page to run the tests again.
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN pointer locked pointermove events received for button state changes 
+NOTRUN pointer locked pointermove events received for button state changes
 

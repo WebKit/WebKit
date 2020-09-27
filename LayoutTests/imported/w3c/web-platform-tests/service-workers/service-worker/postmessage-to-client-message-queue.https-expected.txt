@@ -1,7 +1,7 @@
 
-PASS Messages from ServiceWorker to Client only received after DOMContentLoaded event. 
-PASS Messages from ServiceWorker to Client only received after calling startMessages(). 
-PASS Messages from ServiceWorker to Client only received after setting onmessage. 
-PASS Microtasks run before dispatching messages after calling startMessages(). 
-PASS Microtasks run before dispatching messages after setting onmessage. 
+PASS Messages from ServiceWorker to Client only received after DOMContentLoaded event.
+PASS Messages from ServiceWorker to Client only received after calling startMessages().
+PASS Messages from ServiceWorker to Client only received after setting onmessage.
+PASS Microtasks run before dispatching messages after calling startMessages().
+PASS Microtasks run before dispatching messages after setting onmessage.
 

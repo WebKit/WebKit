@@ -1,6 +1,6 @@
 
-PASS Observing a zero-area target. 
-PASS First rAF 
-PASS document.scrollingElement.scrollTop = 300 
-PASS document.scrollingElement.scrollTop = 100 
+PASS Observing a zero-area target.
+PASS First rAF
+PASS document.scrollingElement.scrollTop = 300
+PASS document.scrollingElement.scrollTop = 100
 

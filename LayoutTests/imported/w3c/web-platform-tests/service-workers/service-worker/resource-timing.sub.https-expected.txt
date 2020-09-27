@@ -1,5 +1,5 @@
 
 
 FAIL Controlled resource loads assert_greater_than: Generated response expected a number greater than 0 but got 0
-PASS Non-controlled resource loads 
+PASS Non-controlled resource loads
 

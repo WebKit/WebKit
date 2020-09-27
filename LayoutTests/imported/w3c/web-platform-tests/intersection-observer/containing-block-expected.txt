@@ -1,7 +1,7 @@
 
-PASS IntersectionObserver should only report intersections if root is a containing block ancestor of target. 
-PASS In containing block and intersecting. 
-PASS In containing block and not intersecting. 
-PASS Not in containing block and intersecting. 
-PASS Not in containing block and not intersecting. 
+PASS IntersectionObserver should only report intersections if root is a containing block ancestor of target.
+PASS In containing block and intersecting.
+PASS In containing block and not intersecting.
+PASS Not in containing block and intersecting.
+PASS Not in containing block and not intersecting.
 

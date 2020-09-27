@@ -1,8 +1,8 @@
 
 
-PASS Intersection observer test with no explicit root and target in a cross-origin iframe. 
-PASS First rAF 
-PASS topDocument.scrollingElement.scrollTop = 200 
-PASS iframeDocument.scrollingElement.scrollTop = 250 
-PASS topDocument.scrollingElement.scrollTop = 100 
+PASS Intersection observer test with no explicit root and target in a cross-origin iframe.
+PASS First rAF
+PASS topDocument.scrollingElement.scrollTop = 200
+PASS iframeDocument.scrollingElement.scrollTop = 250
+PASS topDocument.scrollingElement.scrollTop = 100
 

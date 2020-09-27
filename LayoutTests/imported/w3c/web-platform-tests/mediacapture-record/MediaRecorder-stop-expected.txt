@@ -1,6 +1,6 @@
 
 FAIL MediaRecorder will stop recording and fire a stop event when all tracks are ended assert_equals: MediaRecorder state should be recording immediately following last track ending expected "recording" but got "inactive"
-PASS MediaRecorder will stop recording and fire a stop event when stop() is called 
+PASS MediaRecorder will stop recording and fire a stop event when stop() is called
 FAIL MediaRecorder will fire an exception when stopped after creation assert_throws_dom: function "() => { recorder.stop(); }" did not throw
 FAIL MediaRecorder will fire an exception when stopped after having just been stopped assert_throws_dom: function "() => { recorder.stop(); }" did not throw
 FAIL MediaRecorder will fire an exception when stopped after having just been spontaneously stopped assert_throws_dom: function "() => { recorder.stop(); }" did not throw

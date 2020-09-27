@@ -1,5 +1,5 @@
 
-PASS Let target be the request which is dispatching the event. 
-PASS Calling .updateWith() with an undispatched untrusted event throws "InvalidStateError" 
-PASS Calling .updateWith() with a dispatched, untrusted event, throws "InvalidStateError" 
+PASS Let target be the request which is dispatching the event.
+PASS Calling .updateWith() with an undispatched untrusted event throws "InvalidStateError"
+PASS Calling .updateWith() with a dispatched, untrusted event, throws "InvalidStateError"
 

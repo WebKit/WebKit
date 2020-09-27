@@ -1,7 +1,7 @@
 
 
-PASS Test pointer capture event route across the same-origin frame: Mouse down at inner frame and set pointer capture. 
-PASS Test pointer capture event route across the same-origin frame: Mouse down at outer frame body and set pointer capture. 
-PASS Test pointer capture event route across the same-origin frame: Mouse down with set capture at inner frame, then release on next mouse move. 
-PASS Test pointercapture event route across the same-origin frame: Mouse down with set capture at outer frame, then release on next mouse move. 
+PASS Test pointer capture event route across the same-origin frame: Mouse down at inner frame and set pointer capture.
+PASS Test pointer capture event route across the same-origin frame: Mouse down at outer frame body and set pointer capture.
+PASS Test pointer capture event route across the same-origin frame: Mouse down with set capture at inner frame, then release on next mouse move.
+PASS Test pointercapture event route across the same-origin frame: Mouse down with set capture at outer frame, then release on next mouse move.
 

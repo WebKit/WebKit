@@ -2,10 +2,10 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
 CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
 CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
 
-PASS video-only 
+PASS video-only
 FAIL Untitled video.captureStream is not a function. (In 'video.captureStream()', 'video.captureStream' is undefined)
-PASS audio-only 
+PASS audio-only
 FAIL Untitled 1 video.captureStream is not a function. (In 'video.captureStream()', 'video.captureStream' is undefined)
-PASS video+audio 
+PASS video+audio
 FAIL Untitled 2 video.captureStream is not a function. (In 'video.captureStream()', 'video.captureStream' is undefined)
 

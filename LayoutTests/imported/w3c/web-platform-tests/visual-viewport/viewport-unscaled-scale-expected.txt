@@ -5,5 +5,5 @@ Test Description: This test checks that the default value for scale is 1.
 window.visualViewport.scale is 1.
 
 
-PASS visualViewport.scale default value. 
+PASS visualViewport.scale default value.
 

@@ -1,13 +1,13 @@
- 
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByName is defined 
-PASS redirectStart > 0 in cross-origin redirect with Timing-Allow-Origin. 
-PASS redirectEnd > 0 in cross-origin redirect with Timing-Allow-Origin. 
-PASS fetchStart > 0 in cross-origin redirect with Timing-Allow-Origin. 
-PASS startTime < fetchStart in cross-origin redirect with Timing-Allow-Origin. 
+
+PASS window.performance is defined
+PASS window.performance.getEntriesByName is defined
+PASS redirectStart > 0 in cross-origin redirect with Timing-Allow-Origin.
+PASS redirectEnd > 0 in cross-origin redirect with Timing-Allow-Origin.
+PASS fetchStart > 0 in cross-origin redirect with Timing-Allow-Origin.
+PASS startTime < fetchStart in cross-origin redirect with Timing-Allow-Origin.
 FAIL redirectStart == 0 in cross-origin redirect with failing Timing-Allow-Origin. assert_equals: redirectStart == 0 in cross-origin redirect with failing Timing-Allow-Origin. expected 0 but got 14
 FAIL redirectEnd == 0 in cross-origin redirect with failing Timing-Allow-Origin. assert_equals: redirectEnd == 0 in cross-origin redirect with failing Timing-Allow-Origin. expected 0 but got 29
-PASS fetchStart > 0 in cross-origin redirect with failing Timing-Allow-Origin. 
+PASS fetchStart > 0 in cross-origin redirect with failing Timing-Allow-Origin.
 FAIL startTime == fetchStart in cross-origin redirect with failing Timing-Allow-Origin. assert_equals: startTime == fetchStart in cross-origin redirect with failing Timing-Allow-Origin. expected 14 but got 29
 

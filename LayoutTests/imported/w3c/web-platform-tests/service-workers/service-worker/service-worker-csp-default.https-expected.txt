@@ -1,7 +1,7 @@
 
-PASS CSP test for default-src in ServiceWorkerGlobalScope 
-PASS importScripts test for default-src 
-PASS eval test for default-src 
-PASS Fetch test for default-src 
-PASS Redirected fetch test for default-src 
+PASS CSP test for default-src in ServiceWorkerGlobalScope
+PASS importScripts test for default-src
+PASS eval test for default-src
+PASS Fetch test for default-src
+PASS Redirected fetch test for default-src
 

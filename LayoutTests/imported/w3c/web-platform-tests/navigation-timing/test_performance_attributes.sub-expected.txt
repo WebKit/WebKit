@@ -1,4 +1,4 @@
 
 
-PASS Check that performance.timing has reasonable values for secureConnectionStart and other attributes 
+PASS Check that performance.timing has reasonable values for secureConnectionStart and other attributes
 

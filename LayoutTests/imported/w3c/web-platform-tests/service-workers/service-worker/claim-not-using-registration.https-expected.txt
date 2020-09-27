@@ -1,4 +1,4 @@
 
-PASS Test claim client which is not using registration 
-PASS Test claim client when there's a longer-matched registration not already used by the page 
+PASS Test claim client which is not using registration
+PASS Test claim client when there's a longer-matched registration not already used by the page
 

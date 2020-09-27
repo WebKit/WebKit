@@ -13,6 +13,6 @@ The following pointer types were detected: mouse.
 The following events were logged: gotpointercapture@target1, lostpointercapture@document.
 
 
-PASS lostpointercapture event received 
-PASS lostpointercapture is dispatched on the document 
+PASS lostpointercapture event received
+PASS lostpointercapture is dispatched on the document
 

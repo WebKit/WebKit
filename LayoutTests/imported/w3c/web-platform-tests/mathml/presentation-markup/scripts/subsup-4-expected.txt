@@ -1,4 +1,4 @@
 
-PASS Alignment on the baseline for bases of different heights 
-PASS Vertical position of the scripts for bases of different heights 
+PASS Alignment on the baseline for bases of different heights
+PASS Vertical position of the scripts for bases of different heights
 

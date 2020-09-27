@@ -1,4 +1,4 @@
 
-PASS Ensure that a zero-area target intersecting root generates a notification with intersectionRatio == 1 
-PASS First rAF should generate a notification. 
+PASS Ensure that a zero-area target intersecting root generates a notification with intersectionRatio == 1
+PASS First rAF should generate a notification.
 

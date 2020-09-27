@@ -12,5 +12,5 @@ Gray rectangle received pointercapture.
 Removing gray rectangle from shadow dom.
 Test Passed! Document received lostpointercapture.
 
-PASS lostpointercapture is dispatched on the document when shadow dom capturing element is removed 
+PASS lostpointercapture is dispatched on the document when shadow dom capturing element is removed
 

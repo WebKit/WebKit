@@ -1,8 +1,8 @@
-  
 
-PASS Root margin tests 
-PASS First rAF. 
-PASS document.scrollingElement.scrollLeft = 100 
-PASS document.scrollingElement.scrollTop = document.documentElement.clientHeight + 200 
-PASS document.scrollingElement.scrollTop = document.documentElement.clientHeight + 300 
+
+PASS Root margin tests
+PASS First rAF.
+PASS document.scrollingElement.scrollLeft = 100
+PASS document.scrollingElement.scrollTop = document.documentElement.clientHeight + 200
+PASS document.scrollingElement.scrollTop = document.documentElement.clientHeight + 300
 

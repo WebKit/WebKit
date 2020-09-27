@@ -1,13 +1,13 @@
 
-PASS enqueue() inside size() should work 
-PASS terminate() inside size() should work 
-PASS error() inside size() should work 
-PASS desiredSize inside size() should work 
-PASS readable cancel() inside size() should work 
-PASS pipeTo() inside size() should work 
-PASS read() inside of size() should work 
-PASS writer.write() inside size() should work 
-PASS synchronous writer.write() inside size() should work 
-PASS writer.close() inside size() should work 
-PASS writer.abort() inside size() should work 
+PASS enqueue() inside size() should work
+PASS terminate() inside size() should work
+PASS error() inside size() should work
+PASS desiredSize inside size() should work
+PASS readable cancel() inside size() should work
+PASS pipeTo() inside size() should work
+PASS read() inside of size() should work
+PASS writer.write() inside size() should work
+PASS synchronous writer.write() inside size() should work
+PASS writer.close() inside size() should work
+PASS writer.abort() inside size() should work
 

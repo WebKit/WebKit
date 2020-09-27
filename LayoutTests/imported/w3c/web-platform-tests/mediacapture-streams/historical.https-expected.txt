@@ -1,8 +1,8 @@
 
-PASS webkitMediaStream interface should not exist 
-PASS navigator.webkitGetUserMedia should not exist 
-PASS navigator.mozGetUserMedia should not exist 
-PASS Passing MediaStream to URL.createObjectURL() should throw 
-PASS MediaStream.onactive should not exist 
-PASS MediaStream.oninactive should not exist 
+PASS webkitMediaStream interface should not exist
+PASS navigator.webkitGetUserMedia should not exist
+PASS navigator.mozGetUserMedia should not exist
+PASS Passing MediaStream to URL.createObjectURL() should throw
+PASS MediaStream.onactive should not exist
+PASS MediaStream.oninactive should not exist
 

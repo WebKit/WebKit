@@ -1,8 +1,8 @@
 
 
-PASS Observer with the implicit root; target in a same-origin iframe. 
-PASS First rAF. 
-PASS document.scrollingElement.scrollTop = 200 
-PASS iframe.contentDocument.scrollingElement.scrollTop = 250 
-PASS document.scrollingElement.scrollTop = 100 
+PASS Observer with the implicit root; target in a same-origin iframe.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 200
+PASS iframe.contentDocument.scrollingElement.scrollTop = 250
+PASS document.scrollingElement.scrollTop = 100
 

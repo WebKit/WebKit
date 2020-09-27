@@ -1,3 +1,3 @@
 
-PASS Tests SVGAngle animation from deg to grad. 
+PASS Tests SVGAngle animation from deg to grad.
 

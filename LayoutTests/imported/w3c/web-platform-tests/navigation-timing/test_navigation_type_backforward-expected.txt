@@ -13,10 +13,10 @@ Along the navigation timeline the frame.window.performance.type is checked for T
 This test passes if all of the checks to the navigation.type are correct throughout the navigation scenario and the frame below ends with a green background. Otherwise, this test fails.
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS window.performance.navigation.type == TYPE_NAVIGATE 
-PASS window.performance.navigation.type == TYPE_BACK_FORWARD after history.back() 
-PASS window.performance.navigation.type == TYPE_BACK_FORWARD after history.forward() 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS window.performance.navigation.type == TYPE_NAVIGATE
+PASS window.performance.navigation.type == TYPE_BACK_FORWARD after history.back()
+PASS window.performance.navigation.type == TYPE_BACK_FORWARD after history.forward()
 
 

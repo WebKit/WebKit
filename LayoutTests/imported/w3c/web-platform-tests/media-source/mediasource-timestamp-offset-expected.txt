@@ -1,17 +1,17 @@
 
-PASS Test setting SourceBuffer.timestampOffset to a positive number. 
-PASS Test setting SourceBuffer.timestampOffset to a negative number. 
-PASS Test setting SourceBuffer.timestampOffset to zero. 
-PASS Test setting SourceBuffer.timestampOffset to positive infinity. 
-PASS Test setting SourceBuffer.timestampOffset to negative infinity. 
-PASS Test setting SourceBuffer.timestampOffset to NaN. 
-PASS Test setting SourceBuffer.timestampOffset to undefined. 
-PASS Test setting SourceBuffer.timestampOffset to null. 
-PASS Test setting SourceBuffer.timestampOffset to false. 
-PASS Test setting SourceBuffer.timestampOffset to true. 
-PASS Test setting SourceBuffer.timestampOffset to a number string. 
-PASS Test setting SourceBuffer.timestampOffset to an empty string. 
-PASS Test setting timestampOffset in 'ended' state causes a transition to 'open'. 
-PASS Test getting the initial value of timestampOffset. 
-PASS Test setting timestampoffset after removing the sourcebuffer. 
+PASS Test setting SourceBuffer.timestampOffset to a positive number.
+PASS Test setting SourceBuffer.timestampOffset to a negative number.
+PASS Test setting SourceBuffer.timestampOffset to zero.
+PASS Test setting SourceBuffer.timestampOffset to positive infinity.
+PASS Test setting SourceBuffer.timestampOffset to negative infinity.
+PASS Test setting SourceBuffer.timestampOffset to NaN.
+PASS Test setting SourceBuffer.timestampOffset to undefined.
+PASS Test setting SourceBuffer.timestampOffset to null.
+PASS Test setting SourceBuffer.timestampOffset to false.
+PASS Test setting SourceBuffer.timestampOffset to true.
+PASS Test setting SourceBuffer.timestampOffset to a number string.
+PASS Test setting SourceBuffer.timestampOffset to an empty string.
+PASS Test setting timestampOffset in 'ended' state causes a transition to 'open'.
+PASS Test getting the initial value of timestampOffset.
+PASS Test setting timestampoffset after removing the sourcebuffer.
 

@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Error: requestIdleCallbackException
 
-PASS requestIdleCallback callback exceptions are reported to error handler 
+PASS requestIdleCallback callback exceptions are reported to error handler
 

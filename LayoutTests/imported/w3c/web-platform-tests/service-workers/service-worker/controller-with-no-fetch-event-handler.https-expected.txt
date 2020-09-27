@@ -1,9 +1,9 @@
 
-PASS global setup 
-PASS cross-origin request, no-cors mode 
+PASS global setup
+PASS cross-origin request, no-cors mode
 FAIL cross-origin request, cors denied promise_rejects_js: function "function () { throw e }" threw object "TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin." ("TypeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-PASS cross-origin request, cors approved 
-PASS cleanup global state 
+PASS cross-origin request, cors approved
+PASS cleanup global state
 

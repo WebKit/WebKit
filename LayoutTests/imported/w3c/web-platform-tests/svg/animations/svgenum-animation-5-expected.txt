@@ -1,3 +1,3 @@
 
-PASS Test MorphologyOperatorType enumeration animations 
+PASS Test MorphologyOperatorType enumeration animations
 

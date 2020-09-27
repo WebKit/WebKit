@@ -1,5 +1,5 @@
 
-PASS Test SourceBufferList getter method 
-PASS Test SourceBufferList event dispatching. 
-PASS Test that only 1 removesourcebuffer event fires on each SourceBufferList when the MediaSource closes. 
+PASS Test SourceBufferList getter method
+PASS Test SourceBufferList event dispatching.
+PASS Test that only 1 removesourcebuffer event fires on each SourceBufferList when the MediaSource closes.
 

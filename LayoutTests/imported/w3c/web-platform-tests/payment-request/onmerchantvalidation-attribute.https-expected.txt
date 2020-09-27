@@ -1,6 +1,6 @@
 
-PASS Must have a onmerchantvalidation IDL attribute 
-PASS onmerchantvalidation attribute is a generic handler for "merchantvalidation" 
-PASS onmerchantvalidation attribute is a handler for MerchantValidationEvent 
-PASS onmerchantvalidation attribute and listeners both work 
+PASS Must have a onmerchantvalidation IDL attribute
+PASS onmerchantvalidation attribute is a generic handler for "merchantvalidation"
+PASS onmerchantvalidation attribute is a handler for MerchantValidationEvent
+PASS onmerchantvalidation attribute and listeners both work
 

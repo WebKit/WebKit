@@ -1,5 +1,5 @@
 
-PASS The eventInitDict argument is required 
-PASS The eventInitDict's track member is required. 
-PASS The MediaStreamTrackEvent instance's track attribute is set. 
+PASS The eventInitDict argument is required
+PASS The eventInitDict's track member is required.
+PASS The MediaStreamTrackEvent instance's track attribute is set.
 

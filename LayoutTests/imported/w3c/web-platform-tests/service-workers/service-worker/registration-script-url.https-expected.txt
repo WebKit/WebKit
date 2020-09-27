@@ -1,10 +1,10 @@
 
-PASS Script URL including URL-encoded slash 
-PASS Script URL including uppercase URL-encoded slash 
-PASS Script URL including URL-encoded backslash 
-PASS Script URL including uppercase URL-encoded backslash 
-PASS Script URL is a data URL 
-PASS Script URL is a data URL and scope URL is not relative 
-PASS Script URL including self-reference 
-PASS Script URL including parent-reference 
+PASS Script URL including URL-encoded slash
+PASS Script URL including uppercase URL-encoded slash
+PASS Script URL including URL-encoded backslash
+PASS Script URL including uppercase URL-encoded backslash
+PASS Script URL is a data URL
+PASS Script URL is a data URL and scope URL is not relative
+PASS Script URL including self-reference
+PASS Script URL including parent-reference
 

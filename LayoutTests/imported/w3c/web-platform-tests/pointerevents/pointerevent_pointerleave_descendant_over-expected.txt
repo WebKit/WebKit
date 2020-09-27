@@ -13,5 +13,5 @@ The following pointer types were detected: mouse.
 Refresh the page to run the tests again with a different pointer type.
 
 
-PASS pointerleave shouldn't be received on descendant's pointerover 
+PASS pointerleave shouldn't be received on descendant's pointerover
 

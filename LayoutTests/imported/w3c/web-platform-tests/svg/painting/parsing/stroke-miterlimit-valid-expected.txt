@@ -1,6 +1,6 @@
 
-PASS e.style['stroke-miterlimit'] = "0" should set the property value 
-PASS e.style['stroke-miterlimit'] = "0.5" should set the property value 
-PASS e.style['stroke-miterlimit'] = "1" should set the property value 
-PASS e.style['stroke-miterlimit'] = "7.5" should set the property value 
+PASS e.style['stroke-miterlimit'] = "0" should set the property value
+PASS e.style['stroke-miterlimit'] = "0.5" should set the property value
+PASS e.style['stroke-miterlimit'] = "1" should set the property value
+PASS e.style['stroke-miterlimit'] = "7.5" should set the property value
 

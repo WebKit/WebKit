@@ -2,6 +2,6 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Test for mpath when setting both href and xlink:href Test timed out
-NOTRUN Test for mpath when removing href but we still have xlink:href 
-NOTRUN Test for mpath when removing xlink:href but we still have href 
+NOTRUN Test for mpath when removing href but we still have xlink:href
+NOTRUN Test for mpath when removing xlink:href but we still have href
 

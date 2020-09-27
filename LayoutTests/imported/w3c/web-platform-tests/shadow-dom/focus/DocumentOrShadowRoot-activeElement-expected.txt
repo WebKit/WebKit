@@ -1,8 +1,8 @@
 
-PASS activeElement on document & shadow root when focused element is in the shadow tree 
-PASS activeElement on document & shadow root when focused element is in the document 
-PASS activeElement on document & shadow root when focused element is slotted 
-PASS activeElement on a neighboring host when focused element is in another shadow tree 
-PASS activeElement when focused element is in a nested shadow tree 
-PASS activeElement when focused element is in a parent shadow tree 
+PASS activeElement on document & shadow root when focused element is in the shadow tree
+PASS activeElement on document & shadow root when focused element is in the document
+PASS activeElement on document & shadow root when focused element is slotted
+PASS activeElement on a neighboring host when focused element is in another shadow tree
+PASS activeElement when focused element is in a nested shadow tree
+PASS activeElement when focused element is in a parent shadow tree
 

@@ -1,7 +1,7 @@
 
-PASS Alignment of the base on the baseline 
-PASS Dimensions of the scripted elements 
-PASS Vertical positions of scripts 
-PASS Horizontal alignment of scripts 
-PASS Horizontal positions of scripts 
+PASS Alignment of the base on the baseline
+PASS Dimensions of the scripted elements
+PASS Vertical positions of scripts
+PASS Horizontal alignment of scripts
+PASS Horizontal positions of scripts
 

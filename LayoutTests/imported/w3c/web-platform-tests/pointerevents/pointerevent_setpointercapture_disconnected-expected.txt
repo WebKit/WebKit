@@ -7,5 +7,5 @@ Use the mouse, touch or pen to contact this box.
 The following pointer types were detected: mouse.
 
 
-PASS setPointerCapture: DOMException InvalidStateError 
+PASS setPointerCapture: DOMException InvalidStateError
 

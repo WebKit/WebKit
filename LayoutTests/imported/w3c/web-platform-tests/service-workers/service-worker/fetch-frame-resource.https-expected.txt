@@ -1,8 +1,8 @@
 
-PASS Basic type response could be loaded in the iframe. 
-PASS CORS type response could be loaded in the iframe. 
-PASS Opaque type response could not be loaded in the iframe. 
-PASS Basic type response could be loaded in the new window. 
-PASS CORS type response could be loaded in the new window. 
-PASS Opaque type response could not be loaded in the new window. 
+PASS Basic type response could be loaded in the iframe.
+PASS CORS type response could be loaded in the iframe.
+PASS Opaque type response could not be loaded in the iframe.
+PASS Basic type response could be loaded in the new window.
+PASS CORS type response could be loaded in the new window.
+PASS Opaque type response could not be loaded in the new window.
 

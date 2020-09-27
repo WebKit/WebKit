@@ -1,5 +1,5 @@
 
-PASS PaymentRequestUpdateEvent can be constructed in secure-context 
-PASS PaymentRequestUpdateEvent can be constructed with an EventInitDict, even if not trusted 
-PASS PaymentRequestUpdateEvent can be dispatched, even if not trusted 
+PASS PaymentRequestUpdateEvent can be constructed in secure-context
+PASS PaymentRequestUpdateEvent can be constructed with an EventInitDict, even if not trusted
+PASS PaymentRequestUpdateEvent can be dispatched, even if not trusted
 

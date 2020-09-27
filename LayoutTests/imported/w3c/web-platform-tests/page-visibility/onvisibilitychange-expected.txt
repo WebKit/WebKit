@@ -1,3 +1,3 @@
 
-PASS onvisibilitychange attribute is a proper event handler 
+PASS onvisibilitychange attribute is a proper event handler
 

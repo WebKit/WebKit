@@ -2,5 +2,5 @@ Check that resources from inline styles are loaded with the referrer and referre
 
 
 
-PASS Image from inline styles. 
+PASS Image from inline styles.
 

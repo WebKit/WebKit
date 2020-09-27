@@ -1,11 +1,11 @@
 
 FAIL idl_test setup promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Notification"
-PASS idl_test validation 
-PASS Partial interface ServiceWorkerRegistration: original interface defined 
-PASS Partial interface ServiceWorkerRegistration: member names are unique 
-PASS Partial interface ServiceWorkerGlobalScope: original interface defined 
-PASS Partial interface ServiceWorkerGlobalScope: member names are unique 
-PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
+PASS idl_test validation
+PASS Partial interface ServiceWorkerRegistration: original interface defined
+PASS Partial interface ServiceWorkerRegistration: member names are unique
+PASS Partial interface ServiceWorkerGlobalScope: original interface defined
+PASS Partial interface ServiceWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 FAIL Notification interface: existence and properties of interface object assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface object length assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface object name assert_own_property: self does not have own property "Notification" expected property "Notification" missing
@@ -60,9 +60,9 @@ FAIL Notification interface: notification must inherit property "requireInteract
 FAIL Notification interface: notification must inherit property "data" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "actions" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "close()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
-PASS NotificationEvent interface: existence and properties of interface object 
+PASS NotificationEvent interface: existence and properties of interface object
 FAIL ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions) assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
 FAIL ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions) assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
-PASS ExtendableEvent interface: existence and properties of interface object 
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface object
+PASS ExtendableEvent interface: existence and properties of interface object
 

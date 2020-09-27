@@ -1,15 +1,15 @@
 
-PASS initialize global state 
-PASS event.request has the expected headers for same-origin GET. 
-PASS event.request has the expected headers for same-origin POST. 
-PASS event.request has the expected headers for cross-origin GET. 
-PASS event.request has the expected headers for cross-origin POST. 
-PASS FetchEvent#request.body contains XHR request data (string) 
-PASS FetchEvent#request.body contains XHR request data (blob) 
-PASS FetchEvent#request.method is set to XHR method 
-PASS XHR using OPTIONS method 
-PASS XHR with form data 
-PASS XHR with mode/credentials set 
-PASS XHR to data URL 
-PASS restore global state 
+PASS initialize global state
+PASS event.request has the expected headers for same-origin GET.
+PASS event.request has the expected headers for same-origin POST.
+PASS event.request has the expected headers for cross-origin GET.
+PASS event.request has the expected headers for cross-origin POST.
+PASS FetchEvent#request.body contains XHR request data (string)
+PASS FetchEvent#request.body contains XHR request data (blob)
+PASS FetchEvent#request.method is set to XHR method
+PASS XHR using OPTIONS method
+PASS XHR with form data
+PASS XHR with mode/credentials set
+PASS XHR to data URL
+PASS restore global state
 

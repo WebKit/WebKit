@@ -73,5 +73,5 @@ behaviour: auto
 The following pointer types were detected: touch.
 
 
-PASS touch-action attribute test 
+PASS touch-action attribute test
 

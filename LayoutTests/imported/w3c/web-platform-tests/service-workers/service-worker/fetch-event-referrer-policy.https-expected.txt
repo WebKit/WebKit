@@ -1,6 +1,6 @@
 
 
 FAIL Service Worker responds to fetch event with the referrer policy promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
-PASS Service Worker should respond to fetch with the default referrer policy 
-PASS Service Worker should respond to fetch with the referrer URL when a member of RequestInit is present - Default Referrer 
+PASS Service Worker should respond to fetch with the default referrer policy
+PASS Service Worker should respond to fetch with the referrer URL when a member of RequestInit is present - Default Referrer
 

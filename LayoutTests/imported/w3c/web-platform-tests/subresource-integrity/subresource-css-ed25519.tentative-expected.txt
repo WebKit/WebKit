@@ -1,13 +1,13 @@
 
-PASS Style: Passes, with correct key + signature. 
+PASS Style: Passes, with correct key + signature.
 FAIL Style: Fails, because the key is malformed. assert_unreached: Bad load succeeded. Reached unreachable code
 FAIL Style: Fails because of wrong key. assert_unreached: Bad load succeeded. Reached unreachable code
 FAIL Style: Fails, because of missing key. assert_unreached: Bad load succeeded. Reached unreachable code
 FAIL Style: Fails, because of wrong key. assert_unreached: Bad load succeeded. Reached unreachable code
-PASS Style: Passes, because the first of two keys passes. 
-PASS Style: Passes, because the second of two keys passes. 
-PASS Style: Passes, because at least one signature matches. 
-PASS Style: Passes (as above), with commas between values. 
-PASS Style: Passes (as above), with multiple headers. 
-PASS Style: Passes, with multiple signatures + multiple keys. 
+PASS Style: Passes, because the first of two keys passes.
+PASS Style: Passes, because the second of two keys passes.
+PASS Style: Passes, because at least one signature matches.
+PASS Style: Passes (as above), with commas between values.
+PASS Style: Passes (as above), with multiple headers.
+PASS Style: Passes, with multiple signatures + multiple keys.
 

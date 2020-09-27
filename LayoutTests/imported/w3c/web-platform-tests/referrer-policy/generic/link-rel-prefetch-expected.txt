@@ -1,5 +1,5 @@
 Check that resources loaded via link rel prefetch use the referrer and referrer policy from the document.
 
 
-PASS Prefetched image. 
+PASS Prefetched image.
 

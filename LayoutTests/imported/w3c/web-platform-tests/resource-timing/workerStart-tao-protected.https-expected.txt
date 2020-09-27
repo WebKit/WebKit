@@ -1,6 +1,6 @@
 
 
-PASS Install a SW 
-PASS Add TAO-less iframe to remote origin. Make sure workerStart is zero 
+PASS Install a SW
+PASS Add TAO-less iframe to remote origin. Make sure workerStart is zero
 FAIL Add TAO iframe to remote origin. Make sure workerStart is not zero promise_test: Unhandled rejection with value: "workerStart should not be zero"
 

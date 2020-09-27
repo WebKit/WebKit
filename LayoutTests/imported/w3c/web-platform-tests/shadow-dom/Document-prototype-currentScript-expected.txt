@@ -1,10 +1,10 @@
 
-PASS document.currentScript must not to be set to a script element in a shadow tree in open mode 
-PASS document.currentScript must not to be set to a script element in a shadow tree in closed mode 
-PASS document.currentScript must be set to a script element that loads an external script in a document tree 
-PASS document.currentScript must be set to a script element that loads an external script in a document tree (2) 
-PASS document.currentScript must not be set to a script element that loads an external script in an open shadow tree 
-PASS document.currentScript must not be set to a script element that loads an external script in a closed shadow tree 
-PASS document.currentScript must be set to a script element that loads an external script that was in an open shadow tree and then removed 
-PASS document.currentScript must be set to a script element that loads an external script that was in a closed shadow tree and then removed 
+PASS document.currentScript must not to be set to a script element in a shadow tree in open mode
+PASS document.currentScript must not to be set to a script element in a shadow tree in closed mode
+PASS document.currentScript must be set to a script element that loads an external script in a document tree
+PASS document.currentScript must be set to a script element that loads an external script in a document tree (2)
+PASS document.currentScript must not be set to a script element that loads an external script in an open shadow tree
+PASS document.currentScript must not be set to a script element that loads an external script in a closed shadow tree
+PASS document.currentScript must be set to a script element that loads an external script that was in an open shadow tree and then removed
+PASS document.currentScript must be set to a script element that loads an external script that was in a closed shadow tree and then removed
 

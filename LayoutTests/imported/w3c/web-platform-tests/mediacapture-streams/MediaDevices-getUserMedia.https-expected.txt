@@ -3,7 +3,7 @@ Description
 This test checks for the presence of the navigator.mediaDevices.getUserMedia method.
 
 
-PASS mediaDevices.getUserMedia() is present on navigator 
+PASS mediaDevices.getUserMedia() is present on navigator
 FAIL groupId is correctly supported by getUserMedia() for video devices assert_true: groupId should be supported expected true got false
 FAIL groupId is correctly supported by getUserMedia() for audio devices assert_true: groupId should be supported expected true got false
 FAIL getUserMedia() supports setting none as resizeMode. assert_true: resizeMode should be supported expected true got undefined

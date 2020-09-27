@@ -1,7 +1,7 @@
 
 
-PASS redirectStart should be greater than 0 in same-origin redirect. 
-PASS redirectStart should be equal to startTime in same-origin redirect. 
-PASS redirectEnd should be no less than redirectStart in same-origin redirect. 
-PASS fetchStart should be no less than redirectEnd in same-origin redirect. 
+PASS redirectStart should be greater than 0 in same-origin redirect.
+PASS redirectStart should be equal to startTime in same-origin redirect.
+PASS redirectEnd should be no less than redirectStart in same-origin redirect.
+PASS fetchStart should be no less than redirectEnd in same-origin redirect.
 

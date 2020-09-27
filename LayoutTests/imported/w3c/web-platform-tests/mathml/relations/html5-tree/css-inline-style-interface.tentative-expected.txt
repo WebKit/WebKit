@@ -1,35 +1,35 @@
-This tests the presence and functionality of features of the `ElementCSSInlineStyle` interface for MathMLElements 
+This tests the presence and functionality of features of the `ElementCSSInlineStyle` interface for MathMLElements
 
-PASS The <math> element style property should be present and be functional. 
-PASS The annotation's style property should be present and be functional. 
-PASS The annotation-xml's style property should be present and be functional. 
-PASS The maction's style property should be present and be functional. 
-PASS The menclose's style property should be present and be functional. 
-PASS The merror's style property should be present and be functional. 
-PASS The mfrac's style property should be present and be functional. 
-PASS The mi's style property should be present and be functional. 
-PASS The mmultiscripts's style property should be present and be functional. 
-PASS The mn's style property should be present and be functional. 
-PASS The mo's style property should be present and be functional. 
-PASS The mover's style property should be present and be functional. 
-PASS The mpadded's style property should be present and be functional. 
-PASS The mphantom's style property should be present and be functional. 
-PASS The mprescripts's style property should be present and be functional. 
-PASS The mroot's style property should be present and be functional. 
-PASS The mrow's style property should be present and be functional. 
-PASS The ms's style property should be present and be functional. 
-PASS The mspace's style property should be present and be functional. 
-PASS The msqrt's style property should be present and be functional. 
-PASS The mstyle's style property should be present and be functional. 
-PASS The msub's style property should be present and be functional. 
-PASS The msubsup's style property should be present and be functional. 
-PASS The msup's style property should be present and be functional. 
-PASS The mtable's style property should be present and be functional. 
-PASS The mtd's style property should be present and be functional. 
-PASS The mtext's style property should be present and be functional. 
-PASS The mtr's style property should be present and be functional. 
-PASS The munder's style property should be present and be functional. 
-PASS The munderover's style property should be present and be functional. 
-PASS The none's style property should be present and be functional. 
-PASS The semantics's style property should be present and be functional. 
+PASS The <math> element style property should be present and be functional.
+PASS The annotation's style property should be present and be functional.
+PASS The annotation-xml's style property should be present and be functional.
+PASS The maction's style property should be present and be functional.
+PASS The menclose's style property should be present and be functional.
+PASS The merror's style property should be present and be functional.
+PASS The mfrac's style property should be present and be functional.
+PASS The mi's style property should be present and be functional.
+PASS The mmultiscripts's style property should be present and be functional.
+PASS The mn's style property should be present and be functional.
+PASS The mo's style property should be present and be functional.
+PASS The mover's style property should be present and be functional.
+PASS The mpadded's style property should be present and be functional.
+PASS The mphantom's style property should be present and be functional.
+PASS The mprescripts's style property should be present and be functional.
+PASS The mroot's style property should be present and be functional.
+PASS The mrow's style property should be present and be functional.
+PASS The ms's style property should be present and be functional.
+PASS The mspace's style property should be present and be functional.
+PASS The msqrt's style property should be present and be functional.
+PASS The mstyle's style property should be present and be functional.
+PASS The msub's style property should be present and be functional.
+PASS The msubsup's style property should be present and be functional.
+PASS The msup's style property should be present and be functional.
+PASS The mtable's style property should be present and be functional.
+PASS The mtd's style property should be present and be functional.
+PASS The mtext's style property should be present and be functional.
+PASS The mtr's style property should be present and be functional.
+PASS The munder's style property should be present and be functional.
+PASS The munderover's style property should be present and be functional.
+PASS The none's style property should be present and be functional.
+PASS The semantics's style property should be present and be functional.
 

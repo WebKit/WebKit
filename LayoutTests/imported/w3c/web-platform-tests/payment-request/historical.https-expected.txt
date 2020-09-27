@@ -1,10 +1,10 @@
 
-PASS paymentRequestID in PaymentRequest 
-PASS paymentRequestID in PaymentResponse 
-PASS careOf in PaymentAddress 
-PASS totalAmount in PaymentResponse 
-PASS paymentRequestId in PaymentRequest 
-PASS paymentRequestId in PaymentResponse 
-PASS languageCode in PaymentAddress 
-PASS supportedMethods must not support sequence<DOMString> 
+PASS paymentRequestID in PaymentRequest
+PASS paymentRequestID in PaymentResponse
+PASS careOf in PaymentAddress
+PASS totalAmount in PaymentResponse
+PASS paymentRequestId in PaymentRequest
+PASS paymentRequestId in PaymentResponse
+PASS languageCode in PaymentAddress
+PASS supportedMethods must not support sequence<DOMString>
 

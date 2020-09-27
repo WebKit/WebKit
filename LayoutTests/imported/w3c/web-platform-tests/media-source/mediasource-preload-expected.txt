@@ -1,9 +1,9 @@
 
-PASS sourceopen occurs with element preload=auto 
-PASS sourceopen occurs with element preload=metadata 
-PASS sourceopen occurs with element preload=none 
-PASS error occurs with bogus blob URL (revoked MediaSource object URL) and element preload=auto 
-PASS error occurs with bogus blob URL (revoked MediaSource object URL) and element preload=metadata 
-PASS error occurs with bogus blob URL (corrupted MediaSource object URL) and element preload=auto 
-PASS error occurs with bogus blob URL (corrupted MediaSource object URL) and element preload=metadata 
+PASS sourceopen occurs with element preload=auto
+PASS sourceopen occurs with element preload=metadata
+PASS sourceopen occurs with element preload=none
+PASS error occurs with bogus blob URL (revoked MediaSource object URL) and element preload=auto
+PASS error occurs with bogus blob URL (revoked MediaSource object URL) and element preload=metadata
+PASS error occurs with bogus blob URL (corrupted MediaSource object URL) and element preload=auto
+PASS error occurs with bogus blob URL (corrupted MediaSource object URL) and element preload=metadata
 

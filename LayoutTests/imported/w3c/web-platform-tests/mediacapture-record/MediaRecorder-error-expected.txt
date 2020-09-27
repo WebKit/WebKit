@@ -1,5 +1,5 @@
 
-PASS MediaRecorder will stop recording when any of track is added and error event will be fired 
-PASS MediaRecorder will stop recording when any of track is removed and error event will be fired 
-PASS MediaRecorder cannot start recording when MediaRecorder' state is not inactive and an InvalidStateError should be thrown 
+PASS MediaRecorder will stop recording when any of track is added and error event will be fired
+PASS MediaRecorder will stop recording when any of track is removed and error event will be fired
+PASS MediaRecorder cannot start recording when MediaRecorder' state is not inactive and an InvalidStateError should be thrown
 

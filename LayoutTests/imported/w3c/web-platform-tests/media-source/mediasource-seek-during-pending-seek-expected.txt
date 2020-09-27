@@ -1,4 +1,4 @@
 
-PASS Test seeking to a new location before transitioning beyond HAVE_METADATA. 
-PASS Test seeking to a new location during a pending seek. 
+PASS Test seeking to a new location before transitioning beyond HAVE_METADATA.
+PASS Test seeking to a new location during a pending seek.
 

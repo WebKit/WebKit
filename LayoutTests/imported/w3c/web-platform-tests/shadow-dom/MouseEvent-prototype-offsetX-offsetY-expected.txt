@@ -1,6 +1,6 @@
 Click here
 
-PASS MouseEvent's offsetX and offsetY attributes must be relative to the target. 
-PASS MouseEvent's offsetX and offsetY attributes must be relative to the shadow host when an event is dispatched inside its shadow tree. 
-PASS MouseEvent's offsetX and offsetY attributes must be relative to the target when an event is dispatched on a slotted content. 
+PASS MouseEvent's offsetX and offsetY attributes must be relative to the target.
+PASS MouseEvent's offsetX and offsetY attributes must be relative to the shadow host when an event is dispatched inside its shadow tree.
+PASS MouseEvent's offsetX and offsetY attributes must be relative to the target when an event is dispatched on a slotted content.
 

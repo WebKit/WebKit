@@ -1,7 +1,7 @@
 
-PASS e.style['cy'] = "0" should set the property value 
-PASS e.style['cy'] = "-1px" should set the property value 
-PASS e.style['cy'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['cy'] = "4%" should set the property value 
-PASS e.style['cy'] = "5rem" should set the property value 
+PASS e.style['cy'] = "0" should set the property value
+PASS e.style['cy'] = "-1px" should set the property value
+PASS e.style['cy'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['cy'] = "4%" should set the property value
+PASS e.style['cy'] = "5rem" should set the property value
 

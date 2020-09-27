@@ -1,5 +1,5 @@
 O
-PASS IntersectionObserverV2 observing an iframe element. 
+PASS IntersectionObserverV2 observing an iframe element.
 FAIL First rAF. assert_equals: Initially occluded. expected (boolean) false but got (undefined) undefined
 FAIL occluder.style.textShadow = "none" assert_equals: Notification after removing text shadow. expected 2 but got 1
 FAIL occluder.style.textShadow = "" assert_equals: Notification after re-adding text shadow. expected 3 but got 1

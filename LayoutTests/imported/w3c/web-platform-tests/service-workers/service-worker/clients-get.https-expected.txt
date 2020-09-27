@@ -1,5 +1,5 @@
 
 FAIL Test Clients.get() assert_array_equals: expected property 1 to be false but got true (expected array ["visible", false, "https://localhost:9443/service-workers/service-worker/resources/clients-get-frame.html#2", "window", "nested"] got ["visible", true, "https://localhost:9443/service-workers/service-worker/resources/clients-get-frame.html#2", "window", "nested"])
 FAIL Test successful Clients.get(FetchEvent.resultingClientId) assert_false: Clients.get(FetchEvent.resultingClientId) resolved with a Client expected false got true
-PASS Test unsuccessful Clients.get(FetchEvent.resultingClientId) 
+PASS Test unsuccessful Clients.get(FetchEvent.resultingClientId)
 

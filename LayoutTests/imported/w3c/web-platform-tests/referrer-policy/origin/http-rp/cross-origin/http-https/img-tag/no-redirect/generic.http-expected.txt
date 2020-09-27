@@ -4,15 +4,15 @@ PASS The referrer URL is origin when a
                                  document served over http requires an https
                                  sub-resource via img-tag using the http-rp
                                  delivery method with no-redirect and when
-                                 the target request is cross-origin. 
+                                 the target request is cross-origin.
 PASS The referrer URL is origin when a
                                  document served over http requires an https
                                  sub-resource via img-tag using the http-rp
                                  delivery method with no-redirect and when
-                                 the target request is cross-origin. (srcdoc iframe inherits parent) 
+                                 the target request is cross-origin. (srcdoc iframe inherits parent)
 PASS The referrer URL is origin when a
                                  document served over http requires an https
                                  sub-resource via img-tag using the http-rp
                                  delivery method with no-redirect and when
-                                 the target request is cross-origin. (overridden by srcdoc iframe) 
+                                 the target request is cross-origin. (overridden by srcdoc iframe)
 

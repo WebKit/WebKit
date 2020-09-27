@@ -3,5 +3,5 @@ No Resize Event Fired on Overflow Recalc
 Test Description: This test ensures we don't fire spurrious resize events when overflow is recalculated.
 
 
-PASS Resize event not fired at window.visualViewport when content is added 
+PASS Resize event not fired at window.visualViewport when content is added
 

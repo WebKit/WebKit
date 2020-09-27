@@ -1,12 +1,12 @@
 
-PASS ServiceWorkerGlobalScope: ExtendableMessageEvent Constructor 
-PASS no initializer specified 
-PASS `bubbles` is specified 
-PASS `cancelable` is specified 
-PASS `data` is specified 
-PASS `origin` is specified 
-PASS `lastEventId` is specified 
-PASS `source` is specified 
-PASS `ports` is specified 
-PASS all initial values are specified 
+PASS ServiceWorkerGlobalScope: ExtendableMessageEvent Constructor
+PASS no initializer specified
+PASS `bubbles` is specified
+PASS `cancelable` is specified
+PASS `data` is specified
+PASS `origin` is specified
+PASS `lastEventId` is specified
+PASS `source` is specified
+PASS `ports` is specified
+PASS all initial values are specified
 

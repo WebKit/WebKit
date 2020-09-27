@@ -1,4 +1,4 @@
 
-PASS e.style['stroke-linejoin'] = "auto" should not set the property value 
-PASS e.style['stroke-linejoin'] = "round bevel" should not set the property value 
+PASS e.style['stroke-linejoin'] = "auto" should not set the property value
+PASS e.style['stroke-linejoin'] = "round bevel" should not set the property value
 

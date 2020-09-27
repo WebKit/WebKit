@@ -6,7 +6,7 @@ This test checks that removinging a track from a MediaStream works as expected.
 
 
 
-PASS Tests that a removal from a MediaStream works as expected 
-PASS Test that removal from a MediaStream fires ended on media elements (video first) 
+PASS Tests that a removal from a MediaStream works as expected
+PASS Test that removal from a MediaStream fires ended on media elements (video first)
 FAIL Test that removal from a MediaStream fires ended on media elements (audio first) assert_equals: audio element ended because no more audio tracks expected true but got false
 

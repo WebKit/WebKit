@@ -1,4 +1,4 @@
 
-PASS Observing a target inside shadow DOM. 
-PASS First rAF after creating shadow DOM. 
+PASS Observing a target inside shadow DOM.
+PASS First rAF after creating shadow DOM.
 

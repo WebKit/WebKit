@@ -1,4 +1,4 @@
 
-PASS addSourceBuffer() sets SourceBuffer.mode to 'segments' when the generate timestamps flag is false 
-PASS addSourceBuffer() sets SourceBuffer.mode to 'sequence' when the generate timestamps flag is true 
+PASS addSourceBuffer() sets SourceBuffer.mode to 'segments' when the generate timestamps flag is false
+PASS addSourceBuffer() sets SourceBuffer.mode to 'sequence' when the generate timestamps flag is true
 

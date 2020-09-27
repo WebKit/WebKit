@@ -1,7 +1,7 @@
 
 
-PASS Test Performance Timeline API in Service Worker 
+PASS Test Performance Timeline API in Service Worker
 FAIL empty service worker fetch event included in performance timings assert_greater_than: Slow service worker request should measure increased delay. expected a number greater than 1012 but got 12
-PASS User Timing 
+PASS User Timing
 FAIL Resource Timing assert_equals: expected 2 but got 1
 

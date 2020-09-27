@@ -1,18 +1,18 @@
 
-PASS desiredSize on a released writer 
-PASS desiredSize initial value 
-PASS desiredSize on a writer for a closed stream 
-PASS desiredSize on a writer for an errored stream 
-PASS ws.getWriter() on a closing WritableStream 
-PASS ws.getWriter() on a closed WritableStream 
-PASS ws.getWriter() on an aborted WritableStream 
-PASS ws.getWriter() on an errored WritableStream 
-PASS closed and ready on a released writer 
-PASS WritableStream should call underlying sink methods as methods 
-PASS methods should not not have .apply() or .call() called 
-PASS WritableStream's strategy.size should not be called as a method 
-PASS redundant releaseLock() is no-op 
-PASS ready promise should fire before closed on releaseLock 
+PASS desiredSize on a released writer
+PASS desiredSize initial value
+PASS desiredSize on a writer for a closed stream
+PASS desiredSize on a writer for an errored stream
+PASS ws.getWriter() on a closing WritableStream
+PASS ws.getWriter() on a closed WritableStream
+PASS ws.getWriter() on an aborted WritableStream
+PASS ws.getWriter() on an errored WritableStream
+PASS closed and ready on a released writer
+PASS WritableStream should call underlying sink methods as methods
+PASS methods should not not have .apply() or .call() called
+PASS WritableStream's strategy.size should not be called as a method
+PASS redundant releaseLock() is no-op
+PASS ready promise should fire before closed on releaseLock
 FAIL Subclassing WritableStream should work assert_true: Subclass object should be an instance of Subclass expected true got false
-PASS the locked getter should return true if the stream has a writer 
+PASS the locked getter should return true if the stream has a writer
 

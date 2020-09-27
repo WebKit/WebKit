@@ -1,8 +1,8 @@
 
 FAIL Check if browser supports enough test media types assert_true: Browser doesn't support at least 2 types of video test media expected true got false
-PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) 
-PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mpeg (using types without codecs parameters) 
-PASS Test audio-only changeType for audio/mpeg <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) 
-PASS Test audio-only changeType for audio/mpeg <-> audio/mpeg (using types without codecs parameters) 
-PASS Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters) 
+PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters)
+PASS Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mpeg (using types without codecs parameters)
+PASS Test audio-only changeType for audio/mpeg <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters)
+PASS Test audio-only changeType for audio/mpeg <-> audio/mpeg (using types without codecs parameters)
+PASS Test video-only changeType for video/mp4; codecs="avc1.4D4001" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters)
 

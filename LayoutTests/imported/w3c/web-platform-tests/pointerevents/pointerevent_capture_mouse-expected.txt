@@ -20,12 +20,12 @@ The following pointer types were detected: mouse.
 The following events were logged: pointermove@target0, pointermove@target1, gotpointercapture@target0, pointermove@target0, pointermove@target0, lostpointercapture@target0.
 
 
-PASS gotpointercapture event received 
-PASS lostpointercapture event received 
-PASS pointerover event for black rectangle received 
-PASS pointerover event for purple rectangle received 
-PASS pointermove shouldn't trigger for the purple rectangle while the black rectangle has capture 
-PASS relatedTarget is null when the capture is set. relatedTarget is null 
-PASS pointermove received for captured element while out of it 
-PASS pointermove received for captured element while inside of it 
+PASS gotpointercapture event received
+PASS lostpointercapture event received
+PASS pointerover event for black rectangle received
+PASS pointerover event for purple rectangle received
+PASS pointermove shouldn't trigger for the purple rectangle while the black rectangle has capture
+PASS relatedTarget is null when the capture is set. relatedTarget is null
+PASS pointermove received for captured element while out of it
+PASS pointermove received for captured element while inside of it
 

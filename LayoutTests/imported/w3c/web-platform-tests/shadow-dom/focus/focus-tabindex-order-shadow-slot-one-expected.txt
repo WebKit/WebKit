@@ -3,5 +3,5 @@ slotted below
 slotted above
 belowHost
 
-PASS Order when all tabindex=0, except for one slot that has tabindex=1 
+PASS Order when all tabindex=0, except for one slot that has tabindex=1
 

@@ -1,4 +1,4 @@
 
-PASS There are 4 scripts, and setResourceTimingBufferSize does not reduce the size. 
-PASS onresourcetimingbufferfull should not be invoked during setResourceTimingBufferSize. 
+PASS There are 4 scripts, and setResourceTimingBufferSize does not reduce the size.
+PASS onresourcetimingbufferfull should not be invoked during setResourceTimingBufferSize.
 

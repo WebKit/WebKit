@@ -1,44 +1,44 @@
 
-PASS Script: Same-origin with correct sha256 hash. 
-PASS Script: Same-origin with correct sha384 hash. 
-PASS Script: Same-origin with correct sha512 hash. 
-PASS Script: Same-origin with empty integrity. 
-PASS Script: Same-origin with incorrect hash. 
-PASS Script: Same-origin with multiple sha256 hashes, including correct. 
-PASS Script: Same-origin with multiple sha256 hashes, including unknown algorithm. 
-PASS Script: Same-origin with sha256 mismatch, sha512 match 
-PASS Script: Same-origin with sha256 match, sha512 mismatch 
-PASS Script: <crossorigin='anonymous'> with correct hash, ACAO: * 
-PASS Script: <crossorigin='anonymous'> with incorrect hash, ACAO: * 
-PASS Script: <crossorigin='use-credentials'> with correct hash, CORS-eligible 
-PASS Script: <crossorigin='use-credentials'> with incorrect hash CORS-eligible 
-PASS Script: <crossorigin='anonymous'> with CORS-ineligible resource 
-PASS Script: Cross-origin, not CORS request, with correct hash 
-PASS Script: Cross-origin, not CORS request, with hash mismatch 
-PASS Script: Cross-origin, empty integrity 
-PASS Script: Same-origin with correct hash, options. 
-PASS Script: Same-origin with unknown algorithm only. 
-PASS Style: Same-origin with correct sha256 hash 
-PASS Style: Same-origin with correct sha384 hash 
-PASS Style: Same-origin with correct sha512 hash 
-PASS Style: Same-origin with empty integrity 
-PASS Style: Same-origin with incorrect hash. 
-PASS Style: Same-origin with multiple sha256 hashes, including correct. 
-PASS Style: Same-origin with multiple sha256 hashes, including unknown algorithm. 
-PASS Style: Same-origin with sha256 mismatch, sha512 match 
-PASS Style: Same-origin with sha256 match, sha512 mismatch 
-PASS Style: <crossorigin='anonymous'> with correct hash, ACAO: * 
-PASS Style: <crossorigin='anonymous'> with incorrect hash, ACAO: * 
-PASS Style: <crossorigin='use-credentials'> with correct hash, CORS-eligible 
-PASS Style: <crossorigin='use-credentials'> with incorrect hash CORS-eligible 
-PASS Style: <crossorigin='anonymous'> with CORS-ineligible resource 
-PASS Style: Cross-origin, not CORS request, with correct hash 
-PASS Style: Cross-origin, not CORS request, with hash mismatch 
-PASS Style: Cross-origin, empty integrity 
-PASS Style: Same-origin with correct hash, options. 
-PASS Style: Same-origin with unknown algorithm only. 
-PASS Style: Same-origin with correct sha256 hash, rel='stylesheet license' 
-PASS Style: Same-origin with correct sha256 hash, rel='license stylesheet' 
-PASS Style: Same-origin with correct sha256 and sha512 hash, rel='alternate stylesheet' enabled 
-PASS Style: Same-origin with incorrect sha256 and sha512 hash, rel='alternate stylesheet' enabled 
+PASS Script: Same-origin with correct sha256 hash.
+PASS Script: Same-origin with correct sha384 hash.
+PASS Script: Same-origin with correct sha512 hash.
+PASS Script: Same-origin with empty integrity.
+PASS Script: Same-origin with incorrect hash.
+PASS Script: Same-origin with multiple sha256 hashes, including correct.
+PASS Script: Same-origin with multiple sha256 hashes, including unknown algorithm.
+PASS Script: Same-origin with sha256 mismatch, sha512 match
+PASS Script: Same-origin with sha256 match, sha512 mismatch
+PASS Script: <crossorigin='anonymous'> with correct hash, ACAO: *
+PASS Script: <crossorigin='anonymous'> with incorrect hash, ACAO: *
+PASS Script: <crossorigin='use-credentials'> with correct hash, CORS-eligible
+PASS Script: <crossorigin='use-credentials'> with incorrect hash CORS-eligible
+PASS Script: <crossorigin='anonymous'> with CORS-ineligible resource
+PASS Script: Cross-origin, not CORS request, with correct hash
+PASS Script: Cross-origin, not CORS request, with hash mismatch
+PASS Script: Cross-origin, empty integrity
+PASS Script: Same-origin with correct hash, options.
+PASS Script: Same-origin with unknown algorithm only.
+PASS Style: Same-origin with correct sha256 hash
+PASS Style: Same-origin with correct sha384 hash
+PASS Style: Same-origin with correct sha512 hash
+PASS Style: Same-origin with empty integrity
+PASS Style: Same-origin with incorrect hash.
+PASS Style: Same-origin with multiple sha256 hashes, including correct.
+PASS Style: Same-origin with multiple sha256 hashes, including unknown algorithm.
+PASS Style: Same-origin with sha256 mismatch, sha512 match
+PASS Style: Same-origin with sha256 match, sha512 mismatch
+PASS Style: <crossorigin='anonymous'> with correct hash, ACAO: *
+PASS Style: <crossorigin='anonymous'> with incorrect hash, ACAO: *
+PASS Style: <crossorigin='use-credentials'> with correct hash, CORS-eligible
+PASS Style: <crossorigin='use-credentials'> with incorrect hash CORS-eligible
+PASS Style: <crossorigin='anonymous'> with CORS-ineligible resource
+PASS Style: Cross-origin, not CORS request, with correct hash
+PASS Style: Cross-origin, not CORS request, with hash mismatch
+PASS Style: Cross-origin, empty integrity
+PASS Style: Same-origin with correct hash, options.
+PASS Style: Same-origin with unknown algorithm only.
+PASS Style: Same-origin with correct sha256 hash, rel='stylesheet license'
+PASS Style: Same-origin with correct sha256 hash, rel='license stylesheet'
+PASS Style: Same-origin with correct sha256 and sha512 hash, rel='alternate stylesheet' enabled
+PASS Style: Same-origin with incorrect sha256 and sha512 hash, rel='alternate stylesheet' enabled
 

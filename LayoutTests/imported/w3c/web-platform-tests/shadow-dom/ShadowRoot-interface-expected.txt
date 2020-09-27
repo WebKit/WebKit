@@ -1,14 +1,14 @@
 
-PASS Check the existence of ShadowRoot interface 
-PASS ShadowRoot must inherit from DocumentFragment 
-PASS ShadowRoot must not be a constructor 
-PASS ShadowRoot.activeElement must return the focused element of the context object when shadow root is open. 
-PASS ShadowRoot.activeElement must return the focused element of the context object when shadow root is closed. 
-PASS ShadowRoot.host must return the shadow host of the context object. 
-PASS ShadowRoot.innerHTML must return the result of the HTML fragment serialization algorithm when shadow root is open. 
-PASS ShadowRoot.innerHTML must return the result of the HTML fragment serialization algorithm when shadow root is closed. 
-PASS ShadowRoot.innerHTML must replace all with the result of invoking the fragment parsing algorithm when shadow root is open. 
-PASS ShadowRoot.innerHTML must replace all with the result of invoking the fragment parsing algorithm when shadow root is closed. 
-PASS ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is open. 
-PASS ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is closed. 
+PASS Check the existence of ShadowRoot interface
+PASS ShadowRoot must inherit from DocumentFragment
+PASS ShadowRoot must not be a constructor
+PASS ShadowRoot.activeElement must return the focused element of the context object when shadow root is open.
+PASS ShadowRoot.activeElement must return the focused element of the context object when shadow root is closed.
+PASS ShadowRoot.host must return the shadow host of the context object.
+PASS ShadowRoot.innerHTML must return the result of the HTML fragment serialization algorithm when shadow root is open.
+PASS ShadowRoot.innerHTML must return the result of the HTML fragment serialization algorithm when shadow root is closed.
+PASS ShadowRoot.innerHTML must replace all with the result of invoking the fragment parsing algorithm when shadow root is open.
+PASS ShadowRoot.innerHTML must replace all with the result of invoking the fragment parsing algorithm when shadow root is closed.
+PASS ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is open.
+PASS ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is closed.
 

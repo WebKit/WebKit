@@ -10,44 +10,44 @@ The following pointer types were detected: mouse.
 Refresh the page to run the tests again with a different pointer type.
 
 
-PASS pointerLeave event does not bubble 
-PASS  mouse pointerleave event is a PointerEvent event 
-PASS  mouse pointerleave.pointerId attribute exists 
-PASS  mouse pointerleave.pointerId is readonly 
-PASS  mouse pointerleave.pointerId IDL type long (JS type was number) 
-PASS  mouse pointerleave.width attribute exists 
-PASS  mouse pointerleave.width is readonly 
-PASS  mouse pointerleave.width IDL type float (JS type was number) 
-PASS  mouse pointerleave.height attribute exists 
-PASS  mouse pointerleave.height is readonly 
-PASS  mouse pointerleave.height IDL type float (JS type was number) 
-PASS  mouse pointerleave.pressure attribute exists 
-PASS  mouse pointerleave.pressure is readonly 
-PASS  mouse pointerleave.pressure IDL type float (JS type was number) 
-PASS  mouse pointerleave.tiltX attribute exists 
-PASS  mouse pointerleave.tiltX is readonly 
-PASS  mouse pointerleave.tiltX IDL type long (JS type was number) 
-PASS  mouse pointerleave.tiltY attribute exists 
-PASS  mouse pointerleave.tiltY is readonly 
-PASS  mouse pointerleave.tiltY IDL type long (JS type was number) 
-PASS  mouse pointerleave.pointerType attribute exists 
-PASS  mouse pointerleave.pointerType is readonly 
-PASS  mouse pointerleave.pointerType IDL type string (JS type was string) 
-PASS  mouse pointerleave.isPrimary attribute exists 
-PASS  mouse pointerleave.isPrimary is readonly 
-PASS  mouse pointerleave.isPrimary IDL type boolean (JS type was boolean) 
-PASS  mouse pointerleave.detail attribute exists 
-PASS  mouse pointerleave.detail is readonly 
-PASS  mouse pointerleave.detail IDL type long (JS type was number) 
-PASS  mouse pointerleave.detail value is 0. 
-PASS  mouse pointerleave.fromElement attribute exists 
-PASS  mouse pointerleave.fromElement is readonly 
-PASS  mouse pointerleave.fromElement IDL type object (JS type was object) 
-PASS  mouse pointerleave.fromElement value is null. 
-PASS  mouse pointerleave.toElement attribute exists 
-PASS  mouse pointerleave.toElement is readonly 
-PASS  mouse pointerleave.toElement IDL type object (JS type was object) 
-PASS  mouse pointerleave.toElement value is null. 
-PASS  mouse pointerleave.pressure value is valid 
-PASS  mouse pointerleave properties for pointerType = mouse 
+PASS pointerLeave event does not bubble
+PASS  mouse pointerleave event is a PointerEvent event
+PASS  mouse pointerleave.pointerId attribute exists
+PASS  mouse pointerleave.pointerId is readonly
+PASS  mouse pointerleave.pointerId IDL type long (JS type was number)
+PASS  mouse pointerleave.width attribute exists
+PASS  mouse pointerleave.width is readonly
+PASS  mouse pointerleave.width IDL type float (JS type was number)
+PASS  mouse pointerleave.height attribute exists
+PASS  mouse pointerleave.height is readonly
+PASS  mouse pointerleave.height IDL type float (JS type was number)
+PASS  mouse pointerleave.pressure attribute exists
+PASS  mouse pointerleave.pressure is readonly
+PASS  mouse pointerleave.pressure IDL type float (JS type was number)
+PASS  mouse pointerleave.tiltX attribute exists
+PASS  mouse pointerleave.tiltX is readonly
+PASS  mouse pointerleave.tiltX IDL type long (JS type was number)
+PASS  mouse pointerleave.tiltY attribute exists
+PASS  mouse pointerleave.tiltY is readonly
+PASS  mouse pointerleave.tiltY IDL type long (JS type was number)
+PASS  mouse pointerleave.pointerType attribute exists
+PASS  mouse pointerleave.pointerType is readonly
+PASS  mouse pointerleave.pointerType IDL type string (JS type was string)
+PASS  mouse pointerleave.isPrimary attribute exists
+PASS  mouse pointerleave.isPrimary is readonly
+PASS  mouse pointerleave.isPrimary IDL type boolean (JS type was boolean)
+PASS  mouse pointerleave.detail attribute exists
+PASS  mouse pointerleave.detail is readonly
+PASS  mouse pointerleave.detail IDL type long (JS type was number)
+PASS  mouse pointerleave.detail value is 0.
+PASS  mouse pointerleave.fromElement attribute exists
+PASS  mouse pointerleave.fromElement is readonly
+PASS  mouse pointerleave.fromElement IDL type object (JS type was object)
+PASS  mouse pointerleave.fromElement value is null.
+PASS  mouse pointerleave.toElement attribute exists
+PASS  mouse pointerleave.toElement is readonly
+PASS  mouse pointerleave.toElement IDL type object (JS type was object)
+PASS  mouse pointerleave.toElement value is null.
+PASS  mouse pointerleave.pressure value is valid
+PASS  mouse pointerleave properties for pointerType = mouse
 

@@ -1,10 +1,10 @@
 
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByName is defined 
-PASS There should be one entry. 
+PASS window.performance is defined
+PASS window.performance.getEntriesByName is defined
+PASS There should be one entry.
 FAIL redirectStart == 0 in cross-origin redirect with failing Timing-Allow-Origin. assert_equals: redirectStart == 0 in cross-origin redirect with failing Timing-Allow-Origin. expected 0 but got 15
 FAIL redirectEnd == 0 in cross-origin redirect with failing Timing-Allow-Origin. assert_equals: redirectEnd == 0 in cross-origin redirect with failing Timing-Allow-Origin. expected 0 but got 24
-PASS fetchStart > 0 in cross-origin redirect with failing Timing-Allow-Origin. 
+PASS fetchStart > 0 in cross-origin redirect with failing Timing-Allow-Origin.
 FAIL startTime == fetchStart in cross-origin redirect with failing Timing-Allow-Origin. assert_equals: startTime == fetchStart in cross-origin redirect with failing Timing-Allow-Origin. expected 15 but got 24
 

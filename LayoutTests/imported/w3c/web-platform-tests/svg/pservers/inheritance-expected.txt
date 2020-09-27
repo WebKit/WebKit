@@ -1,6 +1,6 @@
 
-PASS Property stop-color has initial value rgb(0, 0, 0) 
-PASS Property stop-color does not inherit 
-PASS Property stop-opacity has initial value 1 
-PASS Property stop-opacity does not inherit 
+PASS Property stop-color has initial value rgb(0, 0, 0)
+PASS Property stop-color does not inherit
+PASS Property stop-opacity has initial value 1
+PASS Property stop-opacity does not inherit
 

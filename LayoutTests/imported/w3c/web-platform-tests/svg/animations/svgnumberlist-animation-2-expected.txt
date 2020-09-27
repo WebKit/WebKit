@@ -1,4 +1,4 @@
 ABCD
 
-PASS Test 'by' animation of SVGNumberList on 'rotate' attribute of text. 
+PASS Test 'by' animation of SVGNumberList on 'rotate' attribute of text.
 

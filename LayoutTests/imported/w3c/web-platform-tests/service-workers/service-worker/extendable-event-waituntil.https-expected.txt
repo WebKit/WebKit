@@ -1,8 +1,8 @@
 
-PASS Test install event waitUntil fulfilled 
-PASS Test ExtendableEvent multiple waitUntil fulfilled. 
-PASS Test ExtendableEvent waitUntil reject precedence. 
-PASS Test activate event waitUntil fulfilled 
-PASS Test install event waitUntil rejected 
-PASS Test activate event waitUntil rejected. 
+PASS Test install event waitUntil fulfilled
+PASS Test ExtendableEvent multiple waitUntil fulfilled.
+PASS Test ExtendableEvent waitUntil reject precedence.
+PASS Test activate event waitUntil fulfilled
+PASS Test install event waitUntil rejected
+PASS Test activate event waitUntil rejected.
 

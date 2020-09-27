@@ -1,4 +1,4 @@
 
-PASS Property pointer-events has initial value auto 
-PASS Property pointer-events inherits 
+PASS Property pointer-events has initial value auto
+PASS Property pointer-events inherits
 

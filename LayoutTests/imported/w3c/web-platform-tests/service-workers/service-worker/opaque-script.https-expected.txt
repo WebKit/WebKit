@@ -1,6 +1,6 @@
 
-PASS Verify small same-origin cache_storage scripts are not opaque. 
-PASS Verify large same-origin cache_storage scripts are not opaque. 
-PASS Verify small cross-origin cache_storage scripts are opaque. 
-PASS Verify large cross-origin cache_storage scripts are opaque. 
+PASS Verify small same-origin cache_storage scripts are not opaque.
+PASS Verify large same-origin cache_storage scripts are not opaque.
+PASS Verify small cross-origin cache_storage scripts are opaque.
+PASS Verify large cross-origin cache_storage scripts are opaque.
 

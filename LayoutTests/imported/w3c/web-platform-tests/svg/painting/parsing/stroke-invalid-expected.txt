@@ -1,7 +1,7 @@
 
-PASS e.style['stroke'] = "auto" should not set the property value 
-PASS e.style['stroke'] = "none red" should not set the property value 
-PASS e.style['stroke'] = "none url(\"https://example.com/\")" should not set the property value 
-PASS e.style['stroke'] = "red url(\"https://example.com/\")" should not set the property value 
-PASS e.style['stroke'] = "url(\"https://example.com/\") none red" should not set the property value 
+PASS e.style['stroke'] = "auto" should not set the property value
+PASS e.style['stroke'] = "none red" should not set the property value
+PASS e.style['stroke'] = "none url(\"https://example.com/\")" should not set the property value
+PASS e.style['stroke'] = "red url(\"https://example.com/\")" should not set the property value
+PASS e.style['stroke'] = "url(\"https://example.com/\") none red" should not set the property value
 

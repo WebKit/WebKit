@@ -9,42 +9,42 @@ This test validates that the performance.measure() method is working properly. T
 "measure_no_start_no_end": duplicate of the first measure, used to confirm names can be re-used
 After creating each measure, the existence of these measures is validated by calling performance.getEntriesByName() (both with and without the entryType parameter provided), performance.getEntriesByType(), and performance.getEntries()
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].name == "measure_no_start_no_end" 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].startTime is correct 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].duration is approximately correct (up to 20ms difference allowed) 
-PASS window.performance.getEntriesByName("measure_start_no_end")[0].name == "measure_start_no_end" 
-PASS window.performance.getEntriesByName("measure_start_no_end")[0].startTime is correct 
-PASS window.performance.getEntriesByName("measure_start_no_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_start_no_end")[0].duration is approximately correct (up to 20ms difference allowed) 
-PASS window.performance.getEntriesByName("measure_start_end")[0].name == "measure_start_end" 
-PASS window.performance.getEntriesByName("measure_start_end")[0].startTime is correct 
-PASS window.performance.getEntriesByName("measure_start_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_start_end")[0].duration is approximately correct (up to 20ms difference allowed) 
-PASS window.performance.getEntriesByName("measure_no_start_end")[0].name == "measure_no_start_end" 
-PASS window.performance.getEntriesByName("measure_no_start_end")[0].startTime is correct 
-PASS window.performance.getEntriesByName("measure_no_start_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_no_start_end")[0].duration is approximately correct (up to 20ms difference allowed) 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].name == "measure_no_start_no_end" 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].startTime is correct 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].duration is approximately correct (up to 20ms difference allowed) 
-PASS window.performance.getEntriesByName("measure_no_start_no_end", "measure")[0] returns an object containing the "measure_no_start_no_end" measure in the correct order, and its value matches the "measure_no_start_no_end" measure returned by window.performance.getEntriesByName("measure_no_start_no_end") 
-PASS window.performance.getEntriesByName("measure_start_no_end", "measure")[0] returns an object containing the "measure_start_no_end" measure in the correct order, and its value matches the "measure_start_no_end" measure returned by window.performance.getEntriesByName("measure_start_no_end") 
-PASS window.performance.getEntriesByName("measure_start_end", "measure")[0] returns an object containing the "measure_start_end" measure in the correct order, and its value matches the "measure_start_end" measure returned by window.performance.getEntriesByName("measure_start_end") 
-PASS window.performance.getEntriesByName("measure_no_start_end", "measure")[0] returns an object containing the "measure_no_start_end" measure in the correct order, and its value matches the "measure_no_start_end" measure returned by window.performance.getEntriesByName("measure_no_start_end") 
-PASS window.performance.getEntriesByName("measure_no_start_no_end", "measure")[1] returns an object containing the "measure_no_start_no_end" measure in the correct order, and its value matches the "measure_no_start_no_end" measure returned by window.performance.getEntriesByName("measure_no_start_no_end") 
-PASS window.performance.getEntries() returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[0]. 
-PASS window.performance.getEntries() returns an object containing the "measure_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_no_end")[0]. 
-PASS window.performance.getEntries() returns an object containing the "measure_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_end")[0]. 
-PASS window.performance.getEntries() returns an object containing the "measure_no_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_end")[0]. 
-PASS window.performance.getEntries() returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[1]. 
-PASS window.performance.getEntries() returns an object containing all test measures in order. 
-PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[0]. 
-PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_no_end")[0]. 
-PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_end")[0]. 
-PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_no_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_end")[0]. 
-PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[1]. 
-PASS window.performance.getEntriesByType("measure") returns an object containing all test measures in order. 
+PASS window.performance is defined
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].name == "measure_no_start_no_end"
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].startTime is correct
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].entryType == "measure"
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[0].duration is approximately correct (up to 20ms difference allowed)
+PASS window.performance.getEntriesByName("measure_start_no_end")[0].name == "measure_start_no_end"
+PASS window.performance.getEntriesByName("measure_start_no_end")[0].startTime is correct
+PASS window.performance.getEntriesByName("measure_start_no_end")[0].entryType == "measure"
+PASS window.performance.getEntriesByName("measure_start_no_end")[0].duration is approximately correct (up to 20ms difference allowed)
+PASS window.performance.getEntriesByName("measure_start_end")[0].name == "measure_start_end"
+PASS window.performance.getEntriesByName("measure_start_end")[0].startTime is correct
+PASS window.performance.getEntriesByName("measure_start_end")[0].entryType == "measure"
+PASS window.performance.getEntriesByName("measure_start_end")[0].duration is approximately correct (up to 20ms difference allowed)
+PASS window.performance.getEntriesByName("measure_no_start_end")[0].name == "measure_no_start_end"
+PASS window.performance.getEntriesByName("measure_no_start_end")[0].startTime is correct
+PASS window.performance.getEntriesByName("measure_no_start_end")[0].entryType == "measure"
+PASS window.performance.getEntriesByName("measure_no_start_end")[0].duration is approximately correct (up to 20ms difference allowed)
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].name == "measure_no_start_no_end"
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].startTime is correct
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].entryType == "measure"
+PASS window.performance.getEntriesByName("measure_no_start_no_end")[1].duration is approximately correct (up to 20ms difference allowed)
+PASS window.performance.getEntriesByName("measure_no_start_no_end", "measure")[0] returns an object containing the "measure_no_start_no_end" measure in the correct order, and its value matches the "measure_no_start_no_end" measure returned by window.performance.getEntriesByName("measure_no_start_no_end")
+PASS window.performance.getEntriesByName("measure_start_no_end", "measure")[0] returns an object containing the "measure_start_no_end" measure in the correct order, and its value matches the "measure_start_no_end" measure returned by window.performance.getEntriesByName("measure_start_no_end")
+PASS window.performance.getEntriesByName("measure_start_end", "measure")[0] returns an object containing the "measure_start_end" measure in the correct order, and its value matches the "measure_start_end" measure returned by window.performance.getEntriesByName("measure_start_end")
+PASS window.performance.getEntriesByName("measure_no_start_end", "measure")[0] returns an object containing the "measure_no_start_end" measure in the correct order, and its value matches the "measure_no_start_end" measure returned by window.performance.getEntriesByName("measure_no_start_end")
+PASS window.performance.getEntriesByName("measure_no_start_no_end", "measure")[1] returns an object containing the "measure_no_start_no_end" measure in the correct order, and its value matches the "measure_no_start_no_end" measure returned by window.performance.getEntriesByName("measure_no_start_no_end")
+PASS window.performance.getEntries() returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[0].
+PASS window.performance.getEntries() returns an object containing the "measure_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_no_end")[0].
+PASS window.performance.getEntries() returns an object containing the "measure_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_end")[0].
+PASS window.performance.getEntries() returns an object containing the "measure_no_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_end")[0].
+PASS window.performance.getEntries() returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[1].
+PASS window.performance.getEntries() returns an object containing all test measures in order.
+PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[0].
+PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_no_end")[0].
+PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_start_end")[0].
+PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_no_start_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_end")[0].
+PASS window.performance.getEntriesByType("measure") returns an object containing the "measure_no_start_no_end" measure, and it's value matches the measure returned by window.performance.getEntriesByName("measure_no_start_no_end")[1].
+PASS window.performance.getEntriesByType("measure") returns an object containing all test measures in order.
 

@@ -1,6 +1,6 @@
 
-PASS Can construct a readable stream with a valid CountQueuingStrategy 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 0) 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 1) 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 4) 
+PASS Can construct a readable stream with a valid CountQueuingStrategy
+PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 0)
+PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 1)
+PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 4)
 

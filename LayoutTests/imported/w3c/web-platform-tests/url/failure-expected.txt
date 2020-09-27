@@ -6,383 +6,383 @@ CONSOLE MESSAGE: Beacon API cannot load http://./y: due to access control checks
 CONSOLE MESSAGE: Not allowed to load local resource: p
 CONSOLE MESSAGE: Not allowed to load local resource: p
 
-PASS Loading data… 
+PASS Loading data…
 FAIL URL's constructor's base argument: file://example:1/ should throw assert_throws_js: function "() => new URL("about:blank", test.input)" did not throw
 FAIL URL's href: file://example:1/ should throw assert_throws_js: function "() => url.href = test.input" did not throw
 FAIL XHR: file://example:1/ should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): file://example:1/ should throw 
+PASS sendBeacon(): file://example:1/ should throw
 FAIL Location's href: file://example:1/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): file://example:1/ should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: file://example:test/ should throw 
-PASS URL's href: file://example:test/ should throw 
-PASS XHR: file://example:test/ should throw 
-PASS sendBeacon(): file://example:test/ should throw 
+PASS URL's constructor's base argument: file://example:test/ should throw
+PASS URL's href: file://example:test/ should throw
+PASS XHR: file://example:test/ should throw
+PASS sendBeacon(): file://example:test/ should throw
 FAIL Location's href: file://example:test/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): file://example:test/ should throw 
-PASS URL's constructor's base argument: file://example%/ should throw 
-PASS URL's href: file://example%/ should throw 
-PASS XHR: file://example%/ should throw 
-PASS sendBeacon(): file://example%/ should throw 
+PASS window.open(): file://example:test/ should throw
+PASS URL's constructor's base argument: file://example%/ should throw
+PASS URL's href: file://example%/ should throw
+PASS XHR: file://example%/ should throw
+PASS sendBeacon(): file://example%/ should throw
 FAIL Location's href: file://example%/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): file://example%/ should throw 
-PASS URL's constructor's base argument: file://[example]/ should throw 
-PASS URL's href: file://[example]/ should throw 
-PASS XHR: file://[example]/ should throw 
-PASS sendBeacon(): file://[example]/ should throw 
+PASS window.open(): file://example%/ should throw
+PASS URL's constructor's base argument: file://[example]/ should throw
+PASS URL's href: file://[example]/ should throw
+PASS XHR: file://[example]/ should throw
+PASS sendBeacon(): file://[example]/ should throw
 FAIL Location's href: file://[example]/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): file://[example]/ should throw 
-PASS URL's constructor's base argument: http://user:pass@/ should throw 
-PASS URL's href: http://user:pass@/ should throw 
-PASS XHR: http://user:pass@/ should throw 
-PASS sendBeacon(): http://user:pass@/ should throw 
+PASS window.open(): file://[example]/ should throw
+PASS URL's constructor's base argument: http://user:pass@/ should throw
+PASS URL's href: http://user:pass@/ should throw
+PASS XHR: http://user:pass@/ should throw
+PASS sendBeacon(): http://user:pass@/ should throw
 FAIL Location's href: http://user:pass@/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://user:pass@/ should throw 
-PASS URL's constructor's base argument: http://foo:-80/ should throw 
-PASS URL's href: http://foo:-80/ should throw 
-PASS XHR: http://foo:-80/ should throw 
-PASS sendBeacon(): http://foo:-80/ should throw 
+PASS window.open(): http://user:pass@/ should throw
+PASS URL's constructor's base argument: http://foo:-80/ should throw
+PASS URL's href: http://foo:-80/ should throw
+PASS XHR: http://foo:-80/ should throw
+PASS sendBeacon(): http://foo:-80/ should throw
 FAIL Location's href: http://foo:-80/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://foo:-80/ should throw 
-PASS URL's constructor's base argument: http:/:@/www.example.com should throw 
-PASS URL's href: http:/:@/www.example.com should throw 
+PASS window.open(): http://foo:-80/ should throw
+PASS URL's constructor's base argument: http:/:@/www.example.com should throw
+PASS URL's href: http:/:@/www.example.com should throw
 FAIL XHR: http:/:@/www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:/:@/www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/:@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/:@/www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http://user@/www.example.com should throw 
-PASS URL's href: http://user@/www.example.com should throw 
-PASS XHR: http://user@/www.example.com should throw 
-PASS sendBeacon(): http://user@/www.example.com should throw 
+PASS URL's constructor's base argument: http://user@/www.example.com should throw
+PASS URL's href: http://user@/www.example.com should throw
+PASS XHR: http://user@/www.example.com should throw
+PASS sendBeacon(): http://user@/www.example.com should throw
 FAIL Location's href: http://user@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://user@/www.example.com should throw 
-PASS URL's constructor's base argument: http:@/www.example.com should throw 
-PASS URL's href: http:@/www.example.com should throw 
+PASS window.open(): http://user@/www.example.com should throw
+PASS URL's constructor's base argument: http:@/www.example.com should throw
+PASS URL's href: http:@/www.example.com should throw
 FAIL XHR: http:@/www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:@/www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:@/www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http:/@/www.example.com should throw 
-PASS URL's href: http:/@/www.example.com should throw 
+PASS URL's constructor's base argument: http:/@/www.example.com should throw
+PASS URL's href: http:/@/www.example.com should throw
 FAIL XHR: http:/@/www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:/@/www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/@/www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http://@/www.example.com should throw 
-PASS URL's href: http://@/www.example.com should throw 
-PASS XHR: http://@/www.example.com should throw 
-PASS sendBeacon(): http://@/www.example.com should throw 
+PASS URL's constructor's base argument: http://@/www.example.com should throw
+PASS URL's href: http://@/www.example.com should throw
+PASS XHR: http://@/www.example.com should throw
+PASS sendBeacon(): http://@/www.example.com should throw
 FAIL Location's href: http://@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://@/www.example.com should throw 
-PASS URL's constructor's base argument: https:@/www.example.com should throw 
-PASS URL's href: https:@/www.example.com should throw 
-PASS XHR: https:@/www.example.com should throw 
-PASS sendBeacon(): https:@/www.example.com should throw 
+PASS window.open(): http://@/www.example.com should throw
+PASS URL's constructor's base argument: https:@/www.example.com should throw
+PASS URL's href: https:@/www.example.com should throw
+PASS XHR: https:@/www.example.com should throw
+PASS sendBeacon(): https:@/www.example.com should throw
 FAIL Location's href: https:@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https:@/www.example.com should throw 
-PASS URL's constructor's base argument: http:a:b@/www.example.com should throw 
-PASS URL's href: http:a:b@/www.example.com should throw 
+PASS window.open(): https:@/www.example.com should throw
+PASS URL's constructor's base argument: http:a:b@/www.example.com should throw
+PASS URL's href: http:a:b@/www.example.com should throw
 FAIL XHR: http:a:b@/www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:a:b@/www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:a:b@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:a:b@/www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http:/a:b@/www.example.com should throw 
-PASS URL's href: http:/a:b@/www.example.com should throw 
+PASS URL's constructor's base argument: http:/a:b@/www.example.com should throw
+PASS URL's href: http:/a:b@/www.example.com should throw
 FAIL XHR: http:/a:b@/www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:/a:b@/www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/a:b@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/a:b@/www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http://a:b@/www.example.com should throw 
-PASS URL's href: http://a:b@/www.example.com should throw 
-PASS XHR: http://a:b@/www.example.com should throw 
-PASS sendBeacon(): http://a:b@/www.example.com should throw 
+PASS URL's constructor's base argument: http://a:b@/www.example.com should throw
+PASS URL's href: http://a:b@/www.example.com should throw
+PASS XHR: http://a:b@/www.example.com should throw
+PASS sendBeacon(): http://a:b@/www.example.com should throw
 FAIL Location's href: http://a:b@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://a:b@/www.example.com should throw 
-PASS URL's constructor's base argument: http::@/www.example.com should throw 
-PASS URL's href: http::@/www.example.com should throw 
+PASS window.open(): http://a:b@/www.example.com should throw
+PASS URL's constructor's base argument: http::@/www.example.com should throw
+PASS URL's href: http::@/www.example.com should throw
 FAIL XHR: http::@/www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http::@/www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http::@/www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http::@/www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http:@:www.example.com should throw 
-PASS URL's href: http:@:www.example.com should throw 
+PASS URL's constructor's base argument: http:@:www.example.com should throw
+PASS URL's href: http:@:www.example.com should throw
 FAIL XHR: http:@:www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:@:www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:@:www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:@:www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http:/@:www.example.com should throw 
-PASS URL's href: http:/@:www.example.com should throw 
+PASS URL's constructor's base argument: http:/@:www.example.com should throw
+PASS URL's href: http:/@:www.example.com should throw
 FAIL XHR: http:/@:www.example.com should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): http:/@:www.example.com should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/@:www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/@:www.example.com should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: http://@:www.example.com should throw 
-PASS URL's href: http://@:www.example.com should throw 
-PASS XHR: http://@:www.example.com should throw 
-PASS sendBeacon(): http://@:www.example.com should throw 
+PASS URL's constructor's base argument: http://@:www.example.com should throw
+PASS URL's href: http://@:www.example.com should throw
+PASS XHR: http://@:www.example.com should throw
+PASS sendBeacon(): http://@:www.example.com should throw
 FAIL Location's href: http://@:www.example.com should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://@:www.example.com should throw 
-PASS URL's constructor's base argument: https://� should throw 
-PASS URL's href: https://� should throw 
-PASS XHR: https://� should throw 
-PASS sendBeacon(): https://� should throw 
+PASS window.open(): http://@:www.example.com should throw
+PASS URL's constructor's base argument: https://� should throw
+PASS URL's href: https://� should throw
+PASS XHR: https://� should throw
+PASS sendBeacon(): https://� should throw
 FAIL Location's href: https://� should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://� should throw 
-PASS URL's constructor's base argument: https://%EF%BF%BD should throw 
-PASS URL's href: https://%EF%BF%BD should throw 
-PASS XHR: https://%EF%BF%BD should throw 
-PASS sendBeacon(): https://%EF%BF%BD should throw 
+PASS window.open(): https://� should throw
+PASS URL's constructor's base argument: https://%EF%BF%BD should throw
+PASS URL's href: https://%EF%BF%BD should throw
+PASS XHR: https://%EF%BF%BD should throw
+PASS sendBeacon(): https://%EF%BF%BD should throw
 FAIL Location's href: https://%EF%BF%BD should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://%EF%BF%BD should throw 
-PASS URL's constructor's base argument: https://x x:12 should throw 
-PASS URL's href: https://x x:12 should throw 
-PASS XHR: https://x x:12 should throw 
-PASS sendBeacon(): https://x x:12 should throw 
+PASS window.open(): https://%EF%BF%BD should throw
+PASS URL's constructor's base argument: https://x x:12 should throw
+PASS URL's href: https://x x:12 should throw
+PASS XHR: https://x x:12 should throw
+PASS sendBeacon(): https://x x:12 should throw
 FAIL Location's href: https://x x:12 should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://x x:12 should throw 
-PASS URL's constructor's base argument: http://[www.google.com]/ should throw 
-PASS URL's href: http://[www.google.com]/ should throw 
-PASS XHR: http://[www.google.com]/ should throw 
-PASS sendBeacon(): http://[www.google.com]/ should throw 
+PASS window.open(): https://x x:12 should throw
+PASS URL's constructor's base argument: http://[www.google.com]/ should throw
+PASS URL's href: http://[www.google.com]/ should throw
+PASS XHR: http://[www.google.com]/ should throw
+PASS sendBeacon(): http://[www.google.com]/ should throw
 FAIL Location's href: http://[www.google.com]/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://[www.google.com]/ should throw 
-PASS URL's constructor's base argument: sc://\0/ should throw 
-PASS URL's href: sc://\0/ should throw 
-PASS XHR: sc://\0/ should throw 
-PASS sendBeacon(): sc://\0/ should throw 
+PASS window.open(): http://[www.google.com]/ should throw
+PASS URL's constructor's base argument: sc://\0/ should throw
+PASS URL's href: sc://\0/ should throw
+PASS XHR: sc://\0/ should throw
+PASS sendBeacon(): sc://\0/ should throw
 FAIL Location's href: sc://\0/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://\0/ should throw 
-PASS URL's constructor's base argument: sc:// / should throw 
-PASS URL's href: sc:// / should throw 
-PASS XHR: sc:// / should throw 
-PASS sendBeacon(): sc:// / should throw 
+PASS window.open(): sc://\0/ should throw
+PASS URL's constructor's base argument: sc:// / should throw
+PASS URL's href: sc:// / should throw
+PASS XHR: sc:// / should throw
+PASS sendBeacon(): sc:// / should throw
 FAIL Location's href: sc:// / should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc:// / should throw 
-PASS URL's constructor's base argument: sc://@/ should throw 
-PASS URL's href: sc://@/ should throw 
-PASS XHR: sc://@/ should throw 
-PASS sendBeacon(): sc://@/ should throw 
+PASS window.open(): sc:// / should throw
+PASS URL's constructor's base argument: sc://@/ should throw
+PASS URL's href: sc://@/ should throw
+PASS XHR: sc://@/ should throw
+PASS sendBeacon(): sc://@/ should throw
 FAIL Location's href: sc://@/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://@/ should throw 
-PASS URL's constructor's base argument: sc://te@s:t@/ should throw 
-PASS URL's href: sc://te@s:t@/ should throw 
-PASS XHR: sc://te@s:t@/ should throw 
-PASS sendBeacon(): sc://te@s:t@/ should throw 
+PASS window.open(): sc://@/ should throw
+PASS URL's constructor's base argument: sc://te@s:t@/ should throw
+PASS URL's href: sc://te@s:t@/ should throw
+PASS XHR: sc://te@s:t@/ should throw
+PASS sendBeacon(): sc://te@s:t@/ should throw
 FAIL Location's href: sc://te@s:t@/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://te@s:t@/ should throw 
-PASS URL's constructor's base argument: sc://:/ should throw 
-PASS URL's href: sc://:/ should throw 
-PASS XHR: sc://:/ should throw 
-PASS sendBeacon(): sc://:/ should throw 
+PASS window.open(): sc://te@s:t@/ should throw
+PASS URL's constructor's base argument: sc://:/ should throw
+PASS URL's href: sc://:/ should throw
+PASS XHR: sc://:/ should throw
+PASS sendBeacon(): sc://:/ should throw
 FAIL Location's href: sc://:/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://:/ should throw 
-PASS URL's constructor's base argument: sc://:12/ should throw 
-PASS URL's href: sc://:12/ should throw 
-PASS XHR: sc://:12/ should throw 
-PASS sendBeacon(): sc://:12/ should throw 
+PASS window.open(): sc://:/ should throw
+PASS URL's constructor's base argument: sc://:12/ should throw
+PASS URL's href: sc://:12/ should throw
+PASS XHR: sc://:12/ should throw
+PASS sendBeacon(): sc://:12/ should throw
 FAIL Location's href: sc://:12/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://:12/ should throw 
-PASS URL's constructor's base argument: sc://[/ should throw 
-PASS URL's href: sc://[/ should throw 
-PASS XHR: sc://[/ should throw 
-PASS sendBeacon(): sc://[/ should throw 
+PASS window.open(): sc://:12/ should throw
+PASS URL's constructor's base argument: sc://[/ should throw
+PASS URL's href: sc://[/ should throw
+PASS XHR: sc://[/ should throw
+PASS sendBeacon(): sc://[/ should throw
 FAIL Location's href: sc://[/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://[/ should throw 
-PASS URL's constructor's base argument: sc://\/ should throw 
-PASS URL's href: sc://\/ should throw 
-PASS XHR: sc://\/ should throw 
-PASS sendBeacon(): sc://\/ should throw 
+PASS window.open(): sc://[/ should throw
+PASS URL's constructor's base argument: sc://\/ should throw
+PASS URL's href: sc://\/ should throw
+PASS XHR: sc://\/ should throw
+PASS sendBeacon(): sc://\/ should throw
 FAIL Location's href: sc://\/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://\/ should throw 
-PASS URL's constructor's base argument: sc://]/ should throw 
-PASS URL's href: sc://]/ should throw 
-PASS XHR: sc://]/ should throw 
-PASS sendBeacon(): sc://]/ should throw 
+PASS window.open(): sc://\/ should throw
+PASS URL's constructor's base argument: sc://]/ should throw
+PASS URL's href: sc://]/ should throw
+PASS XHR: sc://]/ should throw
+PASS sendBeacon(): sc://]/ should throw
 FAIL Location's href: sc://]/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): sc://]/ should throw 
-PASS URL's constructor's base argument: http://a<b should throw 
-PASS URL's href: http://a<b should throw 
-PASS XHR: http://a<b should throw 
-PASS sendBeacon(): http://a<b should throw 
+PASS window.open(): sc://]/ should throw
+PASS URL's constructor's base argument: http://a<b should throw
+PASS URL's href: http://a<b should throw
+PASS XHR: http://a<b should throw
+PASS sendBeacon(): http://a<b should throw
 FAIL Location's href: http://a<b should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://a<b should throw 
-PASS URL's constructor's base argument: http://a>b should throw 
-PASS URL's href: http://a>b should throw 
-PASS XHR: http://a>b should throw 
-PASS sendBeacon(): http://a>b should throw 
+PASS window.open(): http://a<b should throw
+PASS URL's constructor's base argument: http://a>b should throw
+PASS URL's href: http://a>b should throw
+PASS XHR: http://a>b should throw
+PASS sendBeacon(): http://a>b should throw
 FAIL Location's href: http://a>b should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://a>b should throw 
-PASS URL's constructor's base argument: http://a^b should throw 
-PASS URL's href: http://a^b should throw 
-PASS XHR: http://a^b should throw 
-PASS sendBeacon(): http://a^b should throw 
+PASS window.open(): http://a>b should throw
+PASS URL's constructor's base argument: http://a^b should throw
+PASS URL's href: http://a^b should throw
+PASS XHR: http://a^b should throw
+PASS sendBeacon(): http://a^b should throw
 FAIL Location's href: http://a^b should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://a^b should throw 
-PASS URL's constructor's base argument: non-special://a<b should throw 
-PASS URL's href: non-special://a<b should throw 
-PASS XHR: non-special://a<b should throw 
-PASS sendBeacon(): non-special://a<b should throw 
+PASS window.open(): http://a^b should throw
+PASS URL's constructor's base argument: non-special://a<b should throw
+PASS URL's href: non-special://a<b should throw
+PASS XHR: non-special://a<b should throw
+PASS sendBeacon(): non-special://a<b should throw
 FAIL Location's href: non-special://a<b should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): non-special://a<b should throw 
-PASS URL's constructor's base argument: non-special://a>b should throw 
-PASS URL's href: non-special://a>b should throw 
-PASS XHR: non-special://a>b should throw 
-PASS sendBeacon(): non-special://a>b should throw 
+PASS window.open(): non-special://a<b should throw
+PASS URL's constructor's base argument: non-special://a>b should throw
+PASS URL's href: non-special://a>b should throw
+PASS XHR: non-special://a>b should throw
+PASS sendBeacon(): non-special://a>b should throw
 FAIL Location's href: non-special://a>b should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): non-special://a>b should throw 
-PASS URL's constructor's base argument: non-special://a^b should throw 
-PASS URL's href: non-special://a^b should throw 
-PASS XHR: non-special://a^b should throw 
-PASS sendBeacon(): non-special://a^b should throw 
+PASS window.open(): non-special://a>b should throw
+PASS URL's constructor's base argument: non-special://a^b should throw
+PASS URL's href: non-special://a^b should throw
+PASS XHR: non-special://a^b should throw
+PASS sendBeacon(): non-special://a^b should throw
 FAIL Location's href: non-special://a^b should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): non-special://a^b should throw 
-PASS URL's constructor's base argument: ftp://example.com%80/ should throw 
-PASS URL's href: ftp://example.com%80/ should throw 
-PASS XHR: ftp://example.com%80/ should throw 
-PASS sendBeacon(): ftp://example.com%80/ should throw 
+PASS window.open(): non-special://a^b should throw
+PASS URL's constructor's base argument: ftp://example.com%80/ should throw
+PASS URL's href: ftp://example.com%80/ should throw
+PASS XHR: ftp://example.com%80/ should throw
+PASS sendBeacon(): ftp://example.com%80/ should throw
 FAIL Location's href: ftp://example.com%80/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): ftp://example.com%80/ should throw 
-PASS URL's constructor's base argument: ftp://example.com%A0/ should throw 
-PASS URL's href: ftp://example.com%A0/ should throw 
-PASS XHR: ftp://example.com%A0/ should throw 
-PASS sendBeacon(): ftp://example.com%A0/ should throw 
+PASS window.open(): ftp://example.com%80/ should throw
+PASS URL's constructor's base argument: ftp://example.com%A0/ should throw
+PASS URL's href: ftp://example.com%A0/ should throw
+PASS XHR: ftp://example.com%A0/ should throw
+PASS sendBeacon(): ftp://example.com%A0/ should throw
 FAIL Location's href: ftp://example.com%A0/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): ftp://example.com%A0/ should throw 
-PASS URL's constructor's base argument: https://example.com%80/ should throw 
-PASS URL's href: https://example.com%80/ should throw 
-PASS XHR: https://example.com%80/ should throw 
-PASS sendBeacon(): https://example.com%80/ should throw 
+PASS window.open(): ftp://example.com%A0/ should throw
+PASS URL's constructor's base argument: https://example.com%80/ should throw
+PASS URL's href: https://example.com%80/ should throw
+PASS XHR: https://example.com%80/ should throw
+PASS sendBeacon(): https://example.com%80/ should throw
 FAIL Location's href: https://example.com%80/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://example.com%80/ should throw 
-PASS URL's constructor's base argument: https://example.com%A0/ should throw 
-PASS URL's href: https://example.com%A0/ should throw 
-PASS XHR: https://example.com%A0/ should throw 
-PASS sendBeacon(): https://example.com%A0/ should throw 
+PASS window.open(): https://example.com%80/ should throw
+PASS URL's constructor's base argument: https://example.com%A0/ should throw
+PASS URL's href: https://example.com%A0/ should throw
+PASS XHR: https://example.com%A0/ should throw
+PASS sendBeacon(): https://example.com%A0/ should throw
 FAIL Location's href: https://example.com%A0/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://example.com%A0/ should throw 
-PASS URL's constructor's base argument: https://0x100000000/test should throw 
-PASS URL's href: https://0x100000000/test should throw 
-PASS XHR: https://0x100000000/test should throw 
-PASS sendBeacon(): https://0x100000000/test should throw 
+PASS window.open(): https://example.com%A0/ should throw
+PASS URL's constructor's base argument: https://0x100000000/test should throw
+PASS URL's href: https://0x100000000/test should throw
+PASS XHR: https://0x100000000/test should throw
+PASS sendBeacon(): https://0x100000000/test should throw
 FAIL Location's href: https://0x100000000/test should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://0x100000000/test should throw 
-PASS URL's constructor's base argument: https://256.0.0.1/test should throw 
-PASS URL's href: https://256.0.0.1/test should throw 
-PASS XHR: https://256.0.0.1/test should throw 
-PASS sendBeacon(): https://256.0.0.1/test should throw 
+PASS window.open(): https://0x100000000/test should throw
+PASS URL's constructor's base argument: https://256.0.0.1/test should throw
+PASS URL's href: https://256.0.0.1/test should throw
+PASS XHR: https://256.0.0.1/test should throw
+PASS sendBeacon(): https://256.0.0.1/test should throw
 FAIL Location's href: https://256.0.0.1/test should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://256.0.0.1/test should throw 
-PASS URL's constructor's base argument: \\\.\Y: should throw 
-PASS URL's href: \\\.\Y: should throw 
+PASS window.open(): https://256.0.0.1/test should throw
+PASS URL's constructor's base argument: \\\.\Y: should throw
+PASS URL's href: \\\.\Y: should throw
 FAIL XHR: \\\.\Y: should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): \\\.\Y: should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: \\\.\Y: should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): \\\.\Y: should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: \\\.\y: should throw 
-PASS URL's href: \\\.\y: should throw 
+PASS URL's constructor's base argument: \\\.\y: should throw
+PASS URL's href: \\\.\y: should throw
 FAIL XHR: \\\.\y: should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): \\\.\y: should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: \\\.\y: should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): \\\.\y: should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: https://[0::0::0] should throw 
-PASS URL's href: https://[0::0::0] should throw 
-PASS XHR: https://[0::0::0] should throw 
-PASS sendBeacon(): https://[0::0::0] should throw 
+PASS URL's constructor's base argument: https://[0::0::0] should throw
+PASS URL's href: https://[0::0::0] should throw
+PASS XHR: https://[0::0::0] should throw
+PASS sendBeacon(): https://[0::0::0] should throw
 FAIL Location's href: https://[0::0::0] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0::0::0] should throw 
-PASS URL's constructor's base argument: https://[0:.0] should throw 
-PASS URL's href: https://[0:.0] should throw 
-PASS XHR: https://[0:.0] should throw 
-PASS sendBeacon(): https://[0:.0] should throw 
+PASS window.open(): https://[0::0::0] should throw
+PASS URL's constructor's base argument: https://[0:.0] should throw
+PASS URL's href: https://[0:.0] should throw
+PASS XHR: https://[0:.0] should throw
+PASS sendBeacon(): https://[0:.0] should throw
 FAIL Location's href: https://[0:.0] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0:.0] should throw 
-PASS URL's constructor's base argument: https://[0:0:] should throw 
-PASS URL's href: https://[0:0:] should throw 
-PASS XHR: https://[0:0:] should throw 
-PASS sendBeacon(): https://[0:0:] should throw 
+PASS window.open(): https://[0:.0] should throw
+PASS URL's constructor's base argument: https://[0:0:] should throw
+PASS URL's href: https://[0:0:] should throw
+PASS XHR: https://[0:0:] should throw
+PASS sendBeacon(): https://[0:0:] should throw
 FAIL Location's href: https://[0:0:] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0:0:] should throw 
-PASS URL's constructor's base argument: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw 
-PASS URL's href: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw 
-PASS XHR: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw 
-PASS sendBeacon(): https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw 
+PASS window.open(): https://[0:0:] should throw
+PASS URL's constructor's base argument: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw
+PASS URL's href: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw
+PASS XHR: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw
+PASS sendBeacon(): https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw
 FAIL Location's href: https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw 
-PASS URL's constructor's base argument: https://[0:1.00.0.0.0] should throw 
-PASS URL's href: https://[0:1.00.0.0.0] should throw 
-PASS XHR: https://[0:1.00.0.0.0] should throw 
-PASS sendBeacon(): https://[0:1.00.0.0.0] should throw 
+PASS window.open(): https://[0:1:2:3:4:5:6:7.0.0.0.1] should throw
+PASS URL's constructor's base argument: https://[0:1.00.0.0.0] should throw
+PASS URL's href: https://[0:1.00.0.0.0] should throw
+PASS XHR: https://[0:1.00.0.0.0] should throw
+PASS sendBeacon(): https://[0:1.00.0.0.0] should throw
 FAIL Location's href: https://[0:1.00.0.0.0] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0:1.00.0.0.0] should throw 
-PASS URL's constructor's base argument: https://[0:1.290.0.0.0] should throw 
-PASS URL's href: https://[0:1.290.0.0.0] should throw 
-PASS XHR: https://[0:1.290.0.0.0] should throw 
-PASS sendBeacon(): https://[0:1.290.0.0.0] should throw 
+PASS window.open(): https://[0:1.00.0.0.0] should throw
+PASS URL's constructor's base argument: https://[0:1.290.0.0.0] should throw
+PASS URL's href: https://[0:1.290.0.0.0] should throw
+PASS XHR: https://[0:1.290.0.0.0] should throw
+PASS sendBeacon(): https://[0:1.290.0.0.0] should throw
 FAIL Location's href: https://[0:1.290.0.0.0] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0:1.290.0.0.0] should throw 
-PASS URL's constructor's base argument: https://[0:1.23.23] should throw 
-PASS URL's href: https://[0:1.23.23] should throw 
-PASS XHR: https://[0:1.23.23] should throw 
-PASS sendBeacon(): https://[0:1.23.23] should throw 
+PASS window.open(): https://[0:1.290.0.0.0] should throw
+PASS URL's constructor's base argument: https://[0:1.23.23] should throw
+PASS URL's href: https://[0:1.23.23] should throw
+PASS XHR: https://[0:1.23.23] should throw
+PASS sendBeacon(): https://[0:1.23.23] should throw
 FAIL Location's href: https://[0:1.23.23] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): https://[0:1.23.23] should throw 
-PASS URL's constructor's base argument: http://? should throw 
-PASS URL's href: http://? should throw 
-PASS XHR: http://? should throw 
-PASS sendBeacon(): http://? should throw 
+PASS window.open(): https://[0:1.23.23] should throw
+PASS URL's constructor's base argument: http://? should throw
+PASS URL's href: http://? should throw
+PASS XHR: http://? should throw
+PASS sendBeacon(): http://? should throw
 FAIL Location's href: http://? should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://? should throw 
-PASS URL's constructor's base argument: http://# should throw 
-PASS URL's href: http://# should throw 
-PASS XHR: http://# should throw 
-PASS sendBeacon(): http://# should throw 
+PASS window.open(): http://? should throw
+PASS URL's constructor's base argument: http://# should throw
+PASS URL's href: http://# should throw
+PASS XHR: http://# should throw
+PASS sendBeacon(): http://# should throw
 FAIL Location's href: http://# should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://# should throw 
-PASS URL's constructor's base argument: non-special://[:80/ should throw 
-PASS URL's href: non-special://[:80/ should throw 
-PASS XHR: non-special://[:80/ should throw 
-PASS sendBeacon(): non-special://[:80/ should throw 
+PASS window.open(): http://# should throw
+PASS URL's constructor's base argument: non-special://[:80/ should throw
+PASS URL's href: non-special://[:80/ should throw
+PASS XHR: non-special://[:80/ should throw
+PASS sendBeacon(): non-special://[:80/ should throw
 FAIL Location's href: non-special://[:80/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): non-special://[:80/ should throw 
-PASS URL's constructor's base argument: http://[::127.0.0.0.1] should throw 
-PASS URL's href: http://[::127.0.0.0.1] should throw 
-PASS XHR: http://[::127.0.0.0.1] should throw 
-PASS sendBeacon(): http://[::127.0.0.0.1] should throw 
+PASS window.open(): non-special://[:80/ should throw
+PASS URL's constructor's base argument: http://[::127.0.0.0.1] should throw
+PASS URL's href: http://[::127.0.0.0.1] should throw
+PASS XHR: http://[::127.0.0.0.1] should throw
+PASS sendBeacon(): http://[::127.0.0.0.1] should throw
 FAIL Location's href: http://[::127.0.0.0.1] should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): http://[::127.0.0.0.1] should throw 
-PASS URL's constructor's base argument: a should throw 
-PASS URL's href: a should throw 
+PASS window.open(): http://[::127.0.0.0.1] should throw
+PASS URL's constructor's base argument: a should throw
+PASS URL's href: a should throw
 FAIL XHR: a should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): a should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: a should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): a should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: a/ should throw 
-PASS URL's href: a/ should throw 
+PASS URL's constructor's base argument: a/ should throw
+PASS URL's href: a/ should throw
 FAIL XHR: a/ should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): a/ should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: a/ should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): a/ should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: a// should throw 
-PASS URL's href: a// should throw 
+PASS URL's constructor's base argument: a// should throw
+PASS URL's href: a// should throw
 FAIL XHR: a// should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
 FAIL sendBeacon(): a// should throw assert_throws_js: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: a// should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): a// should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
-PASS URL's constructor's base argument: file://­/p should throw 
-PASS URL's href: file://­/p should throw 
-PASS XHR: file://­/p should throw 
-PASS sendBeacon(): file://­/p should throw 
+PASS URL's constructor's base argument: file://­/p should throw
+PASS URL's href: file://­/p should throw
+PASS XHR: file://­/p should throw
+PASS sendBeacon(): file://­/p should throw
 FAIL Location's href: file://­/p should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): file://­/p should throw 
-PASS URL's constructor's base argument: file://%C2%AD/p should throw 
-PASS URL's href: file://%C2%AD/p should throw 
-PASS XHR: file://%C2%AD/p should throw 
-PASS sendBeacon(): file://%C2%AD/p should throw 
+PASS window.open(): file://­/p should throw
+PASS URL's constructor's base argument: file://%C2%AD/p should throw
+PASS URL's href: file://%C2%AD/p should throw
+PASS XHR: file://%C2%AD/p should throw
+PASS sendBeacon(): file://%C2%AD/p should throw
 FAIL Location's href: file://%C2%AD/p should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
-PASS window.open(): file://%C2%AD/p should throw 
+PASS window.open(): file://%C2%AD/p should throw
 FAIL URL's constructor's base argument: file://xn--/p should throw assert_throws_js: function "() => new URL("about:blank", test.input)" did not throw
 FAIL URL's href: file://xn--/p should throw assert_throws_js: function "() => url.href = test.input" did not throw
 FAIL XHR: file://xn--/p should throw assert_throws_dom: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): file://xn--/p should throw 
+PASS sendBeacon(): file://xn--/p should throw
 FAIL Location's href: file://xn--/p should throw assert_throws_js: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): file://xn--/p should throw assert_throws_dom: function "() => self.open(test.input).close()" did not throw
 

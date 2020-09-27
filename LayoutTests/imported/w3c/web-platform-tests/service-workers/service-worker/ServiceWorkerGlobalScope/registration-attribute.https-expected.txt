@@ -1,4 +1,4 @@
 
-PASS Verify registration attributes on ServiceWorkerGlobalScope 
-PASS Verify registration attributes on ServiceWorkerGlobalScope of the newer worker 
+PASS Verify registration attributes on ServiceWorkerGlobalScope
+PASS Verify registration attributes on ServiceWorkerGlobalScope of the newer worker
 

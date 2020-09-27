@@ -1,11 +1,11 @@
 
-PASS SVGLength, converting from 'px' to other units (detached), unitless 
+PASS SVGLength, converting from 'px' to other units (detached), unitless
 FAIL SVGLength, converting from 'px' to other units (detached), percentage The operation is not supported.
 FAIL SVGLength, converting from 'px' to other units (detached), ems The operation is not supported.
 FAIL SVGLength, converting from 'px' to other units (detached), exs The operation is not supported.
-PASS SVGLength, converting from 'px' to other units (detached), cm 
-PASS SVGLength, converting from 'px' to other units (detached), mm 
-PASS SVGLength, converting from 'px' to other units (detached), in 
-PASS SVGLength, converting from 'px' to other units (detached), pt 
-PASS SVGLength, converting from 'px' to other units (detached), pc 
+PASS SVGLength, converting from 'px' to other units (detached), cm
+PASS SVGLength, converting from 'px' to other units (detached), mm
+PASS SVGLength, converting from 'px' to other units (detached), in
+PASS SVGLength, converting from 'px' to other units (detached), pt
+PASS SVGLength, converting from 'px' to other units (detached), pc
 

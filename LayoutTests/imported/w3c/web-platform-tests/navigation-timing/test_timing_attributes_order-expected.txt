@@ -12,63 +12,63 @@ This test passes if all of the checks to the frame.window.performance.timing att
 Setup
 
 
-PASS window.performance is defined 
-PASS window.performance.timing is defined 
-PASS window.performance.navigation is defined 
-PASS window.performance.navigation.type == TYPE_NAVIGATE 
-PASS window.performance.timing.navigationStart > 0 
-PASS window.performance.timing.redirectStart == 0 
-PASS window.performance.timing.redirectEnd == 0 
-PASS window.performance.timing.fetchStart > 0 
-PASS window.performance.timing.fetchStart >= window.performance.timing.navigationStart 
-PASS window.performance.timing.fetchStart difference with window.performance.timing.navigationStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.domainLookupStart > 0 
-PASS window.performance.timing.domainLookupStart >= window.performance.timing.fetchStart 
-PASS window.performance.timing.domainLookupStart difference with window.performance.timing.fetchStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.domainLookupEnd > 0 
-PASS window.performance.timing.domainLookupEnd >= window.performance.timing.domainLookupStart 
-PASS window.performance.timing.domainLookupEnd difference with window.performance.timing.domainLookupStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.connectStart > 0 
-PASS window.performance.timing.connectStart >= window.performance.timing.domainLookupEnd 
-PASS window.performance.timing.connectStart difference with window.performance.timing.domainLookupEnd is 0 or at least 5 microseconds 
-PASS window.performance.timing.connectEnd > 0 
-PASS window.performance.timing.connectEnd >= window.performance.timing.connectStart 
-PASS window.performance.timing.connectEnd difference with window.performance.timing.connectStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.requestStart > 0 
-PASS window.performance.timing.requestStart >= window.performance.timing.connectEnd 
-PASS window.performance.timing.requestStart difference with window.performance.timing.connectEnd is 0 or at least 5 microseconds 
-PASS window.performance.timing.responseStart > 0 
-PASS window.performance.timing.responseStart >= window.performance.timing.requestStart 
-PASS window.performance.timing.responseStart difference with window.performance.timing.requestStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.responseEnd > 0 
-PASS window.performance.timing.responseEnd >= window.performance.timing.responseStart 
-PASS window.performance.timing.responseEnd difference with window.performance.timing.responseStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.domLoading > 0 
-PASS window.performance.timing.domLoading >= window.performance.timing.fetchStart 
-PASS window.performance.timing.domLoading difference with window.performance.timing.fetchStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.domInteractive > 0 
-PASS window.performance.timing.domInteractive >= window.performance.timing.responseEnd 
-PASS window.performance.timing.domInteractive difference with window.performance.timing.responseEnd is 0 or at least 5 microseconds 
-PASS window.performance.timing.domContentLoadedEventStart > 0 
-PASS window.performance.timing.domContentLoadedEventStart >= window.performance.timing.domInteractive 
-PASS window.performance.timing.domContentLoadedEventStart difference with window.performance.timing.domInteractive is 0 or at least 5 microseconds 
-PASS window.performance.timing.domContentLoadedEventEnd > 0 
-PASS window.performance.timing.domContentLoadedEventEnd >= window.performance.timing.domContentLoadedEventStart 
-PASS window.performance.timing.domContentLoadedEventEnd difference with window.performance.timing.domContentLoadedEventStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.domComplete > 0 
-PASS window.performance.timing.domComplete >= window.performance.timing.domContentLoadedEventEnd 
-PASS window.performance.timing.domComplete difference with window.performance.timing.domContentLoadedEventEnd is 0 or at least 5 microseconds 
-PASS window.performance.timing.loadEventStart > 0 
-PASS window.performance.timing.loadEventStart >= window.performance.timing.domContentLoadedEventEnd 
-PASS window.performance.timing.loadEventStart difference with window.performance.timing.domContentLoadedEventEnd is 0 or at least 5 microseconds 
-PASS window.performance.timing.loadEventEnd > 0 
-PASS window.performance.timing.loadEventEnd >= window.performance.timing.loadEventStart 
-PASS window.performance.timing.loadEventEnd difference with window.performance.timing.loadEventStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.unloadEventStart > 0 
-PASS window.performance.timing.unloadEventStart >= window.performance.timing.navigationStart 
-PASS window.performance.timing.unloadEventStart difference with window.performance.timing.navigationStart is 0 or at least 5 microseconds 
-PASS window.performance.timing.unloadEventEnd > 0 
-PASS window.performance.timing.unloadEventEnd >= window.performance.timing.unloadEventStart 
-PASS window.performance.timing.unloadEventEnd difference with window.performance.timing.unloadEventStart is 0 or at least 5 microseconds 
+PASS window.performance is defined
+PASS window.performance.timing is defined
+PASS window.performance.navigation is defined
+PASS window.performance.navigation.type == TYPE_NAVIGATE
+PASS window.performance.timing.navigationStart > 0
+PASS window.performance.timing.redirectStart == 0
+PASS window.performance.timing.redirectEnd == 0
+PASS window.performance.timing.fetchStart > 0
+PASS window.performance.timing.fetchStart >= window.performance.timing.navigationStart
+PASS window.performance.timing.fetchStart difference with window.performance.timing.navigationStart is 0 or at least 5 microseconds
+PASS window.performance.timing.domainLookupStart > 0
+PASS window.performance.timing.domainLookupStart >= window.performance.timing.fetchStart
+PASS window.performance.timing.domainLookupStart difference with window.performance.timing.fetchStart is 0 or at least 5 microseconds
+PASS window.performance.timing.domainLookupEnd > 0
+PASS window.performance.timing.domainLookupEnd >= window.performance.timing.domainLookupStart
+PASS window.performance.timing.domainLookupEnd difference with window.performance.timing.domainLookupStart is 0 or at least 5 microseconds
+PASS window.performance.timing.connectStart > 0
+PASS window.performance.timing.connectStart >= window.performance.timing.domainLookupEnd
+PASS window.performance.timing.connectStart difference with window.performance.timing.domainLookupEnd is 0 or at least 5 microseconds
+PASS window.performance.timing.connectEnd > 0
+PASS window.performance.timing.connectEnd >= window.performance.timing.connectStart
+PASS window.performance.timing.connectEnd difference with window.performance.timing.connectStart is 0 or at least 5 microseconds
+PASS window.performance.timing.requestStart > 0
+PASS window.performance.timing.requestStart >= window.performance.timing.connectEnd
+PASS window.performance.timing.requestStart difference with window.performance.timing.connectEnd is 0 or at least 5 microseconds
+PASS window.performance.timing.responseStart > 0
+PASS window.performance.timing.responseStart >= window.performance.timing.requestStart
+PASS window.performance.timing.responseStart difference with window.performance.timing.requestStart is 0 or at least 5 microseconds
+PASS window.performance.timing.responseEnd > 0
+PASS window.performance.timing.responseEnd >= window.performance.timing.responseStart
+PASS window.performance.timing.responseEnd difference with window.performance.timing.responseStart is 0 or at least 5 microseconds
+PASS window.performance.timing.domLoading > 0
+PASS window.performance.timing.domLoading >= window.performance.timing.fetchStart
+PASS window.performance.timing.domLoading difference with window.performance.timing.fetchStart is 0 or at least 5 microseconds
+PASS window.performance.timing.domInteractive > 0
+PASS window.performance.timing.domInteractive >= window.performance.timing.responseEnd
+PASS window.performance.timing.domInteractive difference with window.performance.timing.responseEnd is 0 or at least 5 microseconds
+PASS window.performance.timing.domContentLoadedEventStart > 0
+PASS window.performance.timing.domContentLoadedEventStart >= window.performance.timing.domInteractive
+PASS window.performance.timing.domContentLoadedEventStart difference with window.performance.timing.domInteractive is 0 or at least 5 microseconds
+PASS window.performance.timing.domContentLoadedEventEnd > 0
+PASS window.performance.timing.domContentLoadedEventEnd >= window.performance.timing.domContentLoadedEventStart
+PASS window.performance.timing.domContentLoadedEventEnd difference with window.performance.timing.domContentLoadedEventStart is 0 or at least 5 microseconds
+PASS window.performance.timing.domComplete > 0
+PASS window.performance.timing.domComplete >= window.performance.timing.domContentLoadedEventEnd
+PASS window.performance.timing.domComplete difference with window.performance.timing.domContentLoadedEventEnd is 0 or at least 5 microseconds
+PASS window.performance.timing.loadEventStart > 0
+PASS window.performance.timing.loadEventStart >= window.performance.timing.domContentLoadedEventEnd
+PASS window.performance.timing.loadEventStart difference with window.performance.timing.domContentLoadedEventEnd is 0 or at least 5 microseconds
+PASS window.performance.timing.loadEventEnd > 0
+PASS window.performance.timing.loadEventEnd >= window.performance.timing.loadEventStart
+PASS window.performance.timing.loadEventEnd difference with window.performance.timing.loadEventStart is 0 or at least 5 microseconds
+PASS window.performance.timing.unloadEventStart > 0
+PASS window.performance.timing.unloadEventStart >= window.performance.timing.navigationStart
+PASS window.performance.timing.unloadEventStart difference with window.performance.timing.navigationStart is 0 or at least 5 microseconds
+PASS window.performance.timing.unloadEventEnd > 0
+PASS window.performance.timing.unloadEventEnd >= window.performance.timing.unloadEventStart
+PASS window.performance.timing.unloadEventEnd difference with window.performance.timing.unloadEventStart is 0 or at least 5 microseconds
 
 

@@ -3,6 +3,6 @@ Description
 This test validates exception scenarios of invoking mark() and measure() without parameter.
 
 
-PASS window.performance.mark() throws a TypeError exception when invoke without a parameter. 
-PASS window.performance.measure() throws a TypeError exception when invoke without a parameter. 
+PASS window.performance.mark() throws a TypeError exception when invoke without a parameter.
+PASS window.performance.measure() throws a TypeError exception when invoke without a parameter.
 

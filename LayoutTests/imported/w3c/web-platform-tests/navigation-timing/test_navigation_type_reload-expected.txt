@@ -7,28 +7,28 @@ This page should be loaded with a green background frame below. The frame will b
 The window.performance.navigation.type = TYPE_RELOAD
 All of the widow.performance.timing.* values after reload are > all of the window.performance.timing.* values prior to reload.
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS window.performance.navigation.type == TYPE_RELOAD 
-PASS Reload connectEnd > Original connectEnd 
-PASS Reload connectStart > Original connectStart 
-PASS Reload domComplete > Original domComplete 
-PASS Reload domContentLoadedEventEnd > Original domContentLoadedEventEnd 
-PASS Reload domContentLoadedEventStart > Original domContentLoadedEventStart 
-PASS Reload domInteractive > Original domInteractive 
-PASS Reload domLoading > Original domLoading 
-PASS Reload domainLookupEnd > Original domainLookupEnd 
-PASS Reload domainLookupStart > Original domainLookupStart 
-PASS Reload fetchStart > Original fetchStart 
-PASS Reload loadEventEnd > Original loadEventEnd 
-PASS Reload loadEventStart > Original loadEventStart 
-PASS Reload navigationStart > Original navigationStart 
-PASS Reload redirectEnd(0) == Original redirectEnd(0) 
-PASS Reload redirectStart(0) == Original redirectStart(0) 
-PASS Reload requestStart > Original requestStart 
-PASS Reload responseEnd > Original responseEnd 
-PASS Reload responseStart > Original responseStart 
-PASS Reload unloadEventEnd > Original unloadEventEnd 
-PASS Reload unloadEventStart > Original unloadEventStart 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS window.performance.navigation.type == TYPE_RELOAD
+PASS Reload connectEnd > Original connectEnd
+PASS Reload connectStart > Original connectStart
+PASS Reload domComplete > Original domComplete
+PASS Reload domContentLoadedEventEnd > Original domContentLoadedEventEnd
+PASS Reload domContentLoadedEventStart > Original domContentLoadedEventStart
+PASS Reload domInteractive > Original domInteractive
+PASS Reload domLoading > Original domLoading
+PASS Reload domainLookupEnd > Original domainLookupEnd
+PASS Reload domainLookupStart > Original domainLookupStart
+PASS Reload fetchStart > Original fetchStart
+PASS Reload loadEventEnd > Original loadEventEnd
+PASS Reload loadEventStart > Original loadEventStart
+PASS Reload navigationStart > Original navigationStart
+PASS Reload redirectEnd(0) == Original redirectEnd(0)
+PASS Reload redirectStart(0) == Original redirectStart(0)
+PASS Reload requestStart > Original requestStart
+PASS Reload responseEnd > Original responseEnd
+PASS Reload responseStart > Original responseStart
+PASS Reload unloadEventEnd > Original unloadEventEnd
+PASS Reload unloadEventStart > Original unloadEventStart
 
 

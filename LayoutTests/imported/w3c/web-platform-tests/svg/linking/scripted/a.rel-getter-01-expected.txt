@@ -1,4 +1,4 @@
 
-PASS SVGAElement.rel getter 
-PASS Test anchor's rel getter 
+PASS SVGAElement.rel getter
+PASS Test anchor's rel getter
 

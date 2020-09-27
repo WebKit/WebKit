@@ -1,6 +1,6 @@
 
-PASS assignedSlot attribute must be defined on Element and Text interfaces 
-PASS assignedSlot must return null when the node does not have an assigned node 
-PASS assignedSlot must return the assigned slot 
-PASS assignedSlot must return null when the assigned slot element is inside a closed shadow tree 
+PASS assignedSlot attribute must be defined on Element and Text interfaces
+PASS assignedSlot must return null when the node does not have an assigned node
+PASS assignedSlot must return the assigned slot
+PASS assignedSlot must return null when the assigned slot element is inside a closed shadow tree
 

@@ -1,8 +1,8 @@
 
-PASS e.style['rx'] = "auto" should set the property value 
-PASS e.style['rx'] = "0" should set the property value 
-PASS e.style['rx'] = "1px" should set the property value 
-PASS e.style['rx'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['rx'] = "4%" should set the property value 
-PASS e.style['rx'] = "5vw" should set the property value 
+PASS e.style['rx'] = "auto" should set the property value
+PASS e.style['rx'] = "0" should set the property value
+PASS e.style['rx'] = "1px" should set the property value
+PASS e.style['rx'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['rx'] = "4%" should set the property value
+PASS e.style['rx'] = "5vw" should set the property value
 

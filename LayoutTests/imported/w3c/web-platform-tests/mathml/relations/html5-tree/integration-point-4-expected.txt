@@ -1,4 +1,4 @@
 
-PASS mspace layout in SVG foreignObject 
-PASS mfrac layout in SVG foreignObject 
+PASS mspace layout in SVG foreignObject
+PASS mfrac layout in SVG foreignObject
 

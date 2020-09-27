@@ -5,5 +5,5 @@ Description
 This test checks that the MediaStream object returned by the success callback in getUserMedia has exactly one video track and no audio.
 
 
-PASS Tests that a MediaStream with at least one video track is returned 
+PASS Tests that a MediaStream with at least one video track is returned
 

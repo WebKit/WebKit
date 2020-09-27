@@ -8,8 +8,8 @@ frames[0].window.visualViewport width and height is (200, 300).
 frames[0].window.visualViewport width and height when scrollbars are present is (185, 285).
 
 
-PASS window.visualViewport.width of iframe viewport should match iframe width. 
-PASS window.visualViewport.height of iframe viewport should match iframe height. 
-PASS window.visualViewport.width of iframe viewport should not include scrollbar. 
-PASS window.visualViewport.height of iframe viewport should not include scrollbar. 
+PASS window.visualViewport.width of iframe viewport should match iframe width.
+PASS window.visualViewport.height of iframe viewport should match iframe height.
+PASS window.visualViewport.width of iframe viewport should not include scrollbar.
+PASS window.visualViewport.height of iframe viewport should not include scrollbar.
 

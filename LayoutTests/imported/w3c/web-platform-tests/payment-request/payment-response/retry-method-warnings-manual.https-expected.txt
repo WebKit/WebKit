@@ -23,6 +23,6 @@ Done!
 
 Harness Error (TIMEOUT), message = null
 
-PASS Can construct a payment request (smoke test). 
-PASS PaymentResponse.prototype must have a retry() function (smoke test). 
+PASS Can construct a payment request (smoke test).
+PASS PaymentResponse.prototype must have a retry() function (smoke test).
 

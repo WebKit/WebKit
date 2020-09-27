@@ -1,4 +1,4 @@
 
-PASS enumerateDevices returns new objects in case device-info permission is not granted 
-PASS enumerateDevices returns new objects in case device-info permission is granted 
+PASS enumerateDevices returns new objects in case device-info permission is not granted
+PASS enumerateDevices returns new objects in case device-info permission is granted
 

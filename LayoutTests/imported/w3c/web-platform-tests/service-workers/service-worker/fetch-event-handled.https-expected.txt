@@ -2,12 +2,12 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS global setup 
+PASS global setup
 TIMEOUT FetchEvent.handled should resolve when respondWith() is not called for a navigation request Test timed out
-NOTRUN FetchEvent.handled should resolve when respondWith() is not called for a sub-resource request 
-NOTRUN FetchEvent.handled should reject when respondWith() is not called and the event is canceled 
-NOTRUN FetchEvent.handled should resolve when the promise provided to respondWith() is resolved 
-NOTRUN FetchEvent.handled should reject when the promise provided to respondWith() is resolved to an invalid response 
-NOTRUN FetchEvent.handled should reject when the promise provided to respondWith() is rejected 
-NOTRUN global cleanup 
+NOTRUN FetchEvent.handled should resolve when respondWith() is not called for a sub-resource request
+NOTRUN FetchEvent.handled should reject when respondWith() is not called and the event is canceled
+NOTRUN FetchEvent.handled should resolve when the promise provided to respondWith() is resolved
+NOTRUN FetchEvent.handled should reject when the promise provided to respondWith() is resolved to an invalid response
+NOTRUN FetchEvent.handled should reject when the promise provided to respondWith() is rejected
+NOTRUN global cleanup
 

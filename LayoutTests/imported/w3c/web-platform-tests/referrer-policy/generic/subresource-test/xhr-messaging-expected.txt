@@ -16,5 +16,5 @@ http://127.0.0.1:8800/common/security-features/subresource/xhr.py:
 }
 
 
-PASS XHR is responding with HTTP headers 
+PASS XHR is responding with HTTP headers
 

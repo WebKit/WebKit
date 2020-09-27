@@ -1,6 +1,6 @@
 
-PASS loss of controllees triggers activation 
-PASS finishing a request triggers activation 
-PASS skipWaiting bypasses no controllee requirement 
-PASS finishing a request triggers unregister 
+PASS loss of controllees triggers activation
+PASS finishing a request triggers activation
+PASS skipWaiting bypasses no controllee requirement
+PASS finishing a request triggers unregister
 

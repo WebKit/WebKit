@@ -1,7 +1,7 @@
 
-PASS initialize global state 
-PASS import script previously imported at worker evaluation time 
-PASS import script previously imported at worker install time 
+PASS initialize global state
+PASS import script previously imported at worker evaluation time
+PASS import script previously imported at worker install time
 FAIL import script not previously imported assert_equals: expected (string) "NetworkError" but got (object) null
-PASS Tests for importScripts: import scripts updated flag 
+PASS Tests for importScripts: import scripts updated flag
 

@@ -1,8 +1,8 @@
 
-PASS getRegistration 
-PASS Register then getRegistration 
-PASS Register then getRegistration with a URL having a fragment 
-PASS getRegistration with a cross origin URL 
-PASS Register then Unregister then getRegistration 
-PASS Register then Unregister then getRegistration in controlled iframe 
+PASS getRegistration
+PASS Register then getRegistration
+PASS Register then getRegistration with a URL having a fragment
+PASS getRegistration with a cross origin URL
+PASS Register then Unregister then getRegistration
+PASS Register then Unregister then getRegistration in controlled iframe
 

@@ -1,7 +1,7 @@
 
-PASS element.createShadowRoot should not exist 
-PASS element.getDestinationInsertionPoints should not exist 
-PASS text.getDestinationInsertionPoints should not exist 
-PASS event.path should not exist 
-PASS HTMLContentElement should not exist 
+PASS element.createShadowRoot should not exist
+PASS element.getDestinationInsertionPoints should not exist
+PASS text.getDestinationInsertionPoints should not exist
+PASS event.path should not exist
+PASS HTMLContentElement should not exist
 

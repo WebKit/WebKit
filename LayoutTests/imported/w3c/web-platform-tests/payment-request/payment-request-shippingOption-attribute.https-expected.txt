@@ -1,8 +1,8 @@
 
-PASS Must have a .shippingOption IDL attribute. 
-PASS .shippingOption attribute must default to null. 
-PASS If there is a single shipping option, but selected is false, then .shippingOption must be null. 
-PASS If there are multiple shipping options all with `selected` set to false, then .shippingOption is null. 
-PASS Given multiple shipping options, it must use the selected shipping option for .shippingOption value. 
-PASS If there are multiple of the shipping options with selected true, then .shippingOption is the last selected shipping option in order. 
+PASS Must have a .shippingOption IDL attribute.
+PASS .shippingOption attribute must default to null.
+PASS If there is a single shipping option, but selected is false, then .shippingOption must be null.
+PASS If there are multiple shipping options all with `selected` set to false, then .shippingOption is null.
+PASS Given multiple shipping options, it must use the selected shipping option for .shippingOption value.
+PASS If there are multiple of the shipping options with selected true, then .shippingOption is the last selected shipping option in order.
 

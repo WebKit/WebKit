@@ -1,12 +1,12 @@
 
-PASS e.style['stop-color'] = "currentcolor" should set the property value 
-PASS e.style['stop-color'] = "white" should set the property value 
-PASS e.style['stop-color'] = "transparent" should set the property value 
-PASS e.style['stop-color'] = "rgb(255, 255, 255)" should set the property value 
-PASS e.style['stop-color'] = "#ffffff" should set the property value 
-PASS e.style['stop-color'] = "rgba(255, 255, 255, 1.0)" should set the property value 
-PASS e.style['stop-color'] = "rgba(255, 255, 255, 0.4)" should set the property value 
-PASS e.style['stop-color'] = "hsl(0deg, 100%, 100%)" should set the property value 
-PASS e.style['stop-color'] = "hsla(0deg, 100%, 100%, 1.0)" should set the property value 
-PASS e.style['stop-color'] = "hsla(0deg, 100%, 100%, 0.4)" should set the property value 
+PASS e.style['stop-color'] = "currentcolor" should set the property value
+PASS e.style['stop-color'] = "white" should set the property value
+PASS e.style['stop-color'] = "transparent" should set the property value
+PASS e.style['stop-color'] = "rgb(255, 255, 255)" should set the property value
+PASS e.style['stop-color'] = "#ffffff" should set the property value
+PASS e.style['stop-color'] = "rgba(255, 255, 255, 1.0)" should set the property value
+PASS e.style['stop-color'] = "rgba(255, 255, 255, 0.4)" should set the property value
+PASS e.style['stop-color'] = "hsl(0deg, 100%, 100%)" should set the property value
+PASS e.style['stop-color'] = "hsla(0deg, 100%, 100%, 1.0)" should set the property value
+PASS e.style['stop-color'] = "hsla(0deg, 100%, 100%, 0.4)" should set the property value
 

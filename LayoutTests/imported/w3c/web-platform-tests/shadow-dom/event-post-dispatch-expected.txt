@@ -1,16 +1,16 @@
 
-PASS Event properties post dispatch without ShadowRoots (composed: true). 
-PASS Event properties post dispatch without ShadowRoots (composed: false). 
-PASS Event properties post dispatch with an open ShadowRoot (composed: true). 
+PASS Event properties post dispatch without ShadowRoots (composed: true).
+PASS Event properties post dispatch without ShadowRoots (composed: false).
+PASS Event properties post dispatch with an open ShadowRoot (composed: true).
 FAIL Event properties post dispatch with an open ShadowRoot (composed: false). assert_equals: expected null but got Element node <div id="target"></div>
-PASS Event properties post dispatch with a closed ShadowRoot (composed: true). 
+PASS Event properties post dispatch with a closed ShadowRoot (composed: true).
 FAIL Event properties post dispatch with a closed ShadowRoot (composed: false). assert_equals: expected null but got Element node <div id="target"></div>
-PASS Event properties post dispatch with nested ShadowRoots (composed: true). 
+PASS Event properties post dispatch with nested ShadowRoots (composed: true).
 FAIL Event properties post dispatch with nested ShadowRoots (composed: false). assert_equals: expected null but got Element node <div id="target"></div>
 FAIL Event properties post dispatch with relatedTarget in the same shadow tree. (composed: true) assert_equals: expected null but got Element node <div id="target"></div>
 FAIL Event properties post dispatch with relatedTarget in the same shadow tree. (composed: false) assert_equals: expected null but got Element node <div id="target"></div>
-PASS Event properties post dispatch with relatedTarget in the document tree and the shadow tree. (composed: true) 
+PASS Event properties post dispatch with relatedTarget in the document tree and the shadow tree. (composed: true)
 FAIL Event properties post dispatch with relatedTarget in the document tree and the shadow tree. (composed: false) assert_equals: expected null but got Element node <div id="target"></div>
-PASS Event properties post dispatch with relatedTarget in the different shadow trees. (composed: true) 
+PASS Event properties post dispatch with relatedTarget in the different shadow trees. (composed: true)
 FAIL Event properties post dispatch with relatedTarget in the different shadow trees. (composed: false) assert_equals: expected null but got Element node <div id="target"></div>
 

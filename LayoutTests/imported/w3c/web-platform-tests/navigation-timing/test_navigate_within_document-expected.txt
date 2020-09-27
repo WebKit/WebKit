@@ -3,26 +3,26 @@ Description
 This test validates that all of the window.performance.timing attributes remain unchanged after an in document navigation (URL fragment change).
 
 
-PASS window.performance is defined 
-PASS window.performance.timing is defined 
-PASS connectEnd is the same after in document navigation. 
-PASS connectStart is the same after in document navigation. 
-PASS domComplete is the same after in document navigation. 
-PASS domContentLoadedEventEnd is the same after in document navigation. 
-PASS domContentLoadedEventStart is the same after in document navigation. 
-PASS domInteractive is the same after in document navigation. 
-PASS domLoading is the same after in document navigation. 
-PASS domainLookupEnd is the same after in document navigation. 
-PASS domainLookupStart is the same after in document navigation. 
-PASS fetchStart is the same after in document navigation. 
-PASS loadEventEnd is the same after in document navigation. 
-PASS loadEventStart is the same after in document navigation. 
-PASS navigationStart is the same after in document navigation. 
-PASS redirectEnd is the same after in document navigation. 
-PASS redirectStart is the same after in document navigation. 
-PASS requestStart is the same after in document navigation. 
-PASS responseEnd is the same after in document navigation. 
-PASS responseStart is the same after in document navigation. 
-PASS unloadEventEnd is the same after in document navigation. 
-PASS unloadEventStart is the same after in document navigation. 
+PASS window.performance is defined
+PASS window.performance.timing is defined
+PASS connectEnd is the same after in document navigation.
+PASS connectStart is the same after in document navigation.
+PASS domComplete is the same after in document navigation.
+PASS domContentLoadedEventEnd is the same after in document navigation.
+PASS domContentLoadedEventStart is the same after in document navigation.
+PASS domInteractive is the same after in document navigation.
+PASS domLoading is the same after in document navigation.
+PASS domainLookupEnd is the same after in document navigation.
+PASS domainLookupStart is the same after in document navigation.
+PASS fetchStart is the same after in document navigation.
+PASS loadEventEnd is the same after in document navigation.
+PASS loadEventStart is the same after in document navigation.
+PASS navigationStart is the same after in document navigation.
+PASS redirectEnd is the same after in document navigation.
+PASS redirectStart is the same after in document navigation.
+PASS requestStart is the same after in document navigation.
+PASS responseEnd is the same after in document navigation.
+PASS responseStart is the same after in document navigation.
+PASS unloadEventEnd is the same after in document navigation.
+PASS unloadEventStart is the same after in document navigation.
 

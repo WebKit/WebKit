@@ -1,25 +1,25 @@
 When prompted, accept to share your video stream.
 
 
-PASS A device can be opened twice and have the same device ID 
-PASS A device can be opened twice with different resolutions requested 
+PASS A device can be opened twice and have the same device ID
+PASS A device can be opened twice with different resolutions requested
 FAIL groupId is correctly reported by getSettings() for all input devices assert_true: device groupId expected true got false
-PASS deviceId is reported by getSettings() for getUserMedia() audio tracks 
+PASS deviceId is reported by getSettings() for getUserMedia() audio tracks
 FAIL groupId is reported by getSettings() for getUserMedia() audio tracks assert_equals: groupId should exist and it should be a string. expected "string" but got "undefined"
-PASS sampleRate is reported by getSettings() for getUserMedia() audio tracks 
+PASS sampleRate is reported by getSettings() for getUserMedia() audio tracks
 FAIL sampleSize is reported by getSettings() for getUserMedia() audio tracks assert_equals: sampleSize should exist and it should be a number. expected "number" but got "undefined"
-PASS echoCancellation is reported by getSettings() for getUserMedia() audio tracks 
+PASS echoCancellation is reported by getSettings() for getUserMedia() audio tracks
 FAIL autoGainControl is reported by getSettings() for getUserMedia() audio tracks assert_equals: autoGainControl should exist and it should be a boolean. expected "boolean" but got "undefined"
 FAIL noiseSuppression is reported by getSettings() for getUserMedia() audio tracks assert_equals: noiseSuppression should exist and it should be a boolean. expected "boolean" but got "undefined"
 FAIL latency is reported by getSettings() for getUserMedia() audio tracks assert_equals: latency should exist and it should be a number. expected "number" but got "undefined"
 FAIL channelCount is reported by getSettings() for getUserMedia() audio tracks assert_equals: channelCount should exist and it should be a number. expected "number" but got "undefined"
-PASS deviceId is reported by getSettings() for getUserMedia() video tracks 
+PASS deviceId is reported by getSettings() for getUserMedia() video tracks
 FAIL groupId is reported by getSettings() for getUserMedia() video tracks assert_equals: groupId should exist and it should be a string. expected "string" but got "undefined"
-PASS width is reported by getSettings() for getUserMedia() video tracks 
-PASS height is reported by getSettings() for getUserMedia() video tracks 
+PASS width is reported by getSettings() for getUserMedia() video tracks
+PASS height is reported by getSettings() for getUserMedia() video tracks
 FAIL aspectRatio is reported by getSettings() for getUserMedia() video tracks assert_equals: aspectRatio should exist and it should be a number. expected "number" but got "undefined"
-PASS frameRate is reported by getSettings() for getUserMedia() video tracks 
-PASS facingMode is reported by getSettings() for getUserMedia() video tracks 
+PASS frameRate is reported by getSettings() for getUserMedia() video tracks
+PASS facingMode is reported by getSettings() for getUserMedia() video tracks
 FAIL resizeMode is reported by getSettings() for getUserMedia() video tracks assert_equals: resizeMode should exist and it should be a string. expected "string" but got "undefined"
-PASS Stopped tracks should expose deviceId/groupId 
+PASS Stopped tracks should expose deviceId/groupId
 

@@ -3,13 +3,13 @@ Description
 This test validates that a reused resource appears in the buffer once.
 
 
-PASS There should be only one entry 
-PASS Testing resource entries 
-PASS requestStart should be non-zero on the same-origin request 
-PASS responseEnd should not be before startTime 
-PASS duration should not be negative 
-PASS There should be one entry in second test 
-PASS Entry name should start with cross-origin domain 
-PASS Entry name should end with file name 
-PASS requestStart should be 0 on the cross-origin request 
-  
+PASS There should be only one entry
+PASS Testing resource entries
+PASS requestStart should be non-zero on the same-origin request
+PASS responseEnd should not be before startTime
+PASS duration should not be negative
+PASS There should be one entry in second test
+PASS Entry name should start with cross-origin domain
+PASS Entry name should end with file name
+PASS requestStart should be 0 on the cross-origin request
+

@@ -1,6 +1,6 @@
 
-PASS add_completion_callback exists 
-PASS <title> exists 
-PASS <meta name=timeout> exists 
-PASS order of scripts 
+PASS add_completion_callback exists
+PASS <title> exists
+PASS <meta name=timeout> exists
+PASS order of scripts
 

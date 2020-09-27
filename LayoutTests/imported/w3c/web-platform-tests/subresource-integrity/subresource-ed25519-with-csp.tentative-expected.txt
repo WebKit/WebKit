@@ -1,6 +1,6 @@
 
 FAIL Script: Ed25519-with-CSP, passes, valid key, valid signature. assert_unreached: Good load fired error handler. Reached unreachable code
-PASS Script: Ed25519-with-CSP, fails, valid key, invalid signature. 
-PASS Script: Ed25519-with-CSP, passes, alternative key. 
-PASS Script: Ed25519-with-CSP, fails, valid key, valid signature, key not in CSP. 
+PASS Script: Ed25519-with-CSP, fails, valid key, invalid signature.
+PASS Script: Ed25519-with-CSP, passes, alternative key.
+PASS Script: Ed25519-with-CSP, fails, valid key, valid signature, key not in CSP.
 

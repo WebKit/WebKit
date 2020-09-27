@@ -1,4 +1,4 @@
 Test
 
-PASS Test animVal support for SVGAnimatedString animations. 
+PASS Test animVal support for SVGAnimatedString animations.
 

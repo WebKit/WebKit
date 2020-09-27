@@ -3,123 +3,123 @@ Description
 This test validates functionality of the interface window.performance.mark.
 
 
-PASS There should be 0 marks 
-PASS Checking all entries.There should be 3 entries. 
-PASS Checking all entries.Entries in entrylist should be in order. 
-PASS Checking all entries.Entry_list 0. Entry "1" should be one that we have set. 
-PASS Checking all entries.Entry_list 0. entryType should be "mark". 
-PASS Checking all entries.Entry_list 0. startTime should greater than 0. 
-PASS Checking all entries.Entry_list 0. duration of mark should be 0. 
-PASS Checking all entries.Entry_list 1. Entry "abc" should be one that we have set. 
-PASS Checking all entries.Entry_list 1. entryType should be "mark". 
-PASS Checking all entries.Entry_list 1. startTime should greater than 0. 
-PASS Checking all entries.Entry_list 1. duration of mark should be 0. 
-PASS Checking all entries.Entry_list 2. Entry "" should be one that we have set. 
-PASS Checking all entries.Entry_list 2. entryType should be "mark". 
-PASS Checking all entries.Entry_list 2. startTime should greater than 0. 
-PASS Checking all entries.Entry_list 2. duration of mark should be 0. 
-PASS First loop: checking entry of name "1".There should be 1 entries. 
-PASS First loop: checking entry of name "1".Entries in entrylist should be in order. 
-PASS First loop: checking entry of name "1".Entry_list 0. Entry "1" should be one that we have set. 
-PASS First loop: checking entry of name "1".Entry_list 0. entryType should be "mark". 
-PASS First loop: checking entry of name "1".Entry_list 0. startTime should greater than 0. 
-PASS First loop: checking entry of name "1".Entry_list 0. duration of mark should be 0. 
-PASS First loop: checking entry of name "abc".There should be 1 entries. 
-PASS First loop: checking entry of name "abc".Entries in entrylist should be in order. 
-PASS First loop: checking entry of name "abc".Entry_list 0. Entry "abc" should be one that we have set. 
-PASS First loop: checking entry of name "abc".Entry_list 0. entryType should be "mark". 
-PASS First loop: checking entry of name "abc".Entry_list 0. startTime should greater than 0. 
-PASS First loop: checking entry of name "abc".Entry_list 0. duration of mark should be 0. 
-PASS First loop: checking entry of name "".There should be 1 entries. 
-PASS First loop: checking entry of name "".Entries in entrylist should be in order. 
-PASS First loop: checking entry of name "".Entry_list 0. Entry "" should be one that we have set. 
-PASS First loop: checking entry of name "".Entry_list 0. entryType should be "mark". 
-PASS First loop: checking entry of name "".Entry_list 0. startTime should greater than 0. 
-PASS First loop: checking entry of name "".Entry_list 0. duration of mark should be 0. 
-PASS Checking all doubly marked entries.There should be 6 entries. 
-PASS Checking all doubly marked entries.Entries in entrylist should be in order. 
-PASS Checking all doubly marked entries.Entry_list 0. Entry "1" should be one that we have set. 
-PASS Checking all doubly marked entries.Entry_list 0. entryType should be "mark". 
-PASS Checking all doubly marked entries.Entry_list 0. startTime should greater than 0. 
-PASS Checking all doubly marked entries.Entry_list 0. duration of mark should be 0. 
-PASS Checking all doubly marked entries.Entry_list 1. Entry "abc" should be one that we have set. 
-PASS Checking all doubly marked entries.Entry_list 1. entryType should be "mark". 
-PASS Checking all doubly marked entries.Entry_list 1. startTime should greater than 0. 
-PASS Checking all doubly marked entries.Entry_list 1. duration of mark should be 0. 
-PASS Checking all doubly marked entries.Entry_list 2. Entry "" should be one that we have set. 
-PASS Checking all doubly marked entries.Entry_list 2. entryType should be "mark". 
-PASS Checking all doubly marked entries.Entry_list 2. startTime should greater than 0. 
-PASS Checking all doubly marked entries.Entry_list 2. duration of mark should be 0. 
-PASS Checking all doubly marked entries.Entry_list 3. Entry "1" should be one that we have set. 
-PASS Checking all doubly marked entries.Entry_list 3. entryType should be "mark". 
-PASS Checking all doubly marked entries.Entry_list 3. startTime should greater than 0. 
-PASS Checking all doubly marked entries.Entry_list 3. duration of mark should be 0. 
-PASS Checking all doubly marked entries.Entry_list 4. Entry "abc" should be one that we have set. 
-PASS Checking all doubly marked entries.Entry_list 4. entryType should be "mark". 
-PASS Checking all doubly marked entries.Entry_list 4. startTime should greater than 0. 
-PASS Checking all doubly marked entries.Entry_list 4. duration of mark should be 0. 
-PASS Checking all doubly marked entries.Entry_list 5. Entry "" should be one that we have set. 
-PASS Checking all doubly marked entries.Entry_list 5. entryType should be "mark". 
-PASS Checking all doubly marked entries.Entry_list 5. startTime should greater than 0. 
-PASS Checking all doubly marked entries.Entry_list 5. duration of mark should be 0. 
-PASS Second loop step 0: checking entries of name "1".There should be 2 entries. 
-PASS Second loop step 0: checking entries of name "1".Entries in entrylist should be in order. 
-PASS Second loop step 0: checking entries of name "1".Entry_list 0. Entry "1" should be one that we have set. 
-PASS Second loop step 0: checking entries of name "1".Entry_list 0. entryType should be "mark". 
-PASS Second loop step 0: checking entries of name "1".Entry_list 0. startTime should greater than 0. 
-PASS Second loop step 0: checking entries of name "1".Entry_list 0. duration of mark should be 0. 
-PASS Second loop step 0: checking entries of name "1".Entry_list 1. Entry "1" should be one that we have set. 
-PASS Second loop step 0: checking entries of name "1".Entry_list 1. entryType should be "mark". 
-PASS Second loop step 0: checking entries of name "1".Entry_list 1. startTime should greater than 0. 
-PASS Second loop step 0: checking entries of name "1".Entry_list 1. duration of mark should be 0. 
-PASS Second loop step 1: checking entries of name "abc".There should be 2 entries. 
-PASS Second loop step 1: checking entries of name "abc".Entries in entrylist should be in order. 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 0. Entry "abc" should be one that we have set. 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 0. entryType should be "mark". 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 0. startTime should greater than 0. 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 0. duration of mark should be 0. 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 1. Entry "abc" should be one that we have set. 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 1. entryType should be "mark". 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 1. startTime should greater than 0. 
-PASS Second loop step 1: checking entries of name "abc".Entry_list 1. duration of mark should be 0. 
-PASS Second loop step 2: checking entries of name "".There should be 2 entries. 
-PASS Second loop step 2: checking entries of name "".Entries in entrylist should be in order. 
-PASS Second loop step 2: checking entries of name "".Entry_list 0. Entry "" should be one that we have set. 
-PASS Second loop step 2: checking entries of name "".Entry_list 0. entryType should be "mark". 
-PASS Second loop step 2: checking entries of name "".Entry_list 0. startTime should greater than 0. 
-PASS Second loop step 2: checking entries of name "".Entry_list 0. duration of mark should be 0. 
-PASS Second loop step 2: checking entries of name "".Entry_list 1. Entry "" should be one that we have set. 
-PASS Second loop step 2: checking entries of name "".Entry_list 1. entryType should be "mark". 
-PASS Second loop step 2: checking entries of name "".Entry_list 1. startTime should greater than 0. 
-PASS Second loop step 2: checking entries of name "".Entry_list 1. duration of mark should be 0. 
-PASS Second loop step 3: checking entries of name "1".There should be 2 entries. 
-PASS Second loop step 3: checking entries of name "1".Entries in entrylist should be in order. 
-PASS Second loop step 3: checking entries of name "1".Entry_list 0. Entry "1" should be one that we have set. 
-PASS Second loop step 3: checking entries of name "1".Entry_list 0. entryType should be "mark". 
-PASS Second loop step 3: checking entries of name "1".Entry_list 0. startTime should greater than 0. 
-PASS Second loop step 3: checking entries of name "1".Entry_list 0. duration of mark should be 0. 
-PASS Second loop step 3: checking entries of name "1".Entry_list 1. Entry "1" should be one that we have set. 
-PASS Second loop step 3: checking entries of name "1".Entry_list 1. entryType should be "mark". 
-PASS Second loop step 3: checking entries of name "1".Entry_list 1. startTime should greater than 0. 
-PASS Second loop step 3: checking entries of name "1".Entry_list 1. duration of mark should be 0. 
-PASS Second loop step 4: checking entries of name "abc".There should be 2 entries. 
-PASS Second loop step 4: checking entries of name "abc".Entries in entrylist should be in order. 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 0. Entry "abc" should be one that we have set. 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 0. entryType should be "mark". 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 0. startTime should greater than 0. 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 0. duration of mark should be 0. 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 1. Entry "abc" should be one that we have set. 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 1. entryType should be "mark". 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 1. startTime should greater than 0. 
-PASS Second loop step 4: checking entries of name "abc".Entry_list 1. duration of mark should be 0. 
-PASS Second loop step 5: checking entries of name "".There should be 2 entries. 
-PASS Second loop step 5: checking entries of name "".Entries in entrylist should be in order. 
-PASS Second loop step 5: checking entries of name "".Entry_list 0. Entry "" should be one that we have set. 
-PASS Second loop step 5: checking entries of name "".Entry_list 0. entryType should be "mark". 
-PASS Second loop step 5: checking entries of name "".Entry_list 0. startTime should greater than 0. 
-PASS Second loop step 5: checking entries of name "".Entry_list 0. duration of mark should be 0. 
-PASS Second loop step 5: checking entries of name "".Entry_list 1. Entry "" should be one that we have set. 
-PASS Second loop step 5: checking entries of name "".Entry_list 1. entryType should be "mark". 
-PASS Second loop step 5: checking entries of name "".Entry_list 1. startTime should greater than 0. 
-PASS Second loop step 5: checking entries of name "".Entry_list 1. duration of mark should be 0. 
+PASS There should be 0 marks
+PASS Checking all entries.There should be 3 entries.
+PASS Checking all entries.Entries in entrylist should be in order.
+PASS Checking all entries.Entry_list 0. Entry "1" should be one that we have set.
+PASS Checking all entries.Entry_list 0. entryType should be "mark".
+PASS Checking all entries.Entry_list 0. startTime should greater than 0.
+PASS Checking all entries.Entry_list 0. duration of mark should be 0.
+PASS Checking all entries.Entry_list 1. Entry "abc" should be one that we have set.
+PASS Checking all entries.Entry_list 1. entryType should be "mark".
+PASS Checking all entries.Entry_list 1. startTime should greater than 0.
+PASS Checking all entries.Entry_list 1. duration of mark should be 0.
+PASS Checking all entries.Entry_list 2. Entry "" should be one that we have set.
+PASS Checking all entries.Entry_list 2. entryType should be "mark".
+PASS Checking all entries.Entry_list 2. startTime should greater than 0.
+PASS Checking all entries.Entry_list 2. duration of mark should be 0.
+PASS First loop: checking entry of name "1".There should be 1 entries.
+PASS First loop: checking entry of name "1".Entries in entrylist should be in order.
+PASS First loop: checking entry of name "1".Entry_list 0. Entry "1" should be one that we have set.
+PASS First loop: checking entry of name "1".Entry_list 0. entryType should be "mark".
+PASS First loop: checking entry of name "1".Entry_list 0. startTime should greater than 0.
+PASS First loop: checking entry of name "1".Entry_list 0. duration of mark should be 0.
+PASS First loop: checking entry of name "abc".There should be 1 entries.
+PASS First loop: checking entry of name "abc".Entries in entrylist should be in order.
+PASS First loop: checking entry of name "abc".Entry_list 0. Entry "abc" should be one that we have set.
+PASS First loop: checking entry of name "abc".Entry_list 0. entryType should be "mark".
+PASS First loop: checking entry of name "abc".Entry_list 0. startTime should greater than 0.
+PASS First loop: checking entry of name "abc".Entry_list 0. duration of mark should be 0.
+PASS First loop: checking entry of name "".There should be 1 entries.
+PASS First loop: checking entry of name "".Entries in entrylist should be in order.
+PASS First loop: checking entry of name "".Entry_list 0. Entry "" should be one that we have set.
+PASS First loop: checking entry of name "".Entry_list 0. entryType should be "mark".
+PASS First loop: checking entry of name "".Entry_list 0. startTime should greater than 0.
+PASS First loop: checking entry of name "".Entry_list 0. duration of mark should be 0.
+PASS Checking all doubly marked entries.There should be 6 entries.
+PASS Checking all doubly marked entries.Entries in entrylist should be in order.
+PASS Checking all doubly marked entries.Entry_list 0. Entry "1" should be one that we have set.
+PASS Checking all doubly marked entries.Entry_list 0. entryType should be "mark".
+PASS Checking all doubly marked entries.Entry_list 0. startTime should greater than 0.
+PASS Checking all doubly marked entries.Entry_list 0. duration of mark should be 0.
+PASS Checking all doubly marked entries.Entry_list 1. Entry "abc" should be one that we have set.
+PASS Checking all doubly marked entries.Entry_list 1. entryType should be "mark".
+PASS Checking all doubly marked entries.Entry_list 1. startTime should greater than 0.
+PASS Checking all doubly marked entries.Entry_list 1. duration of mark should be 0.
+PASS Checking all doubly marked entries.Entry_list 2. Entry "" should be one that we have set.
+PASS Checking all doubly marked entries.Entry_list 2. entryType should be "mark".
+PASS Checking all doubly marked entries.Entry_list 2. startTime should greater than 0.
+PASS Checking all doubly marked entries.Entry_list 2. duration of mark should be 0.
+PASS Checking all doubly marked entries.Entry_list 3. Entry "1" should be one that we have set.
+PASS Checking all doubly marked entries.Entry_list 3. entryType should be "mark".
+PASS Checking all doubly marked entries.Entry_list 3. startTime should greater than 0.
+PASS Checking all doubly marked entries.Entry_list 3. duration of mark should be 0.
+PASS Checking all doubly marked entries.Entry_list 4. Entry "abc" should be one that we have set.
+PASS Checking all doubly marked entries.Entry_list 4. entryType should be "mark".
+PASS Checking all doubly marked entries.Entry_list 4. startTime should greater than 0.
+PASS Checking all doubly marked entries.Entry_list 4. duration of mark should be 0.
+PASS Checking all doubly marked entries.Entry_list 5. Entry "" should be one that we have set.
+PASS Checking all doubly marked entries.Entry_list 5. entryType should be "mark".
+PASS Checking all doubly marked entries.Entry_list 5. startTime should greater than 0.
+PASS Checking all doubly marked entries.Entry_list 5. duration of mark should be 0.
+PASS Second loop step 0: checking entries of name "1".There should be 2 entries.
+PASS Second loop step 0: checking entries of name "1".Entries in entrylist should be in order.
+PASS Second loop step 0: checking entries of name "1".Entry_list 0. Entry "1" should be one that we have set.
+PASS Second loop step 0: checking entries of name "1".Entry_list 0. entryType should be "mark".
+PASS Second loop step 0: checking entries of name "1".Entry_list 0. startTime should greater than 0.
+PASS Second loop step 0: checking entries of name "1".Entry_list 0. duration of mark should be 0.
+PASS Second loop step 0: checking entries of name "1".Entry_list 1. Entry "1" should be one that we have set.
+PASS Second loop step 0: checking entries of name "1".Entry_list 1. entryType should be "mark".
+PASS Second loop step 0: checking entries of name "1".Entry_list 1. startTime should greater than 0.
+PASS Second loop step 0: checking entries of name "1".Entry_list 1. duration of mark should be 0.
+PASS Second loop step 1: checking entries of name "abc".There should be 2 entries.
+PASS Second loop step 1: checking entries of name "abc".Entries in entrylist should be in order.
+PASS Second loop step 1: checking entries of name "abc".Entry_list 0. Entry "abc" should be one that we have set.
+PASS Second loop step 1: checking entries of name "abc".Entry_list 0. entryType should be "mark".
+PASS Second loop step 1: checking entries of name "abc".Entry_list 0. startTime should greater than 0.
+PASS Second loop step 1: checking entries of name "abc".Entry_list 0. duration of mark should be 0.
+PASS Second loop step 1: checking entries of name "abc".Entry_list 1. Entry "abc" should be one that we have set.
+PASS Second loop step 1: checking entries of name "abc".Entry_list 1. entryType should be "mark".
+PASS Second loop step 1: checking entries of name "abc".Entry_list 1. startTime should greater than 0.
+PASS Second loop step 1: checking entries of name "abc".Entry_list 1. duration of mark should be 0.
+PASS Second loop step 2: checking entries of name "".There should be 2 entries.
+PASS Second loop step 2: checking entries of name "".Entries in entrylist should be in order.
+PASS Second loop step 2: checking entries of name "".Entry_list 0. Entry "" should be one that we have set.
+PASS Second loop step 2: checking entries of name "".Entry_list 0. entryType should be "mark".
+PASS Second loop step 2: checking entries of name "".Entry_list 0. startTime should greater than 0.
+PASS Second loop step 2: checking entries of name "".Entry_list 0. duration of mark should be 0.
+PASS Second loop step 2: checking entries of name "".Entry_list 1. Entry "" should be one that we have set.
+PASS Second loop step 2: checking entries of name "".Entry_list 1. entryType should be "mark".
+PASS Second loop step 2: checking entries of name "".Entry_list 1. startTime should greater than 0.
+PASS Second loop step 2: checking entries of name "".Entry_list 1. duration of mark should be 0.
+PASS Second loop step 3: checking entries of name "1".There should be 2 entries.
+PASS Second loop step 3: checking entries of name "1".Entries in entrylist should be in order.
+PASS Second loop step 3: checking entries of name "1".Entry_list 0. Entry "1" should be one that we have set.
+PASS Second loop step 3: checking entries of name "1".Entry_list 0. entryType should be "mark".
+PASS Second loop step 3: checking entries of name "1".Entry_list 0. startTime should greater than 0.
+PASS Second loop step 3: checking entries of name "1".Entry_list 0. duration of mark should be 0.
+PASS Second loop step 3: checking entries of name "1".Entry_list 1. Entry "1" should be one that we have set.
+PASS Second loop step 3: checking entries of name "1".Entry_list 1. entryType should be "mark".
+PASS Second loop step 3: checking entries of name "1".Entry_list 1. startTime should greater than 0.
+PASS Second loop step 3: checking entries of name "1".Entry_list 1. duration of mark should be 0.
+PASS Second loop step 4: checking entries of name "abc".There should be 2 entries.
+PASS Second loop step 4: checking entries of name "abc".Entries in entrylist should be in order.
+PASS Second loop step 4: checking entries of name "abc".Entry_list 0. Entry "abc" should be one that we have set.
+PASS Second loop step 4: checking entries of name "abc".Entry_list 0. entryType should be "mark".
+PASS Second loop step 4: checking entries of name "abc".Entry_list 0. startTime should greater than 0.
+PASS Second loop step 4: checking entries of name "abc".Entry_list 0. duration of mark should be 0.
+PASS Second loop step 4: checking entries of name "abc".Entry_list 1. Entry "abc" should be one that we have set.
+PASS Second loop step 4: checking entries of name "abc".Entry_list 1. entryType should be "mark".
+PASS Second loop step 4: checking entries of name "abc".Entry_list 1. startTime should greater than 0.
+PASS Second loop step 4: checking entries of name "abc".Entry_list 1. duration of mark should be 0.
+PASS Second loop step 5: checking entries of name "".There should be 2 entries.
+PASS Second loop step 5: checking entries of name "".Entries in entrylist should be in order.
+PASS Second loop step 5: checking entries of name "".Entry_list 0. Entry "" should be one that we have set.
+PASS Second loop step 5: checking entries of name "".Entry_list 0. entryType should be "mark".
+PASS Second loop step 5: checking entries of name "".Entry_list 0. startTime should greater than 0.
+PASS Second loop step 5: checking entries of name "".Entry_list 0. duration of mark should be 0.
+PASS Second loop step 5: checking entries of name "".Entry_list 1. Entry "" should be one that we have set.
+PASS Second loop step 5: checking entries of name "".Entry_list 1. entryType should be "mark".
+PASS Second loop step 5: checking entries of name "".Entry_list 1. startTime should greater than 0.
+PASS Second loop step 5: checking entries of name "".Entry_list 1. duration of mark should be 0.
 

@@ -11,5 +11,5 @@ The following pointer types were detected: mouse.
 Refresh the page to run the tests again with a different pointer type.
 
 
-PASS setPointerCapture: DOMException NotFoundError 
+PASS setPointerCapture: DOMException NotFoundError
 

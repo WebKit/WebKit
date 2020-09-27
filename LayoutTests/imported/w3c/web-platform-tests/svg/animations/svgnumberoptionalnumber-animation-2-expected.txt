@@ -1,3 +1,3 @@
 
-PASS Test 'to' animation of SVGNumberOptionalNumber without optional number. 
+PASS Test 'to' animation of SVGNumberOptionalNumber without optional number.
 

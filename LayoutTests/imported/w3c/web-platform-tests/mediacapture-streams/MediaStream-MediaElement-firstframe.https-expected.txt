@@ -6,6 +6,6 @@ This test checks that a HTMLMediaElement with an assigned MediaStream with a vid
 
 
 
-PASS Tests that loading a MediaStream in a media element eventually results in "canplay" even when not playing or autoplaying 
-PASS Tests that loading a MediaStream in a media element sees all the expected (deterministic) events even when not playing or autoplaying 
+PASS Tests that loading a MediaStream in a media element eventually results in "canplay" even when not playing or autoplaying
+PASS Tests that loading a MediaStream in a media element sees all the expected (deterministic) events even when not playing or autoplaying
 

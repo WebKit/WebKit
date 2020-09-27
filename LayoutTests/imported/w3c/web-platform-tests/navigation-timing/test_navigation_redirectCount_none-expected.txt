@@ -3,9 +3,9 @@ Description
 This test validates that the value of the window.performance.navigation.redirectCount attribute, as well as the window.performance.timing.redirectStart and redirectEnd attributes on a non-redirected navigation.
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS timing.redirectStart on an non-redirected navigation 
-PASS timing.redirectEnd on an non-redirected navigation 
-PASS navigation.redirectCount on an non-redirected navigation 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS timing.redirectStart on an non-redirected navigation
+PASS timing.redirectEnd on an non-redirected navigation
+PASS navigation.redirectCount on an non-redirected navigation
 

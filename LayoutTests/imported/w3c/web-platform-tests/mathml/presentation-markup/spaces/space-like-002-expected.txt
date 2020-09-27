@@ -1,10 +1,10 @@
 
 FAIL space-like maction assert_approx_equals: expected 25 +/- 1 but got 0
-PASS non-space like maction (no first child) 
-PASS non-space like maction (first child not space-like) 
+PASS non-space like maction (no first child)
+PASS non-space like maction (first child not space-like)
 FAIL space-like semantics assert_approx_equals: expected 25 +/- 1 but got 0
-PASS non-space like semantics (no first child) 
-PASS non-space like semantics (first child not space-like) 
+PASS non-space like semantics (no first child)
+PASS non-space like semantics (first child not space-like)
 X
 X
 X

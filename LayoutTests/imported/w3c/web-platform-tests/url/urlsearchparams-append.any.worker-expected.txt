@@ -1,6 +1,6 @@
 
-PASS Append same name 
-PASS Append empty strings 
-PASS Append null 
-PASS Append multiple 
+PASS Append same name
+PASS Append empty strings
+PASS Append null
+PASS Append multiple
 

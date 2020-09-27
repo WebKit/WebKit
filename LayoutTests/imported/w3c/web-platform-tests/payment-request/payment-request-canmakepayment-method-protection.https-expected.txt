@@ -1,4 +1,4 @@
 If you find a buggy test, please file a bug and tag one of the suggested reviewers.
 
-PASS Optionally, at the user agent's discretion, return a promise rejected with a "NotAllowedError" DOMException. 
+PASS Optionally, at the user agent's discretion, return a promise rejected with a "NotAllowedError" DOMException.
 

@@ -1,5 +1,5 @@
 
-PASS Must have a shippingType IDL attribute 
-PASS If options.requestShipping is false, then request.shippingType attribute is null. 
-PASS If options.requestShipping is true, request.shippingType will be options.shippingType. 
+PASS Must have a shippingType IDL attribute
+PASS If options.requestShipping is false, then request.shippingType attribute is null.
+PASS If options.requestShipping is true, request.shippingType will be options.shippingType.
 

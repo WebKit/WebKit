@@ -1,6 +1,6 @@
 
-PASS IntersectionObserver in a single document using the implicit root. 
-PASS First rAF. 
-PASS document.scrollingElement.scrollTop = 300 
-PASS document.scrollingElement.scrollTop = 100 
+PASS IntersectionObserver in a single document using the implicit root.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 300
+PASS document.scrollingElement.scrollTop = 100
 

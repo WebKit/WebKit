@@ -1,3 +1,3 @@
 
-PASS Use of SVGAnimatedEnumeration within SVGFECompositeElement 
+PASS Use of SVGAnimatedEnumeration within SVGFECompositeElement
 

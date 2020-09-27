@@ -1,12 +1,12 @@
 
-PASS Element.attachShadow must create an instance of ShadowRoot for autonomous custom elements 
-PASS Element.attachShadow must create an instance of ShadowRoot for undefined autonomous custom elements 
+PASS Element.attachShadow must create an instance of ShadowRoot for autonomous custom elements
+PASS Element.attachShadow must create an instance of ShadowRoot for undefined autonomous custom elements
 FAIL Element.attachShadow for an autonomous custom element with disabledFeatures=["shadow"] should throw a NotSupportedError assert_throws_dom: Definition, not a host function "() => {
     document.createElement('shadow-disabled-element').attachShadow({mode: 'closed'});
   }" did not throw
 FAIL Element.attachShadow for a customized built-in element with disabledFeatures=["shadow"] should throw a NotSupportedError assert_throws_dom: Definition, not a host function "() => {
     h2.attachShadow({mode: 'closed'});
   }" did not throw
-PASS Element.attachShadow for a custom element with disabledFeatures=["SHADOW"] should not throw a NotSupportedError 
-PASS Element.attachShadow must throw a NotSupportedError for customized built-in elements 
+PASS Element.attachShadow for a custom element with disabledFeatures=["SHADOW"] should not throw a NotSupportedError
+PASS Element.attachShadow must throw a NotSupportedError for customized built-in elements
 

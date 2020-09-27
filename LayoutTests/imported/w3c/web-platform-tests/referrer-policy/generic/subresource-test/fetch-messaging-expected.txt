@@ -15,6 +15,6 @@ http://localhost:8800/common/security-features/subresource/xhr.py:
 }
 
 
-PASS Fetch is supported by the browser. 
-PASS Fetch is responding with HTTP headers 
+PASS Fetch is supported by the browser.
+PASS Fetch is responding with HTTP headers
 

@@ -1,3 +1,3 @@
 
-PASS Test calcMode=discrete animation on SVGAnimateTransform. 
+PASS Test calcMode=discrete animation on SVGAnimateTransform.
 

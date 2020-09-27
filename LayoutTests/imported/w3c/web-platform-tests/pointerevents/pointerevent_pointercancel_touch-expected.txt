@@ -11,43 +11,43 @@ Pointer Events pointercancel Tests
 The following pointer types were detected: touch.
 
 
-PASS pointercancel event received 
-PASS  touch pointercancel event is a PointerEvent event 
-PASS  touch pointercancel.pointerId attribute exists 
-PASS  touch pointercancel.pointerId is readonly 
-PASS  touch pointercancel.pointerId IDL type long (JS type was number) 
-PASS  touch pointercancel.width attribute exists 
-PASS  touch pointercancel.width is readonly 
-PASS  touch pointercancel.width IDL type float (JS type was number) 
-PASS  touch pointercancel.height attribute exists 
-PASS  touch pointercancel.height is readonly 
-PASS  touch pointercancel.height IDL type float (JS type was number) 
-PASS  touch pointercancel.pressure attribute exists 
-PASS  touch pointercancel.pressure is readonly 
-PASS  touch pointercancel.pressure IDL type float (JS type was number) 
-PASS  touch pointercancel.tiltX attribute exists 
-PASS  touch pointercancel.tiltX is readonly 
-PASS  touch pointercancel.tiltX IDL type long (JS type was number) 
-PASS  touch pointercancel.tiltY attribute exists 
-PASS  touch pointercancel.tiltY is readonly 
-PASS  touch pointercancel.tiltY IDL type long (JS type was number) 
-PASS  touch pointercancel.pointerType attribute exists 
-PASS  touch pointercancel.pointerType is readonly 
-PASS  touch pointercancel.pointerType IDL type string (JS type was string) 
-PASS  touch pointercancel.isPrimary attribute exists 
-PASS  touch pointercancel.isPrimary is readonly 
-PASS  touch pointercancel.isPrimary IDL type boolean (JS type was boolean) 
-PASS  touch pointercancel.detail attribute exists 
-PASS  touch pointercancel.detail is readonly 
-PASS  touch pointercancel.detail IDL type long (JS type was number) 
-PASS  touch pointercancel.detail value is 0. 
-PASS  touch pointercancel.fromElement attribute exists 
-PASS  touch pointercancel.fromElement is readonly 
-PASS  touch pointercancel.fromElement IDL type object (JS type was object) 
-PASS  touch pointercancel.fromElement value is null. 
-PASS  touch pointercancel.toElement attribute exists 
-PASS  touch pointercancel.toElement is readonly 
-PASS  touch pointercancel.toElement IDL type object (JS type was object) 
-PASS  touch pointercancel.toElement value is null. 
-PASS  touch pointercancel.pressure value is valid 
+PASS pointercancel event received
+PASS  touch pointercancel event is a PointerEvent event
+PASS  touch pointercancel.pointerId attribute exists
+PASS  touch pointercancel.pointerId is readonly
+PASS  touch pointercancel.pointerId IDL type long (JS type was number)
+PASS  touch pointercancel.width attribute exists
+PASS  touch pointercancel.width is readonly
+PASS  touch pointercancel.width IDL type float (JS type was number)
+PASS  touch pointercancel.height attribute exists
+PASS  touch pointercancel.height is readonly
+PASS  touch pointercancel.height IDL type float (JS type was number)
+PASS  touch pointercancel.pressure attribute exists
+PASS  touch pointercancel.pressure is readonly
+PASS  touch pointercancel.pressure IDL type float (JS type was number)
+PASS  touch pointercancel.tiltX attribute exists
+PASS  touch pointercancel.tiltX is readonly
+PASS  touch pointercancel.tiltX IDL type long (JS type was number)
+PASS  touch pointercancel.tiltY attribute exists
+PASS  touch pointercancel.tiltY is readonly
+PASS  touch pointercancel.tiltY IDL type long (JS type was number)
+PASS  touch pointercancel.pointerType attribute exists
+PASS  touch pointercancel.pointerType is readonly
+PASS  touch pointercancel.pointerType IDL type string (JS type was string)
+PASS  touch pointercancel.isPrimary attribute exists
+PASS  touch pointercancel.isPrimary is readonly
+PASS  touch pointercancel.isPrimary IDL type boolean (JS type was boolean)
+PASS  touch pointercancel.detail attribute exists
+PASS  touch pointercancel.detail is readonly
+PASS  touch pointercancel.detail IDL type long (JS type was number)
+PASS  touch pointercancel.detail value is 0.
+PASS  touch pointercancel.fromElement attribute exists
+PASS  touch pointercancel.fromElement is readonly
+PASS  touch pointercancel.fromElement IDL type object (JS type was object)
+PASS  touch pointercancel.fromElement value is null.
+PASS  touch pointercancel.toElement attribute exists
+PASS  touch pointercancel.toElement is readonly
+PASS  touch pointercancel.toElement IDL type object (JS type was object)
+PASS  touch pointercancel.toElement value is null.
+PASS  touch pointercancel.pressure value is valid
 

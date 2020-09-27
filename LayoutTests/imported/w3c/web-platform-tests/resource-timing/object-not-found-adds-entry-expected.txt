@@ -1,6 +1,6 @@
- 
+
 
 FAIL Test that an navigation object with a 404 response displays an entry assert_unreached: No performance entry was observed Reached unreachable code
 FAIL Test that an navigation object with a 200 response displays an entry assert_unreached: No performance entry was observed Reached unreachable code
-PASS Test that an image object with a 404 response displays an entry 
+PASS Test that an image object with a 404 response displays an entry
 

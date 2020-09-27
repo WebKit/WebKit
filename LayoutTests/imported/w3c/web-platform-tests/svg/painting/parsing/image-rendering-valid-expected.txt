@@ -1,5 +1,5 @@
 
-PASS e.style['image-rendering'] = "auto" should set the property value 
+PASS e.style['image-rendering'] = "auto" should set the property value
 FAIL e.style['image-rendering'] = "optimizequality" should set the property value assert_equals: serialization should be canonical expected "optimizequality" but got "optimizeQuality"
 FAIL e.style['image-rendering'] = "optimizespeed" should set the property value assert_equals: serialization should be canonical expected "optimizespeed" but got "optimizeSpeed"
 

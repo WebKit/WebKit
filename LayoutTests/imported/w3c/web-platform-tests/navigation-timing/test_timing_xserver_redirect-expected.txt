@@ -4,12 +4,12 @@ Description
 This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a cross-origin server side redirect navigation.
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS timing.navigation.type is TYPE_NAVIGATE 
-PASS navigation.redirectCount == 0 on a cross-origin server redirected navigation 
-PASS window.performance.timing.navigationStart > 0 
-PASS timing.redirectStart == 0 on a server redirected navigation from another domain 
-PASS timing.redirectEnd == 0 on a server redirected navigation from another domain 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS timing.navigation.type is TYPE_NAVIGATE
+PASS navigation.redirectCount == 0 on a cross-origin server redirected navigation
+PASS window.performance.timing.navigationStart > 0
+PASS timing.redirectStart == 0 on a server redirected navigation from another domain
+PASS timing.redirectEnd == 0 on a server redirected navigation from another domain
 
 

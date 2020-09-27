@@ -5,5 +5,5 @@ Description
 This test checks that adding a track to a MediaStream works as expected.
 
 
-PASS Tests that adding a track to a MediaStream works as expected 
+PASS Tests that adding a track to a MediaStream works as expected
 

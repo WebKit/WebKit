@@ -1,8 +1,8 @@
 When prompted, accept to share your audio and video stream.
 
 
-PASS Test that setting video-only valid constraints inside of "audio" is simply ignored 
-PASS Test that setting video-only invalid constraints inside of "audio" is simply ignored 
-PASS Test that setting audio-only valid constraints inside of "video" is simply ignored 
-PASS Test that setting audio-only invalid constraints inside of "video" is simply ignored 
+PASS Test that setting video-only valid constraints inside of "audio" is simply ignored
+PASS Test that setting video-only invalid constraints inside of "audio" is simply ignored
+PASS Test that setting audio-only valid constraints inside of "video" is simply ignored
+PASS Test that setting audio-only invalid constraints inside of "video" is simply ignored
 

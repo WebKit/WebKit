@@ -1,10 +1,10 @@
 Basic requestIdleCallback Tests
 
 
-PASS window.requestIdleCallback is defined 
-PASS window.cancelIdleCallback is defined 
-PASS window.requestIdleCallback() returns a number 
-PASS window.cancelIdleCallback() returns undefined 
+PASS window.requestIdleCallback is defined
+PASS window.cancelIdleCallback is defined
+PASS window.requestIdleCallback() returns a number
+PASS window.cancelIdleCallback() returns undefined
 FAIL requestIdleCallback schedules callbacks assert_true: IdleDeadline.timeRemaining() MUST be less than or equal to 50ms in the future. expected true got false
-PASS cancelIdleCallback cancels callbacks 
+PASS cancelIdleCallback cancels callbacks
 

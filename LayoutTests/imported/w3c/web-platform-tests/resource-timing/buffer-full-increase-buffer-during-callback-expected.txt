@@ -1,3 +1,3 @@
 
-PASS Test that increasing the buffer during the callback is enough for entries not to be dropped 
+PASS Test that increasing the buffer during the callback is enough for entries not to be dropped
 

@@ -1,5 +1,5 @@
 
-PASS Test that border bounding box is used to calculate intersection with a non-scrolling root. 
-PASS First rAF. 
-PASS target.style.transform = 'translateY(195px)' 
+PASS Test that border bounding box is used to calculate intersection with a non-scrolling root.
+PASS First rAF.
+PASS target.style.transform = 'translateY(195px)'
 

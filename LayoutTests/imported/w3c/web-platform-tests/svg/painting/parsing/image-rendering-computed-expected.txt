@@ -1,5 +1,5 @@
 
-PASS Property image-rendering value 'auto' 
+PASS Property image-rendering value 'auto'
 FAIL Property image-rendering value 'optimizequality' assert_equals: expected "optimizequality" but got "optimizeQuality"
 FAIL Property image-rendering value 'optimizespeed' assert_equals: expected "optimizespeed" but got "optimizeSpeed"
 

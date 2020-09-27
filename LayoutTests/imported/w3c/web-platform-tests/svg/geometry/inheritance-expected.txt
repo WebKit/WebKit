@@ -1,16 +1,16 @@
 
-PASS Property cx has initial value 0px 
-PASS Property cx does not inherit 
-PASS Property cy has initial value 0px 
-PASS Property cy does not inherit 
-PASS Property r has initial value 0px 
-PASS Property r does not inherit 
-PASS Property rx has initial value auto 
-PASS Property rx does not inherit 
-PASS Property ry has initial value auto 
-PASS Property ry does not inherit 
-PASS Property x has initial value 0px 
-PASS Property x does not inherit 
-PASS Property y has initial value 0px 
-PASS Property y does not inherit 
+PASS Property cx has initial value 0px
+PASS Property cx does not inherit
+PASS Property cy has initial value 0px
+PASS Property cy does not inherit
+PASS Property r has initial value 0px
+PASS Property r does not inherit
+PASS Property rx has initial value auto
+PASS Property rx does not inherit
+PASS Property ry has initial value auto
+PASS Property ry does not inherit
+PASS Property x has initial value 0px
+PASS Property x does not inherit
+PASS Property y has initial value 0px
+PASS Property y does not inherit
 

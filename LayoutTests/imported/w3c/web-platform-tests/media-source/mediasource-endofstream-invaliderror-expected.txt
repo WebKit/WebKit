@@ -1,5 +1,5 @@
 
-PASS Test MediaSource.endOfStream() with invalid non-empty error string. 
-PASS Test MediaSource.endOfStream() with invalid empty error string. 
-PASS Test MediaSource.endOfStream() with invalid null error parameter. 
+PASS Test MediaSource.endOfStream() with invalid non-empty error string.
+PASS Test MediaSource.endOfStream() with invalid empty error string.
+PASS Test MediaSource.endOfStream() with invalid null error parameter.
 

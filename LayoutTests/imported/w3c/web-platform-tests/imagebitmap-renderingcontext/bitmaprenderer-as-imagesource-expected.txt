@@ -1,5 +1,5 @@
 
-PASS Test that createImageBitmap from a bitmaprenderer canvas produces correct result 
-PASS Test that createImageBitmap on a bitmaprenderer canvas that never consumes any source produces correct result 
-PASS Test that createImageBitmap on a bitmaprenderer canvas that consumes null produces correct result 
+PASS Test that createImageBitmap from a bitmaprenderer canvas produces correct result
+PASS Test that createImageBitmap on a bitmaprenderer canvas that never consumes any source produces correct result
+PASS Test that createImageBitmap on a bitmaprenderer canvas that consumes null produces correct result
 

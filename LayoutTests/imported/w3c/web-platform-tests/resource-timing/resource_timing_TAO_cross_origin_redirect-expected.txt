@@ -1,7 +1,7 @@
 
 
-PASS redirectStart should be greater than 0 in timing allowed cross-origin redirect. 
-PASS redirectStart should be equal to startTime in timing allowed cross-origin redirect. 
-PASS redirectEnd should be no less than redirectStart in timing allowed cross-origin redirect. 
-PASS fetchStart should be no less than redirectEnd in timing allowed cross-origin redirect. 
+PASS redirectStart should be greater than 0 in timing allowed cross-origin redirect.
+PASS redirectStart should be equal to startTime in timing allowed cross-origin redirect.
+PASS redirectEnd should be no less than redirectStart in timing allowed cross-origin redirect.
+PASS fetchStart should be no less than redirectEnd in timing allowed cross-origin redirect.
 

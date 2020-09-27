@@ -3,5 +3,5 @@ slotted below
 slotted above
 belowHost
 
-PASS Order when all tabindex=-1 is and delegatesFocus = true 
+PASS Order when all tabindex=-1 is and delegatesFocus = true
 

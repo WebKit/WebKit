@@ -1,22 +1,22 @@
 
-PASS Property stroke-width value '10' 
-PASS Property stroke-width value 'calc(10px + 0.5em)' 
+PASS Property stroke-width value '10'
+PASS Property stroke-width value 'calc(10px + 0.5em)'
 FAIL Property stroke-width value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
-PASS Property stroke-width value '40%' 
-PASS Property stroke-width value 'calc(50% + 60px)' 
-PASS stroke-width computes em lengths 
-PASS stroke-width computes ex lengths 
-PASS stroke-width computes ch lengths 
-PASS stroke-width computes rem lengths 
-PASS stroke-width computes vw lengths 
-PASS stroke-width computes vh lengths 
-PASS stroke-width computes vmin lengths 
-PASS stroke-width computes vmax lengths 
-PASS stroke-width computes cm lengths 
-PASS stroke-width computes mm lengths 
-PASS stroke-width computes Q lengths 
-PASS stroke-width computes in lengths 
-PASS stroke-width computes pt lengths 
-PASS stroke-width computes pc lengths 
-PASS stroke-width computes px lengths 
+PASS Property stroke-width value '40%'
+PASS Property stroke-width value 'calc(50% + 60px)'
+PASS stroke-width computes em lengths
+PASS stroke-width computes ex lengths
+PASS stroke-width computes ch lengths
+PASS stroke-width computes rem lengths
+PASS stroke-width computes vw lengths
+PASS stroke-width computes vh lengths
+PASS stroke-width computes vmin lengths
+PASS stroke-width computes vmax lengths
+PASS stroke-width computes cm lengths
+PASS stroke-width computes mm lengths
+PASS stroke-width computes Q lengths
+PASS stroke-width computes in lengths
+PASS stroke-width computes pt lengths
+PASS stroke-width computes pc lengths
+PASS stroke-width computes px lengths
 

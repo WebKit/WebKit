@@ -6,5 +6,5 @@ Test Description: This test checks that the default value for scale inside an if
 iframe's window.visualViewport.scale is 1.
 
 
-PASS iframe's visualViewport.scale default value. 
+PASS iframe's visualViewport.scale default value.
 

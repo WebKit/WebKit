@@ -3,20 +3,20 @@ Description
 This test checks for the presence of the navigator.mediaDevices.getSupportedConstraints() method.
 
 
-PASS navigator.mediaDevices.getSupportedConstraints exists 
-PASS width is supported 
-PASS height is supported 
-PASS aspectRatio is supported 
-PASS frameRate is supported 
-PASS facingMode is supported 
+PASS navigator.mediaDevices.getSupportedConstraints exists
+PASS width is supported
+PASS height is supported
+PASS aspectRatio is supported
+PASS frameRate is supported
+PASS facingMode is supported
 FAIL resizeMode is supported assert_true: expected true got undefined
 FAIL sampleRate is supported assert_true: expected true got false
 FAIL sampleSize is supported assert_true: expected true got false
-PASS echoCancellation is supported 
+PASS echoCancellation is supported
 FAIL autoGainControl is supported assert_true: expected true got undefined
 FAIL noiseSuppression is supported assert_true: expected true got undefined
 FAIL latency is supported assert_true: expected true got undefined
 FAIL channelCount is supported assert_true: expected true got undefined
-PASS deviceId is supported 
+PASS deviceId is supported
 FAIL groupId is supported assert_true: expected true got false
 

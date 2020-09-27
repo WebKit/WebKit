@@ -1,8 +1,8 @@
 
 FAIL complex space-like subtree assert_approx_equals: expected 25 +/- 1 but got 0
 FAIL complex space-like subtree, from in-flow children assert_approx_equals: expected 25 +/- 1 but got 0
-PASS complex non-space-like subtree 
-PASS complex non-space-like subtree, from in-flow children 
+PASS complex non-space-like subtree
+PASS complex non-space-like subtree, from in-flow children
 X
 X
 X

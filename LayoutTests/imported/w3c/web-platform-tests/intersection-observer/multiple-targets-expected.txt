@@ -1,7 +1,7 @@
 
-PASS One observer with multiple targets. 
-PASS First rAF. 
-PASS document.scrollingElement.scrollTop = 150 
-PASS document.scrollingElement.scrollTop = 10000 
-PASS document.scrollingElement.scrollTop = 0 
+PASS One observer with multiple targets.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 150
+PASS document.scrollingElement.scrollTop = 10000
+PASS document.scrollingElement.scrollTop = 0
 

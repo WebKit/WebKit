@@ -1,4 +1,4 @@
 
-PASS IntersectionObserverEntry.boundingClientRect should match target.boundingClientRect() 
-PASS First rAF should generate notification. 
+PASS IntersectionObserverEntry.boundingClientRect should match target.boundingClientRect()
+PASS First rAF should generate notification.
 

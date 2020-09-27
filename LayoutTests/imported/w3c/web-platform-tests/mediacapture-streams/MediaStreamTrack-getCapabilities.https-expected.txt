@@ -1,21 +1,21 @@
 
-PASS Setup audio MediaStreamTrack getCapabilities() test for sampleRate 
-PASS Setup audio MediaStreamTrack getCapabilities() test for sampleSize 
-PASS Setup audio MediaStreamTrack getCapabilities() test for echoCancellation 
-PASS Setup audio MediaStreamTrack getCapabilities() test for autoGainControl 
-PASS Setup audio MediaStreamTrack getCapabilities() test for noiseSuppression 
-PASS Setup audio MediaStreamTrack getCapabilities() test for latency 
-PASS Setup audio MediaStreamTrack getCapabilities() test for channelCount 
-PASS Setup audio MediaStreamTrack getCapabilities() test for deviceId 
-PASS Setup audio MediaStreamTrack getCapabilities() test for groupId 
-PASS Setup video MediaStreamTrack getCapabilities() test for width 
-PASS Setup video MediaStreamTrack getCapabilities() test for height 
-PASS Setup video MediaStreamTrack getCapabilities() test for aspectRatio 
-PASS Setup video MediaStreamTrack getCapabilities() test for frameRate 
-PASS Setup video MediaStreamTrack getCapabilities() test for facingMode 
-PASS Setup video MediaStreamTrack getCapabilities() test for resizeMode 
-PASS Setup video MediaStreamTrack getCapabilities() test for deviceId 
-PASS Setup video MediaStreamTrack getCapabilities() test for groupId 
+PASS Setup audio MediaStreamTrack getCapabilities() test for sampleRate
+PASS Setup audio MediaStreamTrack getCapabilities() test for sampleSize
+PASS Setup audio MediaStreamTrack getCapabilities() test for echoCancellation
+PASS Setup audio MediaStreamTrack getCapabilities() test for autoGainControl
+PASS Setup audio MediaStreamTrack getCapabilities() test for noiseSuppression
+PASS Setup audio MediaStreamTrack getCapabilities() test for latency
+PASS Setup audio MediaStreamTrack getCapabilities() test for channelCount
+PASS Setup audio MediaStreamTrack getCapabilities() test for deviceId
+PASS Setup audio MediaStreamTrack getCapabilities() test for groupId
+PASS Setup video MediaStreamTrack getCapabilities() test for width
+PASS Setup video MediaStreamTrack getCapabilities() test for height
+PASS Setup video MediaStreamTrack getCapabilities() test for aspectRatio
+PASS Setup video MediaStreamTrack getCapabilities() test for frameRate
+PASS Setup video MediaStreamTrack getCapabilities() test for facingMode
+PASS Setup video MediaStreamTrack getCapabilities() test for resizeMode
+PASS Setup video MediaStreamTrack getCapabilities() test for deviceId
+PASS Setup video MediaStreamTrack getCapabilities() test for groupId
 FAIL Setup audio InputDeviceInfo getCapabilities() test for sampleRate assert_inherits: property "getCapabilities" not found in prototype chain
 FAIL Setup audio InputDeviceInfo getCapabilities() test for sampleSize assert_inherits: property "getCapabilities" not found in prototype chain
 FAIL Setup audio InputDeviceInfo getCapabilities() test for echoCancellation assert_inherits: property "getCapabilities" not found in prototype chain
@@ -33,12 +33,12 @@ FAIL Setup video InputDeviceInfo getCapabilities() test for facingMode assert_in
 FAIL Setup video InputDeviceInfo getCapabilities() test for resizeMode assert_inherits: property "getCapabilities" not found in prototype chain
 FAIL Setup video InputDeviceInfo getCapabilities() test for deviceId assert_inherits: property "getCapabilities" not found in prototype chain
 FAIL Setup video InputDeviceInfo getCapabilities() test for groupId assert_inherits: property "getCapabilities" not found in prototype chain
-PASS Audio track getCapabilities() sampleRate property present. 
-PASS Audio track getCapabilities() sampleRate properly supported. 
+PASS Audio track getCapabilities() sampleRate property present.
+PASS Audio track getCapabilities() sampleRate properly supported.
 FAIL Audio track getCapabilities() sampleSize property present. assert_true: expected true got false
 FAIL Audio track getCapabilities() sampleSize properly supported. assert_equals: expected "object" but got "undefined"
-PASS Audio track getCapabilities() echoCancellation property present. 
-PASS Audio track getCapabilities() echoCancellation properly supported. 
+PASS Audio track getCapabilities() echoCancellation property present.
+PASS Audio track getCapabilities() echoCancellation properly supported.
 FAIL Audio track getCapabilities() autoGainControl property present. assert_true: expected true got false
 FAIL Audio track getCapabilities() autoGainControl properly supported. undefined is not an object (evaluating 'capability.length')
 FAIL Audio track getCapabilities() noiseSuppression property present. assert_true: expected true got false
@@ -47,26 +47,26 @@ FAIL Audio track getCapabilities() latency property present. assert_true: expect
 FAIL Audio track getCapabilities() latency properly supported. assert_equals: expected "object" but got "undefined"
 FAIL Audio track getCapabilities() channelCount property present. assert_true: expected true got false
 FAIL Audio track getCapabilities() channelCount properly supported. assert_equals: expected "object" but got "undefined"
-PASS Audio track getCapabilities() deviceId property present. 
-PASS Audio track getCapabilities() deviceId properly supported. 
+PASS Audio track getCapabilities() deviceId property present.
+PASS Audio track getCapabilities() deviceId properly supported.
 FAIL Audio track getCapabilities() groupId property present. assert_true: expected true got false
 FAIL Audio track getCapabilities() groupId properly supported. assert_equals: expected "string" but got "undefined"
-PASS Video track getCapabilities() width property present. 
-PASS Video track getCapabilities() width properly supported. 
-PASS Video track getCapabilities() height property present. 
-PASS Video track getCapabilities() height properly supported. 
-PASS Video track getCapabilities() aspectRatio property present. 
-PASS Video track getCapabilities() aspectRatio properly supported. 
-PASS Video track getCapabilities() frameRate property present. 
-PASS Video track getCapabilities() frameRate properly supported. 
-PASS Video track getCapabilities() facingMode property present. 
-PASS Video track getCapabilities() facingMode properly supported. 
+PASS Video track getCapabilities() width property present.
+PASS Video track getCapabilities() width properly supported.
+PASS Video track getCapabilities() height property present.
+PASS Video track getCapabilities() height properly supported.
+PASS Video track getCapabilities() aspectRatio property present.
+PASS Video track getCapabilities() aspectRatio properly supported.
+PASS Video track getCapabilities() frameRate property present.
+PASS Video track getCapabilities() frameRate properly supported.
+PASS Video track getCapabilities() facingMode property present.
+PASS Video track getCapabilities() facingMode properly supported.
 FAIL Video track getCapabilities() resizeMode property present. assert_true: expected true got false
 FAIL Video track getCapabilities() resizeMode properly supported. undefined is not an object (evaluating 'capability.forEach')
 FAIL Video track getCapabilities() resizeMode properly supported. Value: none undefined is not an object (evaluating 'expected.indexOf')
 FAIL Video track getCapabilities() resizeMode properly supported. Value: crop-and-scale undefined is not an object (evaluating 'expected.indexOf')
-PASS Video track getCapabilities() deviceId property present. 
-PASS Video track getCapabilities() deviceId properly supported. 
+PASS Video track getCapabilities() deviceId property present.
+PASS Video track getCapabilities() deviceId properly supported.
 FAIL Video track getCapabilities() groupId property present. assert_true: expected true got false
 FAIL Video track getCapabilities() groupId properly supported. assert_equals: expected "string" but got "undefined"
 

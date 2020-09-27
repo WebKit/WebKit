@@ -1,8 +1,8 @@
 
-PASS registrations are not returned following unregister 
-PASS Register then getRegistrations 
-PASS Register multiple times then getRegistrations 
-PASS Register then Unregister then getRegistrations 
-PASS Register then Unregister with controlled frame then getRegistrations 
-PASS getRegistrations promise resolves only with same origin registrations. 
+PASS registrations are not returned following unregister
+PASS Register then getRegistrations
+PASS Register multiple times then getRegistrations
+PASS Register then Unregister then getRegistrations
+PASS Register then Unregister with controlled frame then getRegistrations
+PASS getRegistrations promise resolves only with same origin registrations.
 

@@ -1,4 +1,4 @@
 
-PASS e.style['text-anchor'] = "auto" should not set the property value 
-PASS e.style['text-anchor'] = "start middle" should not set the property value 
+PASS e.style['text-anchor'] = "auto" should not set the property value
+PASS e.style['text-anchor'] = "start middle" should not set the property value
 

@@ -95,7 +95,7 @@ FAIL displaystyle on the none element is mapped to CSS math-style assert_equals:
 FAIL mathvariant on the semantics element is mapped to CSS text-transform assert_equals: attribute specified expected "math-fraktur" but got "none"
 FAIL scriptlevel on the semantics element is mapped to CSS math-script-level assert_equals: no attribute expected "0" but got ""
 FAIL displaystyle on the semantics element is mapped to CSS math-style assert_equals: no attribute expected "inline" but got ""
- 
-   
- 
+
+
+
 

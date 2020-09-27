@@ -1,3 +1,3 @@
 
-PASS The response from service worker should be correctly MIME siniffed. 
+PASS The response from service worker should be correctly MIME siniffed.
 

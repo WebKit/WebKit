@@ -1,7 +1,7 @@
 
-PASS TransformStream flush is called immediately when the writable is closed, if no writes are queued 
-PASS TransformStream flush is called after all queued writes finish, once the writable is closed 
-PASS TransformStream flush gets a chance to enqueue more into the readable 
-PASS TransformStream flush gets a chance to enqueue more into the readable, and can then async close 
-PASS error() during flush should cause writer.close() to reject 
+PASS TransformStream flush is called immediately when the writable is closed, if no writes are queued
+PASS TransformStream flush is called after all queued writes finish, once the writable is closed
+PASS TransformStream flush gets a chance to enqueue more into the readable
+PASS TransformStream flush gets a chance to enqueue more into the readable, and can then async close
+PASS error() during flush should cause writer.close() to reject
 

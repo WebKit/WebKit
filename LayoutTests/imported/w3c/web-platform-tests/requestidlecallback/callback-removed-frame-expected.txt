@@ -1,3 +1,3 @@
 
-PASS calling requestIdleCallback on a contentWindow from a removed iframe should not trigger the callback 
+PASS calling requestIdleCallback on a contentWindow from a removed iframe should not trigger the callback
 

@@ -1,9 +1,9 @@
 
-PASS Tracks have empty default content hint 
-PASS Accepts valid audio contentHints 
-PASS Audio tracks ignore invalid/video contentHints 
-PASS Accepts valid video contentHints 
-PASS Video tracks ignore invalid/audio contentHints 
-PASS Cloned video tracks have separate contentHints 
-PASS Cloned audio tracks have separate contentHints 
+PASS Tracks have empty default content hint
+PASS Accepts valid audio contentHints
+PASS Audio tracks ignore invalid/video contentHints
+PASS Accepts valid video contentHints
+PASS Video tracks ignore invalid/audio contentHints
+PASS Cloned video tracks have separate contentHints
+PASS Cloned audio tracks have separate contentHints
 

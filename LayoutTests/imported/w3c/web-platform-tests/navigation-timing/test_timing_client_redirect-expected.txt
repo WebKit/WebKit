@@ -3,12 +3,12 @@ Description
 This test validates the values of the window.navigation.redirectCount and the window.performance.timing.redirectStart/End times on a client side redirect.
 
 
-PASS window.performance is defined 
-PASS window.performance.navigation is defined 
-PASS window.performance.timing is defined 
-PASS timing.navigation.type is TYPE_NAVIGATE 
-PASS navigation.redirectCount == 0 on an client redirected navigation 
-PASS timing.redirectStart == 0 on an client redirected navigation 
-PASS timing.redirectEnd == 0 on an client redirected navigation 
+PASS window.performance is defined
+PASS window.performance.navigation is defined
+PASS window.performance.timing is defined
+PASS timing.navigation.type is TYPE_NAVIGATE
+PASS navigation.redirectCount == 0 on an client redirected navigation
+PASS timing.redirectStart == 0 on an client redirected navigation
+PASS timing.redirectEnd == 0 on an client redirected navigation
 
 

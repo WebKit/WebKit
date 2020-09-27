@@ -1,6 +1,6 @@
 
-PASS e.style['ry'] = "10" should not set the property value 
-PASS e.style['ry'] = "none" should not set the property value 
-PASS e.style['ry'] = "10px 20px" should not set the property value 
-PASS e.style['ry'] = "-1px" should not set the property value 
+PASS e.style['ry'] = "10" should not set the property value
+PASS e.style['ry'] = "none" should not set the property value
+PASS e.style['ry'] = "10px 20px" should not set the property value
+PASS e.style['ry'] = "-1px" should not set the property value
 

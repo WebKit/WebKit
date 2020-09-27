@@ -1,12 +1,12 @@
 
-PASS Test attribute values on a closed MediaSource object. 
-PASS Test addSourceBuffer() while closed. 
-PASS Test removeSourceBuffer() while closed. 
-PASS Test endOfStream() while closed. 
-PASS Test endOfStream(decode) while closed. 
-PASS Test endOfStream(network) while closed. 
-PASS Test setting duration while closed. 
-PASS Test setting duration while open->closed. 
-PASS Test getting duration while open->closed. 
-PASS Test sourcebuffer.abort when closed. 
+PASS Test attribute values on a closed MediaSource object.
+PASS Test addSourceBuffer() while closed.
+PASS Test removeSourceBuffer() while closed.
+PASS Test endOfStream() while closed.
+PASS Test endOfStream(decode) while closed.
+PASS Test endOfStream(network) while closed.
+PASS Test setting duration while closed.
+PASS Test setting duration while open->closed.
+PASS Test getting duration while open->closed.
+PASS Test sourcebuffer.abort when closed.
 

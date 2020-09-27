@@ -1,13 +1,13 @@
 
-PASS Script: Ed255519 signature, passes. 
+PASS Script: Ed255519 signature, passes.
 FAIL Script: Ed255519 signature, fails because key is malformed. assert_unreached: Bad load succeeded. Reached unreachable code
 FAIL Script: Ed255519 signature, fails because wrong key. assert_unreached: Bad load succeeded. Reached unreachable code
 FAIL Script: Ed255519 signature, fails because no signature in response header. assert_unreached: Bad load succeeded. Reached unreachable code
 FAIL Script: Ed255519 signature, fails because incorrect signature in response. assert_unreached: Bad load succeeded. Reached unreachable code
-PASS Script: Ed255519 signature, passes if any (first) of two keys passes. 
-PASS Script: Ed255519 signature, passes if any (second) of two keys passes. 
-PASS Script: Ed255519 signature, passes because at least one signature matches. 
-PASS Script: Ed255519 signature, passes (as above), with commas between values. 
-PASS Script: Ed255519 signature, passes (as above), with multiple headers. 
-PASS Script: Ed255519 signature, passes, with multiple signature + multiple keys. 
+PASS Script: Ed255519 signature, passes if any (first) of two keys passes.
+PASS Script: Ed255519 signature, passes if any (second) of two keys passes.
+PASS Script: Ed255519 signature, passes because at least one signature matches.
+PASS Script: Ed255519 signature, passes (as above), with commas between values.
+PASS Script: Ed255519 signature, passes (as above), with multiple headers.
+PASS Script: Ed255519 signature, passes, with multiple signature + multiple keys.
 

@@ -1,15 +1,15 @@
 
-PASS Event path for an event with a relatedTarget. relatedTarget != target. 
-PASS Event path for an event with a relatedTarget. Event should be dispatched even when target and relatedTarget are same. 
-PASS Event path for an event with a relatedTarget. Event should stop at the shadow root 
-PASS Event path for an event with a relatedTarget which is identical to target. Event should be dispatched and should stop at the shadow root. 
-PASS Event path for an event with a relatedTarget. target and relaterTarget do not share any shadow-including ancestor. target is in a shadow tree. 
-PASS Event path for an event with a relatedTarget. target and relaterTarget do not share any shadow-including ancestor. target is not in a shadow tree 
-PASS Event path for an event with a relatedTarget. target and relaterTarget share the same shadow-including ancestor. Both are in shadow trees. 
-PASS Event path for an event with a relatedTarget. relatedTarget is a shadow-including ancestor of target. 
-PASS Event path for an event with a relatedTarget. target is a shadow-including ancestor of relatedTarget. 
-PASS Event path for an event with a relatedTarget. target is assigned to a slot. 
-PASS Event path for an event with a relatedTarget. relatedTarget is assigned to a slot. 
-PASS Event path for an event with a relatedTarget. Event should be dispatched at every slots. 
-PASS Event path for an event with a relatedTarget. Event should be dispatched at every slots. relatedTarget should be correctly retargeted. 
+PASS Event path for an event with a relatedTarget. relatedTarget != target.
+PASS Event path for an event with a relatedTarget. Event should be dispatched even when target and relatedTarget are same.
+PASS Event path for an event with a relatedTarget. Event should stop at the shadow root
+PASS Event path for an event with a relatedTarget which is identical to target. Event should be dispatched and should stop at the shadow root.
+PASS Event path for an event with a relatedTarget. target and relaterTarget do not share any shadow-including ancestor. target is in a shadow tree.
+PASS Event path for an event with a relatedTarget. target and relaterTarget do not share any shadow-including ancestor. target is not in a shadow tree
+PASS Event path for an event with a relatedTarget. target and relaterTarget share the same shadow-including ancestor. Both are in shadow trees.
+PASS Event path for an event with a relatedTarget. relatedTarget is a shadow-including ancestor of target.
+PASS Event path for an event with a relatedTarget. target is a shadow-including ancestor of relatedTarget.
+PASS Event path for an event with a relatedTarget. target is assigned to a slot.
+PASS Event path for an event with a relatedTarget. relatedTarget is assigned to a slot.
+PASS Event path for an event with a relatedTarget. Event should be dispatched at every slots.
+PASS Event path for an event with a relatedTarget. Event should be dispatched at every slots. relatedTarget should be correctly retargeted.
 

@@ -2,9 +2,9 @@ CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 
-PASS ResizeObserver implemented 
-PASS guard 
-PASS test0: multiple notifications inside same event loop 
-PASS test1: depths of shadow roots 
-PASS test2: move target in dom while inside event loop 
+PASS ResizeObserver implemented
+PASS guard
+PASS test0: multiple notifications inside same event loop
+PASS test1: depths of shadow roots
+PASS test2: move target in dom while inside event loop
 

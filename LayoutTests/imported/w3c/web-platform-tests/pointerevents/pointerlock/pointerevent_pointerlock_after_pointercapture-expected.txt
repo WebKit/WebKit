@@ -8,5 +8,5 @@ Keep moving the mouse inside the green rectangle.
 Test passes if the pointer capture is released on the yellow rectangle when the green rectangle gets the pointer lock.
 
 
-PASS mouse no pointercapture while pointerlock 
+PASS mouse no pointercapture while pointerlock
 

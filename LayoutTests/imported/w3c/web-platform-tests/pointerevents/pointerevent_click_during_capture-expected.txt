@@ -10,6 +10,6 @@ Repeat the two steps above once again.
 
 
 FAIL mouse click target during capture assert_equals: An element should only receive click when it is the first common ancestor of pointerdown and pointerup targets expected "pointerdown@green,gotpointercapture@blue,pointerup@blue,click@grey,lostpointercapture@blue" but got "pointerdown@green,gotpointercapture@blue,pointerup@blue,lostpointercapture@blue"
-PASS Click target when pointerup/down targeted at the same element with no capture 
-PASS Click target when pointerup/down targeted at different elements with no capture 
+PASS Click target when pointerup/down targeted at the same element with no capture
+PASS Click target when pointerup/down targeted at different elements with no capture
 

@@ -1,3 +1,3 @@
 
-PASS Test calcMode spline with from-by animation. You should see a green 100x100 rect and only PASS messages 
+PASS Test calcMode spline with from-by animation. You should see a green 100x100 rect and only PASS messages
 

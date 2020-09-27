@@ -1,13 +1,13 @@
 
-PASS (pre-req for comparison tests) all CSS short-hand supported 
-PASS (pre-req for comparison tests) initial CSS value supported 
-PASS Compare CSS div definitions (only valid if pre-reqs pass) 
-PASS Compare CSS span definitions (only valid if pre-reqs pass) 
-PASS p is display: block 
-PASS ul > li is display: list-item 
-PASS ol > li is display: list-item 
-PASS table is display: table 
-PASS tbody is display: table-row-group 
-PASS tr is display: table-row 
-PASS td is display: table-cell 
+PASS (pre-req for comparison tests) all CSS short-hand supported
+PASS (pre-req for comparison tests) initial CSS value supported
+PASS Compare CSS div definitions (only valid if pre-reqs pass)
+PASS Compare CSS span definitions (only valid if pre-reqs pass)
+PASS p is display: block
+PASS ul > li is display: list-item
+PASS ol > li is display: list-item
+PASS table is display: table
+PASS tbody is display: table-row-group
+PASS tr is display: table-row
+PASS td is display: table-cell
 

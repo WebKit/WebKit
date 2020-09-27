@@ -1,5 +1,5 @@
 
-PASS e.style['stroke-miterlimit'] = "1." should not set the property value 
-PASS e.style['stroke-miterlimit'] = "2 3" should not set the property value 
-PASS e.style['stroke-miterlimit'] = "-4" should not set the property value 
+PASS e.style['stroke-miterlimit'] = "1." should not set the property value
+PASS e.style['stroke-miterlimit'] = "2 3" should not set the property value
+PASS e.style['stroke-miterlimit'] = "-4" should not set the property value
 

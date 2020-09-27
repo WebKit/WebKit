@@ -1,6 +1,6 @@
 
-PASS Unregister on script evaluation 
-PASS Unregister on installing event 
-PASS Unregister on activate event 
-PASS Unregister controlling service worker 
+PASS Unregister on script evaluation
+PASS Unregister on installing event
+PASS Unregister on activate event
+PASS Unregister controlling service worker
 

@@ -1,5 +1,5 @@
 This is fallback content
 
-PASS Children of a slot in a document tree should not be counted in flattened assigned nodes. 
-PASS Slot fallback content in shadow tree should be counted in flattened assigned nodes. 
+PASS Children of a slot in a document tree should not be counted in flattened assigned nodes.
+PASS Slot fallback content in shadow tree should be counted in flattened assigned nodes.
 

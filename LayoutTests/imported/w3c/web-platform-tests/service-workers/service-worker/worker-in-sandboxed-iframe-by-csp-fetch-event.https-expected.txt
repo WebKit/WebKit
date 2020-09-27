@@ -1,9 +1,9 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Prepare a service worker. 
+PASS Prepare a service worker.
 FAIL Prepare an iframe sandboxed by CSP HTTP header with allow-scripts. assert_false: Service worker should NOT control the sandboxed page expected false got true
-PASS Prepare an iframe sandboxed by CSP HTTP header with allow-scripts and allow-same-origin. 
+PASS Prepare an iframe sandboxed by CSP HTTP header with allow-scripts and allow-same-origin.
 TIMEOUT Fetch request from a worker in iframe sandboxed by CSP HTTP header allow-scripts flag Test timed out
-NOTRUN Fetch request from a worker in iframe sandboxed by CSP HTTP header with allow-scripts and allow-same-origin flag 
+NOTRUN Fetch request from a worker in iframe sandboxed by CSP HTTP header with allow-scripts and allow-same-origin flag
 

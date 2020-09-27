@@ -1,4 +1,4 @@
 
-PASS 4 resource timing entries should be stored in this page. 
-PASS No resource timing entries should be stored after clearResourceTimings. 
+PASS 4 resource timing entries should be stored in this page.
+PASS No resource timing entries should be stored after clearResourceTimings.
 

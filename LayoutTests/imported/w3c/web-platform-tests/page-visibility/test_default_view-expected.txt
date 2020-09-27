@@ -3,11 +3,11 @@ Description
 This test validates that document.hidden == false and document.visibilityState == "visible" for windowless subdocuments.
 
 
-PASS document.hidden is defined and not null. 
-PASS document.visibilityState is defined and not null. 
-PASS windowless subdocument generated for test has a null default view 
-PASS document.hidden is definedwindowless subdocument. 
-PASS document.visibilityState is definedwindowless subdocument. 
-PASS hidden == true for windowless subdocuments with a null default view 
-PASS visibilityState == hidden for windowless subdocuments with a null default view 
+PASS document.hidden is defined and not null.
+PASS document.visibilityState is defined and not null.
+PASS windowless subdocument generated for test has a null default view
+PASS document.hidden is definedwindowless subdocument.
+PASS document.visibilityState is definedwindowless subdocument.
+PASS hidden == true for windowless subdocuments with a null default view
+PASS visibilityState == hidden for windowless subdocuments with a null default view
 

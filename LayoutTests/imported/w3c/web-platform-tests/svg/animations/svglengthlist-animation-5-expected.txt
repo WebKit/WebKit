@@ -1,4 +1,4 @@
 ABCD
 
-PASS Test additive='sum' animation of SVGLengthList. 
+PASS Test additive='sum' animation of SVGLengthList.
 

@@ -1,8 +1,8 @@
 
-PASS Respective horizontal positions 
-PASS Alignment of the base on the baseline 
-PASS Vertical position of scripts 
-PASS Width of scripted elements 
-PASS Height of scripted elements 
-PASS Size of empty elements 
+PASS Respective horizontal positions
+PASS Alignment of the base on the baseline
+PASS Vertical position of scripts
+PASS Width of scripted elements
+PASS Height of scripted elements
+PASS Size of empty elements
 

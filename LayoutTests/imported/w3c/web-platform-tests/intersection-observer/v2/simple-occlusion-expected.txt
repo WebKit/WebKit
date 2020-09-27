@@ -1,6 +1,6 @@
 
-PASS IntersectionObserverV2 in a single document using the implicit root, with an occluding element. 
-PASS First rAF. 
+PASS IntersectionObserverV2 in a single document using the implicit root, with an occluding element.
+PASS First rAF.
 FAIL occluder.style.marginTop = '-10px' assert_equals: entries.length expected 2 but got 1
 FAIL occluder.style.opacity = 0 assert_equals: entries.length expected 3 but got 1
 

@@ -1,7 +1,7 @@
 
-PASS getElementsById() should not leak nodes in shadow tree 
-PASS getElementsByClassName() should not leak nodes in shadow tree 
-PASS getElementsByName() should not leak nodes in shadow tree 
-PASS getElementsByTagName() should not leak nodes in shadow tree 
-PASS getElementsByTagNameNS() should not leak nodes in shadow tree 
+PASS getElementsById() should not leak nodes in shadow tree
+PASS getElementsByClassName() should not leak nodes in shadow tree
+PASS getElementsByName() should not leak nodes in shadow tree
+PASS getElementsByTagName() should not leak nodes in shadow tree
+PASS getElementsByTagNameNS() should not leak nodes in shadow tree
 

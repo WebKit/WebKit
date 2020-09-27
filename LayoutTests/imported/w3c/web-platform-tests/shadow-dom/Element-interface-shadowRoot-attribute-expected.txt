@@ -1,5 +1,5 @@
 
-PASS shadowRoot must be defined on Element prototype 
-PASS shadowRoot attribute must return the open shadow root associated with the element 
-PASS shadowRoot attribute must return null if the shadow root attached to the element is closed 
+PASS shadowRoot must be defined on Element prototype
+PASS shadowRoot attribute must return the open shadow root associated with the element
+PASS shadowRoot attribute must return null if the shadow root attached to the element is closed
 

@@ -1,6 +1,6 @@
 
-PASS Must have a onshippingoptionchange IDL attribute 
-PASS onshippingoptionchange attribute is a generic handler for "shippingoptionchange" 
-PASS onshippingoptionchange attribute is a handler for PaymentRequestUpdateEvent 
-PASS onshippingoptionchange attribute and listeners both work 
+PASS Must have a onshippingoptionchange IDL attribute
+PASS onshippingoptionchange attribute is a generic handler for "shippingoptionchange"
+PASS onshippingoptionchange attribute is a handler for PaymentRequestUpdateEvent
+PASS onshippingoptionchange attribute and listeners both work
 

@@ -1,5 +1,5 @@
 
-PASS add_completion_callback exists 
-PASS GLOBAL exists 
-PASS order of scripts 
+PASS add_completion_callback exists
+PASS GLOBAL exists
+PASS order of scripts
 

@@ -1,20 +1,20 @@
 
-PASS Roundtripping lang "". Expecting "". 
-PASS Roundtripping lang "en". Expecting "en". 
-PASS Roundtripping lang "en-US-x-hixie". Expecting "en-US-x-hixie". 
-PASS Roundtripping lang "de-DE". Expecting "de-DE". 
-PASS Roundtripping lang "de-de". Expecting "de-de". 
-PASS Roundtripping lang "de-De". Expecting "de-De". 
-PASS Roundtripping lang "de-dE". Expecting "de-dE". 
-PASS Roundtripping lang "de-DE-1996". Expecting "de-DE-1996". 
-PASS Roundtripping lang "de-Latn-DE". Expecting "de-Latn-DE". 
-PASS Roundtripping lang "de-Latf-DE". Expecting "de-Latf-DE". 
-PASS Roundtripping lang "de-Latn-DE-1996". Expecting "de-Latn-DE-1996". 
-PASS Roundtripping lang "de-CH". Expecting "de-CH". 
-PASS Roundtripping lang "it-CH". Expecting "it-CH". 
-PASS Roundtripping lang "fr-CH". Expecting "fr-CH". 
-PASS Roundtripping lang "rm-CH". Expecting "rm-CH". 
-PASS Roundtripping lang "es-CH". Expecting "es-CH". 
+PASS Roundtripping lang "". Expecting "".
+PASS Roundtripping lang "en". Expecting "en".
+PASS Roundtripping lang "en-US-x-hixie". Expecting "en-US-x-hixie".
+PASS Roundtripping lang "de-DE". Expecting "de-DE".
+PASS Roundtripping lang "de-de". Expecting "de-de".
+PASS Roundtripping lang "de-De". Expecting "de-De".
+PASS Roundtripping lang "de-dE". Expecting "de-dE".
+PASS Roundtripping lang "de-DE-1996". Expecting "de-DE-1996".
+PASS Roundtripping lang "de-Latn-DE". Expecting "de-Latn-DE".
+PASS Roundtripping lang "de-Latf-DE". Expecting "de-Latf-DE".
+PASS Roundtripping lang "de-Latn-DE-1996". Expecting "de-Latn-DE-1996".
+PASS Roundtripping lang "de-CH". Expecting "de-CH".
+PASS Roundtripping lang "it-CH". Expecting "it-CH".
+PASS Roundtripping lang "fr-CH". Expecting "fr-CH".
+PASS Roundtripping lang "rm-CH". Expecting "rm-CH".
+PASS Roundtripping lang "es-CH". Expecting "es-CH".
 FAIL Roundtripping lang "Latn-de". Expecting "". assert_equals: notification.lang expected "" but got "Latn-de"
 FAIL Roundtripping lang "Latf-de". Expecting "". assert_equals: notification.lang expected "" but got "Latf-de"
 FAIL Roundtripping lang "tic-tac-tac-toe". Expecting "". assert_equals: notification.lang expected "" but got "tic-tac-tac-toe"

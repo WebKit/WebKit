@@ -1,6 +1,6 @@
 
-PASS cloneNode on a shadow root in open mode must throw a NotSupportedError 
-PASS cloneNode on a shadow root in closed mode must throw a NotSupportedError 
-PASS cloneNode on an element with an open shadow root should not clone its shadow root 
-PASS cloneNode on an element with a closed shadow root should not clone its shadow root 
+PASS cloneNode on a shadow root in open mode must throw a NotSupportedError
+PASS cloneNode on a shadow root in closed mode must throw a NotSupportedError
+PASS cloneNode on an element with an open shadow root should not clone its shadow root
+PASS cloneNode on an element with a closed shadow root should not clone its shadow root
 
