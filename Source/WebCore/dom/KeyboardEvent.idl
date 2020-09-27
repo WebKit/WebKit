@@ -49,8 +49,7 @@ interface KeyboardEvent : UIEvent {
     readonly attribute unsigned long which;
 
     // FIXME: this does not match the version in the DOM spec.
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    undefined initKeyboardEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false,
+    undefined initKeyboardEvent(DOMString type, optional boolean canBubble = false, optional boolean cancelable = false,
         optional WindowProxy? view = null, optional DOMString keyIdentifier = "undefined", optional unsigned long location = 0,
         optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false, optional boolean altGraphKey = false);
 };

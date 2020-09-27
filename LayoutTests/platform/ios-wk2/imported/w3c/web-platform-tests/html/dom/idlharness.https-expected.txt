@@ -5044,7 +5044,7 @@ PASS StorageEvent interface: attribute oldValue
 PASS StorageEvent interface: attribute newValue 
 PASS StorageEvent interface: attribute url 
 PASS StorageEvent interface: attribute storageArea 
-FAIL StorageEvent interface: operation initStorageEvent(DOMString, optional boolean, optional boolean, optional DOMString?, optional DOMString?, optional DOMString?, optional USVString, optional Storage?) assert_equals: property has wrong .length expected 1 but got 0
+PASS StorageEvent interface: operation initStorageEvent(DOMString, optional boolean, optional boolean, optional DOMString?, optional DOMString?, optional DOMString?, optional USVString, optional Storage?)
 PASS HTMLMarqueeElement interface: existence and properties of interface object 
 PASS HTMLMarqueeElement interface object length 
 PASS HTMLMarqueeElement interface object name 

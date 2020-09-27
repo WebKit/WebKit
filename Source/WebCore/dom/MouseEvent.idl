@@ -43,9 +43,8 @@
     [Conditional=POINTER_LOCK] readonly attribute long movementY;
     [Conditional=MOUSE_FORCE_EVENTS, ImplementedAs=force]readonly attribute double webkitForce;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
     // FIXME: relatedTarget should be of type EventTarget? but we need to use any to support a quirk for iAd Producer (rdar://problem/30640101).
-    [CallWith=GlobalObject&ScriptExecutionContext, ImplementedAs=initMouseEventQuirk] undefined initMouseEvent(optional DOMString type = "undefined",
+    [CallWith=GlobalObject&ScriptExecutionContext, ImplementedAs=initMouseEventQuirk] undefined initMouseEvent(DOMString type,
         optional boolean canBubble = false, optional boolean cancelable = false,
         optional WindowProxy? view = null, optional long detail = 0,
         optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,

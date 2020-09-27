@@ -1,3 +1,23 @@
+2020-09-27  Rob Buis  <rbuis@igalia.com>
+
+        Clean up type parameter for Event idl
+        https://bugs.webkit.org/show_bug.cgi?id=217013
+
+        Reviewed by Chris Dumez.
+
+        Clean up type parameter for Event idl files, there is no need to
+        pass "undefined" default value.
+
+        * dom/CompositionEvent.idl:
+        * dom/HashChangeEvent.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.idl:
+        * storage/StorageEvent.idl:
+
 2020-09-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add <wbr> to showLayoutTree

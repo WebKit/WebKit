@@ -28,8 +28,7 @@ interface CompositionEvent : UIEvent {
 
     readonly attribute DOMString data;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    undefined initCompositionEvent(optional DOMString typeArg = "undefined",
+    undefined initCompositionEvent(DOMString typeArg,
                               optional boolean canBubbleArg = false,
                               optional boolean cancelableArg = false,
                               optional WindowProxy? viewArg = null,

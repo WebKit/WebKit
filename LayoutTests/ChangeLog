@@ -1,3 +1,18 @@
+2020-09-27  Rob Buis  <rbuis@igalia.com>
+
+        Clean up type parameter for Event idl
+        https://bugs.webkit.org/show_bug.cgi?id=217013
+
+        Reviewed by Chris Dumez.
+
+        Update improved test results.
+
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2020-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove support for setting CMYKA fill and stroke colors in 2D canvas

@@ -21,8 +21,7 @@
 interface HashChangeEvent : Event {
     constructor(DOMString type, optional HashChangeEventInit eventInitDict);
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    undefined initHashChangeEvent(optional DOMString type = "undefined",
+    undefined initHashChangeEvent(DOMString type,
                              optional boolean canBubble = false,
                              optional boolean cancelable = false,
                              optional USVString oldURL = "undefined",

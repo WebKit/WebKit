@@ -32,8 +32,7 @@ interface StorageEvent : Event {
     readonly attribute USVString url;
     readonly attribute Storage? storageArea;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    undefined initStorageEvent(optional DOMString typeArg = "undefined",
+    undefined initStorageEvent(DOMString typeArg,
                           optional boolean canBubbleArg = false,
                           optional boolean cancelableArg = false,
                           optional DOMString keyArg = "undefined",
