@@ -1,3 +1,40 @@
+2020-09-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r267215. rdar://problem/69594225
+
+    Per-app accent color overrides are broken
+    https://bugs.webkit.org/show_bug.cgi?id=216674
+    <rdar://problem/67745464>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/mac/NSApplicationSPI.h:
+    
+    Source/WebKit:
+    
+    No new tests; I've no idea how to write a test that would have caught this;
+    any test I can imagine would have also written to _accentColor and worked fine.
+    
+    * UIProcess/mac/PageClientImplMac.mm:
+    (WebKit::PageClientImpl::accentColor):
+    AppKit changed the meaning of the IPI. Use the correct version.
+    We still write to _accentColor; it is now purely an override.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267215 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-17  Tim Horton  <timothy_horton@apple.com>
+
+            Per-app accent color overrides are broken
+            https://bugs.webkit.org/show_bug.cgi?id=216674
+            <rdar://problem/67745464>
+
+            Reviewed by Wenson Hsieh.
+
+            * pal/spi/mac/NSApplicationSPI.h:
+
 2020-09-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266932. rdar://problem/68881008
