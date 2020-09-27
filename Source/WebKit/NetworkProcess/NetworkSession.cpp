@@ -297,6 +297,9 @@ void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCo
 Optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDomain(const String& firstPartyHost)
 {
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
+    if (!decltype(m_firstPartyHostCNAMEDomains)::isValidKey(firstPartyHost))
+        return WTF::nullopt;
+
     auto iterator = m_firstPartyHostCNAMEDomains.find(firstPartyHost);
     if (iterator == m_firstPartyHostCNAMEDomains.end())
         return WTF::nullopt;
