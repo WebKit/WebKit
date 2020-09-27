@@ -1,5 +1,45 @@
 2020-09-27  Darin Adler  <darin@apple.com>
 
+        Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-korean
+        https://bugs.webkit.org/show_bug.cgi?id=217036
+
+        Reviewed by Zalan Bujtas.
+
+        To run at a resaonable speed, we may want to find a way to change these encoding tests to not
+        decode each character separately since that's not critical to what they are testing; this likely
+        would result in tests fast enough to run as regression tests (right now they are skipped) and
+        much smaller output files too. But for now, these are colossal files.
+
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-csksc56011987-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-korean-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1987-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1989-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc5601-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc_5601-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-windows-949-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-cseuckr-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-csksc56011987-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-iso-ir-149-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-korean-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1987-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1989-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc5601-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc_5601-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-windows-949-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-expected.txt:
+        Strip trailing spaces from these files.
+
+2020-09-27  Darin Adler  <darin@apple.com>
+
         Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis
         https://bugs.webkit.org/show_bug.cgi?id=217039
 
