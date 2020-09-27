@@ -1,6 +1,6 @@
 
-PASS mspace layout in sibling of SVG foreignObject[overflow=visible] 
-PASS mfrac layout in sibling of SVG with foreignObject[overflow=visible] 
- 
+PASS mspace layout in sibling of SVG foreignObject[overflow=visible]
+PASS mfrac layout in sibling of SVG with foreignObject[overflow=visible]
+
 This is a foreignObject
 

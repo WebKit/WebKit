@@ -1,28 +1,28 @@
 
-PASS Check if the output element is a labelable element 
-PASS Check if the output element can access 'labels' 
-PASS Check if the progress element is a labelable element 
-PASS Check if the progress element can access 'labels' 
-PASS Check if the select element is a labelable element 
-PASS Check if the select element can access 'labels' 
-PASS Check if the textarea element is a labelable form-element 
-PASS Check if the textarea element can access 'labels' 
-PASS Check if the button element is a labelable element 
-PASS Check if the button element can access 'labels' 
-PASS Check if the hidden input element is not a labelable element. 
+PASS Check if the output element is a labelable element
+PASS Check if the output element can access 'labels'
+PASS Check if the progress element is a labelable element
+PASS Check if the progress element can access 'labels'
+PASS Check if the select element is a labelable element
+PASS Check if the select element can access 'labels'
+PASS Check if the textarea element is a labelable form-element
+PASS Check if the textarea element can access 'labels'
+PASS Check if the button element is a labelable element
+PASS Check if the button element can access 'labels'
+PASS Check if the hidden input element is not a labelable element.
 FAIL Check if the hidden input element can access 'labels' null is not an object (evaluating 'elem.labels.length')
-PASS Check if the input element in radio state is a labelable element 
-PASS Check if the input element in radio state can access 'labels' 
-PASS Check if the keygen element is a labelable element 
-PASS Check if the keygen element can access 'labels' 
-PASS Check if the meter element is a labelable element 
-PASS Check if the meter element can access 'labels' 
-PASS Check if the fieldset element is not a labelable element 
-PASS Check if the fieldset element can access 'labels' 
-PASS Check if the label element is not a labelable element 
-PASS Check if the label element can access 'labels' 
-PASS Check if the object element is not a labelable element 
-PASS Check if the object element can access 'labels' 
-PASS Check if the img element is not a labelable element 
-PASS Check if the img element can access 'labels' 
+PASS Check if the input element in radio state is a labelable element
+PASS Check if the input element in radio state can access 'labels'
+PASS Check if the keygen element is a labelable element
+PASS Check if the keygen element can access 'labels'
+PASS Check if the meter element is a labelable element
+PASS Check if the meter element can access 'labels'
+PASS Check if the fieldset element is not a labelable element
+PASS Check if the fieldset element can access 'labels'
+PASS Check if the label element is not a labelable element
+PASS Check if the label element can access 'labels'
+PASS Check if the object element is not a labelable element
+PASS Check if the object element can access 'labels'
+PASS Check if the img element is not a labelable element
+PASS Check if the img element can access 'labels'
 

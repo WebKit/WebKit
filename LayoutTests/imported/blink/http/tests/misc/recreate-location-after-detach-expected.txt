@@ -1,1 +1,1 @@
-We pass if we don't crash under ASAN.  
+We pass if we don't crash under ASAN.

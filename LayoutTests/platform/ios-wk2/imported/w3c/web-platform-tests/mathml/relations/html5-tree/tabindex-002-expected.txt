@@ -2,7 +2,7 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Elements with different tabindex must be focused sequentially when pressing 'Tab' keys Test timed out
-tabindex(html,href) 
+tabindex(html,href)
 tabindex(omitted)
 tabindex(empty)
 tabindex(a)

@@ -1,34 +1,34 @@
 
-PASS Null Italic Correction 
-PASS NonNull Italic Correction (MathGlyphVariantRecord) 
+PASS Null Italic Correction
+PASS NonNull Italic Correction (MathGlyphVariantRecord)
 FAIL NonNull Italic Correction (GlyphAssembly) assert_approx_equals: msub expected 50 +/- 1 but got 0
 Null Italic Correction
 
 ⫿
- 
+
 ⫿
- 
+
 ⫿
- 
+
 ⫿
 
 NonNull Italic Correction (MathGlyphVariantRecord)
 
 ⫿
- 
+
 ⫿
- 
+
 ⫿
- 
+
 ⫿
 
 NonNull Italic Correction (GlyphAssembly)
 
 ⫿
- 
+
 ⫿
- 
+
 ⫿
- 
+
 ⫿
 

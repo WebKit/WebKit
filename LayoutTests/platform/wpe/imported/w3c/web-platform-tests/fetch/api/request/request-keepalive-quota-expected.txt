@@ -5,10 +5,10 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources
 CONSOLE MESSAGE: Reached maximum amount of queued data of 64Kb for keepalive requests
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0 due to access control checks.
 
-PASS A Keep-Alive fetch() with a small body should succeed. 
-PASS A Keep-Alive fetch() with a body at the Quota Limit should succeed. 
-PASS A Keep-Alive fetch() with a body over the Quota Limit should reject. 
-PASS A Keep-Alive fetch() should return its allocated Quota upon promise resolution. 
+PASS A Keep-Alive fetch() with a small body should succeed.
+PASS A Keep-Alive fetch() with a body at the Quota Limit should succeed.
+PASS A Keep-Alive fetch() with a body over the Quota Limit should reject.
+PASS A Keep-Alive fetch() should return its allocated Quota upon promise resolution.
 FAIL A Keep-Alive fetch() should return only its allocated Quota upon promise resolution. assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS A Keep-Alive fetch() should not be allowed if the Quota is used up. 
+PASS A Keep-Alive fetch() should not be allowed if the Quota is used up.
 

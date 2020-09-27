@@ -5,10 +5,10 @@ FAIL normal assert_equals: expected "https://localhost:9443/service-workers/serv
 FAIL blank url promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL in scope but not controlled test on installing worker assert_equals: expected "TypeError" but got "NotSupportedError"
 TIMEOUT in scope but not controlled test on active worker Test timed out
-NOTRUN out of scope 
-NOTRUN cross orgin url 
-NOTRUN invalid url (http://[example.com]) 
-NOTRUN invalid url (view-source://example.com) 
-NOTRUN invalid url (file:///) 
-NOTRUN invalid url (about:blank) 
+NOTRUN out of scope
+NOTRUN cross orgin url
+NOTRUN invalid url (http://[example.com])
+NOTRUN invalid url (view-source://example.com)
+NOTRUN invalid url (file:///)
+NOTRUN invalid url (about:blank)
 

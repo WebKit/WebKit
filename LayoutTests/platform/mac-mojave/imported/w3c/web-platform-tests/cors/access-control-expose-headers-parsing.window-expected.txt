@@ -1,18 +1,18 @@
 
-PASS Loading JSON… 
-PASS Parsing: access-control-expose-headers%3A%20BB-8 
-PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%2C%2C%40%23%24%23%25%25%26%5E%26%5E*()()11! 
-PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%2C%20no%20no 
-PASS Parsing: Access-Control-Expose-Headers%3A%20%40%23%24%23%25%25%26%5E%26%5E*()()11!%2Cbb-8 
-PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%0D%0AAccess-Control-Expose-Headers%3A%20no 
-PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%0D%0AAccess-Control-Expose-Headers%3A%20no%20no 
-PASS Parsing: Access-Control-Expose-Headers%3A%20no%0D%0AAccess-Control-Expose-Headers%3A%20bb-8 
-PASS Parsing: Access-Control-Expose-Headers%3A%0D%0AAccess-Control-Expose-Headers%3A%20bb-8 
-PASS Parsing: Access-Control-Expose-Headers%3A%20%2Cbb-8 
+PASS Loading JSON…
+PASS Parsing: access-control-expose-headers%3A%20BB-8
+PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%2C%2C%40%23%24%23%25%25%26%5E%26%5E*()()11!
+PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%2C%20no%20no
+PASS Parsing: Access-Control-Expose-Headers%3A%20%40%23%24%23%25%25%26%5E%26%5E*()()11!%2Cbb-8
+PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%0D%0AAccess-Control-Expose-Headers%3A%20no
+PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%0D%0AAccess-Control-Expose-Headers%3A%20no%20no
+PASS Parsing: Access-Control-Expose-Headers%3A%20no%0D%0AAccess-Control-Expose-Headers%3A%20bb-8
+PASS Parsing: Access-Control-Expose-Headers%3A%0D%0AAccess-Control-Expose-Headers%3A%20bb-8
+PASS Parsing: Access-Control-Expose-Headers%3A%20%2Cbb-8
 FAIL Parsing: Access-Control-Expose-Headers%3A%20bb-8%0C assert_equals: expected (object) null but got (string) "hey"
 FAIL Parsing: Access-Control-Expose-Headers%3A%20bb-8%0B assert_equals: expected (object) null but got (string) "hey"
-PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%0B%2Cbb-8 
-PASS Parsing: Access-Control-Expose-Headers%3A%20'bb-8' 
-PASS Parsing: Access-Control-Expose-Headers%3A%20'bb-8'%2Cbb-8 
-PASS Parsing: Access-Control-Expose-Headers%3A%20%22bb-8%22%2Cbb-8 
+PASS Parsing: Access-Control-Expose-Headers%3A%20bb-8%0B%2Cbb-8
+PASS Parsing: Access-Control-Expose-Headers%3A%20'bb-8'
+PASS Parsing: Access-Control-Expose-Headers%3A%20'bb-8'%2Cbb-8
+PASS Parsing: Access-Control-Expose-Headers%3A%20%22bb-8%22%2Cbb-8
 

@@ -2,22 +2,22 @@
 FAIL Should be parseable in a CSS stylesheet: '(prefers-color-scheme)' assert_true: expected true got false
 FAIL Should be parseable in a CSS stylesheet: '(prefers-color-scheme: light)' assert_true: expected true got false
 FAIL Should be parseable in a CSS stylesheet: '(prefers-color-scheme: dark)' assert_true: expected true got false
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: 0)' 
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: none)' 
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: 10px)' 
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: dark 0)' 
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: dark light)' 
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: light/dark)' 
-PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: no-preference)' 
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: 0)'
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: none)'
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: 10px)'
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: dark 0)'
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: dark light)'
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: light/dark)'
+PASS Should not be parseable in a CSS stylesheet: '(prefers-color-scheme: no-preference)'
 FAIL Should be parseable in JS: '(prefers-color-scheme)' assert_true: expected true got false
 FAIL Should be parseable in JS: '(prefers-color-scheme: light)' assert_true: expected true got false
 FAIL Should be parseable in JS: '(prefers-color-scheme: dark)' assert_true: expected true got false
-PASS Should not be parseable in JS: '(prefers-color-scheme: 0)' 
-PASS Should not be parseable in JS: '(prefers-color-scheme: none)' 
-PASS Should not be parseable in JS: '(prefers-color-scheme: 10px)' 
-PASS Should not be parseable in JS: '(prefers-color-scheme: dark 0)' 
-PASS Should not be parseable in JS: '(prefers-color-scheme: dark light)' 
-PASS Should not be parseable in JS: '(prefers-color-scheme: light/dark)' 
-PASS Should not be parseable in JS: '(prefers-color-scheme: no-preference)' 
+PASS Should not be parseable in JS: '(prefers-color-scheme: 0)'
+PASS Should not be parseable in JS: '(prefers-color-scheme: none)'
+PASS Should not be parseable in JS: '(prefers-color-scheme: 10px)'
+PASS Should not be parseable in JS: '(prefers-color-scheme: dark 0)'
+PASS Should not be parseable in JS: '(prefers-color-scheme: dark light)'
+PASS Should not be parseable in JS: '(prefers-color-scheme: light/dark)'
+PASS Should not be parseable in JS: '(prefers-color-scheme: no-preference)'
 FAIL Check that prefer-color-scheme evaluates to true in the boolean context assert_true: expected true got false
 

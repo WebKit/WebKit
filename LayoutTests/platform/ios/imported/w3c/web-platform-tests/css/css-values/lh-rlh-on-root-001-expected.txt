@@ -1,11 +1,11 @@
  
 
-PASS lh in line-height on root 
-PASS rlh in line-height on root 
-PASS lh in font-size on root 
-PASS rlh in font-size on root 
-PASS 2lh in line-height on root 
-PASS 2rlh in line-height on root 
-PASS 2lh in font-size on root 
+PASS lh in line-height on root
+PASS rlh in line-height on root
+PASS lh in font-size on root
+PASS rlh in font-size on root
+PASS 2lh in line-height on root
+PASS 2rlh in line-height on root
+PASS 2lh in font-size on root
 FAIL 2rlh in font-size on root assert_approx_equals: the rlh unit on the root element's font-size property actually works as a unit and doesn't merely cause a fallback that doesn't take the number of units into account expected 32 +/- 1 but got 40
 

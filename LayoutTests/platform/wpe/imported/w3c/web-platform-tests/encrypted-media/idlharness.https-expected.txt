@@ -6,10 +6,10 @@ This test verifies that implementations of the Encrypted Media Extensions API ma
 
 Harness Error (FAIL), message = Unhandled rejection: MediaKeyMessageEventInit inherits EventInit, but EventInit is undefined.
 
-PASS Partial interface Navigator: original interface defined 
-PASS Partial interface Navigator: valid exposure set 
-PASS Partial interface Navigator: member names are unique 
-PASS Partial interface HTMLMediaElement: original interface defined 
-PASS Partial interface HTMLMediaElement: valid exposure set 
-PASS Partial interface HTMLMediaElement: member names are unique 
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: valid exposure set
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface HTMLMediaElement: original interface defined
+PASS Partial interface HTMLMediaElement: valid exposure set
+PASS Partial interface HTMLMediaElement: member names are unique
 

@@ -1,9 +1,9 @@
 
-PASS IDBKeyRange.only() - returns an IDBKeyRange and the properties are set correctly 
-PASS IDBKeyRange.lowerBound() - returns an IDBKeyRange and the properties are set correctly 
-PASS IDBKeyRange.lowerBound() - 'open' parameter has correct default set 
-PASS IDBKeyRange.upperBound() - returns an IDBKeyRange and the properties are set correctly 
-PASS IDBKeyRange.upperBound() - 'open' parameter has correct default set 
-PASS IDBKeyRange.bound() - returns an IDBKeyRange and the properties are set correctly 
-PASS IDBKeyRange.bound() - 'lowerOpen' and 'upperOpen' parameters have correct defaults set 
+PASS IDBKeyRange.only() - returns an IDBKeyRange and the properties are set correctly
+PASS IDBKeyRange.lowerBound() - returns an IDBKeyRange and the properties are set correctly
+PASS IDBKeyRange.lowerBound() - 'open' parameter has correct default set
+PASS IDBKeyRange.upperBound() - returns an IDBKeyRange and the properties are set correctly
+PASS IDBKeyRange.upperBound() - 'open' parameter has correct default set
+PASS IDBKeyRange.bound() - returns an IDBKeyRange and the properties are set correctly
+PASS IDBKeyRange.bound() - 'lowerOpen' and 'upperOpen' parameters have correct defaults set
 

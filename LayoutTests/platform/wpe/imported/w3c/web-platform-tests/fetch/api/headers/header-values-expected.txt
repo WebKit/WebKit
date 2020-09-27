@@ -1,10 +1,10 @@
 
-PASS XMLHttpRequest with value x%00x needs to throw 
-PASS fetch() with value x%00x needs to throw 
-PASS XMLHttpRequest with value x%0Ax needs to throw 
-PASS fetch() with value x%0Ax needs to throw 
-PASS XMLHttpRequest with value x%0Dx needs to throw 
-PASS fetch() with value x%0Dx needs to throw 
+PASS XMLHttpRequest with value x%00x needs to throw
+PASS fetch() with value x%00x needs to throw
+PASS XMLHttpRequest with value x%0Ax needs to throw
+PASS fetch() with value x%0Ax needs to throw
+PASS XMLHttpRequest with value x%0Dx needs to throw
+PASS fetch() with value x%0Dx needs to throw
 FAIL XMLHttpRequest with all valid values assert_equals: expected "xx" but got "xÂx"
 FAIL fetch() with all valid values assert_equals: expected "xx" but got "xÂx"
 

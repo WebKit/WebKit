@@ -1,6 +1,6 @@
 
-PASS IDBCursor direction - object store with keyrange - next 
-PASS IDBCursor direction - object store with keyrange - prev 
-PASS IDBCursor direction - object store with keyrange - nextunique 
-PASS IDBCursor direction - object store with keyrange - prevunique 
+PASS IDBCursor direction - object store with keyrange - next
+PASS IDBCursor direction - object store with keyrange - prev
+PASS IDBCursor direction - object store with keyrange - nextunique
+PASS IDBCursor direction - object store with keyrange - prevunique
 

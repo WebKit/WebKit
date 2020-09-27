@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.createIndex() - empty name 
+PASS IDBObjectStore.createIndex() - empty name
 

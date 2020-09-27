@@ -1,14 +1,14 @@
 
-PASS True value 
-PASS False value 
-PASS Empty object 
-PASS Null object 
-PASS Undefined object 
-PASS Positive value 
-PASS Negative value 
-PASS NaN value 
-PASS Postive zero value 
-PASS Negative zero value 
-PASS Empty string value 
-PASS Non empty string value 
+PASS True value
+PASS False value
+PASS Empty object
+PASS Null object
+PASS Undefined object
+PASS Positive value
+PASS Negative value
+PASS NaN value
+PASS Postive zero value
+PASS Negative zero value
+PASS Empty string value
+PASS Non empty string value
 

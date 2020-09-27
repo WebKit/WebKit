@@ -1,6 +1,6 @@
 
-PASS Elements with different tabindex must be focused sequentially when pressing 'Tab' keys 
-tabindex(html,href) 
+PASS Elements with different tabindex must be focused sequentially when pressing 'Tab' keys
+tabindex(html,href)
 tabindex(omitted)
 tabindex(empty)
 tabindex(a)

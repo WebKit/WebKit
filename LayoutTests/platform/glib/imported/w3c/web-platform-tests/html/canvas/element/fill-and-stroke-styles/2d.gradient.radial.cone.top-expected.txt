@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.gradient.radial.cone.top 
+PASS Canvas test: 2d.gradient.radial.cone.top
 

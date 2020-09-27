@@ -1,4 +1,4 @@
-This text should only appear once. 
+This text should only appear once.
 
 --------
 Frame: '<!--frame1-->'

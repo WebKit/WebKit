@@ -1,36 +1,36 @@
 Input Time
 
 
-PASS time element of default time value 
-PASS step attribute on default value check 
-PASS max  attribute on default value check 
-PASS min  attribute on default value check 
-PASS type attribute support on input element 
-PASS max attribute support on input element 
-PASS min attribute support on input element 
-PASS step attribute support on input element 
-PASS stepUp function support on input Element 
-PASS stepDown function support on input Element 
-PASS stepUp step value empty on default step value  
-PASS stepDown step value empty default step value 
-PASS stepUp on step value minus 
-PASS stepDown on step value minus 
-PASS stepUp on step value zero  
-PASS stepDown on step value zero  
-PASS stepUp on step value 24 hour 
-PASS stepDown on step value 24 hour  
-PASS stepUp on step value hour   
-PASS stepDown on step value hour  
-PASS stepUp on step value second  
-PASS stepDown on step value second  
-PASS stepUp on step value with fractional seconds 
-PASS stepDown on step value with fractional seconds 
-PASS stepUp argument 2 times 
-PASS stepDown argument 2 times 
+PASS time element of default time value
+PASS step attribute on default value check
+PASS max  attribute on default value check
+PASS min  attribute on default value check
+PASS type attribute support on input element
+PASS max attribute support on input element
+PASS min attribute support on input element
+PASS step attribute support on input element
+PASS stepUp function support on input Element
+PASS stepDown function support on input Element
+PASS stepUp step value empty on default step value
+PASS stepDown step value empty default step value
+PASS stepUp on step value minus
+PASS stepDown on step value minus
+PASS stepUp on step value zero
+PASS stepDown on step value zero
+PASS stepUp on step value 24 hour
+PASS stepDown on step value 24 hour
+PASS stepUp on step value hour
+PASS stepDown on step value hour
+PASS stepUp on step value second
+PASS stepDown on step value second
+PASS stepUp on step value with fractional seconds
+PASS stepDown on step value with fractional seconds
+PASS stepUp argument 2 times
+PASS stepDown argument 2 times
 FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
 FAIL stepDown stop so lower than the minimum value The object is in an invalid state.
 FAIL stop at border on stepUp The object is in an invalid state.
 FAIL stop at border on stepDown The object is in an invalid state.
 FAIL  empty value of stepUp The object is in an invalid state.
-PASS set value on not time format value 
+PASS set value on not time format value
 

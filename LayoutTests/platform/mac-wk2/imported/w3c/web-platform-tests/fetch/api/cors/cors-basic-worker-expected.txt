@@ -2,19 +2,19 @@ CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
-PASS Same domain different port [no-cors mode] 
-PASS Same domain different port [server forbid CORS] 
-PASS Same domain different port [cors mode] 
+PASS Same domain different port [no-cors mode]
+PASS Same domain different port [server forbid CORS]
+PASS Same domain different port [cors mode]
 FAIL Same domain different protocol different port [no-cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Same domain different protocol different port [server forbid CORS] 
+PASS Same domain different protocol different port [server forbid CORS]
 FAIL Same domain different protocol different port [cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Cross domain basic usage [no-cors mode] 
-PASS Cross domain basic usage [server forbid CORS] 
-PASS Cross domain basic usage [cors mode] 
-PASS Cross domain different port [no-cors mode] 
-PASS Cross domain different port [server forbid CORS] 
-PASS Cross domain different port [cors mode] 
+PASS Cross domain basic usage [no-cors mode]
+PASS Cross domain basic usage [server forbid CORS]
+PASS Cross domain basic usage [cors mode]
+PASS Cross domain different port [no-cors mode]
+PASS Cross domain different port [server forbid CORS]
+PASS Cross domain different port [cors mode]
 FAIL Cross domain different protocol [no-cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Cross domain different protocol [server forbid CORS] 
+PASS Cross domain different protocol [server forbid CORS]
 FAIL Cross domain different protocol [cors mode] promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

@@ -1,7 +1,7 @@
 
-PASS Operator dictionary chunk 1 - largeop 
-PASS Operator dictionary chunk 2 - largeop 
-PASS Operator dictionary chunk 3 - largeop 
-PASS Operator dictionary chunk 4 - largeop 
-PASS Operator dictionary chunk 5 - largeop 
+PASS Operator dictionary chunk 1 - largeop
+PASS Operator dictionary chunk 2 - largeop
+PASS Operator dictionary chunk 3 - largeop
+PASS Operator dictionary chunk 4 - largeop
+PASS Operator dictionary chunk 5 - largeop
 

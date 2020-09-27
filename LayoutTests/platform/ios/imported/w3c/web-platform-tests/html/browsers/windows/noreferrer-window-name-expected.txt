@@ -5,5 +5,5 @@ CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with
 CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://localhost:8800/html/browsers/windows/noreferrer-window-name.html'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
 
 
-PASS rel=noreferrer and reuse of names 
+PASS rel=noreferrer and reuse of names
 

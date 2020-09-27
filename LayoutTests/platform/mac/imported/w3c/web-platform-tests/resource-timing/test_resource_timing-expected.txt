@@ -3,32 +3,32 @@ Description
 NOTE: Due to caching behavior in the browser, it is possible that when revisiting this page, some resources may not have to be fetched from the network. As a result, the performance timeline will not contain entries for these resources. This test will fail if any entries are missing to ensure that all resources are fetched from the network and entries for these resources exist in the Performance Timeline. If revisiting this page, please either perform a full reload of the page or clear the cache between visits.
 
 
-PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (iframe) 
-PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (iframe) 
-PASS PerformanceEntry has correct order of timing attributes (iframe) 
+PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (iframe)
+PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (iframe)
+PASS PerformanceEntry has correct order of timing attributes (iframe)
 FAIL PerformanceEntry has correct network transfer attributes (iframe) assert_equals: encodedBodySize size expected (number) 215 but got (undefined) undefined
-PASS PerformanceEntry has correct protocol attribute (iframe) 
-PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (img) 
-PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (img) 
-PASS PerformanceEntry has correct order of timing attributes (img) 
+PASS PerformanceEntry has correct protocol attribute (iframe)
+PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (img)
+PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (img)
+PASS PerformanceEntry has correct order of timing attributes (img)
 FAIL PerformanceEntry has correct network transfer attributes (img) assert_equals: encodedBodySize size expected (number) 249 but got (undefined) undefined
-PASS PerformanceEntry has correct protocol attribute (img) 
-PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (link) 
-PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (link) 
-PASS PerformanceEntry has correct order of timing attributes (link) 
+PASS PerformanceEntry has correct protocol attribute (img)
+PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (link)
+PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (link)
+PASS PerformanceEntry has correct order of timing attributes (link)
 FAIL PerformanceEntry has correct network transfer attributes (link) assert_equals: encodedBodySize size expected (number) 44 but got (undefined) undefined
-PASS PerformanceEntry has correct protocol attribute (link) 
-PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (script) 
-PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (script) 
-PASS PerformanceEntry has correct order of timing attributes (script) 
+PASS PerformanceEntry has correct protocol attribute (link)
+PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (script)
+PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (script)
+PASS PerformanceEntry has correct order of timing attributes (script)
 FAIL PerformanceEntry has correct network transfer attributes (script) assert_equals: encodedBodySize size expected (number) 133 but got (undefined) undefined
-PASS PerformanceEntry has correct protocol attribute (script) 
-PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (xmlhttprequest) 
-PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (xmlhttprequest) 
-PASS PerformanceEntry has correct order of timing attributes (xmlhttprequest) 
+PASS PerformanceEntry has correct protocol attribute (script)
+PASS window.performance.getEntriesByName() and window.performance.getEntriesByNameType() return same data (xmlhttprequest)
+PASS PerformanceEntry has correct name, initiatorType, startTime, and duration (xmlhttprequest)
+PASS PerformanceEntry has correct order of timing attributes (xmlhttprequest)
 FAIL PerformanceEntry has correct network transfer attributes (xmlhttprequest) assert_equals: encodedBodySize size expected (number) 112 but got (undefined) undefined
-PASS PerformanceEntry has correct protocol attribute (xmlhttprequest) 
-PASS window.performance Resource Timing Entries exist 
-PASS window.performance Resource Timing Entries exist 1 
-PASS window.performance Resource Timing Entries exist 2 
+PASS PerformanceEntry has correct protocol attribute (xmlhttprequest)
+PASS window.performance Resource Timing Entries exist
+PASS window.performance Resource Timing Entries exist 1
+PASS window.performance Resource Timing Entries exist 2
 

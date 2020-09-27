@@ -1,5 +1,5 @@
 
-PASS Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be opened 
-PASS Send 65K binary data on a WebSocket - ArrayBuffer - Message should be received 
-PASS Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be closed 
+PASS Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be opened
+PASS Send 65K binary data on a WebSocket - ArrayBuffer - Message should be received
+PASS Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be closed
 

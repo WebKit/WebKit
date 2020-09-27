@@ -1,123 +1,123 @@
 
 
-PASS [HTTP - SameOrigin] Preserve fragment in 301 redirect 
-PASS [HTTP - SameOrigin] Preserve fragment in 302 redirect 
-PASS [HTTP - SameOrigin] Preserve fragment in 303 redirect 
-PASS [HTTP - SameOrigin] Preserve fragment in 307 redirect 
-PASS [HTTP - SameOrigin] Preserve fragment in 308 redirect 
-PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 301 redirect 
-PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 302 redirect 
-PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 303 redirect 
-PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 307 redirect 
-PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 308 redirect 
-PASS [HTTP - SameOrigin] Preserve fragment in multiple 301 redirects 
-PASS [HTTP - SameOrigin] Preserve fragment in multiple 302 redirects 
-PASS [HTTP - SameOrigin] Preserve fragment in multiple 303 redirects 
-PASS [HTTP - SameOrigin] Preserve fragment in multiple 307 redirects 
-PASS [HTTP - SameOrigin] Preserve fragment in multiple 308 redirects 
-PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 301 redirects 
-PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 302 redirects 
-PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 303 redirects 
-PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 307 redirects 
-PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 308 redirects 
-PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects 
-PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects 
-PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects 
-PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects 
-PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects 
-PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 301 redirects 
-PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 302 redirects 
-PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 303 redirects 
-PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 307 redirects 
-PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 308 redirects 
-PASS [HTTPS - SameOrigin] Preserve fragment in 301 redirect 
-PASS [HTTPS - SameOrigin] Preserve fragment in 302 redirect 
-PASS [HTTPS - SameOrigin] Preserve fragment in 303 redirect 
-PASS [HTTPS - SameOrigin] Preserve fragment in 307 redirect 
-PASS [HTTPS - SameOrigin] Preserve fragment in 308 redirect 
-PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 301 redirect 
-PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 302 redirect 
-PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 303 redirect 
-PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 307 redirect 
-PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 308 redirect 
-PASS [HTTPS - SameOrigin] Preserve fragment in multiple 301 redirects 
-PASS [HTTPS - SameOrigin] Preserve fragment in multiple 302 redirects 
-PASS [HTTPS - SameOrigin] Preserve fragment in multiple 303 redirects 
-PASS [HTTPS - SameOrigin] Preserve fragment in multiple 307 redirects 
-PASS [HTTPS - SameOrigin] Preserve fragment in multiple 308 redirects 
-PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 301 redirects 
-PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 302 redirects 
-PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 303 redirects 
-PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 307 redirects 
-PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 308 redirects 
-PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects 
-PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects 
-PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects 
-PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects 
-PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects 
-PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 301 redirects 
-PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 302 redirects 
-PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 303 redirects 
-PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 307 redirects 
-PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 308 redirects 
-PASS [HTTP - CrossOrigin] Preserve fragment in 301 redirect 
-PASS [HTTP - CrossOrigin] Preserve fragment in 302 redirect 
-PASS [HTTP - CrossOrigin] Preserve fragment in 303 redirect 
-PASS [HTTP - CrossOrigin] Preserve fragment in 307 redirect 
-PASS [HTTP - CrossOrigin] Preserve fragment in 308 redirect 
-PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 301 redirect 
-PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 302 redirect 
-PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 303 redirect 
-PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 307 redirect 
-PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 308 redirect 
-PASS [HTTP - CrossOrigin] Preserve fragment in multiple 301 redirects 
-PASS [HTTP - CrossOrigin] Preserve fragment in multiple 302 redirects 
-PASS [HTTP - CrossOrigin] Preserve fragment in multiple 303 redirects 
-PASS [HTTP - CrossOrigin] Preserve fragment in multiple 307 redirects 
-PASS [HTTP - CrossOrigin] Preserve fragment in multiple 308 redirects 
-PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 301 redirects 
-PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 302 redirects 
-PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 303 redirects 
-PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 307 redirects 
-PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 308 redirects 
-PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects 
-PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects 
-PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects 
-PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects 
-PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects 
-PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 301 redirects 
-PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 302 redirects 
-PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 303 redirects 
-PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 307 redirects 
-PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 308 redirects 
-PASS [HTTPS - CrossOrigin] Preserve fragment in 301 redirect 
-PASS [HTTPS - CrossOrigin] Preserve fragment in 302 redirect 
-PASS [HTTPS - CrossOrigin] Preserve fragment in 303 redirect 
-PASS [HTTPS - CrossOrigin] Preserve fragment in 307 redirect 
-PASS [HTTPS - CrossOrigin] Preserve fragment in 308 redirect 
-PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 301 redirect 
-PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 302 redirect 
-PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 303 redirect 
-PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 307 redirect 
-PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 308 redirect 
-PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 301 redirects 
-PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 302 redirects 
-PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 303 redirects 
-PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 307 redirects 
-PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 308 redirects 
-PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 301 redirects 
-PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 302 redirects 
-PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 303 redirects 
-PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 307 redirects 
-PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 308 redirects 
-PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects 
-PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects 
-PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects 
-PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects 
-PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects 
-PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 301 redirects 
-PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 302 redirects 
-PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 303 redirects 
-PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 307 redirects 
-PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 308 redirects 
+PASS [HTTP - SameOrigin] Preserve fragment in 301 redirect
+PASS [HTTP - SameOrigin] Preserve fragment in 302 redirect
+PASS [HTTP - SameOrigin] Preserve fragment in 303 redirect
+PASS [HTTP - SameOrigin] Preserve fragment in 307 redirect
+PASS [HTTP - SameOrigin] Preserve fragment in 308 redirect
+PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 301 redirect
+PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 302 redirect
+PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 303 redirect
+PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 307 redirect
+PASS [HTTP - SameOrigin] Redirect URL fragment takes precedence in 308 redirect
+PASS [HTTP - SameOrigin] Preserve fragment in multiple 301 redirects
+PASS [HTTP - SameOrigin] Preserve fragment in multiple 302 redirects
+PASS [HTTP - SameOrigin] Preserve fragment in multiple 303 redirects
+PASS [HTTP - SameOrigin] Preserve fragment in multiple 307 redirects
+PASS [HTTP - SameOrigin] Preserve fragment in multiple 308 redirects
+PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 301 redirects
+PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 302 redirects
+PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 303 redirects
+PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 307 redirects
+PASS [HTTP - SameOrigin] Destination URL fragment takes precedence in multiple 308 redirects
+PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects
+PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects
+PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects
+PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects
+PASS [HTTP - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects
+PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 301 redirects
+PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 302 redirects
+PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 303 redirects
+PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 307 redirects
+PASS [HTTP - SameOrigin] Preserve intermediate fragment in multiple 308 redirects
+PASS [HTTPS - SameOrigin] Preserve fragment in 301 redirect
+PASS [HTTPS - SameOrigin] Preserve fragment in 302 redirect
+PASS [HTTPS - SameOrigin] Preserve fragment in 303 redirect
+PASS [HTTPS - SameOrigin] Preserve fragment in 307 redirect
+PASS [HTTPS - SameOrigin] Preserve fragment in 308 redirect
+PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 301 redirect
+PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 302 redirect
+PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 303 redirect
+PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 307 redirect
+PASS [HTTPS - SameOrigin] Redirect URL fragment takes precedence in 308 redirect
+PASS [HTTPS - SameOrigin] Preserve fragment in multiple 301 redirects
+PASS [HTTPS - SameOrigin] Preserve fragment in multiple 302 redirects
+PASS [HTTPS - SameOrigin] Preserve fragment in multiple 303 redirects
+PASS [HTTPS - SameOrigin] Preserve fragment in multiple 307 redirects
+PASS [HTTPS - SameOrigin] Preserve fragment in multiple 308 redirects
+PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 301 redirects
+PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 302 redirects
+PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 303 redirects
+PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 307 redirects
+PASS [HTTPS - SameOrigin] Destination URL fragment takes precedence in multiple 308 redirects
+PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects
+PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects
+PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects
+PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects
+PASS [HTTPS - SameOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects
+PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 301 redirects
+PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 302 redirects
+PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 303 redirects
+PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 307 redirects
+PASS [HTTPS - SameOrigin] Preserve intermediate fragment in multiple 308 redirects
+PASS [HTTP - CrossOrigin] Preserve fragment in 301 redirect
+PASS [HTTP - CrossOrigin] Preserve fragment in 302 redirect
+PASS [HTTP - CrossOrigin] Preserve fragment in 303 redirect
+PASS [HTTP - CrossOrigin] Preserve fragment in 307 redirect
+PASS [HTTP - CrossOrigin] Preserve fragment in 308 redirect
+PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 301 redirect
+PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 302 redirect
+PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 303 redirect
+PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 307 redirect
+PASS [HTTP - CrossOrigin] Redirect URL fragment takes precedence in 308 redirect
+PASS [HTTP - CrossOrigin] Preserve fragment in multiple 301 redirects
+PASS [HTTP - CrossOrigin] Preserve fragment in multiple 302 redirects
+PASS [HTTP - CrossOrigin] Preserve fragment in multiple 303 redirects
+PASS [HTTP - CrossOrigin] Preserve fragment in multiple 307 redirects
+PASS [HTTP - CrossOrigin] Preserve fragment in multiple 308 redirects
+PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 301 redirects
+PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 302 redirects
+PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 303 redirects
+PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 307 redirects
+PASS [HTTP - CrossOrigin] Destination URL fragment takes precedence in multiple 308 redirects
+PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects
+PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects
+PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects
+PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects
+PASS [HTTP - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects
+PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 301 redirects
+PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 302 redirects
+PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 303 redirects
+PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 307 redirects
+PASS [HTTP - CrossOrigin] Preserve intermediate fragment in multiple 308 redirects
+PASS [HTTPS - CrossOrigin] Preserve fragment in 301 redirect
+PASS [HTTPS - CrossOrigin] Preserve fragment in 302 redirect
+PASS [HTTPS - CrossOrigin] Preserve fragment in 303 redirect
+PASS [HTTPS - CrossOrigin] Preserve fragment in 307 redirect
+PASS [HTTPS - CrossOrigin] Preserve fragment in 308 redirect
+PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 301 redirect
+PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 302 redirect
+PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 303 redirect
+PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 307 redirect
+PASS [HTTPS - CrossOrigin] Redirect URL fragment takes precedence in 308 redirect
+PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 301 redirects
+PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 302 redirects
+PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 303 redirects
+PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 307 redirects
+PASS [HTTPS - CrossOrigin] Preserve fragment in multiple 308 redirects
+PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 301 redirects
+PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 302 redirects
+PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 303 redirects
+PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 307 redirects
+PASS [HTTPS - CrossOrigin] Destination URL fragment takes precedence in multiple 308 redirects
+PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 301 redirects
+PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 302 redirects
+PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 303 redirects
+PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 307 redirects
+PASS [HTTPS - CrossOrigin] Final redirect fragment takes precedence over intermediate in multiple 308 redirects
+PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 301 redirects
+PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 302 redirects
+PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 303 redirects
+PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 307 redirects
+PASS [HTTPS - CrossOrigin] Preserve intermediate fragment in multiple 308 redirects
 

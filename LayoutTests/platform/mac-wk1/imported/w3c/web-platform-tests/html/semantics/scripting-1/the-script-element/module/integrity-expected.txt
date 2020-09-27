@@ -1,5 +1,5 @@
 
-PASS The integrity attribute must have no affect on inline module scripts 
-PASS The integrity attribute must be verified on the top-level of a module and allow it to execute when it matches 
-PASS The integrity attribute must be verified on the top-level of a module and not allow it to execute when there's a mismatch 
+PASS The integrity attribute must have no affect on inline module scripts
+PASS The integrity attribute must be verified on the top-level of a module and allow it to execute when it matches
+PASS The integrity attribute must be verified on the top-level of a module and not allow it to execute when there's a mismatch
 

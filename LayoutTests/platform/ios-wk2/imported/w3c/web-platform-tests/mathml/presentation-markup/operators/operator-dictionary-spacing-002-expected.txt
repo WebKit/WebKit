@@ -1,7 +1,7 @@
 
-PASS Operator dictionary chunk 1 - lspace/rspace 
-PASS Operator dictionary chunk 2 - lspace/rspace 
-PASS Operator dictionary chunk 3 - lspace/rspace 
-PASS Operator dictionary chunk 4 - lspace/rspace 
-PASS Operator dictionary chunk 5 - lspace/rspace 
+PASS Operator dictionary chunk 1 - lspace/rspace
+PASS Operator dictionary chunk 2 - lspace/rspace
+PASS Operator dictionary chunk 3 - lspace/rspace
+PASS Operator dictionary chunk 4 - lspace/rspace
+PASS Operator dictionary chunk 5 - lspace/rspace
 

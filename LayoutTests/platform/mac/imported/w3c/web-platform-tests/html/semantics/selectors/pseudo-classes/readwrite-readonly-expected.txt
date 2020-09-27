@@ -1,30 +1,30 @@
 
 FAIL The :read-write pseudo-class must not match input elements to which the readonly attribute does not apply assert_array_equals: lengths differ, expected array [] length 0, got [Element node <input id="color1" type="color"></input>] length 1
 FAIL The :read-only pseudo-class must match input elements to which the readonly attribute does not apply assert_array_equals: lengths differ, expected array [Element node <input id="checkbox1" type="checkbox"></input>, Element node <input id="hidden1" type="hidden" value="abc"></input>, Element node <input id="range1" type="range"></input>, Element node <input id="color1" type="color"></input>, Element node <input id="radio1" type="radio"></input>, Element node <input id="file1" type="file"></input>, Element node <input id="submit1" type="submit"></input>, Element node <input id="image1" type="image"></input>, Element node <input id="button1" type="button" value="Button"></input>, Element node <input id="reset1" type="reset"></input>] length 10, got [Element node <input id="checkbox1" type="checkbox"></input>, Element node <input id="hidden1" type="hidden" value="abc"></input>, Element node <input id="range1" type="range"></input>, Element node <input id="radio1" type="radio"></input>, Element node <input id="file1" type="file"></input>, Element node <input id="submit1" type="submit"></input>, Element node <input id="image1" type="image"></input>, Element node <input id="button1" type="button" value="Button"></input>, Element node <input id="reset1" type="reset"></input>] length 9
-PASS The :read-write pseudo-class must match input elements to which the readonly attribute applies, and that are mutable 
-PASS The :read-only pseudo-class must not match input elements to which the readonly attribute applies, and that are mutable 
-PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been added 
-PASS The :read-only pseudo-class must match input elements after the readonly attribute has been added 
-PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been removed 
-PASS The :read-only pseudo-class must match input elements after the readonly attribute has been removed 
-PASS The :read-write pseudo-class must not match input elements after the disabled attribute has been added 
-PASS The :read-only pseudo-class must match input elements after the disabled attribute has been added 
-PASS The :read-write pseudo-class must match input elements after the disabled attribute has been removed 
-PASS The :read-only pseudo-class must not match input elements after the disabled attribute has been removed 
-PASS The :read-write pseudo-class must match textarea elements that do not have a readonly attribute, and that are not disabled 
-PASS The :read-only pseudo-class must match textarea elements that have a readonly attribute, or that are disabled 
-PASS The :read-write pseudo-class must match textarea elements after the readonly attribute has been added 
-PASS The :read-only pseudo-class must match textarea elements after the readonly attribute has been added 
-PASS The :read-write pseudo-class must not match textarea elements that are disabled 
-PASS The :read-only pseudo-class must match textarea elements that are disabled 
-PASS The :read-write pseudo-class must match elements that are editable 
-PASS The :read-only pseudo-class must not match elements that are editable 
-PASS The :read-write pseudo-class must match elements that are editing hosts 
-PASS The :read-only pseudo-class must not match elements that are editing hosts 
-         
-    
- 
- 
+PASS The :read-write pseudo-class must match input elements to which the readonly attribute applies, and that are mutable
+PASS The :read-only pseudo-class must not match input elements to which the readonly attribute applies, and that are mutable
+PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been added
+PASS The :read-only pseudo-class must match input elements after the readonly attribute has been added
+PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been removed
+PASS The :read-only pseudo-class must match input elements after the readonly attribute has been removed
+PASS The :read-write pseudo-class must not match input elements after the disabled attribute has been added
+PASS The :read-only pseudo-class must match input elements after the disabled attribute has been added
+PASS The :read-write pseudo-class must match input elements after the disabled attribute has been removed
+PASS The :read-only pseudo-class must not match input elements after the disabled attribute has been removed
+PASS The :read-write pseudo-class must match textarea elements that do not have a readonly attribute, and that are not disabled
+PASS The :read-only pseudo-class must match textarea elements that have a readonly attribute, or that are disabled
+PASS The :read-write pseudo-class must match textarea elements after the readonly attribute has been added
+PASS The :read-only pseudo-class must match textarea elements after the readonly attribute has been added
+PASS The :read-write pseudo-class must not match textarea elements that are disabled
+PASS The :read-only pseudo-class must match textarea elements that are disabled
+PASS The :read-write pseudo-class must match elements that are editable
+PASS The :read-only pseudo-class must not match elements that are editable
+PASS The :read-write pseudo-class must match elements that are editing hosts
+PASS The :read-only pseudo-class must not match elements that are editing hosts
+
+
+
+
 paragraph1.
 
 paragraph2.

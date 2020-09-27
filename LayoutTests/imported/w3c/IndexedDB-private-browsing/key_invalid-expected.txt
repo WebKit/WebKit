@@ -1,36 +1,36 @@
 
-PASS Invalid key - true 
-PASS Invalid key - false 
-PASS Invalid key - null 
-PASS Invalid key - NaN 
-PASS Invalid key - undefined 
-PASS Invalid key - undefined2 
-PASS Invalid key - function() {} 
-PASS Invalid key - {} 
-PASS Invalid key - { obj: 1 } 
-PASS Invalid key - Math 
-PASS Invalid key - window 
-PASS Invalid key - {length:0,constructor:Array} 
-PASS Invalid key - Array cloneâ€™s instance 
-PASS Invalid key - Array (object) 
-PASS Invalid key - String (object) 
-PASS Invalid key - new String() 
-PASS Invalid key - new Number() 
-PASS Invalid key - new Boolean() 
-PASS Invalid key - [{}] 
-PASS Invalid key - [[], [], [], [[ Date ]]] 
-PASS Invalid key - [undefined] 
-PASS Invalid key - [,1] 
-PASS Invalid key - document.getElementsByTagName("script") 
-PASS Invalid key - new Date(NaN) 
-PASS Invalid key - new Date(Infinity) 
-PASS Invalid key - /foo/ 
-PASS Invalid key - new RegExp() 
-PASS Invalid key - sparse array 
-PASS Invalid key - sparse array 2 
-PASS Invalid key - [[1], [3], [7], [[ sparse array ]]] 
-PASS Invalid key - [1,2,3,,] 
-PASS Invalid key - array directly contains self 
-PASS Invalid key - array indirectly contains self 
-PASS Invalid key - array member contains self 
+PASS Invalid key - true
+PASS Invalid key - false
+PASS Invalid key - null
+PASS Invalid key - NaN
+PASS Invalid key - undefined
+PASS Invalid key - undefined2
+PASS Invalid key - function() {}
+PASS Invalid key - {}
+PASS Invalid key - { obj: 1 }
+PASS Invalid key - Math
+PASS Invalid key - window
+PASS Invalid key - {length:0,constructor:Array}
+PASS Invalid key - Array cloneâ€™s instance
+PASS Invalid key - Array (object)
+PASS Invalid key - String (object)
+PASS Invalid key - new String()
+PASS Invalid key - new Number()
+PASS Invalid key - new Boolean()
+PASS Invalid key - [{}]
+PASS Invalid key - [[], [], [], [[ Date ]]]
+PASS Invalid key - [undefined]
+PASS Invalid key - [,1]
+PASS Invalid key - document.getElementsByTagName("script")
+PASS Invalid key - new Date(NaN)
+PASS Invalid key - new Date(Infinity)
+PASS Invalid key - /foo/
+PASS Invalid key - new RegExp()
+PASS Invalid key - sparse array
+PASS Invalid key - sparse array 2
+PASS Invalid key - [[1], [3], [7], [[ sparse array ]]]
+PASS Invalid key - [1,2,3,,]
+PASS Invalid key - array directly contains self
+PASS Invalid key - array indirectly contains self
+PASS Invalid key - array member contains self
 

@@ -1,4 +1,4 @@
 The feature(s) tested here are known to have been made available via vendor prefixes; you can run this test with vendor prefixes enabled.
 
-PASS Can set up a basic WebRTC call. 
-  
+PASS Can set up a basic WebRTC call.
+

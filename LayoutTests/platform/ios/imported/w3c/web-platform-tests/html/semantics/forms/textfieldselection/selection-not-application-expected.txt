@@ -50,9 +50,9 @@ FAIL text field selection for the input reset assert_throws: function "function 
 FAIL text field selection for the input button assert_throws: function "function (){
         el.selectionStart;
       }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-PASS text field selection for the input text 
-PASS text field selection for the input search 
-PASS text field selection for the input tel 
-PASS text field selection for the input url 
-PASS text field selection for the input password 
+PASS text field selection for the input text
+PASS text field selection for the input search
+PASS text field selection for the input tel
+PASS text field selection for the input url
+PASS text field selection for the input password
 

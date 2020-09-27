@@ -1,7 +1,7 @@
 
-PASS features "top=/104" should NOT set "top=104" 
-PASS features "top=_104" should NOT set "top=104" 
-PASS features "top=L104" should NOT set "top=104" 
+PASS features "top=/104" should NOT set "top=104"
+PASS features "top=_104" should NOT set "top=104"
+PASS features "top=L104" should NOT set "top=104"
 FAIL features "top=105.5" should set "top=105" assert_equals: "top=105.5 value after first non-digit will be ignored" expected 105 but got 0
 FAIL features "top=105.32" should set "top=105" assert_equals: "top=105.32 value after first non-digit will be ignored" expected 105 but got 0
 FAIL features "top=105LLl" should set "top=105" assert_equals: "top=105LLl value after first non-digit will be ignored" expected 105 but got 0

@@ -1,36 +1,36 @@
 
 FAIL msub (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL msub (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS msub (not embellished operator) 
-PASS msub (not embellished operator, from in-flow children) 
+PASS msub (not embellished operator)
+PASS msub (not embellished operator, from in-flow children)
 FAIL msup (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL msup (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS msup (not embellished operator) 
-PASS msup (not embellished operator, from in-flow children) 
+PASS msup (not embellished operator)
+PASS msup (not embellished operator, from in-flow children)
 FAIL msubsup (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL msubsup (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS msubsup (not embellished operator) 
-PASS msubsup (not embellished operator, from in-flow children) 
+PASS msubsup (not embellished operator)
+PASS msubsup (not embellished operator, from in-flow children)
 FAIL munder (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL munder (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS munder (not embellished operator) 
-PASS munder (not embellished operator, from in-flow children) 
+PASS munder (not embellished operator)
+PASS munder (not embellished operator, from in-flow children)
 FAIL mover (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mover (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS mover (not embellished operator) 
-PASS mover (not embellished operator, from in-flow children) 
+PASS mover (not embellished operator)
+PASS mover (not embellished operator, from in-flow children)
 FAIL munderover (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL munderover (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS munderover (not embellished operator) 
-PASS munderover (not embellished operator, from in-flow children) 
+PASS munderover (not embellished operator)
+PASS munderover (not embellished operator, from in-flow children)
 FAIL mmultiscripts (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mmultiscripts (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS mmultiscripts (not embellished operator) 
-PASS mmultiscripts (not embellished operator, from in-flow children) 
+PASS mmultiscripts (not embellished operator)
+PASS mmultiscripts (not embellished operator, from in-flow children)
 FAIL mfrac (embellished operator) assert_approx_equals: expected 50 +/- 1 but got 0
 FAIL mfrac (embellished operator, from in-flow children) assert_approx_equals: expected 50 +/- 1 but got 0
-PASS mfrac (not embellished operator) 
-PASS mfrac (not embellished operator, from in-flow children) 
+PASS mfrac (not embellished operator)
+PASS mfrac (not embellished operator, from in-flow children)
 X
 X
 X

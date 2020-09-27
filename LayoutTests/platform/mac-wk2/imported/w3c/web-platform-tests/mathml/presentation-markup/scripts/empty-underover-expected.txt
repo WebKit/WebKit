@@ -1,9 +1,9 @@
 
-PASS Size of empty script elements 
- 
- 
- 
- 
- 
- 
+PASS Size of empty script elements
+
+
+
+
+
+
 

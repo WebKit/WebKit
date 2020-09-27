@@ -1,3 +1,3 @@
 
-PASS Test string list ordering in IndexedDB 
+PASS Test string list ordering in IndexedDB
 

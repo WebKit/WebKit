@@ -1,9 +1,9 @@
 
 
-PASS [INPUT in EMAIL status] The multiple attribute is false and the value attribute is empty 
-PASS [INPUT in EMAIL status] The multiple attribute is false and the value attribute is a valid e-mail address 
-PASS [INPUT in EMAIL status] The multiple attribute is true and the value contains valid e-mail addresses 
-PASS [INPUT in EMAIL status] The multiple attribute is true and the value attribute contains a ',' 
+PASS [INPUT in EMAIL status] The multiple attribute is false and the value attribute is empty
+PASS [INPUT in EMAIL status] The multiple attribute is false and the value attribute is a valid e-mail address
+PASS [INPUT in EMAIL status] The multiple attribute is true and the value contains valid e-mail addresses
+PASS [INPUT in EMAIL status] The multiple attribute is true and the value attribute contains a ','
 FAIL [INPUT in DATETIME status] The datetime type must be supported. assert_equals: The datetime type should be supported. expected "datetime" but got "text"
 FAIL [INPUT in COLOR status] The color type must be supported. assert_equals: The color type should be supported. expected "color" but got "text"
 

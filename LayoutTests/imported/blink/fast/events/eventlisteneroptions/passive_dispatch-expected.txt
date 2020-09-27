@@ -1,9 +1,9 @@
 
-PASS Two argument register 
-PASS Prevent default capture false 
-PASS Prevent default capture true 
-PASS Prevent default with empty object 
-PASS Prevent default with passive false 
-PASS Prevent default with passive true  
-PASS Passive and Blocking Registered Handlers 
+PASS Two argument register
+PASS Prevent default capture false
+PASS Prevent default capture true
+PASS Prevent default with empty object
+PASS Prevent default with passive false
+PASS Prevent default with passive true
+PASS Passive and Blocking Registered Handlers
 

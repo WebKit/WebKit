@@ -1,7 +1,7 @@
 
 FAIL Empty value should return #000000 assert_equals: expected "#000000" but got ""
 FAIL Missing value should return #000000 assert_equals: expected "#000000" but got "undefined"
-PASS Valid simple color: should return #ffffff 
+PASS Valid simple color: should return #ffffff
 FAIL Valid simple color (containing LATIN CAPITAL LETTERS): should return #ffffff (converted to ASCII lowercase) assert_equals: expected "#ffffff" but got "#FFFFFF"
 FAIL Zero-padding assert_equals: expected "#0f0f0f" but got "#0F0F0F"
 FAIL Invalid simple color: not 7 characters long assert_equals: expected "#000000" but got "#fff"

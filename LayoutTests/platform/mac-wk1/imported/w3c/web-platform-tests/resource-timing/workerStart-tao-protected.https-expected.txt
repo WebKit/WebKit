@@ -3,6 +3,6 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an obj
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Install a SW Test timed out
-NOTRUN Add TAO-less iframe to remote origin. Make sure workerStart is zero 
-NOTRUN Add TAO iframe to remote origin. Make sure workerStart is not zero 
+NOTRUN Add TAO-less iframe to remote origin. Make sure workerStart is zero
+NOTRUN Add TAO iframe to remote origin. Make sure workerStart is not zero
 

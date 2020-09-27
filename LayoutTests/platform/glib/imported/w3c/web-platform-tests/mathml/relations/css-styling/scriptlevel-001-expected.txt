@@ -1,5 +1,5 @@
 
-PASS automatic scriptlevel on mfrac (displaystyle=true) 
+PASS automatic scriptlevel on mfrac (displaystyle=true)
 FAIL automatic scriptlevel on mfrac (displaystyle=false) assert_approx_equals: numerator expected 71 +/- 0.1 but got 100
 FAIL automatic scriptlevel on mroot assert_approx_equals: index expected 50.41 +/- 0.1 but got 56.25
 FAIL automatic scriptlevel on msub assert_approx_equals: child 1 expected 71 +/- 0.1 but got 75
@@ -16,7 +16,10 @@ FAIL automatic scriptlevel on munderover (accent=true) assert_approx_equals: und
 FAIL checking dynamic/case-insensitive accent/accentunder assert_approx_equals: under expected 71 +/- 0.1 but got 75
 0
 1
- 
+
+0
+1
+
 0
 1
 
@@ -25,22 +28,19 @@ FAIL checking dynamic/case-insensitive accent/accentunder assert_approx_equals: 
 
 0
 1
- 
+0
+1
+2
+
+0
+1
+
 0
 1
 0
 1
 2
- 
-0
-1
- 
-0
-1
-0
-1
-2
- 
+
 0
 1
 2
@@ -53,14 +53,14 @@ FAIL checking dynamic/case-insensitive accent/accentunder assert_approx_equals: 
 
 0
 1
- 
+
 0
 1
- 
+
 0
 1
 2
- 
+
 0
 1
 2

@@ -5,21 +5,21 @@ CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
-PASS Cross domain different subdomain [origin OK] 
-PASS Cross domain different subdomain [origin KO] 
-PASS Same domain different port [origin OK] 
-PASS Same domain different port [origin KO] 
-PASS Cross domain different port [origin OK] 
-PASS Cross domain different port [origin KO] 
+PASS Cross domain different subdomain [origin OK]
+PASS Cross domain different subdomain [origin KO]
+PASS Same domain different port [origin OK]
+PASS Same domain different port [origin KO]
+PASS Cross domain different port [origin OK]
+PASS Cross domain different port [origin KO]
 FAIL Cross domain different protocol [origin OK] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Cross domain different protocol [origin KO] 
+PASS Cross domain different protocol [origin KO]
 FAIL Same domain different protocol different port [origin OK] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Same domain different protocol different port [origin KO] 
-PASS Cross domain [POST] [origin OK] 
-PASS Cross domain [POST] [origin KO] 
-PASS Cross domain [HEAD] [origin OK] 
-PASS Cross domain [HEAD] [origin KO] 
-PASS CORS preflight [PUT] [origin OK] 
-PASS CORS preflight [PUT] [origin KO] 
-PASS Allowed origin: "" [origin KO] 
+PASS Same domain different protocol different port [origin KO]
+PASS Cross domain [POST] [origin OK]
+PASS Cross domain [POST] [origin KO]
+PASS Cross domain [HEAD] [origin OK]
+PASS Cross domain [HEAD] [origin KO]
+PASS CORS preflight [PUT] [origin OK]
+PASS CORS preflight [PUT] [origin KO]
+PASS Allowed origin: "" [origin KO]
 

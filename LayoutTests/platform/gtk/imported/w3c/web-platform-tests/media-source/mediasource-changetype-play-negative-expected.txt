@@ -1,39 +1,39 @@
 
-PASS Check if browser supports enough test media types across audio and video for changeType negative tests 
-PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8" 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis" 
-PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8" 
-PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis" 
-PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8" (using types without codecs parameters) 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) 
-PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8" (without codecs parameters for addSourceBuffer) 
-PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis" (without codecs parameters for addSourceBuffer) 
-PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9" 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis" 
-PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9" 
-PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis" 
-PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9" (using types without codecs parameters) 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) 
-PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9" (without codecs parameters for addSourceBuffer) 
-PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis" (without codecs parameters for addSourceBuffer) 
-PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/mp4; codecs="avc1.4D4001" 
-PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/webm; codecs="vorbis" 
-PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters) 
-PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) 
-PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp8" 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/mp4; codecs="mp4a.40.2" 
-PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp8" (using types without codecs parameters) 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) 
-PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp9" 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/mp4; codecs="mp4a.40.2" 
-PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp9" (using types without codecs parameters) 
-PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) 
-PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001" 
-PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2" 
-PASS Negative test audio<->video implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001" 
-PASS Negative test video<->audio implicit changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2" 
-PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters) 
-PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) 
-PASS Negative test audio<->video implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001" (without codecs parameters for addSourceBuffer) 
-PASS Negative test video<->audio implicit changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2" (without codecs parameters for addSourceBuffer) 
+PASS Check if browser supports enough test media types across audio and video for changeType negative tests
+PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8"
+PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis"
+PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8"
+PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis"
+PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8" (using types without codecs parameters)
+PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis" (using types without codecs parameters)
+PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp8" (without codecs parameters for addSourceBuffer)
+PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp8" <-> audio/webm; codecs="vorbis" (without codecs parameters for addSourceBuffer)
+PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9"
+PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis"
+PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9"
+PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis"
+PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9" (using types without codecs parameters)
+PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis" (using types without codecs parameters)
+PASS Negative test audio<->video implicit changeType for audio/webm; codecs="vorbis" <-> video/webm; codecs="vp9" (without codecs parameters for addSourceBuffer)
+PASS Negative test video<->audio implicit changeType for video/webm; codecs="vp9" <-> audio/webm; codecs="vorbis" (without codecs parameters for addSourceBuffer)
+PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/mp4; codecs="avc1.4D4001"
+PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/webm; codecs="vorbis"
+PASS Negative test audio<->video changeType for audio/webm; codecs="vorbis" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters)
+PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/webm; codecs="vorbis" (using types without codecs parameters)
+PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp8"
+PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/mp4; codecs="mp4a.40.2"
+PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp8" (using types without codecs parameters)
+PASS Negative test video<->audio changeType for video/webm; codecs="vp8" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters)
+PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp9"
+PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/mp4; codecs="mp4a.40.2"
+PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/webm; codecs="vp9" (using types without codecs parameters)
+PASS Negative test video<->audio changeType for video/webm; codecs="vp9" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters)
+PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001"
+PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2"
+PASS Negative test audio<->video implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001"
+PASS Negative test video<->audio implicit changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2"
+PASS Negative test audio<->video changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001" (using types without codecs parameters)
+PASS Negative test video<->audio changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters)
+PASS Negative test audio<->video implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> video/mp4; codecs="avc1.4D4001" (without codecs parameters for addSourceBuffer)
+PASS Negative test video<->audio implicit changeType for video/mp4; codecs="avc1.4D4001" <-> audio/mp4; codecs="mp4a.40.2" (without codecs parameters for addSourceBuffer)
 

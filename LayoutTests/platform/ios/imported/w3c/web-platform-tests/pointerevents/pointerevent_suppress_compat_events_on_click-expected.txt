@@ -13,8 +13,8 @@ The following pointer types were detected: touch.
 The following events were logged: click@target0, mousedown@target1, mouseup@target1, click@target1.
 
 
-PASS Suppress compat mouse events on click 
-PASS primary pointer pointerdown@target0 
-PASS primary pointer pointerdown@target1 
-PASS Event log 
+PASS Suppress compat mouse events on click
+PASS primary pointer pointerdown@target0
+PASS primary pointer pointerdown@target1
+PASS Event log
 

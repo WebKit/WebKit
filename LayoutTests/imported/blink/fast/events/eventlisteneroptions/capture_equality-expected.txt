@@ -1,6 +1,6 @@
 
-PASS Empty object 
-PASS Capture false 
-PASS Capture true 
-PASS Non-empty object 
+PASS Empty object
+PASS Capture false
+PASS Capture true
+PASS Non-empty object
 

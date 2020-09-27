@@ -7,8 +7,8 @@ window.visualViewport width and height is (800, 600).
 window.visualViewport width and height when scrollbars are present is (800, 600).
 
 
-PASS visualViewport.width should match documentElement.clientWidth when unzoomed. 
-PASS visualViewport.height should match documentElement.clientHeight when unzoomed. 
-PASS visualViewport.width should exclude scrollbar. 
-PASS visualViewport.height should exclude scrollbar. 
+PASS visualViewport.width should match documentElement.clientWidth when unzoomed.
+PASS visualViewport.height should match documentElement.clientHeight when unzoomed.
+PASS visualViewport.width should exclude scrollbar.
+PASS visualViewport.height should exclude scrollbar.
 

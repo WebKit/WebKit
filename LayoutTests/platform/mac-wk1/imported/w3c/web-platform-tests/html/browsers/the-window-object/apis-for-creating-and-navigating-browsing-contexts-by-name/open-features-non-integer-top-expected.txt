@@ -2,13 +2,13 @@
 FAIL features "top=/104" should NOT set "top=104" assert_equals: "top=/104 begins with an invalid character and should be ignored" expected 25 but got 105
 FAIL features "top=_104" should NOT set "top=104" assert_equals: "top=_104 begins with an invalid character and should be ignored" expected 25 but got 105
 FAIL features "top=L104" should NOT set "top=104" assert_equals: "top=L104 begins with an invalid character and should be ignored" expected 25 but got 105
-PASS features "top=105.5" should set "top=105" 
-PASS features "top=105.32" should set "top=105" 
-PASS features "top=105LLl" should set "top=105" 
-PASS features "top=105^4" should set "top=105" 
-PASS features "top=105*3" should set "top=105" 
-PASS features "top=105/5" should set "top=105" 
-PASS features "top=105  " should set "top=105" 
-PASS features "top=105e1" should set "top=105" 
-PASS features "top=105e-1" should set "top=105" 
+PASS features "top=105.5" should set "top=105"
+PASS features "top=105.32" should set "top=105"
+PASS features "top=105LLl" should set "top=105"
+PASS features "top=105^4" should set "top=105"
+PASS features "top=105*3" should set "top=105"
+PASS features "top=105/5" should set "top=105"
+PASS features "top=105  " should set "top=105"
+PASS features "top=105e1" should set "top=105"
+PASS features "top=105e-1" should set "top=105"
 

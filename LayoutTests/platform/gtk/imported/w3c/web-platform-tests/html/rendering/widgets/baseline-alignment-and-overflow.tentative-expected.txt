@@ -1,39 +1,39 @@
 
-PASS <input type="text" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="text" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="text" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="text" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="text" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="text" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="text" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="text" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="text" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="text" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="search" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="search" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="search" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="search" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="search" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="search" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="search" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="search" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="search" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="search" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="tel" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="tel" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="tel" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="tel" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="tel" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="tel" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="tel" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="tel" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="tel" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="tel" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="url" value="data:,x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="url" value="data:,x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="url" value="data:,x" style="overflow: visible; appearance: auto;">
+PASS <input type="url" value="data:,x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="url" value="data:,x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="url" value="data:,x" style="overflow: visible; appearance: none;"> 
-PASS <input type="url" value="data:,x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="url" value="data:,x" style="overflow: visible; appearance: none;">
+PASS <input type="url" value="data:,x" style="overflow: hidden; appearance: none;">
 FAIL <input type="url" value="data:,x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="email" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="email" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="email" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="email" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="email" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="email" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="email" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="email" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="email" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="email" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="password" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="password" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="password" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="password" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="password" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="password" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="password" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="password" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="password" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="password" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
 FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: auto;"> assert_equals: input type should be supported expected "date" but got "text"
 FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: auto;"> assert_equals: input type should be supported expected "date" but got "text"
@@ -65,11 +65,11 @@ FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scro
 FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: none;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
 FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: none;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
 FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: none;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
-PASS <input type="number" value="0" style="overflow: visible; appearance: auto;"> 
-PASS <input type="number" value="0" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="number" value="0" style="overflow: visible; appearance: auto;">
+PASS <input type="number" value="0" style="overflow: hidden; appearance: auto;">
 FAIL <input type="number" value="0" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-PASS <input type="number" value="0" style="overflow: visible; appearance: none;"> 
-PASS <input type="number" value="0" style="overflow: hidden; appearance: none;"> 
+PASS <input type="number" value="0" style="overflow: visible; appearance: none;">
+PASS <input type="number" value="0" style="overflow: hidden; appearance: none;">
 FAIL <input type="number" value="0" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
 FAIL <input type="range" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
 FAIL <input type="range" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 71 +/- 3 but got 61
@@ -83,217 +83,217 @@ FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: au
 FAIL <input type="color" value="#000000" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 49 +/- 3 but got 44
 FAIL <input type="color" value="#000000" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 49 +/- 3 but got 44
 FAIL <input type="color" value="#000000" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 49 +/- 3 but got 71
-PASS <input type="checkbox" style="overflow: visible; appearance: auto;"> 
-PASS <input type="checkbox" style="overflow: hidden; appearance: auto;"> 
-PASS <input type="checkbox" style="overflow: scroll; appearance: auto;"> 
-PASS <input type="checkbox" style="overflow: visible; appearance: none;"> 
-PASS <input type="checkbox" style="overflow: hidden; appearance: none;"> 
-PASS <input type="checkbox" style="overflow: scroll; appearance: none;"> 
-PASS <input type="radio" style="overflow: visible; appearance: auto;"> 
-PASS <input type="radio" style="overflow: hidden; appearance: auto;"> 
-PASS <input type="radio" style="overflow: scroll; appearance: auto;"> 
-PASS <input type="radio" style="overflow: visible; appearance: none;"> 
-PASS <input type="radio" style="overflow: hidden; appearance: none;"> 
-PASS <input type="radio" style="overflow: scroll; appearance: none;"> 
+PASS <input type="checkbox" style="overflow: visible; appearance: auto;">
+PASS <input type="checkbox" style="overflow: hidden; appearance: auto;">
+PASS <input type="checkbox" style="overflow: scroll; appearance: auto;">
+PASS <input type="checkbox" style="overflow: visible; appearance: none;">
+PASS <input type="checkbox" style="overflow: hidden; appearance: none;">
+PASS <input type="checkbox" style="overflow: scroll; appearance: none;">
+PASS <input type="radio" style="overflow: visible; appearance: auto;">
+PASS <input type="radio" style="overflow: hidden; appearance: auto;">
+PASS <input type="radio" style="overflow: scroll; appearance: auto;">
+PASS <input type="radio" style="overflow: visible; appearance: none;">
+PASS <input type="radio" style="overflow: hidden; appearance: none;">
+PASS <input type="radio" style="overflow: scroll; appearance: none;">
 FAIL <input type="file" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 31 +/- 3 but got 24
 FAIL <input type="file" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 31 +/- 3 but got 24
 FAIL <input type="file" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 31 +/- 3 but got 71
 FAIL <input type="file" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 31 +/- 3 but got 24
 FAIL <input type="file" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 31 +/- 3 but got 24
 FAIL <input type="file" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 31 +/- 3 but got 71
-PASS <input type="submit" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="submit" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="submit" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="submit" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="submit" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 27
-PASS <input type="submit" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="submit" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="submit" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="submit" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="submit" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 27
 FAIL <input type="image" src="data:,broken" alt="x" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 20 +/- 3 but got 71
-PASS <input type="image" src="data:,broken" alt="x" style="overflow: hidden; appearance: auto;"> 
-PASS <input type="image" src="data:,broken" alt="x" style="overflow: scroll; appearance: auto;"> 
+PASS <input type="image" src="data:,broken" alt="x" style="overflow: hidden; appearance: auto;">
+PASS <input type="image" src="data:,broken" alt="x" style="overflow: scroll; appearance: auto;">
 FAIL <input type="image" src="data:,broken" alt="x" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 20 +/- 3 but got 71
-PASS <input type="image" src="data:,broken" alt="x" style="overflow: hidden; appearance: none;"> 
-PASS <input type="image" src="data:,broken" alt="x" style="overflow: scroll; appearance: none;"> 
-PASS <input type="image" src="data:(png)" alt="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="image" src="data:(png)" alt="x" style="overflow: hidden; appearance: auto;"> 
-PASS <input type="image" src="data:(png)" alt="x" style="overflow: scroll; appearance: auto;"> 
-PASS <input type="image" src="data:(png)" alt="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="image" src="data:(png)" alt="x" style="overflow: hidden; appearance: none;"> 
-PASS <input type="image" src="data:(png)" alt="x" style="overflow: scroll; appearance: none;"> 
-PASS <input type="reset" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="reset" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="image" src="data:,broken" alt="x" style="overflow: hidden; appearance: none;">
+PASS <input type="image" src="data:,broken" alt="x" style="overflow: scroll; appearance: none;">
+PASS <input type="image" src="data:(png)" alt="x" style="overflow: visible; appearance: auto;">
+PASS <input type="image" src="data:(png)" alt="x" style="overflow: hidden; appearance: auto;">
+PASS <input type="image" src="data:(png)" alt="x" style="overflow: scroll; appearance: auto;">
+PASS <input type="image" src="data:(png)" alt="x" style="overflow: visible; appearance: none;">
+PASS <input type="image" src="data:(png)" alt="x" style="overflow: hidden; appearance: none;">
+PASS <input type="image" src="data:(png)" alt="x" style="overflow: scroll; appearance: none;">
+PASS <input type="reset" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="reset" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="reset" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 27
-PASS <input type="reset" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="reset" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="reset" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="reset" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="reset" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 27
-PASS <input type="button" value="x" style="overflow: visible; appearance: auto;"> 
-PASS <input type="button" value="x" style="overflow: hidden; appearance: auto;"> 
+PASS <input type="button" value="x" style="overflow: visible; appearance: auto;">
+PASS <input type="button" value="x" style="overflow: hidden; appearance: auto;">
 FAIL <input type="button" value="x" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 27
-PASS <input type="button" value="x" style="overflow: visible; appearance: none;"> 
-PASS <input type="button" value="x" style="overflow: hidden; appearance: none;"> 
+PASS <input type="button" value="x" style="overflow: visible; appearance: none;">
+PASS <input type="button" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="button" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 27
 refs
 
 ref-text-input-like x
-ref-checkbox-input-appearance-auto-like 
-ref-color-input-like 
+ref-checkbox-input-appearance-auto-like
+ref-color-input-like
 ref-file-input-like x
 ref-image-input-showing-alt-overflow-visible-like x
-ref-image-input-showing-image-like 
+ref-image-input-showing-image-like
 template table
 
-text 
-search 
-tel 
-url 
-email 
-password 
-date 
-month 
-week 
-time 
-datetime-local 
-number 
-range 
-color 
-checkbox 
-radio 
-file 
-submit 
-image 
-image-with-src 
-reset 
-button 
+text
+search
+tel
+url
+email
+password
+date
+month
+week
+time
+datetime-local
+number
+range
+color
+checkbox
+radio
+file
+submit
+image
+image-with-src
+reset
+button
 tests
 
-text 
-text 
-text 
-text 
-text 
-text 
-search 
-search 
-search 
-search 
-search 
-search 
-tel 
-tel 
-tel 
-tel 
-tel 
-tel 
-url 
-url 
-url 
-url 
-url 
-url 
-email 
-email 
-email 
-email 
-email 
-email 
-password 
-password 
-password 
-password 
-password 
-password 
-date 
-date 
-date 
-date 
-date 
-date 
-month 
-month 
-month 
-month 
-month 
-month 
-week 
-week 
-week 
-week 
-week 
-week 
-time 
-time 
-time 
-time 
-time 
-time 
-datetime-local 
-datetime-local 
-datetime-local 
-datetime-local 
-datetime-local 
-datetime-local 
-number 
-number 
-number 
-number 
-number 
-number 
-range 
-range 
-range 
-range 
-range 
-range 
-color 
-color 
-color 
-color 
-color 
-color 
-checkbox 
-checkbox 
-checkbox 
-checkbox 
-checkbox 
-checkbox 
-radio 
-radio 
-radio 
-radio 
-radio 
-radio 
-file 
-file 
-file 
-file 
-file 
-file 
-submit 
-submit 
-submit 
-submit 
-submit 
-submit 
-image 
-image 
-image 
-image 
-image 
-image 
-image-with-src 
-image-with-src 
-image-with-src 
-image-with-src 
-image-with-src 
-image-with-src 
-reset 
-reset 
-reset 
-reset 
-reset 
-reset 
-button 
-button 
-button 
-button 
-button 
-button 
+text
+text
+text
+text
+text
+text
+search
+search
+search
+search
+search
+search
+tel
+tel
+tel
+tel
+tel
+tel
+url
+url
+url
+url
+url
+url
+email
+email
+email
+email
+email
+email
+password
+password
+password
+password
+password
+password
+date
+date
+date
+date
+date
+date
+month
+month
+month
+month
+month
+month
+week
+week
+week
+week
+week
+week
+time
+time
+time
+time
+time
+time
+datetime-local
+datetime-local
+datetime-local
+datetime-local
+datetime-local
+datetime-local
+number
+number
+number
+number
+number
+number
+range
+range
+range
+range
+range
+range
+color
+color
+color
+color
+color
+color
+checkbox
+checkbox
+checkbox
+checkbox
+checkbox
+checkbox
+radio
+radio
+radio
+radio
+radio
+radio
+file
+file
+file
+file
+file
+file
+submit
+submit
+submit
+submit
+submit
+submit
+image
+image
+image
+image
+image
+image
+image-with-src
+image-with-src
+image-with-src
+image-with-src
+image-with-src
+image-with-src
+reset
+reset
+reset
+reset
+reset
+reset
+button
+button
+button
+button
+button
+button

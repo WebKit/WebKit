@@ -1,17 +1,17 @@
 
-PASS Blob URLs can be used in fetch 
+PASS Blob URLs can be used in fetch
 FAIL fetch with a fragment should succeed promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS fetch of a revoked URL should fail 
-PASS Only exact matches should revoke URLs, using fetch 
-PASS Appending a query string should cause fetch to fail 
-PASS Appending a path should cause fetch to fail 
-PASS fetch with method "HEAD" should fail 
-PASS fetch with method "POST" should fail 
-PASS fetch with method "DELETE" should fail 
-PASS fetch with method "OPTIONS" should fail 
-PASS fetch with method "PUT" should fail 
-PASS fetch with method "CUSTOM" should fail 
-PASS fetch should return Content-Type from Blob 
+PASS fetch of a revoked URL should fail
+PASS Only exact matches should revoke URLs, using fetch
+PASS Appending a query string should cause fetch to fail
+PASS Appending a path should cause fetch to fail
+PASS fetch with method "HEAD" should fail
+PASS fetch with method "POST" should fail
+PASS fetch with method "DELETE" should fail
+PASS fetch with method "OPTIONS" should fail
+PASS fetch with method "PUT" should fail
+PASS fetch with method "CUSTOM" should fail
+PASS fetch should return Content-Type from Blob
 FAIL Revoke blob URL after creating Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS Revoke blob URL after calling fetch, fetch should succeed 
+PASS Revoke blob URL after calling fetch, fetch should succeed
 

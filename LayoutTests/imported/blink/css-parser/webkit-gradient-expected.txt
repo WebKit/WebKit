@@ -1,5 +1,5 @@
 
-PASS -webkit-gradient accepts positive radii. 
-PASS -webkit-gradient accepts zero radii. 
-PASS -webkit-gradient rejects negative radii. 
+PASS -webkit-gradient accepts positive radii.
+PASS -webkit-gradient accepts zero radii.
+PASS -webkit-gradient rejects negative radii.
 

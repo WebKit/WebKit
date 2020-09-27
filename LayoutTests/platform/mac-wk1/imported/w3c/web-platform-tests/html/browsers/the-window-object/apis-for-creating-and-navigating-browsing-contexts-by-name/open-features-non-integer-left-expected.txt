@@ -2,13 +2,13 @@
 FAIL features "left=/104" should NOT set "left=104" assert_equals: "left=/104 begins with an invalid character and should be ignored" expected 0 but got 105
 FAIL features "left=_104" should NOT set "left=104" assert_equals: "left=_104 begins with an invalid character and should be ignored" expected 0 but got 105
 FAIL features "left=L104" should NOT set "left=104" assert_equals: "left=L104 begins with an invalid character and should be ignored" expected 0 but got 105
-PASS features "left=105.5" should set "left=105" 
-PASS features "left=105.32" should set "left=105" 
-PASS features "left=105LLl" should set "left=105" 
-PASS features "left=105^4" should set "left=105" 
-PASS features "left=105*3" should set "left=105" 
-PASS features "left=105/5" should set "left=105" 
-PASS features "left=105  " should set "left=105" 
-PASS features "left=105e1" should set "left=105" 
-PASS features "left=105e-1" should set "left=105" 
+PASS features "left=105.5" should set "left=105"
+PASS features "left=105.32" should set "left=105"
+PASS features "left=105LLl" should set "left=105"
+PASS features "left=105^4" should set "left=105"
+PASS features "left=105*3" should set "left=105"
+PASS features "left=105/5" should set "left=105"
+PASS features "left=105  " should set "left=105"
+PASS features "left=105e1" should set "left=105"
+PASS features "left=105e-1" should set "left=105"
 

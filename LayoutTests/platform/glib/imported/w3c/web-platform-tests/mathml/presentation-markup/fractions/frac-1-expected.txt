@@ -1,11 +1,11 @@
 
-PASS Fraction axis is aligned on the math axis 
-PASS Vertical positions of numerator and denominator 
-PASS Horizontal alignments of numerator and denominator 
-PASS Dimension of mfrac elements 
+PASS Fraction axis is aligned on the math axis
+PASS Vertical positions of numerator and denominator
+PASS Horizontal alignments of numerator and denominator
+PASS Dimension of mfrac elements
 FAIL Preferred width of mfrac elements assert_approx_equals: Should be the maximum preferred width of numerator/denominator. expected 32 +/- 1 but got 30
 
- 
- 
- 
+
+
+
 

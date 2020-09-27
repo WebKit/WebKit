@@ -1,10 +1,10 @@
 
-PASS Baseline alignment 
-PASS Heights of bases 
-PASS AccentBaseHeight, UnderbarExtraDescender 
-PASS AccentBaseHeight, UnderbarVerticalGap 
-PASS AccentBaseHeight, OverbarExtraAscender 
-PASS AccentBaseHeight, OverbarVerticalGap 
+PASS Baseline alignment
+PASS Heights of bases
+PASS AccentBaseHeight, UnderbarExtraDescender
+PASS AccentBaseHeight, UnderbarVerticalGap
+PASS AccentBaseHeight, OverbarExtraAscender
+PASS AccentBaseHeight, OverbarVerticalGap
 FAIL Dynamic change of accentunder attribute assert_approx_equals: el0051: gap between base and underscript ; Invert boolean value using absent attribute expected 0 +/- 2 but got 70
 FAIL Dynamic change of accent attribute assert_approx_equals: el0061: accent=true ; short base ; Invert boolean value using absent attribute expected 40 +/- 2 but got 140
 

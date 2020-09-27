@@ -1,10 +1,10 @@
 
-PASS Baseline alignment 
-PASS Heights of bases 
-PASS AccentBaseHeight, UnderbarExtraDescender 
-PASS AccentBaseHeight, UnderbarVerticalGap 
-PASS AccentBaseHeight, OverbarExtraAscender 
-PASS AccentBaseHeight, OverbarVerticalGap 
+PASS Baseline alignment
+PASS Heights of bases
+PASS AccentBaseHeight, UnderbarExtraDescender
+PASS AccentBaseHeight, UnderbarVerticalGap
+PASS AccentBaseHeight, OverbarExtraAscender
+PASS AccentBaseHeight, OverbarVerticalGap
 °
 ˘
 ˘

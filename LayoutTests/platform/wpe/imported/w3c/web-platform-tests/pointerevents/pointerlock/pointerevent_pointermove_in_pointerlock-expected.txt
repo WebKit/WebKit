@@ -11,6 +11,6 @@ Move your mouse.
 
 Harness Error (FAIL), message = Unhandled rejection: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
 
-NOTRUN pointermove event received 
-NOTRUN pointermove event received inner frame 
+NOTRUN pointermove event received
+NOTRUN pointermove event received inner frame
 

@@ -9,5 +9,5 @@ Bar
 Foo
 Bar
 
-PASS min-width should force all buttons to be 200px wide 
+PASS min-width should force all buttons to be 200px wide
 

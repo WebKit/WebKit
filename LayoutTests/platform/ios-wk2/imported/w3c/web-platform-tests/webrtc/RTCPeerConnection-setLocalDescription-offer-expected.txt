@@ -1,9 +1,9 @@
 
-PASS setLocalDescription with valid offer should succeed 
+PASS setLocalDescription with valid offer should succeed
 FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
 FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to push down transport description for data: Local fingerprint does not match identity. Expected: sha-256 80:24:3B:E3:F6:F1:54:B7:B9:A9:E7:C1:A6:78:13:F4:F2:36:20:49:EF:84:5C:0D:2E:22:FE:01:38:7A:D6:EC Got: sha-256 4D:8A:5B:E5:F3:1C:8C:B9:37:96:1D:A7:EF:61:5E:D7:25:0C:28:0C:5B:64:8F:22:CD:3B:60:C4:76:7B:17:71" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
 FAIL Set created offer other than last offer should reject with InvalidModificationError assert_false: Expect both session descriptions to have different count of media lines expected false got true
 FAIL Creating and setting offer multiple times should succeed assert_not_equals: Expect session description to be defined got disallowed value undefined
-PASS Test onsignalingstatechange event for setLocalDescription with valid offer should succeed 
-PASS Test onsignalingstatechange event for Creating and setting offer multiple times should succeed 
+PASS Test onsignalingstatechange event for setLocalDescription with valid offer should succeed
+PASS Test onsignalingstatechange event for Creating and setting offer multiple times should succeed
 

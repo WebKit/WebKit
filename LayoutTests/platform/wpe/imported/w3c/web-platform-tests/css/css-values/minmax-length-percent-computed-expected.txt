@@ -1,52 +1,52 @@
 
-PASS min(1px + 1%) should be used-value-equivalent to calc(1px + 1%) 
-PASS min(1cm + 1%) should be used-value-equivalent to calc(1cm + 1%) 
-PASS min(1mm + 1%) should be used-value-equivalent to calc(1mm + 1%) 
-PASS min(1Q + 1%) should be used-value-equivalent to calc(1Q + 1%) 
-PASS min(1in + 1%) should be used-value-equivalent to calc(1in + 1%) 
-PASS min(1pc + 1%) should be used-value-equivalent to calc(1pc + 1%) 
-PASS min(1pt + 1%) should be used-value-equivalent to calc(1pt + 1%) 
-PASS min(1em + 1%) should be used-value-equivalent to calc(1em + 1%) 
-PASS min(1ex + 1%) should be used-value-equivalent to calc(1ex + 1%) 
-PASS min(1ch + 1%) should be used-value-equivalent to calc(1ch + 1%) 
-PASS min(1rem + 1%) should be used-value-equivalent to calc(1rem + 1%) 
-PASS min(1vh + 1%) should be used-value-equivalent to calc(1vh + 1%) 
-PASS min(1vw + 1%) should be used-value-equivalent to calc(1vw + 1%) 
-PASS min(1vmin + 1%) should be used-value-equivalent to calc(1vmin + 1%) 
-PASS min(1vmax + 1%) should be used-value-equivalent to calc(1vmax + 1%) 
-PASS max(1px + 1%) should be used-value-equivalent to calc(1px + 1%) 
-PASS max(1cm + 1%) should be used-value-equivalent to calc(1cm + 1%) 
-PASS max(1mm + 1%) should be used-value-equivalent to calc(1mm + 1%) 
-PASS max(1Q + 1%) should be used-value-equivalent to calc(1Q + 1%) 
-PASS max(1in + 1%) should be used-value-equivalent to calc(1in + 1%) 
-PASS max(1pc + 1%) should be used-value-equivalent to calc(1pc + 1%) 
-PASS max(1pt + 1%) should be used-value-equivalent to calc(1pt + 1%) 
-PASS max(1em + 1%) should be used-value-equivalent to calc(1em + 1%) 
-PASS max(1ex + 1%) should be used-value-equivalent to calc(1ex + 1%) 
-PASS max(1ch + 1%) should be used-value-equivalent to calc(1ch + 1%) 
-PASS max(1rem + 1%) should be used-value-equivalent to calc(1rem + 1%) 
-PASS max(1vh + 1%) should be used-value-equivalent to calc(1vh + 1%) 
-PASS max(1vw + 1%) should be used-value-equivalent to calc(1vw + 1%) 
-PASS max(1vmin + 1%) should be used-value-equivalent to calc(1vmin + 1%) 
-PASS max(1vmax + 1%) should be used-value-equivalent to calc(1vmax + 1%) 
-PASS min(20px, 10%) should be used-value-equivalent to 20px 
-PASS min(1em, 10%) should be used-value-equivalent to 20px 
-PASS max(20px, 10%) should be used-value-equivalent to 40px 
-PASS max(1em, 10%) should be used-value-equivalent to 40px 
-PASS min(20px, 10%) should be used-value-equivalent to 10px; width=100px 
-PASS min(1em, 10%) should be used-value-equivalent to 10px; width=100px 
-PASS max(20px, 10%) should be used-value-equivalent to 20px; width=100px 
-PASS max(1em, 10%) should be used-value-equivalent to 20px; width=100px 
-PASS min(30px + 10%, 60px + 5%) should be used-value-equivalent to 70px 
-PASS max(2em + 10%, 1em + 20%) should be used-value-equivalent to 100px 
-PASS calc(min(1.5em, 10%) + 10px) should be used-value-equivalent to 40px 
-PASS calc(min(1.5em, 10%) - 10px) should be used-value-equivalent to 20px 
-PASS calc(min(1.5em, 10%) * 2) should be used-value-equivalent to 60px 
-PASS calc(min(1.5em, 10%) / 2) should be used-value-equivalent to 15px 
-PASS calc(max(1em, 15%) + 10px) should be used-value-equivalent to 70px 
-PASS calc(max(1em, 15%) - 10px) should be used-value-equivalent to 50px 
-PASS calc(max(1em, 15%) * 2) should be used-value-equivalent to 120px 
-PASS calc(max(1em, 15%) / 2) should be used-value-equivalent to 30px 
-PASS calc(min(1.5em, 10%) + max(1em, 15%)) should be used-value-equivalent to 90px 
-PASS calc(min(1.5em, 10%) - max(1em, 15%)) should be used-value-equivalent to -30px 
+PASS min(1px + 1%) should be used-value-equivalent to calc(1px + 1%)
+PASS min(1cm + 1%) should be used-value-equivalent to calc(1cm + 1%)
+PASS min(1mm + 1%) should be used-value-equivalent to calc(1mm + 1%)
+PASS min(1Q + 1%) should be used-value-equivalent to calc(1Q + 1%)
+PASS min(1in + 1%) should be used-value-equivalent to calc(1in + 1%)
+PASS min(1pc + 1%) should be used-value-equivalent to calc(1pc + 1%)
+PASS min(1pt + 1%) should be used-value-equivalent to calc(1pt + 1%)
+PASS min(1em + 1%) should be used-value-equivalent to calc(1em + 1%)
+PASS min(1ex + 1%) should be used-value-equivalent to calc(1ex + 1%)
+PASS min(1ch + 1%) should be used-value-equivalent to calc(1ch + 1%)
+PASS min(1rem + 1%) should be used-value-equivalent to calc(1rem + 1%)
+PASS min(1vh + 1%) should be used-value-equivalent to calc(1vh + 1%)
+PASS min(1vw + 1%) should be used-value-equivalent to calc(1vw + 1%)
+PASS min(1vmin + 1%) should be used-value-equivalent to calc(1vmin + 1%)
+PASS min(1vmax + 1%) should be used-value-equivalent to calc(1vmax + 1%)
+PASS max(1px + 1%) should be used-value-equivalent to calc(1px + 1%)
+PASS max(1cm + 1%) should be used-value-equivalent to calc(1cm + 1%)
+PASS max(1mm + 1%) should be used-value-equivalent to calc(1mm + 1%)
+PASS max(1Q + 1%) should be used-value-equivalent to calc(1Q + 1%)
+PASS max(1in + 1%) should be used-value-equivalent to calc(1in + 1%)
+PASS max(1pc + 1%) should be used-value-equivalent to calc(1pc + 1%)
+PASS max(1pt + 1%) should be used-value-equivalent to calc(1pt + 1%)
+PASS max(1em + 1%) should be used-value-equivalent to calc(1em + 1%)
+PASS max(1ex + 1%) should be used-value-equivalent to calc(1ex + 1%)
+PASS max(1ch + 1%) should be used-value-equivalent to calc(1ch + 1%)
+PASS max(1rem + 1%) should be used-value-equivalent to calc(1rem + 1%)
+PASS max(1vh + 1%) should be used-value-equivalent to calc(1vh + 1%)
+PASS max(1vw + 1%) should be used-value-equivalent to calc(1vw + 1%)
+PASS max(1vmin + 1%) should be used-value-equivalent to calc(1vmin + 1%)
+PASS max(1vmax + 1%) should be used-value-equivalent to calc(1vmax + 1%)
+PASS min(20px, 10%) should be used-value-equivalent to 20px
+PASS min(1em, 10%) should be used-value-equivalent to 20px
+PASS max(20px, 10%) should be used-value-equivalent to 40px
+PASS max(1em, 10%) should be used-value-equivalent to 40px
+PASS min(20px, 10%) should be used-value-equivalent to 10px; width=100px
+PASS min(1em, 10%) should be used-value-equivalent to 10px; width=100px
+PASS max(20px, 10%) should be used-value-equivalent to 20px; width=100px
+PASS max(1em, 10%) should be used-value-equivalent to 20px; width=100px
+PASS min(30px + 10%, 60px + 5%) should be used-value-equivalent to 70px
+PASS max(2em + 10%, 1em + 20%) should be used-value-equivalent to 100px
+PASS calc(min(1.5em, 10%) + 10px) should be used-value-equivalent to 40px
+PASS calc(min(1.5em, 10%) - 10px) should be used-value-equivalent to 20px
+PASS calc(min(1.5em, 10%) * 2) should be used-value-equivalent to 60px
+PASS calc(min(1.5em, 10%) / 2) should be used-value-equivalent to 15px
+PASS calc(max(1em, 15%) + 10px) should be used-value-equivalent to 70px
+PASS calc(max(1em, 15%) - 10px) should be used-value-equivalent to 50px
+PASS calc(max(1em, 15%) * 2) should be used-value-equivalent to 120px
+PASS calc(max(1em, 15%) / 2) should be used-value-equivalent to 30px
+PASS calc(min(1.5em, 10%) + max(1em, 15%)) should be used-value-equivalent to 90px
+PASS calc(min(1.5em, 10%) - max(1em, 15%)) should be used-value-equivalent to -30px
 

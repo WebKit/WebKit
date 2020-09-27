@@ -1,162 +1,162 @@
 
-PASS Operator dictionary chunk 1 - lspace/rspace 
-PASS Operator dictionary chunk 1 - movablelimits 
-PASS Operator dictionary chunk 1 - largeop 
-PASS Operator dictionary chunk 1 - stretchy 
-PASS Operator dictionary chunk 1 - symmetric 
+PASS Operator dictionary chunk 1 - lspace/rspace
+PASS Operator dictionary chunk 1 - movablelimits
+PASS Operator dictionary chunk 1 - largeop
+PASS Operator dictionary chunk 1 - stretchy
+PASS Operator dictionary chunk 1 - symmetric
 FAIL Operator dictionary chunk 1 - accent assert_approx_equals: Accent property for " postfix should be 'true' expected 22.359375 +/- 1 but got 7.5
-PASS Operator dictionary chunk 2 - lspace/rspace 
-PASS Operator dictionary chunk 2 - movablelimits 
-PASS Operator dictionary chunk 2 - largeop 
-PASS Operator dictionary chunk 2 - stretchy 
-PASS Operator dictionary chunk 2 - symmetric 
+PASS Operator dictionary chunk 2 - lspace/rspace
+PASS Operator dictionary chunk 2 - movablelimits
+PASS Operator dictionary chunk 2 - largeop
+PASS Operator dictionary chunk 2 - stretchy
+PASS Operator dictionary chunk 2 - symmetric
 FAIL Operator dictionary chunk 2 - accent assert_approx_equals: Accent property for ª postfix should be 'true' expected 22.359375 +/- 1 but got 7.5
-PASS Operator dictionary chunk 3 - lspace/rspace 
-PASS Operator dictionary chunk 3 - movablelimits 
-PASS Operator dictionary chunk 3 - largeop 
-PASS Operator dictionary chunk 3 - stretchy 
-PASS Operator dictionary chunk 3 - symmetric 
+PASS Operator dictionary chunk 3 - lspace/rspace
+PASS Operator dictionary chunk 3 - movablelimits
+PASS Operator dictionary chunk 3 - largeop
+PASS Operator dictionary chunk 3 - stretchy
+PASS Operator dictionary chunk 3 - symmetric
 FAIL Operator dictionary chunk 3 - accent assert_approx_equals: Accent property for ‛ postfix should be 'true' expected 22.359375 +/- 1 but got 7.5
-PASS Operator dictionary chunk 4 - lspace/rspace 
-PASS Operator dictionary chunk 4 - movablelimits 
-PASS Operator dictionary chunk 4 - largeop 
-PASS Operator dictionary chunk 4 - stretchy 
-PASS Operator dictionary chunk 4 - symmetric 
-PASS Operator dictionary chunk 4 - accent 
-PASS Operator dictionary chunk 5 - lspace/rspace 
-PASS Operator dictionary chunk 5 - movablelimits 
-PASS Operator dictionary chunk 5 - largeop 
-PASS Operator dictionary chunk 5 - stretchy 
-PASS Operator dictionary chunk 5 - symmetric 
-PASS Operator dictionary chunk 5 - accent 
-PASS Operator dictionary chunk 6 - lspace/rspace 
-PASS Operator dictionary chunk 6 - movablelimits 
-PASS Operator dictionary chunk 6 - largeop 
-PASS Operator dictionary chunk 6 - stretchy 
-PASS Operator dictionary chunk 6 - symmetric 
-PASS Operator dictionary chunk 6 - accent 
-PASS Operator dictionary chunk 7 - lspace/rspace 
-PASS Operator dictionary chunk 7 - movablelimits 
-PASS Operator dictionary chunk 7 - largeop 
-PASS Operator dictionary chunk 7 - stretchy 
-PASS Operator dictionary chunk 7 - symmetric 
-PASS Operator dictionary chunk 7 - accent 
-PASS Operator dictionary chunk 8 - lspace/rspace 
-PASS Operator dictionary chunk 8 - movablelimits 
-PASS Operator dictionary chunk 8 - largeop 
-PASS Operator dictionary chunk 8 - stretchy 
-PASS Operator dictionary chunk 8 - symmetric 
-PASS Operator dictionary chunk 8 - accent 
-PASS Operator dictionary chunk 9 - lspace/rspace 
-PASS Operator dictionary chunk 9 - movablelimits 
-PASS Operator dictionary chunk 9 - largeop 
-PASS Operator dictionary chunk 9 - stretchy 
-PASS Operator dictionary chunk 9 - symmetric 
-PASS Operator dictionary chunk 9 - accent 
-PASS Operator dictionary chunk 10 - lspace/rspace 
-PASS Operator dictionary chunk 10 - movablelimits 
-PASS Operator dictionary chunk 10 - largeop 
-PASS Operator dictionary chunk 10 - stretchy 
-PASS Operator dictionary chunk 10 - symmetric 
-PASS Operator dictionary chunk 10 - accent 
-PASS Operator dictionary chunk 11 - lspace/rspace 
-PASS Operator dictionary chunk 11 - movablelimits 
-PASS Operator dictionary chunk 11 - largeop 
+PASS Operator dictionary chunk 4 - lspace/rspace
+PASS Operator dictionary chunk 4 - movablelimits
+PASS Operator dictionary chunk 4 - largeop
+PASS Operator dictionary chunk 4 - stretchy
+PASS Operator dictionary chunk 4 - symmetric
+PASS Operator dictionary chunk 4 - accent
+PASS Operator dictionary chunk 5 - lspace/rspace
+PASS Operator dictionary chunk 5 - movablelimits
+PASS Operator dictionary chunk 5 - largeop
+PASS Operator dictionary chunk 5 - stretchy
+PASS Operator dictionary chunk 5 - symmetric
+PASS Operator dictionary chunk 5 - accent
+PASS Operator dictionary chunk 6 - lspace/rspace
+PASS Operator dictionary chunk 6 - movablelimits
+PASS Operator dictionary chunk 6 - largeop
+PASS Operator dictionary chunk 6 - stretchy
+PASS Operator dictionary chunk 6 - symmetric
+PASS Operator dictionary chunk 6 - accent
+PASS Operator dictionary chunk 7 - lspace/rspace
+PASS Operator dictionary chunk 7 - movablelimits
+PASS Operator dictionary chunk 7 - largeop
+PASS Operator dictionary chunk 7 - stretchy
+PASS Operator dictionary chunk 7 - symmetric
+PASS Operator dictionary chunk 7 - accent
+PASS Operator dictionary chunk 8 - lspace/rspace
+PASS Operator dictionary chunk 8 - movablelimits
+PASS Operator dictionary chunk 8 - largeop
+PASS Operator dictionary chunk 8 - stretchy
+PASS Operator dictionary chunk 8 - symmetric
+PASS Operator dictionary chunk 8 - accent
+PASS Operator dictionary chunk 9 - lspace/rspace
+PASS Operator dictionary chunk 9 - movablelimits
+PASS Operator dictionary chunk 9 - largeop
+PASS Operator dictionary chunk 9 - stretchy
+PASS Operator dictionary chunk 9 - symmetric
+PASS Operator dictionary chunk 9 - accent
+PASS Operator dictionary chunk 10 - lspace/rspace
+PASS Operator dictionary chunk 10 - movablelimits
+PASS Operator dictionary chunk 10 - largeop
+PASS Operator dictionary chunk 10 - stretchy
+PASS Operator dictionary chunk 10 - symmetric
+PASS Operator dictionary chunk 10 - accent
+PASS Operator dictionary chunk 11 - lspace/rspace
+PASS Operator dictionary chunk 11 - movablelimits
+PASS Operator dictionary chunk 11 - largeop
 FAIL Operator dictionary chunk 11 - stretchy assert_approx_equals: Stretchy property for 〈 prefix should be 'true' expected 0 +/- 1 but got 45
-PASS Operator dictionary chunk 11 - symmetric 
-PASS Operator dictionary chunk 11 - accent 
-PASS Operator dictionary chunk 12 - lspace/rspace 
-PASS Operator dictionary chunk 12 - movablelimits 
-PASS Operator dictionary chunk 12 - largeop 
-PASS Operator dictionary chunk 12 - stretchy 
-PASS Operator dictionary chunk 12 - symmetric 
-PASS Operator dictionary chunk 12 - accent 
-PASS Operator dictionary chunk 13 - lspace/rspace 
-PASS Operator dictionary chunk 13 - movablelimits 
-PASS Operator dictionary chunk 13 - largeop 
-PASS Operator dictionary chunk 13 - stretchy 
-PASS Operator dictionary chunk 13 - symmetric 
-PASS Operator dictionary chunk 13 - accent 
-PASS Operator dictionary chunk 14 - lspace/rspace 
-PASS Operator dictionary chunk 14 - movablelimits 
-PASS Operator dictionary chunk 14 - largeop 
-PASS Operator dictionary chunk 14 - stretchy 
-PASS Operator dictionary chunk 14 - symmetric 
-PASS Operator dictionary chunk 14 - accent 
-PASS Operator dictionary chunk 15 - lspace/rspace 
-PASS Operator dictionary chunk 15 - movablelimits 
-PASS Operator dictionary chunk 15 - largeop 
-PASS Operator dictionary chunk 15 - stretchy 
-PASS Operator dictionary chunk 15 - symmetric 
-PASS Operator dictionary chunk 15 - accent 
-PASS Operator dictionary chunk 16 - lspace/rspace 
-PASS Operator dictionary chunk 16 - movablelimits 
-PASS Operator dictionary chunk 16 - largeop 
-PASS Operator dictionary chunk 16 - stretchy 
-PASS Operator dictionary chunk 16 - symmetric 
-PASS Operator dictionary chunk 16 - accent 
-PASS Operator dictionary chunk 17 - lspace/rspace 
-PASS Operator dictionary chunk 17 - movablelimits 
-PASS Operator dictionary chunk 17 - largeop 
-PASS Operator dictionary chunk 17 - stretchy 
-PASS Operator dictionary chunk 17 - symmetric 
-PASS Operator dictionary chunk 17 - accent 
-PASS Operator dictionary chunk 18 - lspace/rspace 
-PASS Operator dictionary chunk 18 - movablelimits 
-PASS Operator dictionary chunk 18 - largeop 
-PASS Operator dictionary chunk 18 - stretchy 
-PASS Operator dictionary chunk 18 - symmetric 
-PASS Operator dictionary chunk 18 - accent 
-PASS Operator dictionary chunk 19 - lspace/rspace 
-PASS Operator dictionary chunk 19 - movablelimits 
-PASS Operator dictionary chunk 19 - largeop 
-PASS Operator dictionary chunk 19 - stretchy 
-PASS Operator dictionary chunk 19 - symmetric 
-PASS Operator dictionary chunk 19 - accent 
-PASS Operator dictionary chunk 20 - lspace/rspace 
-PASS Operator dictionary chunk 20 - movablelimits 
-PASS Operator dictionary chunk 20 - largeop 
-PASS Operator dictionary chunk 20 - stretchy 
-PASS Operator dictionary chunk 20 - symmetric 
-PASS Operator dictionary chunk 20 - accent 
-PASS Operator dictionary chunk 21 - lspace/rspace 
-PASS Operator dictionary chunk 21 - movablelimits 
-PASS Operator dictionary chunk 21 - largeop 
-PASS Operator dictionary chunk 21 - stretchy 
-PASS Operator dictionary chunk 21 - symmetric 
-PASS Operator dictionary chunk 21 - accent 
-PASS Operator dictionary chunk 22 - lspace/rspace 
-PASS Operator dictionary chunk 22 - movablelimits 
-PASS Operator dictionary chunk 22 - largeop 
-PASS Operator dictionary chunk 22 - stretchy 
-PASS Operator dictionary chunk 22 - symmetric 
-PASS Operator dictionary chunk 22 - accent 
-PASS Operator dictionary chunk 23 - lspace/rspace 
-PASS Operator dictionary chunk 23 - movablelimits 
-PASS Operator dictionary chunk 23 - largeop 
-PASS Operator dictionary chunk 23 - stretchy 
-PASS Operator dictionary chunk 23 - symmetric 
-PASS Operator dictionary chunk 23 - accent 
-accent for """ (postfix): 
+PASS Operator dictionary chunk 11 - symmetric
+PASS Operator dictionary chunk 11 - accent
+PASS Operator dictionary chunk 12 - lspace/rspace
+PASS Operator dictionary chunk 12 - movablelimits
+PASS Operator dictionary chunk 12 - largeop
+PASS Operator dictionary chunk 12 - stretchy
+PASS Operator dictionary chunk 12 - symmetric
+PASS Operator dictionary chunk 12 - accent
+PASS Operator dictionary chunk 13 - lspace/rspace
+PASS Operator dictionary chunk 13 - movablelimits
+PASS Operator dictionary chunk 13 - largeop
+PASS Operator dictionary chunk 13 - stretchy
+PASS Operator dictionary chunk 13 - symmetric
+PASS Operator dictionary chunk 13 - accent
+PASS Operator dictionary chunk 14 - lspace/rspace
+PASS Operator dictionary chunk 14 - movablelimits
+PASS Operator dictionary chunk 14 - largeop
+PASS Operator dictionary chunk 14 - stretchy
+PASS Operator dictionary chunk 14 - symmetric
+PASS Operator dictionary chunk 14 - accent
+PASS Operator dictionary chunk 15 - lspace/rspace
+PASS Operator dictionary chunk 15 - movablelimits
+PASS Operator dictionary chunk 15 - largeop
+PASS Operator dictionary chunk 15 - stretchy
+PASS Operator dictionary chunk 15 - symmetric
+PASS Operator dictionary chunk 15 - accent
+PASS Operator dictionary chunk 16 - lspace/rspace
+PASS Operator dictionary chunk 16 - movablelimits
+PASS Operator dictionary chunk 16 - largeop
+PASS Operator dictionary chunk 16 - stretchy
+PASS Operator dictionary chunk 16 - symmetric
+PASS Operator dictionary chunk 16 - accent
+PASS Operator dictionary chunk 17 - lspace/rspace
+PASS Operator dictionary chunk 17 - movablelimits
+PASS Operator dictionary chunk 17 - largeop
+PASS Operator dictionary chunk 17 - stretchy
+PASS Operator dictionary chunk 17 - symmetric
+PASS Operator dictionary chunk 17 - accent
+PASS Operator dictionary chunk 18 - lspace/rspace
+PASS Operator dictionary chunk 18 - movablelimits
+PASS Operator dictionary chunk 18 - largeop
+PASS Operator dictionary chunk 18 - stretchy
+PASS Operator dictionary chunk 18 - symmetric
+PASS Operator dictionary chunk 18 - accent
+PASS Operator dictionary chunk 19 - lspace/rspace
+PASS Operator dictionary chunk 19 - movablelimits
+PASS Operator dictionary chunk 19 - largeop
+PASS Operator dictionary chunk 19 - stretchy
+PASS Operator dictionary chunk 19 - symmetric
+PASS Operator dictionary chunk 19 - accent
+PASS Operator dictionary chunk 20 - lspace/rspace
+PASS Operator dictionary chunk 20 - movablelimits
+PASS Operator dictionary chunk 20 - largeop
+PASS Operator dictionary chunk 20 - stretchy
+PASS Operator dictionary chunk 20 - symmetric
+PASS Operator dictionary chunk 20 - accent
+PASS Operator dictionary chunk 21 - lspace/rspace
+PASS Operator dictionary chunk 21 - movablelimits
+PASS Operator dictionary chunk 21 - largeop
+PASS Operator dictionary chunk 21 - stretchy
+PASS Operator dictionary chunk 21 - symmetric
+PASS Operator dictionary chunk 21 - accent
+PASS Operator dictionary chunk 22 - lspace/rspace
+PASS Operator dictionary chunk 22 - movablelimits
+PASS Operator dictionary chunk 22 - largeop
+PASS Operator dictionary chunk 22 - stretchy
+PASS Operator dictionary chunk 22 - symmetric
+PASS Operator dictionary chunk 22 - accent
+PASS Operator dictionary chunk 23 - lspace/rspace
+PASS Operator dictionary chunk 23 - movablelimits
+PASS Operator dictionary chunk 23 - largeop
+PASS Operator dictionary chunk 23 - stretchy
+PASS Operator dictionary chunk 23 - symmetric
+PASS Operator dictionary chunk 23 - accent
+accent for """ (postfix):
  
 "
- VS 
+ VS
  
 "
-accent for "ª" (postfix): 
+accent for "ª" (postfix):
  
 ª
- VS 
+ VS
  
 ª
-accent for "‛" (postfix): 
+accent for "‛" (postfix):
  
 ‛
- VS 
+ VS
  
 ‛
-stretchy for "〈" (prefix): 
+stretchy for "〈" (prefix):
 〈
- VS 
+ VS
 〈
 

@@ -1,41 +1,41 @@
 
-PASS Check method init value of GET and associated getter 
-PASS Check method init value of HEAD and associated getter 
-PASS Check method init value of POST and associated getter 
-PASS Check method init value of PUT and associated getter 
-PASS Check method init value of DELETE and associated getter 
-PASS Check method init value of OPTIONS and associated getter 
-PASS Check method init value of head and associated getter 
-PASS Check referrer init value of /relative/ressource and associated getter 
-PASS Check referrer init value of http://localhost:8800/relative/ressource?query=true#fragment and associated getter 
-PASS Check referrer init value of http://localhost:8800/ and associated getter 
-PASS Check referrer init value of http://test.url and associated getter 
-PASS Check referrer init value of about:client and associated getter 
-PASS Check referrer init value of  and associated getter 
-PASS Check referrerPolicy init value of  and associated getter 
-PASS Check referrerPolicy init value of no-referrer and associated getter 
-PASS Check referrerPolicy init value of no-referrer-when-downgrade and associated getter 
-PASS Check referrerPolicy init value of origin and associated getter 
-PASS Check referrerPolicy init value of origin-when-cross-origin and associated getter 
-PASS Check referrerPolicy init value of unsafe-url and associated getter 
-PASS Check referrerPolicy init value of same-origin and associated getter 
-PASS Check referrerPolicy init value of strict-origin and associated getter 
-PASS Check referrerPolicy init value of strict-origin-when-cross-origin and associated getter 
-PASS Check mode init value of same-origin and associated getter 
-PASS Check mode init value of no-cors and associated getter 
-PASS Check mode init value of cors and associated getter 
-PASS Check credentials init value of omit and associated getter 
-PASS Check credentials init value of same-origin and associated getter 
-PASS Check credentials init value of include and associated getter 
-PASS Check cache init value of default and associated getter 
-PASS Check cache init value of no-store and associated getter 
-PASS Check cache init value of reload and associated getter 
-PASS Check cache init value of no-cache and associated getter 
-PASS Check cache init value of force-cache and associated getter 
-PASS Check redirect init value of follow and associated getter 
-PASS Check redirect init value of error and associated getter 
-PASS Check redirect init value of manual and associated getter 
-PASS Check integrity init value of  and associated getter 
-PASS Check integrity init value of AZERTYUIOP1234567890 and associated getter 
-PASS Check window init value of null and associated getter 
+PASS Check method init value of GET and associated getter
+PASS Check method init value of HEAD and associated getter
+PASS Check method init value of POST and associated getter
+PASS Check method init value of PUT and associated getter
+PASS Check method init value of DELETE and associated getter
+PASS Check method init value of OPTIONS and associated getter
+PASS Check method init value of head and associated getter
+PASS Check referrer init value of /relative/ressource and associated getter
+PASS Check referrer init value of http://localhost:8800/relative/ressource?query=true#fragment and associated getter
+PASS Check referrer init value of http://localhost:8800/ and associated getter
+PASS Check referrer init value of http://test.url and associated getter
+PASS Check referrer init value of about:client and associated getter
+PASS Check referrer init value of  and associated getter
+PASS Check referrerPolicy init value of  and associated getter
+PASS Check referrerPolicy init value of no-referrer and associated getter
+PASS Check referrerPolicy init value of no-referrer-when-downgrade and associated getter
+PASS Check referrerPolicy init value of origin and associated getter
+PASS Check referrerPolicy init value of origin-when-cross-origin and associated getter
+PASS Check referrerPolicy init value of unsafe-url and associated getter
+PASS Check referrerPolicy init value of same-origin and associated getter
+PASS Check referrerPolicy init value of strict-origin and associated getter
+PASS Check referrerPolicy init value of strict-origin-when-cross-origin and associated getter
+PASS Check mode init value of same-origin and associated getter
+PASS Check mode init value of no-cors and associated getter
+PASS Check mode init value of cors and associated getter
+PASS Check credentials init value of omit and associated getter
+PASS Check credentials init value of same-origin and associated getter
+PASS Check credentials init value of include and associated getter
+PASS Check cache init value of default and associated getter
+PASS Check cache init value of no-store and associated getter
+PASS Check cache init value of reload and associated getter
+PASS Check cache init value of no-cache and associated getter
+PASS Check cache init value of force-cache and associated getter
+PASS Check redirect init value of follow and associated getter
+PASS Check redirect init value of error and associated getter
+PASS Check redirect init value of manual and associated getter
+PASS Check integrity init value of  and associated getter
+PASS Check integrity init value of AZERTYUIOP1234567890 and associated getter
+PASS Check window init value of null and associated getter
 

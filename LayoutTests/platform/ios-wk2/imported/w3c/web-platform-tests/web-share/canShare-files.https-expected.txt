@@ -1,8 +1,8 @@
 
-PASS canShare with single file 
-PASS canShare with empty file list 
-PASS canShare with single file list 
-PASS canShare with file list 
-PASS canShare with repeated file 
-PASS canShare with file list and url 
+PASS canShare with single file
+PASS canShare with empty file list
+PASS canShare with single file list
+PASS canShare with file list
+PASS canShare with repeated file
+PASS canShare with file list and url
 

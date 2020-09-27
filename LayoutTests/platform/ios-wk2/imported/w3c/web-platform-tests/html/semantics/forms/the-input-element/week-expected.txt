@@ -1,18 +1,18 @@
 
-PASS empty value 
-PASS Valid value: Value should be 2014-W52 
-PASS 2014 has 52 weeks: Value should be empty 
-PASS 2015 has 53 weeks: Value should be 2015-W53 
-PASS Invalid value: year only 
-PASS Invalid value: no week number 
-PASS Invalid value: no '-' (U+002D) 
-PASS Invalid value: yearless week 
-PASS Invalid value: should be capital letter 'W' 
-PASS Invalid value: incorrect with '-' at the end 
-PASS Invalid value: value should be two parts 
-PASS Invalid value: yearless week and no '-' (U+002D) 
-PASS Value >= min attribute 
-PASS Value < min attribute 
-PASS Value <= max attribute 
-PASS Value > max attribute 
+PASS empty value
+PASS Valid value: Value should be 2014-W52
+PASS 2014 has 52 weeks: Value should be empty
+PASS 2015 has 53 weeks: Value should be 2015-W53
+PASS Invalid value: year only
+PASS Invalid value: no week number
+PASS Invalid value: no '-' (U+002D)
+PASS Invalid value: yearless week
+PASS Invalid value: should be capital letter 'W'
+PASS Invalid value: incorrect with '-' at the end
+PASS Invalid value: value should be two parts
+PASS Invalid value: yearless week and no '-' (U+002D)
+PASS Value >= min attribute
+PASS Value < min attribute
+PASS Value <= max attribute
+PASS Value > max attribute
 

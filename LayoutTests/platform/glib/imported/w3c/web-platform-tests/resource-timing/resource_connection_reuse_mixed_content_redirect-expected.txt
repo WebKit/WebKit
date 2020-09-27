@@ -3,12 +3,12 @@ Description
 This test validates that connectStart and connectEnd are the same when a connection is reused (e.g. when a persistent connection is used).
 
 
-PASS window.performance is defined 
-PASS window.performance.getEntriesByType is defined 
-PASS There should be 2 PerformanceEntries 
-PASS connectStart and fetchStart should be the same 
-PASS connectEnd and fetchStart should be the same 
-PASS secureConnectionStart and fetchStart should be the same 
-PASS domainLookupStart and fetchStart should be the same 
-PASS domainLookupEnd and fetchStart should be the same 
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
+PASS There should be 2 PerformanceEntries
+PASS connectStart and fetchStart should be the same
+PASS connectEnd and fetchStart should be the same
+PASS secureConnectionStart and fetchStart should be the same
+PASS domainLookupStart and fetchStart should be the same
+PASS domainLookupEnd and fetchStart should be the same
 

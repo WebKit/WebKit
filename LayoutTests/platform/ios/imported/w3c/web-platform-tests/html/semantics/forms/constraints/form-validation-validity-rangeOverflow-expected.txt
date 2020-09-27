@@ -1,55 +1,55 @@
 
 FAIL [INPUT in DATETIME status] The datetime type must be supported. assert_equals: The datetime type should be supported. expected "datetime" but got "text"
-PASS [INPUT in DATE status] The max attribute is not set 
-PASS [INPUT in DATE status] Value is empty string 
-PASS [INPUT in DATE status] The max attribute is an invalid date 
-PASS [INPUT in DATE status] The value attribute is an invalid date 
-PASS [INPUT in DATE status] The value is an invalid date(year is three digits) 
-PASS [INPUT in DATE status] The value is an invalid date(month is greater than 12) 
-PASS [INPUT in DATE status] The value is an invalid date(date is greater than 29 for Feb) 
-PASS [INPUT in DATE status] The max attribute is greater than value attribute 
-PASS [INPUT in DATE status] The value attribute is greater than max attribute 
-PASS [INPUT in DATE status] The value attribute is greater than max attribute(Year is 10000 should be valid) 
-PASS [INPUT in MONTH status] The max attribute is not set 
-PASS [INPUT in MONTH status] Value is empty string 
-PASS [INPUT in MONTH status] The max attribute is an invalid month string 
-PASS [INPUT in MONTH status] The value attribute is an invalid month string 
-PASS [INPUT in MONTH status] The value is an invalid month string(year is three digits) 
-PASS [INPUT in MONTH status] The value is an invalid month string(month is greater than 12) 
-PASS [INPUT in MONTH status] The max attribute is greater than value attribute 
-PASS [INPUT in MONTH status] The value attribute is greater than max attribute 
-PASS [INPUT in MONTH status] The value attribute is greater than max attribute(Year is 10000 should be valid) 
-PASS [INPUT in WEEK status] The max attribute is not set 
-PASS [INPUT in WEEK status] Value is empty string 
-PASS [INPUT in WEEK status] The max attribute is an invalid week string 
-PASS [INPUT in WEEK status] The value attribute is an invalid week string 
-PASS [INPUT in WEEK status] The value attribute is an invalid week string(w is in lowercase) 
-PASS [INPUT in WEEK status] The value is an invalid week string(year is three digits) 
-PASS [INPUT in WEEK status] The value is an invalid week string(week is too greater) 
-PASS [INPUT in WEEK status] The max attribute is greater than value attribute 
-PASS [INPUT in WEEK status] The value attribute is greater than max attribute 
-PASS [INPUT in WEEK status] The value attribute is greater than max attribute(Year is 10000 should be valid) 
-PASS [INPUT in TIME status] The max attribute is not set 
-PASS [INPUT in TIME status] Value is empty string 
-PASS [INPUT in TIME status] The max attribute is an invalid time string 
-PASS [INPUT in TIME status] The value attribute is an invalid time string 
-PASS [INPUT in TIME status] The value attribute is an invalid time string(hour is greater than 23) 
-PASS [INPUT in TIME status] The value attribute is an invalid time string(minute is greater than 59) 
-PASS [INPUT in TIME status] The value attribute is an invalid time string(second is greater than 59) 
-PASS [INPUT in TIME status] The max attribute is greater than value attribute 
-PASS [INPUT in TIME status] The time missing second and minute parts is invalid 
-PASS [INPUT in TIME status] The value attribute is greater than max attribute 
-PASS [INPUT in TIME status] The value is greater than max(with millisecond in 1 digit) 
-PASS [INPUT in TIME status] The value is greater than max(with millisecond in 2 digit) 
-PASS [INPUT in TIME status] The value is greater than max(with millisecond in 3 digit) 
-PASS [INPUT in TIME status] The time missing second part is valid 
-PASS [INPUT in NUMBER status] The max attribute is not set 
-PASS [INPUT in NUMBER status] Value is empty string 
-PASS [INPUT in NUMBER status] The max is greater than value(integer) 
-PASS [INPUT in NUMBER status] The max is greater than value(floating number) 
-PASS [INPUT in NUMBER status] The max equals to value 
-PASS [INPUT in NUMBER status] The value is not a number 
-PASS [INPUT in NUMBER status] The value is greater than max(integer) 
-PASS [INPUT in NUMBER status] The value is greater than max(floating number) 
-PASS [INPUT in NUMBER status] The value is greater than max(scientific notation) 
+PASS [INPUT in DATE status] The max attribute is not set
+PASS [INPUT in DATE status] Value is empty string
+PASS [INPUT in DATE status] The max attribute is an invalid date
+PASS [INPUT in DATE status] The value attribute is an invalid date
+PASS [INPUT in DATE status] The value is an invalid date(year is three digits)
+PASS [INPUT in DATE status] The value is an invalid date(month is greater than 12)
+PASS [INPUT in DATE status] The value is an invalid date(date is greater than 29 for Feb)
+PASS [INPUT in DATE status] The max attribute is greater than value attribute
+PASS [INPUT in DATE status] The value attribute is greater than max attribute
+PASS [INPUT in DATE status] The value attribute is greater than max attribute(Year is 10000 should be valid)
+PASS [INPUT in MONTH status] The max attribute is not set
+PASS [INPUT in MONTH status] Value is empty string
+PASS [INPUT in MONTH status] The max attribute is an invalid month string
+PASS [INPUT in MONTH status] The value attribute is an invalid month string
+PASS [INPUT in MONTH status] The value is an invalid month string(year is three digits)
+PASS [INPUT in MONTH status] The value is an invalid month string(month is greater than 12)
+PASS [INPUT in MONTH status] The max attribute is greater than value attribute
+PASS [INPUT in MONTH status] The value attribute is greater than max attribute
+PASS [INPUT in MONTH status] The value attribute is greater than max attribute(Year is 10000 should be valid)
+PASS [INPUT in WEEK status] The max attribute is not set
+PASS [INPUT in WEEK status] Value is empty string
+PASS [INPUT in WEEK status] The max attribute is an invalid week string
+PASS [INPUT in WEEK status] The value attribute is an invalid week string
+PASS [INPUT in WEEK status] The value attribute is an invalid week string(w is in lowercase)
+PASS [INPUT in WEEK status] The value is an invalid week string(year is three digits)
+PASS [INPUT in WEEK status] The value is an invalid week string(week is too greater)
+PASS [INPUT in WEEK status] The max attribute is greater than value attribute
+PASS [INPUT in WEEK status] The value attribute is greater than max attribute
+PASS [INPUT in WEEK status] The value attribute is greater than max attribute(Year is 10000 should be valid)
+PASS [INPUT in TIME status] The max attribute is not set
+PASS [INPUT in TIME status] Value is empty string
+PASS [INPUT in TIME status] The max attribute is an invalid time string
+PASS [INPUT in TIME status] The value attribute is an invalid time string
+PASS [INPUT in TIME status] The value attribute is an invalid time string(hour is greater than 23)
+PASS [INPUT in TIME status] The value attribute is an invalid time string(minute is greater than 59)
+PASS [INPUT in TIME status] The value attribute is an invalid time string(second is greater than 59)
+PASS [INPUT in TIME status] The max attribute is greater than value attribute
+PASS [INPUT in TIME status] The time missing second and minute parts is invalid
+PASS [INPUT in TIME status] The value attribute is greater than max attribute
+PASS [INPUT in TIME status] The value is greater than max(with millisecond in 1 digit)
+PASS [INPUT in TIME status] The value is greater than max(with millisecond in 2 digit)
+PASS [INPUT in TIME status] The value is greater than max(with millisecond in 3 digit)
+PASS [INPUT in TIME status] The time missing second part is valid
+PASS [INPUT in NUMBER status] The max attribute is not set
+PASS [INPUT in NUMBER status] Value is empty string
+PASS [INPUT in NUMBER status] The max is greater than value(integer)
+PASS [INPUT in NUMBER status] The max is greater than value(floating number)
+PASS [INPUT in NUMBER status] The max equals to value
+PASS [INPUT in NUMBER status] The value is not a number
+PASS [INPUT in NUMBER status] The value is greater than max(integer)
+PASS [INPUT in NUMBER status] The value is greater than max(floating number)
+PASS [INPUT in NUMBER status] The value is greater than max(scientific notation)
 

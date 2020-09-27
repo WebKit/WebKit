@@ -1,27 +1,27 @@
 
 FAIL [INPUT in DATETIME status] The datetime type must be supported. assert_equals: The datetime type should be supported. expected "datetime" but got "text"
-PASS [INPUT in DATE status] The step attribute is not set 
-PASS [INPUT in DATE status] The value attibute is empty string 
+PASS [INPUT in DATE status] The step attribute is not set
+PASS [INPUT in DATE status] The value attibute is empty string
 FAIL [INPUT in DATE status] The value must match the step assert_false: The validity.stepMismatch should be false. expected false got true
-PASS [INPUT in DATE status] The value must mismatch the step 
-PASS [INPUT in MONTH status] The step attribute is not set 
-PASS [INPUT in MONTH status] The value attibute is empty string 
-PASS [INPUT in MONTH status] The value must match the step 
-PASS [INPUT in MONTH status] The value must mismatch the step 
-PASS [INPUT in WEEK status] The step attribute is not set 
-PASS [INPUT in WEEK status] The value attibute is empty string 
+PASS [INPUT in DATE status] The value must mismatch the step
+PASS [INPUT in MONTH status] The step attribute is not set
+PASS [INPUT in MONTH status] The value attibute is empty string
+PASS [INPUT in MONTH status] The value must match the step
+PASS [INPUT in MONTH status] The value must mismatch the step
+PASS [INPUT in WEEK status] The step attribute is not set
+PASS [INPUT in WEEK status] The value attibute is empty string
 FAIL [INPUT in WEEK status] The value must match the step assert_false: The validity.stepMismatch should be false. expected false got true
-PASS [INPUT in WEEK status] The value must mismatch the step 
-PASS [INPUT in TIME status] The step attribute is not set 
-PASS [INPUT in TIME status] The value attibute is empty string 
+PASS [INPUT in WEEK status] The value must mismatch the step
+PASS [INPUT in TIME status] The step attribute is not set
+PASS [INPUT in TIME status] The value attibute is empty string
 FAIL [INPUT in TIME status] The value must match the step assert_false: The validity.stepMismatch should be false. expected false got true
-PASS [INPUT in TIME status] The value must mismatch the step 
-PASS [INPUT in DATETIME-LOCAL status] The step attribute is not set 
-PASS [INPUT in DATETIME-LOCAL status] The value attibute is empty string 
+PASS [INPUT in TIME status] The value must mismatch the step
+PASS [INPUT in DATETIME-LOCAL status] The step attribute is not set
+PASS [INPUT in DATETIME-LOCAL status] The value attibute is empty string
 FAIL [INPUT in DATETIME-LOCAL status] The value must match the step assert_false: The validity.stepMismatch should be false. expected false got true
-PASS [INPUT in DATETIME-LOCAL status] The value must mismatch the step 
-PASS [INPUT in NUMBER status] The step attribute is not set 
-PASS [INPUT in NUMBER status] The value attibute is empty string 
-PASS [INPUT in NUMBER status] The value must match the step 
-PASS [INPUT in NUMBER status] The value must mismatch the step 
+PASS [INPUT in DATETIME-LOCAL status] The value must mismatch the step
+PASS [INPUT in NUMBER status] The step attribute is not set
+PASS [INPUT in NUMBER status] The value attibute is empty string
+PASS [INPUT in NUMBER status] The value must match the step
+PASS [INPUT in NUMBER status] The value must mismatch the step
 

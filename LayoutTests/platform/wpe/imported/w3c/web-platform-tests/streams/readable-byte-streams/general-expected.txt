@@ -1,84 +1,84 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS getReader({mode: "byob"}) throws on non-bytes streams 
-PASS ReadableStream with byte source can be constructed with no errors 
-PASS getReader({mode}) must perform ToString() 
-PASS ReadableStream with byte source: Construct and expect start and pull being called 
-PASS ReadableStream with byte source: No automatic pull call if start doesn't finish 
-PASS ReadableStream with byte source: Construct with highWaterMark of 0 
-PASS ReadableStream with byte source: desiredSize when closed 
-PASS ReadableStream with byte source: desiredSize when errored 
-PASS ReadableStream with byte source: getReader(), then releaseLock() 
-PASS ReadableStream with byte source: getReader() with mode set to byob, then releaseLock() 
-PASS ReadableStream with byte source: Test that closing a stream does not release a reader automatically 
-PASS ReadableStream with byte source: Test that closing a stream does not release a BYOB reader automatically 
-PASS ReadableStream with byte source: Test that erroring a stream does not release a reader automatically 
-PASS ReadableStream with byte source: Test that erroring a stream does not release a BYOB reader automatically 
-PASS ReadableStream with byte source: releaseLock() on ReadableStreamReader with pending read() must throw 
-PASS ReadableStream with byte source: Automatic pull() after start() 
-PASS ReadableStream with byte source: Automatic pull() after start() and read() 
+PASS getReader({mode: "byob"}) throws on non-bytes streams
+PASS ReadableStream with byte source can be constructed with no errors
+PASS getReader({mode}) must perform ToString()
+PASS ReadableStream with byte source: Construct and expect start and pull being called
+PASS ReadableStream with byte source: No automatic pull call if start doesn't finish
+PASS ReadableStream with byte source: Construct with highWaterMark of 0
+PASS ReadableStream with byte source: desiredSize when closed
+PASS ReadableStream with byte source: desiredSize when errored
+PASS ReadableStream with byte source: getReader(), then releaseLock()
+PASS ReadableStream with byte source: getReader() with mode set to byob, then releaseLock()
+PASS ReadableStream with byte source: Test that closing a stream does not release a reader automatically
+PASS ReadableStream with byte source: Test that closing a stream does not release a BYOB reader automatically
+PASS ReadableStream with byte source: Test that erroring a stream does not release a reader automatically
+PASS ReadableStream with byte source: Test that erroring a stream does not release a BYOB reader automatically
+PASS ReadableStream with byte source: releaseLock() on ReadableStreamReader with pending read() must throw
+PASS ReadableStream with byte source: Automatic pull() after start()
+PASS ReadableStream with byte source: Automatic pull() after start() and read()
 FAIL ReadableStream with byte source: autoAllocateChunkSize assert_equals: pull() must have been invoked twice expected 2 but got 1
-PASS ReadableStream with byte source: Mix of auto allocate and BYOB 
-PASS ReadableStream with byte source: Automatic pull() after start() and read(view) 
-PASS ReadableStream with byte source: enqueue(), getReader(), then read() 
-PASS ReadableStream with byte source: Push source that doesn't understand pull signal 
+PASS ReadableStream with byte source: Mix of auto allocate and BYOB
+PASS ReadableStream with byte source: Automatic pull() after start() and read(view)
+PASS ReadableStream with byte source: enqueue(), getReader(), then read()
+PASS ReadableStream with byte source: Push source that doesn't understand pull signal
 FAIL ReadableStream with byte source: pull() function is not callable assert_throws: constructor should throw function "() => new ReadableStream({
     pull: 'foo',
     type: 'bytes'
   })" did not throw
-PASS ReadableStream with byte source: enqueue() with Uint16Array, getReader(), then read() 
-PASS ReadableStream with byte source: enqueue(), read(view) partially, then read() 
-PASS ReadableStream with byte source: getReader(), enqueue(), close(), then read() 
-PASS ReadableStream with byte source: enqueue(), close(), getReader(), then read() 
-PASS ReadableStream with byte source: Respond to pull() by enqueue() 
-PASS ReadableStream with byte source: Respond to pull() by enqueue() asynchronously 
+PASS ReadableStream with byte source: enqueue() with Uint16Array, getReader(), then read()
+PASS ReadableStream with byte source: enqueue(), read(view) partially, then read()
+PASS ReadableStream with byte source: getReader(), enqueue(), close(), then read()
+PASS ReadableStream with byte source: enqueue(), close(), getReader(), then read()
+PASS ReadableStream with byte source: Respond to pull() by enqueue()
+PASS ReadableStream with byte source: Respond to pull() by enqueue() asynchronously
 TIMEOUT ReadableStream with byte source: Respond to multiple pull() by separate enqueue() Test timed out
-NOTRUN ReadableStream with byte source: read(view), then respond() 
-NOTRUN ReadableStream with byte source: read(view), then respond() with a transferred ArrayBuffer 
-NOTRUN ReadableStream with byte source: read(view), then respond() with too big value 
-NOTRUN ReadableStream with byte source: respond(3) to read(view) with 2 element Uint16Array enqueues the 1 byte remainder 
-NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) 
-NOTRUN ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = not BYOB) 
-NOTRUN ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = BYOB) 
-NOTRUN ReadableStream with byte source: getReader(), read(view), then cancel() 
-NOTRUN ReadableStream with byte source: cancel() with partially filled pending pull() request 
-NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) where view.buffer is not fully covered by view 
-NOTRUN ReadableStream with byte source: Multiple enqueue(), getReader(), then read(view) 
-NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) with a bigger view 
-NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) with a smaller views 
-NOTRUN ReadableStream with byte source: enqueue() 1 byte, getReader(), then read(view) with Uint16Array 
-NOTRUN ReadableStream with byte source: enqueue() 3 byte, getReader(), then read(view) with 2-element Uint16Array 
-NOTRUN ReadableStream with byte source: read(view) with Uint16Array on close()-d stream with 1 byte enqueue()-d must fail 
-NOTRUN ReadableStream with byte source: A stream must be errored if close()-d before fulfilling read(view) with Uint16Array 
-PASS ReadableStream with byte source: Throw if close()-ed more than once 
-PASS ReadableStream with byte source: Throw on enqueue() after close() 
-NOTRUN ReadableStream with byte source: read(view), then respond() and close() in pull() 
-NOTRUN ReadableStream with byte source: read(view) with Uint32Array, then fill it by multiple respond() calls 
-NOTRUN ReadableStream with byte source: read() twice, then enqueue() twice 
-NOTRUN ReadableStream with byte source: Multiple read(view), close() and respond() 
-NOTRUN ReadableStream with byte source: Multiple read(view), big enqueue() 
-NOTRUN ReadableStream with byte source: Multiple read(view) and multiple enqueue() 
-NOTRUN ReadableStream with byte source: read(view) with passing undefined as view must fail 
-NOTRUN ReadableStream with byte source: read(view) with zero-length view must fail 
-NOTRUN ReadableStream with byte source: read(view) with passing an empty object as view must fail 
-NOTRUN ReadableStream with byte source: Even read(view) with passing ArrayBufferView like object as view must fail 
-NOTRUN ReadableStream with byte source: read() on an errored stream 
-NOTRUN ReadableStream with byte source: read(), then error() 
-NOTRUN ReadableStream with byte source: read(view) on an errored stream 
-NOTRUN ReadableStream with byte source: read(view), then error() 
-NOTRUN ReadableStream with byte source: Throwing in pull function must error the stream 
-NOTRUN ReadableStream with byte source: Throwing in pull in response to read() must be ignored if the stream is errored in it 
-NOTRUN ReadableStream with byte source: Throwing in pull in response to read(view) function must error the stream 
-NOTRUN ReadableStream with byte source: Throwing in pull in response to read(view) must be ignored if the stream is errored in it 
-NOTRUN calling respond() twice on the same byobRequest should throw 
-NOTRUN calling respondWithNewView() twice on the same byobRequest should throw 
-NOTRUN calling respond(0) twice on the same byobRequest should throw even when closed 
-NOTRUN pull() resolving should not make releaseLock() possible 
-NOTRUN ReadableStream with byte source: default reader + autoAllocateChunkSize + byobRequest interaction 
-PASS ReadableStreamBYOBReader can be constructed directly 
-PASS ReadableStreamBYOBReader constructor requires a ReadableStream argument 
-PASS ReadableStreamBYOBReader constructor requires an unlocked ReadableStream 
-PASS ReadableStreamBYOBReader constructor requires a ReadableStream with type "bytes" 
-PASS ReadableStream constructor should not accept a strategy with a size defined if type is "bytes" 
+NOTRUN ReadableStream with byte source: read(view), then respond()
+NOTRUN ReadableStream with byte source: read(view), then respond() with a transferred ArrayBuffer
+NOTRUN ReadableStream with byte source: read(view), then respond() with too big value
+NOTRUN ReadableStream with byte source: respond(3) to read(view) with 2 element Uint16Array enqueues the 1 byte remainder
+NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view)
+NOTRUN ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = not BYOB)
+NOTRUN ReadableStream with byte source: enqueue(), getReader(), then cancel() (mode = BYOB)
+NOTRUN ReadableStream with byte source: getReader(), read(view), then cancel()
+NOTRUN ReadableStream with byte source: cancel() with partially filled pending pull() request
+NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) where view.buffer is not fully covered by view
+NOTRUN ReadableStream with byte source: Multiple enqueue(), getReader(), then read(view)
+NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) with a bigger view
+NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view) with a smaller views
+NOTRUN ReadableStream with byte source: enqueue() 1 byte, getReader(), then read(view) with Uint16Array
+NOTRUN ReadableStream with byte source: enqueue() 3 byte, getReader(), then read(view) with 2-element Uint16Array
+NOTRUN ReadableStream with byte source: read(view) with Uint16Array on close()-d stream with 1 byte enqueue()-d must fail
+NOTRUN ReadableStream with byte source: A stream must be errored if close()-d before fulfilling read(view) with Uint16Array
+PASS ReadableStream with byte source: Throw if close()-ed more than once
+PASS ReadableStream with byte source: Throw on enqueue() after close()
+NOTRUN ReadableStream with byte source: read(view), then respond() and close() in pull()
+NOTRUN ReadableStream with byte source: read(view) with Uint32Array, then fill it by multiple respond() calls
+NOTRUN ReadableStream with byte source: read() twice, then enqueue() twice
+NOTRUN ReadableStream with byte source: Multiple read(view), close() and respond()
+NOTRUN ReadableStream with byte source: Multiple read(view), big enqueue()
+NOTRUN ReadableStream with byte source: Multiple read(view) and multiple enqueue()
+NOTRUN ReadableStream with byte source: read(view) with passing undefined as view must fail
+NOTRUN ReadableStream with byte source: read(view) with zero-length view must fail
+NOTRUN ReadableStream with byte source: read(view) with passing an empty object as view must fail
+NOTRUN ReadableStream with byte source: Even read(view) with passing ArrayBufferView like object as view must fail
+NOTRUN ReadableStream with byte source: read() on an errored stream
+NOTRUN ReadableStream with byte source: read(), then error()
+NOTRUN ReadableStream with byte source: read(view) on an errored stream
+NOTRUN ReadableStream with byte source: read(view), then error()
+NOTRUN ReadableStream with byte source: Throwing in pull function must error the stream
+NOTRUN ReadableStream with byte source: Throwing in pull in response to read() must be ignored if the stream is errored in it
+NOTRUN ReadableStream with byte source: Throwing in pull in response to read(view) function must error the stream
+NOTRUN ReadableStream with byte source: Throwing in pull in response to read(view) must be ignored if the stream is errored in it
+NOTRUN calling respond() twice on the same byobRequest should throw
+NOTRUN calling respondWithNewView() twice on the same byobRequest should throw
+NOTRUN calling respond(0) twice on the same byobRequest should throw even when closed
+NOTRUN pull() resolving should not make releaseLock() possible
+NOTRUN ReadableStream with byte source: default reader + autoAllocateChunkSize + byobRequest interaction
+PASS ReadableStreamBYOBReader can be constructed directly
+PASS ReadableStreamBYOBReader constructor requires a ReadableStream argument
+PASS ReadableStreamBYOBReader constructor requires an unlocked ReadableStream
+PASS ReadableStreamBYOBReader constructor requires a ReadableStream with type "bytes"
+PASS ReadableStream constructor should not accept a strategy with a size defined if type is "bytes"
 

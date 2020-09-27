@@ -1,34 +1,34 @@
 deriveKey Tests for ECDH
 
 
-PASS P-521 good parameters 
-PASS P-521 mixed case parameters 
-PASS P-521 missing public curve 
-PASS P-521 public property of algorithm is not a CryptoKey 
-PASS P-521 mismatched curves 
-PASS P-521 public property of algorithm is not an ECDSA public key 
-PASS P-521 no deriveKey usage for base key 
-PASS P-521 base key is not a private key 
-PASS P-521 public property value is a private key 
-PASS P-521 public property value is a secret key 
-PASS P-256 good parameters 
-PASS P-256 mixed case parameters 
-PASS P-256 missing public curve 
-PASS P-256 public property of algorithm is not a CryptoKey 
-PASS P-256 mismatched curves 
-PASS P-256 public property of algorithm is not an ECDSA public key 
-PASS P-256 no deriveKey usage for base key 
-PASS P-256 base key is not a private key 
-PASS P-256 public property value is a private key 
-PASS P-256 public property value is a secret key 
-PASS P-384 good parameters 
-PASS P-384 mixed case parameters 
-PASS P-384 missing public curve 
-PASS P-384 public property of algorithm is not a CryptoKey 
-PASS P-384 mismatched curves 
-PASS P-384 public property of algorithm is not an ECDSA public key 
-PASS P-384 no deriveKey usage for base key 
-PASS P-384 base key is not a private key 
-PASS P-384 public property value is a private key 
-PASS P-384 public property value is a secret key 
+PASS P-521 good parameters
+PASS P-521 mixed case parameters
+PASS P-521 missing public curve
+PASS P-521 public property of algorithm is not a CryptoKey
+PASS P-521 mismatched curves
+PASS P-521 public property of algorithm is not an ECDSA public key
+PASS P-521 no deriveKey usage for base key
+PASS P-521 base key is not a private key
+PASS P-521 public property value is a private key
+PASS P-521 public property value is a secret key
+PASS P-256 good parameters
+PASS P-256 mixed case parameters
+PASS P-256 missing public curve
+PASS P-256 public property of algorithm is not a CryptoKey
+PASS P-256 mismatched curves
+PASS P-256 public property of algorithm is not an ECDSA public key
+PASS P-256 no deriveKey usage for base key
+PASS P-256 base key is not a private key
+PASS P-256 public property value is a private key
+PASS P-256 public property value is a secret key
+PASS P-384 good parameters
+PASS P-384 mixed case parameters
+PASS P-384 missing public curve
+PASS P-384 public property of algorithm is not a CryptoKey
+PASS P-384 mismatched curves
+PASS P-384 public property of algorithm is not an ECDSA public key
+PASS P-384 no deriveKey usage for base key
+PASS P-384 base key is not a private key
+PASS P-384 public property value is a private key
+PASS P-384 public property value is a secret key
 

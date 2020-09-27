@@ -1,21 +1,21 @@
 
-PASS No timeline entry for about:blank 
-PASS 'iframe (Populate cache): The initial request populates the cache (if appropriate). 
-PASS 'iframe (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any). 
-PASS 'xmlhttprequest (Populate cache): The initial request populates the cache (if appropriate). 
-PASS 'xmlhttprequest (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any). 
-PASS 'script (Populate cache): The initial request populates the cache (if appropriate). 
-PASS 'script (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any). 
-PASS 'link (Populate cache): The initial request populates the cache (if appropriate). 
-PASS 'link (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any). 
+PASS No timeline entry for about:blank
+PASS 'iframe (Populate cache): The initial request populates the cache (if appropriate).
+PASS 'iframe (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any).
+PASS 'xmlhttprequest (Populate cache): The initial request populates the cache (if appropriate).
+PASS 'xmlhttprequest (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any).
+PASS 'script (Populate cache): The initial request populates the cache (if appropriate).
+PASS 'script (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any).
+PASS 'link (Populate cache): The initial request populates the cache (if appropriate).
+PASS 'link (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any).
 FAIL 'iframe: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. assert_greater_than_equal: 'responseEnd' must be 250ms later than 'responseStart'. expected a number greater than or equal to 2919 but got 2670
-PASS 'xmlhttprequest: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. 
+PASS 'xmlhttprequest: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'.
 FAIL 'script: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. assert_greater_than_equal: 'responseEnd' must be 250ms later than 'responseStart'. expected a number greater than or equal to 4403.000000000001 but got 4153.000000000001
 FAIL 'link: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. assert_greater_than_equal: 'responseEnd' must be 250ms later than 'responseStart'. expected a number greater than or equal to 5147 but got 4897
-PASS 'iframe (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. 
-PASS 'xmlhttprequest (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. 
-PASS 'script (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. 
-PASS 'link (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. 
+PASS 'iframe (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
+PASS 'xmlhttprequest (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
+PASS 'script (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
+PASS 'link (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
 FAIL 'iframe 250ms delay in headers does not affect responseStart' assert_greater_than_equal: Delay after HTTP/1.1 status should not affect 'responseStart'. expected a number greater than or equal to 8624 but got 8375
 FAIL 'xmlhttprequest 250ms delay in headers does not affect responseStart' assert_greater_than_equal: Delay after HTTP/1.1 status should not affect 'responseStart'. expected a number greater than or equal to 9099 but got 8850
 FAIL 'script 250ms delay in headers does not affect responseStart' assert_greater_than_equal: Delay after HTTP/1.1 status should not affect 'responseStart'. expected a number greater than or equal to 9572.000000000002 but got 9323

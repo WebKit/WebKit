@@ -1,7 +1,7 @@
 
-PASS share with no arguments (same as empty dictionary) 
-PASS share with an empty dictionary 
-PASS share with a undefined argument (same as empty dictionary) 
-PASS share with a null argument (same as empty dictionary) 
-PASS share with a dictionary containing only surplus fields 
+PASS share with no arguments (same as empty dictionary)
+PASS share with an empty dictionary
+PASS share with a undefined argument (same as empty dictionary)
+PASS share with a null argument (same as empty dictionary)
+PASS share with a dictionary containing only surplus fields
 

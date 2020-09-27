@@ -1,3 +1,3 @@
 
-PASS IDBDatabase.createObjectStore() - attempting to create an existing object store with a different keyPath throw ConstraintError  
+PASS IDBDatabase.createObjectStore() - attempting to create an existing object store with a different keyPath throw ConstraintError
 

@@ -18,5 +18,5 @@ Refresh the page to run the tests again.
 
 Harness Error (FAIL), message = TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
 
-NOTRUN pointer locked pointermove events received for button state changes 
+NOTRUN pointer locked pointermove events received for button state changes
 

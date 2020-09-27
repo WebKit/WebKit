@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.add() - Attempt to add a record that does not meet the constraints of an object store's inline key requirements  
+PASS IDBObjectStore.add() - Attempt to add a record that does not meet the constraints of an object store's inline key requirements
 

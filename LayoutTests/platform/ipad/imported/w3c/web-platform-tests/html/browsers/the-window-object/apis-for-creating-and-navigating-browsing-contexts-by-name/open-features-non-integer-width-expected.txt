@@ -1,9 +1,9 @@
 
-PASS top=0,left=0,height=401,: absence of feature "width" should be treated same as "width=0" 
-PASS top=0,left=0: absence of feature "width" should be treated same as "width=0" 
-PASS features "width=/404" should NOT set "width=404" 
-PASS features "width=_404" should NOT set "width=404" 
-PASS features "width=L404" should NOT set "width=404" 
+PASS top=0,left=0,height=401,: absence of feature "width" should be treated same as "width=0"
+PASS top=0,left=0: absence of feature "width" should be treated same as "width=0"
+PASS features "width=/404" should NOT set "width=404"
+PASS features "width=_404" should NOT set "width=404"
+PASS features "width=L404" should NOT set "width=404"
 FAIL features "width=405.5" should set "width=405" assert_equals: "top=0,left=0,height=401,width=405.5 value after first non-digit will be ignored" expected 405 but got 800
 FAIL features "width=405.32" should set "width=405" assert_equals: "top=0,left=0,height=401,width=405.32 value after first non-digit will be ignored" expected 405 but got 800
 FAIL features "width=405LLl" should set "width=405" assert_equals: "top=0,left=0,height=401,width=405LLl value after first non-digit will be ignored" expected 405 but got 800

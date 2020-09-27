@@ -2,13 +2,13 @@
 FAIL features "screeny=/404" should NOT set "height=404" assert_equals: "screeny=/404 begins with an invalid character and should be ignored" expected 23 but got 405
 FAIL features "screeny=_404" should NOT set "height=404" assert_equals: "screeny=_404 begins with an invalid character and should be ignored" expected 23 but got 405
 FAIL features "screeny=L404" should NOT set "height=404" assert_equals: "screeny=L404 begins with an invalid character and should be ignored" expected 23 but got 405
-PASS features "screeny=405.5" should set "height=405" 
-PASS features "screeny=405.32" should set "height=405" 
-PASS features "screeny=405LLl" should set "height=405" 
-PASS features "screeny=405^4" should set "height=405" 
-PASS features "screeny=405*3" should set "height=405" 
-PASS features "screeny=405/5" should set "height=405" 
-PASS features "screeny=405  " should set "height=405" 
-PASS features "screeny=405e1" should set "height=405" 
-PASS features "screeny=405e-1" should set "height=405" 
+PASS features "screeny=405.5" should set "height=405"
+PASS features "screeny=405.32" should set "height=405"
+PASS features "screeny=405LLl" should set "height=405"
+PASS features "screeny=405^4" should set "height=405"
+PASS features "screeny=405*3" should set "height=405"
+PASS features "screeny=405/5" should set "height=405"
+PASS features "screeny=405  " should set "height=405"
+PASS features "screeny=405e1" should set "height=405"
+PASS features "screeny=405e-1" should set "height=405"
 

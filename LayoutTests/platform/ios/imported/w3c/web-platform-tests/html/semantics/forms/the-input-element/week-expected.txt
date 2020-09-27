@@ -1,15 +1,15 @@
 
-PASS empty value 
-PASS Valid value: Value should be 2014-W52 
-PASS 2014 has 52 weeks: Value should be empty 
-PASS 2015 has 53 weeks: Value should be 2015-W53 
-PASS Invalid value: year only 
-PASS Invalid value: no week number 
-PASS Invalid value: no '-' (U+002D) 
-PASS Invalid value: yearless week 
-PASS Invalid value: yearless week and no '-' (U+002D) 
-PASS Value >= min attribute 
+PASS empty value
+PASS Valid value: Value should be 2014-W52
+PASS 2014 has 52 weeks: Value should be empty
+PASS 2015 has 53 weeks: Value should be 2015-W53
+PASS Invalid value: year only
+PASS Invalid value: no week number
+PASS Invalid value: no '-' (U+002D)
+PASS Invalid value: yearless week
+PASS Invalid value: yearless week and no '-' (U+002D)
+PASS Value >= min attribute
 FAIL Value < min attribute assert_equals: expected "2014-W02" but got "2014-W01"
-PASS Value <= max attribute 
+PASS Value <= max attribute
 FAIL Value > max attribute assert_equals: expected "2014-W11" but got "2014-W12"
 

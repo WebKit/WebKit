@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/redirect-cors.py?location=http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow.py&allow_origin=true. Cross-origin redirection denied by Cross-Origin Resource Sharing policy.
 
 FAIL Local sync redirect to remote origin  A network error occurred.
-PASS Local async redirect to remote origin 
+PASS Local async redirect to remote origin
 FAIL Remote sync redirect to local origin  A network error occurred.
-PASS Remote async redirect to local origin 
+PASS Remote async redirect to local origin
 FAIL Remote sync redirect to same remote origin  A network error occurred.
-PASS Remote async redirect to same remote origin 
+PASS Remote async redirect to same remote origin
 

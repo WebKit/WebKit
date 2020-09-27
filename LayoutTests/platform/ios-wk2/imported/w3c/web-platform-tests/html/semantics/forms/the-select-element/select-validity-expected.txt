@@ -1,6 +1,6 @@
 
-PASS Placeholder label options within a select 
-PASS Placeholder label-like options within optgroup 
+PASS Placeholder label options within a select
+PASS Placeholder label-like options within optgroup
 FAIL Validation on selects with display size set as more than one assert_false: If no options are selected the select must be seen as invalid. expected false got true
-PASS Validation on selects with multiple set 
+PASS Validation on selects with multiple set
 

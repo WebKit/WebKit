@@ -1,19 +1,19 @@
 
-PASS empty value 
-PASS Valid value: value should be 00:00 
-PASS Valid value: value should be 00:00:00 
-PASS Valid value: value should be 00:00:00.0 
-PASS Valid value: value should be 00:00:00.00 
-PASS Valid value: value should be 00:00:00.000 
+PASS empty value
+PASS Valid value: value should be 00:00
+PASS Valid value: value should be 00:00:00
+PASS Valid value: value should be 00:00:00.0
+PASS Valid value: value should be 00:00:00.00
+PASS Valid value: value should be 00:00:00.000
 FAIL Invalid value: fraction should have one, two or three ASCII digits. Value should be empty assert_equals: expected "" but got "00:00:00.0000"
-PASS Invalid value: hour should have two ASCII digits. Value should be empty 
-PASS Invalid value: minutes should have two ASCII digits. Value should be empty 
-PASS Invalid value: seconds should have two ASCII digits. Value should be empty 
-PASS Invalid value: hour > 23. Value should be empty 
-PASS Invalid value: minute > 59. Value should be empty 
-PASS Invalid value: second > 59. Value should be empty 
-PASS Value >= min attribute 
+PASS Invalid value: hour should have two ASCII digits. Value should be empty
+PASS Invalid value: minutes should have two ASCII digits. Value should be empty
+PASS Invalid value: seconds should have two ASCII digits. Value should be empty
+PASS Invalid value: hour > 23. Value should be empty
+PASS Invalid value: minute > 59. Value should be empty
+PASS Invalid value: second > 59. Value should be empty
+PASS Value >= min attribute
 FAIL Value < min attribute assert_equals: expected "12:00:00.001" but got "12:00:00.000"
-PASS Value <= max attribute 
+PASS Value <= max attribute
 FAIL Value > max attribute assert_equals: expected "12:00:00.000" but got "12:00:00.001"
 

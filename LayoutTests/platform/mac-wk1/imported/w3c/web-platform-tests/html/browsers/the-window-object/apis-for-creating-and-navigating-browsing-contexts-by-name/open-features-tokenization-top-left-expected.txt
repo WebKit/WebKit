@@ -12,8 +12,8 @@ FAIL "top==142" should set top position of opened window assert_equals: expected
 FAIL "\ttop= 142" should set top position of opened window assert_equals: expected 142 but got 152
 FAIL ",top=142,," should set top position of opened window assert_equals: expected 142 but got 152
 FAIL "TOP=142" should set top position of opened window assert_equals: expected 142 but got 152
-PASS "top=152,left=152" should set top and left position of opened window 
-PASS "top=152,,left=152," should set top and left position of opened window 
-PASS "top=152==left=152" should set top and left position of opened window 
-PASS ",,top= 152, left=152" should set top and left position of opened window 
+PASS "top=152,left=152" should set top and left position of opened window
+PASS "top=152,,left=152," should set top and left position of opened window
+PASS "top=152==left=152" should set top and left position of opened window
+PASS ",,top= 152, left=152" should set top and left position of opened window
 

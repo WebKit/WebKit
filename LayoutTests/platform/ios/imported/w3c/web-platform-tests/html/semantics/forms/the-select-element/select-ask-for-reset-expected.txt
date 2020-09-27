@@ -1,5 +1,5 @@
 
-PASS ask for reset on node remove, non multiple. 
-PASS ask for reset on node insert, non multiple. 
+PASS ask for reset on node remove, non multiple.
+PASS ask for reset on node insert, non multiple.
 FAIL change selectedness of option, non multiple. assert_false: option should not be selected. expected false got true
 

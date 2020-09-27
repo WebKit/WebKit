@@ -1,4 +1,4 @@
 
-PASS Default font-family on <math> is not inherited 
+PASS Default font-family on <math> is not inherited
 FAIL Default font-family on <math> is 'math' assert_equals: expected "math" but got "\"Latin Modern Math\", \"STIX Two Math\", \"XITS Math\", \"STIX Math\", \"Libertinus Math\", \"TeX Gyre Termes Math\", \"TeX Gyre Bonum Math\", \"TeX Gyre Schola\", \"DejaVu Math TeX Gyre\", \"TeX Gyre Pagella Math\", \"Asana Math\", \"Cambria Math\", \"Lucida Bright Math\", \"Minion Math\", STIXGeneral, STIXSizeOneSym, Symbol, \"Times New Roman\", serif"
 

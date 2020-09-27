@@ -1,26 +1,26 @@
 
-PASS Invalid keyPath - "j a" 
-PASS Invalid keyPath - ".yo" 
-PASS Invalid keyPath - "yo,lo" 
-PASS Invalid keyPath - [] 
-PASS Invalid keyPath - ["array with space"] 
-PASS Invalid keyPath - multidimensional array (invalid toString) 
-PASS Invalid keyPath - "3m" 
-PASS Invalid keyPath - {toString->3m} 
-PASS Invalid keyPath - "my.1337" 
-PASS Invalid keyPath - "..yo" 
-PASS Invalid keyPath - "y..o" 
-PASS Invalid keyPath - "y.o." 
-PASS Invalid keyPath - "y.o.." 
-PASS Invalid keyPath - "m.*" 
-PASS Invalid keyPath - "\"m\"" 
-PASS Invalid keyPath - "m%" 
-PASS Invalid keyPath - "m/" 
-PASS Invalid keyPath - "m/a" 
-PASS Invalid keyPath - "m&" 
-PASS Invalid keyPath - "m!" 
-PASS Invalid keyPath - "*" 
-PASS Invalid keyPath - "*.*" 
-PASS Invalid keyPath - "^m" 
-PASS Invalid keyPath - "/m/" 
+PASS Invalid keyPath - "j a"
+PASS Invalid keyPath - ".yo"
+PASS Invalid keyPath - "yo,lo"
+PASS Invalid keyPath - []
+PASS Invalid keyPath - ["array with space"]
+PASS Invalid keyPath - multidimensional array (invalid toString)
+PASS Invalid keyPath - "3m"
+PASS Invalid keyPath - {toString->3m}
+PASS Invalid keyPath - "my.1337"
+PASS Invalid keyPath - "..yo"
+PASS Invalid keyPath - "y..o"
+PASS Invalid keyPath - "y.o."
+PASS Invalid keyPath - "y.o.."
+PASS Invalid keyPath - "m.*"
+PASS Invalid keyPath - "\"m\""
+PASS Invalid keyPath - "m%"
+PASS Invalid keyPath - "m/"
+PASS Invalid keyPath - "m/a"
+PASS Invalid keyPath - "m&"
+PASS Invalid keyPath - "m!"
+PASS Invalid keyPath - "*"
+PASS Invalid keyPath - "*.*"
+PASS Invalid keyPath - "^m"
+PASS Invalid keyPath - "/m/"
 

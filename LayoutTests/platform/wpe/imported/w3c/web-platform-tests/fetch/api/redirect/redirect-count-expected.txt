@@ -9,14 +9,14 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources
 CONSOLE MESSAGE: Load cannot follow more than 20 redirections
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?count=1&max_age=0&redirect_status=308&max_count=21&token=cac43f8e-995f-405c-b1fa-7ef692e6dc39&location=..%2Fresources%2Fredirect.py&count=20 due to access control checks.
 
-PASS Redirect 301 20 times 
-PASS Redirect 301 21 times 
-PASS Redirect 302 20 times 
-PASS Redirect 302 21 times 
-PASS Redirect 303 20 times 
-PASS Redirect 303 21 times 
-PASS Redirect 307 20 times 
-PASS Redirect 307 21 times 
-PASS Redirect 308 20 times 
-PASS Redirect 308 21 times 
+PASS Redirect 301 20 times
+PASS Redirect 301 21 times
+PASS Redirect 302 20 times
+PASS Redirect 302 21 times
+PASS Redirect 303 20 times
+PASS Redirect 303 21 times
+PASS Redirect 307 20 times
+PASS Redirect 307 21 times
+PASS Redirect 308 20 times
+PASS Redirect 308 21 times
 

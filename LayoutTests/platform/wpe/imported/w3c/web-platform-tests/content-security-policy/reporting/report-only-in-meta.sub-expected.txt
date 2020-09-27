@@ -1,6 +1,6 @@
 
 
-PASS Image should load 
-PASS checkReport tests loaded 
-PASS Violation report status OK. 
+PASS Image should load
+PASS checkReport tests loaded
+PASS Violation report status OK.
 

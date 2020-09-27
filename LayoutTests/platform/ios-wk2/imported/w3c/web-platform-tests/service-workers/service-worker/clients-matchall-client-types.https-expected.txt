@@ -1,4 +1,4 @@
 
-PASS Verify matchAll() with window client type 
+PASS Verify matchAll() with window client type
 FAIL Verify matchAll() with {window, sharedworker, worker} client types promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 

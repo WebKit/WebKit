@@ -1,12 +1,12 @@
 
-PASS Test addSourceBuffer() in 'ended' state. 
-PASS Test addSourceBuffer() with empty type 
-PASS Test addSourceBuffer() with null 
-PASS Test addSourceBuffer() with unsupported type 
+PASS Test addSourceBuffer() in 'ended' state.
+PASS Test addSourceBuffer() with empty type
+PASS Test addSourceBuffer() with null
+PASS Test addSourceBuffer() with unsupported type
 FAIL Test addSourceBuffer() with Vorbis and VP8 assert_true: video/webm;codecs="vp8,vorbis" is supported expected true got false
 FAIL Test addSourceBuffer() with Vorbis and VP8 in separate SourceBuffers assert_true: video/webm;codecs="vp8" is supported expected true got false
-PASS Test addSourceBuffer() video only 
-PASS Test addSourceBuffer() audio only 
-PASS Test addSourceBuffer() with AAC and H.264 
-PASS Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers 
+PASS Test addSourceBuffer() video only
+PASS Test addSourceBuffer() audio only
+PASS Test addSourceBuffer() with AAC and H.264
+PASS Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers
 

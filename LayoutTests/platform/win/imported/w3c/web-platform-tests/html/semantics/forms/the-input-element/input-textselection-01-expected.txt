@@ -1,11 +1,11 @@
 
-PASS The selection interface members 
-PASS Selection attributes should apply to type text 
-PASS Selection attributes should apply to type search 
-PASS Selection attributes should apply to type url 
-PASS Selection attributes should apply to type tel 
-PASS Selection attributes should apply to type email 
-PASS Selection attributes should apply to type password 
+PASS The selection interface members
+PASS Selection attributes should apply to type text
+PASS Selection attributes should apply to type search
+PASS Selection attributes should apply to type url
+PASS Selection attributes should apply to type tel
+PASS Selection attributes should apply to type email
+PASS Selection attributes should apply to type password
 FAIL Selection attributes should not apply to type hidden assert_throws: Should throw with type hidden function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type datetime assert_equals: Input type unsupported expected "datetime" but got "text"
 FAIL Selection attributes should not apply to type date assert_equals: Input type unsupported expected "date" but got "text"

@@ -1,5 +1,5 @@
 
-PASS Check if browser supports enough test media types 
+PASS Check if browser supports enough test media types
 FAIL Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) The operation is not supported.
 FAIL Test audio-only changeType for audio/webm; codecs="vorbis" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters) The operation is not supported.
 FAIL Test audio-only changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/webm; codecs="vorbis" (using types without codecs parameters) The operation is not supported.

@@ -1,14 +1,14 @@
 
-PASS "toNativeLineEndings" should not be supported 
-PASS "FileError" should not be supported 
-PASS "FileException" should not be supported 
-PASS "FileHandle" should not be supported 
-PASS "FileRequest" should not be supported 
-PASS "MutableFile" should not be supported 
-PASS Blob should not support slice prefixed 
-PASS BlobBuilder should not be supported. 
-PASS createFor method should not be supported 
-PASS Blob.close() should not be supported 
-PASS File's lastModifiedDate should not be supported 
+PASS "toNativeLineEndings" should not be supported
+PASS "FileError" should not be supported
+PASS "FileException" should not be supported
+PASS "FileHandle" should not be supported
+PASS "FileRequest" should not be supported
+PASS "MutableFile" should not be supported
+PASS Blob should not support slice prefixed
+PASS BlobBuilder should not be supported.
+PASS createFor method should not be supported
+PASS Blob.close() should not be supported
+PASS File's lastModifiedDate should not be supported
 FAIL Service worker test setup undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
 

@@ -1,38 +1,38 @@
 
 
-PASS Fetch: /images/green-1x1.png 
-PASS Fetch: /images/gre\nen-1x1.png 
-PASS Fetch: /images/gre\ten-1x1.png 
-PASS Fetch: /images/gre\ren-1x1.png 
-PASS Fetch: /images/green-1x1.png?img=< 
-PASS Fetch: /images/green-1x1.png?img=&lt; 
-PASS Fetch: /images/green-1x1.png?img=%3C 
-PASS Fetch: /images/gr\neen-1x1.png?img=%3C 
-PASS Fetch: /images/gr\reen-1x1.png?img=%3C 
-PASS Fetch: /images/gr\teen-1x1.png?img=%3C 
-PASS Fetch: /images/green-1x1.png?img=&#10; 
-PASS Fetch: /images/gr\neen-1x1.png?img=&#10; 
-PASS Fetch: /images/gr\reen-1x1.png?img=&#10; 
-PASS Fetch: /images/gr\teen-1x1.png?img=&#10; 
+PASS Fetch: /images/green-1x1.png
+PASS Fetch: /images/gre\nen-1x1.png
+PASS Fetch: /images/gre\ten-1x1.png
+PASS Fetch: /images/gre\ren-1x1.png
+PASS Fetch: /images/green-1x1.png?img=<
+PASS Fetch: /images/green-1x1.png?img=&lt;
+PASS Fetch: /images/green-1x1.png?img=%3C
+PASS Fetch: /images/gr\neen-1x1.png?img=%3C
+PASS Fetch: /images/gr\reen-1x1.png?img=%3C
+PASS Fetch: /images/gr\teen-1x1.png?img=%3C
+PASS Fetch: /images/green-1x1.png?img=&#10;
+PASS Fetch: /images/gr\neen-1x1.png?img=&#10;
+PASS Fetch: /images/gr\reen-1x1.png?img=&#10;
+PASS Fetch: /images/gr\teen-1x1.png?img=&#10;
 FAIL Fetch: /images/gre\nen-1x1.png?img=< assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/gre\ren-1x1.png?img=< assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/gre\ten-1x1.png?img=< assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/green-1x1.png?<\n=block assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/green-1x1.png?<\r=block assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/green-1x1.png?<\t=block assert_unreached: Fetch should fail. Reached unreachable code
-PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;lt;b"> 
+PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;lt;b">
 FAIL <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b&amp;lt;c"> assert_equals: Height expected 1 but got 0
-PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=\n      ">\n     
-PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;lt;\n      ">\n     
+PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=\n      ">\n
+PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;lt;\n      ">\n
 FAIL \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;#10;\n      ">\n     assert_equals: Height expected 1 but got 0
-PASS <img id="dangling" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="> 
+PASS <img id="dangling" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
 FAIL <img id="dangling" src="data:image/png;base64,&#10;iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="> assert_equals: Height expected 1 but got 0
 FAIL <img id="dangling" src="data:image/png;base64,i&#10;VBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="> assert_equals: Height expected 1 but got 0
-PASS <img id="dangling" src="data:image/svg+xml;utf8,\n      <svg width='1' height='1' xmlns='http://www.w3.org/2000/svg'>\n        <rect width='100%' height='100%' fill='rebeccapurple'/>\n        <rect x='10%' y='10%' width='80%' height='80%' fill='lightgreen'/>\n      </svg>"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;&lt;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;&#10;b"> 
+PASS <img id="dangling" src="data:image/svg+xml;utf8,\n      <svg width='1' height='1' xmlns='http://www.w3.org/2000/svg'>\n        <rect width='100%' height='100%' fill='rebeccapurple'/>\n        <rect x='10%' y='10%' width='80%' height='80%' fill='lightgreen'/>\n      </svg>">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;&lt;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;&#10;b">
 FAIL \n      <img id="dangling" src="/images/green-1x1.png?img=\n        &lt;\n        &#10;b\n      ">\n     assert_equals: Height expected 0 but got 1
 

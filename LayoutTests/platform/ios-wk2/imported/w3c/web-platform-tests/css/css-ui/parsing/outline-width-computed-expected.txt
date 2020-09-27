@@ -1,11 +1,11 @@
 
-PASS Property outline-width value '2.5px' 
-PASS Property outline-width value '10px' 
-PASS Property outline-width value '0.5em' 
-PASS Property outline-width value 'calc(10px + 0.5em)' 
-PASS Property outline-width value 'calc(10px - 0.5em)' 
-PASS Property outline-width value 'thin' 
-PASS Property outline-width value 'medium' 
-PASS Property outline-width value 'thick' 
-PASS outline-width is 0 when outline-style is none 
+PASS Property outline-width value '2.5px'
+PASS Property outline-width value '10px'
+PASS Property outline-width value '0.5em'
+PASS Property outline-width value 'calc(10px + 0.5em)'
+PASS Property outline-width value 'calc(10px - 0.5em)'
+PASS Property outline-width value 'thin'
+PASS Property outline-width value 'medium'
+PASS Property outline-width value 'thick'
+PASS outline-width is 0 when outline-style is none
 

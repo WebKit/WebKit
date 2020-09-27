@@ -1,48 +1,48 @@
 
-PASS Adding missing children to mfrac 
-PASS Removing child from valid mfrac 
+PASS Adding missing children to mfrac
+PASS Removing child from valid mfrac
 FAIL Adding child to valid mfrac assert_approx_equals: block position (child 1) expected 0 +/- 1 but got 13.234375
-PASS Removing extra child from mfrac 
-PASS Adding missing children to munder 
-PASS Removing child from valid munder 
+PASS Removing extra child from mfrac
+PASS Adding missing children to munder
+PASS Removing child from valid munder
 FAIL Adding child to valid munder assert_approx_equals: block position (child 1) expected 0 +/- 1 but got 11.90625
-PASS Removing extra child from munder 
-PASS Adding missing children to mover 
+PASS Removing extra child from munder
+PASS Adding missing children to mover
 FAIL Removing child from valid mover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 22.53125
 FAIL Adding child to valid mover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 22.53125
-PASS Removing extra child from mover 
-PASS Adding missing children to munderover 
+PASS Removing extra child from mover
+PASS Adding missing children to munderover
 FAIL Removing child from valid munderover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 32.53125
 FAIL Adding child to valid munderover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 32.53125
-PASS Removing extra child from munderover 
-PASS Adding missing children to msub 
-PASS Removing child from valid msub 
+PASS Removing extra child from munderover
+PASS Adding missing children to msub
+PASS Removing child from valid msub
 FAIL Adding child to valid msub assert_approx_equals: inline position (child 1) expected 0 +/- 1 but got 10
-PASS Removing extra child from msub 
-PASS Adding missing children to msup 
+PASS Removing extra child from msub
+PASS Adding missing children to msup
 FAIL Removing child from valid msup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 16
 FAIL Adding child to valid msup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 16
-PASS Removing extra child from msup 
-PASS Adding missing children to msubsup 
+PASS Removing extra child from msup
+PASS Adding missing children to msubsup
 FAIL Removing child from valid msubsup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 26
 FAIL Adding child to valid msubsup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 26
-PASS Removing extra child from msubsup 
-PASS Adding missing children to mroot 
+PASS Removing extra child from msubsup
+PASS Adding missing children to mroot
 FAIL Removing child from valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 18.546875
 FAIL Adding child to valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 18.546875
-PASS Removing extra child from mroot 
+PASS Removing extra child from mroot
 FAIL Removing children from msqrt assert_approx_equals: inline size expected 13 +/- 1 but got 16
-PASS Adding children to msqrt 
-PASS Removing children from mpadded 
-PASS Adding children to mpadded 
-PASS Removing children from mspace 
-PASS Adding children to mspace 
-PASS multiscripts child count from 3 to 0 
-PASS multiscripts child count from 3 to 1 
+PASS Adding children to msqrt
+PASS Removing children from mpadded
+PASS Adding children to mpadded
+PASS Removing children from mspace
+PASS Adding children to mspace
+PASS multiscripts child count from 3 to 0
+PASS multiscripts child count from 3 to 1
 FAIL multiscripts child count from 3 to 2 assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 26
-PASS multiscripts child count from 0 to 3 
-PASS multiscripts child count from 3 to 6 
-PASS multiscripts child count from 3 to 8 
+PASS multiscripts child count from 0 to 3
+PASS multiscripts child count from 3 to 6
+PASS multiscripts child count from 3 to 8
 
 
 

@@ -1,10 +1,10 @@
 Inputs Date
 
 
-PASS date type support on input element 
-PASS The value attribute, if specified and not empty, must have a value that is a valid date string. 
-PASS The min attribute must be reflected verbatim by the min property. 
-PASS The max attribute must be reflected verbatim by the max property. 
-PASS User agents must not allow the user to set the value to a non-empty string that is not a valid date string. 
-PASS Number of days 
+PASS date type support on input element
+PASS The value attribute, if specified and not empty, must have a value that is a valid date string.
+PASS The min attribute must be reflected verbatim by the min property.
+PASS The max attribute must be reflected verbatim by the max property.
+PASS User agents must not allow the user to set the value to a non-empty string that is not a valid date string.
+PASS Number of days
 

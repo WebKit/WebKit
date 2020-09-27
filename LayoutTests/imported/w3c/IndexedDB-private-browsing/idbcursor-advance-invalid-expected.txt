@@ -1,8 +1,8 @@
 
-PASS IDBCursor.advance() - invalid - attempt to call advance twice 
-PASS IDBCursor.advance() - invalid - pass something other than number 
-PASS IDBCursor.advance() - invalid - pass null/undefined 
-PASS IDBCursor.advance() - invalid - missing argument 
-PASS IDBCursor.advance() - invalid - pass negative numbers 
-PASS IDBCursor.advance() - invalid - got value not set on exception 
+PASS IDBCursor.advance() - invalid - attempt to call advance twice
+PASS IDBCursor.advance() - invalid - pass something other than number
+PASS IDBCursor.advance() - invalid - pass null/undefined
+PASS IDBCursor.advance() - invalid - missing argument
+PASS IDBCursor.advance() - invalid - pass negative numbers
+PASS IDBCursor.advance() - invalid - got value not set on exception
 

@@ -1,7 +1,7 @@
 
-PASS IDBCursor.direction - undefined 
-PASS IDBCursor.direction - next 
-PASS IDBCursor.direction - prev 
-PASS IDBCursor.direction - nextunique 
-PASS IDBCursor.direction - prevunique 
+PASS IDBCursor.direction - undefined
+PASS IDBCursor.direction - next
+PASS IDBCursor.direction - prev
+PASS IDBCursor.direction - nextunique
+PASS IDBCursor.direction - prevunique
 

@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
 
 
-PASS Image should not load 
-PASS Violation report status OK. 
+PASS Image should not load
+PASS Violation report status OK.
 FAIL Test report cookies. assert_true: Report should contain cookie: cspViolationReportCookie2 expected true got false
 

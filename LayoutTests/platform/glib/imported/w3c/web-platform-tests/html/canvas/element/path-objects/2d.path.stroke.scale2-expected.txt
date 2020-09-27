@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS Stroke line widths are scaled by the current transformation matrix 
+PASS Stroke line widths are scaled by the current transformation matrix
 

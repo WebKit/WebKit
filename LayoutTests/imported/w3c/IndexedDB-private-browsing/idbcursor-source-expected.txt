@@ -1,4 +1,4 @@
 
-PASS IDBCursor.source - IDBObjectStore 
-PASS IDBCursor.source - IDBIndex 
+PASS IDBCursor.source - IDBObjectStore
+PASS IDBCursor.source - IDBIndex
 

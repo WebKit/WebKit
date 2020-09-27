@@ -1,4 +1,4 @@
 
 
-PASS Verify CORS XHR of fetch() in a Service Worker 
+PASS Verify CORS XHR of fetch() in a Service Worker
 

@@ -1,5 +1,5 @@
 
-PASS Send (paired surrogates) data on a WebSocket - Connection should be opened 
-PASS Send (paired surrogates) data on a WebSocket - Message should be received 
-PASS Send (paired surrogates) data on a WebSocket - Connection should be closed 
+PASS Send (paired surrogates) data on a WebSocket - Connection should be opened
+PASS Send (paired surrogates) data on a WebSocket - Message should be received
+PASS Send (paired surrogates) data on a WebSocket - Connection should be closed
 

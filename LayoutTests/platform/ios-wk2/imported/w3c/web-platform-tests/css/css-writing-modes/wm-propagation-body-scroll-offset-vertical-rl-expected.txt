@@ -1,5 +1,5 @@
 
-PASS Check initial scroll position of viewport. 
-PASS Scroll to scrollLeft = -1000 should be possible. 
+PASS Check initial scroll position of viewport.
+PASS Scroll to scrollLeft = -1000 should be possible.
 FAIL Scroll to scrollLeft = 1000 should not be possible. assert_equals: scrollLeft should be 0. expected 0 but got 1000
 

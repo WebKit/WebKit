@@ -1,3 +1,3 @@
 
-PASS IDBDatabase.createObjectStore() - attempt to create an object store that already exists  
+PASS IDBDatabase.createObjectStore() - attempt to create an object store that already exists
 

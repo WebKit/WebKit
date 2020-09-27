@@ -1,9 +1,9 @@
 
-PASS IDBKeyRange.bound() - bound requires more than 0 arguments. 
-PASS IDBKeyRange.bound(null, null) - null parameters are incorrect. 
-PASS IDBKeyRange.bound(1, null / null, 1) - null parameter is incorrect. 
-PASS IDBKeyRange.bound(lower, upper / lower > upper) -  'lower' is greater than 'upper'. 
-PASS IDBKeyRange.bound(DOMString/Date/Array, 1) - A DOMString, Date and Array are greater than a float. 
-PASS IDBKeyRange.bound(noExistingVariable, 1 / goodVariable, noExistingVariable) - noExistingVariable is not defined. 
-PASS IDBKeyRange.bound(true, 1) - boolean is not a valid key type. 
+PASS IDBKeyRange.bound() - bound requires more than 0 arguments.
+PASS IDBKeyRange.bound(null, null) - null parameters are incorrect.
+PASS IDBKeyRange.bound(1, null / null, 1) - null parameter is incorrect.
+PASS IDBKeyRange.bound(lower, upper / lower > upper) -  'lower' is greater than 'upper'.
+PASS IDBKeyRange.bound(DOMString/Date/Array, 1) - A DOMString, Date and Array are greater than a float.
+PASS IDBKeyRange.bound(noExistingVariable, 1 / goodVariable, noExistingVariable) - noExistingVariable is not defined.
+PASS IDBKeyRange.bound(true, 1) - boolean is not a valid key type.
 

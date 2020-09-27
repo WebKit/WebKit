@@ -1,6 +1,6 @@
 
-PASS XMLHttpRequest: send() - Redirects (basics) (301) 
-PASS XMLHttpRequest: send() - Redirects (basics) (302) 
-PASS XMLHttpRequest: send() - Redirects (basics) (303) 
-PASS XMLHttpRequest: send() - Redirects (basics) (307) 
+PASS XMLHttpRequest: send() - Redirects (basics) (301)
+PASS XMLHttpRequest: send() - Redirects (basics) (302)
+PASS XMLHttpRequest: send() - Redirects (basics) (303)
+PASS XMLHttpRequest: send() - Redirects (basics) (307)
 

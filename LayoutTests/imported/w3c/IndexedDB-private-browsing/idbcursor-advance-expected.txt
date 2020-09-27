@@ -1,8 +1,8 @@
 
-PASS IDBCursor.advance() - advances 
-PASS IDBCursor.advance() - advances backwards 
-PASS IDBCursor.advance() - skip far forward 
-PASS IDBCursor.advance() - within range 
-PASS IDBCursor.advance() - within single key range 
-PASS IDBCursor.advance() - within single key range, with several results 
+PASS IDBCursor.advance() - advances
+PASS IDBCursor.advance() - advances backwards
+PASS IDBCursor.advance() - skip far forward
+PASS IDBCursor.advance() - within range
+PASS IDBCursor.advance() - within single key range
+PASS IDBCursor.advance() - within single key range, with several results
 

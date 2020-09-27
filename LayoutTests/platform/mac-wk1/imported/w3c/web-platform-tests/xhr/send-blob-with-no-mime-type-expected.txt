@@ -1,10 +1,10 @@
 
 FAIL Synchronous blob loading with no mime type [POST] assert_equals: expected "NO" but got "application/x-www-form-urlencoded"
 FAIL Asynchronous blob loading with no mime type [POST] assert_equals: expected "NO" but got "application/x-www-form-urlencoded"
-PASS Synchronous blob loading with no mime type [PUT] 
-PASS Asynchronous blob loading with no mime type [PUT] 
+PASS Synchronous blob loading with no mime type [PUT]
+PASS Asynchronous blob loading with no mime type [PUT]
 FAIL Synchronous blob loading with invalid mime type [POST] assert_equals: expected "NO" but got "application/x-www-form-urlencoded"
 FAIL Asynchronous blob loading with invalid mime type [POST] assert_equals: expected "NO" but got "application/x-www-form-urlencoded"
-PASS Synchronous blob loading with invalid mime type [PUT] 
-PASS Asynchronous blob loading with invalid mime type [PUT] 
+PASS Synchronous blob loading with invalid mime type [PUT]
+PASS Asynchronous blob loading with invalid mime type [PUT]
 

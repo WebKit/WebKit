@@ -1,20 +1,20 @@
 
-PASS Test invalid MIME format "video" 
-PASS Test invalid MIME format "video/" 
+PASS Test invalid MIME format "video"
+PASS Test invalid MIME format "video/"
 FAIL Test invalid MIME format "video/webm" assert_equals: supported expected false but got true
 FAIL Test invalid MIME format "video/webm;" assert_equals: supported expected false but got true
 FAIL Test invalid MIME format "video/webm;codecs" assert_equals: supported expected false but got true
 FAIL Test invalid MIME format "video/webm;codecs=" assert_equals: supported expected false but got true
-PASS Test invalid MIME format "video/webm;codecs="" 
+PASS Test invalid MIME format "video/webm;codecs=""
 FAIL Test invalid MIME format "video/webm;codecs=""" assert_equals: supported expected false but got true
-PASS Test invalid MIME format "video/webm;codecs=","" 
+PASS Test invalid MIME format "video/webm;codecs=",""
 FAIL Test invalid MIME format "audio/webm;aaacodecsbbb=opus" assert_equals: supported expected false but got true
-PASS Test invalid MIME format "unsupported_mediatype" 
-PASS Test invalid MIME format "" 
-PASS Test invalid MIME format "null" 
-PASS Test invalid MSE MIME media type "xxx" 
-PASS Test invalid MSE MIME media type "text/html" 
-PASS Test invalid MSE MIME media type "image/jpeg" 
+PASS Test invalid MIME format "unsupported_mediatype"
+PASS Test invalid MIME format ""
+PASS Test invalid MIME format "null"
+PASS Test invalid MSE MIME media type "xxx"
+PASS Test invalid MSE MIME media type "text/html"
+PASS Test invalid MSE MIME media type "image/jpeg"
 FAIL Test invalid mismatch between MIME type and codec ID "audio/webm;codecs="vp8"" assert_equals: supported expected false but got true
 FAIL Test invalid mismatch between MIME type and codec ID "audio/mp4;codecs="avc1.4d001e"" assert_equals: supported expected false but got true
 FAIL Test invalid mismatch between MIME type and codec ID "audio/mp4;codecs="vorbis"" assert_equals: supported expected false but got true
@@ -26,24 +26,24 @@ FAIL Test invalid codec ID "audio/mp4;codecs="mp4a"" assert_equals: supported ex
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.40"" assert_equals: supported expected false but got true
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.40."" assert_equals: supported expected false but got true
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.67.3"" assert_equals: supported expected false but got true
-PASS Test valid WebM type "video/webm;codecs="vp8"" 
-PASS Test valid WebM type "video/webm;codecs="vorbis"" 
-PASS Test valid WebM type "video/webm;codecs="vp8,vorbis"" 
-PASS Test valid WebM type "video/webm;codecs="vorbis, vp8"" 
-PASS Test valid WebM type "audio/webm;codecs="vorbis"" 
-PASS Test valid WebM type "AUDIO/WEBM;CODECS="vorbis"" 
+PASS Test valid WebM type "video/webm;codecs="vp8""
+PASS Test valid WebM type "video/webm;codecs="vorbis""
+PASS Test valid WebM type "video/webm;codecs="vp8,vorbis""
+PASS Test valid WebM type "video/webm;codecs="vorbis, vp8""
+PASS Test valid WebM type "audio/webm;codecs="vorbis""
+PASS Test valid WebM type "AUDIO/WEBM;CODECS="vorbis""
 FAIL Test valid WebM type "audio/webm;codecs=vorbis;test="6"" assert_equals: supported expected true but got false
-PASS Test valid WebM type "audio/webm;codecs="opus"" 
-PASS Test valid WebM type "video/webm;codecs="opus"" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e"" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.42001e"" 
-PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.2"" 
-PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.5"" 
-PASS Test valid MP4 type "audio/mp4;codecs="mp4a.67"" 
-PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2"" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.2"" 
-PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2 , avc1.4d001e "" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.5"" 
-PASS Test valid MP4 type "audio/mp4;codecs="opus"" 
-PASS Test valid MP4 type "video/mp4;codecs="opus"" 
+PASS Test valid WebM type "audio/webm;codecs="opus""
+PASS Test valid WebM type "video/webm;codecs="opus""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.42001e""
+PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.2""
+PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.5""
+PASS Test valid MP4 type "audio/mp4;codecs="mp4a.67""
+PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.2""
+PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2 , avc1.4d001e ""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.5""
+PASS Test valid MP4 type "audio/mp4;codecs="opus""
+PASS Test valid MP4 type "video/mp4;codecs="opus""
 
