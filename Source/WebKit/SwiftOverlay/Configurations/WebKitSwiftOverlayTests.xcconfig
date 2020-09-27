@@ -44,15 +44,3 @@ SDKROOT = macosx.internal
 SDKROOT[sdk=iphoneos*] = iphoneos.internal
 SDKROOT[sdk=appletv*] = appletvos.internal
 SDKROOT[sdk=watchos*] = watchos.internal
-
-// We need to generate swiftmodules for these architectures, so that they can be
-// imported in apps that are deployable on OS versions that support them.
-// However, we can only generate module files for these; we can't emit binaries.
-// (All imported definitions will be unavailable on these older OS versions.)
-SWIFT_MODULE_ONLY_ARCHS[sdk=iphoneos*] = armv7 armv7s
-SWIFT_MODULE_ONLY_ARCHS[sdk=iphonesimulator*] = i386
-SWIFT_MODULE_ONLY_IPHONEOS_DEPLOYMENT_TARGET = 10.3
-SWIFT_MODULE_ONLY_ARCHS[sdk=watchos*] =
-SWIFT_MODULE_ONLY_ARCHS[sdk=watchsimulator*] =
-SWIFT_MODULE_ONLY_ARCHS[sdk=appletvos*] =
-SWIFT_MODULE_ONLY_ARCHS[sdk=appletvsimulator*] =
