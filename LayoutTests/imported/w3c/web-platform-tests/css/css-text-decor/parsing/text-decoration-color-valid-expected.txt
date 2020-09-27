@@ -1,5 +1,5 @@
 
-PASS e.style['text-decoration-color'] = "currentcolor" should set the property value 
-PASS e.style['text-decoration-color'] = "red" should set the property value 
-PASS e.style['text-decoration-color'] = "rgba(10, 20, 30, 0.4)" should set the property value 
+PASS e.style['text-decoration-color'] = "currentcolor" should set the property value
+PASS e.style['text-decoration-color'] = "red" should set the property value
+PASS e.style['text-decoration-color'] = "rgba(10, 20, 30, 0.4)" should set the property value
 

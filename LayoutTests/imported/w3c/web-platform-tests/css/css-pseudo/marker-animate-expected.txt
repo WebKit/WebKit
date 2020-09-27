@@ -1,5 +1,5 @@
 
 FAIL 'color' animation assert_equals: color expected "rgb(100, 50, 150)" but got "rgb(0, 0, 0)"
-PASS 'opacity' animation 
+PASS 'opacity' animation
 FAIL 'color' + 'opacity' animation assert_equals: color expected "rgb(100, 50, 150)" but got "rgb(0, 0, 0)"
 list item

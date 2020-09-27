@@ -1,4 +1,4 @@
- 
+
 
 
 FAIL document.adoptedStyleSheets should initially have length 0. undefined is not an object (evaluating 'document.adoptedStyleSheets.length')

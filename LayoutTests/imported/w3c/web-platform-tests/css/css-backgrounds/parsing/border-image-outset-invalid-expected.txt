@@ -1,7 +1,7 @@
 
-PASS e.style['border-image-outset'] = "auto" should not set the property value 
-PASS e.style['border-image-outset'] = "-1" should not set the property value 
-PASS e.style['border-image-outset'] = "-2px" should not set the property value 
-PASS e.style['border-image-outset'] = "1%" should not set the property value 
-PASS e.style['border-image-outset'] = "1 2 3 4 5" should not set the property value 
+PASS e.style['border-image-outset'] = "auto" should not set the property value
+PASS e.style['border-image-outset'] = "-1" should not set the property value
+PASS e.style['border-image-outset'] = "-2px" should not set the property value
+PASS e.style['border-image-outset'] = "1%" should not set the property value
+PASS e.style['border-image-outset'] = "1 2 3 4 5" should not set the property value
 

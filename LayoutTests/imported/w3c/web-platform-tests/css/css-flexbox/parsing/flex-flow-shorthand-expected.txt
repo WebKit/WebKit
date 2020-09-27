@@ -1,8 +1,8 @@
 
-PASS e.style['flex-flow'] = "nowrap column" should set flex-direction 
-PASS e.style['flex-flow'] = "nowrap column" should set flex-wrap 
-PASS e.style['flex-flow'] = "nowrap column" should not set unrelated longhands 
-PASS e.style['flex-flow'] = "wrap row-reverse" should set flex-direction 
-PASS e.style['flex-flow'] = "wrap row-reverse" should set flex-wrap 
-PASS e.style['flex-flow'] = "wrap row-reverse" should not set unrelated longhands 
+PASS e.style['flex-flow'] = "nowrap column" should set flex-direction
+PASS e.style['flex-flow'] = "nowrap column" should set flex-wrap
+PASS e.style['flex-flow'] = "nowrap column" should not set unrelated longhands
+PASS e.style['flex-flow'] = "wrap row-reverse" should set flex-direction
+PASS e.style['flex-flow'] = "wrap row-reverse" should set flex-wrap
+PASS e.style['flex-flow'] = "wrap row-reverse" should not set unrelated longhands
 

@@ -1,4 +1,4 @@
 
-PASS e.style['background'] = "red, green" should not set the property value 
+PASS e.style['background'] = "red, green" should not set the property value
 FAIL e.style['background'] = "black 0 url(https://example.invalid/) / cover" should not set the property value assert_equals: expected "" but got "url(\"https://example.invalid/\") 0px center / cover black"
 

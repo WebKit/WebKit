@@ -1,8 +1,8 @@
 
-PASS 3005  IDEOGRAPHIC ITERATION MARK may appear at line start if zh and loose 
-PASS 303B  VERTICAL IDEOGRAPHIC ITERATION MARK may appear at line start if zh and loose 
-PASS 309D  HIRAGANA ITERATION MARK may appear at line start if zh and loose 
-PASS 309E  HIRAGANA VOICED ITERATION MARK may appear at line start if zh and loose 
-PASS 30FD  KATAKANA ITERATION MARK may appear at line start if zh and loose 
-PASS 30FE  KATAKANA VOICED ITERATION MARK may appear at line start if zh and loose 
+PASS 3005  IDEOGRAPHIC ITERATION MARK may appear at line start if zh and loose
+PASS 303B  VERTICAL IDEOGRAPHIC ITERATION MARK may appear at line start if zh and loose
+PASS 309D  HIRAGANA ITERATION MARK may appear at line start if zh and loose
+PASS 309E  HIRAGANA VOICED ITERATION MARK may appear at line start if zh and loose
+PASS 30FD  KATAKANA ITERATION MARK may appear at line start if zh and loose
+PASS 30FE  KATAKANA VOICED ITERATION MARK may appear at line start if zh and loose
 

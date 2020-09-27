@@ -1,17 +1,17 @@
 
-PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-delay 
-PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-duration 
-PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-property 
-PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-timing-function 
-PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should not set unrelated longhands 
+PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-delay
+PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-duration
+PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-property
+PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-timing-function
+PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should not set unrelated longhands
 FAIL e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-delay assert_equals: transition-delay should be canonical expected "-3s, 0s" but got "-3s, initial"
 FAIL e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-duration assert_equals: transition-duration should be canonical expected "1s, 0s" but got "1s, initial"
 FAIL e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-property assert_equals: transition-property should be canonical expected "all, top" but got "initial, top"
 FAIL e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-timing-function assert_equals: transition-timing-function should be canonical expected "ease, cubic-bezier(0, -2, 1, 3)" but got "initial, cubic-bezier(0, -2, 1, 3)"
-PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should not set unrelated longhands 
+PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should not set unrelated longhands
 FAIL e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-delay assert_equals: transition-delay should be canonical expected "0s, -3s" but got "initial, -3s"
 FAIL e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-duration assert_equals: transition-duration should be canonical expected "0s, 1s" but got "initial, 1s"
 FAIL e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-property assert_equals: transition-property should be canonical expected "top, all" but got "top, initial"
 FAIL e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-timing-function assert_equals: transition-timing-function should be canonical expected "cubic-bezier(0, -2, 1, 3), ease" but got "cubic-bezier(0, -2, 1, 3), initial"
-PASS e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should not set unrelated longhands 
+PASS e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should not set unrelated longhands
 

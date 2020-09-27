@@ -5,8 +5,8 @@ Historically, the Apple Safari web browser has added an "intrinsic margin" to fo
 FAIL text input element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
 FAIL button input element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
 FAIL submit input element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
-PASS radio input element 
-PASS checkbox input element 
+PASS radio input element
+PASS checkbox input element
 FAIL textarea element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
 FAIL select element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])
 FAIL button element assert_array_equals: expected property 0 to be "2px" but got "0px" (expected array ["2px", "2px"] got ["0px", "0px"])

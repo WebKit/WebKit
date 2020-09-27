@@ -1,6 +1,6 @@
 Filler Text
 
-PASS animationstart event is instanceof AnimationEvent 
-PASS animationend event is instanceof AnimationEvent 
-PASS animationiteration event is instanceof AnimationEvent 
+PASS animationstart event is instanceof AnimationEvent
+PASS animationend event is instanceof AnimationEvent
+PASS animationiteration event is instanceof AnimationEvent
 

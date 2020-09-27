@@ -1,10 +1,10 @@
 
-PASS Property transition-delay has initial value 0s 
-PASS Property transition-delay does not inherit 
-PASS Property transition-duration has initial value 0s 
-PASS Property transition-duration does not inherit 
-PASS Property transition-property has initial value all 
-PASS Property transition-property does not inherit 
-PASS Property transition-timing-function has initial value ease 
-PASS Property transition-timing-function does not inherit 
+PASS Property transition-delay has initial value 0s
+PASS Property transition-delay does not inherit
+PASS Property transition-duration has initial value 0s
+PASS Property transition-duration does not inherit
+PASS Property transition-property has initial value all
+PASS Property transition-property does not inherit
+PASS Property transition-timing-function has initial value ease
+PASS Property transition-timing-function does not inherit
 

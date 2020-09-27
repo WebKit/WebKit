@@ -1,4 +1,4 @@
 
-PASS Animatable::getAnimations() should be able to see a style-created CSS animation immediately 
-PASS Document::getAnimations() should be able to see a style-created CSS animation immediately 
+PASS Animatable::getAnimations() should be able to see a style-created CSS animation immediately
+PASS Document::getAnimations() should be able to see a style-created CSS animation immediately
 

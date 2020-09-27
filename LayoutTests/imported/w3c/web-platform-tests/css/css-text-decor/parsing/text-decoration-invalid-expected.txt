@@ -1,5 +1,5 @@
 
-PASS e.style['text-decoration'] = "double overline underline dotted" should not set the property value 
-PASS e.style['text-decoration'] = "red line-through green" should not set the property value 
-PASS e.style['text-decoration'] = "overline blue underline" should not set the property value 
+PASS e.style['text-decoration'] = "double overline underline dotted" should not set the property value
+PASS e.style['text-decoration'] = "red line-through green" should not set the property value
+PASS e.style['text-decoration'] = "overline blue underline" should not set the property value
 

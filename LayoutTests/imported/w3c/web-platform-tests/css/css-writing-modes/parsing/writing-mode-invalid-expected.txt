@@ -1,4 +1,4 @@
 
-PASS e.style['writing-mode'] = "auto" should not set the property value 
-PASS e.style['writing-mode'] = "horizontal-tb vertical-rl" should not set the property value 
+PASS e.style['writing-mode'] = "auto" should not set the property value
+PASS e.style['writing-mode'] = "horizontal-tb vertical-rl" should not set the property value
 

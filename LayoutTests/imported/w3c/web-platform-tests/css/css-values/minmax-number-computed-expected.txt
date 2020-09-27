@@ -1,16 +1,16 @@
 
-PASS min(1) should be used-value-equivalent to 1 
-PASS max(1) should be used-value-equivalent to 1 
-PASS min(0.2, max(0.1, 0.15)) should be used-value-equivalent to 0.15 
-PASS max(0.1, min(0.2, 0.15)) should be used-value-equivalent to 0.15 
+PASS min(1) should be used-value-equivalent to 1
+PASS max(1) should be used-value-equivalent to 1
+PASS min(0.2, max(0.1, 0.15)) should be used-value-equivalent to 0.15
+PASS max(0.1, min(0.2, 0.15)) should be used-value-equivalent to 0.15
 FAIL calc(min(0.1, 0.2) + 0.05) should be used-value-equivalent to 0.15 assert_equals: calc(min(0.1, 0.2) + 0.05) and 0.15 serialize to the same thing in used values. expected "matrix(0.15, 0, 0, 0.15, 0, 0)" but got "matrix(0.15000000000000002, 0, 0, 0.15000000000000002, 0, 0)"
-PASS calc(min(0.1, 0.2) - 0.05) should be used-value-equivalent to 0.05 
-PASS calc(min(0.1, 0.2) * 2) should be used-value-equivalent to 0.2 
-PASS calc(min(0.1, 0.2) / 2) should be used-value-equivalent to 0.05 
-PASS calc(max(0.1, 0.2) + 0.05) should be used-value-equivalent to 0.25 
+PASS calc(min(0.1, 0.2) - 0.05) should be used-value-equivalent to 0.05
+PASS calc(min(0.1, 0.2) * 2) should be used-value-equivalent to 0.2
+PASS calc(min(0.1, 0.2) / 2) should be used-value-equivalent to 0.05
+PASS calc(max(0.1, 0.2) + 0.05) should be used-value-equivalent to 0.25
 FAIL calc(max(0.1, 0.2) - 0.05) should be used-value-equivalent to 0.15 assert_equals: calc(max(0.1, 0.2) - 0.05) and 0.15 serialize to the same thing in used values. expected "matrix(0.15, 0, 0, 0.15, 0, 0)" but got "matrix(0.15000000000000002, 0, 0, 0.15000000000000002, 0, 0)"
-PASS calc(max(0.1, 0.2) * 2) should be used-value-equivalent to 0.4 
-PASS calc(max(0.1, 0.2) / 2) should be used-value-equivalent to 0.1 
-PASS calc(min(0.1, 0.2) + max(0.1, 0.05)) should be used-value-equivalent to 0.2 
-PASS calc(min(0.1, 0.2) - max(0.1, 0.05)) should be used-value-equivalent to 0 
+PASS calc(max(0.1, 0.2) * 2) should be used-value-equivalent to 0.4
+PASS calc(max(0.1, 0.2) / 2) should be used-value-equivalent to 0.1
+PASS calc(min(0.1, 0.2) + max(0.1, 0.05)) should be used-value-equivalent to 0.2
+PASS calc(min(0.1, 0.2) - max(0.1, 0.05)) should be used-value-equivalent to 0
 

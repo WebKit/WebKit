@@ -1,5 +1,5 @@
 
-PASS e.style['background-image'] = "none" should set the property value 
-PASS e.style['background-image'] = "url(\"http://www.example.com/\")" should set the property value 
-PASS e.style['background-image'] = "none, url(\"http://www.example.com/\")" should set the property value 
+PASS e.style['background-image'] = "none" should set the property value
+PASS e.style['background-image'] = "url(\"http://www.example.com/\")" should set the property value
+PASS e.style['background-image'] = "none, url(\"http://www.example.com/\")" should set the property value
 

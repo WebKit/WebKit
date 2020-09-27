@@ -1,22 +1,22 @@
 
-PASS Property align-content has initial value normal 
-PASS Property align-content does not inherit 
-PASS Property align-items has initial value normal 
-PASS Property align-items does not inherit 
-PASS Property align-self has initial value auto 
-PASS Property align-self does not inherit 
-PASS Property flex-basis has initial value auto 
-PASS Property flex-basis does not inherit 
-PASS Property flex-direction has initial value row 
-PASS Property flex-direction does not inherit 
-PASS Property flex-grow has initial value 0 
-PASS Property flex-grow does not inherit 
-PASS Property flex-shrink has initial value 1 
-PASS Property flex-shrink does not inherit 
-PASS Property flex-wrap has initial value nowrap 
-PASS Property flex-wrap does not inherit 
-PASS Property justify-content has initial value normal 
-PASS Property justify-content does not inherit 
-PASS Property order has initial value 0 
-PASS Property order does not inherit 
+PASS Property align-content has initial value normal
+PASS Property align-content does not inherit
+PASS Property align-items has initial value normal
+PASS Property align-items does not inherit
+PASS Property align-self has initial value auto
+PASS Property align-self does not inherit
+PASS Property flex-basis has initial value auto
+PASS Property flex-basis does not inherit
+PASS Property flex-direction has initial value row
+PASS Property flex-direction does not inherit
+PASS Property flex-grow has initial value 0
+PASS Property flex-grow does not inherit
+PASS Property flex-shrink has initial value 1
+PASS Property flex-shrink does not inherit
+PASS Property flex-wrap has initial value nowrap
+PASS Property flex-wrap does not inherit
+PASS Property justify-content has initial value normal
+PASS Property justify-content does not inherit
+PASS Property order has initial value 0
+PASS Property order does not inherit
 

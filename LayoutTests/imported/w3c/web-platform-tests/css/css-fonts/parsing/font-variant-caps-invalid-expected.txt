@@ -1,4 +1,4 @@
 
-PASS e.style['font-variant-caps'] = "auto" should not set the property value 
-PASS e.style['font-variant-caps'] = "normal unicase" should not set the property value 
+PASS e.style['font-variant-caps'] = "auto" should not set the property value
+PASS e.style['font-variant-caps'] = "normal unicase" should not set the property value
 

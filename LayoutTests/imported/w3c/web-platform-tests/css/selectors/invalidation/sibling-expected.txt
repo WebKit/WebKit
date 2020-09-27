@@ -1,9 +1,9 @@
 
-PASS Adjacent with universal selector 
-PASS Indirect adjacent with universal selector 
-PASS Indirect adjacent with two adjacent selectors 
-PASS Adjacent class 
-PASS Adjacent universal 
-PASS Sibling subtree through an indirect adjacent combinator 
-PASS Sibling descendant through a universal selector 
+PASS Adjacent with universal selector
+PASS Indirect adjacent with universal selector
+PASS Indirect adjacent with two adjacent selectors
+PASS Adjacent class
+PASS Adjacent universal
+PASS Sibling subtree through an indirect adjacent combinator
+PASS Sibling descendant through a universal selector
 

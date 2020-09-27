@@ -1,14 +1,14 @@
 
-PASS e.style['gap'] = "normal" should set column-gap 
-PASS e.style['gap'] = "normal" should set row-gap 
-PASS e.style['gap'] = "normal" should not set unrelated longhands 
-PASS e.style['gap'] = "10px 20%" should set column-gap 
-PASS e.style['gap'] = "10px 20%" should set row-gap 
-PASS e.style['gap'] = "10px 20%" should not set unrelated longhands 
-PASS e.style['gap'] = "10px normal" should set column-gap 
-PASS e.style['gap'] = "10px normal" should set row-gap 
-PASS e.style['gap'] = "10px normal" should not set unrelated longhands 
-PASS e.style['gap'] = "normal calc(20% + 10px)" should set column-gap 
-PASS e.style['gap'] = "normal calc(20% + 10px)" should set row-gap 
-PASS e.style['gap'] = "normal calc(20% + 10px)" should not set unrelated longhands 
+PASS e.style['gap'] = "normal" should set column-gap
+PASS e.style['gap'] = "normal" should set row-gap
+PASS e.style['gap'] = "normal" should not set unrelated longhands
+PASS e.style['gap'] = "10px 20%" should set column-gap
+PASS e.style['gap'] = "10px 20%" should set row-gap
+PASS e.style['gap'] = "10px 20%" should not set unrelated longhands
+PASS e.style['gap'] = "10px normal" should set column-gap
+PASS e.style['gap'] = "10px normal" should set row-gap
+PASS e.style['gap'] = "10px normal" should not set unrelated longhands
+PASS e.style['gap'] = "normal calc(20% + 10px)" should set column-gap
+PASS e.style['gap'] = "normal calc(20% + 10px)" should set row-gap
+PASS e.style['gap'] = "normal calc(20% + 10px)" should not set unrelated longhands
 

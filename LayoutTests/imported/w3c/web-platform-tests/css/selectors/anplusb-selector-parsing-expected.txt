@@ -1,75 +1,75 @@
 
-PASS :nth-child(1n+0) should be parsed and serialized correctly 
-PASS :nth-child(n+0) should be parsed and serialized correctly 
-PASS :nth-child(n) should be parsed and serialized correctly 
-PASS :nth-child(-n+0) should be parsed and serialized correctly 
-PASS :nth-child(-n) should be parsed and serialized correctly 
-PASS :nth-child(N) should be parsed and serialized correctly 
-PASS :nth-child(+n+3) should be parsed and serialized correctly 
-PASS :nth-child( +n + 7 ) should be parsed and serialized correctly 
-PASS :nth-child(  N- 123) should be parsed and serialized correctly 
-PASS :nth-child(n- 10) should be parsed and serialized correctly 
+PASS :nth-child(1n+0) should be parsed and serialized correctly
+PASS :nth-child(n+0) should be parsed and serialized correctly
+PASS :nth-child(n) should be parsed and serialized correctly
+PASS :nth-child(-n+0) should be parsed and serialized correctly
+PASS :nth-child(-n) should be parsed and serialized correctly
+PASS :nth-child(N) should be parsed and serialized correctly
+PASS :nth-child(+n+3) should be parsed and serialized correctly
+PASS :nth-child( +n + 7 ) should be parsed and serialized correctly
+PASS :nth-child(  N- 123) should be parsed and serialized correctly
+PASS :nth-child(n- 10) should be parsed and serialized correctly
 PASS :nth-child(-n
-- 1) should be parsed and serialized correctly 
+- 1) should be parsed and serialized correctly
 PASS :nth-child( 23n
 
 +
 
-123 ) should be parsed and serialized correctly 
-PASS :nth-child(n- 1 2) should not parse 
-PASS :nth-child(n-b1) should not parse 
-PASS :nth-child(n-+1) should not parse 
-PASS :nth-child(n-1n) should not parse 
-PASS :nth-child(-n -b1) should not parse 
-PASS :nth-child(-1n- b1) should not parse 
-PASS :nth-child(-n-13b1) should not parse 
-PASS :nth-child(-n-+1) should not parse 
-PASS :nth-child(-n+n) should not parse 
-PASS :nth-child(+ 1n) should not parse 
-PASS :nth-child(  n +12 3) should not parse 
-PASS :nth-child(  12 n ) should not parse 
-PASS :nth-child(+12n-0+1) should not parse 
-PASS :nth-child(+12N -- 1) should not parse 
-PASS :nth-child(+12 N ) should not parse 
-PASS :nth-child(+ n + 7) should not parse 
-PASS :nth-last-child(1n+0) should be parsed and serialized correctly 
-PASS :nth-last-child(n+0) should be parsed and serialized correctly 
-PASS :nth-last-child(n) should be parsed and serialized correctly 
-PASS :nth-last-child(-n+0) should be parsed and serialized correctly 
-PASS :nth-last-child(-n) should be parsed and serialized correctly 
-PASS :nth-last-child(N) should be parsed and serialized correctly 
-PASS :nth-last-child(+n+3) should be parsed and serialized correctly 
-PASS :nth-last-child( +n + 7 ) should be parsed and serialized correctly 
-PASS :nth-last-child(  N- 123) should be parsed and serialized correctly 
-PASS :nth-last-child(n- 10) should be parsed and serialized correctly 
+123 ) should be parsed and serialized correctly
+PASS :nth-child(n- 1 2) should not parse
+PASS :nth-child(n-b1) should not parse
+PASS :nth-child(n-+1) should not parse
+PASS :nth-child(n-1n) should not parse
+PASS :nth-child(-n -b1) should not parse
+PASS :nth-child(-1n- b1) should not parse
+PASS :nth-child(-n-13b1) should not parse
+PASS :nth-child(-n-+1) should not parse
+PASS :nth-child(-n+n) should not parse
+PASS :nth-child(+ 1n) should not parse
+PASS :nth-child(  n +12 3) should not parse
+PASS :nth-child(  12 n ) should not parse
+PASS :nth-child(+12n-0+1) should not parse
+PASS :nth-child(+12N -- 1) should not parse
+PASS :nth-child(+12 N ) should not parse
+PASS :nth-child(+ n + 7) should not parse
+PASS :nth-last-child(1n+0) should be parsed and serialized correctly
+PASS :nth-last-child(n+0) should be parsed and serialized correctly
+PASS :nth-last-child(n) should be parsed and serialized correctly
+PASS :nth-last-child(-n+0) should be parsed and serialized correctly
+PASS :nth-last-child(-n) should be parsed and serialized correctly
+PASS :nth-last-child(N) should be parsed and serialized correctly
+PASS :nth-last-child(+n+3) should be parsed and serialized correctly
+PASS :nth-last-child( +n + 7 ) should be parsed and serialized correctly
+PASS :nth-last-child(  N- 123) should be parsed and serialized correctly
+PASS :nth-last-child(n- 10) should be parsed and serialized correctly
 PASS :nth-last-child(-n
-- 1) should be parsed and serialized correctly 
+- 1) should be parsed and serialized correctly
 PASS :nth-last-child( 23n
 
 +
 
-123 ) should be parsed and serialized correctly 
-PASS :nth-last-child(n- 1 2) should not parse 
-PASS :nth-last-child(n-b1) should not parse 
-PASS :nth-last-child(n-+1) should not parse 
-PASS :nth-last-child(n-1n) should not parse 
-PASS :nth-last-child(-n -b1) should not parse 
-PASS :nth-last-child(-1n- b1) should not parse 
-PASS :nth-last-child(-n-13b1) should not parse 
-PASS :nth-last-child(-n-+1) should not parse 
-PASS :nth-last-child(-n+n) should not parse 
-PASS :nth-last-child(+ 1n) should not parse 
-PASS :nth-last-child(  n +12 3) should not parse 
-PASS :nth-last-child(  12 n ) should not parse 
-PASS :nth-last-child(+12n-0+1) should not parse 
-PASS :nth-last-child(+12N -- 1) should not parse 
-PASS :nth-last-child(+12 N ) should not parse 
-PASS :nth-last-child(+ n + 7) should not parse 
+123 ) should be parsed and serialized correctly
+PASS :nth-last-child(n- 1 2) should not parse
+PASS :nth-last-child(n-b1) should not parse
+PASS :nth-last-child(n-+1) should not parse
+PASS :nth-last-child(n-1n) should not parse
+PASS :nth-last-child(-n -b1) should not parse
+PASS :nth-last-child(-1n- b1) should not parse
+PASS :nth-last-child(-n-13b1) should not parse
+PASS :nth-last-child(-n-+1) should not parse
+PASS :nth-last-child(-n+n) should not parse
+PASS :nth-last-child(+ 1n) should not parse
+PASS :nth-last-child(  n +12 3) should not parse
+PASS :nth-last-child(  12 n ) should not parse
+PASS :nth-last-child(+12n-0+1) should not parse
+PASS :nth-last-child(+12N -- 1) should not parse
+PASS :nth-last-child(+12 N ) should not parse
+PASS :nth-last-child(+ n + 7) should not parse
 FAIL :nth-of-type(1n+0) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(n)" but got ":nth-of-type(1n+0)"
 FAIL :nth-of-type(n+0) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(n)" but got ":nth-of-type(n+0)"
-PASS :nth-of-type(n) should be parsed and serialized correctly 
+PASS :nth-of-type(n) should be parsed and serialized correctly
 FAIL :nth-of-type(-n+0) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(-n)" but got ":nth-of-type(-n+0)"
-PASS :nth-of-type(-n) should be parsed and serialized correctly 
+PASS :nth-of-type(-n) should be parsed and serialized correctly
 FAIL :nth-of-type(N) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(n)" but got ":nth-of-type(N)"
 FAIL :nth-of-type(+n+3) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(n+3)" but got ":nth-of-type(+n+3)"
 FAIL :nth-of-type( +n + 7 ) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(n+7)" but got ":nth-of-type(+n + 7)"
@@ -82,27 +82,27 @@ FAIL :nth-of-type( 23n
 +
 
 123 ) should be parsed and serialized correctly assert_equals: expected ":nth-of-type(23n+123)" but got ":nth-of-type(23n + 123)"
-PASS :nth-of-type(n- 1 2) should not parse 
-PASS :nth-of-type(n-b1) should not parse 
-PASS :nth-of-type(n-+1) should not parse 
-PASS :nth-of-type(n-1n) should not parse 
-PASS :nth-of-type(-n -b1) should not parse 
-PASS :nth-of-type(-1n- b1) should not parse 
-PASS :nth-of-type(-n-13b1) should not parse 
-PASS :nth-of-type(-n-+1) should not parse 
-PASS :nth-of-type(-n+n) should not parse 
-PASS :nth-of-type(+ 1n) should not parse 
-PASS :nth-of-type(  n +12 3) should not parse 
-PASS :nth-of-type(  12 n ) should not parse 
-PASS :nth-of-type(+12n-0+1) should not parse 
-PASS :nth-of-type(+12N -- 1) should not parse 
-PASS :nth-of-type(+12 N ) should not parse 
-PASS :nth-of-type(+ n + 7) should not parse 
+PASS :nth-of-type(n- 1 2) should not parse
+PASS :nth-of-type(n-b1) should not parse
+PASS :nth-of-type(n-+1) should not parse
+PASS :nth-of-type(n-1n) should not parse
+PASS :nth-of-type(-n -b1) should not parse
+PASS :nth-of-type(-1n- b1) should not parse
+PASS :nth-of-type(-n-13b1) should not parse
+PASS :nth-of-type(-n-+1) should not parse
+PASS :nth-of-type(-n+n) should not parse
+PASS :nth-of-type(+ 1n) should not parse
+PASS :nth-of-type(  n +12 3) should not parse
+PASS :nth-of-type(  12 n ) should not parse
+PASS :nth-of-type(+12n-0+1) should not parse
+PASS :nth-of-type(+12N -- 1) should not parse
+PASS :nth-of-type(+12 N ) should not parse
+PASS :nth-of-type(+ n + 7) should not parse
 FAIL :nth-last-of-type(1n+0) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(n)" but got ":nth-last-of-type(1n+0)"
 FAIL :nth-last-of-type(n+0) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(n)" but got ":nth-last-of-type(n+0)"
-PASS :nth-last-of-type(n) should be parsed and serialized correctly 
+PASS :nth-last-of-type(n) should be parsed and serialized correctly
 FAIL :nth-last-of-type(-n+0) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(-n)" but got ":nth-last-of-type(-n+0)"
-PASS :nth-last-of-type(-n) should be parsed and serialized correctly 
+PASS :nth-last-of-type(-n) should be parsed and serialized correctly
 FAIL :nth-last-of-type(N) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(n)" but got ":nth-last-of-type(N)"
 FAIL :nth-last-of-type(+n+3) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(n+3)" but got ":nth-last-of-type(+n+3)"
 FAIL :nth-last-of-type( +n + 7 ) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(n+7)" but got ":nth-last-of-type(+n + 7)"
@@ -115,20 +115,20 @@ FAIL :nth-last-of-type( 23n
 +
 
 123 ) should be parsed and serialized correctly assert_equals: expected ":nth-last-of-type(23n+123)" but got ":nth-last-of-type(23n + 123)"
-PASS :nth-last-of-type(n- 1 2) should not parse 
-PASS :nth-last-of-type(n-b1) should not parse 
-PASS :nth-last-of-type(n-+1) should not parse 
-PASS :nth-last-of-type(n-1n) should not parse 
-PASS :nth-last-of-type(-n -b1) should not parse 
-PASS :nth-last-of-type(-1n- b1) should not parse 
-PASS :nth-last-of-type(-n-13b1) should not parse 
-PASS :nth-last-of-type(-n-+1) should not parse 
-PASS :nth-last-of-type(-n+n) should not parse 
-PASS :nth-last-of-type(+ 1n) should not parse 
-PASS :nth-last-of-type(  n +12 3) should not parse 
-PASS :nth-last-of-type(  12 n ) should not parse 
-PASS :nth-last-of-type(+12n-0+1) should not parse 
-PASS :nth-last-of-type(+12N -- 1) should not parse 
-PASS :nth-last-of-type(+12 N ) should not parse 
-PASS :nth-last-of-type(+ n + 7) should not parse 
+PASS :nth-last-of-type(n- 1 2) should not parse
+PASS :nth-last-of-type(n-b1) should not parse
+PASS :nth-last-of-type(n-+1) should not parse
+PASS :nth-last-of-type(n-1n) should not parse
+PASS :nth-last-of-type(-n -b1) should not parse
+PASS :nth-last-of-type(-1n- b1) should not parse
+PASS :nth-last-of-type(-n-13b1) should not parse
+PASS :nth-last-of-type(-n-+1) should not parse
+PASS :nth-last-of-type(-n+n) should not parse
+PASS :nth-last-of-type(+ 1n) should not parse
+PASS :nth-last-of-type(  n +12 3) should not parse
+PASS :nth-last-of-type(  12 n ) should not parse
+PASS :nth-last-of-type(+12n-0+1) should not parse
+PASS :nth-last-of-type(+12N -- 1) should not parse
+PASS :nth-last-of-type(+12 N ) should not parse
+PASS :nth-last-of-type(+ n + 7) should not parse
 

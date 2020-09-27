@@ -1,28 +1,28 @@
 
-PASS Checking invalid combination - justify-self: legacy 
-PASS Checking invalid combination - justify-self: space-around 
-PASS Checking invalid combination - justify-self: auto safe 
-PASS Checking invalid combination - justify-self: auto left 
-PASS Checking invalid combination - justify-self: normal unsafe 
-PASS Checking invalid combination - justify-self: normal stretch 
-PASS Checking invalid combination - justify-self: baseline normal 
-PASS Checking invalid combination - justify-self: baseline center 
-PASS Checking invalid combination - justify-self: first baseline center 
-PASS Checking invalid combination - justify-self: last baseline center 
-PASS Checking invalid combination - justify-self: baseline last 
-PASS Checking invalid combination - justify-self: baseline first 
-PASS Checking invalid combination - justify-self: stretch unsafe 
-PASS Checking invalid combination - justify-self: stretch right 
-PASS Checking invalid combination - justify-self: unsafe unsafe 
-PASS Checking invalid combination - justify-self: unsafe safe 
-PASS Checking invalid combination - justify-self: center start 
-PASS Checking invalid combination - justify-self: unsafe stretch 
-PASS Checking invalid combination - justify-self: safe stretch 
-PASS Checking invalid combination - justify-self: baseline safe 
-PASS Checking invalid combination - justify-self: unsafe baseline 
-PASS Checking invalid combination - justify-self: unsafe safe left 
-PASS Checking invalid combination - justify-self: unsafe left safe 
-PASS Checking invalid combination - justify-self: left safe unsafe safe 
-PASS Checking invalid combination - justify-self: start safe 
-PASS Checking invalid combination - justify-self: safe 
+PASS Checking invalid combination - justify-self: legacy
+PASS Checking invalid combination - justify-self: space-around
+PASS Checking invalid combination - justify-self: auto safe
+PASS Checking invalid combination - justify-self: auto left
+PASS Checking invalid combination - justify-self: normal unsafe
+PASS Checking invalid combination - justify-self: normal stretch
+PASS Checking invalid combination - justify-self: baseline normal
+PASS Checking invalid combination - justify-self: baseline center
+PASS Checking invalid combination - justify-self: first baseline center
+PASS Checking invalid combination - justify-self: last baseline center
+PASS Checking invalid combination - justify-self: baseline last
+PASS Checking invalid combination - justify-self: baseline first
+PASS Checking invalid combination - justify-self: stretch unsafe
+PASS Checking invalid combination - justify-self: stretch right
+PASS Checking invalid combination - justify-self: unsafe unsafe
+PASS Checking invalid combination - justify-self: unsafe safe
+PASS Checking invalid combination - justify-self: center start
+PASS Checking invalid combination - justify-self: unsafe stretch
+PASS Checking invalid combination - justify-self: safe stretch
+PASS Checking invalid combination - justify-self: baseline safe
+PASS Checking invalid combination - justify-self: unsafe baseline
+PASS Checking invalid combination - justify-self: unsafe safe left
+PASS Checking invalid combination - justify-self: unsafe left safe
+PASS Checking invalid combination - justify-self: left safe unsafe safe
+PASS Checking invalid combination - justify-self: start safe
+PASS Checking invalid combination - justify-self: safe
 

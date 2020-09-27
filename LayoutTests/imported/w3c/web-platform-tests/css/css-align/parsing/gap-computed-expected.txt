@@ -5,9 +5,9 @@ FAIL Property gap value '20%' assert_equals: expected "20%" but got "20% 20%"
 FAIL Property gap value 'calc(20% + 10px)' assert_equals: expected "calc(20% + 10px)" but got "calc(20% + 10px) calc(20% + 10px)"
 FAIL Property gap value 'calc(-0.5em + 10px)' assert_equals: expected "0px" but got "0px 0px"
 FAIL Property gap value 'calc(0.5em + 10px)' assert_equals: expected "30px" but got "30px 30px"
-PASS Property gap value 'normal 10px' 
-PASS Property gap value '10px 20%' 
-PASS Property gap value '20% calc(20% + 10px)' 
-PASS Property gap value 'calc(20% + 10px) normal' 
-PASS Property gap value 'calc(-0.5em + 10px) calc(0.5em + 10px)' 
+PASS Property gap value 'normal 10px'
+PASS Property gap value '10px 20%'
+PASS Property gap value '20% calc(20% + 10px)'
+PASS Property gap value 'calc(20% + 10px) normal'
+PASS Property gap value 'calc(-0.5em + 10px) calc(0.5em + 10px)'
 

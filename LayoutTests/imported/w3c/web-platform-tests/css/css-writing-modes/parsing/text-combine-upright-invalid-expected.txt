@@ -1,4 +1,4 @@
 
-PASS e.style['text-combine-upright'] = "auto" should not set the property value 
-PASS e.style['text-combine-upright'] = "none all" should not set the property value 
+PASS e.style['text-combine-upright'] = "auto" should not set the property value
+PASS e.style['text-combine-upright'] = "none all" should not set the property value
 

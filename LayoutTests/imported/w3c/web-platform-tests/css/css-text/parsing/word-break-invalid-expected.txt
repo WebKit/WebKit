@@ -1,10 +1,10 @@
 
-PASS e.style['word-break'] = "auto" should not set the property value 
-PASS e.style['word-break'] = "normal keep-all" should not set the property value 
-PASS e.style['word-break'] = "break-all break-all" should not set the property value 
-PASS e.style['word-break'] = "normal break-word" should not set the property value 
-PASS e.style['word-break'] = "break-word normal" should not set the property value 
-PASS e.style['word-break'] = "keep-all break-word" should not set the property value 
-PASS e.style['word-break'] = "break-all break-word" should not set the property value 
-PASS e.style['word-break'] = "word-break" should not set the property value 
+PASS e.style['word-break'] = "auto" should not set the property value
+PASS e.style['word-break'] = "normal keep-all" should not set the property value
+PASS e.style['word-break'] = "break-all break-all" should not set the property value
+PASS e.style['word-break'] = "normal break-word" should not set the property value
+PASS e.style['word-break'] = "break-word normal" should not set the property value
+PASS e.style['word-break'] = "keep-all break-word" should not set the property value
+PASS e.style['word-break'] = "break-all break-word" should not set the property value
+PASS e.style['word-break'] = "word-break" should not set the property value
 

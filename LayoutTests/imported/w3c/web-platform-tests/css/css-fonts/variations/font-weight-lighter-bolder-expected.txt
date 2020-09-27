@@ -10,26 +10,26 @@ AAA 899
 AAA 900
 AAA 901
 
-PASS Test lighter font-weight for base weight 99 
+PASS Test lighter font-weight for base weight 99
 FAIL Test bolder font-weight for base weight 99 assert_equals: Bolder value 99 should match expected value. expected "400" but got "normal"
-PASS Test lighter font-weight for base weight 100 
+PASS Test lighter font-weight for base weight 100
 FAIL Test bolder font-weight for base weight 100 assert_equals: Bolder value 100 should match expected value. expected "400" but got "normal"
-PASS Test lighter font-weight for base weight 349 
+PASS Test lighter font-weight for base weight 349
 FAIL Test bolder font-weight for base weight 349 assert_equals: Bolder value 349 should match expected value. expected "400" but got "normal"
-PASS Test lighter font-weight for base weight 350 
+PASS Test lighter font-weight for base weight 350
 FAIL Test bolder font-weight for base weight 350 assert_equals: Bolder value 350 should match expected value. expected "700" but got "bold"
-PASS Test lighter font-weight for base weight 549 
+PASS Test lighter font-weight for base weight 549
 FAIL Test bolder font-weight for base weight 549 assert_equals: Bolder value 549 should match expected value. expected "700" but got "bold"
 FAIL Test lighter font-weight for base weight 550 assert_equals: Lighter value for 550 should match expected value. expected "400" but got "normal"
-PASS Test bolder font-weight for base weight 550 
+PASS Test bolder font-weight for base weight 550
 FAIL Test lighter font-weight for base weight 749 assert_equals: Lighter value for 749 should match expected value. expected "400" but got "normal"
-PASS Test bolder font-weight for base weight 749 
+PASS Test bolder font-weight for base weight 749
 FAIL Test lighter font-weight for base weight 750 assert_equals: Lighter value for 750 should match expected value. expected "700" but got "bold"
-PASS Test bolder font-weight for base weight 750 
+PASS Test bolder font-weight for base weight 750
 FAIL Test lighter font-weight for base weight 899 assert_equals: Lighter value for 899 should match expected value. expected "700" but got "bold"
-PASS Test bolder font-weight for base weight 899 
+PASS Test bolder font-weight for base weight 899
 FAIL Test lighter font-weight for base weight 900 assert_equals: Lighter value for 900 should match expected value. expected "700" but got "bold"
-PASS Test bolder font-weight for base weight 900 
+PASS Test bolder font-weight for base weight 900
 FAIL Test lighter font-weight for base weight 901 assert_equals: Lighter value for 901 should match expected value. expected "700" but got "bold"
-PASS Test bolder font-weight for base weight 901 
+PASS Test bolder font-weight for base weight 901
 

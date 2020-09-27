@@ -1,6 +1,6 @@
 
-PASS background-clip_initial 
-PASS background-clip_border-box 
-PASS background-clip_padding-box 
-PASS background-clip_content-box 
+PASS background-clip_initial
+PASS background-clip_border-box
+PASS background-clip_padding-box
+PASS background-clip_content-box
 

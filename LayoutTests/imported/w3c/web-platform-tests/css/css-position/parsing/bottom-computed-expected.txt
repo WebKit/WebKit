@@ -1,7 +1,7 @@
 
-PASS Property bottom value 'auto' 
-PASS Property bottom value 'calc(10px + 0.5em)' 
-PASS Property bottom value 'calc(10px - 0.5em)' 
-PASS Property bottom value '-40%' 
-PASS Property bottom value 'calc(50% + 60px)' 
+PASS Property bottom value 'auto'
+PASS Property bottom value 'calc(10px + 0.5em)'
+PASS Property bottom value 'calc(10px - 0.5em)'
+PASS Property bottom value '-40%'
+PASS Property bottom value 'calc(50% + 60px)'
 

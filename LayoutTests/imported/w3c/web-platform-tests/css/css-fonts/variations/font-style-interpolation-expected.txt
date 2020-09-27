@@ -1,6 +1,6 @@
 Animation test
 Transition test
 
-PASS font-style animation 
-PASS font-style transition 
+PASS font-style animation
+PASS font-style transition
 

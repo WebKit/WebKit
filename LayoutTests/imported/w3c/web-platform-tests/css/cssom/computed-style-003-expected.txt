@@ -1,4 +1,4 @@
 
 
-PASS Check that a percent width in an iframe is the resolved width when the iframe is displayed. 
+PASS Check that a percent width in an iframe is the resolved width when the iframe is displayed.
 

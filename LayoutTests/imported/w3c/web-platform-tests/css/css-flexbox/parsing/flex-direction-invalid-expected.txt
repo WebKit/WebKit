@@ -1,4 +1,4 @@
 
-PASS e.style['flex-direction'] = "auto" should not set the property value 
-PASS e.style['flex-direction'] = "column row-reverse" should not set the property value 
+PASS e.style['flex-direction'] = "auto" should not set the property value
+PASS e.style['flex-direction'] = "column row-reverse" should not set the property value
 

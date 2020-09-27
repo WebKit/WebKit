@@ -1,6 +1,6 @@
 
-PASS e.style['word-boundary-expansion'] = "auto" should not set the property value 
-PASS e.style['word-boundary-expansion'] = "normal" should not set the property value 
-PASS e.style['word-boundary-expansion'] = "spaces" should not set the property value 
-PASS e.style['word-boundary-expansion'] = "space ideographic-space" should not set the property value 
+PASS e.style['word-boundary-expansion'] = "auto" should not set the property value
+PASS e.style['word-boundary-expansion'] = "normal" should not set the property value
+PASS e.style['word-boundary-expansion'] = "spaces" should not set the property value
+PASS e.style['word-boundary-expansion'] = "space ideographic-space" should not set the property value
 

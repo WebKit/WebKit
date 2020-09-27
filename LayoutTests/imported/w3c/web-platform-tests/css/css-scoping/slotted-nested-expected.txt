@@ -1,6 +1,6 @@
 This text should be green
 
 
-PASS Slotted matches rules against the slot in the right tree 
+PASS Slotted matches rules against the slot in the right tree
 FAIL Style invalidation works correctly for nested slots assert_not_equals: got disallowed value "rgb(0, 128, 0)"
 

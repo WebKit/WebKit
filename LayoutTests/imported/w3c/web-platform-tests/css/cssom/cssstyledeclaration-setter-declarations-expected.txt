@@ -1,6 +1,6 @@
 
-PASS setProperty with longhand should update only the declaration being set 
-PASS property setter should update only the declaration being set 
-PASS setProperty with shorthand should update only the declarations being set 
-PASS longhand property setter should update only the decoarations being set 
+PASS setProperty with longhand should update only the declaration being set
+PASS property setter should update only the declaration being set
+PASS setProperty with shorthand should update only the declarations being set
+PASS longhand property setter should update only the decoarations being set
 

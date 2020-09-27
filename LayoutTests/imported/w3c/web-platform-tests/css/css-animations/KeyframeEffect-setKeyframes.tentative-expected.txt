@@ -1,5 +1,5 @@
 
-PASS KeyframeEffect.setKeyframes() causes subsequent changes to @keyframes rules to be ignored 
-PASS KeyframeEffect.setKeyframes() causes subsequent changes to animation-timing-function to be ignored 
+PASS KeyframeEffect.setKeyframes() causes subsequent changes to @keyframes rules to be ignored
+PASS KeyframeEffect.setKeyframes() causes subsequent changes to animation-timing-function to be ignored
 FAIL KeyframeEffect.setKeyframes() should NOT cause subsequent changes to @keyframes rules to be ignored if it threw assert_equals: value for 'left' on Keyframes reflect the value set via style should match expected "300px" but got "100px"
 

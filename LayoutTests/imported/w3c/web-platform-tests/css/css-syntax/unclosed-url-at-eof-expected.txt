@@ -1,4 +1,4 @@
 
-PASS Unclosed url token at EOF is valid. 
-PASS Unclosed empty url token at EOF is valid. 
+PASS Unclosed url token at EOF is valid.
+PASS Unclosed empty url token at EOF is valid.
 

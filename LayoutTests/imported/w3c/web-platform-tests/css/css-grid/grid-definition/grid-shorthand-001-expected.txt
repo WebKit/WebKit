@@ -1,4 +1,4 @@
 
-PASS Check gutter properties initial values 
-PASS Check gutter properties after setting 'grid' shorthand 
+PASS Check gutter properties initial values
+PASS Check gutter properties after setting 'grid' shorthand
 

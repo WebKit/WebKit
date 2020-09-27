@@ -1,4 +1,4 @@
 
-PASS style.textContent modification 
-PASS style.innerHTML modification 
+PASS style.textContent modification
+PASS style.innerHTML modification
 

@@ -1,10 +1,10 @@
 
-PASS horizontal-tb block-start 
-PASS horizontal-tb block-end 
-PASS vertical-lr block-start 
-PASS vertical-lr block-end 
-PASS vertical-rl block-start 
-PASS vertical-rl block-end 
+PASS horizontal-tb block-start
+PASS horizontal-tb block-end
+PASS vertical-lr block-start
+PASS vertical-lr block-end
+PASS vertical-rl block-start
+PASS vertical-rl block-end
 A A
 A A
 A A

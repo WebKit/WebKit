@@ -1,13 +1,13 @@
 
-PASS e.style['grid-template-areas'] = "auto" should not set the property value 
-PASS e.style['grid-template-areas'] = "none \"first\"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\"first\" none" should not set the property value 
-PASS e.style['grid-template-areas'] = "\"\"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\" \"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\".\" \"\"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\".\" \" \"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\"first\" \"\"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\"first\" \"\" \"second\"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\"first\" \" \"" should not set the property value 
-PASS e.style['grid-template-areas'] = "\"\" none" should not set the property value 
+PASS e.style['grid-template-areas'] = "auto" should not set the property value
+PASS e.style['grid-template-areas'] = "none \"first\"" should not set the property value
+PASS e.style['grid-template-areas'] = "\"first\" none" should not set the property value
+PASS e.style['grid-template-areas'] = "\"\"" should not set the property value
+PASS e.style['grid-template-areas'] = "\" \"" should not set the property value
+PASS e.style['grid-template-areas'] = "\".\" \"\"" should not set the property value
+PASS e.style['grid-template-areas'] = "\".\" \" \"" should not set the property value
+PASS e.style['grid-template-areas'] = "\"first\" \"\"" should not set the property value
+PASS e.style['grid-template-areas'] = "\"first\" \"\" \"second\"" should not set the property value
+PASS e.style['grid-template-areas'] = "\"first\" \" \"" should not set the property value
+PASS e.style['grid-template-areas'] = "\"\" none" should not set the property value
 

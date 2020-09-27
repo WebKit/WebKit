@@ -1,5 +1,5 @@
 
-PASS @supports should ignore registered syntax 
-PASS CSS.supports(conditionText) should ignore registered syntax 
+PASS @supports should ignore registered syntax
+PASS CSS.supports(conditionText) should ignore registered syntax
 FAIL CSS.supports(property, value) should ignore registered syntax assert_true: expected true got false
 

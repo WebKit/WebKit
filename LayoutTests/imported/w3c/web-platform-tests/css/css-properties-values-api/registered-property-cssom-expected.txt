@@ -1,5 +1,5 @@
 
-PASS CSSOM setters function as expected for unregistered properties 
+PASS CSSOM setters function as expected for unregistered properties
 FAIL CSS.registerProperty The given initial value does not parse for the given syntax.
 FAIL Formerly valid values are still readable from inline styles but are computed as the unset value assert_equals: expected "rgb(0, 0, 255)" but got "hello"
 FAIL Values not matching the registered type can still be set assert_equals: expected "hi" but got "5"

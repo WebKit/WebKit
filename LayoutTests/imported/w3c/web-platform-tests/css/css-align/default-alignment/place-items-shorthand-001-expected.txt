@@ -1,19 +1,19 @@
 
-PASS Checking place-items: normal 
-PASS Checking place-items: stretch 
-PASS Checking place-items: start 
-PASS Checking place-items: end 
-PASS Checking place-items: self-start 
-PASS Checking place-items: self-end 
-PASS Checking place-items: center 
-PASS Checking place-items: flex-start 
-PASS Checking place-items: flex-end 
-PASS Checking place-items: baseline 
-PASS Checking place-items: first baseline 
-PASS Checking place-items: last baseline 
-PASS Checking place-items: safe flex-end 
-PASS Checking place-items: unsafe end 
-PASS Checking place-items: safe end 
-PASS Checking place-items: unsafe flex-start 
-PASS Checking place-items: safe center 
+PASS Checking place-items: normal
+PASS Checking place-items: stretch
+PASS Checking place-items: start
+PASS Checking place-items: end
+PASS Checking place-items: self-start
+PASS Checking place-items: self-end
+PASS Checking place-items: center
+PASS Checking place-items: flex-start
+PASS Checking place-items: flex-end
+PASS Checking place-items: baseline
+PASS Checking place-items: first baseline
+PASS Checking place-items: last baseline
+PASS Checking place-items: safe flex-end
+PASS Checking place-items: unsafe end
+PASS Checking place-items: safe end
+PASS Checking place-items: unsafe flex-start
+PASS Checking place-items: safe center
 

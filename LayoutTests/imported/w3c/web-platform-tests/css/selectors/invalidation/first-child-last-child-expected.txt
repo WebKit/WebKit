@@ -1,5 +1,5 @@
 first-initiallylast-initially
 
-PASS Adding multiple nodes at once should invalidate :first-child correctly. 
-PASS Adding multiple nodes at once should invalidate :last-child correctly. 
+PASS Adding multiple nodes at once should invalidate :first-child correctly.
+PASS Adding multiple nodes at once should invalidate :last-child correctly.
 

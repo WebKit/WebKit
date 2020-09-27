@@ -1,3 +1,3 @@
 
-PASS Transition does not occur when the value is currentcolor and color changes 
+PASS Transition does not occur when the value is currentcolor and color changes
 

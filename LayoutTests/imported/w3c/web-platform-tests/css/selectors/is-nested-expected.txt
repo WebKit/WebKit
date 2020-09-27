@@ -1,6 +1,6 @@
 Yellow
 Red
 
-PASS Test nested :is() chooses highest specificity for class outside :is(). 
-PASS Test nested :is() specificity for class within arguments. 
+PASS Test nested :is() chooses highest specificity for class outside :is().
+PASS Test nested :is() specificity for class within arguments.
 

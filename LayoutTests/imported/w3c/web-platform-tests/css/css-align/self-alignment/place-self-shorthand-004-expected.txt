@@ -1,6 +1,6 @@
 
-PASS Verify fallback values are invalid 
-PASS Verify 'left' and 'right' values are invalid for block/cross axis alignment 
-PASS Verify numeric values are invalid 
-PASS Verify empty declaration is invalid 
+PASS Verify fallback values are invalid
+PASS Verify 'left' and 'right' values are invalid for block/cross axis alignment
+PASS Verify numeric values are invalid
+PASS Verify empty declaration is invalid
 

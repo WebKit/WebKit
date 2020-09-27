@@ -1,7 +1,7 @@
 
-PASS e.style['word-spacing'] = "normal" should set the property value 
-PASS e.style['word-spacing'] = "10px" should set the property value 
-PASS e.style['word-spacing'] = "-20px" should set the property value 
-PASS e.style['word-spacing'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['word-spacing'] = "0" should set the property value 
+PASS e.style['word-spacing'] = "normal" should set the property value
+PASS e.style['word-spacing'] = "10px" should set the property value
+PASS e.style['word-spacing'] = "-20px" should set the property value
+PASS e.style['word-spacing'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['word-spacing'] = "0" should set the property value
 

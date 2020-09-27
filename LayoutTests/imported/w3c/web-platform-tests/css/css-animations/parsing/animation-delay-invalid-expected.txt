@@ -1,7 +1,7 @@
 
-PASS e.style['animation-delay'] = "infinite" should not set the property value 
-PASS e.style['animation-delay'] = "0" should not set the property value 
-PASS e.style['animation-delay'] = "1s 2s" should not set the property value 
-PASS e.style['animation-delay'] = "initial, -3s" should not set the property value 
-PASS e.style['animation-delay'] = "-3s, initial" should not set the property value 
+PASS e.style['animation-delay'] = "infinite" should not set the property value
+PASS e.style['animation-delay'] = "0" should not set the property value
+PASS e.style['animation-delay'] = "1s 2s" should not set the property value
+PASS e.style['animation-delay'] = "initial, -3s" should not set the property value
+PASS e.style['animation-delay'] = "-3s, initial" should not set the property value
 

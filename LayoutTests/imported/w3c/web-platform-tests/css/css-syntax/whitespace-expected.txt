@@ -1,33 +1,33 @@
 
-PASS U+0009 is CSS whitespace 
-PASS U+000a is CSS whitespace 
-PASS U+000c is CSS whitespace 
-PASS U+000d is CSS whitespace 
-PASS U+0020 is CSS whitespace 
-PASS U+000b is *not* CSS whitespace 
-PASS U+0085 is *not* CSS whitespace 
-PASS U+00a0 is *not* CSS whitespace 
-PASS U+1680 is *not* CSS whitespace 
-PASS U+2000 is *not* CSS whitespace 
-PASS U+2001 is *not* CSS whitespace 
-PASS U+2002 is *not* CSS whitespace 
-PASS U+2003 is *not* CSS whitespace 
-PASS U+2004 is *not* CSS whitespace 
-PASS U+2005 is *not* CSS whitespace 
-PASS U+2006 is *not* CSS whitespace 
-PASS U+2007 is *not* CSS whitespace 
-PASS U+2008 is *not* CSS whitespace 
-PASS U+2009 is *not* CSS whitespace 
-PASS U+200a is *not* CSS whitespace 
-PASS U+2928 is *not* CSS whitespace 
-PASS U+2029 is *not* CSS whitespace 
-PASS U+202f is *not* CSS whitespace 
-PASS U+205f is *not* CSS whitespace 
-PASS U+3000 is *not* CSS whitespace 
-PASS U+180e is *not* CSS whitespace 
-PASS U+200b is *not* CSS whitespace 
-PASS U+200c is *not* CSS whitespace 
-PASS U+200d is *not* CSS whitespace 
-PASS U+2060 is *not* CSS whitespace 
-PASS U+feff is *not* CSS whitespace 
+PASS U+0009 is CSS whitespace
+PASS U+000a is CSS whitespace
+PASS U+000c is CSS whitespace
+PASS U+000d is CSS whitespace
+PASS U+0020 is CSS whitespace
+PASS U+000b is *not* CSS whitespace
+PASS U+0085 is *not* CSS whitespace
+PASS U+00a0 is *not* CSS whitespace
+PASS U+1680 is *not* CSS whitespace
+PASS U+2000 is *not* CSS whitespace
+PASS U+2001 is *not* CSS whitespace
+PASS U+2002 is *not* CSS whitespace
+PASS U+2003 is *not* CSS whitespace
+PASS U+2004 is *not* CSS whitespace
+PASS U+2005 is *not* CSS whitespace
+PASS U+2006 is *not* CSS whitespace
+PASS U+2007 is *not* CSS whitespace
+PASS U+2008 is *not* CSS whitespace
+PASS U+2009 is *not* CSS whitespace
+PASS U+200a is *not* CSS whitespace
+PASS U+2928 is *not* CSS whitespace
+PASS U+2029 is *not* CSS whitespace
+PASS U+202f is *not* CSS whitespace
+PASS U+205f is *not* CSS whitespace
+PASS U+3000 is *not* CSS whitespace
+PASS U+180e is *not* CSS whitespace
+PASS U+200b is *not* CSS whitespace
+PASS U+200c is *not* CSS whitespace
+PASS U+200d is *not* CSS whitespace
+PASS U+2060 is *not* CSS whitespace
+PASS U+feff is *not* CSS whitespace
 

@@ -1,6 +1,6 @@
 
-PASS Test animation name being empty. 
-PASS Test a non-conflicting animation name. 
+PASS Test animation name being empty.
+PASS Test a non-conflicting animation name.
 FAIL Test an animation name that is the same as a possible animation fill-mode. assert_equals: style1.animationName expected "none" but got "initial"
 FAIL Test an animation name that is the same as a possible animation direction. assert_equals: style1.animationName expected "none" but got "initial"
 FAIL Test an animation name that is the same as a possible running state. assert_equals: style1.animationName expected "none" but got "initial"

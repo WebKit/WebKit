@@ -1,6 +1,6 @@
 
-PASS e.style['transition'] = "1s 2s 3s" should not set the property value 
-PASS e.style['transition'] = "-1s -2s" should not set the property value 
-PASS e.style['transition'] = "steps(1) steps(2)" should not set the property value 
-PASS e.style['transition'] = "none top" should not set the property value 
+PASS e.style['transition'] = "1s 2s 3s" should not set the property value
+PASS e.style['transition'] = "-1s -2s" should not set the property value
+PASS e.style['transition'] = "steps(1) steps(2)" should not set the property value
+PASS e.style['transition'] = "none top" should not set the property value
 

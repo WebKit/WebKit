@@ -1,3 +1,3 @@
 
-PASS all width and height should be same 
+PASS all width and height should be same
 

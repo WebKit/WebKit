@@ -1,12 +1,12 @@
 
-PASS e.style['padding'] = "auto" should not set the property value 
-PASS e.style['padding'] = "available" should not set the property value 
-PASS e.style['padding'] = "10px border-box" should not set the property value 
-PASS e.style['padding'] = "calc(2em + 3ex) auto" should not set the property value 
-PASS e.style['padding'] = "10px 20px 30px 40px 50px" should not set the property value 
-PASS e.style['padding-top'] = "auto" should not set the property value 
-PASS e.style['padding-bottom'] = "10px 20px calc(2em + 3ex) auto" should not set the property value 
-PASS e.style['padding-bottom-left'] = "10px 20px" should not set the property value 
-PASS e.style['padding-top'] = "-10px" should not set the property value 
-PASS e.style['padding-right'] = "-20%" should not set the property value 
+PASS e.style['padding'] = "auto" should not set the property value
+PASS e.style['padding'] = "available" should not set the property value
+PASS e.style['padding'] = "10px border-box" should not set the property value
+PASS e.style['padding'] = "calc(2em + 3ex) auto" should not set the property value
+PASS e.style['padding'] = "10px 20px 30px 40px 50px" should not set the property value
+PASS e.style['padding-top'] = "auto" should not set the property value
+PASS e.style['padding-bottom'] = "10px 20px calc(2em + 3ex) auto" should not set the property value
+PASS e.style['padding-bottom-left'] = "10px 20px" should not set the property value
+PASS e.style['padding-top'] = "-10px" should not set the property value
+PASS e.style['padding-right'] = "-20%" should not set the property value
 

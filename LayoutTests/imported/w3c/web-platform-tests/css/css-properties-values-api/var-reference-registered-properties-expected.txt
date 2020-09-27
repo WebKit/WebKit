@@ -1,15 +1,15 @@
 
-PASS var() references work with registered properties 
+PASS var() references work with registered properties
 FAIL References to registered var()-properties work in registered lists assert_equals: expected "1px, 10px, 2px" but got "0px"
 FAIL References to mixed registered and unregistered var()-properties work in registered lists assert_equals: expected "1px, 20px, 10px, 2px" but got "0px"
 FAIL Registered lists may be concatenated assert_equals: expected "1px, 10px, 2px, 1px, 20px, 10px, 2px" but got "0px"
-PASS Font-relative units are absolutized when substituting 
-PASS Calc expressions are resolved when substituting 
+PASS Font-relative units are absolutized when substituting
+PASS Calc expressions are resolved when substituting
 FAIL Lists with relative units are absolutized when substituting assert_equals: expected "110px, 120px" but got "0px"
 FAIL Values are absolutized when substituting into properties with universal syntax The given initial value does not parse for the given syntax.
-PASS Valid fallback does not invalidate var()-reference [<length>, 10px] 
-PASS Valid fallback does not invalidate var()-reference [<length> | <color>, red] 
-PASS Valid fallback does not invalidate var()-reference [<length> | none, none] 
+PASS Valid fallback does not invalidate var()-reference [<length>, 10px]
+PASS Valid fallback does not invalidate var()-reference [<length> | <color>, red]
+PASS Valid fallback does not invalidate var()-reference [<length> | none, none]
 FAIL Invalid fallback invalidates var()-reference [<length>, red] assert_equals: expected "" but got "40px"
 FAIL Invalid fallback invalidates var()-reference [<length> | none, nolength] assert_equals: expected "" but got "40px"
 FAIL Invalid fallback invalidates var()-reference [<length>, var(--novar)] assert_equals: expected "" but got "40px"

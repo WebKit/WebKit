@@ -1,43 +1,43 @@
 
-PASS the event is an instance of TransitionEvent 
-PASS the event inherts from Event 
-PASS Missing type argument 
-PASS type argument is string 
-PASS type argument is null 
-PASS event type set to undefined 
-PASS propertyName has default value of empty string 
-PASS elapsedTime has default value of 0.0 
-PASS propertyName is readonly 
-PASS elapsedTime is readonly 
-PASS animationEventInit argument is null 
-PASS animationEventInit argument is undefined 
-PASS animationEventInit argument is empty dictionary 
-PASS TransitionEvent.pseudoElement initialized from the dictionary 
-PASS propertyName set to 'sample' 
-PASS propertyName set to undefined 
-PASS propertyName set to null 
-PASS propertyName set to false 
-PASS propertyName set to true 
-PASS propertyName set to a number 
-PASS propertyName set to [] 
-PASS propertyName set to [1, 2, 3] 
-PASS propertyName set to an object 
-PASS propertyName set to an object with a valueOf function 
-PASS elapsedTime set to 0.5 
-PASS elapsedTime set to -0.5 
-PASS elapsedTime set to undefined 
-PASS elapsedTime set to null 
-PASS elapsedTime set to false 
-PASS elapsedTime set to true 
-PASS elapsedTime set to '' 
-PASS elapsedTime set to [] 
-PASS elapsedTime set to [0.5] 
-PASS elapsedTime set to an object with a valueOf function 
-PASS elapsedTime cannot be set to NaN 
-PASS elapsedTime cannot be set to Infinity 
-PASS elapsedTime cannot be set to -Infinity 
-PASS elapsedTime cannot be set to 'sample' 
-PASS elapsedTime cannot be set to [0.5, 1.0] 
-PASS elapsedTime cannot be set to an object 
-PASS TransitionEventInit properties set value 
+PASS the event is an instance of TransitionEvent
+PASS the event inherts from Event
+PASS Missing type argument
+PASS type argument is string
+PASS type argument is null
+PASS event type set to undefined
+PASS propertyName has default value of empty string
+PASS elapsedTime has default value of 0.0
+PASS propertyName is readonly
+PASS elapsedTime is readonly
+PASS animationEventInit argument is null
+PASS animationEventInit argument is undefined
+PASS animationEventInit argument is empty dictionary
+PASS TransitionEvent.pseudoElement initialized from the dictionary
+PASS propertyName set to 'sample'
+PASS propertyName set to undefined
+PASS propertyName set to null
+PASS propertyName set to false
+PASS propertyName set to true
+PASS propertyName set to a number
+PASS propertyName set to []
+PASS propertyName set to [1, 2, 3]
+PASS propertyName set to an object
+PASS propertyName set to an object with a valueOf function
+PASS elapsedTime set to 0.5
+PASS elapsedTime set to -0.5
+PASS elapsedTime set to undefined
+PASS elapsedTime set to null
+PASS elapsedTime set to false
+PASS elapsedTime set to true
+PASS elapsedTime set to ''
+PASS elapsedTime set to []
+PASS elapsedTime set to [0.5]
+PASS elapsedTime set to an object with a valueOf function
+PASS elapsedTime cannot be set to NaN
+PASS elapsedTime cannot be set to Infinity
+PASS elapsedTime cannot be set to -Infinity
+PASS elapsedTime cannot be set to 'sample'
+PASS elapsedTime cannot be set to [0.5, 1.0]
+PASS elapsedTime cannot be set to an object
+PASS TransitionEventInit properties set value
 

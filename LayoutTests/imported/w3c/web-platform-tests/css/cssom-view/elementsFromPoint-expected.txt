@@ -1,17 +1,17 @@
  
  
-    
+ 
 Hello!
  
 Another teal
 
-PASS Negative co-ordinates 
-PASS co-ordinates larger than the viewport 
-PASS co-ordinates larger than the viewport from in iframe 
-PASS Return first element that is the target for hit testing 
-PASS First element to get mouse events with pointer-events css 
-PASS SVG element at x,y 
-PASS transformed element at x,y 
-PASS no hit target at x,y 
-PASS No viewport available 
+PASS Negative co-ordinates
+PASS co-ordinates larger than the viewport
+PASS co-ordinates larger than the viewport from in iframe
+PASS Return first element that is the target for hit testing
+PASS First element to get mouse events with pointer-events css
+PASS SVG element at x,y
+PASS transformed element at x,y
+PASS no hit target at x,y
+PASS No viewport available
 

@@ -1,9 +1,9 @@
 
-PASS e.style['text-indent'] = "auto" should not set the property value 
-PASS e.style['text-indent'] = "hanging" should not set the property value 
-PASS e.style['text-indent'] = "each-line" should not set the property value 
-PASS e.style['text-indent'] = "10" should not set the property value 
-PASS e.style['text-indent'] = "10px hanging 20px" should not set the property value 
-PASS e.style['text-indent'] = "hanging 20% hanging" should not set the property value 
-PASS e.style['text-indent'] = "each-line each-line" should not set the property value 
+PASS e.style['text-indent'] = "auto" should not set the property value
+PASS e.style['text-indent'] = "hanging" should not set the property value
+PASS e.style['text-indent'] = "each-line" should not set the property value
+PASS e.style['text-indent'] = "10" should not set the property value
+PASS e.style['text-indent'] = "10px hanging 20px" should not set the property value
+PASS e.style['text-indent'] = "hanging 20% hanging" should not set the property value
+PASS e.style['text-indent'] = "each-line each-line" should not set the property value
 

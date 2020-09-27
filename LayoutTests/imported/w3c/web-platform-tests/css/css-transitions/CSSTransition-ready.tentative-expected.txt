@@ -1,4 +1,4 @@
 
-PASS ready promise is rejected when a transition is canceled by updating transition-property 
-PASS ready promise is rejected when a transition is canceled by changing the transition property to something not interpolable 
+PASS ready promise is rejected when a transition is canceled by updating transition-property
+PASS ready promise is rejected when a transition is canceled by changing the transition property to something not interpolable
 

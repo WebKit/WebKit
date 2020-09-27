@@ -1,6 +1,6 @@
 
-PASS e.style['transition-delay'] = "0s" should set the property value 
-PASS e.style['transition-delay'] = "500ms" should set the property value 
-PASS e.style['transition-delay'] = "1s, 2s" should set the property value 
-PASS e.style['transition-delay'] = "-1s, -2s" should set the property value 
+PASS e.style['transition-delay'] = "0s" should set the property value
+PASS e.style['transition-delay'] = "500ms" should set the property value
+PASS e.style['transition-delay'] = "1s, 2s" should set the property value
+PASS e.style['transition-delay'] = "-1s, -2s" should set the property value
 

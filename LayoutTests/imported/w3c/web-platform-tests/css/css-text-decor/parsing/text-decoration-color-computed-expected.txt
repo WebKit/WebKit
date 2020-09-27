@@ -1,5 +1,5 @@
 
-PASS Property text-decoration-color value 'rgb(0, 0, 255)' 
-PASS Property text-decoration-color value 'currentcolor' 
-PASS Property text-decoration-color value 'inherit' 
+PASS Property text-decoration-color value 'rgb(0, 0, 255)'
+PASS Property text-decoration-color value 'currentcolor'
+PASS Property text-decoration-color value 'inherit'
 

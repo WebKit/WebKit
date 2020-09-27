@@ -1,7 +1,7 @@
 
-PASS e.style['column-rule-width'] = "thin" should set the property value 
-PASS e.style['column-rule-width'] = "medium" should set the property value 
-PASS e.style['column-rule-width'] = "thick" should set the property value 
-PASS e.style['column-rule-width'] = "0" should set the property value 
-PASS e.style['column-rule-width'] = "10px" should set the property value 
+PASS e.style['column-rule-width'] = "thin" should set the property value
+PASS e.style['column-rule-width'] = "medium" should set the property value
+PASS e.style['column-rule-width'] = "thick" should set the property value
+PASS e.style['column-rule-width'] = "0" should set the property value
+PASS e.style['column-rule-width'] = "10px" should set the property value
 

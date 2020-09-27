@@ -1,6 +1,6 @@
 
-PASS e.style['background-repeat'] = "repeat" should set the property value 
-PASS e.style['background-repeat'] = "repeat-x, repeat-y, repeat" should set the property value 
-PASS e.style['background-repeat'] = "repeat space, round no-repeat, repeat-x" should set the property value 
-PASS e.style['background-repeat'] = "repeat repeat" should set the property value 
+PASS e.style['background-repeat'] = "repeat" should set the property value
+PASS e.style['background-repeat'] = "repeat-x, repeat-y, repeat" should set the property value
+PASS e.style['background-repeat'] = "repeat space, round no-repeat, repeat-x" should set the property value
+PASS e.style['background-repeat'] = "repeat repeat" should set the property value
 

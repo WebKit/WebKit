@@ -1,5 +1,5 @@
 
 FAIL e.style['background-size'] = "-1px" should not set the property value assert_equals: expected "" but got "-1px"
 FAIL e.style['background-size'] = "2% -3%" should not set the property value assert_equals: expected "" but got "2% -3%"
-PASS e.style['background-size'] = "1px 2px 3px" should not set the property value 
+PASS e.style['background-size'] = "1px 2px 3px" should not set the property value
 

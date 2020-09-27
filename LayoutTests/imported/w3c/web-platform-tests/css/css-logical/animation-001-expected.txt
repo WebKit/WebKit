@@ -4,17 +4,17 @@ FAIL Logical properties can be animated using array notation assert_equals: expe
 FAIL Logical properties are NOT stored as physical properties assert_equals: expected 2 but got 0
 FAIL Logical properties in animations respect the writing-mode assert_equals: expected "50px" but got "0px"
 FAIL Logical properties in animations respect the direction assert_equals: expected "50px" but got "0px"
-PASS Physical properties win over logical properties in object notation 
-PASS Physical properties win over logical properties in array notation 
-PASS Physical properties with variables win over logical properties 
+PASS Physical properties win over logical properties in object notation
+PASS Physical properties win over logical properties in array notation
+PASS Physical properties with variables win over logical properties
 FAIL Logical shorthands follow the usual prioritization based on number of component longhands assert_equals: expected "100px" but got "0px"
 FAIL Physical longhands win over logical shorthands assert_equals: expected "100px" but got "0px"
 FAIL Logical longhands win over physical shorthands assert_equals: expected "100px" but got "200px"
-PASS Physical shorthands win over logical shorthands 
-PASS Physical shorthands using variables win over logical shorthands 
+PASS Physical shorthands win over logical shorthands
+PASS Physical shorthands using variables win over logical shorthands
 FAIL Physical properties and logical properties can be mixed assert_equals: expected "250px" but got "300px"
 FAIL Physical shorthands and logical shorthands can be mixed assert_equals: expected "250px" but got "150px"
-PASS Physical properties win over logical properties even when some keyframes only have logical properties 
+PASS Physical properties win over logical properties even when some keyframes only have logical properties
 FAIL Animations update when the writing-mode is changed assert_equals: expected "50px" but got "0px"
 FAIL Filling animations update when the writing-mode is changed assert_equals: expected "100px" but got "0px"
 FAIL Animations with implicit from values update when the writing-mode is changed assert_equals: expected "250px" but got "200px"
@@ -22,6 +22,6 @@ FAIL Animations with overlapping physical and logical properties update when the
 FAIL Animations update when the writing-mode is changed through a CSS variable assert_equals: expected "50px" but got "0px"
 FAIL Animations update when the direction is changed assert_equals: expected "50px" but got "0px"
 FAIL Logical shorthand with variable references animates correctly assert_equals: expected "250px" but got "auto"
-PASS writing-mode is not animatable 
-PASS direction is not animatable 
+PASS writing-mode is not animatable
+PASS direction is not animatable
 

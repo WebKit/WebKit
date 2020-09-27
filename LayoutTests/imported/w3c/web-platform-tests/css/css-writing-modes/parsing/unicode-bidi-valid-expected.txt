@@ -1,8 +1,8 @@
 
-PASS e.style['unicode-bidi'] = "normal" should set the property value 
-PASS e.style['unicode-bidi'] = "embed" should set the property value 
-PASS e.style['unicode-bidi'] = "isolate" should set the property value 
-PASS e.style['unicode-bidi'] = "bidi-override" should set the property value 
-PASS e.style['unicode-bidi'] = "isolate-override" should set the property value 
-PASS e.style['unicode-bidi'] = "plaintext" should set the property value 
+PASS e.style['unicode-bidi'] = "normal" should set the property value
+PASS e.style['unicode-bidi'] = "embed" should set the property value
+PASS e.style['unicode-bidi'] = "isolate" should set the property value
+PASS e.style['unicode-bidi'] = "bidi-override" should set the property value
+PASS e.style['unicode-bidi'] = "isolate-override" should set the property value
+PASS e.style['unicode-bidi'] = "plaintext" should set the property value
 

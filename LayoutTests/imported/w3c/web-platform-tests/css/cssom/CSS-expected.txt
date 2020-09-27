@@ -1,6 +1,6 @@
 
-PASS CSS.escape 
-PASS CSS.supports, one argument form 
+PASS CSS.escape
+PASS CSS.supports, one argument form
 FAIL CSS.supports, two argument form assert_equals: CSS.supports: two argument form succeeds for custom property expected true but got false
 FAIL CSS.supports, selector function assert_equals: CSS.supports: selector() with unknown combinators expected false but got true
 

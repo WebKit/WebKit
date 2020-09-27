@@ -1,5 +1,5 @@
 It's invalid to use 2 pseudoelements in a selector but if somehow it becomes valid, it should not expose the internal structure of the shadow tree.
 
-PASS ::part cannot be chained to reach elements in the inner host 
-PASS Chained ::part selectors are dropped 
+PASS ::part cannot be chained to reach elements in the inner host
+PASS Chained ::part selectors are dropped
 

@@ -1,7 +1,7 @@
 
-PASS e.style['flex-basis'] = "none" should not set the property value 
-PASS e.style['flex-basis'] = "auto content" should not set the property value 
-PASS e.style['flex-basis'] = "-1px" should not set the property value 
-PASS e.style['flex-basis'] = "-2%" should not set the property value 
-PASS e.style['flex-basis'] = "3px 4%" should not set the property value 
+PASS e.style['flex-basis'] = "none" should not set the property value
+PASS e.style['flex-basis'] = "auto content" should not set the property value
+PASS e.style['flex-basis'] = "-1px" should not set the property value
+PASS e.style['flex-basis'] = "-2%" should not set the property value
+PASS e.style['flex-basis'] = "3px 4%" should not set the property value
 

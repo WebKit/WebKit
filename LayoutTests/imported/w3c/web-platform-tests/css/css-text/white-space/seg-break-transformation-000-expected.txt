@@ -1,10 +1,10 @@
 
-PASS linebreak only 
-PASS spaces linebreak 
-PASS linebreak spaces 
-PASS spaces linebreak spaces 
-PASS multiple linebreaks 
-PASS multiple linebreaks + spaces 
+PASS linebreak only
+PASS spaces linebreak
+PASS linebreak spaces
+PASS spaces linebreak spaces
+PASS multiple linebreaks
+PASS multiple linebreaks + spaces
 hello there
 hello there
 hello there

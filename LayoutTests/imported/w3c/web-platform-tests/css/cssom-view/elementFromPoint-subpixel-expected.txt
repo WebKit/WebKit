@@ -1,8 +1,8 @@
 
 FAIL Hit test top left corner of box assert_equals: expected Element node <div class="box" id="box">
       <div class="child"></div... but got Element node <div class="map"></div>
-PASS Hit test top right corner of box 
+PASS Hit test top right corner of box
 FAIL Hit test bottom left corner of box assert_equals: expected Element node <div class="box" id="box">
       <div class="child"></div... but got Element node <div class="map"></div>
-PASS Hit test lower left corner of box 
+PASS Hit test lower left corner of box
 

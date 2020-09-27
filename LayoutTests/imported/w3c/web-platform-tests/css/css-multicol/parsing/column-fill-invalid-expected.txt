@@ -1,4 +1,4 @@
 
-PASS e.style['column-fill'] = "none" should not set the property value 
-PASS e.style['column-fill'] = "auto balance" should not set the property value 
+PASS e.style['column-fill'] = "none" should not set the property value
+PASS e.style['column-fill'] = "auto balance" should not set the property value
 

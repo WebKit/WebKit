@@ -1,6 +1,6 @@
 
-PASS Property color has initial value rgb(0, 0, 0) 
-PASS Property color inherits 
-PASS Property opacity has initial value 1 
-PASS Property opacity does not inherit 
+PASS Property color has initial value rgb(0, 0, 0)
+PASS Property color inherits
+PASS Property opacity has initial value 1
+PASS Property opacity does not inherit
 

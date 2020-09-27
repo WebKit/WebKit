@@ -1,11 +1,11 @@
 
-PASS .grid, container 1 
-PASS .grid, container 2 
-PASS .grid, container 3 
-PASS .grid, container 4 
-PASS .grid, container 5 
-PASS .grid, container 6 
-FAIL .grid, container 7 assert_equals: 
+PASS .grid, container 1
+PASS .grid, container 2
+PASS .grid, container 3
+PASS .grid, container 4
+PASS .grid, container 5
+PASS .grid, container 6
+FAIL .grid, container 7 assert_equals:
 <div class="container" data-expected-width="480" data-expected-height="165">
     <div class="grid twoRows" data-offset-x="0" data-offset-y="40">
         <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
@@ -24,10 +24,10 @@ FAIL .grid, container 7 assert_equals:
     </div>
 </div>
 offsetTop expected 40 but got 50
-PASS .grid, container 8 
-PASS .grid, container 9 
-PASS .grid, container 10 
-FAIL .grid, container 11 assert_equals: 
+PASS .grid, container 8
+PASS .grid, container 9
+PASS .grid, container 10
+FAIL .grid, container 11 assert_equals:
 <div class="container" data-expected-width="480" data-expected-height="165">
     <div class="grid twoRows" data-offset-x="0" data-offset-y="55">
         <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
@@ -46,11 +46,11 @@ FAIL .grid, container 11 assert_equals:
     </div>
 </div>
 offsetTop expected 40 but got 50
-PASS .grid, container 12 
-PASS .grid, container 13 
-PASS .grid, container 14 
-PASS .grid, container 15 
-FAIL .grid, container 16 assert_equals: 
+PASS .grid, container 12
+PASS .grid, container 13
+PASS .grid, container 14
+PASS .grid, container 15
+FAIL .grid, container 16 assert_equals:
 <div class="container" data-expected-width="480" data-expected-height="250">
     <div id="first" class="grid twoRows" data-offset-x="0" data-offset-y="80">
         <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
@@ -69,7 +69,7 @@ FAIL .grid, container 16 assert_equals:
     </div>
 </div>
 height expected 250 but got 300
-FAIL .grid, container 17 assert_equals: 
+FAIL .grid, container 17 assert_equals:
 <div class="container" data-expected-width="480" data-expected-height="250">
     <div id="first" class="grid twoRows" data-offset-x="0" data-offset-y="80">
         <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
@@ -88,7 +88,7 @@ FAIL .grid, container 17 assert_equals:
     </div>
 </div>
 height expected 250 but got 300
-FAIL .grid, container 18 assert_equals: 
+FAIL .grid, container 18 assert_equals:
 <div class="container" data-expected-width="480" data-expected-height="250">
     <div id="first" class="grid twoRows" data-offset-x="0" data-offset-y="80">
         <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
@@ -112,26 +112,26 @@ Each grid container must use its first (grid order) item to compute its baseline
 
 This case shows 3 items located along the first row and in different columns. The grid baseline is computed using the one located at first column (blue item) regardless of source order.
 
- 
- 
+
+
 This case shows 3 items located along the first row and in different columns. The baseline-aligned item (blue) always determines the grid baseline.
 
- 
- 
+
+
 This case shows 3 items' areas intersecting the first row and first column, but none of them participate in baseline alignment in the first row, so the dom order must be used to determine each grid's baseline.
 
- 
- 
+
+
 This case shows 3 items' areas intersecting the first row and first column, but one of the items participates in baseline alignment in the first row, so such item is used to determine the grid's baseline instead of using the dom order.
 
- 
- 
+
+
 This case shows one of the grids with no items, hence its baseline must be synthesized from its margin box.
 
- 
- 
+
+
 This case shows two of the grids with no items in their first row, hence the items in the second row are evaluated.
 
- 
- 
+
+
 

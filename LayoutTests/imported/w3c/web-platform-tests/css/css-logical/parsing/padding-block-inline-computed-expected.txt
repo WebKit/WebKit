@@ -1,18 +1,18 @@
 
-PASS Property padding-block-start value '10px' 
+PASS Property padding-block-start value '10px'
 FAIL Property padding-block-end value '10%' assert_equals: expected "20px" but got "0px"
-PASS Property padding-inline-start value '30px' 
-PASS Property padding-inline-end value '1em' 
+PASS Property padding-inline-start value '30px'
+PASS Property padding-inline-end value '1em'
 FAIL Property padding-block-start value 'calc(10% + 40px)' assert_equals: expected "60px" but got "40px"
-PASS Property padding-block-end value 'calc(10% - 40px)' 
-PASS Property padding-inline-start value 'calc(10% - 40px)' 
+PASS Property padding-block-end value 'calc(10% - 40px)'
+PASS Property padding-inline-start value 'calc(10% - 40px)'
 FAIL Property padding-inline-end value 'calc(10% + 40px)' assert_equals: expected "60px" but got "40px"
-PASS Property padding-block-start value 'calc(10px - 0.5em)' 
-PASS Property padding-block-end value 'calc(10px + 0.5em)' 
-PASS Property padding-inline-start value 'calc(10px + 0.5em)' 
-PASS Property padding-inline-end value 'calc(10px - 0.5em)' 
-PASS Property padding-block value '10px' 
-PASS Property padding-block value '10px 20px' 
-PASS Property padding-inline value '30px' 
-PASS Property padding-inline value '30px 40px' 
+PASS Property padding-block-start value 'calc(10px - 0.5em)'
+PASS Property padding-block-end value 'calc(10px + 0.5em)'
+PASS Property padding-inline-start value 'calc(10px + 0.5em)'
+PASS Property padding-inline-end value 'calc(10px - 0.5em)'
+PASS Property padding-block value '10px'
+PASS Property padding-block value '10px 20px'
+PASS Property padding-inline value '30px'
+PASS Property padding-inline value '30px 40px'
 

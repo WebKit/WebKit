@@ -1,5 +1,5 @@
 
 FAIL Escape start parenthesis in ::part name. assert_equals: expected "::part(\\(foo)" but got "::part((foo)"
 FAIL Escape start space in ::part name. assert_equals: expected "::part(bar\\ )" but got "::part(bar )"
-PASS Collapse spaces in ::part names list. 
+PASS Collapse spaces in ::part names list.
 

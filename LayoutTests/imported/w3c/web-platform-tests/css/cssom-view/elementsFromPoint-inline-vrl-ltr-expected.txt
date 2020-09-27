@@ -1,4 +1,4 @@
 target
 
-PASS elementsFromPoint should return all elements under a point 
+PASS elementsFromPoint should return all elements under a point
 

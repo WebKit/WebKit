@@ -1,4 +1,4 @@
 
-PASS Check place-items: inherit - align-items resolved value 
-PASS Check place-items: inherit - justify-items resolved value 
+PASS Check place-items: inherit - align-items resolved value
+PASS Check place-items: inherit - justify-items resolved value
 

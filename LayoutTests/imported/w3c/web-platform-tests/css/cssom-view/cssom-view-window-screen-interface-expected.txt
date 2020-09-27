@@ -1,8 +1,8 @@
 
-PASS window.screen.width >= 0 && window.screen.width < 6000000 
-PASS window.screen.height >= 0 && window.screen.height < 6000000 
-PASS window.screen.availWidth >= 0 && window.screen.availWidth <= window.screen.width 
-PASS window.screen.availHeight >= 0 && window.screen.availHeight <= window.screen.height 
-PASS window.screen.colorDepth == 0 || window.screen.colorDepth == 16 || window.screen.colorDepth == 24 || window.screen.colorDepth == 32 
-PASS window.screen.pixelDepth must return the value returned by window.screen.colorDepth 
+PASS window.screen.width >= 0 && window.screen.width < 6000000
+PASS window.screen.height >= 0 && window.screen.height < 6000000
+PASS window.screen.availWidth >= 0 && window.screen.availWidth <= window.screen.width
+PASS window.screen.availHeight >= 0 && window.screen.availHeight <= window.screen.height
+PASS window.screen.colorDepth == 0 || window.screen.colorDepth == 16 || window.screen.colorDepth == 24 || window.screen.colorDepth == 32
+PASS window.screen.pixelDepth must return the value returned by window.screen.colorDepth
 

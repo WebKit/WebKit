@@ -1,6 +1,6 @@
 
-PASS background-origin_initial 
-PASS background-origin_border-box 
-PASS background-origin_padding-box 
-PASS background-origin_content-box 
+PASS background-origin_initial
+PASS background-origin_border-box
+PASS background-origin_padding-box
+PASS background-origin_content-box
 

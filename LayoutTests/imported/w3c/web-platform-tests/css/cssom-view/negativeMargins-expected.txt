@@ -1,6 +1,6 @@
 Hello
 
-PASS cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins 
+PASS cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins
 FAIL cssom-view - elementFromPoint and elementsFromPoint dealing with negative margins 1 assert_array_equals: elementsFromPoint should get sequence [inner, outer, body, html] lengths differ, expected array [Element node <div id="inner" style="width:100px; height:100px; margin-..., Element node <div id="outer" style="background:yellow">
   <div id="inn..., Element node <body>
 <div id="outer" style="background:yellow">

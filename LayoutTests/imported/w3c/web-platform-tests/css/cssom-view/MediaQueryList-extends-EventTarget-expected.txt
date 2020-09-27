@@ -1,9 +1,9 @@
 
-PASS onchange adds listener 
-PASS onchange removes listener 
-PASS listeners for "change" type are called 
-PASS listeners with different type are not called 
-PASS addEventListener "once" option is respected 
-PASS removeEventListener removes listener 
-PASS dispatchEvent works as expected 
+PASS onchange adds listener
+PASS onchange removes listener
+PASS listeners for "change" type are called
+PASS listeners with different type are not called
+PASS addEventListener "once" option is respected
+PASS removeEventListener removes listener
+PASS dispatchEvent works as expected
 

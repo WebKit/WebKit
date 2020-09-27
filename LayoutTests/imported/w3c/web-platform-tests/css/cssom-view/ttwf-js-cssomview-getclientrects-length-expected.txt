@@ -1,6 +1,6 @@
 Test Test Link
 
-PASS assert_length_of_getClientRects_from_Parent 
-PASS assert_length_of_getClientRects_from_Button 
-PASS assert_length_of_getClientRects_from_Link 
+PASS assert_length_of_getClientRects_from_Parent
+PASS assert_length_of_getClientRects_from_Button
+PASS assert_length_of_getClientRects_from_Link
 

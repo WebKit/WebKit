@@ -1,5 +1,5 @@
 
-PASS A sticky element should not be affected by ancestor padding until it reaches it 
-PASS A sticky element should be offset by ancestor padding even when stuck 
-PASS Ancestor overflow padding does not allow a sticky element to escape its container 
+PASS A sticky element should not be affected by ancestor padding until it reaches it
+PASS A sticky element should be offset by ancestor padding even when stuck
+PASS Ancestor overflow padding does not allow a sticky element to escape its container
 

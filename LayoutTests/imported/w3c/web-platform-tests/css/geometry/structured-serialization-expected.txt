@@ -1,33 +1,33 @@
 
-PASS DOMPointReadOnly clone: basic 
-PASS DOMPointReadOnly clone: custom property 
-PASS DOMPointReadOnly clone: throwing getters 
-PASS DOMPointReadOnly clone: non-initial values 
-PASS DOMPoint clone: basic 
-PASS DOMPoint clone: custom property 
-PASS DOMPoint clone: throwing getters 
-PASS DOMPoint clone: non-initial values 
-PASS DOMRectReadOnly clone: basic 
-PASS DOMRectReadOnly clone: custom property 
-PASS DOMRectReadOnly clone: throwing getters 
-PASS DOMRectReadOnly clone: non-initial values 
-PASS DOMRect clone: basic 
-PASS DOMRect clone: custom property 
-PASS DOMRect clone: throwing getters 
-PASS DOMRect clone: non-initial values 
-PASS DOMQuad clone: basic 
-PASS DOMQuad clone: custom property 
-PASS DOMQuad clone: throwing getters 
-PASS DOMQuad clone: non-initial values 
-PASS DOMMatrixReadOnly clone: basic 
-PASS DOMMatrixReadOnly clone: custom property 
-PASS DOMMatrixReadOnly clone: throwing getters 
-PASS DOMMatrixReadOnly clone: non-initial values (2d) 
-PASS DOMMatrixReadOnly clone: non-initial values (3d) 
-PASS DOMMatrix clone: basic 
-PASS DOMMatrix clone: custom property 
-PASS DOMMatrix clone: throwing getters 
-PASS DOMMatrix clone: non-initial values (2d) 
-PASS DOMMatrix clone: non-initial values (3d) 
-PASS DOMRectList clone 
+PASS DOMPointReadOnly clone: basic
+PASS DOMPointReadOnly clone: custom property
+PASS DOMPointReadOnly clone: throwing getters
+PASS DOMPointReadOnly clone: non-initial values
+PASS DOMPoint clone: basic
+PASS DOMPoint clone: custom property
+PASS DOMPoint clone: throwing getters
+PASS DOMPoint clone: non-initial values
+PASS DOMRectReadOnly clone: basic
+PASS DOMRectReadOnly clone: custom property
+PASS DOMRectReadOnly clone: throwing getters
+PASS DOMRectReadOnly clone: non-initial values
+PASS DOMRect clone: basic
+PASS DOMRect clone: custom property
+PASS DOMRect clone: throwing getters
+PASS DOMRect clone: non-initial values
+PASS DOMQuad clone: basic
+PASS DOMQuad clone: custom property
+PASS DOMQuad clone: throwing getters
+PASS DOMQuad clone: non-initial values
+PASS DOMMatrixReadOnly clone: basic
+PASS DOMMatrixReadOnly clone: custom property
+PASS DOMMatrixReadOnly clone: throwing getters
+PASS DOMMatrixReadOnly clone: non-initial values (2d)
+PASS DOMMatrixReadOnly clone: non-initial values (3d)
+PASS DOMMatrix clone: basic
+PASS DOMMatrix clone: custom property
+PASS DOMMatrix clone: throwing getters
+PASS DOMMatrix clone: non-initial values (2d)
+PASS DOMMatrix clone: non-initial values (3d)
+PASS DOMRectList clone
 

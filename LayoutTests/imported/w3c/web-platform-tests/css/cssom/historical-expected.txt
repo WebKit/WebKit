@@ -1,21 +1,21 @@
 
-PASS Historical Document member: selectedStyleSheetSet 
-PASS Historical Document member: lastStyleSheetSet 
-PASS Historical Document member: preferredStyleSheetSet 
-PASS Historical Document member: styleSheetSets 
-PASS Historical Document member: enableStyleSheetsForSet 
-PASS Historical Document member: selectedStylesheetSet 
-PASS Historical Document member: preferredStylesheetSet 
+PASS Historical Document member: selectedStyleSheetSet
+PASS Historical Document member: lastStyleSheetSet
+PASS Historical Document member: preferredStyleSheetSet
+PASS Historical Document member: styleSheetSets
+PASS Historical Document member: enableStyleSheetsForSet
+PASS Historical Document member: selectedStylesheetSet
+PASS Historical Document member: preferredStylesheetSet
 FAIL Historical interface: Rect assert_false: expected false got true
 FAIL Historical interface: RGBColor assert_false: expected false got true
 FAIL Historical interface: CSSValue assert_false: expected false got true
 FAIL Historical interface: CSSPrimitiveValue assert_false: expected false got true
 FAIL Historical interface: CSSValueList assert_false: expected false got true
 FAIL Historical CSSStyleDeclaration member: getPropertyCSSValue assert_false: expected false got true
-PASS Historical CSSStyleDeclaration member: setPropertyValue 
-PASS Historical CSSStyleDeclaration member: setPropertyPriority 
-PASS Historical Element member: cascadedStyle 
-PASS Historical Element member: defaultStyle 
-PASS Historical Element member: rawComputedStyle 
-PASS Historical Element member: usedStyle 
+PASS Historical CSSStyleDeclaration member: setPropertyValue
+PASS Historical CSSStyleDeclaration member: setPropertyPriority
+PASS Historical Element member: cascadedStyle
+PASS Historical Element member: defaultStyle
+PASS Historical Element member: rawComputedStyle
+PASS Historical Element member: usedStyle
 

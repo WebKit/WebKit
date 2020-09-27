@@ -1,38 +1,38 @@
 
-PASS ellipse() - inline 
-PASS ellipse(50px 100px) - inline 
-PASS ellipse(100px 100px) - inline 
-PASS ellipse(25% 50%) - inline 
-PASS ellipse(50px 25%) - inline 
-PASS ellipse(25% 50px) - inline 
-PASS ellipse(25% closest-side) - inline 
-PASS ellipse(25px closest-side) - inline 
-PASS ellipse(closest-side 75%) - inline 
-PASS ellipse(closest-side 75px) - inline 
-PASS ellipse(25% farthest-side) - inline 
-PASS ellipse(25px farthest-side) - inline 
-PASS ellipse(farthest-side 75%) - inline 
-PASS ellipse(farthest-side 75px) - inline 
-PASS ellipse(closest-side closest-side) - inline 
-PASS ellipse(farthest-side farthest-side) - inline 
-PASS ellipse(closest-side farthest-side) - inline 
-PASS ellipse(farthest-side closest-side) - inline 
-PASS ellipse() - computed 
-PASS ellipse(50px 100px) - computed 
-PASS ellipse(100px 100px) - computed 
-PASS ellipse(25% 50%) - computed 
-PASS ellipse(50px 25%) - computed 
-PASS ellipse(25% 50px) - computed 
-PASS ellipse(25% closest-side) - computed 
-PASS ellipse(25px closest-side) - computed 
-PASS ellipse(closest-side 75%) - computed 
-PASS ellipse(closest-side 75px) - computed 
-PASS ellipse(25% farthest-side) - computed 
-PASS ellipse(25px farthest-side) - computed 
-PASS ellipse(farthest-side 75%) - computed 
-PASS ellipse(farthest-side 75px) - computed 
-PASS ellipse(closest-side closest-side) - computed 
-PASS ellipse(farthest-side farthest-side) - computed 
-PASS ellipse(closest-side farthest-side) - computed 
-PASS ellipse(farthest-side closest-side) - computed 
+PASS ellipse() - inline
+PASS ellipse(50px 100px) - inline
+PASS ellipse(100px 100px) - inline
+PASS ellipse(25% 50%) - inline
+PASS ellipse(50px 25%) - inline
+PASS ellipse(25% 50px) - inline
+PASS ellipse(25% closest-side) - inline
+PASS ellipse(25px closest-side) - inline
+PASS ellipse(closest-side 75%) - inline
+PASS ellipse(closest-side 75px) - inline
+PASS ellipse(25% farthest-side) - inline
+PASS ellipse(25px farthest-side) - inline
+PASS ellipse(farthest-side 75%) - inline
+PASS ellipse(farthest-side 75px) - inline
+PASS ellipse(closest-side closest-side) - inline
+PASS ellipse(farthest-side farthest-side) - inline
+PASS ellipse(closest-side farthest-side) - inline
+PASS ellipse(farthest-side closest-side) - inline
+PASS ellipse() - computed
+PASS ellipse(50px 100px) - computed
+PASS ellipse(100px 100px) - computed
+PASS ellipse(25% 50%) - computed
+PASS ellipse(50px 25%) - computed
+PASS ellipse(25% 50px) - computed
+PASS ellipse(25% closest-side) - computed
+PASS ellipse(25px closest-side) - computed
+PASS ellipse(closest-side 75%) - computed
+PASS ellipse(closest-side 75px) - computed
+PASS ellipse(25% farthest-side) - computed
+PASS ellipse(25px farthest-side) - computed
+PASS ellipse(farthest-side 75%) - computed
+PASS ellipse(farthest-side 75px) - computed
+PASS ellipse(closest-side closest-side) - computed
+PASS ellipse(farthest-side farthest-side) - computed
+PASS ellipse(closest-side farthest-side) - computed
+PASS ellipse(farthest-side closest-side) - computed
 

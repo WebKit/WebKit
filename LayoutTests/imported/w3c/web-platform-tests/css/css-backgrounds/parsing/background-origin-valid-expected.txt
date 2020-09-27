@@ -1,6 +1,6 @@
 
-PASS e.style['background-origin'] = "border-box" should set the property value 
-PASS e.style['background-origin'] = "padding-box" should set the property value 
-PASS e.style['background-origin'] = "content-box" should set the property value 
-PASS e.style['background-origin'] = "border-box, padding-box, content-box" should set the property value 
+PASS e.style['background-origin'] = "border-box" should set the property value
+PASS e.style['background-origin'] = "padding-box" should set the property value
+PASS e.style['background-origin'] = "content-box" should set the property value
+PASS e.style['background-origin'] = "border-box, padding-box, content-box" should set the property value
 

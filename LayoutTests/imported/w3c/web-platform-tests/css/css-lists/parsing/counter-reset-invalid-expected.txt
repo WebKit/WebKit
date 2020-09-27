@@ -1,7 +1,7 @@
 
-PASS e.style['counter-reset'] = "none chapter" should not set the property value 
-PASS e.style['counter-reset'] = "3" should not set the property value 
-PASS e.style['counter-reset'] = "99 imagenum" should not set the property value 
-PASS e.style['counter-reset'] = "section -1, imagenum 99" should not set the property value 
-PASS e.style['counter-reset'] = "section 3.14" should not set the property value 
+PASS e.style['counter-reset'] = "none chapter" should not set the property value
+PASS e.style['counter-reset'] = "3" should not set the property value
+PASS e.style['counter-reset'] = "99 imagenum" should not set the property value
+PASS e.style['counter-reset'] = "section -1, imagenum 99" should not set the property value
+PASS e.style['counter-reset'] = "section 3.14" should not set the property value
 

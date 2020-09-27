@@ -1,18 +1,18 @@
 
-PASS polygon() - invalid 
-PASS polygon(evenodd) - invalid 
-PASS polygon(nonzero) - invalid 
-PASS polygon(evenodd, foo bar) - invalid 
-PASS polygon(nonzero, bar foo) - invalid 
-PASS polygon(foo, 1px 2px) - invalid 
-PASS polygon(evenodd 1px 2px) - invalid 
-PASS polygon(nonzero 1px 2px) - invalid 
-PASS polygon(1px) - invalid 
-PASS polygon(1px 2px 3px) - invalid 
-PASS polygon(1px 2px 3px 4px) - invalid 
-PASS polygon(1px, 2px) - invalid 
-PASS polygon(1px 2px evenodd) - invalid 
-PASS polygon(1px 2px nonzero) - invalid 
-PASS polygon(evenodd, 10 20) - invalid 
-PASS polygon(nonzero, 10 20) - invalid 
+PASS polygon() - invalid
+PASS polygon(evenodd) - invalid
+PASS polygon(nonzero) - invalid
+PASS polygon(evenodd, foo bar) - invalid
+PASS polygon(nonzero, bar foo) - invalid
+PASS polygon(foo, 1px 2px) - invalid
+PASS polygon(evenodd 1px 2px) - invalid
+PASS polygon(nonzero 1px 2px) - invalid
+PASS polygon(1px) - invalid
+PASS polygon(1px 2px 3px) - invalid
+PASS polygon(1px 2px 3px 4px) - invalid
+PASS polygon(1px, 2px) - invalid
+PASS polygon(1px 2px evenodd) - invalid
+PASS polygon(1px 2px nonzero) - invalid
+PASS polygon(evenodd, 10 20) - invalid
+PASS polygon(nonzero, 10 20) - invalid
 

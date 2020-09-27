@@ -1,8 +1,8 @@
 
-PASS e.style['box-sizing'] = "auto" should not set the property value 
-PASS e.style['box-sizing'] = "content-box border-box" should not set the property value 
-PASS e.style['box-sizing'] = "fill-box" should not set the property value 
-PASS e.style['box-sizing'] = "margin-box" should not set the property value 
-PASS e.style['box-sizing'] = "padding-box" should not set the property value 
-PASS e.style['box-sizing'] = "view-box" should not set the property value 
+PASS e.style['box-sizing'] = "auto" should not set the property value
+PASS e.style['box-sizing'] = "content-box border-box" should not set the property value
+PASS e.style['box-sizing'] = "fill-box" should not set the property value
+PASS e.style['box-sizing'] = "margin-box" should not set the property value
+PASS e.style['box-sizing'] = "padding-box" should not set the property value
+PASS e.style['box-sizing'] = "view-box" should not set the property value
 

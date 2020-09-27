@@ -1,10 +1,10 @@
 
-PASS dispatchEvent triggers listener added with addListener 
-PASS listener added with addListener and addEventListener is called once 
-PASS listener added with addListener and addEventListener (capture) is called twice 
-PASS removeEventListener removes listener added with addListener 
-PASS removeEventListener (capture) doesn't remove listener added with addListener 
-PASS removeListener removes listener added with addEventListener 
-PASS removeListener doesn't remove listener added with addEventListener (capture) 
-PASS capturing event listener fires before non-capturing listener at target 
+PASS dispatchEvent triggers listener added with addListener
+PASS listener added with addListener and addEventListener is called once
+PASS listener added with addListener and addEventListener (capture) is called twice
+PASS removeEventListener removes listener added with addListener
+PASS removeEventListener (capture) doesn't remove listener added with addListener
+PASS removeListener removes listener added with addEventListener
+PASS removeListener doesn't remove listener added with addEventListener (capture)
+PASS capturing event listener fires before non-capturing listener at target
 

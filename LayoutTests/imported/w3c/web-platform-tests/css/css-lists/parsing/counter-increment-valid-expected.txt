@@ -1,6 +1,6 @@
 
-PASS e.style['counter-increment'] = "none" should set the property value 
-PASS e.style['counter-increment'] = "chapter" should set the property value 
-PASS e.style['counter-increment'] = "section -1" should set the property value 
-PASS e.style['counter-increment'] = "first -1 second third 99" should set the property value 
+PASS e.style['counter-increment'] = "none" should set the property value
+PASS e.style['counter-increment'] = "chapter" should set the property value
+PASS e.style['counter-increment'] = "section -1" should set the property value
+PASS e.style['counter-increment'] = "first -1 second third 99" should set the property value
 

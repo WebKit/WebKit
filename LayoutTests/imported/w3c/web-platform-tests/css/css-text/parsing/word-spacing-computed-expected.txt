@@ -1,6 +1,6 @@
 
-PASS Property word-spacing value 'normal' 
-PASS Property word-spacing value '10px' 
-PASS Property word-spacing value '-20px' 
-PASS Property word-spacing value 'calc(10px - 0.5em)' 
+PASS Property word-spacing value 'normal'
+PASS Property word-spacing value '10px'
+PASS Property word-spacing value '-20px'
+PASS Property word-spacing value 'calc(10px - 0.5em)'
 

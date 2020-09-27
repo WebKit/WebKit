@@ -1,4 +1,4 @@
 
-PASS Check place-self: inherit - align-self resolved value 
-PASS Check place-self: inherit - justify-self resolved value 
+PASS Check place-self: inherit - align-self resolved value
+PASS Check place-self: inherit - justify-self resolved value
 

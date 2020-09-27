@@ -1,8 +1,8 @@
 
-PASS Property shape-image-threshold has initial value 0 
-PASS Property shape-image-threshold does not inherit 
-PASS Property shape-margin has initial value 0px 
-PASS Property shape-margin does not inherit 
-PASS Property shape-outside has initial value none 
-PASS Property shape-outside does not inherit 
+PASS Property shape-image-threshold has initial value 0
+PASS Property shape-image-threshold does not inherit
+PASS Property shape-margin has initial value 0px
+PASS Property shape-margin does not inherit
+PASS Property shape-outside has initial value none
+PASS Property shape-outside does not inherit
 

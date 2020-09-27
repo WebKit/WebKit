@@ -1,5 +1,5 @@
 Test
 Test
 
-PASS Verify that collection font is loaded 
+PASS Verify that collection font is loaded
 

@@ -1,5 +1,5 @@
 
-PASS e.style['order'] = "auto" should not set the property value 
-PASS e.style['order'] = "123.45" should not set the property value 
-PASS e.style['order'] = "123 45" should not set the property value 
+PASS e.style['order'] = "auto" should not set the property value
+PASS e.style['order'] = "123.45" should not set the property value
+PASS e.style['order'] = "123 45" should not set the property value
 

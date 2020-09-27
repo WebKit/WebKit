@@ -1,5 +1,5 @@
 x
 
-PASS Element getClientRects() 
-PASS Range getClientRects() 
+PASS Element getClientRects()
+PASS Range getClientRects()
 

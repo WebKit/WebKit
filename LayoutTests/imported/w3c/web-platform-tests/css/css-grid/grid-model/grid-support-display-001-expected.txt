@@ -1,8 +1,8 @@
 
-PASS Test style display 'grid' 
-PASS Test style display 'inline-grid' 
-PASS Test CSS display 'grid' 
-PASS Test CSS display 'inline-grid' 
-PASS Test JavaScript display 'grid' 
-PASS Test JavaScript display 'inline-grid' 
+PASS Test style display 'grid'
+PASS Test style display 'inline-grid'
+PASS Test CSS display 'grid'
+PASS Test CSS display 'inline-grid'
+PASS Test JavaScript display 'grid'
+PASS Test JavaScript display 'inline-grid'
 

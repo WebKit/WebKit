@@ -1,4 +1,4 @@
 
-PASS Check that the resolved value for the initial color on the root element matches canvastext. 
-PASS Check that the resolved value of an explicit color:initial matches canvastext. 
+PASS Check that the resolved value for the initial color on the root element matches canvastext.
+PASS Check that the resolved value of an explicit color:initial matches canvastext.
 

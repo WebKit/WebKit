@@ -1,5 +1,5 @@
 abcdef
 success if does not crash
 
-PASS pre(white-space's one of values) crash if there is no available width 
+PASS pre(white-space's one of values) crash if there is no available width
 

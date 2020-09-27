@@ -1,5 +1,5 @@
 
-PASS e.style['writing-mode'] = "horizontal-tb" should set the property value 
-PASS e.style['writing-mode'] = "vertical-rl" should set the property value 
-PASS e.style['writing-mode'] = "vertical-lr" should set the property value 
+PASS e.style['writing-mode'] = "horizontal-tb" should set the property value
+PASS e.style['writing-mode'] = "vertical-rl" should set the property value
+PASS e.style['writing-mode'] = "vertical-lr" should set the property value
 

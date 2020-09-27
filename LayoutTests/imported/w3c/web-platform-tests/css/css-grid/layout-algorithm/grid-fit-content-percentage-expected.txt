@@ -1,7 +1,7 @@
 
-PASS fit-content(0%) 
-PASS fit-content(50%) 
-PASS fit-content(75%) 
-PASS fit-content(100%) 
-PASS fit-content(150%) 
+PASS fit-content(0%)
+PASS fit-content(50%)
+PASS fit-content(75%)
+PASS fit-content(100%)
+PASS fit-content(150%)
 

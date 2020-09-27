@@ -1,4 +1,4 @@
-               
 
-PASS image-orientation:from-image computed style reports correct values 
+
+PASS image-orientation:from-image computed style reports correct values
 

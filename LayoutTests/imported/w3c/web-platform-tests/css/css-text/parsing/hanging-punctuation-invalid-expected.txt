@@ -1,9 +1,9 @@
 
-PASS e.style['hanging-punctuation'] = "none first" should not set the property value 
-PASS e.style['hanging-punctuation'] = "last none" should not set the property value 
-PASS e.style['hanging-punctuation'] = "first first" should not set the property value 
-PASS e.style['hanging-punctuation'] = "force-end allow-end" should not set the property value 
-PASS e.style['hanging-punctuation'] = "allow-end last force-end" should not set the property value 
-PASS e.style['hanging-punctuation'] = "first allow-end last allow-end" should not set the property value 
-PASS e.style['hanging-punctuation'] = "last force-end last" should not set the property value 
+PASS e.style['hanging-punctuation'] = "none first" should not set the property value
+PASS e.style['hanging-punctuation'] = "last none" should not set the property value
+PASS e.style['hanging-punctuation'] = "first first" should not set the property value
+PASS e.style['hanging-punctuation'] = "force-end allow-end" should not set the property value
+PASS e.style['hanging-punctuation'] = "allow-end last force-end" should not set the property value
+PASS e.style['hanging-punctuation'] = "first allow-end last allow-end" should not set the property value
+PASS e.style['hanging-punctuation'] = "last force-end last" should not set the property value
 

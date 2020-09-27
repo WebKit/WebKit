@@ -1,8 +1,8 @@
 
-PASS e.style['max-block-size'] = "none" should set the property value 
-PASS e.style['max-block-size'] = "10px" should set the property value 
-PASS e.style['max-block-size'] = "20%" should set the property value 
-PASS e.style['max-block-size'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['max-block-size'] = "min-content" should set the property value 
-PASS e.style['max-block-size'] = "max-content" should set the property value 
+PASS e.style['max-block-size'] = "none" should set the property value
+PASS e.style['max-block-size'] = "10px" should set the property value
+PASS e.style['max-block-size'] = "20%" should set the property value
+PASS e.style['max-block-size'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['max-block-size'] = "min-content" should set the property value
+PASS e.style['max-block-size'] = "max-content" should set the property value
 

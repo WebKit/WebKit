@@ -5,7 +5,7 @@ VerticalLR grid and item with fixed width
 VerticalRL grid and item with fixed width
 É É ÉÉ
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
 

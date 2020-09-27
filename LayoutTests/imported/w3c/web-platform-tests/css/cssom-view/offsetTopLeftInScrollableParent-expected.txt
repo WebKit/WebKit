@@ -1,10 +1,10 @@
 
-PASS Basic functionality 
-PASS Basic functionality in scrolled parent 
-PASS Margins on child 
-PASS Margins on child and parent 
-PASS Margins on child and parent, border on child 
-PASS Margins on child and parent, border on child and parent 
-PASS Margins on child and parent, border on child and parent, padding on child 
-PASS Margins on child and parent, border on child and parent, padding on child and parent 
+PASS Basic functionality
+PASS Basic functionality in scrolled parent
+PASS Margins on child
+PASS Margins on child and parent
+PASS Margins on child and parent, border on child
+PASS Margins on child and parent, border on child and parent
+PASS Margins on child and parent, border on child and parent, padding on child
+PASS Margins on child and parent, border on child and parent, padding on child and parent
 

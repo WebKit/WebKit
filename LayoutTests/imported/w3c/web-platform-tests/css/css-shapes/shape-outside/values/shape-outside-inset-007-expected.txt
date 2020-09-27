@@ -1,21 +1,21 @@
 
-PASS inset(10px round 10 20 30 40) - invalid 
-PASS inset(10px round 10px 20 30 40) - invalid 
-PASS inset(10px round 10px 20px 30 40) - invalid 
-PASS inset(10px round 10px 20px 30px 40) - invalid 
-PASS inset(10px round 10px 20px 30px 40px / 10 20 30 40) - invalid 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20 30 40) - invalid 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30 40) - invalid 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px 40) - invalid 
-PASS inset(10px round  10px, 20px, 30px, 40px) - invalid 
-PASS inset(10px round  10px, 20px, 30px 40px) - invalid 
-PASS inset(10px round  10px, 20px 30px 40px) - invalid 
-PASS inset(10px round  10px 20px, 30px, 40px) - invalid 
-PASS inset(10px round  10px 20px 30px, 40px) - invalid 
-PASS inset(10px round  10px, 20px, 30px, 40px / 10px, 20px, 30px, 40px) - invalid 
-PASS inset(10px round  10px 20px, 30px, 40px / 10px 20px, 30px, 40) - invalid 
-PASS inset(10px round  10px 20px 30px, 40px / 10px 20px 30px, 40) - invalid 
-PASS inset(10px round  foo, bar, boo, $$) - invalid 
-PASS inset(10px round  10px, xx, px pt) - invalid 
-PASS inset(10px round  word) - invalid 
+PASS inset(10px round 10 20 30 40) - invalid
+PASS inset(10px round 10px 20 30 40) - invalid
+PASS inset(10px round 10px 20px 30 40) - invalid
+PASS inset(10px round 10px 20px 30px 40) - invalid
+PASS inset(10px round 10px 20px 30px 40px / 10 20 30 40) - invalid
+PASS inset(10px round 10px 20px 30px 40px / 10px 20 30 40) - invalid
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30 40) - invalid
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px 40) - invalid
+PASS inset(10px round  10px, 20px, 30px, 40px) - invalid
+PASS inset(10px round  10px, 20px, 30px 40px) - invalid
+PASS inset(10px round  10px, 20px 30px 40px) - invalid
+PASS inset(10px round  10px 20px, 30px, 40px) - invalid
+PASS inset(10px round  10px 20px 30px, 40px) - invalid
+PASS inset(10px round  10px, 20px, 30px, 40px / 10px, 20px, 30px, 40px) - invalid
+PASS inset(10px round  10px 20px, 30px, 40px / 10px 20px, 30px, 40) - invalid
+PASS inset(10px round  10px 20px 30px, 40px / 10px 20px 30px, 40) - invalid
+PASS inset(10px round  foo, bar, boo, $$) - invalid
+PASS inset(10px round  10px, xx, px pt) - invalid
+PASS inset(10px round  word) - invalid
 

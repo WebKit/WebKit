@@ -1,12 +1,12 @@
 
-PASS 00B0  DEGREE SIGN may appear at line start if ja and loose 
-PASS 2030  PER MILLE SIGN may appear at line start if ja and loose 
-PASS 2032  PRIME may appear at line start if ja and loose 
-PASS 2033  DOUBLE PRIME may appear at line start if ja and loose 
-PASS 2035  REVERSED PRIME may appear at line start if ja and loose 
-PASS 2103  DEGREE CELSIUS may appear at line start if ja and loose 
-PASS 2109  DEGREE FAHRENHEIT may appear at line start if ja and loose 
-PASS FE6A  SMALL PERCENT SIGN may appear at line start if ja and loose 
-PASS FF05  FULLWIDTH PERCENT SIGN may appear at line start if ja and loose 
-PASS FFE0  FULLWIDTH CENT SIGN may appear at line start if ja and loose 
+PASS 00B0  DEGREE SIGN may appear at line start if ja and loose
+PASS 2030  PER MILLE SIGN may appear at line start if ja and loose
+PASS 2032  PRIME may appear at line start if ja and loose
+PASS 2033  DOUBLE PRIME may appear at line start if ja and loose
+PASS 2035  REVERSED PRIME may appear at line start if ja and loose
+PASS 2103  DEGREE CELSIUS may appear at line start if ja and loose
+PASS 2109  DEGREE FAHRENHEIT may appear at line start if ja and loose
+PASS FE6A  SMALL PERCENT SIGN may appear at line start if ja and loose
+PASS FF05  FULLWIDTH PERCENT SIGN may appear at line start if ja and loose
+PASS FFE0  FULLWIDTH CENT SIGN may appear at line start if ja and loose
 

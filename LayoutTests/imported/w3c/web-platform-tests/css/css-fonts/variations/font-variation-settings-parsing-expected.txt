@@ -1,40 +1,40 @@
 
-PASS Property value: Axis tag with valid non-letter ascii characters 
-PASS Property value: Invalid character below allowed range (first char) 
-PASS Property value: Invalid character above allowed range (mid char) 
-PASS Property value: Axis values in scientific form are valid 
-PASS Property value: 'normal' value is valid 
-PASS Property value: Tag with less than 4 characters is invalid 
-PASS Property value: Tag with more than 4 characters is invalid 
-PASS Property value: Trailing comma is invalid 
-PASS Property value: Unquoted tags are invalid 
-PASS Property value: Unmatched quotes around tag are invalid 
-PASS Property value: Tag without value isinvalid 
-PASS Property value: Value without tag is invalid 
-PASS Property value: Value before tag is invalid 
-PASS Property value: Missing comma between axes is invalid 
-PASS Property value: Calculations should be supported 
-PASS Property value: Units should not be supported 
-PASS Property value: Units should not be supported (in calc) 
-PASS Property value: Percentages should not be supported 
-PASS Property value: Percentages should not be supported (in calc) 
-PASS @supports: Axis tag with valid non-letter ascii characters 
-PASS @supports: Invalid character below allowed range (first char) 
-PASS @supports: Invalid character above allowed range (mid char) 
-PASS @supports: Axis values in scientific form are valid 
-PASS @supports: 'normal' value is valid 
-PASS @supports: Tag with less than 4 characters is invalid 
-PASS @supports: Tag with more than 4 characters is invalid 
-PASS @supports: Trailing comma is invalid 
-PASS @supports: Unquoted tags are invalid 
-PASS @supports: Unmatched quotes around tag are invalid 
-PASS @supports: Tag without value isinvalid 
-PASS @supports: Value without tag is invalid 
-PASS @supports: Value before tag is invalid 
-PASS @supports: Missing comma between axes is invalid 
-PASS @supports: Calculations should be supported 
-PASS @supports: Units should not be supported 
-PASS @supports: Units should not be supported (in calc) 
-PASS @supports: Percentages should not be supported 
-PASS @supports: Percentages should not be supported (in calc) 
+PASS Property value: Axis tag with valid non-letter ascii characters
+PASS Property value: Invalid character below allowed range (first char)
+PASS Property value: Invalid character above allowed range (mid char)
+PASS Property value: Axis values in scientific form are valid
+PASS Property value: 'normal' value is valid
+PASS Property value: Tag with less than 4 characters is invalid
+PASS Property value: Tag with more than 4 characters is invalid
+PASS Property value: Trailing comma is invalid
+PASS Property value: Unquoted tags are invalid
+PASS Property value: Unmatched quotes around tag are invalid
+PASS Property value: Tag without value isinvalid
+PASS Property value: Value without tag is invalid
+PASS Property value: Value before tag is invalid
+PASS Property value: Missing comma between axes is invalid
+PASS Property value: Calculations should be supported
+PASS Property value: Units should not be supported
+PASS Property value: Units should not be supported (in calc)
+PASS Property value: Percentages should not be supported
+PASS Property value: Percentages should not be supported (in calc)
+PASS @supports: Axis tag with valid non-letter ascii characters
+PASS @supports: Invalid character below allowed range (first char)
+PASS @supports: Invalid character above allowed range (mid char)
+PASS @supports: Axis values in scientific form are valid
+PASS @supports: 'normal' value is valid
+PASS @supports: Tag with less than 4 characters is invalid
+PASS @supports: Tag with more than 4 characters is invalid
+PASS @supports: Trailing comma is invalid
+PASS @supports: Unquoted tags are invalid
+PASS @supports: Unmatched quotes around tag are invalid
+PASS @supports: Tag without value isinvalid
+PASS @supports: Value without tag is invalid
+PASS @supports: Value before tag is invalid
+PASS @supports: Missing comma between axes is invalid
+PASS @supports: Calculations should be supported
+PASS @supports: Units should not be supported
+PASS @supports: Units should not be supported (in calc)
+PASS @supports: Percentages should not be supported
+PASS @supports: Percentages should not be supported (in calc)
 

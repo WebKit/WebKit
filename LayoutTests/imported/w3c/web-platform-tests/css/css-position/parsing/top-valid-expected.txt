@@ -1,6 +1,6 @@
 
-PASS e.style['top'] = "auto" should set the property value 
-PASS e.style['top'] = "-10px" should set the property value 
-PASS e.style['top'] = "-20%" should set the property value 
-PASS e.style['top'] = "calc(2em + 3ex)" should set the property value 
+PASS e.style['top'] = "auto" should set the property value
+PASS e.style['top'] = "-10px" should set the property value
+PASS e.style['top'] = "-20%" should set the property value
+PASS e.style['top'] = "calc(2em + 3ex)" should set the property value
 

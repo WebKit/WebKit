@@ -1,24 +1,24 @@
 
-PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scroll()  
-PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scroll()  
-PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scroll()  
-PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scroll()  
-PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scrollTo()  
-PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scrollTo()  
-PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scrollTo()  
-PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scrollTo()  
-PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scrollBy()  
-PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scrollBy()  
-PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scrollBy()  
-PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scrollBy()  
-PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scrollIntoView()  
-PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scrollIntoView()  
-PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scrollIntoView()  
-PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scrollIntoView()  
-PASS Scroll positions when performing smooth scrolling from 0 to 500 by setting scrollLeft  
-PASS Scroll positions when performing smooth scrolling from 1000 to 500 by setting scrollLeft  
-PASS Scroll positions when performing smooth scrolling from 0 to 250 by setting scrollTop  
-PASS Scroll positions when performing smooth scrolling from 500 to 250 by setting scrollTop  
-PASS Scroll positions when aborting a smooth scrolling with another smooth scrolling 
-PASS Scroll positions when aborting a smooth scrolling with an instant scrolling 
+PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scroll()
+PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scroll()
+PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scroll()
+PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scroll()
+PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scrollTo()
+PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scrollTo()
+PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scrollTo()
+PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scrollTo()
+PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scrollBy()
+PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scrollBy()
+PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scrollBy()
+PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scrollBy()
+PASS Scroll positions when performing smooth scrolling from (0, 0) to (500, 250) using scrollIntoView()
+PASS Scroll positions when performing smooth scrolling from (1000, 0) to (500, 250) using scrollIntoView()
+PASS Scroll positions when performing smooth scrolling from (0, 500) to (500, 250) using scrollIntoView()
+PASS Scroll positions when performing smooth scrolling from (1000, 500) to (500, 250) using scrollIntoView()
+PASS Scroll positions when performing smooth scrolling from 0 to 500 by setting scrollLeft
+PASS Scroll positions when performing smooth scrolling from 1000 to 500 by setting scrollLeft
+PASS Scroll positions when performing smooth scrolling from 0 to 250 by setting scrollTop
+PASS Scroll positions when performing smooth scrolling from 500 to 250 by setting scrollTop
+PASS Scroll positions when aborting a smooth scrolling with another smooth scrolling
+PASS Scroll positions when aborting a smooth scrolling with an instant scrolling
 

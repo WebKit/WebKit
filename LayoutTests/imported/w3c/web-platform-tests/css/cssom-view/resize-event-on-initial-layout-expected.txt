@@ -1,3 +1,3 @@
 
-PASS resize events are not fired on the initial layout 
+PASS resize events are not fired on the initial layout
 

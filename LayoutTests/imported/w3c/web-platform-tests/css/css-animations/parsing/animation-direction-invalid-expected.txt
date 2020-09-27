@@ -1,6 +1,6 @@
 
-PASS e.style['animation-direction'] = "auto" should not set the property value 
-PASS e.style['animation-direction'] = "normal reverse" should not set the property value 
-PASS e.style['animation-direction'] = "reverse, initial" should not set the property value 
-PASS e.style['animation-direction'] = "initial, reverse" should not set the property value 
+PASS e.style['animation-direction'] = "auto" should not set the property value
+PASS e.style['animation-direction'] = "normal reverse" should not set the property value
+PASS e.style['animation-direction'] = "reverse, initial" should not set the property value
+PASS e.style['animation-direction'] = "initial, reverse" should not set the property value
 

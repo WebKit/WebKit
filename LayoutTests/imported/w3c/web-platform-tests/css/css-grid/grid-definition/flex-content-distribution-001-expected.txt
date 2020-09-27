@@ -11,10 +11,10 @@ Grid with align-content: center.
 Grid with align-content: end.
 
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
-PASS .grid 6 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
 

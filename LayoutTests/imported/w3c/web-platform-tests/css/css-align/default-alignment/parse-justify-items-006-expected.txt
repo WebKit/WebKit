@@ -1,5 +1,5 @@
 
-PASS Test the value justify-items: legacy left 
-PASS Test the value justify-items: legacy center 
-PASS Test the value justify-items: legacy right 
+PASS Test the value justify-items: legacy left
+PASS Test the value justify-items: legacy center
+PASS Test the value justify-items: legacy right
 

@@ -1,5 +1,5 @@
 
-PASS e.style['opacity'] = "auto" should not set the property value 
-PASS e.style['opacity'] = "10px" should not set the property value 
-PASS e.style['opacity'] = "0 1" should not set the property value 
+PASS e.style['opacity'] = "auto" should not set the property value
+PASS e.style['opacity'] = "10px" should not set the property value
+PASS e.style['opacity'] = "0 1" should not set the property value
 

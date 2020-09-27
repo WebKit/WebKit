@@ -1,11 +1,11 @@
 
-PASS writing-mode initial value 
-PASS writing-mode: vertical-rl 
-PASS writing-mode: vertical-lr 
-PASS writing-mode should inherit 
-PASS writing-mode: horizontal-tb 
-PASS writing-mode: initial 
-PASS writing-mode: inherit 
-PASS writing-mode: horizontal-tb; writing-mode: inherit 
-PASS writing-mode: foo 
+PASS writing-mode initial value
+PASS writing-mode: vertical-rl
+PASS writing-mode: vertical-lr
+PASS writing-mode should inherit
+PASS writing-mode: horizontal-tb
+PASS writing-mode: initial
+PASS writing-mode: inherit
+PASS writing-mode: horizontal-tb; writing-mode: inherit
+PASS writing-mode: foo
 

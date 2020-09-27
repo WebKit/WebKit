@@ -1,11 +1,11 @@
 
-PASS e.style['background-position-y'] = "left" should not set the property value 
-PASS e.style['background-position-y'] = "right" should not set the property value 
-PASS e.style['background-position-y'] = "x-start" should not set the property value 
-PASS e.style['background-position-y'] = "x-end" should not set the property value 
-PASS e.style['background-position-y'] = "center 10px" should not set the property value 
-PASS e.style['background-position-y'] = "20% top" should not set the property value 
-PASS e.style['background-position-y'] = "bottom top" should not set the property value 
-PASS e.style['background-position-y'] = "y-start center" should not set the property value 
-PASS e.style['background-position-y'] = "top, center bottom" should not set the property value 
+PASS e.style['background-position-y'] = "left" should not set the property value
+PASS e.style['background-position-y'] = "right" should not set the property value
+PASS e.style['background-position-y'] = "x-start" should not set the property value
+PASS e.style['background-position-y'] = "x-end" should not set the property value
+PASS e.style['background-position-y'] = "center 10px" should not set the property value
+PASS e.style['background-position-y'] = "20% top" should not set the property value
+PASS e.style['background-position-y'] = "bottom top" should not set the property value
+PASS e.style['background-position-y'] = "y-start center" should not set the property value
+PASS e.style['background-position-y'] = "top, center bottom" should not set the property value
 

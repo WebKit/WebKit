@@ -1,5 +1,5 @@
 
-PASS The root element is the last element returned for otherwise empty queries within the viewport 
-PASS The root element is the last element returned for valid queries 
-PASS An empty sequence is returned for queries outside the viewport 
+PASS The root element is the last element returned for otherwise empty queries within the viewport
+PASS The root element is the last element returned for valid queries
+PASS An empty sequence is returned for queries outside the viewport
 

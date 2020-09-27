@@ -1,5 +1,5 @@
 
-PASS insertRule with namespace and omitted index argument 
-PASS insertRule with namespace and undefined index argument 
-PASS insertRule with namespace and omitted index argument should insert import 
+PASS insertRule with namespace and omitted index argument
+PASS insertRule with namespace and undefined index argument
+PASS insertRule with namespace and omitted index argument should insert import
 

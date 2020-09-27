@@ -1,7 +1,7 @@
 
-PASS Property line-break value 'auto' 
-PASS Property line-break value 'loose' 
-PASS Property line-break value 'normal' 
-PASS Property line-break value 'strict' 
-PASS Property line-break value 'anywhere' 
+PASS Property line-break value 'auto'
+PASS Property line-break value 'loose'
+PASS Property line-break value 'normal'
+PASS Property line-break value 'strict'
+PASS Property line-break value 'anywhere'
 

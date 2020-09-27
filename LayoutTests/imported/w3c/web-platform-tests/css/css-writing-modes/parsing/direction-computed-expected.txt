@@ -1,4 +1,4 @@
 
-PASS Property direction value 'ltr' 
-PASS Property direction value 'rtl' 
+PASS Property direction value 'ltr'
+PASS Property direction value 'rtl'
 

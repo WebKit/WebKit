@@ -1,7 +1,7 @@
 
-PASS Escaped EOF turns into a U+FFFD in a hash token, makes it 'ID' type. 
-PASS Escaped EOF turns into a U+FFFD in an ident token. 
-PASS Escaped EOF turns into a U+FFFD in a dimension token. 
-PASS Escaped EOF turns into a U+FFFD in a url token. 
-PASS Escaped EOF in a string is ignored. 
+PASS Escaped EOF turns into a U+FFFD in a hash token, makes it 'ID' type.
+PASS Escaped EOF turns into a U+FFFD in an ident token.
+PASS Escaped EOF turns into a U+FFFD in a dimension token.
+PASS Escaped EOF turns into a U+FFFD in a url token.
+PASS Escaped EOF in a string is ignored.
 

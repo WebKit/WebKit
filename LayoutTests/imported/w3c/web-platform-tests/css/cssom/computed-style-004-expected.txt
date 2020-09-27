@@ -1,5 +1,5 @@
 
 
-PASS Check that the initial width is 100px. 
-PASS Check that the resolved width of the inner div is affected by changing the width of outer iframe. 
+PASS Check that the initial width is 100px.
+PASS Check that the resolved width of the inner div is affected by changing the width of outer iframe.
 

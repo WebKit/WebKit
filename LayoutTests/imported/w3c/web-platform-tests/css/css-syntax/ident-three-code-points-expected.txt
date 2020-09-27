@@ -7,12 +7,12 @@ test B
 test C
 test D
 
-PASS one should be green 
-PASS two should be green 
-PASS three should be green 
-PASS four should be green 
-PASS five should be green 
-PASS six should be green 
-PASS seven should be green 
-PASS eight should be green 
+PASS one should be green
+PASS two should be green
+PASS three should be green
+PASS four should be green
+PASS five should be green
+PASS six should be green
+PASS seven should be green
+PASS eight should be green
 

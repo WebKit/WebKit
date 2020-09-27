@@ -1,10 +1,10 @@
 
-PASS Property border-color value 'currentcolor' 
-PASS Property border-color value 'red yellow' 
-PASS Property border-color value 'red yellow currentcolor' 
-PASS Property border-color value 'red yellow green blue' 
-PASS Property border-top-color value 'red' 
-PASS Property border-right-color value 'yellow' 
-PASS Property border-bottom-color value 'green' 
-PASS Property border-left-color value 'blue' 
+PASS Property border-color value 'currentcolor'
+PASS Property border-color value 'red yellow'
+PASS Property border-color value 'red yellow currentcolor'
+PASS Property border-color value 'red yellow green blue'
+PASS Property border-top-color value 'red'
+PASS Property border-right-color value 'yellow'
+PASS Property border-bottom-color value 'green'
+PASS Property border-left-color value 'blue'
 

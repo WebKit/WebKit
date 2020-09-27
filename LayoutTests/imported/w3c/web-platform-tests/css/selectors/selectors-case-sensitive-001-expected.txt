@@ -1,7 +1,7 @@
 You should see a green square below.
 
 
-PASS CSS selector should match for Unicode uppercase element 
-PASS Elements with namespace should work the same way 
-PASS `querySelector` should not use Unicode case-folding 
+PASS CSS selector should match for Unicode uppercase element
+PASS Elements with namespace should work the same way
+PASS `querySelector` should not use Unicode case-folding
 

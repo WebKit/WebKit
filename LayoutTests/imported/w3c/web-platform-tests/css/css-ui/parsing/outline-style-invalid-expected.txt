@@ -1,5 +1,5 @@
 
-PASS e.style['outline-style'] = "hidden" should not set the property value 
-PASS e.style['outline-style'] = "dotted dashed" should not set the property value 
-PASS e.style['outline-style'] = "solid double groove ridge" should not set the property value 
+PASS e.style['outline-style'] = "hidden" should not set the property value
+PASS e.style['outline-style'] = "dotted dashed" should not set the property value
+PASS e.style['outline-style'] = "solid double groove ridge" should not set the property value
 

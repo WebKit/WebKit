@@ -5,7 +5,7 @@ ref
 
 ref
 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 0 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 1 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 2 
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 0
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 1
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 2
 

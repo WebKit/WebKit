@@ -1,6 +1,6 @@
 
-PASS Verify that setting a CSS property to undefined has no effect. 
-PASS Verify that setting a CSS property priority to undefined is accepted. 
-PASS Verify that setting a CSS property to null is treated like empty string. 
-PASS Verify that setting a CSS property priority to null is treated like empty string. 
+PASS Verify that setting a CSS property to undefined has no effect.
+PASS Verify that setting a CSS property priority to undefined is accepted.
+PASS Verify that setting a CSS property to null is treated like empty string.
+PASS Verify that setting a CSS property priority to null is treated like empty string.
 

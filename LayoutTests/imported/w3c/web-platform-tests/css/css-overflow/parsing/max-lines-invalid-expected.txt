@@ -1,9 +1,9 @@
 
-PASS e.style['max-lines'] = "auto" should not set the property value 
-PASS e.style['max-lines'] = "0" should not set the property value 
-PASS e.style['max-lines'] = "-5" should not set the property value 
-PASS e.style['max-lines'] = "none none" should not set the property value 
-PASS e.style['max-lines'] = "1 none" should not set the property value 
-PASS e.style['max-lines'] = "none 2" should not set the property value 
-PASS e.style['max-lines'] = "3 4" should not set the property value 
+PASS e.style['max-lines'] = "auto" should not set the property value
+PASS e.style['max-lines'] = "0" should not set the property value
+PASS e.style['max-lines'] = "-5" should not set the property value
+PASS e.style['max-lines'] = "none none" should not set the property value
+PASS e.style['max-lines'] = "1 none" should not set the property value
+PASS e.style['max-lines'] = "none 2" should not set the property value
+PASS e.style['max-lines'] = "3 4" should not set the property value
 

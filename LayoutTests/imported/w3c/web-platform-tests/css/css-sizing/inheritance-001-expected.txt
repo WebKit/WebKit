@@ -1,12 +1,12 @@
 
-PASS Property box-sizing has initial value content-box 
-PASS Property box-sizing does not inherit 
-PASS Property max-height has initial value none 
-PASS Property max-height does not inherit 
-PASS Property max-width has initial value none 
-PASS Property max-width does not inherit 
-PASS Property min-height has initial value auto 
-PASS Property min-height does not inherit 
-PASS Property min-width has initial value auto 
-PASS Property min-width does not inherit 
+PASS Property box-sizing has initial value content-box
+PASS Property box-sizing does not inherit
+PASS Property max-height has initial value none
+PASS Property max-height does not inherit
+PASS Property max-width has initial value none
+PASS Property max-width does not inherit
+PASS Property min-height has initial value auto
+PASS Property min-height does not inherit
+PASS Property min-width has initial value auto
+PASS Property min-width does not inherit
 

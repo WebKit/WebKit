@@ -1,12 +1,12 @@
 
-PASS e.style['max-inline-size'] = "auto" should not set the property value 
-PASS e.style['max-inline-size'] = "min-content available" should not set the property value 
-PASS e.style['max-inline-size'] = "max-content 10px" should not set the property value 
-PASS e.style['max-inline-size'] = "20% available" should not set the property value 
-PASS e.style['max-inline-size'] = "-10px" should not set the property value 
-PASS e.style['max-inline-size'] = "-20%" should not set the property value 
-PASS e.style['max-inline-size'] = "60" should not set the property value 
-PASS e.style['max-inline-size'] = "10px 20%" should not set the property value 
-PASS e.style['max-inline-size'] = "10px border-box" should not set the property value 
-PASS e.style['max-inline-size'] = "content-box 20%" should not set the property value 
+PASS e.style['max-inline-size'] = "auto" should not set the property value
+PASS e.style['max-inline-size'] = "min-content available" should not set the property value
+PASS e.style['max-inline-size'] = "max-content 10px" should not set the property value
+PASS e.style['max-inline-size'] = "20% available" should not set the property value
+PASS e.style['max-inline-size'] = "-10px" should not set the property value
+PASS e.style['max-inline-size'] = "-20%" should not set the property value
+PASS e.style['max-inline-size'] = "60" should not set the property value
+PASS e.style['max-inline-size'] = "10px 20%" should not set the property value
+PASS e.style['max-inline-size'] = "10px border-box" should not set the property value
+PASS e.style['max-inline-size'] = "content-box 20%" should not set the property value
 

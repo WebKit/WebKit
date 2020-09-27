@@ -1,4 +1,4 @@
 
-PASS 301C WAVE DASH may appear at line start if zh and loose 
-PASS 30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN may appear at line start if zh and loose 
+PASS 301C WAVE DASH may appear at line start if zh and loose
+PASS 30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN may appear at line start if zh and loose
 

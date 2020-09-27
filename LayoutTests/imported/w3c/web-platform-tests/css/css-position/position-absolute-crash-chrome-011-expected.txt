@@ -5,6 +5,6 @@ fixed container F container
 splitter
 container
 
-PASS test passes if changing abspos inline container to static does not crash 
-PASS test passes if changing fixed inline container to static does not crash 
+PASS test passes if changing abspos inline container to static does not crash
+PASS test passes if changing fixed inline container to static does not crash
 

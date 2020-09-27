@@ -1,4 +1,4 @@
 test subscript test
 
-PASS sub element in a child inline box should not be included 
+PASS sub element in a child inline box should not be included
 

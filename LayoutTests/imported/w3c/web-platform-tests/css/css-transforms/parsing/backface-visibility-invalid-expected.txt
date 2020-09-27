@@ -1,4 +1,4 @@
 
-PASS e.style['backface-visibility'] = "auto" should not set the property value 
-PASS e.style['backface-visibility'] = "visible hidden" should not set the property value 
+PASS e.style['backface-visibility'] = "auto" should not set the property value
+PASS e.style['backface-visibility'] = "visible hidden" should not set the property value
 

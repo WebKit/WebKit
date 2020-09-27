@@ -1,4 +1,4 @@
  
 
-PASS A lang= value with language and region subtags will NOT match a lang attribute value with language, script and region subtags. 
+PASS A lang= value with language and region subtags will NOT match a lang attribute value with language, script and region subtags.
 

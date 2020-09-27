@@ -1,18 +1,18 @@
 
-PASS .rect 1 
-PASS .rect 2 
-PASS .rect 3 
-PASS .rect 4 
-PASS .rect 5 
-PASS .rect 6 
-PASS .rect 7 
-PASS .rect 8 
-PASS .rect 9 
-PASS .rect 10 
-PASS .rect 11 
-PASS .rect 12 
-PASS .rect 13 
-PASS .rect 14 
-PASS .rect 15 
-PASS .rect 16 
+PASS .rect 1
+PASS .rect 2
+PASS .rect 3
+PASS .rect 4
+PASS .rect 5
+PASS .rect 6
+PASS .rect 7
+PASS .rect 8
+PASS .rect 9
+PASS .rect 10
+PASS .rect 11
+PASS .rect 12
+PASS .rect 13
+PASS .rect 14
+PASS .rect 15
+PASS .rect 16
 

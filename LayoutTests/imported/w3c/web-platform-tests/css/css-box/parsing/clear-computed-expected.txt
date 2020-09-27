@@ -1,8 +1,8 @@
 
-PASS Property clear value 'none' 
-PASS Property clear value 'left' 
-PASS Property clear value 'right' 
-PASS Property clear value 'both' 
+PASS Property clear value 'none'
+PASS Property clear value 'left'
+PASS Property clear value 'right'
+PASS Property clear value 'both'
 FAIL Property clear value 'inline-start' assert_true: 'inline-start' is a supported value for clear. expected true got false
 FAIL Property clear value 'inline-end' assert_true: 'inline-end' is a supported value for clear. expected true got false
 

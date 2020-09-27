@@ -1,4 +1,4 @@
 
-PASS e.style['image-orientation'] = "from-image" should set the property value 
-PASS e.style['image-orientation'] = "none" should set the property value 
+PASS e.style['image-orientation'] = "from-image" should set the property value
+PASS e.style['image-orientation'] = "none" should set the property value
 

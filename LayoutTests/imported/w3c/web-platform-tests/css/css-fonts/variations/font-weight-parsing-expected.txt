@@ -1,29 +1,29 @@
 A
 
-PASS @supports: Values that are not multiple of 100 should be parsed successfully 
-PASS @supports: Non-integer Values should be parsed successfully 
-PASS @supports: Minimum allowed value should be parsed successfully 
-PASS @supports: Values below minimum should be rejected 
-PASS @supports: Values below zero should be rejected 
-PASS @supports: Maximum allowed value should be parsed successfully 
-PASS @supports: Values above maximum should be rejected 
-PASS @supports: Simple calc value 
-PASS @supports: Negative simple calc value (to be clamped) 
-PASS @supports: Out-of-range simple calc value (to be clamped) 
-PASS @supports: Valid calc expression 
-PASS @supports: Valid calc expression with out-of-range value (to be clamped) 
-PASS @supports: Valid calc expression with units 
-PASS @supports: Extra number after numeric value 
-PASS @supports: Extra content after numeric value 
-PASS @supports: Extra content after keyword value 
-PASS @supports: Extra content after calc value 
-PASS Computed style: Values that are not multiple of 100 should be parsed successfully 
-PASS Computed style: Non-integer Values should be parsed successfully 
-PASS Computed style: Minimum allowed value should be parsed successfully 
-PASS Computed style: Maximum allowed value should be parsed successfully 
-PASS Computed style: Simple calc value 
+PASS @supports: Values that are not multiple of 100 should be parsed successfully
+PASS @supports: Non-integer Values should be parsed successfully
+PASS @supports: Minimum allowed value should be parsed successfully
+PASS @supports: Values below minimum should be rejected
+PASS @supports: Values below zero should be rejected
+PASS @supports: Maximum allowed value should be parsed successfully
+PASS @supports: Values above maximum should be rejected
+PASS @supports: Simple calc value
+PASS @supports: Negative simple calc value (to be clamped)
+PASS @supports: Out-of-range simple calc value (to be clamped)
+PASS @supports: Valid calc expression
+PASS @supports: Valid calc expression with out-of-range value (to be clamped)
+PASS @supports: Valid calc expression with units
+PASS @supports: Extra number after numeric value
+PASS @supports: Extra content after numeric value
+PASS @supports: Extra content after keyword value
+PASS @supports: Extra content after calc value
+PASS Computed style: Values that are not multiple of 100 should be parsed successfully
+PASS Computed style: Non-integer Values should be parsed successfully
+PASS Computed style: Minimum allowed value should be parsed successfully
+PASS Computed style: Maximum allowed value should be parsed successfully
+PASS Computed style: Simple calc value
 FAIL Computed style: Negative simple calc value (to be clamped) assert_equals: Negative simple calc value (to be clamped) expected "1" but got "0"
-PASS Computed style: Out-of-range simple calc value (to be clamped) 
-PASS Computed style: Valid calc expression 
-PASS Computed style: Valid calc expression with out-of-range value (to be clamped) 
+PASS Computed style: Out-of-range simple calc value (to be clamped)
+PASS Computed style: Valid calc expression
+PASS Computed style: Valid calc expression with out-of-range value (to be clamped)
 

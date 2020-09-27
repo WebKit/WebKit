@@ -1,4 +1,4 @@
 
-PASS Valid the algorithm rule of offsetParent check step 1 
-PASS Valid the algorithm rule of offsetParent check step 2 
+PASS Valid the algorithm rule of offsetParent check step 1
+PASS Valid the algorithm rule of offsetParent check step 2
 

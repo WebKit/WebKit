@@ -1,5 +1,5 @@
 
-PASS e.style['bottom'] = "min-content" should not set the property value 
-PASS e.style['bottom'] = "60" should not set the property value 
-PASS e.style['bottom'] = "10px 20%" should not set the property value 
+PASS e.style['bottom'] = "min-content" should not set the property value
+PASS e.style['bottom'] = "60" should not set the property value
+PASS e.style['bottom'] = "10px 20%" should not set the property value
 

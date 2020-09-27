@@ -1,7 +1,7 @@
 
-PASS e.style['letter-spacing'] = "auto" should not set the property value 
-PASS e.style['letter-spacing'] = "20" should not set the property value 
-PASS e.style['letter-spacing'] = "30%" should not set the property value 
-PASS e.style['letter-spacing'] = "calc(40% + 50px)" should not set the property value 
-PASS e.style['letter-spacing'] = "normal 10px" should not set the property value 
+PASS e.style['letter-spacing'] = "auto" should not set the property value
+PASS e.style['letter-spacing'] = "20" should not set the property value
+PASS e.style['letter-spacing'] = "30%" should not set the property value
+PASS e.style['letter-spacing'] = "calc(40% + 50px)" should not set the property value
+PASS e.style['letter-spacing'] = "normal 10px" should not set the property value
 

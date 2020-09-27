@@ -28,7 +28,7 @@ FAIL Compositing: property <border-image-slice> underlying [10% 20%] from add [1
 FAIL Compositing: property <border-image-slice> underlying [10% 20%] from add [190% 180% 290% 280%] to add [90% 80%] at (1) should be [100%] assert_equals: expected "100 % " but got "90 % 80 % "
 FAIL Compositing: property <border-image-slice> underlying [10% 20%] from add [190% 180% 290% 280%] to add [90% 80%] at (1.25) should be [75% 75% 50% 50%] assert_equals: expected "75 % 75 % 50 % 50 % " but got "65 % 55 % 40 % 30 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20%] from replace [100 100%] to add [190 180%] at (-0.25) should be [75 75%] assert_equals: expected "75 75 % " but got "77.5 80 % "
-PASS Compositing: property <border-image-slice> underlying [10 20%] from replace [100 100%] to add [190 180%] at (0) should be [100 100%] 
+PASS Compositing: property <border-image-slice> underlying [10 20%] from replace [100 100%] to add [190 180%] at (0) should be [100 100%]
 FAIL Compositing: property <border-image-slice> underlying [10 20%] from replace [100 100%] to add [190 180%] at (0.25) should be [125 125%] assert_equals: expected "125 125 % " but got "122.5 120 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20%] from replace [100 100%] to add [190 180%] at (0.5) should be [150 150%] assert_equals: expected "150 150 % " but got "145 140 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20%] from replace [100 100%] to add [190 180%] at (0.75) should be [175 175%] assert_equals: expected "175 175 % " but got "167.5 160 % "
@@ -39,20 +39,20 @@ FAIL Compositing: property <border-image-slice> underlying [10% 20] from add [90
 FAIL Compositing: property <border-image-slice> underlying [10% 20] from add [90% 80] to replace [0% 0 0% 0] at (0.25) should be [75% 75] assert_equals: expected "75 % 75 " but got "67.5 % 60 "
 FAIL Compositing: property <border-image-slice> underlying [10% 20] from add [90% 80] to replace [0% 0 0% 0] at (0.5) should be [50% 50] assert_equals: expected "50 % 50 " but got "45 % 40 "
 FAIL Compositing: property <border-image-slice> underlying [10% 20] from add [90% 80] to replace [0% 0 0% 0] at (0.75) should be [25% 25] assert_equals: expected "25 % 25 " but got "22.5 % 20 "
-PASS Compositing: property <border-image-slice> underlying [10% 20] from add [90% 80] to replace [0% 0 0% 0] at (1) should be [0% 0] 
+PASS Compositing: property <border-image-slice> underlying [10% 20] from add [90% 80] to replace [0% 0 0% 0] at (1) should be [0% 0]
 FAIL Compositing: property <border-image-slice> underlying [10% 20] from add [90% 80] to replace [0% 0 0% 0] at (1.25) should be [0% 0] assert_equals: expected "0 % 0 " but got "- 22.5 % - 20 "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (-0.25) should be [100% 150%] assert_equals: expected "100 % 150 % " but got "75 % 125 % "
-PASS Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (0) should be [100% 150%] 
+PASS Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (0) should be [100% 150%]
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (0.25) should be [100% 150%] assert_equals: expected "100 % 150 % " but got "125 % 175 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (0.5) should be [200% 250% fill] assert_equals: expected "200 % 250 % fill " but got "150 % 200 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (0.75) should be [200% 250% fill] assert_equals: expected "200 % 250 % fill " but got "175 % 225 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (1) should be [200% 250% fill] assert_equals: expected "200 % 250 % fill " but got "200 % 250 % "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100% 150%] to add [200% 250% fill] at (1.25) should be [200% 250% fill] assert_equals: expected "200 % 250 % fill " but got "225 % 275 % "
-PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (-0.25) should be [100 150%] 
-PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (0) should be [100 150%] 
+PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (-0.25) should be [100 150%]
+PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (0) should be [100 150%]
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (0.25) should be [100 150%] assert_equals: expected "100 150 % " but got "0 "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (0.5) should be [200% 250] assert_equals: expected "200 % 250 " but got "0 "
 FAIL Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (0.75) should be [200% 250] assert_equals: expected "200 % 250 " but got "0 "
-PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (1) should be [200% 250] 
-PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (1.25) should be [200% 250] 
+PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (1) should be [200% 250]
+PASS Compositing: property <border-image-slice> underlying [10 20] from add [100 150%] to add [200% 250] at (1.25) should be [200% 250]
 

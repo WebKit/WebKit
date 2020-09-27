@@ -1,6 +1,6 @@
 
-PASS calc(10/100) - computed 
-PASS calc(10/100 + 30/100) - computed 
-PASS calc(150/100) - computed 
-PASS calc(150/100 - 2) - computed 
+PASS calc(10/100) - computed
+PASS calc(10/100 + 30/100) - computed
+PASS calc(150/100) - computed
+PASS calc(150/100 - 2) - computed
 

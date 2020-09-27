@@ -1,12 +1,12 @@
 
-PASS Check that "block-size: 1" is not valid in quirks mode 
-PASS Check that "min-block-size: 1" is not valid in quirks mode 
-PASS Check that "max-block-size: 1" is not valid in quirks mode 
-PASS Check that "inline-size: 1" is not valid in quirks mode 
-PASS Check that "min-inline-size: 1" is not valid in quirks mode 
-PASS Check that "max-inline-size: 1" is not valid in quirks mode 
-PASS Check that "margin-block-start: 1" is not valid in quirks mode 
-PASS Check that "margin-block-end: 1" is not valid in quirks mode 
-PASS Check that "margin-inline-start: 1" is not valid in quirks mode 
-PASS Check that "margin-inline-end: 1" is not valid in quirks mode 
+PASS Check that "block-size: 1" is not valid in quirks mode
+PASS Check that "min-block-size: 1" is not valid in quirks mode
+PASS Check that "max-block-size: 1" is not valid in quirks mode
+PASS Check that "inline-size: 1" is not valid in quirks mode
+PASS Check that "min-inline-size: 1" is not valid in quirks mode
+PASS Check that "max-inline-size: 1" is not valid in quirks mode
+PASS Check that "margin-block-start: 1" is not valid in quirks mode
+PASS Check that "margin-block-end: 1" is not valid in quirks mode
+PASS Check that "margin-inline-start: 1" is not valid in quirks mode
+PASS Check that "margin-inline-end: 1" is not valid in quirks mode
 

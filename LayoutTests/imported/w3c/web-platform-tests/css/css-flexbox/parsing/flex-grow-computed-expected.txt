@@ -1,6 +1,6 @@
 
-PASS Property flex-grow value '1' 
+PASS Property flex-grow value '1'
 FAIL Property flex-grow value '2.34e+06' assert_equals: expected "2.34e+06" but got "2340000"
 FAIL Property flex-grow value '6.78e+08' assert_equals: expected "6.78e+08" but got "678000000"
-PASS Property flex-grow value '0' 
+PASS Property flex-grow value '0'
 

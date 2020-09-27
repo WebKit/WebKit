@@ -1,10 +1,10 @@
 
-PASS simple percentage conversion test 1 
-PASS simple percentage conversion test 2 
-PASS simple percentage conversion test 3 
-PASS simple percentage conversion test 4 
-PASS percentage conversion test 5 
-PASS percentage conversion test 6 
-PASS percentage conversion test 7 
-PASS percentage conversion test 8 
+PASS simple percentage conversion test 1
+PASS simple percentage conversion test 2
+PASS simple percentage conversion test 3
+PASS simple percentage conversion test 4
+PASS percentage conversion test 5
+PASS percentage conversion test 6
+PASS percentage conversion test 7
+PASS percentage conversion test 8
 

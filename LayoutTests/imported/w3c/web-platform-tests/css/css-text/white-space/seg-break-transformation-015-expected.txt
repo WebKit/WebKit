@@ -1,16 +1,16 @@
 
-PASS linebreak only thai latin 
-PASS spaces linebreak thai latin 
-PASS linebreak spaces thai latin 
-PASS spaces linebreak spaces thai latin 
-PASS multiple linebreaks thai latin 
-PASS multiple linebreaks + spaces thai latin 
-PASS linebreak only latin thai 
-PASS spaces linebreak latin thai 
-PASS linebreak spaces latin thai 
-PASS spaces linebreak spaces latin thai 
-PASS multiple linebreaks latin thai 
-PASS multiple linebreaks + spaces latin thai 
+PASS linebreak only thai latin
+PASS spaces linebreak thai latin
+PASS linebreak spaces thai latin
+PASS spaces linebreak spaces thai latin
+PASS multiple linebreaks thai latin
+PASS multiple linebreaks + spaces thai latin
+PASS linebreak only latin thai
+PASS spaces linebreak latin thai
+PASS linebreak spaces latin thai
+PASS spaces linebreak spaces latin thai
+PASS multiple linebreaks latin thai
+PASS multiple linebreaks + spaces latin thai
 ภาษา latin
 ภาษา latin
 ภาษา latin

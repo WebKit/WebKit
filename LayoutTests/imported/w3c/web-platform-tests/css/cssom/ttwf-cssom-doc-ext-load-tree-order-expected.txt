@@ -1,6 +1,6 @@
 
 FAIL styleSheets.length must be 5 assert_equals: styleSheets.length is incorrect: expected 5 but got 1
-PASS styleSheets item 0 title must be aaa 
+PASS styleSheets item 0 title must be aaa
 FAIL styleSheets item 1 title must be zebra null is not an object (evaluating 'styleSheets.item(1).title')
 FAIL styleSheets item 0 title must be kilo null is not an object (evaluating 'styleSheets.item(2).title')
 FAIL styleSheets item 0 title must be alpha null is not an object (evaluating 'styleSheets.item(3).title')

@@ -1,5 +1,5 @@
 
-PASS e.style['border'] = "auto" should not set the property value 
-PASS e.style['border'] = "thin double green 1px" should not set the property value 
-PASS e.style['border'] = "-2em" should not set the property value 
+PASS e.style['border'] = "auto" should not set the property value
+PASS e.style['border'] = "thin double green 1px" should not set the property value
+PASS e.style['border'] = "-2em" should not set the property value
 

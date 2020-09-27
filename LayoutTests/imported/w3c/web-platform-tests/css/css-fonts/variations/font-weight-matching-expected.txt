@@ -1,18 +1,18 @@
 A A A A A A A
 A9A9A9A8A8A7A6A3A3A2A2A1A1A1
 
-PASS Test @font-face matching for weight 99 
-PASS Test @font-face matching for weight 100 
-PASS Test @font-face matching for weight 249 
-PASS Test @font-face matching for weight 250 
-PASS Test @font-face matching for weight 399 
-PASS Test @font-face matching for weight 400 
-PASS Test @font-face matching for weight 420 
-PASS Test @font-face matching for weight 470 
-PASS Test @font-face matching for weight 500 
-PASS Test @font-face matching for weight 600 
-PASS Test @font-face matching for weight 750 
-PASS Test @font-face matching for weight 751 
-PASS Test @font-face matching for weight 900 
-PASS Test @font-face matching for weight 1000 
+PASS Test @font-face matching for weight 99
+PASS Test @font-face matching for weight 100
+PASS Test @font-face matching for weight 249
+PASS Test @font-face matching for weight 250
+PASS Test @font-face matching for weight 399
+PASS Test @font-face matching for weight 400
+PASS Test @font-face matching for weight 420
+PASS Test @font-face matching for weight 470
+PASS Test @font-face matching for weight 500
+PASS Test @font-face matching for weight 600
+PASS Test @font-face matching for weight 750
+PASS Test @font-face matching for weight 751
+PASS Test @font-face matching for weight 900
+PASS Test @font-face matching for weight 1000
 

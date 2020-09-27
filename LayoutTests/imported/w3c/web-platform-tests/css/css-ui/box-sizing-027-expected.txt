@@ -1,4 +1,4 @@
 
-PASS Check the resolved value of 'width' when box-sizing is  border-box. 
-PASS Check the resolved value of 'height' when box-sizing is  border-box. 
+PASS Check the resolved value of 'width' when box-sizing is  border-box.
+PASS Check the resolved value of 'height' when box-sizing is  border-box.
 

@@ -1,9 +1,9 @@
 
-PASS e.style['text-decoration-thickness'] = "otto" should not set the property value 
-PASS e.style['text-decoration-thickness'] = "asdlflj" should not set the property value 
-PASS e.style['text-decoration-thickness'] = "-10" should not set the property value 
-PASS e.style['text-decoration-thickness'] = "60002020" should not set the property value 
-PASS e.style['text-decoration-thickness'] = "!@#$%^&" should not set the property value 
-PASS e.style['text-decoration-thickness'] = "10e2" should not set the property value 
-PASS e.style['text-decoration-thickness'] = "from font" should not set the property value 
+PASS e.style['text-decoration-thickness'] = "otto" should not set the property value
+PASS e.style['text-decoration-thickness'] = "asdlflj" should not set the property value
+PASS e.style['text-decoration-thickness'] = "-10" should not set the property value
+PASS e.style['text-decoration-thickness'] = "60002020" should not set the property value
+PASS e.style['text-decoration-thickness'] = "!@#$%^&" should not set the property value
+PASS e.style['text-decoration-thickness'] = "10e2" should not set the property value
+PASS e.style['text-decoration-thickness'] = "from font" should not set the property value
 

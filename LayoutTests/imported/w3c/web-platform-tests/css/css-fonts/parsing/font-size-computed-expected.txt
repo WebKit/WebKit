@@ -1,23 +1,23 @@
 
-PASS xx-small <= x-small 
-PASS x-small <= small 
-PASS small <= medium 
-PASS medium <= large 
-PASS large <= x-large 
-PASS x-large <= xx-large 
-PASS xx-large <= xxx-large 
-PASS inherit <= larger 
-PASS smaller <= inherit 
-PASS Property font-size value '10px' 
-PASS Property font-size value '20%' 
-PASS Property font-size value 'calc(30% - 40px)' 
-PASS Property font-size value 'calc(30% + 40px)' 
-PASS Property font-size value 'calc(10px - 0.5em)' 
-PASS Property font-size value 'calc(10px + 0.5em)' 
-PASS <font size="2"> is font-size: small 
-PASS <font size="3"> is font-size: medium 
-PASS <font size="4"> is font-size: large 
-PASS <font size="5"> is font-size: x-large 
-PASS <font size="6"> is font-size: xx-large 
+PASS xx-small <= x-small
+PASS x-small <= small
+PASS small <= medium
+PASS medium <= large
+PASS large <= x-large
+PASS x-large <= xx-large
+PASS xx-large <= xxx-large
+PASS inherit <= larger
+PASS smaller <= inherit
+PASS Property font-size value '10px'
+PASS Property font-size value '20%'
+PASS Property font-size value 'calc(30% - 40px)'
+PASS Property font-size value 'calc(30% + 40px)'
+PASS Property font-size value 'calc(10px - 0.5em)'
+PASS Property font-size value 'calc(10px + 0.5em)'
+PASS <font size="2"> is font-size: small
+PASS <font size="3"> is font-size: medium
+PASS <font size="4"> is font-size: large
+PASS <font size="5"> is font-size: x-large
+PASS <font size="6"> is font-size: xx-large
 FAIL <font size="7"> is font-size: xxx-large assert_equals: expected "48px" but got "32px"
 

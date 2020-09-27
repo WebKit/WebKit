@@ -1,5 +1,5 @@
 
-PASS e.style['background-repeat'] = "repeat repeat-x" should not set the property value 
-PASS e.style['background-repeat'] = "repeat-y round" should not set the property value 
-PASS e.style['background-repeat'] = "repeat space round" should not set the property value 
+PASS e.style['background-repeat'] = "repeat repeat-x" should not set the property value
+PASS e.style['background-repeat'] = "repeat-y round" should not set the property value
+PASS e.style['background-repeat'] = "repeat space round" should not set the property value
 

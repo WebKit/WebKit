@@ -1,24 +1,24 @@
 
-PASS delay of a new tranisition 
-PASS Positive delay of a new transition 
-PASS Negative delay of a new transition 
-PASS endDelay of a new transition 
-PASS fill of a new transition 
-PASS iterationStart of a new transition 
-PASS iterations of a new transition 
-PASS duration of a new transition 
-PASS direction of a new transition 
-PASS easing of a new transition 
-PASS non-default easing of a new transition 
-PASS endTime of a new transition 
-PASS activeDuration of a new transition 
-PASS localTime of a new transition 
-PASS localTime is always equal to currentTime 
-PASS localTime reflects playbackRate immediately 
-PASS progress of a new transition 
-PASS progress of a new transition with positive delay in before phase 
-PASS progress of a finished transition 
-PASS currentIteration of a new transition 
-PASS currentIteration of a new transition with positive delay in before phase 
-PASS currentIteration of a finished transition 
+PASS delay of a new tranisition
+PASS Positive delay of a new transition
+PASS Negative delay of a new transition
+PASS endDelay of a new transition
+PASS fill of a new transition
+PASS iterationStart of a new transition
+PASS iterations of a new transition
+PASS duration of a new transition
+PASS direction of a new transition
+PASS easing of a new transition
+PASS non-default easing of a new transition
+PASS endTime of a new transition
+PASS activeDuration of a new transition
+PASS localTime of a new transition
+PASS localTime is always equal to currentTime
+PASS localTime reflects playbackRate immediately
+PASS progress of a new transition
+PASS progress of a new transition with positive delay in before phase
+PASS progress of a finished transition
+PASS currentIteration of a new transition
+PASS currentIteration of a new transition with positive delay in before phase
+PASS currentIteration of a finished transition
 

@@ -1,4 +1,4 @@
 
-PASS e.style['text-overflow'] = "auto" should not set the property value 
-PASS e.style['text-overflow'] = "clip ellipsis clip" should not set the property value 
+PASS e.style['text-overflow'] = "auto" should not set the property value
+PASS e.style['text-overflow'] = "clip ellipsis clip" should not set the property value
 

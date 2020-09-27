@@ -16,6 +16,6 @@ FAIL Origin-clean check in cross-origin CSSOM Stylesheets (redirect from cross-o
 FAIL Origin-clean check in loading error CSSOM Stylesheets assert_throws_dom: stylesheet.cssRules should throw SecurityError. function "function () {
                     sheet.cssRules;
                 }" did not throw
-PASS Origin-clean check in same-origin CSSOM Stylesheets 
+PASS Origin-clean check in same-origin CSSOM Stylesheets
 FAIL Origin-clean check in data:css CSSOM Stylesheets null is not an object (evaluating 'sheet.cssRules.length')
 

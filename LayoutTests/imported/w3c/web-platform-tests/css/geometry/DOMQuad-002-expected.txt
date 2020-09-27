@@ -1,21 +1,21 @@
 Test DOMQuad interface
 
 
-PASS test Constructor no args 
-PASS test Constructor with one init DOMPoint arg 
-PASS test Constructor with two init DOMPoint args 
-PASS test Constructor with three init DOMPoint args 
-PASS test Constructor with four init DOMPoint args 
-PASS test Constructor with one DOMPoint arg 
-PASS test Constructor with two DOMPoint args 
-PASS test Constructor with three DOMPoint args 
-PASS test Constructor with four DOMPoint args 
-PASS test Constructor with invaild integer args 
-PASS test Constructor with invaild string args 
-PASS test Constructor with NaN 
-PASS test fromRect 
-PASS test fromRect with Infinity 
-PASS test fromQuad 
-PASS test p1, p2, p3, p4 are readonly 
-PASS test getBounds 
+PASS test Constructor no args
+PASS test Constructor with one init DOMPoint arg
+PASS test Constructor with two init DOMPoint args
+PASS test Constructor with three init DOMPoint args
+PASS test Constructor with four init DOMPoint args
+PASS test Constructor with one DOMPoint arg
+PASS test Constructor with two DOMPoint args
+PASS test Constructor with three DOMPoint args
+PASS test Constructor with four DOMPoint args
+PASS test Constructor with invaild integer args
+PASS test Constructor with invaild string args
+PASS test Constructor with NaN
+PASS test fromRect
+PASS test fromRect with Infinity
+PASS test fromQuad
+PASS test p1, p2, p3, p4 are readonly
+PASS test getBounds
 

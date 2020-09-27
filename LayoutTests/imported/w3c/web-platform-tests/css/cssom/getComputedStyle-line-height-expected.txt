@@ -1,6 +1,6 @@
 
-PASS line-height: normal 
-PASS line-height: 1 
-PASS line-height: 10px 
+PASS line-height: normal
+PASS line-height: 1
+PASS line-height: 10px
 FAIL line-height: 10% assert_equals: 10% should compute to 1.6px expected "1.6px" but got "1.600000023841858px"
 

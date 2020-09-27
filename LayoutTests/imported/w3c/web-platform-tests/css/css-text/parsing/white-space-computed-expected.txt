@@ -1,8 +1,8 @@
 
-PASS Property white-space value 'normal' 
-PASS Property white-space value 'pre' 
-PASS Property white-space value 'nowrap' 
-PASS Property white-space value 'pre-wrap' 
-PASS Property white-space value 'break-spaces' 
-PASS Property white-space value 'pre-line' 
+PASS Property white-space value 'normal'
+PASS Property white-space value 'pre'
+PASS Property white-space value 'nowrap'
+PASS Property white-space value 'pre-wrap'
+PASS Property white-space value 'break-spaces'
+PASS Property white-space value 'pre-line'
 

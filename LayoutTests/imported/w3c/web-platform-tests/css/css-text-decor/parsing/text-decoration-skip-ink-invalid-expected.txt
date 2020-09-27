@@ -1,11 +1,11 @@
 
-PASS e.style['text-decoration-skip-ink'] = "edges" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "auto none" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "10px" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "-5em" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "otto" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "20%" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "-13%" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "0" should not set the property value 
-PASS e.style['text-decoration-skip-ink'] = "non" should not set the property value 
+PASS e.style['text-decoration-skip-ink'] = "edges" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "auto none" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "10px" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "-5em" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "otto" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "20%" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "-13%" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "0" should not set the property value
+PASS e.style['text-decoration-skip-ink'] = "non" should not set the property value
 

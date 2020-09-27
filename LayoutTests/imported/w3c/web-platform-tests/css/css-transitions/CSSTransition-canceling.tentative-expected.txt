@@ -1,13 +1,13 @@
 
-PASS Animated style is cleared after canceling a running CSS transition 
-PASS After canceling a transition, it can still be re-used 
-PASS After canceling a finished transition, it can still be re-used 
-PASS After canceling a transition, updating transition properties doesn't make it live again 
-PASS Setting display:none on an element cancels its transitions 
-PASS Setting display:none cancels transitions on a child element 
-PASS Removing a property from transition-property cancels transitions on that property 
-PASS Setting zero combined duration 
-PASS Changing style to another interpolable value cancels the original transition 
-PASS An after-change style value can't be interpolated 
-PASS Reversing a running transition cancels the original transition 
+PASS Animated style is cleared after canceling a running CSS transition
+PASS After canceling a transition, it can still be re-used
+PASS After canceling a finished transition, it can still be re-used
+PASS After canceling a transition, updating transition properties doesn't make it live again
+PASS Setting display:none on an element cancels its transitions
+PASS Setting display:none cancels transitions on a child element
+PASS Removing a property from transition-property cancels transitions on that property
+PASS Setting zero combined duration
+PASS Changing style to another interpolable value cancels the original transition
+PASS An after-change style value can't be interpolated
+PASS Reversing a running transition cancels the original transition
 

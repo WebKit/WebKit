@@ -1,5 +1,5 @@
 
-PASS property repetition 
-PASS padding, padding-left 
-PASS padding-left, padding 
+PASS property repetition
+PASS padding, padding-left
+PASS padding-left, padding
 

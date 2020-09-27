@@ -1,4 +1,4 @@
 
-PASS e.style['image-rendering'] = "none" should not set the property value 
-PASS e.style['image-rendering'] = "high-quality crisp-edges" should not set the property value 
+PASS e.style['image-rendering'] = "none" should not set the property value
+PASS e.style['image-rendering'] = "high-quality crisp-edges" should not set the property value
 

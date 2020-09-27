@@ -1,9 +1,9 @@
 
-PASS e.style['line-clamp'] = "auto" should not set the property value 
-PASS e.style['line-clamp'] = "0" should not set the property value 
-PASS e.style['line-clamp'] = "-5" should not set the property value 
-PASS e.style['line-clamp'] = "\" etc., etc. \"" should not set the property value 
-PASS e.style['line-clamp'] = "none 2" should not set the property value 
-PASS e.style['line-clamp'] = "3 none" should not set the property value 
-PASS e.style['line-clamp'] = "auto 4" should not set the property value 
+PASS e.style['line-clamp'] = "auto" should not set the property value
+PASS e.style['line-clamp'] = "0" should not set the property value
+PASS e.style['line-clamp'] = "-5" should not set the property value
+PASS e.style['line-clamp'] = "\" etc., etc. \"" should not set the property value
+PASS e.style['line-clamp'] = "none 2" should not set the property value
+PASS e.style['line-clamp'] = "3 none" should not set the property value
+PASS e.style['line-clamp'] = "auto 4" should not set the property value
 

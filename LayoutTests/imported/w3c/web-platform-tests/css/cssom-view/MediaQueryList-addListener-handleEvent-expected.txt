@@ -2,9 +2,9 @@ CONSOLE MESSAGE: [object Object]
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 
-PASS calls handleEvent method of event listener 
-PASS looks up handleEvent method on every event dispatch 
-PASS doesn't look up handleEvent method on callable event listeners 
+PASS calls handleEvent method of event listener
+PASS looks up handleEvent method on every event dispatch
+PASS doesn't look up handleEvent method on callable event listeners
 FAIL rethrows errors when getting handleEvent assert_true: Timed out waiting for error expected true got false
 FAIL throws if handleEvent is falsy and not callable assert_true: Timed out waiting for error expected true got false
 FAIL throws if handleEvent is thruthy and not callable assert_true: Timed out waiting for error expected true got false

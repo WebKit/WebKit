@@ -1,10 +1,10 @@
 
-PASS Property image-orientation has initial value from-image 
-PASS Property image-orientation inherits 
-PASS Property image-rendering has initial value auto 
-PASS Property image-rendering inherits 
-PASS Property object-fit has initial value fill 
-PASS Property object-fit does not inherit 
-PASS Property object-position has initial value 50% 50% 
-PASS Property object-position does not inherit 
+PASS Property image-orientation has initial value from-image
+PASS Property image-orientation inherits
+PASS Property image-rendering has initial value auto
+PASS Property image-rendering inherits
+PASS Property object-fit has initial value fill
+PASS Property object-fit does not inherit
+PASS Property object-position has initial value 50% 50%
+PASS Property object-position does not inherit
 

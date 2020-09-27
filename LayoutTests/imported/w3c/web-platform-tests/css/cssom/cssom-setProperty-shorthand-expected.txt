@@ -1,78 +1,78 @@
 
-PASS shorthand font can be set with setProperty 
-PASS shorthand font can be removed with removeProperty 
-PASS shorthand font can be set with setProperty and priority !important 
-PASS shorthand font can be removed with removeProperty even when set with !important 
-PASS shorthand border-top can be set with setProperty 
-PASS shorthand border-top can be removed with removeProperty 
-PASS shorthand border-top can be set with setProperty and priority !important 
-PASS shorthand border-top can be removed with removeProperty even when set with !important 
-PASS shorthand border-right can be set with setProperty 
-PASS shorthand border-right can be removed with removeProperty 
-PASS shorthand border-right can be set with setProperty and priority !important 
-PASS shorthand border-right can be removed with removeProperty even when set with !important 
-PASS shorthand border-bottom can be set with setProperty 
-PASS shorthand border-bottom can be removed with removeProperty 
-PASS shorthand border-bottom can be set with setProperty and priority !important 
-PASS shorthand border-bottom can be removed with removeProperty even when set with !important 
-PASS shorthand border-left can be set with setProperty 
-PASS shorthand border-left can be removed with removeProperty 
-PASS shorthand border-left can be set with setProperty and priority !important 
-PASS shorthand border-left can be removed with removeProperty even when set with !important 
-PASS shorthand border can be set with setProperty 
-PASS shorthand border can be removed with removeProperty 
-PASS shorthand border can be set with setProperty and priority !important 
-PASS shorthand border can be removed with removeProperty even when set with !important 
-PASS shorthand border-color can be set with setProperty 
-PASS shorthand border-color can be removed with removeProperty 
-PASS shorthand border-color can be set with setProperty and priority !important 
-PASS shorthand border-color can be removed with removeProperty even when set with !important 
-PASS shorthand border-style can be set with setProperty 
-PASS shorthand border-style can be removed with removeProperty 
-PASS shorthand border-style can be set with setProperty and priority !important 
-PASS shorthand border-style can be removed with removeProperty even when set with !important 
-PASS shorthand border-width can be set with setProperty 
-PASS shorthand border-width can be removed with removeProperty 
-PASS shorthand border-width can be set with setProperty and priority !important 
-PASS shorthand border-width can be removed with removeProperty even when set with !important 
-PASS shorthand background-position can be set with setProperty 
-PASS shorthand background-position can be removed with removeProperty 
-PASS shorthand background-position can be set with setProperty and priority !important 
-PASS shorthand background-position can be removed with removeProperty even when set with !important 
-PASS shorthand background-repeat can be set with setProperty 
-PASS shorthand background-repeat can be removed with removeProperty 
-PASS shorthand background-repeat can be set with setProperty and priority !important 
-PASS shorthand background-repeat can be removed with removeProperty even when set with !important 
-PASS shorthand border-spacing can be set with setProperty 
-PASS shorthand border-spacing can be removed with removeProperty 
-PASS shorthand border-spacing can be set with setProperty and priority !important 
-PASS shorthand border-spacing can be removed with removeProperty even when set with !important 
-PASS shorthand list-style can be set with setProperty 
-PASS shorthand list-style can be removed with removeProperty 
-PASS shorthand list-style can be set with setProperty and priority !important 
-PASS shorthand list-style can be removed with removeProperty even when set with !important 
-PASS shorthand margin can be set with setProperty 
-PASS shorthand margin can be removed with removeProperty 
-PASS shorthand margin can be set with setProperty and priority !important 
-PASS shorthand margin can be removed with removeProperty even when set with !important 
-PASS shorthand outline can be set with setProperty 
-PASS shorthand outline can be removed with removeProperty 
-PASS shorthand outline can be set with setProperty and priority !important 
-PASS shorthand outline can be removed with removeProperty even when set with !important 
-PASS shorthand padding can be set with setProperty 
-PASS shorthand padding can be removed with removeProperty 
-PASS shorthand padding can be set with setProperty and priority !important 
-PASS shorthand padding can be removed with removeProperty even when set with !important 
-PASS shorthand background can be set with setProperty 
-PASS shorthand background can be removed with removeProperty 
-PASS shorthand background can be set with setProperty and priority !important 
-PASS shorthand background can be removed with removeProperty even when set with !important 
-PASS shorthand overflow can be set with setProperty 
-PASS shorthand overflow can be removed with removeProperty 
-PASS shorthand overflow can be set with setProperty and priority !important 
-PASS shorthand overflow can be removed with removeProperty even when set with !important 
-PASS shorthand border-radius can be set with setProperty 
-PASS shorthand border-radius can be removed with removeProperty 
-PASS shorthand border-radius can be set with setProperty and priority !important 
-PASS shorthand border-radius can be removed with removeProperty even when set with !important 
+PASS shorthand font can be set with setProperty
+PASS shorthand font can be removed with removeProperty
+PASS shorthand font can be set with setProperty and priority !important
+PASS shorthand font can be removed with removeProperty even when set with !important
+PASS shorthand border-top can be set with setProperty
+PASS shorthand border-top can be removed with removeProperty
+PASS shorthand border-top can be set with setProperty and priority !important
+PASS shorthand border-top can be removed with removeProperty even when set with !important
+PASS shorthand border-right can be set with setProperty
+PASS shorthand border-right can be removed with removeProperty
+PASS shorthand border-right can be set with setProperty and priority !important
+PASS shorthand border-right can be removed with removeProperty even when set with !important
+PASS shorthand border-bottom can be set with setProperty
+PASS shorthand border-bottom can be removed with removeProperty
+PASS shorthand border-bottom can be set with setProperty and priority !important
+PASS shorthand border-bottom can be removed with removeProperty even when set with !important
+PASS shorthand border-left can be set with setProperty
+PASS shorthand border-left can be removed with removeProperty
+PASS shorthand border-left can be set with setProperty and priority !important
+PASS shorthand border-left can be removed with removeProperty even when set with !important
+PASS shorthand border can be set with setProperty
+PASS shorthand border can be removed with removeProperty
+PASS shorthand border can be set with setProperty and priority !important
+PASS shorthand border can be removed with removeProperty even when set with !important
+PASS shorthand border-color can be set with setProperty
+PASS shorthand border-color can be removed with removeProperty
+PASS shorthand border-color can be set with setProperty and priority !important
+PASS shorthand border-color can be removed with removeProperty even when set with !important
+PASS shorthand border-style can be set with setProperty
+PASS shorthand border-style can be removed with removeProperty
+PASS shorthand border-style can be set with setProperty and priority !important
+PASS shorthand border-style can be removed with removeProperty even when set with !important
+PASS shorthand border-width can be set with setProperty
+PASS shorthand border-width can be removed with removeProperty
+PASS shorthand border-width can be set with setProperty and priority !important
+PASS shorthand border-width can be removed with removeProperty even when set with !important
+PASS shorthand background-position can be set with setProperty
+PASS shorthand background-position can be removed with removeProperty
+PASS shorthand background-position can be set with setProperty and priority !important
+PASS shorthand background-position can be removed with removeProperty even when set with !important
+PASS shorthand background-repeat can be set with setProperty
+PASS shorthand background-repeat can be removed with removeProperty
+PASS shorthand background-repeat can be set with setProperty and priority !important
+PASS shorthand background-repeat can be removed with removeProperty even when set with !important
+PASS shorthand border-spacing can be set with setProperty
+PASS shorthand border-spacing can be removed with removeProperty
+PASS shorthand border-spacing can be set with setProperty and priority !important
+PASS shorthand border-spacing can be removed with removeProperty even when set with !important
+PASS shorthand list-style can be set with setProperty
+PASS shorthand list-style can be removed with removeProperty
+PASS shorthand list-style can be set with setProperty and priority !important
+PASS shorthand list-style can be removed with removeProperty even when set with !important
+PASS shorthand margin can be set with setProperty
+PASS shorthand margin can be removed with removeProperty
+PASS shorthand margin can be set with setProperty and priority !important
+PASS shorthand margin can be removed with removeProperty even when set with !important
+PASS shorthand outline can be set with setProperty
+PASS shorthand outline can be removed with removeProperty
+PASS shorthand outline can be set with setProperty and priority !important
+PASS shorthand outline can be removed with removeProperty even when set with !important
+PASS shorthand padding can be set with setProperty
+PASS shorthand padding can be removed with removeProperty
+PASS shorthand padding can be set with setProperty and priority !important
+PASS shorthand padding can be removed with removeProperty even when set with !important
+PASS shorthand background can be set with setProperty
+PASS shorthand background can be removed with removeProperty
+PASS shorthand background can be set with setProperty and priority !important
+PASS shorthand background can be removed with removeProperty even when set with !important
+PASS shorthand overflow can be set with setProperty
+PASS shorthand overflow can be removed with removeProperty
+PASS shorthand overflow can be set with setProperty and priority !important
+PASS shorthand overflow can be removed with removeProperty even when set with !important
+PASS shorthand border-radius can be set with setProperty
+PASS shorthand border-radius can be removed with removeProperty
+PASS shorthand border-radius can be set with setProperty and priority !important
+PASS shorthand border-radius can be removed with removeProperty even when set with !important
 

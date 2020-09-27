@@ -1,8 +1,8 @@
 
-PASS e.style['column-count'] = "none" should not set the property value 
-PASS e.style['column-count'] = "2.5" should not set the property value 
-PASS e.style['column-count'] = "-1" should not set the property value 
-PASS e.style['column-count'] = "0" should not set the property value 
-PASS e.style['column-count'] = "auto 1" should not set the property value 
-PASS e.style['column-count'] = "1 234" should not set the property value 
+PASS e.style['column-count'] = "none" should not set the property value
+PASS e.style['column-count'] = "2.5" should not set the property value
+PASS e.style['column-count'] = "-1" should not set the property value
+PASS e.style['column-count'] = "0" should not set the property value
+PASS e.style['column-count'] = "auto 1" should not set the property value
+PASS e.style['column-count'] = "1 234" should not set the property value
 

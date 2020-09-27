@@ -1,7 +1,7 @@
 
-PASS parse 'none' 
-PASS parse 'all' 
-PASS parse 'width' 
-PASS parse 'all, width' 
-PASS parse 'width, all' 
+PASS parse 'none'
+PASS parse 'all'
+PASS parse 'width'
+PASS parse 'all, width'
+PASS parse 'width, all'
 

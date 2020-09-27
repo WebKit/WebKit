@@ -1,4 +1,4 @@
 
-PASS e.style['column-span'] = "none" should set the property value 
-PASS e.style['column-span'] = "all" should set the property value 
+PASS e.style['column-span'] = "none" should set the property value
+PASS e.style['column-span'] = "all" should set the property value
 

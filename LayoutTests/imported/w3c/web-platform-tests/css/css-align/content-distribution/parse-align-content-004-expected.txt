@@ -1,42 +1,42 @@
 
-PASS Checking invalid combination - align-content: auto 
-PASS Checking invalid combination - align-content: legacy 
-PASS Checking invalid combination - align-content: self-start 
-PASS Checking invalid combination - align-content: left 
-PASS Checking invalid combination - align-content: safe right 
-PASS Checking invalid combination - align-content: auto safe 
-PASS Checking invalid combination - align-content: auto left 
-PASS Checking invalid combination - align-content: normal unsafe 
-PASS Checking invalid combination - align-content: normal stretch 
-PASS Checking invalid combination - align-content: baseline normal 
-PASS Checking invalid combination - align-content: baseline center 
-PASS Checking invalid combination - align-content: first baseline center 
-PASS Checking invalid combination - align-content: last baseline center 
-PASS Checking invalid combination - align-content: baseline last 
-PASS Checking invalid combination - align-content: baseline first 
-PASS Checking invalid combination - align-content: stretch unsafe 
-PASS Checking invalid combination - align-content: stretch right 
-PASS Checking invalid combination - align-content: unsafe unsafe 
-PASS Checking invalid combination - align-content: unsafe safe 
-PASS Checking invalid combination - align-content: center start 
-PASS Checking invalid combination - align-content: unsafe stretch 
-PASS Checking invalid combination - align-content: safe stretch 
-PASS Checking invalid combination - align-content: baseline safe 
-PASS Checking invalid combination - align-content: unsafe baseline 
-PASS Checking invalid combination - align-content: unsafe safe left 
-PASS Checking invalid combination - align-content: unsafe left safe 
-PASS Checking invalid combination - align-content: left safe unsafe safe 
-PASS Checking invalid combination - align-content: start safe 
-PASS Checking invalid combination - align-content: safe 
-PASS Checking invalid combination - align-content: space-between left 
-PASS Checking invalid combination - align-content: space-around center 
-PASS Checking invalid combination - align-content: space-evenly right 
-PASS Checking invalid combination - align-content: stretch safe start 
-PASS Checking invalid combination - align-content: space-around unsafe 
-PASS Checking invalid combination - align-content: space-evenly safe flex-start 
-PASS Checking invalid combination - align-content: space-between safe 
-PASS Checking invalid combination - align-content: space-between stretch 
-PASS Checking invalid combination - align-content: stretch start 
-PASS Checking invalid combination - align-content: stretch baseline 
-PASS Checking invalid combination - align-content: first baseline space-around 
+PASS Checking invalid combination - align-content: auto
+PASS Checking invalid combination - align-content: legacy
+PASS Checking invalid combination - align-content: self-start
+PASS Checking invalid combination - align-content: left
+PASS Checking invalid combination - align-content: safe right
+PASS Checking invalid combination - align-content: auto safe
+PASS Checking invalid combination - align-content: auto left
+PASS Checking invalid combination - align-content: normal unsafe
+PASS Checking invalid combination - align-content: normal stretch
+PASS Checking invalid combination - align-content: baseline normal
+PASS Checking invalid combination - align-content: baseline center
+PASS Checking invalid combination - align-content: first baseline center
+PASS Checking invalid combination - align-content: last baseline center
+PASS Checking invalid combination - align-content: baseline last
+PASS Checking invalid combination - align-content: baseline first
+PASS Checking invalid combination - align-content: stretch unsafe
+PASS Checking invalid combination - align-content: stretch right
+PASS Checking invalid combination - align-content: unsafe unsafe
+PASS Checking invalid combination - align-content: unsafe safe
+PASS Checking invalid combination - align-content: center start
+PASS Checking invalid combination - align-content: unsafe stretch
+PASS Checking invalid combination - align-content: safe stretch
+PASS Checking invalid combination - align-content: baseline safe
+PASS Checking invalid combination - align-content: unsafe baseline
+PASS Checking invalid combination - align-content: unsafe safe left
+PASS Checking invalid combination - align-content: unsafe left safe
+PASS Checking invalid combination - align-content: left safe unsafe safe
+PASS Checking invalid combination - align-content: start safe
+PASS Checking invalid combination - align-content: safe
+PASS Checking invalid combination - align-content: space-between left
+PASS Checking invalid combination - align-content: space-around center
+PASS Checking invalid combination - align-content: space-evenly right
+PASS Checking invalid combination - align-content: stretch safe start
+PASS Checking invalid combination - align-content: space-around unsafe
+PASS Checking invalid combination - align-content: space-evenly safe flex-start
+PASS Checking invalid combination - align-content: space-between safe
+PASS Checking invalid combination - align-content: space-between stretch
+PASS Checking invalid combination - align-content: stretch start
+PASS Checking invalid combination - align-content: stretch baseline
+PASS Checking invalid combination - align-content: first baseline space-around
 

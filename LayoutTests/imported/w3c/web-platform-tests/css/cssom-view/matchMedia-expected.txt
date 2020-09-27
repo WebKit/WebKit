@@ -1,12 +1,12 @@
 
-PASS window.matchMedia is a function 
-PASS window.matchMedia("all") matches 
-PASS window.matchMedia("") matches 
-PASS window.matchMedia("(min-width: 1px)") matches 
-PASS media query with syntax error is serialized as "not all" 
-PASS iframe.matchMedia("(max-width: 199px), all and (min-width: 200px)") is serialized w/o "all" 
-PASS iframe.matchMedia("(min-aspect-ratio: 1/1)") matches 
-PASS iframe.matchMedia("(width: 200px)") matches 
-PASS iframe.matchMedia("(max-height: 50px)") matches 
-PASS iframe.matchMedia("(min-width: 150px)") matches 
+PASS window.matchMedia is a function
+PASS window.matchMedia("all") matches
+PASS window.matchMedia("") matches
+PASS window.matchMedia("(min-width: 1px)") matches
+PASS media query with syntax error is serialized as "not all"
+PASS iframe.matchMedia("(max-width: 199px), all and (min-width: 200px)") is serialized w/o "all"
+PASS iframe.matchMedia("(min-aspect-ratio: 1/1)") matches
+PASS iframe.matchMedia("(width: 200px)") matches
+PASS iframe.matchMedia("(max-height: 50px)") matches
+PASS iframe.matchMedia("(min-width: 150px)") matches
 

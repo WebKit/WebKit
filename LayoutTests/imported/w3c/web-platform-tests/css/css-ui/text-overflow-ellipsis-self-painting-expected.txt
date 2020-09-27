@@ -1,5 +1,5 @@
-1234567890 
-1234567890 
+1234567890
+1234567890
 
-PASS CSS Basic User Interface Test: ellipsis when there are self-painting objects 
+PASS CSS Basic User Interface Test: ellipsis when there are self-painting objects
 

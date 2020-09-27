@@ -1,6 +1,6 @@
 
-PASS Access to .part returns an empty DOMTokenList. 
-PASS Multiple names give a DOMTokenList with multiple entries. 
-PASS DOMTokenList created by access is persisted. 
-PASS Changes in DOMTokenList are refected in attribute. 
+PASS Access to .part returns an empty DOMTokenList.
+PASS Multiple names give a DOMTokenList with multiple entries.
+PASS DOMTokenList created by access is persisted.
+PASS Changes in DOMTokenList are refected in attribute.
 

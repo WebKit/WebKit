@@ -1,4 +1,4 @@
  
 
-PASS A :lang value with a multiple subtags will match a lang attribute value with multiple subtags as long as the first part is the same. 
+PASS A :lang value with a multiple subtags will match a lang attribute value with multiple subtags as long as the first part is the same.
 

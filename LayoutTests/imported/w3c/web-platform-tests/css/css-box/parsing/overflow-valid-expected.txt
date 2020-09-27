@@ -1,10 +1,10 @@
 
-PASS e.style['overflow'] = "visible" should set the property value 
-PASS e.style['overflow'] = "hidden" should set the property value 
-PASS e.style['overflow'] = "scroll" should set the property value 
-PASS e.style['overflow'] = "auto" should set the property value 
-PASS e.style['overflow-x'] = "visible" should set the property value 
-PASS e.style['overflow-x'] = "hidden" should set the property value 
-PASS e.style['overflow-x'] = "scroll" should set the property value 
-PASS e.style['overflow-y'] = "auto" should set the property value 
+PASS e.style['overflow'] = "visible" should set the property value
+PASS e.style['overflow'] = "hidden" should set the property value
+PASS e.style['overflow'] = "scroll" should set the property value
+PASS e.style['overflow'] = "auto" should set the property value
+PASS e.style['overflow-x'] = "visible" should set the property value
+PASS e.style['overflow-x'] = "hidden" should set the property value
+PASS e.style['overflow-x'] = "scroll" should set the property value
+PASS e.style['overflow-y'] = "auto" should set the property value
 

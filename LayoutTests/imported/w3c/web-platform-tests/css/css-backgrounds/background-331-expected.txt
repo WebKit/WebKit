@@ -1,10 +1,10 @@
 
-PASS background_initial_image 
-PASS background_initial_position 
-PASS background_initial_size 
-PASS background_initial_repeat 
-PASS background_initial_attachment 
-PASS background_initial_origin 
-PASS background_initial_clip 
-PASS background_initial_color 
+PASS background_initial_image
+PASS background_initial_position
+PASS background_initial_size
+PASS background_initial_repeat
+PASS background_initial_attachment
+PASS background_initial_origin
+PASS background_initial_clip
+PASS background_initial_color
 

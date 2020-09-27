@@ -1,17 +1,17 @@
 
-PASS e.style['place-items'] = "auto" should not set the property value 
-PASS e.style['place-items'] = "space-around" should not set the property value 
-PASS e.style['place-items'] = "space-between" should not set the property value 
-PASS e.style['place-items'] = "space-evenly" should not set the property value 
-PASS e.style['place-items'] = "left" should not set the property value 
-PASS e.style['place-items'] = "unsafe right" should not set the property value 
-PASS e.style['place-items'] = "left baseline" should not set the property value 
-PASS e.style['place-items'] = "unsafe right flex-end" should not set the property value 
-PASS e.style['place-items'] = "legacy center" should not set the property value 
-PASS e.style['place-items'] = "legacy left" should not set the property value 
-PASS e.style['place-items'] = "legacy" should not set the property value 
-PASS e.style['place-items'] = "legacy right flex-start" should not set the property value 
-PASS e.style['place-items'] = "legacy normal" should not set the property value 
-PASS e.style['place-items'] = "normal flex-start baseline" should not set the property value 
-PASS e.style['place-items'] = "baseline safe" should not set the property value 
+PASS e.style['place-items'] = "auto" should not set the property value
+PASS e.style['place-items'] = "space-around" should not set the property value
+PASS e.style['place-items'] = "space-between" should not set the property value
+PASS e.style['place-items'] = "space-evenly" should not set the property value
+PASS e.style['place-items'] = "left" should not set the property value
+PASS e.style['place-items'] = "unsafe right" should not set the property value
+PASS e.style['place-items'] = "left baseline" should not set the property value
+PASS e.style['place-items'] = "unsafe right flex-end" should not set the property value
+PASS e.style['place-items'] = "legacy center" should not set the property value
+PASS e.style['place-items'] = "legacy left" should not set the property value
+PASS e.style['place-items'] = "legacy" should not set the property value
+PASS e.style['place-items'] = "legacy right flex-start" should not set the property value
+PASS e.style['place-items'] = "legacy normal" should not set the property value
+PASS e.style['place-items'] = "normal flex-start baseline" should not set the property value
+PASS e.style['place-items'] = "baseline safe" should not set the property value
 

@@ -2,9 +2,9 @@
 FAIL Decimal ::marker assert_equals: width expected "30px" but got "auto"
 FAIL Decimal ::marker with custom value assert_equals: width expected "40px" but got "auto"
 FAIL String ::marker assert_equals: width expected "20px" but got "auto"
-PASS ::marker with no box due to 'list-style' 
+PASS ::marker with no box due to 'list-style'
 FAIL ::marker with custom string contents assert_equals: width expected "60px" but got "auto"
 FAIL ::marker with custom image contents assert_equals: width expected "100px" but got "auto"
 FAIL ::marker with custom string and image contents assert_equals: width expected "130px" but got "auto"
-PASS ::marker with no box due to 'content' 
+PASS ::marker with no box due to 'content'
 

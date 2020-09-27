@@ -1,3 +1,3 @@
 
-PASS HTMLLinkElement.disabled setter sets the explicitly enabled state if toggled back and forth. 
+PASS HTMLLinkElement.disabled setter sets the explicitly enabled state if toggled back and forth.
 

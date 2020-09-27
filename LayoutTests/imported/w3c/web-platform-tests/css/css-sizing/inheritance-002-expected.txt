@@ -1,6 +1,6 @@
 
-PASS Property height has initial value 0px 
-PASS Property height does not inherit 
-PASS Property width has initial value 0px 
-PASS Property width does not inherit 
+PASS Property height has initial value 0px
+PASS Property height does not inherit
+PASS Property width has initial value 0px
+PASS Property width does not inherit
 

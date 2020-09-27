@@ -1,6 +1,6 @@
 
-PASS e.style['animation-fill-mode'] = "auto" should not set the property value 
-PASS e.style['animation-fill-mode'] = "forwards backwards" should not set the property value 
-PASS e.style['animation-fill-mode'] = "both, initial" should not set the property value 
-PASS e.style['animation-fill-mode'] = "initial, both" should not set the property value 
+PASS e.style['animation-fill-mode'] = "auto" should not set the property value
+PASS e.style['animation-fill-mode'] = "forwards backwards" should not set the property value
+PASS e.style['animation-fill-mode'] = "both, initial" should not set the property value
+PASS e.style['animation-fill-mode'] = "initial, both" should not set the property value
 

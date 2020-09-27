@@ -1,12 +1,12 @@
 
-PASS addition of 2 time units: s plus s 
-PASS addition of 2 time units: s plus ms 
-PASS addition of 2 time units: ms plus ms 
-PASS substraction of time unit: s minus s 
-PASS substraction of time unit: s minus ms 
-PASS multiplication of integer with a time unit: int multiplied by s 
-PASS multiplication of integer with a time unit: int multiplied by ms 
-PASS division of time unit with integer: s divided by int 
-PASS division of time unit with integer: ms divided by int 
-PASS conversion of time unit: ms into s 
+PASS addition of 2 time units: s plus s
+PASS addition of 2 time units: s plus ms
+PASS addition of 2 time units: ms plus ms
+PASS substraction of time unit: s minus s
+PASS substraction of time unit: s minus ms
+PASS multiplication of integer with a time unit: int multiplied by s
+PASS multiplication of integer with a time unit: int multiplied by ms
+PASS division of time unit with integer: s divided by int
+PASS division of time unit with integer: ms divided by int
+PASS conversion of time unit: ms into s
 

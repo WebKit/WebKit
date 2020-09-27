@@ -1,5 +1,5 @@
 
-PASS e.style['flex-wrap'] = "nowrap" should set the property value 
-PASS e.style['flex-wrap'] = "wrap" should set the property value 
-PASS e.style['flex-wrap'] = "wrap-reverse" should set the property value 
+PASS e.style['flex-wrap'] = "nowrap" should set the property value
+PASS e.style['flex-wrap'] = "wrap" should set the property value
+PASS e.style['flex-wrap'] = "wrap-reverse" should set the property value
 

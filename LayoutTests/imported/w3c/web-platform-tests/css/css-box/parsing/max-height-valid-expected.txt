@@ -1,9 +1,9 @@
 
-PASS e.style['max-height'] = "none" should set the property value 
-PASS e.style['max-height'] = "10px" should set the property value 
-PASS e.style['max-height'] = "20%" should set the property value 
-PASS e.style['max-height'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['max-height'] = "min-content" should set the property value 
-PASS e.style['max-height'] = "max-content" should set the property value 
-PASS e.style['max-height'] = "fit-content" should set the property value 
+PASS e.style['max-height'] = "none" should set the property value
+PASS e.style['max-height'] = "10px" should set the property value
+PASS e.style['max-height'] = "20%" should set the property value
+PASS e.style['max-height'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['max-height'] = "min-content" should set the property value
+PASS e.style['max-height'] = "max-content" should set the property value
+PASS e.style['max-height'] = "fit-content" should set the property value
 

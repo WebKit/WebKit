@@ -1,7 +1,7 @@
 
-PASS e.style['column-width'] = "none" should not set the property value 
-PASS e.style['column-width'] = "10" should not set the property value 
-PASS e.style['column-width'] = "-20px" should not set the property value 
-PASS e.style['column-width'] = "30%" should not set the property value 
-PASS e.style['column-width'] = "auto 40px" should not set the property value 
+PASS e.style['column-width'] = "none" should not set the property value
+PASS e.style['column-width'] = "10" should not set the property value
+PASS e.style['column-width'] = "-20px" should not set the property value
+PASS e.style['column-width'] = "30%" should not set the property value
+PASS e.style['column-width'] = "auto 40px" should not set the property value
 

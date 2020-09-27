@@ -1,17 +1,17 @@
 
-PASS e.style['margin'] = "10px" should set the property value 
-PASS e.style['margin'] = "20%" should set the property value 
-PASS e.style['margin'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['margin'] = "auto" should set the property value 
-PASS e.style['margin'] = "-10px" should set the property value 
-PASS e.style['margin'] = "-20%" should set the property value 
-PASS e.style['margin'] = "calc(2em + 3ex) auto" should set the property value 
-PASS e.style['margin'] = "auto calc(2em + 3ex) 20%" should set the property value 
-PASS e.style['margin'] = "10px 20% calc(2em + 3ex) auto" should set the property value 
-PASS e.style['margin-top'] = "10px" should set the property value 
-PASS e.style['margin-right'] = "20%" should set the property value 
-PASS e.style['margin-bottom'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['margin-left'] = "auto" should set the property value 
-PASS e.style['margin-top'] = "-10px" should set the property value 
-PASS e.style['margin-right'] = "-20%" should set the property value 
+PASS e.style['margin'] = "10px" should set the property value
+PASS e.style['margin'] = "20%" should set the property value
+PASS e.style['margin'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['margin'] = "auto" should set the property value
+PASS e.style['margin'] = "-10px" should set the property value
+PASS e.style['margin'] = "-20%" should set the property value
+PASS e.style['margin'] = "calc(2em + 3ex) auto" should set the property value
+PASS e.style['margin'] = "auto calc(2em + 3ex) 20%" should set the property value
+PASS e.style['margin'] = "10px 20% calc(2em + 3ex) auto" should set the property value
+PASS e.style['margin-top'] = "10px" should set the property value
+PASS e.style['margin-right'] = "20%" should set the property value
+PASS e.style['margin-bottom'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['margin-left'] = "auto" should set the property value
+PASS e.style['margin-top'] = "-10px" should set the property value
+PASS e.style['margin-right'] = "-20%" should set the property value
 

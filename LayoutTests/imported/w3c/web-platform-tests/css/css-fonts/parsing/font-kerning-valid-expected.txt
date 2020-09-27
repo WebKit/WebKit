@@ -1,5 +1,5 @@
 
-PASS e.style['font-kerning'] = "auto" should set the property value 
-PASS e.style['font-kerning'] = "normal" should set the property value 
-PASS e.style['font-kerning'] = "none" should set the property value 
+PASS e.style['font-kerning'] = "auto" should set the property value
+PASS e.style['font-kerning'] = "normal" should set the property value
+PASS e.style['font-kerning'] = "none" should set the property value
 

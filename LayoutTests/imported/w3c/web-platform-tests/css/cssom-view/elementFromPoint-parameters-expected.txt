@@ -1,6 +1,6 @@
 
-PASS document.elementFromPoint: Parameters are mandatory. 
-PASS document.elementFromPoint: Parameters should be finite floating point values. 
-PASS document.elementsFromPoint: Parameters are mandatory. 
-PASS document.elementsFromPoint: Parameters should be finite floating point values. 
+PASS document.elementFromPoint: Parameters are mandatory.
+PASS document.elementFromPoint: Parameters should be finite floating point values.
+PASS document.elementsFromPoint: Parameters are mandatory.
+PASS document.elementsFromPoint: Parameters should be finite floating point values.
 

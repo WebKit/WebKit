@@ -1,13 +1,13 @@
 
-PASS e.style['width'] = "complex" should not set the property value 
-PASS e.style['width'] = "none" should not set the property value 
-PASS e.style['width'] = "min-content available" should not set the property value 
-PASS e.style['width'] = "max-content 10px" should not set the property value 
-PASS e.style['width'] = "20% available" should not set the property value 
-PASS e.style['width'] = "-10px" should not set the property value 
-PASS e.style['width'] = "-20%" should not set the property value 
-PASS e.style['width'] = "60" should not set the property value 
-PASS e.style['width'] = "10px 20%" should not set the property value 
-PASS e.style['width'] = "10px border-box" should not set the property value 
-PASS e.style['width'] = "content-box 20%" should not set the property value 
+PASS e.style['width'] = "complex" should not set the property value
+PASS e.style['width'] = "none" should not set the property value
+PASS e.style['width'] = "min-content available" should not set the property value
+PASS e.style['width'] = "max-content 10px" should not set the property value
+PASS e.style['width'] = "20% available" should not set the property value
+PASS e.style['width'] = "-10px" should not set the property value
+PASS e.style['width'] = "-20%" should not set the property value
+PASS e.style['width'] = "60" should not set the property value
+PASS e.style['width'] = "10px 20%" should not set the property value
+PASS e.style['width'] = "10px border-box" should not set the property value
+PASS e.style['width'] = "content-box 20%" should not set the property value
 

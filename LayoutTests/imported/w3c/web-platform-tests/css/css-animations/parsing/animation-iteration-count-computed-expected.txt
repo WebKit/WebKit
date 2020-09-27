@@ -1,3 +1,3 @@
 
-PASS Property animation-iteration-count value '0, infinite, 3' 
+PASS Property animation-iteration-count value '0, infinite, 3'
 

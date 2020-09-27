@@ -2,5 +2,5 @@
 헬로우월드헬로우월드헬로우월드헬로우월드헬로우월드
 
 FAIL 0000000000 assert_greater_than: expected a number greater than 20 but got 20
-PASS 헬로우월드헬로우월드헬로우월드헬로우월드헬로우월드 
+PASS 헬로우월드헬로우월드헬로우월드헬로우월드헬로우월드
 

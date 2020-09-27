@@ -1,8 +1,8 @@
 
-PASS testing letter-spacing: calc(1 + 1px) 
-PASS testing letter-spacing: calc(1 + 100%) 
-PASS testing letter-spacing: calc(100%) 
-PASS testing letter-spacing: calc(10px) bla 
-PASS testing letter-spacing: calc(bla) 10px 
-PASS testing letter-spacing: calc(10px) 
+PASS testing letter-spacing: calc(1 + 1px)
+PASS testing letter-spacing: calc(1 + 100%)
+PASS testing letter-spacing: calc(100%)
+PASS testing letter-spacing: calc(10px) bla
+PASS testing letter-spacing: calc(bla) 10px
+PASS testing letter-spacing: calc(10px)
 

@@ -1,4 +1,4 @@
  
 
-PASS A lang= value will match a lang attribute value regardless of case differences in the script tag. 
+PASS A lang= value will match a lang attribute value regardless of case differences in the script tag.
 

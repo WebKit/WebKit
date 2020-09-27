@@ -1,5 +1,5 @@
 
-PASS e.style['float'] = "auto" should not set the property value 
-PASS e.style['float'] = "right bottom" should not set the property value 
-PASS e.style['float'] = "top, left" should not set the property value 
+PASS e.style['float'] = "auto" should not set the property value
+PASS e.style['float'] = "right bottom" should not set the property value
+PASS e.style['float'] = "top, left" should not set the property value
 

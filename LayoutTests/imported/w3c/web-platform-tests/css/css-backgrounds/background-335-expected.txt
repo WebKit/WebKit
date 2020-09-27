@@ -1,4 +1,4 @@
 
-PASS background_specified_box_one_origin 
-PASS background_specified_box_one_clip 
+PASS background_specified_box_one_origin
+PASS background_specified_box_one_clip
 

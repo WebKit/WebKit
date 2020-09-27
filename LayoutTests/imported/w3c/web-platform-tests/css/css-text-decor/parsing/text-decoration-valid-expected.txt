@@ -1,6 +1,6 @@
 
-PASS e.style['text-decoration'] = "none" should set the property value 
-PASS e.style['text-decoration'] = "line-through" should set the property value 
+PASS e.style['text-decoration'] = "none" should set the property value
+PASS e.style['text-decoration'] = "line-through" should set the property value
 FAIL e.style['text-decoration'] = "solid" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['text-decoration'] = "currentcolor" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['text-decoration'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""

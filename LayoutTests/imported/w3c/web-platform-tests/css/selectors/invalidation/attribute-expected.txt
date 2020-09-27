@@ -1,8 +1,8 @@
 
-PASS [att] selector is effective 
-PASS [att=val] selector is effective 
-PASS [att~=val] selector is effective 
-PASS [att|=val] selector is effective 
-PASS #id selector is effective 
-PASS .class selector is effective 
+PASS [att] selector is effective
+PASS [att=val] selector is effective
+PASS [att~=val] selector is effective
+PASS [att|=val] selector is effective
+PASS #id selector is effective
+PASS .class selector is effective
 

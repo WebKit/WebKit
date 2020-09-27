@@ -1,10 +1,10 @@
 
-PASS e.style['border-style'] = "none" should set the property value 
-PASS e.style['border-style'] = "none hidden dotted dashed" should set the property value 
-PASS e.style['border-style'] = "solid double groove ridge" should set the property value 
-PASS e.style['border-style'] = "inset outset" should set the property value 
-PASS e.style['border-top-style'] = "solid" should set the property value 
-PASS e.style['border-right-style'] = "double" should set the property value 
-PASS e.style['border-bottom-style'] = "groove" should set the property value 
-PASS e.style['border-left-style'] = "ridge" should set the property value 
+PASS e.style['border-style'] = "none" should set the property value
+PASS e.style['border-style'] = "none hidden dotted dashed" should set the property value
+PASS e.style['border-style'] = "solid double groove ridge" should set the property value
+PASS e.style['border-style'] = "inset outset" should set the property value
+PASS e.style['border-top-style'] = "solid" should set the property value
+PASS e.style['border-right-style'] = "double" should set the property value
+PASS e.style['border-bottom-style'] = "groove" should set the property value
+PASS e.style['border-left-style'] = "ridge" should set the property value
 

@@ -1,34 +1,34 @@
 
-PASS Checking invalid combination - justify-items: auto 
-PASS Checking invalid combination - justify-items: space-around 
-PASS Checking invalid combination - justify-items: auto safe 
-PASS Checking invalid combination - justify-items: auto left 
-PASS Checking invalid combination - justify-items: normal unsafe 
-PASS Checking invalid combination - justify-items: normal stretch 
-PASS Checking invalid combination - justify-items: baseline normal 
-PASS Checking invalid combination - justify-items: baseline center 
-PASS Checking invalid combination - justify-items: first baseline center 
-PASS Checking invalid combination - justify-items: last baseline center 
-PASS Checking invalid combination - justify-items: baseline last 
-PASS Checking invalid combination - justify-items: baseline first 
-PASS Checking invalid combination - justify-items: stretch unsafe 
-PASS Checking invalid combination - justify-items: stretch right 
-PASS Checking invalid combination - justify-items: unsafe unsafe 
-PASS Checking invalid combination - justify-items: unsafe safe 
-PASS Checking invalid combination - justify-items: center start 
-PASS Checking invalid combination - justify-items: unsafe stretch 
-PASS Checking invalid combination - justify-items: safe stretch 
-PASS Checking invalid combination - justify-items: baseline safe 
-PASS Checking invalid combination - justify-items: unsafe baseline 
-PASS Checking invalid combination - justify-items: unsafe safe left 
-PASS Checking invalid combination - justify-items: unsafe left safe 
-PASS Checking invalid combination - justify-items: left safe unsafe safe 
-PASS Checking invalid combination - justify-items: start safe 
-PASS Checking invalid combination - justify-items: safe 
-PASS Checking invalid combination - justify-items: legacy start 
-PASS Checking invalid combination - justify-items: legacy end 
-PASS Checking invalid combination - justify-items: legacy right unsafe 
-PASS Checking invalid combination - justify-items: legacy auto 
-PASS Checking invalid combination - justify-items: legacy stretch 
-PASS Checking invalid combination - justify-items: legacy left right 
+PASS Checking invalid combination - justify-items: auto
+PASS Checking invalid combination - justify-items: space-around
+PASS Checking invalid combination - justify-items: auto safe
+PASS Checking invalid combination - justify-items: auto left
+PASS Checking invalid combination - justify-items: normal unsafe
+PASS Checking invalid combination - justify-items: normal stretch
+PASS Checking invalid combination - justify-items: baseline normal
+PASS Checking invalid combination - justify-items: baseline center
+PASS Checking invalid combination - justify-items: first baseline center
+PASS Checking invalid combination - justify-items: last baseline center
+PASS Checking invalid combination - justify-items: baseline last
+PASS Checking invalid combination - justify-items: baseline first
+PASS Checking invalid combination - justify-items: stretch unsafe
+PASS Checking invalid combination - justify-items: stretch right
+PASS Checking invalid combination - justify-items: unsafe unsafe
+PASS Checking invalid combination - justify-items: unsafe safe
+PASS Checking invalid combination - justify-items: center start
+PASS Checking invalid combination - justify-items: unsafe stretch
+PASS Checking invalid combination - justify-items: safe stretch
+PASS Checking invalid combination - justify-items: baseline safe
+PASS Checking invalid combination - justify-items: unsafe baseline
+PASS Checking invalid combination - justify-items: unsafe safe left
+PASS Checking invalid combination - justify-items: unsafe left safe
+PASS Checking invalid combination - justify-items: left safe unsafe safe
+PASS Checking invalid combination - justify-items: start safe
+PASS Checking invalid combination - justify-items: safe
+PASS Checking invalid combination - justify-items: legacy start
+PASS Checking invalid combination - justify-items: legacy end
+PASS Checking invalid combination - justify-items: legacy right unsafe
+PASS Checking invalid combination - justify-items: legacy auto
+PASS Checking invalid combination - justify-items: legacy stretch
+PASS Checking invalid combination - justify-items: legacy left right
 

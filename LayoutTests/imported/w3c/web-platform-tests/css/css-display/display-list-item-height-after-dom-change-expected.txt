@@ -1,4 +1,4 @@
 This text should have a green background
 
-PASS List item height after DOM change. 
+PASS List item height after DOM change.
 

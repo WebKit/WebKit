@@ -1,10 +1,10 @@
 
-PASS Property tab-size value '0' 
-PASS Property tab-size value '16' 
-PASS Property tab-size value '4' 
-PASS Property tab-size value '2.5' 
-PASS Property tab-size value '0px' 
-PASS Property tab-size value '10px' 
-PASS Property tab-size value 'calc(10px + 0.5em)' 
-PASS Property tab-size value 'calc(10px - 0.5em)' 
+PASS Property tab-size value '0'
+PASS Property tab-size value '16'
+PASS Property tab-size value '4'
+PASS Property tab-size value '2.5'
+PASS Property tab-size value '0px'
+PASS Property tab-size value '10px'
+PASS Property tab-size value 'calc(10px + 0.5em)'
+PASS Property tab-size value 'calc(10px - 0.5em)'
 

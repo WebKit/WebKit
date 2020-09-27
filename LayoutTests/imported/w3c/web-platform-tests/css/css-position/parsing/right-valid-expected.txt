@@ -1,6 +1,6 @@
 
-PASS e.style['right'] = "auto" should set the property value 
-PASS e.style['right'] = "-10px" should set the property value 
-PASS e.style['right'] = "-20%" should set the property value 
-PASS e.style['right'] = "calc(2em + 3ex)" should set the property value 
+PASS e.style['right'] = "auto" should set the property value
+PASS e.style['right'] = "-10px" should set the property value
+PASS e.style['right'] = "-20%" should set the property value
+PASS e.style['right'] = "calc(2em + 3ex)" should set the property value
 

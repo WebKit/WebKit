@@ -1,6 +1,6 @@
 
-PASS read_only 
-PASS property_values 
-PASS inherited_property_values 
-PASS relative_property_values 
+PASS read_only
+PASS property_values
+PASS inherited_property_values
+PASS relative_property_values
 

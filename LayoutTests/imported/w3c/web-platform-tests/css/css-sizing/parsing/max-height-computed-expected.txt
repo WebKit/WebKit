@@ -1,10 +1,10 @@
 
-PASS Property max-height value 'none' 
-PASS Property max-height value 'min-content' 
-PASS Property max-height value 'max-content' 
-PASS Property max-height value '10px' 
-PASS Property max-height value '20%' 
-PASS Property max-height value 'calc(10% + 40px)' 
-PASS Property max-height value 'calc(10px - 0.5em)' 
-PASS Property max-height value 'calc(10px + 0.5em)' 
+PASS Property max-height value 'none'
+PASS Property max-height value 'min-content'
+PASS Property max-height value 'max-content'
+PASS Property max-height value '10px'
+PASS Property max-height value '20%'
+PASS Property max-height value 'calc(10% + 40px)'
+PASS Property max-height value 'calc(10px - 0.5em)'
+PASS Property max-height value 'calc(10px + 0.5em)'
 

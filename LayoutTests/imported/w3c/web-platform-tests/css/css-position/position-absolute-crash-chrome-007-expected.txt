@@ -1,7 +1,7 @@
-parent 
+parent
 start split start
 splitter
 split middle css-container start ABSFULLABS css container end split end parent end
 
-PASS test passes if it does not crash 
+PASS test passes if it does not crash
 

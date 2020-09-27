@@ -1,4 +1,4 @@
 
-PASS e.style['unicode-bidi'] = "auto" should not set the property value 
-PASS e.style['unicode-bidi'] = "isolate plaintext" should not set the property value 
+PASS e.style['unicode-bidi'] = "auto" should not set the property value
+PASS e.style['unicode-bidi'] = "isolate plaintext" should not set the property value
 

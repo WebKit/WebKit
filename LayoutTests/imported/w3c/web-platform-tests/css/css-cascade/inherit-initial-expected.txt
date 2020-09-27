@@ -1,6 +1,6 @@
 
-PASS z-index:inherit on root element should compute to 'auto'. 
-PASS position:inherit on root element should compute to 'static'. 
-PASS overflow:inherit on root element should compute to 'visible'. 
-PASS background-color:inherit on root element should compute to 'rgba(0, 0, 0, 0)'. 
+PASS z-index:inherit on root element should compute to 'auto'.
+PASS position:inherit on root element should compute to 'static'.
+PASS overflow:inherit on root element should compute to 'visible'.
+PASS background-color:inherit on root element should compute to 'rgba(0, 0, 0, 0)'.
 

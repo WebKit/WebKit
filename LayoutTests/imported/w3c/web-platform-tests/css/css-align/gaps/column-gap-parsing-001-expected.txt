@@ -1,20 +1,20 @@
 
-PASS Default column-gap is 'normal' 
-PASS column-gap accepts pixels 
-PASS column-gap accepts em 
-PASS column-gap accepts vw 
-PASS column-gap accepts percentage 
-PASS column-gap accepts calc() 
-PASS column-gap accepts calc() mixing fixed and percentage values 
-PASS Initial column-gap is 'normal' 
-PASS Initial column-gap is 'normal' 2 
-PASS Initial inherited column-gap is 'normal' 
-PASS column-gap is inheritable 
-PASS Negative column-gap is invalid 
-PASS 'max-content' column-gap is invalid 
-PASS 'none' column-gap is invalid 
-PASS column-gap with multiple values is invalid 
-PASS Angle column-gap is invalid 
-PASS Resolution column-gap is invalid 
-PASS Time column-gap is invalid 
+PASS Default column-gap is 'normal'
+PASS column-gap accepts pixels
+PASS column-gap accepts em
+PASS column-gap accepts vw
+PASS column-gap accepts percentage
+PASS column-gap accepts calc()
+PASS column-gap accepts calc() mixing fixed and percentage values
+PASS Initial column-gap is 'normal'
+PASS Initial column-gap is 'normal' 2
+PASS Initial inherited column-gap is 'normal'
+PASS column-gap is inheritable
+PASS Negative column-gap is invalid
+PASS 'max-content' column-gap is invalid
+PASS 'none' column-gap is invalid
+PASS column-gap with multiple values is invalid
+PASS Angle column-gap is invalid
+PASS Resolution column-gap is invalid
+PASS Time column-gap is invalid
 

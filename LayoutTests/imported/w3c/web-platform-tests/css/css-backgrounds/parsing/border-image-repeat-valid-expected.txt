@@ -1,5 +1,5 @@
 
-PASS e.style['border-image-repeat'] = "stretch" should set the property value 
-PASS e.style['border-image-repeat'] = "space space" should set the property value 
-PASS e.style['border-image-repeat'] = "repeat round" should set the property value 
+PASS e.style['border-image-repeat'] = "stretch" should set the property value
+PASS e.style['border-image-repeat'] = "space space" should set the property value
+PASS e.style['border-image-repeat'] = "repeat round" should set the property value
 

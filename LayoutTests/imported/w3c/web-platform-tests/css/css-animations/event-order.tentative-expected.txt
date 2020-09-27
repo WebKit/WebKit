@@ -1,6 +1,6 @@
 
-PASS Same events are ordered by elements 
-PASS Same events on pseudo-elements follow the prescribed order 
+PASS Same events are ordered by elements
+PASS Same events on pseudo-elements follow the prescribed order
 FAIL Same events on pseudo-elements follow the prescribed order (::marker) assert_equals: Number of events received (4) should match expected number (5) (expected: animationstart, animationstart, animationstart, animationstart, animationstart, actual: animationstart, animationstart, animationstart, animationstart) expected 5 but got 4
 FAIL Start and iteration events are ordered by time assert_equals: Event #1 types should match (expected: animationiteration, animationstart, actual: animationstart, animationiteration) expected "animationiteration" but got "animationstart"
 FAIL Iteration and end events are ordered by time assert_equals: Event #1 types should match (expected: animationiteration, animationend, actual: animationend, animationiteration) expected "animationiteration" but got "animationend"

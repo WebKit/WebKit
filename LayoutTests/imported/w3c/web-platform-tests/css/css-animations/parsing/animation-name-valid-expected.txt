@@ -1,13 +1,13 @@
 
-PASS e.style['animation-name'] = "NONE" should set the property value 
-PASS e.style['animation-name'] = "foo" should set the property value 
-PASS e.style['animation-name'] = "Both" should set the property value 
-PASS e.style['animation-name'] = "ease-in" should set the property value 
-PASS e.style['animation-name'] = "infinite" should set the property value 
-PASS e.style['animation-name'] = "paused" should set the property value 
-PASS e.style['animation-name'] = "first, second, third" should set the property value 
+PASS e.style['animation-name'] = "NONE" should set the property value
+PASS e.style['animation-name'] = "foo" should set the property value
+PASS e.style['animation-name'] = "Both" should set the property value
+PASS e.style['animation-name'] = "ease-in" should set the property value
+PASS e.style['animation-name'] = "infinite" should set the property value
+PASS e.style['animation-name'] = "paused" should set the property value
+PASS e.style['animation-name'] = "first, second, third" should set the property value
 FAIL e.style['animation-name'] = "\"string\"" should set the property value assert_equals: serialization should be canonical expected "\"string\"" but got "string"
-PASS e.style['animation-name'] = "\"multi word string\"" should set the property value 
+PASS e.style['animation-name'] = "\"multi word string\"" should set the property value
 FAIL e.style['animation-name'] = "\"initial\"" should set the property value assert_equals: serialization should be canonical expected "\"initial\"" but got "initial"
-PASS e.style['animation-name'] = "\"---\\22---\"" should set the property value 
+PASS e.style['animation-name'] = "\"---\\22---\"" should set the property value
 

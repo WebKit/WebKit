@@ -1,5 +1,5 @@
 
-PASS getClientRects-inline-atomic-child 
-PASS getClientRects-inline-atomic-child 1 
-PASS getClientRects-inline-atomic-child 2 
+PASS getClientRects-inline-atomic-child
+PASS getClientRects-inline-atomic-child 1
+PASS getClientRects-inline-atomic-child 2
 

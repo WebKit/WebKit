@@ -1,4 +1,4 @@
 
-PASS e.style['font-variant-position'] = "auto" should not set the property value 
-PASS e.style['font-variant-position'] = "super sub" should not set the property value 
+PASS e.style['font-variant-position'] = "auto" should not set the property value
+PASS e.style['font-variant-position'] = "super sub" should not set the property value
 

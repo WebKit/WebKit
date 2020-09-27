@@ -1,4 +1,4 @@
 
-PASS Property text-overflow value 'clip' 
-PASS Property text-overflow value 'ellipsis' 
+PASS Property text-overflow value 'clip'
+PASS Property text-overflow value 'ellipsis'
 

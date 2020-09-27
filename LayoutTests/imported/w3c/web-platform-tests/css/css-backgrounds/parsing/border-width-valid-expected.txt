@@ -1,8 +1,8 @@
 
-PASS e.style['border-width'] = "1em" should set the property value 
-PASS e.style['border-width'] = "2px thin medium thick" should set the property value 
-PASS e.style['border-top-width'] = "0px" should set the property value 
-PASS e.style['border-right-width'] = "thin" should set the property value 
-PASS e.style['border-bottom-width'] = "medium" should set the property value 
-PASS e.style['border-left-width'] = "thick" should set the property value 
+PASS e.style['border-width'] = "1em" should set the property value
+PASS e.style['border-width'] = "2px thin medium thick" should set the property value
+PASS e.style['border-top-width'] = "0px" should set the property value
+PASS e.style['border-right-width'] = "thin" should set the property value
+PASS e.style['border-bottom-width'] = "medium" should set the property value
+PASS e.style['border-left-width'] = "thick" should set the property value
 

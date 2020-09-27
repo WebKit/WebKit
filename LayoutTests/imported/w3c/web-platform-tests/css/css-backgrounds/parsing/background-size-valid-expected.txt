@@ -1,11 +1,11 @@
 
-PASS e.style['background-size'] = "1px" should set the property value 
-PASS e.style['background-size'] = "1px auto" should set the property value 
-PASS e.style['background-size'] = "2% 3%" should set the property value 
-PASS e.style['background-size'] = "auto" should set the property value 
-PASS e.style['background-size'] = "auto auto" should set the property value 
-PASS e.style['background-size'] = "auto 4%" should set the property value 
-PASS e.style['background-size'] = "contain" should set the property value 
-PASS e.style['background-size'] = "cover" should set the property value 
-PASS e.style['background-size'] = "auto 1px, 2% 3%, contain" should set the property value 
+PASS e.style['background-size'] = "1px" should set the property value
+PASS e.style['background-size'] = "1px auto" should set the property value
+PASS e.style['background-size'] = "2% 3%" should set the property value
+PASS e.style['background-size'] = "auto" should set the property value
+PASS e.style['background-size'] = "auto auto" should set the property value
+PASS e.style['background-size'] = "auto 4%" should set the property value
+PASS e.style['background-size'] = "contain" should set the property value
+PASS e.style['background-size'] = "cover" should set the property value
+PASS e.style['background-size'] = "auto 1px, 2% 3%, contain" should set the property value
 

@@ -1,7 +1,7 @@
 
-PASS e.style['position'] = "static" should set the property value 
-PASS e.style['position'] = "relative" should set the property value 
-PASS e.style['position'] = "absolute" should set the property value 
-PASS e.style['position'] = "sticky" should set the property value 
-PASS e.style['position'] = "fixed" should set the property value 
+PASS e.style['position'] = "static" should set the property value
+PASS e.style['position'] = "relative" should set the property value
+PASS e.style['position'] = "absolute" should set the property value
+PASS e.style['position'] = "sticky" should set the property value
+PASS e.style['position'] = "fixed" should set the property value
 

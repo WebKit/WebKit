@@ -1,5 +1,5 @@
 
-PASS e.style['text-orientation'] = "mixed" should set the property value 
-PASS e.style['text-orientation'] = "upright" should set the property value 
-PASS e.style['text-orientation'] = "sideways" should set the property value 
+PASS e.style['text-orientation'] = "mixed" should set the property value
+PASS e.style['text-orientation'] = "upright" should set the property value
+PASS e.style['text-orientation'] = "sideways" should set the property value
 

@@ -1,9 +1,9 @@
 
-PASS Interpolated value is observable 
+PASS Interpolated value is observable
 FAIL Important rules override animations assert_equals: expected "rgb(0, 128, 0)" but got "rgb(15, 15, 15)"
 FAIL Non-overriden interpolations are observable assert_equals: expected "rgb(0, 128, 0)" but got "rgb(15, 15, 15)"
 FAIL Important rules override animations (::before) assert_equals: expected "rgb(0, 128, 0)" but got "rgb(15, 15, 15)"
-PASS Important rules do not override animations on :visited as seen from JS 
+PASS Important rules do not override animations on :visited as seen from JS
 FAIL Standard property animations appearing via setKeyframes do not override important declarations assert_equals: expected "rgb(255, 255, 255)" but got "rgb(15, 15, 15)"
 FAIL Custom property animations appearing via setKeyframes do not override important declarations assert_equals: expected "150px" but got "10px"
 

@@ -1,13 +1,13 @@
 
-PASS Property border-width value '1px' 
-PASS Property border-width value '1px 2px' 
-PASS Property border-width value '1px 2px 3px' 
-PASS Property border-width value '1px 2px 3px 4px' 
-PASS Property border-width value '0.5em' 
-PASS Property border-width value '2px thin medium thick' 
-PASS Property border-top-width value '0px' 
-PASS Property border-right-width value '10px' 
-PASS Property border-bottom-width value 'calc(-0.5em + 10px)' 
-PASS Property border-left-width value 'calc(0.5em + 10px)' 
-PASS thin ≤ medium ≤ thick 
+PASS Property border-width value '1px'
+PASS Property border-width value '1px 2px'
+PASS Property border-width value '1px 2px 3px'
+PASS Property border-width value '1px 2px 3px 4px'
+PASS Property border-width value '0.5em'
+PASS Property border-width value '2px thin medium thick'
+PASS Property border-top-width value '0px'
+PASS Property border-right-width value '10px'
+PASS Property border-bottom-width value 'calc(-0.5em + 10px)'
+PASS Property border-left-width value 'calc(0.5em + 10px)'
+PASS thin ≤ medium ≤ thick
 

@@ -1,10 +1,10 @@
 
-PASS -20px - inline - invalid 
-PASS -.4567px - inline - invalid 
-PASS nonLength - inline - invalid 
-PASS 10 - inline - invalid 
-PASS -20px - computed - invalid 
-PASS -.4567px - computed - invalid 
-PASS nonLength - computed - invalid 
-PASS 10 - computed - invalid 
+PASS -20px - inline - invalid
+PASS -.4567px - inline - invalid
+PASS nonLength - inline - invalid
+PASS 10 - inline - invalid
+PASS -20px - computed - invalid
+PASS -.4567px - computed - invalid
+PASS nonLength - computed - invalid
+PASS 10 - computed - invalid
 

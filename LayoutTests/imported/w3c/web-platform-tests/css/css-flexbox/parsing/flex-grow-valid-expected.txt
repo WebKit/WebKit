@@ -1,6 +1,6 @@
 
-PASS e.style['flex-grow'] = "1" should set the property value 
-PASS e.style['flex-grow'] = "23.4e5" should set the property value 
-PASS e.style['flex-grow'] = "+.678E9" should set the property value 
-PASS e.style['flex-grow'] = ".0" should set the property value 
+PASS e.style['flex-grow'] = "1" should set the property value
+PASS e.style['flex-grow'] = "23.4e5" should set the property value
+PASS e.style['flex-grow'] = "+.678E9" should set the property value
+PASS e.style['flex-grow'] = ".0" should set the property value
 

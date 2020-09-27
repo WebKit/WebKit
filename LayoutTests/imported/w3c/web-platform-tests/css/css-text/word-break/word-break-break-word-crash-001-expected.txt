@@ -5,5 +5,5 @@
 123456654321
 123456 654321
 
-PASS Test float + nbsp + break-word does not freeze 
+PASS Test float + nbsp + break-word does not freeze
 

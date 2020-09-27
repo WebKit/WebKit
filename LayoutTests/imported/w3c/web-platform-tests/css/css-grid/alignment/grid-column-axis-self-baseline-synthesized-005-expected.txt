@@ -5,6 +5,6 @@ verticalRL grid and parallel items
 É É ÉÉ
 É
 
-PASS .grid 1 
-PASS .grid 2 
+PASS .grid 1
+PASS .grid 2
 

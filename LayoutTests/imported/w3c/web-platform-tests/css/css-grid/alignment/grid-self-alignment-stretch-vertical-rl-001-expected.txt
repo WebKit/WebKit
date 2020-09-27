@@ -9,5 +9,5 @@ X XXX
 X
 XX XXX
 
-PASS .grid 1 
+PASS .grid 1
 

@@ -1,6 +1,6 @@
 
-PASS mediatest_medialist_serialize_element 
-PASS mediatest_medialist_serialize_comma 
-PASS mediatest_medialist_serialize_empty 
-PASS mediatest_medialist_serialize_order 
+PASS mediatest_medialist_serialize_element
+PASS mediatest_medialist_serialize_comma
+PASS mediatest_medialist_serialize_empty
+PASS mediatest_medialist_serialize_order
 

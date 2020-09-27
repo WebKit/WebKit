@@ -1,20 +1,20 @@
 
-PASS Default row-gap is 'normal' 
-PASS row-gap accepts pixels 
-PASS row-gap accepts em 
-PASS row-gap accepts vw 
-PASS row-gap accepts percentage 
-PASS row-gap accepts calc() 
-PASS row-gap accepts calc() mixing fixed and percentage values 
-PASS Initial row-gap is 'normal' 
-PASS Initial row-gap is 'normal' 2 
-PASS Initial inherited row-gap is 'normal' 
-PASS row-gap is inheritable 
-PASS Negative row-gap is invalid 
-PASS 'max-content' row-gap is invalid 
-PASS 'none' row-gap is invalid 
-PASS row-gap with multiple values is invalid 
-PASS Angle row-gap is invalid 
-PASS Resolution row-gap is invalid 
-PASS Time row-gap is invalid 
+PASS Default row-gap is 'normal'
+PASS row-gap accepts pixels
+PASS row-gap accepts em
+PASS row-gap accepts vw
+PASS row-gap accepts percentage
+PASS row-gap accepts calc()
+PASS row-gap accepts calc() mixing fixed and percentage values
+PASS Initial row-gap is 'normal'
+PASS Initial row-gap is 'normal' 2
+PASS Initial inherited row-gap is 'normal'
+PASS row-gap is inheritable
+PASS Negative row-gap is invalid
+PASS 'max-content' row-gap is invalid
+PASS 'none' row-gap is invalid
+PASS row-gap with multiple values is invalid
+PASS Angle row-gap is invalid
+PASS Resolution row-gap is invalid
+PASS Time row-gap is invalid
 

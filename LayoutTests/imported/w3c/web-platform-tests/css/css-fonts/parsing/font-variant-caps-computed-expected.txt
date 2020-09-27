@@ -1,9 +1,9 @@
 
-PASS Property font-variant-caps value 'normal' 
-PASS Property font-variant-caps value 'small-caps' 
-PASS Property font-variant-caps value 'all-small-caps' 
-PASS Property font-variant-caps value 'petite-caps' 
-PASS Property font-variant-caps value 'all-petite-caps' 
-PASS Property font-variant-caps value 'unicase' 
-PASS Property font-variant-caps value 'titling-caps' 
+PASS Property font-variant-caps value 'normal'
+PASS Property font-variant-caps value 'small-caps'
+PASS Property font-variant-caps value 'all-small-caps'
+PASS Property font-variant-caps value 'petite-caps'
+PASS Property font-variant-caps value 'all-petite-caps'
+PASS Property font-variant-caps value 'unicase'
+PASS Property font-variant-caps value 'titling-caps'
 

@@ -1,12 +1,12 @@
 
-PASS e.style['min-block-size'] = "none" should not set the property value 
-PASS e.style['min-block-size'] = "min-content available" should not set the property value 
-PASS e.style['min-block-size'] = "max-content 10px" should not set the property value 
-PASS e.style['min-block-size'] = "20% available" should not set the property value 
-PASS e.style['min-block-size'] = "-10px" should not set the property value 
-PASS e.style['min-block-size'] = "-20%" should not set the property value 
-PASS e.style['min-block-size'] = "60" should not set the property value 
-PASS e.style['min-block-size'] = "10px 20%" should not set the property value 
-PASS e.style['min-block-size'] = "10px border-box" should not set the property value 
-PASS e.style['min-block-size'] = "content-box 20%" should not set the property value 
+PASS e.style['min-block-size'] = "none" should not set the property value
+PASS e.style['min-block-size'] = "min-content available" should not set the property value
+PASS e.style['min-block-size'] = "max-content 10px" should not set the property value
+PASS e.style['min-block-size'] = "20% available" should not set the property value
+PASS e.style['min-block-size'] = "-10px" should not set the property value
+PASS e.style['min-block-size'] = "-20%" should not set the property value
+PASS e.style['min-block-size'] = "60" should not set the property value
+PASS e.style['min-block-size'] = "10px 20%" should not set the property value
+PASS e.style['min-block-size'] = "10px border-box" should not set the property value
+PASS e.style['min-block-size'] = "content-box 20%" should not set the property value
 

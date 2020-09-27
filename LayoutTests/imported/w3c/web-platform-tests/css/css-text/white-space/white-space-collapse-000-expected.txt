@@ -1,8 +1,8 @@
 
-PASS spaces removed 
-PASS spaces removed between Wide characters 
-PASS spaces removed between Fullwidth characters 
-PASS spaces removed between Halfwidth characters 
+PASS spaces removed
+PASS spaces removed between Wide characters
+PASS spaces removed between Fullwidth characters
+PASS spaces removed between Halfwidth characters
 hello there
 hello there
 缔造真正全球通行 的万维网

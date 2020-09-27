@@ -2,5 +2,5 @@ The test passes if the short green horizontal bars are the right of the circle, 
 
 XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXXXXXXXXXXX
 
-PASS CSS Test: Shape from image - shape-image-threshold - 0.9 
+PASS CSS Test: Shape from image - shape-image-threshold - 0.9
 

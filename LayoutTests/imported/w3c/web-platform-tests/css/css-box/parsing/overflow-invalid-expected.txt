@@ -1,8 +1,8 @@
 
-PASS e.style['overflow'] = "none" should not set the property value 
-PASS e.style['overflow'] = "visible hidden scroll" should not set the property value 
-PASS e.style['overflow'] = "no-display, no-content" should not set the property value 
-PASS e.style['overflow-x'] = "none" should not set the property value 
-PASS e.style['overflow-y'] = "visible hidden" should not set the property value 
-PASS e.style['overflow-y'] = "no-display, no-content" should not set the property value 
+PASS e.style['overflow'] = "none" should not set the property value
+PASS e.style['overflow'] = "visible hidden scroll" should not set the property value
+PASS e.style['overflow'] = "no-display, no-content" should not set the property value
+PASS e.style['overflow-x'] = "none" should not set the property value
+PASS e.style['overflow-y'] = "visible hidden" should not set the property value
+PASS e.style['overflow-y'] = "no-display, no-content" should not set the property value
 

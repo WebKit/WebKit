@@ -1,7 +1,7 @@
 
 FAIL Keyframes set using setKeyframes() are reflected in computed style for a running transition assert_equals: expected "200px" but got "0px"
-PASS A transition with replaced keyframes still returns the original transitionProperty 
-PASS A transition with no keyframes still returns the original transitionProperty 
+PASS A transition with replaced keyframes still returns the original transitionProperty
+PASS A transition with no keyframes still returns the original transitionProperty
 FAIL A transition with replaced keyframes animating the same property still exhibits normal reversing behavior. assert_approx_equals: The reversed transition has correctly reduced duration expected 50000 +/- 1 but got 100000
 FAIL A transition with replaced keyframes animating a different property still exhibits normal reversing behavior  (reversing from the base value). undefined is not an object (evaluating 'reversedTransition.effect')
 FAIL A transition with replaced keyframes animating nothing still exhibits normal reversing behavior (reversing from the base value). undefined is not an object (evaluating 'reversedTransition.effect')

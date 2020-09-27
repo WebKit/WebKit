@@ -18,32 +18,32 @@ FAIL Animation of font-weight in ::marker assert_equals: expected "500" but got 
 FAIL Animation of white-space in ::marker assert_equals: expected "nowrap" but got "normal"
 FAIL Animation of color in ::marker assert_equals: expected "rgb(50, 150, 100)" but got "rgb(0, 0, 0)"
 FAIL Animation of text-combine-upright in ::marker assert_true: text-combine-upright doesn't seem to be supported in the computed style expected true got false
-PASS Animation of unicode-bidi in ::marker 
-PASS Animation of direction in ::marker 
+PASS Animation of unicode-bidi in ::marker
+PASS Animation of direction in ::marker
 FAIL Animation of content in ::marker assert_equals: expected "\"bar\"" but got ""
-PASS Animation of display in ::marker 
-PASS Animation of position in ::marker 
-PASS Animation of float in ::marker 
+PASS Animation of display in ::marker
+PASS Animation of position in ::marker
+PASS Animation of float in ::marker
 FAIL Animation of list-style in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
-PASS Animation of list-style-image in ::marker 
-PASS Animation of list-style-position in ::marker 
-PASS Animation of list-style-type in ::marker 
-PASS Animation of line-height in ::marker 
+PASS Animation of list-style-image in ::marker
+PASS Animation of list-style-position in ::marker
+PASS Animation of list-style-type in ::marker
+PASS Animation of line-height in ::marker
 FAIL Transition of font in ::marker assert_in_array: value "italic small-caps 900 ultra-expanded 25px/normal Ahem" not in array ["italic small-caps 500 expanded 15px Ahem", "italic small-caps 500 expanded 15px/normal Ahem"]
-PASS Transition of font-family in ::marker 
-PASS Transition of font-feature-settings in ::marker 
+PASS Transition of font-family in ::marker
+PASS Transition of font-feature-settings in ::marker
 FAIL Transition of font-kerning in ::marker assert_equals: expected "none" but got "auto"
 FAIL Transition of font-size in ::marker assert_equals: expected "15px" but got "25px"
 FAIL Transition of font-size-adjust in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
 FAIL Transition of font-stretch in ::marker assert_in_array: value "ultra-expanded" not in array ["expanded", "125%"]
-PASS Transition of font-style in ::marker 
-PASS Transition of font-synthesis in ::marker 
-PASS Transition of font-variant in ::marker 
-PASS Transition of font-variant-caps in ::marker 
-PASS Transition of font-variant-east-asian in ::marker 
-PASS Transition of font-variant-ligatures in ::marker 
-PASS Transition of font-variant-numeric in ::marker 
-PASS Transition of font-variant-position in ::marker 
+PASS Transition of font-style in ::marker
+PASS Transition of font-synthesis in ::marker
+PASS Transition of font-variant in ::marker
+PASS Transition of font-variant-caps in ::marker
+PASS Transition of font-variant-east-asian in ::marker
+PASS Transition of font-variant-ligatures in ::marker
+PASS Transition of font-variant-numeric in ::marker
+PASS Transition of font-variant-position in ::marker
 FAIL Transition of font-weight in ::marker assert_equals: expected "500" but got "900"
 FAIL Transition of white-space in ::marker assert_equals: expected "nowrap" but got "normal"
 FAIL Transition of color in ::marker assert_equals: expected "rgb(50, 150, 100)" but got "rgb(100, 200, 0)"
@@ -51,12 +51,12 @@ FAIL Transition of text-combine-upright in ::marker assert_true: text-combine-up
 FAIL Transition of unicode-bidi in ::marker assert_equals: expected "plaintext" but got "normal"
 FAIL Transition of direction in ::marker assert_equals: expected "rtl" but got "ltr"
 FAIL Transition of content in ::marker assert_equals: expected "\"bar\"" but got ""
-PASS Transition of display in ::marker 
-PASS Transition of position in ::marker 
-PASS Transition of float in ::marker 
+PASS Transition of display in ::marker
+PASS Transition of position in ::marker
+PASS Transition of float in ::marker
 FAIL Transition of list-style in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
-PASS Transition of list-style-image in ::marker 
-PASS Transition of list-style-position in ::marker 
-PASS Transition of list-style-type in ::marker 
-PASS Transition of line-height in ::marker 
+PASS Transition of list-style-image in ::marker
+PASS Transition of list-style-position in ::marker
+PASS Transition of list-style-type in ::marker
+PASS Transition of line-height in ::marker
 target

@@ -1,8 +1,8 @@
 
-PASS e.style['inline-size'] = "auto" should set the property value 
-PASS e.style['inline-size'] = "10px" should set the property value 
-PASS e.style['inline-size'] = "20%" should set the property value 
-PASS e.style['inline-size'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['inline-size'] = "min-content" should set the property value 
-PASS e.style['inline-size'] = "max-content" should set the property value 
+PASS e.style['inline-size'] = "auto" should set the property value
+PASS e.style['inline-size'] = "10px" should set the property value
+PASS e.style['inline-size'] = "20%" should set the property value
+PASS e.style['inline-size'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['inline-size'] = "min-content" should set the property value
+PASS e.style['inline-size'] = "max-content" should set the property value
 

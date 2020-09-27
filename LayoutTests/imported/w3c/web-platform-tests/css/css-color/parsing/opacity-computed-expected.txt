@@ -1,10 +1,10 @@
 
-PASS Property opacity value '1' 
-PASS Property opacity value '0.5' 
-PASS Property opacity value '0' 
-PASS Property opacity value '-2' 
-PASS Property opacity value '3' 
-PASS Property opacity value '-100%' 
-PASS Property opacity value '50%' 
-PASS Property opacity value '300%' 
+PASS Property opacity value '1'
+PASS Property opacity value '0.5'
+PASS Property opacity value '0'
+PASS Property opacity value '-2'
+PASS Property opacity value '3'
+PASS Property opacity value '-100%'
+PASS Property opacity value '50%'
+PASS Property opacity value '300%'
 

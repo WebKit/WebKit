@@ -10,5 +10,5 @@ Some spaces... '         ' ... for size reference.
 A space... ' ' ... for size reference.
 'leading text', for size reference.
 
-PASS Test tab-size measurements 
+PASS Test tab-size measurements
 

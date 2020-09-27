@@ -1,6 +1,6 @@
 
-PASS e.style['white-space'] = "auto" should not set the property value 
-PASS e.style['white-space'] = "normal pre" should not set the property value 
-PASS e.style['white-space'] = "nowrap pre-wrap" should not set the property value 
-PASS e.style['white-space'] = "pre-line break-spaces" should not set the property value 
+PASS e.style['white-space'] = "auto" should not set the property value
+PASS e.style['white-space'] = "normal pre" should not set the property value
+PASS e.style['white-space'] = "nowrap pre-wrap" should not set the property value
+PASS e.style['white-space'] = "pre-line break-spaces" should not set the property value
 

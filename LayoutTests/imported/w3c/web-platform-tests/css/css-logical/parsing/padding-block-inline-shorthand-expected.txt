@@ -1,14 +1,14 @@
 
-PASS e.style['padding-block'] = "0% 10px" should set padding-block-end 
-PASS e.style['padding-block'] = "0% 10px" should set padding-block-start 
-PASS e.style['padding-block'] = "0% 10px" should not set unrelated longhands 
-PASS e.style['padding-block'] = "20%" should set padding-block-end 
-PASS e.style['padding-block'] = "20%" should set padding-block-start 
-PASS e.style['padding-block'] = "20%" should not set unrelated longhands 
-PASS e.style['padding-inline'] = "10px 30%" should set padding-inline-end 
-PASS e.style['padding-inline'] = "10px 30%" should set padding-inline-start 
-PASS e.style['padding-inline'] = "10px 30%" should not set unrelated longhands 
-PASS e.style['padding-inline'] = "0%" should set padding-inline-end 
-PASS e.style['padding-inline'] = "0%" should set padding-inline-start 
-PASS e.style['padding-inline'] = "0%" should not set unrelated longhands 
+PASS e.style['padding-block'] = "0% 10px" should set padding-block-end
+PASS e.style['padding-block'] = "0% 10px" should set padding-block-start
+PASS e.style['padding-block'] = "0% 10px" should not set unrelated longhands
+PASS e.style['padding-block'] = "20%" should set padding-block-end
+PASS e.style['padding-block'] = "20%" should set padding-block-start
+PASS e.style['padding-block'] = "20%" should not set unrelated longhands
+PASS e.style['padding-inline'] = "10px 30%" should set padding-inline-end
+PASS e.style['padding-inline'] = "10px 30%" should set padding-inline-start
+PASS e.style['padding-inline'] = "10px 30%" should not set unrelated longhands
+PASS e.style['padding-inline'] = "0%" should set padding-inline-end
+PASS e.style['padding-inline'] = "0%" should set padding-inline-start
+PASS e.style['padding-inline'] = "0%" should not set unrelated longhands
 

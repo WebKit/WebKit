@@ -1,9 +1,9 @@
 
-PASS Sanity 
-PASS Basic division works 
-PASS Rounds up if fractional part is >= 0.5 
-PASS Accepts numbers, and rounds 
-PASS Operation between <integer> and <number> works 
-PASS Rounds down if fractional part is < 0.5 
-PASS Only rounds at the end of the conversion 
+PASS Sanity
+PASS Basic division works
+PASS Rounds up if fractional part is >= 0.5
+PASS Accepts numbers, and rounds
+PASS Operation between <integer> and <number> works
+PASS Rounds down if fractional part is < 0.5
+PASS Only rounds at the end of the conversion
 

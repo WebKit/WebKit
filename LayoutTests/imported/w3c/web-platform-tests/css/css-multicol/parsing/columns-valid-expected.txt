@@ -1,3 +1,3 @@
 
-PASS e.style['columns'] = "2 10px" should set the property value 
+PASS e.style['columns'] = "2 10px" should set the property value
 

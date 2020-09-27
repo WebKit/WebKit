@@ -1,6 +1,6 @@
 
-PASS e.style['background-clip'] = "fill-box" should not set the property value 
-PASS e.style['background-clip'] = "margin-box" should not set the property value 
-PASS e.style['background-clip'] = "stroke-box" should not set the property value 
-PASS e.style['background-clip'] = "view-box" should not set the property value 
+PASS e.style['background-clip'] = "fill-box" should not set the property value
+PASS e.style['background-clip'] = "margin-box" should not set the property value
+PASS e.style['background-clip'] = "stroke-box" should not set the property value
+PASS e.style['background-clip'] = "view-box" should not set the property value
 

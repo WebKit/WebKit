@@ -1,7 +1,7 @@
 
-PASS e.style['-webkit-line-clamp'] = "auto" should not set the property value 
-PASS e.style['-webkit-line-clamp'] = "0" should not set the property value 
-PASS e.style['-webkit-line-clamp'] = "-5" should not set the property value 
-PASS e.style['-webkit-line-clamp'] = "none \"~\"" should not set the property value 
-PASS e.style['-webkit-line-clamp'] = "1 \"~\"" should not set the property value 
+PASS e.style['-webkit-line-clamp'] = "auto" should not set the property value
+PASS e.style['-webkit-line-clamp'] = "0" should not set the property value
+PASS e.style['-webkit-line-clamp'] = "-5" should not set the property value
+PASS e.style['-webkit-line-clamp'] = "none \"~\"" should not set the property value
+PASS e.style['-webkit-line-clamp'] = "1 \"~\"" should not set the property value
 

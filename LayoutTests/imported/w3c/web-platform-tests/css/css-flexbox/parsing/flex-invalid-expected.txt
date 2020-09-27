@@ -1,6 +1,6 @@
 
-PASS e.style['flex'] = "none 1" should not set the property value 
-PASS e.style['flex'] = "2 3 4" should not set the property value 
-PASS e.style['flex'] = "5px 7%" should not set the property value 
-PASS e.style['flex'] = "9 none" should not set the property value 
+PASS e.style['flex'] = "none 1" should not set the property value
+PASS e.style['flex'] = "2 3 4" should not set the property value
+PASS e.style['flex'] = "5px 7%" should not set the property value
+PASS e.style['flex'] = "9 none" should not set the property value
 

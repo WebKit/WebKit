@@ -1,5 +1,5 @@
 Test passes if there is a filled green square, and no scrollbars
 
 
-PASS Sticky position and its overflow contribution 
+PASS Sticky position and its overflow contribution
 

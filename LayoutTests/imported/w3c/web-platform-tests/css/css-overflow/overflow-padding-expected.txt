@@ -2,16 +2,16 @@ green blocks get scrollbars, yellow do not.
 
 Block child gets only block padding.
 
- 
+
 Inline child gets block and inline padding.
 
 X  XX
 XX  X
 Inline block child gets block and inline padding.
 
- 
+
 Padding applies to linebox, not linebox overflow.
 
 
-PASS Container padding is applied approriately to block/inline children. 
+PASS Container padding is applied approriately to block/inline children.
 

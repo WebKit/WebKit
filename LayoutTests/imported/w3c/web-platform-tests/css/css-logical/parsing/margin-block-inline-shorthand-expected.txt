@@ -1,14 +1,14 @@
 
-PASS e.style['margin-block'] = "10px" should set margin-block-end 
-PASS e.style['margin-block'] = "10px" should set margin-block-start 
-PASS e.style['margin-block'] = "10px" should not set unrelated longhands 
-PASS e.style['margin-block'] = "20% auto" should set margin-block-end 
-PASS e.style['margin-block'] = "20% auto" should set margin-block-start 
-PASS e.style['margin-block'] = "20% auto" should not set unrelated longhands 
-PASS e.style['margin-inline'] = "30%" should set margin-inline-end 
-PASS e.style['margin-inline'] = "30%" should set margin-inline-start 
-PASS e.style['margin-inline'] = "30%" should not set unrelated longhands 
-PASS e.style['margin-inline'] = "auto 40px" should set margin-inline-end 
-PASS e.style['margin-inline'] = "auto 40px" should set margin-inline-start 
-PASS e.style['margin-inline'] = "auto 40px" should not set unrelated longhands 
+PASS e.style['margin-block'] = "10px" should set margin-block-end
+PASS e.style['margin-block'] = "10px" should set margin-block-start
+PASS e.style['margin-block'] = "10px" should not set unrelated longhands
+PASS e.style['margin-block'] = "20% auto" should set margin-block-end
+PASS e.style['margin-block'] = "20% auto" should set margin-block-start
+PASS e.style['margin-block'] = "20% auto" should not set unrelated longhands
+PASS e.style['margin-inline'] = "30%" should set margin-inline-end
+PASS e.style['margin-inline'] = "30%" should set margin-inline-start
+PASS e.style['margin-inline'] = "30%" should not set unrelated longhands
+PASS e.style['margin-inline'] = "auto 40px" should set margin-inline-end
+PASS e.style['margin-inline'] = "auto 40px" should set margin-inline-start
+PASS e.style['margin-inline'] = "auto 40px" should not set unrelated longhands
 

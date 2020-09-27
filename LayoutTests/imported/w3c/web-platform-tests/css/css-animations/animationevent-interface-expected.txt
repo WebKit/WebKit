@@ -1,43 +1,43 @@
 
-PASS the event is an instance of AnimationEvent 
-PASS the event inherts from Event 
-PASS Missing type argument 
-PASS type argument is string 
-PASS type argument is null 
-PASS event type set to undefined 
-PASS animationName has default value of empty string 
-PASS elapsedTime has default value of 0.0 
-PASS animationName is readonly 
-PASS elapsedTime is readonly 
-PASS animationEventInit argument is null 
-PASS animationEventInit argument is undefined 
-PASS animationEventInit argument is empty dictionary 
-PASS AnimationEvent.pseudoElement initialized from the dictionary 
-PASS animationName set to 'sample' 
-PASS animationName set to undefined 
-PASS animationName set to null 
-PASS animationName set to false 
-PASS animationName set to true 
-PASS animationName set to a number 
-PASS animationName set to [] 
-PASS animationName set to [1, 2, 3] 
-PASS animationName set to an object 
-PASS animationName set to an object with a valueOf function 
-PASS elapsedTime set to 0.5 
-PASS elapsedTime set to -0.5 
-PASS elapsedTime set to undefined 
-PASS elapsedTime set to null 
-PASS elapsedTime set to false 
-PASS elapsedTime set to true 
-PASS elapsedTime set to '' 
-PASS elapsedTime set to [] 
-PASS elapsedTime set to [0.5] 
-PASS elapsedTime set to an object with a valueOf function 
-PASS elapsedTime cannot be set to NaN 
-PASS elapsedTime cannot be set to Infinity 
-PASS elapsedTime cannot be set to -Infinity 
-PASS elapsedTime cannot be set to 'sample' 
-PASS elapsedTime cannot be set to [0.5, 1.0] 
-PASS elapsedTime cannot be set to an object 
-PASS AnimationEventInit properties set value 
+PASS the event is an instance of AnimationEvent
+PASS the event inherts from Event
+PASS Missing type argument
+PASS type argument is string
+PASS type argument is null
+PASS event type set to undefined
+PASS animationName has default value of empty string
+PASS elapsedTime has default value of 0.0
+PASS animationName is readonly
+PASS elapsedTime is readonly
+PASS animationEventInit argument is null
+PASS animationEventInit argument is undefined
+PASS animationEventInit argument is empty dictionary
+PASS AnimationEvent.pseudoElement initialized from the dictionary
+PASS animationName set to 'sample'
+PASS animationName set to undefined
+PASS animationName set to null
+PASS animationName set to false
+PASS animationName set to true
+PASS animationName set to a number
+PASS animationName set to []
+PASS animationName set to [1, 2, 3]
+PASS animationName set to an object
+PASS animationName set to an object with a valueOf function
+PASS elapsedTime set to 0.5
+PASS elapsedTime set to -0.5
+PASS elapsedTime set to undefined
+PASS elapsedTime set to null
+PASS elapsedTime set to false
+PASS elapsedTime set to true
+PASS elapsedTime set to ''
+PASS elapsedTime set to []
+PASS elapsedTime set to [0.5]
+PASS elapsedTime set to an object with a valueOf function
+PASS elapsedTime cannot be set to NaN
+PASS elapsedTime cannot be set to Infinity
+PASS elapsedTime cannot be set to -Infinity
+PASS elapsedTime cannot be set to 'sample'
+PASS elapsedTime cannot be set to [0.5, 1.0]
+PASS elapsedTime cannot be set to an object
+PASS AnimationEventInit properties set value
 

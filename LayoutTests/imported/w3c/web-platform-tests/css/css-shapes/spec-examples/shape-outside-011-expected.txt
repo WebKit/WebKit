@@ -2,5 +2,5 @@ The test passes if the green horizontal bars are to the right of the circle, and
 
 XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX
 
-PASS CSS Test: Shape from image - url(), alpha channel, opacity > 0 
+PASS CSS Test: Shape from image - url(), alpha channel, opacity > 0
 

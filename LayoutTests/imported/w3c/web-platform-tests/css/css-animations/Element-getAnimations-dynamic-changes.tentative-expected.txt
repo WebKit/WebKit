@@ -1,7 +1,7 @@
 
-PASS Animations preserve their startTime when changed 
-PASS Updated Animations maintain their order in the list 
-PASS Only the startTimes of existing animations are preserved 
+PASS Animations preserve their startTime when changed
+PASS Updated Animations maintain their order in the list
+PASS Only the startTimes of existing animations are preserved
 FAIL Animations are removed from the start of the list while preserving the state of existing Animations assert_equals: List of Animations was trimmed expected 1 but got 2
 FAIL Animation state is preserved when interleaving animations in list assert_equals: Second Animation remains in same position after interleaving expected object "[object CSSAnimation]" but got object "[object CSSAnimation]"
 

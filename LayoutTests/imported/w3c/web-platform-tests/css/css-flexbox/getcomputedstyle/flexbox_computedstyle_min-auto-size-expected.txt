@@ -1,6 +1,6 @@
 
-PASS Computed min-width/min-height of specified auto for flex item. 
-PASS Computed min-width/min-height of specified auto inside display:none which would otherwise have been a flex item. 
-PASS Computed min-width/min-height of specified auto for flex item inside display:contents. 
-PASS Computed min-width/min-height of specified auto with display:none which would otherwise have been a flex item. 
+PASS Computed min-width/min-height of specified auto for flex item.
+PASS Computed min-width/min-height of specified auto inside display:none which would otherwise have been a flex item.
+PASS Computed min-width/min-height of specified auto for flex item inside display:contents.
+PASS Computed min-width/min-height of specified auto with display:none which would otherwise have been a flex item.
 

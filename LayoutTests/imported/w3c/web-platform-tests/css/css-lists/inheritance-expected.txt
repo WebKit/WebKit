@@ -1,12 +1,12 @@
 
-PASS Property counter-increment has initial value none 
-PASS Property counter-increment does not inherit 
-PASS Property counter-reset has initial value none 
-PASS Property counter-reset does not inherit 
-PASS Property list-style-image has initial value none 
-PASS Property list-style-image inherits 
-PASS Property list-style-position has initial value outside 
-PASS Property list-style-position inherits 
-PASS Property list-style-type has initial value disc 
-PASS Property list-style-type inherits 
+PASS Property counter-increment has initial value none
+PASS Property counter-increment does not inherit
+PASS Property counter-reset has initial value none
+PASS Property counter-reset does not inherit
+PASS Property list-style-image has initial value none
+PASS Property list-style-image inherits
+PASS Property list-style-position has initial value outside
+PASS Property list-style-position inherits
+PASS Property list-style-type has initial value disc
+PASS Property list-style-type inherits
 

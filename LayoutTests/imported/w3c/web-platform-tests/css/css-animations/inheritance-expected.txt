@@ -1,18 +1,18 @@
 
-PASS Property animation-delay has initial value 0s 
-PASS Property animation-delay does not inherit 
-PASS Property animation-direction has initial value normal 
-PASS Property animation-direction does not inherit 
-PASS Property animation-duration has initial value 0s 
-PASS Property animation-duration does not inherit 
-PASS Property animation-fill-mode has initial value none 
-PASS Property animation-fill-mode does not inherit 
-PASS Property animation-iteration-count has initial value 1 
-PASS Property animation-iteration-count does not inherit 
-PASS Property animation-name has initial value none 
-PASS Property animation-name does not inherit 
-PASS Property animation-play-state has initial value running 
-PASS Property animation-play-state does not inherit 
-PASS Property animation-timing-function has initial value ease 
-PASS Property animation-timing-function does not inherit 
+PASS Property animation-delay has initial value 0s
+PASS Property animation-delay does not inherit
+PASS Property animation-direction has initial value normal
+PASS Property animation-direction does not inherit
+PASS Property animation-duration has initial value 0s
+PASS Property animation-duration does not inherit
+PASS Property animation-fill-mode has initial value none
+PASS Property animation-fill-mode does not inherit
+PASS Property animation-iteration-count has initial value 1
+PASS Property animation-iteration-count does not inherit
+PASS Property animation-name has initial value none
+PASS Property animation-name does not inherit
+PASS Property animation-play-state has initial value running
+PASS Property animation-play-state does not inherit
+PASS Property animation-timing-function has initial value ease
+PASS Property animation-timing-function does not inherit
 

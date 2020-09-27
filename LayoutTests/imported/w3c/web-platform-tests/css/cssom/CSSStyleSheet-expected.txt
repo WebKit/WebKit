@@ -1,19 +1,19 @@
 
-PASS preconditions 
-PASS insertRule with #bar selector 
-PASS insertRule with no argument throws 
-PASS insertRule with index greater than length throws 
-PASS deleteRule(1) 
-PASS deleteRule with no argument throws 
-PASS deleteRule on empty style sheet throws 
-PASS removeRule with no argument removes first rule 
-PASS removeRule on empty style sheet throws 
-PASS addRule with @media rule 
-PASS removeRule(1) 
-PASS addRule with #foo selectors 
-PASS addRule with no argument adds "undefined" selector 
-PASS addRule with index greater than length throws 
+PASS preconditions
+PASS insertRule with #bar selector
+PASS insertRule with no argument throws
+PASS insertRule with index greater than length throws
+PASS deleteRule(1)
+PASS deleteRule with no argument throws
+PASS deleteRule on empty style sheet throws
+PASS removeRule with no argument removes first rule
+PASS removeRule on empty style sheet throws
+PASS addRule with @media rule
+PASS removeRule(1)
+PASS addRule with #foo selectors
+PASS addRule with no argument adds "undefined" selector
+PASS addRule with index greater than length throws
 FAIL cssRules and rules are the same object assert_equals: expected object "[object CSSRuleList]" but got object "[object CSSRuleList]"
-PASS cssRules returns the same object twice 
+PASS cssRules returns the same object twice
 FAIL rules returns the same object twice assert_equals: expected object "[object CSSRuleList]" but got object "[object CSSRuleList]"
 

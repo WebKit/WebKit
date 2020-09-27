@@ -1,7 +1,7 @@
 
-PASS e.style['list-style'] = "none" should set the property value 
-PASS e.style['list-style'] = "inside" should set the property value 
-PASS e.style['list-style'] = "url(\"https://example.com/\")" should set the property value 
-PASS e.style['list-style'] = "square" should set the property value 
+PASS e.style['list-style'] = "none" should set the property value
+PASS e.style['list-style'] = "inside" should set the property value
+PASS e.style['list-style'] = "url(\"https://example.com/\")" should set the property value
+PASS e.style['list-style'] = "square" should set the property value
 FAIL e.style['list-style'] = "square url(\"https://example.com/\") inside" should set the property value assert_equals: serialization should be canonical expected "inside url(\"https://example.com/\") square" but got "square inside url(\"https://example.com/\")"
 

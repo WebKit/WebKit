@@ -1,62 +1,62 @@
 
-PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> in standards mode 
-PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> in standards mode 
-PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> with querySelector in standards mode 
-PASS [align='left'] /* sanity check (match) */ <div align="left"> in standards mode 
-PASS [align='left'] /* sanity check (match) */ <div align="left"> with querySelector in standards mode 
-PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> in standards mode 
-PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> with querySelector in standards mode 
-PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> in standards mode 
-PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> with querySelector in standards mode 
-PASS [id^='a'] /* sanity check (match) */ <div id="ab"> in standards mode 
-PASS [id^='a'] /* sanity check (match) */ <div id="ab"> with querySelector in standards mode 
-PASS [id$='A'] /* sanity check (match) */ <div id="XA"> in standards mode 
-PASS [id$='A'] /* sanity check (match) */ <div id="XA"> with querySelector in standards mode 
-PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> in standards mode 
-PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> with querySelector in standards mode 
-PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> in standards mode 
-PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> with querySelector in standards mode 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode 
-PASS [foo='bar' i] <div foo="BAR"> in standards mode 
-PASS [foo='bar' i] <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='' i] <div foo=""> in standards mode 
-PASS [foo='' i] <div foo=""> with querySelector in standards mode 
-PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> in standards mode 
-PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> in standards mode 
-PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> with querySelector in standards mode 
-PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> in standards mode 
-PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> with querySelector in standards mode 
-PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> in standards mode 
-PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> with querySelector in standards mode 
-PASS [align='left' i] <div align="LEFT"> in standards mode 
-PASS [align='left' i] <div align="LEFT"> with querySelector in standards mode 
-PASS [align='LEFT' i] <div align="left"> in standards mode 
-PASS [align='LEFT' i] <div align="left"> with querySelector in standards mode 
-PASS [class~='a' i] <div class="X A B"> in standards mode 
-PASS [class~='a' i] <div class="X A B"> with querySelector in standards mode 
-PASS [class~='A' i] <div class="x a b"> in standards mode 
-PASS [class~='A' i] <div class="x a b"> with querySelector in standards mode 
-PASS [id^='a' i] <div id="AB"> in standards mode 
-PASS [id^='a' i] <div id="AB"> with querySelector in standards mode 
-PASS [id$='A' i] <div id="xa"> in standards mode 
-PASS [id$='A' i] <div id="xa"> with querySelector in standards mode 
-PASS [lang|='a' i] <div lang="A-B"> in standards mode 
-PASS [lang|='a' i] <div lang="A-B"> with querySelector in standards mode 
-PASS [lang*='A' i] <div lang="xab"> in standards mode 
-PASS [lang*='A' i] <div lang="xab"> with querySelector in standards mode 
-PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode 
-PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in standards mode 
-PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode 
-PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in standards mode 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode 
-PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> in standards mode 
-PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> in standards mode 
-PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> in standards mode 
-PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> with querySelector in standards mode 
+PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> in standards mode
+PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> with querySelector in standards mode
+PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> in standards mode
+PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> with querySelector in standards mode
+PASS [align='left'] /* sanity check (match) */ <div align="left"> in standards mode
+PASS [align='left'] /* sanity check (match) */ <div align="left"> with querySelector in standards mode
+PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> in standards mode
+PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> with querySelector in standards mode
+PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> in standards mode
+PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> with querySelector in standards mode
+PASS [id^='a'] /* sanity check (match) */ <div id="ab"> in standards mode
+PASS [id^='a'] /* sanity check (match) */ <div id="ab"> with querySelector in standards mode
+PASS [id$='A'] /* sanity check (match) */ <div id="XA"> in standards mode
+PASS [id$='A'] /* sanity check (match) */ <div id="XA"> with querySelector in standards mode
+PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> in standards mode
+PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> with querySelector in standards mode
+PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> in standards mode
+PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> with querySelector in standards mode
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode
+PASS [foo='bar' i] <div foo="BAR"> in standards mode
+PASS [foo='bar' i] <div foo="BAR"> with querySelector in standards mode
+PASS [foo='' i] <div foo=""> in standards mode
+PASS [foo='' i] <div foo=""> with querySelector in standards mode
+PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> in standards mode
+PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> in standards mode
+PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> with querySelector in standards mode
+PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> in standards mode
+PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> with querySelector in standards mode
+PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> in standards mode
+PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> with querySelector in standards mode
+PASS [align='left' i] <div align="LEFT"> in standards mode
+PASS [align='left' i] <div align="LEFT"> with querySelector in standards mode
+PASS [align='LEFT' i] <div align="left"> in standards mode
+PASS [align='LEFT' i] <div align="left"> with querySelector in standards mode
+PASS [class~='a' i] <div class="X A B"> in standards mode
+PASS [class~='a' i] <div class="X A B"> with querySelector in standards mode
+PASS [class~='A' i] <div class="x a b"> in standards mode
+PASS [class~='A' i] <div class="x a b"> with querySelector in standards mode
+PASS [id^='a' i] <div id="AB"> in standards mode
+PASS [id^='a' i] <div id="AB"> with querySelector in standards mode
+PASS [id$='A' i] <div id="xa"> in standards mode
+PASS [id$='A' i] <div id="xa"> with querySelector in standards mode
+PASS [lang|='a' i] <div lang="A-B"> in standards mode
+PASS [lang|='a' i] <div lang="A-B"> with querySelector in standards mode
+PASS [lang*='A' i] <div lang="xab"> in standards mode
+PASS [lang*='A' i] <div lang="xab"> with querySelector in standards mode
+PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode
+PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in standards mode
+PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode
+PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in standards mode
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode
+PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> in standards mode
+PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> with querySelector in standards mode
+PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> in standards mode
+PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> with querySelector in standards mode
+PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> in standards mode
+PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> with querySelector in standards mode
 FAIL [foo='bar' s] <div foo="bar"> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='bar' s] <div foo="bar"> with querySelector in standards mode The string did not match the expected pattern.
 FAIL [foo='' s] <div foo=""> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -90,121 +90,121 @@ FAIL [*|lang='A' s] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with qu
 FAIL @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' s] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode assert_equals: rule didn't parse into CSSOM expected 2 but got 1
 FAIL [foo='BAR' s][foo='BAR' s] <div foo="BAR"> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='BAR' s][foo='BAR' s] <div foo="BAR"> with querySelector in standards mode The string did not match the expected pattern.
-PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> in standards mode 
-PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> with querySelector in standards mode 
-PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> in standards mode 
-PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> with querySelector in standards mode 
-PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> in standards mode 
-PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> with querySelector in standards mode 
-PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> in standards mode 
-PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> with querySelector in standards mode 
-PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> in standards mode 
-PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> in standards mode 
-PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> with querySelector in standards mode 
-PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> in standards mode 
-PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> with querySelector in standards mode 
-PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> in standards mode 
-PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> with querySelector in standards mode 
-PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> in standards mode 
-PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> with querySelector in standards mode 
-PASS [id$='A'] <div id="xa"> in standards mode 
-PASS [id$='A'] <div id="xa"> with querySelector in standards mode 
-PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode 
-PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in standards mode 
-PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode 
-PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in standards mode 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode 
-PASS [foo='' i] <div foo="BAR"> in standards mode 
-PASS [foo='' i] <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='\0' i] /* \0 in selector */ <div foo=""> in standards mode 
-PASS [foo='\0' i] /* \0 in selector */ <div foo=""> with querySelector in standards mode 
-PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> in standards mode 
-PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> with querySelector in standards mode 
-PASS [foo='ä' i] <div foo="Ä"> in standards mode 
-PASS [foo='ä' i] <div foo="Ä"> with querySelector in standards mode 
-PASS [foo='Ä' i] <div foo="ä"> in standards mode 
-PASS [foo='Ä' i] <div foo="ä"> with querySelector in standards mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> in standards mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> in standards mode 
-PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in standards mode 
-PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> in standards mode 
-PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> in standards mode 
-PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in standards mode 
-PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode 
-PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode 
-PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode 
-PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> in standards mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in standards mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> in standards mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in standards mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> in standards mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in standards mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> in standards mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in standards mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode 
-PASS [foo='i' i] <div foo="İ"> in standards mode 
-PASS [foo='i' i] <div foo="İ"> with querySelector in standards mode 
-PASS [foo='i' i] <div foo="ı"> in standards mode 
-PASS [foo='i' i] <div foo="ı"> with querySelector in standards mode 
-PASS [foo='I' i] <div foo="İ"> in standards mode 
-PASS [foo='I' i] <div foo="İ"> with querySelector in standards mode 
-PASS [foo='I' i] <div foo="ı"> in standards mode 
-PASS [foo='I' i] <div foo="ı"> with querySelector in standards mode 
-PASS [foo='İ' i] <div foo="i"> in standards mode 
-PASS [foo='İ' i] <div foo="i"> with querySelector in standards mode 
-PASS [foo='ı' i] <div foo="i"> in standards mode 
-PASS [foo='ı' i] <div foo="i"> with querySelector in standards mode 
-PASS [foo='İ' i] <div foo="I"> in standards mode 
-PASS [foo='İ' i] <div foo="I"> with querySelector in standards mode 
-PASS [foo='ı' i] <div foo="I"> in standards mode 
-PASS [foo='ı' i] <div foo="I"> with querySelector in standards mode 
-PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> in standards mode 
-PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in standards mode 
-PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> in standards mode 
-PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in standards mode 
-PASS [foo='bar' i] <div FOO="bar"> in standards mode 
-PASS [foo='bar' i] <div FOO="bar"> with querySelector in standards mode 
-PASS [foo='	' i] /* tab in selector */ <div foo=" "> in standards mode 
-PASS [foo='	' i] /* tab in selector */ <div foo=" "> with querySelector in standards mode 
-PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> in standards mode 
-PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> with querySelector in standards mode 
-PASS @namespace x 'a'; [x|foo='' i] <div {A}foo=""> in standards mode 
-PASS @namespace x 'A'; [x|foo='' i] <div {a}foo=""> in standards mode 
-PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in standards mode 
-PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in standards mode 
-PASS [foo='bar' i] <div baz="BAR"> in standards mode 
-PASS [foo='bar' i] <div baz="BAR"> with querySelector in standards mode 
-PASS [foo^='é' i] <div foo="É"> in standards mode 
-PASS [foo^='é' i] <div foo="É"> with querySelector in standards mode 
-PASS [foo$='é' i] <div foo="É"> in standards mode 
-PASS [foo$='é' i] <div foo="É"> with querySelector in standards mode 
-PASS [foo*='é' i] <div foo="É"> in standards mode 
-PASS [foo*='é' i] <div foo="É"> with querySelector in standards mode 
-PASS [foo|='é' i] <div foo="É"> in standards mode 
-PASS [foo|='é' i] <div foo="É"> with querySelector in standards mode 
-PASS [foo^='É' i] <div foo="é"> in standards mode 
-PASS [foo^='É' i] <div foo="é"> with querySelector in standards mode 
-PASS [foo$='É' i] <div foo="é"> in standards mode 
-PASS [foo$='É' i] <div foo="é"> with querySelector in standards mode 
-PASS [foo*='É' i] <div foo="é"> in standards mode 
-PASS [foo*='É' i] <div foo="é"> with querySelector in standards mode 
-PASS [foo|='É' i] <div foo="é"> in standards mode 
-PASS [foo|='É' i] <div foo="é"> with querySelector in standards mode 
+PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> in standards mode
+PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> with querySelector in standards mode
+PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> in standards mode
+PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> with querySelector in standards mode
+PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> in standards mode
+PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> with querySelector in standards mode
+PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> in standards mode
+PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> with querySelector in standards mode
+PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> in standards mode
+PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> with querySelector in standards mode
+PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> in standards mode
+PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> with querySelector in standards mode
+PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> in standards mode
+PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> with querySelector in standards mode
+PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> in standards mode
+PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> with querySelector in standards mode
+PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> in standards mode
+PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> with querySelector in standards mode
+PASS [id$='A'] <div id="xa"> in standards mode
+PASS [id$='A'] <div id="xa"> with querySelector in standards mode
+PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in standards mode
+PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in standards mode
+PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode
+PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in standards mode
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in standards mode
+PASS [foo='' i] <div foo="BAR"> in standards mode
+PASS [foo='' i] <div foo="BAR"> with querySelector in standards mode
+PASS [foo='\0' i] /* \0 in selector */ <div foo=""> in standards mode
+PASS [foo='\0' i] /* \0 in selector */ <div foo=""> with querySelector in standards mode
+PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> in standards mode
+PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> with querySelector in standards mode
+PASS [foo='ä' i] <div foo="Ä"> in standards mode
+PASS [foo='ä' i] <div foo="Ä"> with querySelector in standards mode
+PASS [foo='Ä' i] <div foo="ä"> in standards mode
+PASS [foo='Ä' i] <div foo="ä"> with querySelector in standards mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> in standards mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> in standards mode
+PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in standards mode
+PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> in standards mode
+PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> in standards mode
+PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in standards mode
+PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode
+PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode
+PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode
+PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> in standards mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in standards mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> in standards mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in standards mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> in standards mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in standards mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> in standards mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in standards mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> in standards mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in standards mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> in standards mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in standards mode
+PASS [foo='i' i] <div foo="İ"> in standards mode
+PASS [foo='i' i] <div foo="İ"> with querySelector in standards mode
+PASS [foo='i' i] <div foo="ı"> in standards mode
+PASS [foo='i' i] <div foo="ı"> with querySelector in standards mode
+PASS [foo='I' i] <div foo="İ"> in standards mode
+PASS [foo='I' i] <div foo="İ"> with querySelector in standards mode
+PASS [foo='I' i] <div foo="ı"> in standards mode
+PASS [foo='I' i] <div foo="ı"> with querySelector in standards mode
+PASS [foo='İ' i] <div foo="i"> in standards mode
+PASS [foo='İ' i] <div foo="i"> with querySelector in standards mode
+PASS [foo='ı' i] <div foo="i"> in standards mode
+PASS [foo='ı' i] <div foo="i"> with querySelector in standards mode
+PASS [foo='İ' i] <div foo="I"> in standards mode
+PASS [foo='İ' i] <div foo="I"> with querySelector in standards mode
+PASS [foo='ı' i] <div foo="I"> in standards mode
+PASS [foo='ı' i] <div foo="I"> with querySelector in standards mode
+PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> in standards mode
+PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in standards mode
+PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> in standards mode
+PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in standards mode
+PASS [foo='bar' i] <div FOO="bar"> in standards mode
+PASS [foo='bar' i] <div FOO="bar"> with querySelector in standards mode
+PASS [foo='	' i] /* tab in selector */ <div foo=" "> in standards mode
+PASS [foo='	' i] /* tab in selector */ <div foo=" "> with querySelector in standards mode
+PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> in standards mode
+PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> with querySelector in standards mode
+PASS @namespace x 'a'; [x|foo='' i] <div {A}foo=""> in standards mode
+PASS @namespace x 'A'; [x|foo='' i] <div {a}foo=""> in standards mode
+PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in standards mode
+PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in standards mode
+PASS [foo='bar' i] <div baz="BAR"> in standards mode
+PASS [foo='bar' i] <div baz="BAR"> with querySelector in standards mode
+PASS [foo^='é' i] <div foo="É"> in standards mode
+PASS [foo^='é' i] <div foo="É"> with querySelector in standards mode
+PASS [foo$='é' i] <div foo="É"> in standards mode
+PASS [foo$='é' i] <div foo="É"> with querySelector in standards mode
+PASS [foo*='é' i] <div foo="É"> in standards mode
+PASS [foo*='é' i] <div foo="É"> with querySelector in standards mode
+PASS [foo|='é' i] <div foo="É"> in standards mode
+PASS [foo|='é' i] <div foo="É"> with querySelector in standards mode
+PASS [foo^='É' i] <div foo="é"> in standards mode
+PASS [foo^='É' i] <div foo="é"> with querySelector in standards mode
+PASS [foo$='É' i] <div foo="é"> in standards mode
+PASS [foo$='É' i] <div foo="é"> with querySelector in standards mode
+PASS [foo*='É' i] <div foo="é"> in standards mode
+PASS [foo*='É' i] <div foo="é"> with querySelector in standards mode
+PASS [foo|='É' i] <div foo="é"> in standards mode
+PASS [foo|='É' i] <div foo="é"> with querySelector in standards mode
 FAIL [foo='' s] <div foo="BAR"> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='' s] <div foo="BAR"> with querySelector in standards mode The string did not match the expected pattern.
 FAIL [foo='\0' s] /* \0 in selector */ <div foo=""> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -320,64 +320,64 @@ FAIL [foo='BAR'][foo='bar' s] <div foo="BAR"> in standards mode assert_equals: r
 FAIL [foo='BAR'][foo='bar' s] <div foo="BAR"> with querySelector in standards mode The string did not match the expected pattern.
 FAIL [foo='bar' s][foo='BAR'] <div foo="bar"> in standards mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='bar' s][foo='BAR'] <div foo="bar"> with querySelector in standards mode The string did not match the expected pattern.
-PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> in quirks mode 
-PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> in quirks mode 
-PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> with querySelector in quirks mode 
-PASS [align='left'] /* sanity check (match) */ <div align="left"> in quirks mode 
-PASS [align='left'] /* sanity check (match) */ <div align="left"> with querySelector in quirks mode 
-PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> in quirks mode 
-PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> with querySelector in quirks mode 
-PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> in quirks mode 
-PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> with querySelector in quirks mode 
-PASS [id^='a'] /* sanity check (match) */ <div id="ab"> in quirks mode 
-PASS [id^='a'] /* sanity check (match) */ <div id="ab"> with querySelector in quirks mode 
-PASS [id$='A'] /* sanity check (match) */ <div id="XA"> in quirks mode 
-PASS [id$='A'] /* sanity check (match) */ <div id="XA"> with querySelector in quirks mode 
-PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> in quirks mode 
-PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> with querySelector in quirks mode 
-PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> in quirks mode 
-PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> with querySelector in quirks mode 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode 
-PASS [foo='bar' i] <div foo="BAR"> in quirks mode 
-PASS [foo='bar' i] <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='' i] <div foo=""> in quirks mode 
-PASS [foo='' i] <div foo=""> with querySelector in quirks mode 
-PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> in quirks mode 
-PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> with querySelector in quirks mode 
-PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> in quirks mode 
-PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> with querySelector in quirks mode 
-PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> in quirks mode 
-PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> with querySelector in quirks mode 
-PASS [align='left' i] <div align="LEFT"> in quirks mode 
-PASS [align='left' i] <div align="LEFT"> with querySelector in quirks mode 
-PASS [align='LEFT' i] <div align="left"> in quirks mode 
-PASS [align='LEFT' i] <div align="left"> with querySelector in quirks mode 
-PASS [class~='a' i] <div class="X A B"> in quirks mode 
-PASS [class~='a' i] <div class="X A B"> with querySelector in quirks mode 
-PASS [class~='A' i] <div class="x a b"> in quirks mode 
-PASS [class~='A' i] <div class="x a b"> with querySelector in quirks mode 
-PASS [id^='a' i] <div id="AB"> in quirks mode 
-PASS [id^='a' i] <div id="AB"> with querySelector in quirks mode 
-PASS [id$='A' i] <div id="xa"> in quirks mode 
-PASS [id$='A' i] <div id="xa"> with querySelector in quirks mode 
-PASS [lang|='a' i] <div lang="A-B"> in quirks mode 
-PASS [lang|='a' i] <div lang="A-B"> with querySelector in quirks mode 
-PASS [lang*='A' i] <div lang="xab"> in quirks mode 
-PASS [lang*='A' i] <div lang="xab"> with querySelector in quirks mode 
-PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode 
-PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in quirks mode 
-PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode 
-PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in quirks mode 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode 
-PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> in quirks mode 
-PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> in quirks mode 
-PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> in quirks mode 
-PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> with querySelector in quirks mode 
+PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> in quirks mode
+PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> in quirks mode
+PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> with querySelector in quirks mode
+PASS [align='left'] /* sanity check (match) */ <div align="left"> in quirks mode
+PASS [align='left'] /* sanity check (match) */ <div align="left"> with querySelector in quirks mode
+PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> in quirks mode
+PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> with querySelector in quirks mode
+PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> in quirks mode
+PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> with querySelector in quirks mode
+PASS [id^='a'] /* sanity check (match) */ <div id="ab"> in quirks mode
+PASS [id^='a'] /* sanity check (match) */ <div id="ab"> with querySelector in quirks mode
+PASS [id$='A'] /* sanity check (match) */ <div id="XA"> in quirks mode
+PASS [id$='A'] /* sanity check (match) */ <div id="XA"> with querySelector in quirks mode
+PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> in quirks mode
+PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> with querySelector in quirks mode
+PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> in quirks mode
+PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> with querySelector in quirks mode
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode
+PASS [foo='bar' i] <div foo="BAR"> in quirks mode
+PASS [foo='bar' i] <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='' i] <div foo=""> in quirks mode
+PASS [foo='' i] <div foo=""> with querySelector in quirks mode
+PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> in quirks mode
+PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> in quirks mode
+PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> with querySelector in quirks mode
+PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> in quirks mode
+PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> with querySelector in quirks mode
+PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> in quirks mode
+PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> with querySelector in quirks mode
+PASS [align='left' i] <div align="LEFT"> in quirks mode
+PASS [align='left' i] <div align="LEFT"> with querySelector in quirks mode
+PASS [align='LEFT' i] <div align="left"> in quirks mode
+PASS [align='LEFT' i] <div align="left"> with querySelector in quirks mode
+PASS [class~='a' i] <div class="X A B"> in quirks mode
+PASS [class~='a' i] <div class="X A B"> with querySelector in quirks mode
+PASS [class~='A' i] <div class="x a b"> in quirks mode
+PASS [class~='A' i] <div class="x a b"> with querySelector in quirks mode
+PASS [id^='a' i] <div id="AB"> in quirks mode
+PASS [id^='a' i] <div id="AB"> with querySelector in quirks mode
+PASS [id$='A' i] <div id="xa"> in quirks mode
+PASS [id$='A' i] <div id="xa"> with querySelector in quirks mode
+PASS [lang|='a' i] <div lang="A-B"> in quirks mode
+PASS [lang|='a' i] <div lang="A-B"> with querySelector in quirks mode
+PASS [lang*='A' i] <div lang="xab"> in quirks mode
+PASS [lang*='A' i] <div lang="xab"> with querySelector in quirks mode
+PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode
+PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in quirks mode
+PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode
+PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in quirks mode
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode
+PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> in quirks mode
+PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> in quirks mode
+PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> in quirks mode
+PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> with querySelector in quirks mode
 FAIL [foo='bar' s] <div foo="bar"> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='bar' s] <div foo="bar"> with querySelector in quirks mode The string did not match the expected pattern.
 FAIL [foo='' s] <div foo=""> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -411,121 +411,121 @@ FAIL [*|lang='A' s] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with qu
 FAIL @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' s] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode assert_equals: rule didn't parse into CSSOM expected 2 but got 1
 FAIL [foo='BAR' s][foo='BAR' s] <div foo="BAR"> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='BAR' s][foo='BAR' s] <div foo="BAR"> with querySelector in quirks mode The string did not match the expected pattern.
-PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> in quirks mode 
-PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> with querySelector in quirks mode 
-PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> in quirks mode 
-PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> with querySelector in quirks mode 
-PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> in quirks mode 
-PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> with querySelector in quirks mode 
-PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> in quirks mode 
-PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> with querySelector in quirks mode 
-PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> in quirks mode 
-PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> in quirks mode 
-PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> with querySelector in quirks mode 
-PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> in quirks mode 
-PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> with querySelector in quirks mode 
-PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> in quirks mode 
-PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> with querySelector in quirks mode 
-PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> in quirks mode 
-PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> with querySelector in quirks mode 
-PASS [id$='A'] <div id="xa"> in quirks mode 
-PASS [id$='A'] <div id="xa"> with querySelector in quirks mode 
-PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode 
-PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in quirks mode 
-PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode 
-PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in quirks mode 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode 
-PASS [foo='' i] <div foo="BAR"> in quirks mode 
-PASS [foo='' i] <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='\0' i] /* \0 in selector */ <div foo=""> in quirks mode 
-PASS [foo='\0' i] /* \0 in selector */ <div foo=""> with querySelector in quirks mode 
-PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> in quirks mode 
-PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> with querySelector in quirks mode 
-PASS [foo='ä' i] <div foo="Ä"> in quirks mode 
-PASS [foo='ä' i] <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo='Ä' i] <div foo="ä"> in quirks mode 
-PASS [foo='Ä' i] <div foo="ä"> with querySelector in quirks mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> in quirks mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> in quirks mode 
-PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in quirks mode 
-PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> in quirks mode 
-PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> in quirks mode 
-PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in quirks mode 
-PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode 
-PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode 
-PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode 
-PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> in quirks mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in quirks mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> in quirks mode 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> in quirks mode 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in quirks mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode 
-PASS [foo='i' i] <div foo="İ"> in quirks mode 
-PASS [foo='i' i] <div foo="İ"> with querySelector in quirks mode 
-PASS [foo='i' i] <div foo="ı"> in quirks mode 
-PASS [foo='i' i] <div foo="ı"> with querySelector in quirks mode 
-PASS [foo='I' i] <div foo="İ"> in quirks mode 
-PASS [foo='I' i] <div foo="İ"> with querySelector in quirks mode 
-PASS [foo='I' i] <div foo="ı"> in quirks mode 
-PASS [foo='I' i] <div foo="ı"> with querySelector in quirks mode 
-PASS [foo='İ' i] <div foo="i"> in quirks mode 
-PASS [foo='İ' i] <div foo="i"> with querySelector in quirks mode 
-PASS [foo='ı' i] <div foo="i"> in quirks mode 
-PASS [foo='ı' i] <div foo="i"> with querySelector in quirks mode 
-PASS [foo='İ' i] <div foo="I"> in quirks mode 
-PASS [foo='İ' i] <div foo="I"> with querySelector in quirks mode 
-PASS [foo='ı' i] <div foo="I"> in quirks mode 
-PASS [foo='ı' i] <div foo="I"> with querySelector in quirks mode 
-PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> in quirks mode 
-PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in quirks mode 
-PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> in quirks mode 
-PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in quirks mode 
-PASS [foo='bar' i] <div FOO="bar"> in quirks mode 
-PASS [foo='bar' i] <div FOO="bar"> with querySelector in quirks mode 
-PASS [foo='	' i] /* tab in selector */ <div foo=" "> in quirks mode 
-PASS [foo='	' i] /* tab in selector */ <div foo=" "> with querySelector in quirks mode 
-PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> in quirks mode 
-PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> with querySelector in quirks mode 
-PASS @namespace x 'a'; [x|foo='' i] <div {A}foo=""> in quirks mode 
-PASS @namespace x 'A'; [x|foo='' i] <div {a}foo=""> in quirks mode 
-PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in quirks mode 
-PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in quirks mode 
-PASS [foo='bar' i] <div baz="BAR"> in quirks mode 
-PASS [foo='bar' i] <div baz="BAR"> with querySelector in quirks mode 
-PASS [foo^='é' i] <div foo="É"> in quirks mode 
-PASS [foo^='é' i] <div foo="É"> with querySelector in quirks mode 
-PASS [foo$='é' i] <div foo="É"> in quirks mode 
-PASS [foo$='é' i] <div foo="É"> with querySelector in quirks mode 
-PASS [foo*='é' i] <div foo="É"> in quirks mode 
-PASS [foo*='é' i] <div foo="É"> with querySelector in quirks mode 
-PASS [foo|='é' i] <div foo="É"> in quirks mode 
-PASS [foo|='é' i] <div foo="É"> with querySelector in quirks mode 
-PASS [foo^='É' i] <div foo="é"> in quirks mode 
-PASS [foo^='É' i] <div foo="é"> with querySelector in quirks mode 
-PASS [foo$='É' i] <div foo="é"> in quirks mode 
-PASS [foo$='É' i] <div foo="é"> with querySelector in quirks mode 
-PASS [foo*='É' i] <div foo="é"> in quirks mode 
-PASS [foo*='É' i] <div foo="é"> with querySelector in quirks mode 
-PASS [foo|='É' i] <div foo="é"> in quirks mode 
-PASS [foo|='É' i] <div foo="é"> with querySelector in quirks mode 
+PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> in quirks mode
+PASS [align='left'] /* sanity check (match HTML) */ <div align="LEFT"> with querySelector in quirks mode
+PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> in quirks mode
+PASS [align='LEFT'] /* sanity check (match HTML) */ <div align="left"> with querySelector in quirks mode
+PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> in quirks mode
+PASS [lang|='a'] /* sanity check (match HTML) */ <div lang="A-B"> with querySelector in quirks mode
+PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> in quirks mode
+PASS [lang*='A'] /* sanity check (match HTML) */ <div lang="xab"> with querySelector in quirks mode
+PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> in quirks mode
+PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> in quirks mode
+PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> with querySelector in quirks mode
+PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> in quirks mode
+PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> with querySelector in quirks mode
+PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> in quirks mode
+PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> with querySelector in quirks mode
+PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> in quirks mode
+PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> with querySelector in quirks mode
+PASS [id$='A'] <div id="xa"> in quirks mode
+PASS [id$='A'] <div id="xa"> with querySelector in quirks mode
+PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in quirks mode
+PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in quirks mode
+PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode
+PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in quirks mode
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in quirks mode
+PASS [foo='' i] <div foo="BAR"> in quirks mode
+PASS [foo='' i] <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='\0' i] /* \0 in selector */ <div foo=""> in quirks mode
+PASS [foo='\0' i] /* \0 in selector */ <div foo=""> with querySelector in quirks mode
+PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> in quirks mode
+PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> with querySelector in quirks mode
+PASS [foo='ä' i] <div foo="Ä"> in quirks mode
+PASS [foo='ä' i] <div foo="Ä"> with querySelector in quirks mode
+PASS [foo='Ä' i] <div foo="ä"> in quirks mode
+PASS [foo='Ä' i] <div foo="ä"> with querySelector in quirks mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> in quirks mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> in quirks mode
+PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in quirks mode
+PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> in quirks mode
+PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> in quirks mode
+PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in quirks mode
+PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode
+PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode
+PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode
+PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> in quirks mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in quirks mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> in quirks mode
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in quirks mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> in quirks mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in quirks mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> in quirks mode
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in quirks mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> in quirks mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in quirks mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> in quirks mode
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in quirks mode
+PASS [foo='i' i] <div foo="İ"> in quirks mode
+PASS [foo='i' i] <div foo="İ"> with querySelector in quirks mode
+PASS [foo='i' i] <div foo="ı"> in quirks mode
+PASS [foo='i' i] <div foo="ı"> with querySelector in quirks mode
+PASS [foo='I' i] <div foo="İ"> in quirks mode
+PASS [foo='I' i] <div foo="İ"> with querySelector in quirks mode
+PASS [foo='I' i] <div foo="ı"> in quirks mode
+PASS [foo='I' i] <div foo="ı"> with querySelector in quirks mode
+PASS [foo='İ' i] <div foo="i"> in quirks mode
+PASS [foo='İ' i] <div foo="i"> with querySelector in quirks mode
+PASS [foo='ı' i] <div foo="i"> in quirks mode
+PASS [foo='ı' i] <div foo="i"> with querySelector in quirks mode
+PASS [foo='İ' i] <div foo="I"> in quirks mode
+PASS [foo='İ' i] <div foo="I"> with querySelector in quirks mode
+PASS [foo='ı' i] <div foo="I"> in quirks mode
+PASS [foo='ı' i] <div foo="I"> with querySelector in quirks mode
+PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> in quirks mode
+PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in quirks mode
+PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> in quirks mode
+PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in quirks mode
+PASS [foo='bar' i] <div FOO="bar"> in quirks mode
+PASS [foo='bar' i] <div FOO="bar"> with querySelector in quirks mode
+PASS [foo='	' i] /* tab in selector */ <div foo=" "> in quirks mode
+PASS [foo='	' i] /* tab in selector */ <div foo=" "> with querySelector in quirks mode
+PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> in quirks mode
+PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> with querySelector in quirks mode
+PASS @namespace x 'a'; [x|foo='' i] <div {A}foo=""> in quirks mode
+PASS @namespace x 'A'; [x|foo='' i] <div {a}foo=""> in quirks mode
+PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in quirks mode
+PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in quirks mode
+PASS [foo='bar' i] <div baz="BAR"> in quirks mode
+PASS [foo='bar' i] <div baz="BAR"> with querySelector in quirks mode
+PASS [foo^='é' i] <div foo="É"> in quirks mode
+PASS [foo^='é' i] <div foo="É"> with querySelector in quirks mode
+PASS [foo$='é' i] <div foo="É"> in quirks mode
+PASS [foo$='é' i] <div foo="É"> with querySelector in quirks mode
+PASS [foo*='é' i] <div foo="É"> in quirks mode
+PASS [foo*='é' i] <div foo="É"> with querySelector in quirks mode
+PASS [foo|='é' i] <div foo="É"> in quirks mode
+PASS [foo|='é' i] <div foo="É"> with querySelector in quirks mode
+PASS [foo^='É' i] <div foo="é"> in quirks mode
+PASS [foo^='É' i] <div foo="é"> with querySelector in quirks mode
+PASS [foo$='É' i] <div foo="é"> in quirks mode
+PASS [foo$='É' i] <div foo="é"> with querySelector in quirks mode
+PASS [foo*='É' i] <div foo="é"> in quirks mode
+PASS [foo*='É' i] <div foo="é"> with querySelector in quirks mode
+PASS [foo|='É' i] <div foo="é"> in quirks mode
+PASS [foo|='É' i] <div foo="é"> with querySelector in quirks mode
 FAIL [foo='' s] <div foo="BAR"> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='' s] <div foo="BAR"> with querySelector in quirks mode The string did not match the expected pattern.
 FAIL [foo='\0' s] /* \0 in selector */ <div foo=""> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -641,64 +641,64 @@ FAIL [foo='BAR'][foo='bar' s] <div foo="BAR"> in quirks mode assert_equals: rule
 FAIL [foo='BAR'][foo='bar' s] <div foo="BAR"> with querySelector in quirks mode The string did not match the expected pattern.
 FAIL [foo='bar' s][foo='BAR'] <div foo="bar"> in quirks mode assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='bar' s][foo='BAR'] <div foo="bar"> with querySelector in quirks mode The string did not match the expected pattern.
-PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> in XML 
-PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> with querySelector in XML 
-PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> in XML 
-PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> with querySelector in XML 
-PASS [align='left'] /* sanity check (match) */ <div align="left"> in XML 
-PASS [align='left'] /* sanity check (match) */ <div align="left"> with querySelector in XML 
-PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> in XML 
-PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> with querySelector in XML 
-PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> in XML 
-PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> with querySelector in XML 
-PASS [id^='a'] /* sanity check (match) */ <div id="ab"> in XML 
-PASS [id^='a'] /* sanity check (match) */ <div id="ab"> with querySelector in XML 
-PASS [id$='A'] /* sanity check (match) */ <div id="XA"> in XML 
-PASS [id$='A'] /* sanity check (match) */ <div id="XA"> with querySelector in XML 
-PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> in XML 
-PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> with querySelector in XML 
-PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> in XML 
-PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> with querySelector in XML 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML 
-PASS [foo='bar' i] <div foo="BAR"> in XML 
-PASS [foo='bar' i] <div foo="BAR"> with querySelector in XML 
-PASS [foo='' i] <div foo=""> in XML 
-PASS [foo='' i] <div foo=""> with querySelector in XML 
-PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> in XML 
-PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> with querySelector in XML 
-PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> in XML 
-PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> with querySelector in XML 
-PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> in XML 
-PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> with querySelector in XML 
-PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> in XML 
-PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> with querySelector in XML 
-PASS [align='left' i] <div align="LEFT"> in XML 
-PASS [align='left' i] <div align="LEFT"> with querySelector in XML 
-PASS [align='LEFT' i] <div align="left"> in XML 
-PASS [align='LEFT' i] <div align="left"> with querySelector in XML 
-PASS [class~='a' i] <div class="X A B"> in XML 
-PASS [class~='a' i] <div class="X A B"> with querySelector in XML 
-PASS [class~='A' i] <div class="x a b"> in XML 
-PASS [class~='A' i] <div class="x a b"> with querySelector in XML 
-PASS [id^='a' i] <div id="AB"> in XML 
-PASS [id^='a' i] <div id="AB"> with querySelector in XML 
-PASS [id$='A' i] <div id="xa"> in XML 
-PASS [id$='A' i] <div id="xa"> with querySelector in XML 
-PASS [lang|='a' i] <div lang="A-B"> in XML 
-PASS [lang|='a' i] <div lang="A-B"> with querySelector in XML 
-PASS [lang*='A' i] <div lang="xab"> in XML 
-PASS [lang*='A' i] <div lang="xab"> with querySelector in XML 
-PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML 
-PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in XML 
-PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML 
-PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in XML 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML 
-PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> in XML 
-PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> with querySelector in XML 
-PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> in XML 
-PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> with querySelector in XML 
-PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> in XML 
-PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> with querySelector in XML 
+PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> in XML
+PASS [foo='BAR'] /* sanity check (match) */ <div foo="BAR"> with querySelector in XML
+PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> in XML
+PASS [foo='bar'] /* sanity check (match) */ <div foo="bar"> with querySelector in XML
+PASS [align='left'] /* sanity check (match) */ <div align="left"> in XML
+PASS [align='left'] /* sanity check (match) */ <div align="left"> with querySelector in XML
+PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> in XML
+PASS [class~='a'] /* sanity check (match) */ <div class="X a b"> with querySelector in XML
+PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> in XML
+PASS [class~='A'] /* sanity check (match) */ <div class="x A B"> with querySelector in XML
+PASS [id^='a'] /* sanity check (match) */ <div id="ab"> in XML
+PASS [id^='a'] /* sanity check (match) */ <div id="ab"> with querySelector in XML
+PASS [id$='A'] /* sanity check (match) */ <div id="XA"> in XML
+PASS [id$='A'] /* sanity check (match) */ <div id="XA"> with querySelector in XML
+PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> in XML
+PASS [lang|='a'] /* sanity check (match) */ <div lang="a-b"> with querySelector in XML
+PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> in XML
+PASS [lang*='A'] /* sanity check (match) */ <div lang="XAB"> with querySelector in XML
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML
+PASS [foo='bar' i] <div foo="BAR"> in XML
+PASS [foo='bar' i] <div foo="BAR"> with querySelector in XML
+PASS [foo='' i] <div foo=""> in XML
+PASS [foo='' i] <div foo=""> with querySelector in XML
+PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> in XML
+PASS [foo='ä' i] /* COMBINING in both */ <div foo="Ä"> with querySelector in XML
+PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> in XML
+PASS [foo='Ä' i] /* COMBINING in both */ <div foo="ä"> with querySelector in XML
+PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> in XML
+PASS [*|foo='bar' i] <div foo="x" {a}foo="x" {b}foo="BAR" {c}foo="x"> with querySelector in XML
+PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> in XML
+PASS [*|foo='bar' i] <div foo="BAR" {a}foo="x" {b}foo="x" {c}foo="x"> with querySelector in XML
+PASS [align='left' i] <div align="LEFT"> in XML
+PASS [align='left' i] <div align="LEFT"> with querySelector in XML
+PASS [align='LEFT' i] <div align="left"> in XML
+PASS [align='LEFT' i] <div align="left"> with querySelector in XML
+PASS [class~='a' i] <div class="X A B"> in XML
+PASS [class~='a' i] <div class="X A B"> with querySelector in XML
+PASS [class~='A' i] <div class="x a b"> in XML
+PASS [class~='A' i] <div class="x a b"> with querySelector in XML
+PASS [id^='a' i] <div id="AB"> in XML
+PASS [id^='a' i] <div id="AB"> with querySelector in XML
+PASS [id$='A' i] <div id="xa"> in XML
+PASS [id$='A' i] <div id="xa"> with querySelector in XML
+PASS [lang|='a' i] <div lang="A-B"> in XML
+PASS [lang|='a' i] <div lang="A-B"> with querySelector in XML
+PASS [lang*='A' i] <div lang="xab"> in XML
+PASS [lang*='A' i] <div lang="xab"> with querySelector in XML
+PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML
+PASS [*|lang='a' i] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in XML
+PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML
+PASS [*|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in XML
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' i] <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML
+PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> in XML
+PASS [foo='bar' i][foo='bar' i] <div foo="BAR"> with querySelector in XML
+PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> in XML
+PASS [foo='BAR'][foo='bar' i] <div foo="BAR"> with querySelector in XML
+PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> in XML
+PASS [foo='bar' i][foo='BAR'] <div foo="BAR"> with querySelector in XML
 FAIL [foo='bar' s] <div foo="bar"> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='bar' s] <div foo="bar"> with querySelector in XML The string did not match the expected pattern.
 FAIL [foo='' s] <div foo=""> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -732,113 +732,113 @@ FAIL [*|lang='A' s] <div {http://www.w3.org/XML/1998/namespace}lang="A"> with qu
 FAIL @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A' s] <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML assert_equals: rule didn't parse into CSSOM expected 2 but got 1
 FAIL [foo='BAR' s][foo='BAR' s] <div foo="BAR"> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='BAR' s][foo='BAR' s] <div foo="BAR"> with querySelector in XML The string did not match the expected pattern.
-PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> in XML 
-PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> with querySelector in XML 
-PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> in XML 
-PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> with querySelector in XML 
-PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> in XML 
-PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> with querySelector in XML 
-PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> in XML 
-PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> with querySelector in XML 
-PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> in XML 
-PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> with querySelector in XML 
-PASS [id$='A'] <div id="xa"> in XML 
-PASS [id$='A'] <div id="xa"> with querySelector in XML 
-PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML 
-PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in XML 
-PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML 
-PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in XML 
-PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML 
-PASS [foo='' i] <div foo="BAR"> in XML 
-PASS [foo='' i] <div foo="BAR"> with querySelector in XML 
-PASS [foo='\0' i] /* \0 in selector */ <div foo=""> in XML 
-PASS [foo='\0' i] /* \0 in selector */ <div foo=""> with querySelector in XML 
-PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> in XML 
-PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> with querySelector in XML 
-PASS [foo='ä' i] <div foo="Ä"> in XML 
-PASS [foo='ä' i] <div foo="Ä"> with querySelector in XML 
-PASS [foo='Ä' i] <div foo="ä"> in XML 
-PASS [foo='Ä' i] <div foo="ä"> with querySelector in XML 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> in XML 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in XML 
-PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> in XML 
-PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in XML 
-PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> in XML 
-PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in XML 
-PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> in XML 
-PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in XML 
-PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> in XML 
-PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML 
-PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> in XML 
-PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> in XML 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> in XML 
-PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> in XML 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in XML 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> in XML 
-PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in XML 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> in XML 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in XML 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> in XML 
-PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in XML 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> in XML 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> in XML 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> in XML 
-PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> in XML 
-PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML 
-PASS [foo='i' i] <div foo="İ"> in XML 
-PASS [foo='i' i] <div foo="İ"> with querySelector in XML 
-PASS [foo='i' i] <div foo="ı"> in XML 
-PASS [foo='i' i] <div foo="ı"> with querySelector in XML 
-PASS [foo='I' i] <div foo="İ"> in XML 
-PASS [foo='I' i] <div foo="İ"> with querySelector in XML 
-PASS [foo='I' i] <div foo="ı"> in XML 
-PASS [foo='I' i] <div foo="ı"> with querySelector in XML 
-PASS [foo='İ' i] <div foo="i"> in XML 
-PASS [foo='İ' i] <div foo="i"> with querySelector in XML 
-PASS [foo='ı' i] <div foo="i"> in XML 
-PASS [foo='ı' i] <div foo="i"> with querySelector in XML 
-PASS [foo='İ' i] <div foo="I"> in XML 
-PASS [foo='İ' i] <div foo="I"> with querySelector in XML 
-PASS [foo='ı' i] <div foo="I"> in XML 
-PASS [foo='ı' i] <div foo="I"> with querySelector in XML 
-PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> in XML 
-PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in XML 
-PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> in XML 
-PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in XML 
-PASS [foo='bar' i] <div FOO="bar"> in XML 
-PASS [foo='bar' i] <div FOO="bar"> with querySelector in XML 
-PASS [foo='	' i] /* tab in selector */ <div foo=" "> in XML 
-PASS [foo='	' i] /* tab in selector */ <div foo=" "> with querySelector in XML 
-PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> in XML 
-PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> with querySelector in XML 
-PASS @namespace x 'a'; [x|foo='' i] <div {A}foo=""> in XML 
-PASS @namespace x 'A'; [x|foo='' i] <div {a}foo=""> in XML 
-PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in XML 
-PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in XML 
-PASS [foo='bar' i] <div baz="BAR"> in XML 
-PASS [foo='bar' i] <div baz="BAR"> with querySelector in XML 
-PASS [foo^='é' i] <div foo="É"> in XML 
-PASS [foo^='é' i] <div foo="É"> with querySelector in XML 
-PASS [foo$='é' i] <div foo="É"> in XML 
-PASS [foo$='é' i] <div foo="É"> with querySelector in XML 
-PASS [foo*='é' i] <div foo="É"> in XML 
-PASS [foo*='é' i] <div foo="É"> with querySelector in XML 
-PASS [foo|='é' i] <div foo="É"> in XML 
-PASS [foo|='é' i] <div foo="É"> with querySelector in XML 
-PASS [foo^='É' i] <div foo="é"> in XML 
-PASS [foo^='É' i] <div foo="é"> with querySelector in XML 
-PASS [foo$='É' i] <div foo="é"> in XML 
-PASS [foo$='É' i] <div foo="é"> with querySelector in XML 
-PASS [foo*='É' i] <div foo="é"> in XML 
-PASS [foo*='É' i] <div foo="é"> with querySelector in XML 
-PASS [foo|='É' i] <div foo="é"> in XML 
-PASS [foo|='É' i] <div foo="é"> with querySelector in XML 
+PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> in XML
+PASS [missingattr] /* sanity check (no match) */ <div foo="BAR"> with querySelector in XML
+PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> in XML
+PASS [foo='bar'] /* sanity check (no match) */ <div foo="BAR"> with querySelector in XML
+PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> in XML
+PASS [class~='a'] /* sanity check (no match) */ <div class="X A B"> with querySelector in XML
+PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> in XML
+PASS [class~='A'] /* sanity check (no match) */ <div class="x a b"> with querySelector in XML
+PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> in XML
+PASS [id^='a'] /* sanity check (no match) */ <div id="AB"> with querySelector in XML
+PASS [id$='A'] <div id="xa"> in XML
+PASS [id$='A'] <div id="xa"> with querySelector in XML
+PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> in XML
+PASS [*|lang='a'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="A"> with querySelector in XML
+PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML
+PASS [*|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> with querySelector in XML
+PASS @namespace x 'http://www.w3.org/XML/1998/namespace'; [x|lang='A'] /* sanity check (no match) */ <div {http://www.w3.org/XML/1998/namespace}lang="a"> in XML
+PASS [foo='' i] <div foo="BAR"> in XML
+PASS [foo='' i] <div foo="BAR"> with querySelector in XML
+PASS [foo='\0' i] /* \0 in selector */ <div foo=""> in XML
+PASS [foo='\0' i] /* \0 in selector */ <div foo=""> with querySelector in XML
+PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> in XML
+PASS [foo='' i] /* \0 in attribute */ <div foo="\0"> with querySelector in XML
+PASS [foo='ä' i] <div foo="Ä"> in XML
+PASS [foo='ä' i] <div foo="Ä"> with querySelector in XML
+PASS [foo='Ä' i] <div foo="ä"> in XML
+PASS [foo='Ä' i] <div foo="ä"> with querySelector in XML
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> in XML
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in XML
+PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> in XML
+PASS [foo~='ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in XML
+PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> in XML
+PASS [foo^='Ä' i] /* COMBINING in selector */ <div foo="Ä"> with querySelector in XML
+PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> in XML
+PASS [foo$='Ä' i] /* COMBINING in selector */ <div foo="ä"> with querySelector in XML
+PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> in XML
+PASS [foo*='ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML
+PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> in XML
+PASS [foo|='ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> in XML
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> in XML
+PASS [foo='Ä' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> in XML
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in XML
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> in XML
+PASS [foo='ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in XML
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> in XML
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="a"> with querySelector in XML
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> in XML
+PASS [foo='Ä' i] /* COMBINING in selector */ <div foo="A"> with querySelector in XML
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> in XML
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> in XML
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="ä"> with querySelector in XML
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> in XML
+PASS [foo='a' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> in XML
+PASS [foo='A' i] /* COMBINING in attribute */ <div foo="Ä"> with querySelector in XML
+PASS [foo='i' i] <div foo="İ"> in XML
+PASS [foo='i' i] <div foo="İ"> with querySelector in XML
+PASS [foo='i' i] <div foo="ı"> in XML
+PASS [foo='i' i] <div foo="ı"> with querySelector in XML
+PASS [foo='I' i] <div foo="İ"> in XML
+PASS [foo='I' i] <div foo="İ"> with querySelector in XML
+PASS [foo='I' i] <div foo="ı"> in XML
+PASS [foo='I' i] <div foo="ı"> with querySelector in XML
+PASS [foo='İ' i] <div foo="i"> in XML
+PASS [foo='İ' i] <div foo="i"> with querySelector in XML
+PASS [foo='ı' i] <div foo="i"> in XML
+PASS [foo='ı' i] <div foo="i"> with querySelector in XML
+PASS [foo='İ' i] <div foo="I"> in XML
+PASS [foo='İ' i] <div foo="I"> with querySelector in XML
+PASS [foo='ı' i] <div foo="I"> in XML
+PASS [foo='ı' i] <div foo="I"> with querySelector in XML
+PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> in XML
+PASS [foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in XML
+PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> in XML
+PASS [|foo='bar' i] <div foo="x" {a}foo="BAR"> with querySelector in XML
+PASS [foo='bar' i] <div FOO="bar"> in XML
+PASS [foo='bar' i] <div FOO="bar"> with querySelector in XML
+PASS [foo='	' i] /* tab in selector */ <div foo=" "> in XML
+PASS [foo='	' i] /* tab in selector */ <div foo=" "> with querySelector in XML
+PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> in XML
+PASS [foo=' ' i] /* tab in attribute */ <div foo="	"> with querySelector in XML
+PASS @namespace x 'a'; [x|foo='' i] <div {A}foo=""> in XML
+PASS @namespace x 'A'; [x|foo='' i] <div {a}foo=""> in XML
+PASS [foo='bar' i][foo='bar'] <div foo="BAR"> in XML
+PASS [foo='bar' i][foo='bar'] <div foo="BAR"> with querySelector in XML
+PASS [foo='bar' i] <div baz="BAR"> in XML
+PASS [foo='bar' i] <div baz="BAR"> with querySelector in XML
+PASS [foo^='é' i] <div foo="É"> in XML
+PASS [foo^='é' i] <div foo="É"> with querySelector in XML
+PASS [foo$='é' i] <div foo="É"> in XML
+PASS [foo$='é' i] <div foo="É"> with querySelector in XML
+PASS [foo*='é' i] <div foo="É"> in XML
+PASS [foo*='é' i] <div foo="É"> with querySelector in XML
+PASS [foo|='é' i] <div foo="É"> in XML
+PASS [foo|='é' i] <div foo="É"> with querySelector in XML
+PASS [foo^='É' i] <div foo="é"> in XML
+PASS [foo^='É' i] <div foo="é"> with querySelector in XML
+PASS [foo$='É' i] <div foo="é"> in XML
+PASS [foo$='É' i] <div foo="é"> with querySelector in XML
+PASS [foo*='É' i] <div foo="é"> in XML
+PASS [foo*='É' i] <div foo="é"> with querySelector in XML
+PASS [foo|='É' i] <div foo="é"> in XML
+PASS [foo|='É' i] <div foo="é"> with querySelector in XML
 FAIL [foo='' s] <div foo="BAR"> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='' s] <div foo="BAR"> with querySelector in XML The string did not match the expected pattern.
 FAIL [foo='\0' s] /* \0 in selector */ <div foo=""> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
@@ -954,5 +954,5 @@ FAIL [foo='BAR'][foo='bar' s] <div foo="BAR"> in XML assert_equals: rule didn't 
 FAIL [foo='BAR'][foo='bar' s] <div foo="BAR"> with querySelector in XML The string did not match the expected pattern.
 FAIL [foo='bar' s][foo='BAR'] <div foo="bar"> in XML assert_equals: rule didn't parse into CSSOM expected 1 but got 0
 FAIL [foo='bar' s][foo='BAR'] <div foo="bar"> with querySelector in XML The string did not match the expected pattern.
- 
+
 

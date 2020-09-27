@@ -1,4 +1,4 @@
 
-PASS e.style['list-style'] = "inside disc outside" should not set the property value 
-PASS e.style['list-style'] = "square circle" should not set the property value 
+PASS e.style['list-style'] = "inside disc outside" should not set the property value
+PASS e.style['list-style'] = "square circle" should not set the property value
 

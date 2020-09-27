@@ -1,6 +1,6 @@
 
-PASS e.style['row-gap'] = "auto" should not set the property value 
-PASS e.style['row-gap'] = "-10px" should not set the property value 
-PASS e.style['row-gap'] = "10px 20%" should not set the property value 
-PASS e.style['row-gap'] = "normal 10px" should not set the property value 
+PASS e.style['row-gap'] = "auto" should not set the property value
+PASS e.style['row-gap'] = "-10px" should not set the property value
+PASS e.style['row-gap'] = "10px 20%" should not set the property value
+PASS e.style['row-gap'] = "normal 10px" should not set the property value
 

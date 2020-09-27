@@ -1,5 +1,5 @@
 
-PASS Property transition-duration value '500ms' 
-PASS Property transition-duration value 'calc(2 * 3s)' 
+PASS Property transition-duration value '500ms'
+PASS Property transition-duration value 'calc(2 * 3s)'
 FAIL Property transition-duration value '20s, 10s' assert_equals: expected "20s, 10s" but got "10s"
 

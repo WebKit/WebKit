@@ -1,4 +1,4 @@
 
-PASS e.style['position'] = "auto" should not set the property value 
-PASS e.style['position'] = "static relative" should not set the property value 
+PASS e.style['position'] = "auto" should not set the property value
+PASS e.style['position'] = "static relative" should not set the property value
 

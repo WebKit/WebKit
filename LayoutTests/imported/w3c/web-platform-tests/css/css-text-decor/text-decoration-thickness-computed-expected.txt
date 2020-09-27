@@ -1,5 +1,5 @@
 
-PASS Property text-decoration-thickness value 'auto' 
-PASS Property text-decoration-thickness value 'from-font' 
-PASS Property text-decoration-thickness value 'calc(10px - 8px)' 
+PASS Property text-decoration-thickness value 'auto'
+PASS Property text-decoration-thickness value 'from-font'
+PASS Property text-decoration-thickness value 'calc(10px - 8px)'
 

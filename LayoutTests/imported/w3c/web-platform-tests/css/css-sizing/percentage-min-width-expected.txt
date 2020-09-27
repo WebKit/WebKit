@@ -1,5 +1,5 @@
 Test passes if there is a filled green square and no red.
 
 
-PASS #container 1 
+PASS #container 1
 

@@ -1,6 +1,6 @@
 
-PASS empty URL: inline-unquoted 
-PASS empty URL: inline-quoted 
-PASS empty URL: external-unquoted 
-PASS empty URL: external-quoted 
+PASS empty URL: inline-unquoted
+PASS empty URL: inline-quoted
+PASS empty URL: external-unquoted
+PASS empty URL: external-quoted
 

@@ -1,4 +1,4 @@
 
-PASS e.style['font-style'] = "auto" should not set the property value 
-PASS e.style['font-style'] = "italic oblique" should not set the property value 
+PASS e.style['font-style'] = "auto" should not set the property value
+PASS e.style['font-style'] = "italic oblique" should not set the property value
 

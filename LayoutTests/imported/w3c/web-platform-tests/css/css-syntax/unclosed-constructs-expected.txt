@@ -1,6 +1,6 @@
 
-PASS "[foo]" is a valid selector 
-PASS "[foo" is a valid selector 
-PASS ":nth-child(1)" is a valid selector 
-PASS ":nth-child(1" is a valid selector 
+PASS "[foo]" is a valid selector
+PASS "[foo" is a valid selector
+PASS ":nth-child(1)" is a valid selector
+PASS ":nth-child(1" is a valid selector
 

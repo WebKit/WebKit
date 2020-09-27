@@ -1,12 +1,12 @@
 
-PASS Ensure that body element is loaded. 
-PASS Ensure that style.overflowY can be set properly. 
-PASS document.compatMode should be BackCompat in quirks. 
-PASS document.scrollingElement should be body element in quirks. 
-PASS scrollingElement in quirks should be null when body is potentially scrollable. 
-PASS scrollingElement in quirks should be body if any of document and body has a visible overflow. 
-PASS When body potentially scrollable, document.body.scrollHeight changes when changing the height of the body content in quirks. 
-PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. visible, scroll) 
-PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. scroll, visible) 
-PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. visible, visible) 
+PASS Ensure that body element is loaded.
+PASS Ensure that style.overflowY can be set properly.
+PASS document.compatMode should be BackCompat in quirks.
+PASS document.scrollingElement should be body element in quirks.
+PASS scrollingElement in quirks should be null when body is potentially scrollable.
+PASS scrollingElement in quirks should be body if any of document and body has a visible overflow.
+PASS When body potentially scrollable, document.body.scrollHeight changes when changing the height of the body content in quirks.
+PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. visible, scroll)
+PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. scroll, visible)
+PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. visible, visible)
 

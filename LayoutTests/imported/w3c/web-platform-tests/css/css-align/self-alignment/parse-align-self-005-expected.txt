@@ -1,5 +1,5 @@
 
-PASS Test the value 'inherit' overrides current value ('end') 
-PASS Test the value 'inherit' overrides current value ('safe start') 
-PASS Test the value 'inherit' overrides current value ('unsafe center') 
+PASS Test the value 'inherit' overrides current value ('end')
+PASS Test the value 'inherit' overrides current value ('safe start')
+PASS Test the value 'inherit' overrides current value ('unsafe center')
 

@@ -1,14 +1,14 @@
 
-PASS Multiple selectors with combinators 
-PASS Nested :is 
-PASS Nested :where 
-PASS Nested inside :host, without combinators 
+PASS Multiple selectors with combinators
+PASS Nested :is
+PASS Nested :where
+PASS Nested inside :host, without combinators
 FAIL Nested inside :host, with combinators assert_equals: Nested inside :host, with combinators: :host(:is(div .foo)) expected false but got true
-PASS Pseudo-classes inside 
-PASS Pseudo-classes after 
-PASS Pseudo-elements after 
-PASS Pseudo-elements inside 
-PASS Combinators after 
-PASS After part with simple pseudo-class 
+PASS Pseudo-classes inside
+PASS Pseudo-classes after
+PASS Pseudo-elements after
+PASS Pseudo-elements inside
+PASS Combinators after
+PASS After part with simple pseudo-class
 FAIL After part with invalid selector after assert_equals: After part with invalid selector after: ::part(foo):is([attr='value']) expected false but got true
 

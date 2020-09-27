@@ -1,4 +1,4 @@
 ...
 
-PASS CSSOM View - 7 - element.offsetWidth detatches correctly 
+PASS CSSOM View - 7 - element.offsetWidth detatches correctly
 

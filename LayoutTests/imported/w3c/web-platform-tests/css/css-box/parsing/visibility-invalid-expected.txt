@@ -1,4 +1,4 @@
 
-PASS e.style['visibility'] = "auto" should not set the property value 
-PASS e.style['visibility'] = "hidden collapse" should not set the property value 
+PASS e.style['visibility'] = "auto" should not set the property value
+PASS e.style['visibility'] = "hidden collapse" should not set the property value
 

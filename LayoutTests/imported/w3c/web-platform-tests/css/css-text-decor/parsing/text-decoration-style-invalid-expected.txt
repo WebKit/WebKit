@@ -1,4 +1,4 @@
 
-PASS e.style['text-decoration-style'] = "groove" should not set the property value 
-PASS e.style['text-decoration-style'] = "solid wavy" should not set the property value 
+PASS e.style['text-decoration-style'] = "groove" should not set the property value
+PASS e.style['text-decoration-style'] = "solid wavy" should not set the property value
 

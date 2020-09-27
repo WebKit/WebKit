@@ -1,31 +1,31 @@
 
-PASS Checking invalid combination - align-items: auto 
-PASS Checking invalid combination - align-items: legacy 
-PASS Checking invalid combination - align-items: space-around 
-PASS Checking invalid combination - align-items: left 
-PASS Checking invalid combination - align-items: safe right 
-PASS Checking invalid combination - align-items: auto safe 
-PASS Checking invalid combination - align-items: auto left 
-PASS Checking invalid combination - align-items: normal unsafe 
-PASS Checking invalid combination - align-items: normal stretch 
-PASS Checking invalid combination - align-items: baseline normal 
-PASS Checking invalid combination - align-items: baseline center 
-PASS Checking invalid combination - align-items: first baseline center 
-PASS Checking invalid combination - align-items: last baseline center 
-PASS Checking invalid combination - align-items: baseline last 
-PASS Checking invalid combination - align-items: baseline first 
-PASS Checking invalid combination - align-items: stretch unsafe 
-PASS Checking invalid combination - align-items: stretch right 
-PASS Checking invalid combination - align-items: unsafe unsafe 
-PASS Checking invalid combination - align-items: unsafe safe 
-PASS Checking invalid combination - align-items: center start 
-PASS Checking invalid combination - align-items: unsafe stretch 
-PASS Checking invalid combination - align-items: safe stretch 
-PASS Checking invalid combination - align-items: baseline safe 
-PASS Checking invalid combination - align-items: unsafe baseline 
-PASS Checking invalid combination - align-items: unsafe safe left 
-PASS Checking invalid combination - align-items: unsafe left safe 
-PASS Checking invalid combination - align-items: left safe unsafe safe 
-PASS Checking invalid combination - align-items: start safe 
-PASS Checking invalid combination - align-items: safe 
+PASS Checking invalid combination - align-items: auto
+PASS Checking invalid combination - align-items: legacy
+PASS Checking invalid combination - align-items: space-around
+PASS Checking invalid combination - align-items: left
+PASS Checking invalid combination - align-items: safe right
+PASS Checking invalid combination - align-items: auto safe
+PASS Checking invalid combination - align-items: auto left
+PASS Checking invalid combination - align-items: normal unsafe
+PASS Checking invalid combination - align-items: normal stretch
+PASS Checking invalid combination - align-items: baseline normal
+PASS Checking invalid combination - align-items: baseline center
+PASS Checking invalid combination - align-items: first baseline center
+PASS Checking invalid combination - align-items: last baseline center
+PASS Checking invalid combination - align-items: baseline last
+PASS Checking invalid combination - align-items: baseline first
+PASS Checking invalid combination - align-items: stretch unsafe
+PASS Checking invalid combination - align-items: stretch right
+PASS Checking invalid combination - align-items: unsafe unsafe
+PASS Checking invalid combination - align-items: unsafe safe
+PASS Checking invalid combination - align-items: center start
+PASS Checking invalid combination - align-items: unsafe stretch
+PASS Checking invalid combination - align-items: safe stretch
+PASS Checking invalid combination - align-items: baseline safe
+PASS Checking invalid combination - align-items: unsafe baseline
+PASS Checking invalid combination - align-items: unsafe safe left
+PASS Checking invalid combination - align-items: unsafe left safe
+PASS Checking invalid combination - align-items: left safe unsafe safe
+PASS Checking invalid combination - align-items: start safe
+PASS Checking invalid combination - align-items: safe
 

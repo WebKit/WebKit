@@ -1,7 +1,7 @@
 
-PASS e.style['image-rendering'] = "auto" should set the property value 
+PASS e.style['image-rendering'] = "auto" should set the property value
 FAIL e.style['image-rendering'] = "smooth" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['image-rendering'] = "high-quality" should set the property value assert_not_equals: property should be set got disallowed value ""
-PASS e.style['image-rendering'] = "crisp-edges" should set the property value 
-PASS e.style['image-rendering'] = "pixelated" should set the property value 
+PASS e.style['image-rendering'] = "crisp-edges" should set the property value
+PASS e.style['image-rendering'] = "pixelated" should set the property value
 

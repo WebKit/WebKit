@@ -1,37 +1,37 @@
 Test DOMQuad interface
 
 
-PASS testConstructor0: points 
-PASS testConstructor0: bounds 
-PASS testConstructor1 
-PASS testConstructor2 
-PASS testConstructor3 
-PASS testConstructor4 
-PASS fromRect() method on DOMQuad: points 
-PASS fromRect() method on DOMQuad: bounds 
-PASS fromRect() method on DOMQuad with negatives: points 
-PASS fromRect() method on DOMQuad with negatives: bounds 
-PASS fromRect() method on DOMQuad with Infinity: points 
-PASS fromRect() method on DOMQuad with Infinity: bounds 
-PASS testConstructor8: points 
-PASS testConstructor8: bounds 
-PASS testConstructor9: points 
-PASS testConstructor9: bounds 
-PASS testConstructor10: points 
-PASS testConstructor10: bounds 
-PASS testConstructor11: points 
-PASS testConstructor11: bounds 
-PASS testConstructor12: points 
-PASS testConstructor12: bounds 
-PASS testConstructor13: points 
-PASS testConstructor13: bounds 
-PASS testConstructor14: points 
-PASS testConstructor14: bounds 
-PASS testConstructor15 
-PASS testConstructor16: points 
-PASS testConstructor16: bounds 
-PASS p1Top4Attributes0: points 
-PASS p1Top4Attributes0: bounds 
-PASS p1Top4Attributes1: points 
-PASS p1Top4Attributes1: bounds 
+PASS testConstructor0: points
+PASS testConstructor0: bounds
+PASS testConstructor1
+PASS testConstructor2
+PASS testConstructor3
+PASS testConstructor4
+PASS fromRect() method on DOMQuad: points
+PASS fromRect() method on DOMQuad: bounds
+PASS fromRect() method on DOMQuad with negatives: points
+PASS fromRect() method on DOMQuad with negatives: bounds
+PASS fromRect() method on DOMQuad with Infinity: points
+PASS fromRect() method on DOMQuad with Infinity: bounds
+PASS testConstructor8: points
+PASS testConstructor8: bounds
+PASS testConstructor9: points
+PASS testConstructor9: bounds
+PASS testConstructor10: points
+PASS testConstructor10: bounds
+PASS testConstructor11: points
+PASS testConstructor11: bounds
+PASS testConstructor12: points
+PASS testConstructor12: bounds
+PASS testConstructor13: points
+PASS testConstructor13: bounds
+PASS testConstructor14: points
+PASS testConstructor14: bounds
+PASS testConstructor15
+PASS testConstructor16: points
+PASS testConstructor16: bounds
+PASS p1Top4Attributes0: points
+PASS p1Top4Attributes0: bounds
+PASS p1Top4Attributes1: points
+PASS p1Top4Attributes1: bounds
 

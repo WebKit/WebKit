@@ -1,6 +1,6 @@
 
-PASS e.style['background-origin'] = "fill-box" should not set the property value 
-PASS e.style['background-origin'] = "margin-box" should not set the property value 
-PASS e.style['background-origin'] = "stroke-box" should not set the property value 
-PASS e.style['background-origin'] = "view-box" should not set the property value 
+PASS e.style['background-origin'] = "fill-box" should not set the property value
+PASS e.style['background-origin'] = "margin-box" should not set the property value
+PASS e.style['background-origin'] = "stroke-box" should not set the property value
+PASS e.style['background-origin'] = "view-box" should not set the property value
 

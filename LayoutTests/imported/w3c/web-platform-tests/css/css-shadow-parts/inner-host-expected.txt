@@ -1,5 +1,5 @@
-The following text should be green: 
+The following text should be green:
 
-PASS Part in outer host is styled by document style sheet 
-PASS Part in inner host is not styled by document style sheet 
+PASS Part in outer host is styled by document style sheet
+PASS Part in inner host is not styled by document style sheet
 

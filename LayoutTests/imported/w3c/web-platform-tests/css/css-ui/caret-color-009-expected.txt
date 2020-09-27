@@ -1,5 +1,5 @@
 
-PASS Check the resolved value of 'auto' 
-PASS Check the resolved value of 'currentcolor' 
-PASS Check the resolved value of 'initial' 
+PASS Check the resolved value of 'auto'
+PASS Check the resolved value of 'currentcolor'
+PASS Check the resolved value of 'initial'
 

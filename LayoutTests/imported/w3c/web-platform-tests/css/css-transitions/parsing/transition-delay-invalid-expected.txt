@@ -1,7 +1,7 @@
 
-PASS e.style['transition-delay'] = "infinite" should not set the property value 
-PASS e.style['transition-delay'] = "0" should not set the property value 
-PASS e.style['transition-delay'] = "500ms 0.5s" should not set the property value 
-PASS e.style['transition-delay'] = "-3s, initial" should not set the property value 
-PASS e.style['transition-delay'] = "initial, -3s" should not set the property value 
+PASS e.style['transition-delay'] = "infinite" should not set the property value
+PASS e.style['transition-delay'] = "0" should not set the property value
+PASS e.style['transition-delay'] = "500ms 0.5s" should not set the property value
+PASS e.style['transition-delay'] = "-3s, initial" should not set the property value
+PASS e.style['transition-delay'] = "initial, -3s" should not set the property value
 

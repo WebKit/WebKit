@@ -1,26 +1,26 @@
 
-PASS Property display value 'grid' 
-PASS Property display value 'inline-grid' 
-PASS Property display value 'inline' 
-PASS Property display value 'block' 
-PASS Property display value 'list-item' 
-PASS Property display value 'inline-block' 
-PASS Property display value 'table' 
-PASS Property display value 'inline-table' 
-PASS Property display value 'table-row-group' 
-PASS Property display value 'table-header-group' 
-PASS Property display value 'table-footer-group' 
-PASS Property display value 'table-row' 
-PASS Property display value 'table-column-group' 
-PASS Property display value 'table-column' 
-PASS Property display value 'table-cell' 
-PASS Property display value 'table-caption' 
-PASS Property display value 'none' 
-PASS Property display value 'flex' 
-PASS Property display value 'inline-flex' 
-PASS Property display value 'contents' 
-PASS position absolute affects computed display 
-PASS position fixed affects computed display 
-PASS float left affects computed display 
-PASS float right affects computed display 
+PASS Property display value 'grid'
+PASS Property display value 'inline-grid'
+PASS Property display value 'inline'
+PASS Property display value 'block'
+PASS Property display value 'list-item'
+PASS Property display value 'inline-block'
+PASS Property display value 'table'
+PASS Property display value 'inline-table'
+PASS Property display value 'table-row-group'
+PASS Property display value 'table-header-group'
+PASS Property display value 'table-footer-group'
+PASS Property display value 'table-row'
+PASS Property display value 'table-column-group'
+PASS Property display value 'table-column'
+PASS Property display value 'table-cell'
+PASS Property display value 'table-caption'
+PASS Property display value 'none'
+PASS Property display value 'flex'
+PASS Property display value 'inline-flex'
+PASS Property display value 'contents'
+PASS position absolute affects computed display
+PASS position fixed affects computed display
+PASS float left affects computed display
+PASS float right affects computed display
 

@@ -1,5 +1,5 @@
 
-PASS e.style['outline-width'] = "auto" should not set the property value 
-PASS e.style['outline-width'] = "1%" should not set the property value 
-PASS e.style['outline-width'] = "thin medium thick medium thin" should not set the property value 
+PASS e.style['outline-width'] = "auto" should not set the property value
+PASS e.style['outline-width'] = "1%" should not set the property value
+PASS e.style['outline-width'] = "thin medium thick medium thin" should not set the property value
 

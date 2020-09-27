@@ -1,4 +1,4 @@
 
-PASS float-in-div 
-PASS float-in-table 
+PASS float-in-div
+PASS float-in-table
 

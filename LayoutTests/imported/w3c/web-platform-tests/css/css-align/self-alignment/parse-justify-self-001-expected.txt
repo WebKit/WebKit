@@ -1,22 +1,22 @@
 
-PASS Checking justify-self: auto 
-PASS Checking justify-self: normal 
-PASS Checking justify-self: stretch 
-PASS Checking justify-self: left 
-PASS Checking justify-self: right 
-PASS Checking justify-self: start 
-PASS Checking justify-self: end 
-PASS Checking justify-self: self-start 
-PASS Checking justify-self: self-end 
-PASS Checking justify-self: center 
-PASS Checking justify-self: flex-start 
-PASS Checking justify-self: flex-end 
-PASS Checking justify-self: baseline 
-PASS Checking justify-self: first baseline 
-PASS Checking justify-self: last baseline 
-PASS Checking justify-self: safe flex-end 
-PASS Checking justify-self: unsafe end 
-PASS Checking justify-self: safe end 
-PASS Checking justify-self: unsafe flex-start 
-PASS Checking justify-self: safe center 
+PASS Checking justify-self: auto
+PASS Checking justify-self: normal
+PASS Checking justify-self: stretch
+PASS Checking justify-self: left
+PASS Checking justify-self: right
+PASS Checking justify-self: start
+PASS Checking justify-self: end
+PASS Checking justify-self: self-start
+PASS Checking justify-self: self-end
+PASS Checking justify-self: center
+PASS Checking justify-self: flex-start
+PASS Checking justify-self: flex-end
+PASS Checking justify-self: baseline
+PASS Checking justify-self: first baseline
+PASS Checking justify-self: last baseline
+PASS Checking justify-self: safe flex-end
+PASS Checking justify-self: unsafe end
+PASS Checking justify-self: safe end
+PASS Checking justify-self: unsafe flex-start
+PASS Checking justify-self: safe center
 

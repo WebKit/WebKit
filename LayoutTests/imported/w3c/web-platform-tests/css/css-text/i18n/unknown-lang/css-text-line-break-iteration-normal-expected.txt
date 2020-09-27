@@ -1,8 +1,8 @@
 
-PASS 3005  IDEOGRAPHIC ITERATION MARK may NOT appear at line start if lang unknown and normal 
-PASS 303B  VERTICAL IDEOGRAPHIC ITERATION MARK may NOT appear at line start if lang unknown and normal 
-PASS 309D  HIRAGANA ITERATION MARK may NOT appear at line start if lang unknown and normal 
-PASS 309E  HIRAGANA VOICED ITERATION MARK may NOT appear at line start if lang unknown and normal 
-PASS 30FD  KATAKANA ITERATION MARK may NOT appear at line start if lang unknown and normal 
-PASS 30FE  KATAKANA VOICED ITERATION MARK may NOT appear at line start if lang unknown and normal 
+PASS 3005  IDEOGRAPHIC ITERATION MARK may NOT appear at line start if lang unknown and normal
+PASS 303B  VERTICAL IDEOGRAPHIC ITERATION MARK may NOT appear at line start if lang unknown and normal
+PASS 309D  HIRAGANA ITERATION MARK may NOT appear at line start if lang unknown and normal
+PASS 309E  HIRAGANA VOICED ITERATION MARK may NOT appear at line start if lang unknown and normal
+PASS 30FD  KATAKANA ITERATION MARK may NOT appear at line start if lang unknown and normal
+PASS 30FE  KATAKANA VOICED ITERATION MARK may NOT appear at line start if lang unknown and normal
 

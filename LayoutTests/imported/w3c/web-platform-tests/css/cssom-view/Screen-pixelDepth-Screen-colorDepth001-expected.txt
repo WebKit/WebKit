@@ -3,6 +3,6 @@ This case tests the Screen pixelDepth and colorDepth
 The test passes if the value is 24
 
 
-PASS testColorDepth 
-PASS testPixelDepth 
+PASS testColorDepth
+PASS testPixelDepth
 

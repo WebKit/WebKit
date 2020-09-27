@@ -24,9 +24,9 @@ FAIL width auto(to) / events assert_equals: Expected TransitionEnd events trigge
 FAIL width auto(from) / values assert_not_equals: must not be target value after start got disallowed value "13.328125px"
 FAIL width auto(from) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "width:2s" but got ""
 FAIL clip auto(to) / values assert_not_equals: must not be target value after start got disallowed value "auto"
-PASS clip auto(to) / events 
-PASS clip auto(from) / values 
-PASS clip auto(from) / events 
+PASS clip auto(to) / events
+PASS clip auto(from) / values
+PASS clip auto(from) / events
 FAIL marker-offset auto(to) / values assert_not_equals: initial and target values may not match got disallowed value ""
 FAIL marker-offset auto(to) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "marker-offset:2s" but got ""
 FAIL marker-offset auto(from) / values assert_not_equals: initial and target values may not match got disallowed value ""
@@ -47,9 +47,9 @@ FAIL bottom auto(to) / values assert_not_equals: must not be target value after 
 FAIL bottom auto(to) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "bottom:2s" but got ""
 FAIL bottom auto(from) / values assert_not_equals: must not be target value after start got disallowed value "13.333333015441895px"
 FAIL bottom auto(from) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "bottom:2s" but got ""
-PASS z-index auto(to) / values 
-PASS z-index auto(to) / events 
-PASS z-index auto(from) / values 
-PASS z-index auto(from) / events 
+PASS z-index auto(to) / values
+PASS z-index auto(to) / events
+PASS z-index auto(from) / values
+PASS z-index auto(from) / events
 Text sample
 

@@ -1,20 +1,20 @@
-offset 
+offset
 offsetref
-offset 
+offset
 offsetref
-offset 
+offset
 offsetref
-offset 
+offset
 offsetref
-offset 
+offset
 offsetref
-offset 
+offset
 offsetref
 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 0 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 1 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 2 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 3 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 4 
-PASS offsetTop/Left of empty inline elements should work as if they were not empty: 5 
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 0
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 1
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 2
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 3
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 4
+PASS offsetTop/Left of empty inline elements should work as if they were not empty: 5
 

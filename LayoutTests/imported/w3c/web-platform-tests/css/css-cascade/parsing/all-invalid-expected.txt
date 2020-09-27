@@ -1,9 +1,9 @@
 
-PASS e.style['all'] = "auto" should not set the property value 
-PASS e.style['all'] = "none" should not set the property value 
-PASS e.style['all'] = "filter" should not set the property value 
-PASS e.style['all'] = "unset inherit" should not set the property value 
-PASS e.style['all'] = "inherit initial" should not set the property value 
-PASS e.style['all'] = "initial unset" should not set the property value 
-PASS e.style['all'] = "opacity transform" should not set the property value 
+PASS e.style['all'] = "auto" should not set the property value
+PASS e.style['all'] = "none" should not set the property value
+PASS e.style['all'] = "filter" should not set the property value
+PASS e.style['all'] = "unset inherit" should not set the property value
+PASS e.style['all'] = "inherit initial" should not set the property value
+PASS e.style['all'] = "initial unset" should not set the property value
+PASS e.style['all'] = "opacity transform" should not set the property value
 

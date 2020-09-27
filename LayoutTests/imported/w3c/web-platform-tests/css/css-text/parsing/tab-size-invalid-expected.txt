@@ -1,6 +1,6 @@
 
-PASS e.style['tab-size'] = "-10px" should not set the property value 
-PASS e.style['tab-size'] = "-20" should not set the property value 
-PASS e.style['tab-size'] = "30%" should not set the property value 
-PASS e.style['tab-size'] = "calc(40% + 50px)" should not set the property value 
+PASS e.style['tab-size'] = "-10px" should not set the property value
+PASS e.style['tab-size'] = "-20" should not set the property value
+PASS e.style['tab-size'] = "30%" should not set the property value
+PASS e.style['tab-size'] = "calc(40% + 50px)" should not set the property value
 

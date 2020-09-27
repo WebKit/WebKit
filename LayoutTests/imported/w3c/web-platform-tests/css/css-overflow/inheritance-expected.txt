@@ -9,10 +9,10 @@ FAIL Property overflow-block has initial value visible assert_true: overflow-blo
 FAIL Property overflow-block does not inherit assert_true: expected true got false
 FAIL Property overflow-inline has initial value visible assert_true: overflow-inline doesn't seem to be supported in the computed style expected true got false
 FAIL Property overflow-inline does not inherit assert_true: expected true got false
-PASS Property overflow-x has initial value visible 
-PASS Property overflow-x does not inherit 
-PASS Property overflow-y has initial value visible 
-PASS Property overflow-y does not inherit 
-PASS Property text-overflow has initial value clip 
-PASS Property text-overflow does not inherit 
+PASS Property overflow-x has initial value visible
+PASS Property overflow-x does not inherit
+PASS Property overflow-y has initial value visible
+PASS Property overflow-y does not inherit
+PASS Property text-overflow has initial value clip
+PASS Property text-overflow does not inherit
 

@@ -1,7 +1,7 @@
 
-PASS testing border-top-left-radius: calc(10px + 25%) calc(20px + 25%) 
-PASS testing border-top-right-radius: calc(1em + 25%) 
-PASS testing border-bottom-right-radius: calc(25%) 
-PASS testing border-bottom-left-radius: calc(25px); 
-PASS testing border-radius shorthand 
+PASS testing border-top-left-radius: calc(10px + 25%) calc(20px + 25%)
+PASS testing border-top-right-radius: calc(1em + 25%)
+PASS testing border-bottom-right-radius: calc(25%)
+PASS testing border-bottom-left-radius: calc(25px);
+PASS testing border-radius shorthand
 

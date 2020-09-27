@@ -1,16 +1,16 @@
 
-PASS Property column-count has initial value auto 
-PASS Property column-count does not inherit 
-PASS Property column-fill has initial value balance 
-PASS Property column-fill does not inherit 
-PASS Property column-rule-color has initial value rgba(42, 53, 64, 0.75) 
-PASS Property column-rule-color does not inherit 
-PASS Property column-rule-style has initial value none 
-PASS Property column-rule-style does not inherit 
-PASS Property column-rule-width has initial value 3px 
-PASS Property column-rule-width does not inherit 
-PASS Property column-span has initial value none 
-PASS Property column-span does not inherit 
-PASS Property column-width has initial value auto 
-PASS Property column-width does not inherit 
+PASS Property column-count has initial value auto
+PASS Property column-count does not inherit
+PASS Property column-fill has initial value balance
+PASS Property column-fill does not inherit
+PASS Property column-rule-color has initial value rgba(42, 53, 64, 0.75)
+PASS Property column-rule-color does not inherit
+PASS Property column-rule-style has initial value none
+PASS Property column-rule-style does not inherit
+PASS Property column-rule-width has initial value 3px
+PASS Property column-rule-width does not inherit
+PASS Property column-span has initial value none
+PASS Property column-span does not inherit
+PASS Property column-width has initial value auto
+PASS Property column-width does not inherit
 

@@ -1,6 +1,6 @@
 
-PASS e.style['z-index'] = "none" should not set the property value 
-PASS e.style['z-index'] = "10px" should not set the property value 
-PASS e.style['z-index'] = "0.5" should not set the property value 
-PASS e.style['z-index'] = "auto 123" should not set the property value 
+PASS e.style['z-index'] = "none" should not set the property value
+PASS e.style['z-index'] = "10px" should not set the property value
+PASS e.style['z-index'] = "0.5" should not set the property value
+PASS e.style['z-index'] = "auto 123" should not set the property value
 

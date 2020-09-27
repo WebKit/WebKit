@@ -1,44 +1,44 @@
 Test DOMPoint and DOMPointReadOnly interfaces
 
 
-PASS test DOMPoint Constructor no args 
-PASS test DOMPoint Constructor one args 
-PASS test DOMPoint Constructor two args 
-PASS test DOMPoint Constructor three args 
-PASS test DOMPoint Constructor four args 
-PASS test DOMPoint Constructor more then four args 
-PASS test DOMPoint Constructor with undefined 
-PASS test DOMPoint Constructor with string 
+PASS test DOMPoint Constructor no args
+PASS test DOMPoint Constructor one args
+PASS test DOMPoint Constructor two args
+PASS test DOMPoint Constructor three args
+PASS test DOMPoint Constructor four args
+PASS test DOMPoint Constructor more then four args
+PASS test DOMPoint Constructor with undefined
+PASS test DOMPoint Constructor with string
 FAIL test DOMPoint Constructor with empty object assert_equals: x is not matched expected NaN but got 0
-PASS test DOMPoint fromPoint with empty object 
-PASS test DOMPoint fromPoint with x 
-PASS test DOMPoint fromPoint with x, y 
-PASS test DOMPoint fromPoint with x, y, z 
-PASS test DOMPoint fromPoint with x, y, z, w 
-PASS test DOMPoint fromPoint with x, y, z, w, v 
-PASS test DOMPoint fromPoint with x, z 
-PASS test DOMPoint fromPoint with undefined value 
-PASS test DOMPoint matrixTransform 
-PASS test DOMPoint matrixTransform with inconsistent input 
-PASS test DOMPoint Attributes undefined 
-PASS test DOMPoint Attributes NaN Infinity 
-PASS test DOMPointReadOnly Constructor no args 
-PASS test DOMPointReadOnly Constructor one args 
-PASS test DOMPointReadOnly Constructor two args 
-PASS test DOMPointReadOnly Constructor three args 
-PASS test DOMPointReadOnly Constructor four args 
-PASS test DOMPointReadOnly Constructor more then four args 
-PASS test DOMPointReadOnly Constructor with undefined 
-PASS test DOMPointReadOnly Constructor with string 
+PASS test DOMPoint fromPoint with empty object
+PASS test DOMPoint fromPoint with x
+PASS test DOMPoint fromPoint with x, y
+PASS test DOMPoint fromPoint with x, y, z
+PASS test DOMPoint fromPoint with x, y, z, w
+PASS test DOMPoint fromPoint with x, y, z, w, v
+PASS test DOMPoint fromPoint with x, z
+PASS test DOMPoint fromPoint with undefined value
+PASS test DOMPoint matrixTransform
+PASS test DOMPoint matrixTransform with inconsistent input
+PASS test DOMPoint Attributes undefined
+PASS test DOMPoint Attributes NaN Infinity
+PASS test DOMPointReadOnly Constructor no args
+PASS test DOMPointReadOnly Constructor one args
+PASS test DOMPointReadOnly Constructor two args
+PASS test DOMPointReadOnly Constructor three args
+PASS test DOMPointReadOnly Constructor four args
+PASS test DOMPointReadOnly Constructor more then four args
+PASS test DOMPointReadOnly Constructor with undefined
+PASS test DOMPointReadOnly Constructor with string
 FAIL test DOMPointReadOnly Constructor with object assert_equals: x is not matched expected NaN but got 0
-PASS test DOMPointReadOnly fromPoint with empty object 
-PASS test DOMPointReadOnly fromPoint with x 
-PASS test DOMPointReadOnly fromPoint with x, y 
-PASS test DOMPointReadOnly fromPoint with x, y, z 
-PASS test DOMPointReadOnly fromPoint with x, y, z, w 
-PASS test DOMPointReadOnly fromPoint with x, y, z, w, v 
-PASS test DOMPointReadOnly fromPoint with x, z 
-PASS test DOMPointReadOnly fromPoint with undefined value 
-PASS test DOMPointReadOnly matrixTransform 
-PASS test DOMPointReadOnly Attributes undefined 
+PASS test DOMPointReadOnly fromPoint with empty object
+PASS test DOMPointReadOnly fromPoint with x
+PASS test DOMPointReadOnly fromPoint with x, y
+PASS test DOMPointReadOnly fromPoint with x, y, z
+PASS test DOMPointReadOnly fromPoint with x, y, z, w
+PASS test DOMPointReadOnly fromPoint with x, y, z, w, v
+PASS test DOMPointReadOnly fromPoint with x, z
+PASS test DOMPointReadOnly fromPoint with undefined value
+PASS test DOMPointReadOnly matrixTransform
+PASS test DOMPointReadOnly Attributes undefined
 

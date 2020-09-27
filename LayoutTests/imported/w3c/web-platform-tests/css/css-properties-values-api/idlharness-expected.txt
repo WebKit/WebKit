@@ -1,8 +1,8 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial namespace CSS: original namespace defined 
-PASS Partial namespace CSS: member names are unique 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial namespace CSS: original namespace defined
+PASS Partial namespace CSS: member names are unique
 FAIL CSSPropertyRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
 FAIL CSSPropertyRule interface object length assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
 FAIL CSSPropertyRule interface object name assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
@@ -13,6 +13,6 @@ FAIL CSSPropertyRule interface: attribute name assert_own_property: self does no
 FAIL CSSPropertyRule interface: attribute syntax assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
 FAIL CSSPropertyRule interface: attribute inherits assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
 FAIL CSSPropertyRule interface: attribute initialValue assert_own_property: self does not have own property "CSSPropertyRule" expected property "CSSPropertyRule" missing
-PASS CSS namespace: operation escape(CSSOMString) 
-PASS CSS namespace: operation registerProperty(PropertyDefinition) 
+PASS CSS namespace: operation escape(CSSOMString)
+PASS CSS namespace: operation registerProperty(PropertyDefinition)
 

@@ -1,6 +1,6 @@
 
-PASS Property word-break value 'normal' 
-PASS Property word-break value 'keep-all' 
-PASS Property word-break value 'break-all' 
-PASS Property word-break value 'break-word' 
+PASS Property word-break value 'normal'
+PASS Property word-break value 'keep-all'
+PASS Property word-break value 'break-all'
+PASS Property word-break value 'break-word'
 

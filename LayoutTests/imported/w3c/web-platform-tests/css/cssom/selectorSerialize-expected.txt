@@ -1,16 +1,16 @@
 
-PASS :nth-child serialization produces canonical form 
-PASS single universal selector shows '*' when serialized. 
-PASS single type (simple) selector in the sequence of simple selectors that is not a universal selector 
-PASS single class (simple) selector in the sequence of simple selectors that is not a universal selector 
-PASS single id (simple) selector in the sequence of simple selectors that is not a universal selector 
-PASS single pseudo (simple) selector which does not accept arguments in the sequence of simple selectors that is not a universal selector 
+PASS :nth-child serialization produces canonical form
+PASS single universal selector shows '*' when serialized.
+PASS single type (simple) selector in the sequence of simple selectors that is not a universal selector
+PASS single class (simple) selector in the sequence of simple selectors that is not a universal selector
+PASS single id (simple) selector in the sequence of simple selectors that is not a universal selector
+PASS single pseudo (simple) selector which does not accept arguments in the sequence of simple selectors that is not a universal selector
 FAIL single pseudo (simple) selector "lang" which accepts arguments in the sequence of simple selectors that is not a universal selector assert_equals: expected ":lang(ja)" but got ":lang(\"ja\")"
-PASS single pseudo (simple) selector "nth-child" which accepts arguments in the sequence of simple selectors that is not a universal selector 
-PASS single pseudo (simple) selector "nth-last-child" which accepts arguments in the sequence of simple selectors that is not a universal selector 
+PASS single pseudo (simple) selector "nth-child" which accepts arguments in the sequence of simple selectors that is not a universal selector
+PASS single pseudo (simple) selector "nth-last-child" which accepts arguments in the sequence of simple selectors that is not a universal selector
 FAIL single pseudo (simple) selector "nth-of-child" which accepts arguments in the sequence of simple selectors that is not a universal selector assert_equals: expected ":nth-of-type(2n)" but got ":nth-of-type(even)"
 FAIL single pseudo (simple) selector ":nth-last-of-type" which accepts arguments in the sequence of simple selectors that is not a universal selector assert_equals: expected ":nth-last-of-type(2n)" but got ":nth-last-of-type(even)"
-PASS single pseudo (simple) selector ":not" which accepts arguments in the sequence of simple selectors that is not a universal selector 
+PASS single pseudo (simple) selector ":not" which accepts arguments in the sequence of simple selectors that is not a universal selector
 FAIL escaped character in attribute name assert_equals: expected "[ns\\:foo]" but got "[ns:foo]"
 FAIL escaped character as code point in attribute name assert_equals: expected "[\\30 zonk]" but got "[0zonk]"
 FAIL escaped character (@) in attribute name assert_equals: expected "[\\@]" but got "[@]"

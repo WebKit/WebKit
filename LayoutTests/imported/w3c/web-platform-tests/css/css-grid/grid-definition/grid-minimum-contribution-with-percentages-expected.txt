@@ -1,18 +1,18 @@
 
-PASS auto - columns 
-PASS auto - rows 
-PASS min - columns 
-PASS min - rows 
-PASS max - columns 
-PASS max - rows 
-PASS size - columns 
-PASS size - rows 
-PASS min max - columns 
-PASS min max - rows 
-PASS min size - columns 
-PASS min size - rows 
-PASS max size - columns 
-PASS max size - rows 
-PASS min max size - columns 
-PASS min max size - rows 
+PASS auto - columns
+PASS auto - rows
+PASS min - columns
+PASS min - rows
+PASS max - columns
+PASS max - rows
+PASS size - columns
+PASS size - rows
+PASS min max - columns
+PASS min max - rows
+PASS min size - columns
+PASS min size - rows
+PASS max size - columns
+PASS max size - rows
+PASS min max size - columns
+PASS min max size - rows
 

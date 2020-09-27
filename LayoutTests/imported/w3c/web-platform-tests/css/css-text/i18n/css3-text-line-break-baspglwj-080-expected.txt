@@ -3,8 +3,8 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa྅bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa྅bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa྅bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-PASS white-space:normal 
-PASS white-space:pre-line 
-PASS white-space:pre-wrap 
-PASS white-space:break-spaces 
+PASS white-space:normal
+PASS white-space:pre-line
+PASS white-space:pre-wrap
+PASS white-space:break-spaces
 

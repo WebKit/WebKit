@@ -1,7 +1,7 @@
 
-PASS Computed style parent (should be null) 
-PASS Exception thrown when trying to change a computed style declaration via property 
-PASS Exception thrown when trying to change a computed style declaration via setProperty 
-PASS Exception thrown when trying to change a computed style alias via property 
-PASS Exception thrown when trying to change a computed style alias via setProperty 
+PASS Computed style parent (should be null)
+PASS Exception thrown when trying to change a computed style declaration via property
+PASS Exception thrown when trying to change a computed style declaration via setProperty
+PASS Exception thrown when trying to change a computed style alias via property
+PASS Exception thrown when trying to change a computed style alias via setProperty
 

@@ -1,8 +1,8 @@
 
-PASS e.style['white-space'] = "normal" should set the property value 
-PASS e.style['white-space'] = "pre" should set the property value 
-PASS e.style['white-space'] = "nowrap" should set the property value 
-PASS e.style['white-space'] = "pre-wrap" should set the property value 
-PASS e.style['white-space'] = "break-spaces" should set the property value 
-PASS e.style['white-space'] = "pre-line" should set the property value 
+PASS e.style['white-space'] = "normal" should set the property value
+PASS e.style['white-space'] = "pre" should set the property value
+PASS e.style['white-space'] = "nowrap" should set the property value
+PASS e.style['white-space'] = "pre-wrap" should set the property value
+PASS e.style['white-space'] = "break-spaces" should set the property value
+PASS e.style['white-space'] = "pre-line" should set the property value
 

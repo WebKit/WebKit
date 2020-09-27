@@ -6,11 +6,11 @@ foo
 foo
 foo
 
-PASS Shorthand serialization with shorthand and longhands mixed. 
-PASS Shorthand serialization with just longhands. 
+PASS Shorthand serialization with shorthand and longhands mixed.
+PASS Shorthand serialization with just longhands.
 FAIL Shorthand serialization with variable and variable from other shorthand. assert_equals: expected "var(--a)" but got ""
-PASS Shorthand serialization after setting 
+PASS Shorthand serialization after setting
 FAIL Shorthand serialization with 'initial' value. assert_equals: expected "margin: initial;" but got ""
-PASS Shorthand serialization with 'initial' value, one longhand with important flag. 
-PASS Shorthand serialization with 'initial' value, longhands set individually, one with important flag. 
+PASS Shorthand serialization with 'initial' value, one longhand with important flag.
+PASS Shorthand serialization with 'initial' value, longhands set individually, one with important flag.
 

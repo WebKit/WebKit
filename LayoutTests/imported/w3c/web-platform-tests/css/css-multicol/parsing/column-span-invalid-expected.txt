@@ -1,4 +1,4 @@
 
-PASS e.style['column-span'] = "auto" should not set the property value 
-PASS e.style['column-span'] = "none all" should not set the property value 
+PASS e.style['column-span'] = "auto" should not set the property value
+PASS e.style['column-span'] = "none all" should not set the property value
 

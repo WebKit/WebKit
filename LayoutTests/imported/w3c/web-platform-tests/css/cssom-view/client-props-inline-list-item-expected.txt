@@ -1,4 +1,4 @@
 FooFoo
 
-PASS client* returns the same for non-replaced inlines regardless of list-item-ness 
+PASS client* returns the same for non-replaced inlines regardless of list-item-ness
 

@@ -1,5 +1,5 @@
 
-PASS e.style['border-width'] = "none" should not set the property value 
-PASS e.style['border-width'] = "thin medium thick medium thin" should not set the property value 
-PASS e.style['border-width'] = "-1px" should not set the property value 
+PASS e.style['border-width'] = "none" should not set the property value
+PASS e.style['border-width'] = "thin medium thick medium thin" should not set the property value
+PASS e.style['border-width'] = "-1px" should not set the property value
 

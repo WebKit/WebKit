@@ -1,7 +1,7 @@
 
-PASS before reaching the sticking point, neither sticky box should be offset 
-PASS the inner sticky can stick before the outer one if necessary 
-PASS both sticky boxes can be stuck at the same time 
-PASS neither sticky can escape their containing block 
-PASS the inner sticky cannot be pushed outside the outer sticky 
+PASS before reaching the sticking point, neither sticky box should be offset
+PASS the inner sticky can stick before the outer one if necessary
+PASS both sticky boxes can be stuck at the same time
+PASS neither sticky can escape their containing block
+PASS the inner sticky cannot be pushed outside the outer sticky
 

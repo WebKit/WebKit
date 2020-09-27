@@ -1,5 +1,5 @@
 
-PASS HTMLElement's CSSStyleDeclaration is mutable 
-PASS getComputedStyle's CSSStyleDeclaration is not mutable 
-PASS StyleSheet's CSSStyleDeclaration is mutable 
+PASS HTMLElement's CSSStyleDeclaration is mutable
+PASS getComputedStyle's CSSStyleDeclaration is not mutable
+PASS StyleSheet's CSSStyleDeclaration is mutable
 

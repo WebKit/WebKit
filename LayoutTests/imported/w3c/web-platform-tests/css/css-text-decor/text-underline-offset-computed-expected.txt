@@ -1,4 +1,4 @@
 
-PASS Property text-underline-offset value 'auto' 
-PASS Property text-underline-offset value 'calc(10px - 8px)' 
+PASS Property text-underline-offset value 'auto'
+PASS Property text-underline-offset value 'calc(10px - 8px)'
 

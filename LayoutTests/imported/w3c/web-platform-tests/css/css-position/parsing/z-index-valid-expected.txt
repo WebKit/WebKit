@@ -1,6 +1,6 @@
 
-PASS e.style['z-index'] = "auto" should set the property value 
-PASS e.style['z-index'] = "-789" should set the property value 
-PASS e.style['z-index'] = "0" should set the property value 
-PASS e.style['z-index'] = "123" should set the property value 
+PASS e.style['z-index'] = "auto" should set the property value
+PASS e.style['z-index'] = "-789" should set the property value
+PASS e.style['z-index'] = "0" should set the property value
+PASS e.style['z-index'] = "123" should set the property value
 

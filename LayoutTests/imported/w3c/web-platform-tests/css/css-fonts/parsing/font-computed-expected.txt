@@ -1,10 +1,10 @@
 
-PASS caption should be a supported system font. 
-PASS icon should be a supported system font. 
-PASS menu should be a supported system font. 
-PASS message-box should be a supported system font. 
-PASS small-caption should be a supported system font. 
-PASS status-bar should be a supported system font. 
+PASS caption should be a supported system font.
+PASS icon should be a supported system font.
+PASS menu should be a supported system font.
+PASS message-box should be a supported system font.
+PASS small-caption should be a supported system font.
+PASS status-bar should be a supported system font.
 FAIL Property font value 'xx-small serif' assert_equals: expected "9px serif" but got "normal normal normal normal 9px/normal serif"
 FAIL Property font value 'normal medium/normal sans-serif' assert_equals: expected "16px sans-serif" but got "normal normal normal normal 16px/normal sans-serif"
 FAIL Property font value 'normal normal xx-large/1.2 cursive' assert_equals: expected "32px / 38px cursive" but got "normal normal normal normal 32px/38px cursive"

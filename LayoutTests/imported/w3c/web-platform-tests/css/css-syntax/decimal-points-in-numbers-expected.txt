@@ -1,8 +1,8 @@
 
-PASS decimal point between digits is valid in a number 
-PASS decimal point before digits is valid in a number 
-PASS decimal point after digits is invalid in a number 
-PASS decimal point between digits is valid in a dimension 
-PASS decimal point before digits is valid in a dimension 
+PASS decimal point between digits is valid in a number
+PASS decimal point before digits is valid in a number
+PASS decimal point after digits is invalid in a number
+PASS decimal point between digits is valid in a dimension
+PASS decimal point before digits is valid in a dimension
 FAIL decimal point after digits is invalid in a dimension assert_not_equals: got disallowed value "1px"
 

@@ -1,17 +1,17 @@
 Test DOMMatrixReadOnly methods do not mutate the object
 
 
-PASS test translate() doesn't mutate 
-PASS test scale() doesn't mutate 
+PASS test translate() doesn't mutate
+PASS test scale() doesn't mutate
 FAIL test scaleNonUniform() doesn't mutate matrix.scaleNonUniform is not a function. (In 'matrix.scaleNonUniform(1,5)', 'matrix.scaleNonUniform' is undefined)
-PASS test scale3d() doesn't mutate 
-PASS test rotate() doesn't mutate 
-PASS test rotateFromVector() doesn't mutate 
-PASS test rotateAxisAngle() doesn't mutate 
-PASS test skewX() doesn't mutate 
-PASS test skewY() doesn't mutate 
-PASS test multiply() doesn't mutate 
-PASS test flipX() doesn't mutate 
-PASS test flipY() doesn't mutate 
-PASS test inverse() doesn't mutate 
+PASS test scale3d() doesn't mutate
+PASS test rotate() doesn't mutate
+PASS test rotateFromVector() doesn't mutate
+PASS test rotateAxisAngle() doesn't mutate
+PASS test skewX() doesn't mutate
+PASS test skewY() doesn't mutate
+PASS test multiply() doesn't mutate
+PASS test flipX() doesn't mutate
+PASS test flipY() doesn't mutate
+PASS test inverse() doesn't mutate
 

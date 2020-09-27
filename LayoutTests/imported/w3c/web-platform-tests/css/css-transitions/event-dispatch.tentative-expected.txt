@@ -1,28 +1,28 @@
 
-PASS Idle -> Pending or Before 
-PASS Idle -> Before 
-PASS Idle or Pending -> Active 
-PASS Idle or Pending -> After 
-PASS Before -> Idle (display: none) 
-PASS Before -> Idle (Animation.timeline = null) 
-PASS Before -> Active 
-PASS Before -> After 
-PASS Active -> Idle, no delay (display: none) 
-PASS Active -> Idle, no delay (Animation.timeline = null) 
-PASS Active -> Idle, with positive delay (display: none) 
-PASS Active -> Idle, with positive delay (Animation.timeline = null) 
-PASS Active -> Idle, with negative delay (display: none) 
-PASS Active -> Idle, with negative delay (Animation.timeline = null) 
-PASS Active -> Before 
-PASS Active -> After 
-PASS After -> Before 
-PASS After -> Active 
-PASS Calculating the interval start and end time with negative start delay. 
-PASS Calculating the interval start and end time with negative end delay. 
-PASS Call Animation.cancel after canceling transition. 
-PASS Restart transition after canceling transition immediately 
-PASS Call Animation.cancel after restarting transition immediately 
-PASS Set timeline and play transition after clear the timeline 
-PASS Set null target effect after canceling the transition 
-PASS Cancel the transition after clearing the target effect 
+PASS Idle -> Pending or Before
+PASS Idle -> Before
+PASS Idle or Pending -> Active
+PASS Idle or Pending -> After
+PASS Before -> Idle (display: none)
+PASS Before -> Idle (Animation.timeline = null)
+PASS Before -> Active
+PASS Before -> After
+PASS Active -> Idle, no delay (display: none)
+PASS Active -> Idle, no delay (Animation.timeline = null)
+PASS Active -> Idle, with positive delay (display: none)
+PASS Active -> Idle, with positive delay (Animation.timeline = null)
+PASS Active -> Idle, with negative delay (display: none)
+PASS Active -> Idle, with negative delay (Animation.timeline = null)
+PASS Active -> Before
+PASS Active -> After
+PASS After -> Before
+PASS After -> Active
+PASS Calculating the interval start and end time with negative start delay.
+PASS Calculating the interval start and end time with negative end delay.
+PASS Call Animation.cancel after canceling transition.
+PASS Restart transition after canceling transition immediately
+PASS Call Animation.cancel after restarting transition immediately
+PASS Set timeline and play transition after clear the timeline
+PASS Set null target effect after canceling the transition
+PASS Cancel the transition after clearing the target effect
 

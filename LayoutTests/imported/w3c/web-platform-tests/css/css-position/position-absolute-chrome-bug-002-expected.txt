@@ -1,5 +1,5 @@
 floatleft
 text
 
-PASS #target position is recalculated correctly. 
+PASS #target position is recalculated correctly.
 

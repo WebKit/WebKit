@@ -1,4 +1,4 @@
 
-PASS mediatest_mediaquery_serialize_1 
-PASS mediatest_mediaquery_serialize_2 
+PASS mediatest_mediaquery_serialize_1
+PASS mediatest_mediaquery_serialize_2
 

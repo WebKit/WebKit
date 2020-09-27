@@ -1,6 +1,6 @@
 
-PASS e.style['max-width'] = "auto" should not set the property value 
-PASS e.style['max-width'] = "min-content max-content" should not set the property value 
-PASS e.style['max-width'] = "-10%" should not set the property value 
-PASS e.style['max-width'] = "-0.5em" should not set the property value 
+PASS e.style['max-width'] = "auto" should not set the property value
+PASS e.style['max-width'] = "min-content max-content" should not set the property value
+PASS e.style['max-width'] = "-10%" should not set the property value
+PASS e.style['max-width'] = "-0.5em" should not set the property value
 

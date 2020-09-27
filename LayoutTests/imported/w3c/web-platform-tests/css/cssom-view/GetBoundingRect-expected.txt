@@ -1,4 +1,4 @@
 FOO
 
-PASS getBoundingClientRect 
+PASS getBoundingClientRect
 

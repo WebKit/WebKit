@@ -1,4 +1,4 @@
 
 
-PASS getComputedStyle cross-doc properly reflects media query changes 
+PASS getComputedStyle cross-doc properly reflects media query changes
 

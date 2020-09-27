@@ -1,4 +1,4 @@
 
 
-PASS Check that a percent width in an iframe is resolved against iframe width for getComputedStyle. 
+PASS Check that a percent width in an iframe is resolved against iframe width for getComputedStyle.
 

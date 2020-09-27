@@ -1,6 +1,6 @@
 
-PASS Property flex-direction value 'row' 
-PASS Property flex-direction value 'row-reverse' 
-PASS Property flex-direction value 'column' 
-PASS Property flex-direction value 'column-reverse' 
+PASS Property flex-direction value 'row'
+PASS Property flex-direction value 'row-reverse'
+PASS Property flex-direction value 'column'
+PASS Property flex-direction value 'column-reverse'
 

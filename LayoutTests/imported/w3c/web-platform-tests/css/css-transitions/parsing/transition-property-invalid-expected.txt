@@ -1,7 +1,7 @@
 
-PASS e.style['transition-property'] = "one two three" should not set the property value 
-PASS e.style['transition-property'] = "1, 2, 3" should not set the property value 
-PASS e.style['transition-property'] = "none, one" should not set the property value 
-PASS e.style['transition-property'] = "initial, top" should not set the property value 
-PASS e.style['transition-property'] = "top, initial" should not set the property value 
+PASS e.style['transition-property'] = "one two three" should not set the property value
+PASS e.style['transition-property'] = "1, 2, 3" should not set the property value
+PASS e.style['transition-property'] = "none, one" should not set the property value
+PASS e.style['transition-property'] = "initial, top" should not set the property value
+PASS e.style['transition-property'] = "top, initial" should not set the property value
 

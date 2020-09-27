@@ -1,5 +1,5 @@
 
-PASS .flexbox 1 
+PASS .flexbox 1
 You should see a green rectangle, 40px high.
 
 

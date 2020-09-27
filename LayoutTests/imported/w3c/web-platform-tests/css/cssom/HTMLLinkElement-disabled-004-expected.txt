@@ -1,3 +1,3 @@
 
-PASS HTMLLinkElement.disabled's explicitly enabled state doesn't persist on clones 
+PASS HTMLLinkElement.disabled's explicitly enabled state doesn't persist on clones
 

@@ -1,4 +1,4 @@
-The following text should be green: 
+The following text should be green:
 
-PASS Part in inner host is forwarded for styling by document style sheet 
+PASS Part in inner host is forwarded for styling by document style sheet
 

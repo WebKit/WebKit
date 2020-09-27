@@ -1,4 +1,4 @@
 
-PASS Check place-self: initial - align-self expanded value 
-PASS Check place-self: initial - justify-self expanded value 
+PASS Check place-self: initial - align-self expanded value
+PASS Check place-self: initial - justify-self expanded value
 

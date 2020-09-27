@@ -1,7 +1,7 @@
 
-PASS CSSStyleDeclaration_accessible 
-PASS read 
-PASS csstext_write 
-PASS property_write 
-PASS shorthand_properties 
+PASS CSSStyleDeclaration_accessible
+PASS read
+PASS csstext_write
+PASS property_write
+PASS shorthand_properties
 

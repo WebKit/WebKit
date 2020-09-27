@@ -1,9 +1,9 @@
 
-PASS Property background-color value 'currentcolor' 
-PASS Property background-color value 'red' 
-PASS Property background-color value '#00FF00' 
-PASS Property background-color value 'rgb(0, 0, 255)' 
-PASS Property background-color value 'rgb(100%, 100%, 0%)' 
-PASS Property background-color value 'hsl(120, 100%, 50%)' 
-PASS Property background-color value 'transparent' 
+PASS Property background-color value 'currentcolor'
+PASS Property background-color value 'red'
+PASS Property background-color value '#00FF00'
+PASS Property background-color value 'rgb(0, 0, 255)'
+PASS Property background-color value 'rgb(100%, 100%, 0%)'
+PASS Property background-color value 'hsl(120, 100%, 50%)'
+PASS Property background-color value 'transparent'
 

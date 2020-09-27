@@ -1,4 +1,4 @@
 This text should not have a border, just corner dots
 
-PASS Check that the border-image shorthand resets border-image-slice to its initial value. 
+PASS Check that the border-image shorthand resets border-image-slice to its initial value.
 

@@ -1,7 +1,7 @@
 
-PASS Serialization of computed style value for display:contents 
-PASS display:contents element as inherit parent - explicit inheritance 
-PASS display:contents element as inherit parent - implicit inheritance 
-PASS Resolved value should be computed value, not used value, for display:contents 
-PASS display:contents is blockified for root elements 
+PASS Serialization of computed style value for display:contents
+PASS display:contents element as inherit parent - explicit inheritance
+PASS display:contents element as inherit parent - implicit inheritance
+PASS Resolved value should be computed value, not used value, for display:contents
+PASS display:contents is blockified for root elements
 

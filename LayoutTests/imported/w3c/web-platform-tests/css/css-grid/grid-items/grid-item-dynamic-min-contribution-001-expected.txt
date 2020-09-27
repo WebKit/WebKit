@@ -1,9 +1,9 @@
 
-PASS Minimum size: auto 
-PASS Minimum size: 0% 
-PASS Minimum size: 100% 
-PASS Minimum size: 200% 
-PASS Minimum size: 300% 
-PASS Minimum size: 400px 
-PASS Minimum size: 500px 
+PASS Minimum size: auto
+PASS Minimum size: 0%
+PASS Minimum size: 100%
+PASS Minimum size: 200%
+PASS Minimum size: 300%
+PASS Minimum size: 400px
+PASS Minimum size: 500px
 

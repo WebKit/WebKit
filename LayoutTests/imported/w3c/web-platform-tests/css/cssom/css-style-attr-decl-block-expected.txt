@@ -1,9 +1,9 @@
 
-PASS Style attribute should create CSS declaration block based on its content 
-PASS Changes to style attribute should reflect on CSS declaration block 
-PASS Changes to CSS declaration block should reflect on style attribute 
-PASS Changes to CSS declaration block should queue mutation record for style attribute 
-PASS Removing non-existing property or setting invalid value on CSS declaration block shouldn't queue mutation record 
-PASS Changes to CSS declaration block after a base URL change 
-PASS Expansion of all:unset and all:revert treated identically 
+PASS Style attribute should create CSS declaration block based on its content
+PASS Changes to style attribute should reflect on CSS declaration block
+PASS Changes to CSS declaration block should reflect on style attribute
+PASS Changes to CSS declaration block should queue mutation record for style attribute
+PASS Removing non-existing property or setting invalid value on CSS declaration block shouldn't queue mutation record
+PASS Changes to CSS declaration block after a base URL change
+PASS Expansion of all:unset and all:revert treated identically
 

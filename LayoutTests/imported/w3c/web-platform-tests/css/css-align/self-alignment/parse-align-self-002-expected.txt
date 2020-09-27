@@ -1,9 +1,9 @@
 
-PASS Test 'initial' value when nothing is specified 
-PASS Test align-self: 'initial' 
-PASS Test grid items align-self: 'initial' 
-PASS Test flex items align-self: 'initial' 
-PASS Test absolute positioned elements align-self: 'initial' 
-PASS Test absolute positioned grid items align-self: 'initial' 
-PASS Test absolute positioned flex items align-self: 'initial' 
+PASS Test 'initial' value when nothing is specified
+PASS Test align-self: 'initial'
+PASS Test grid items align-self: 'initial'
+PASS Test flex items align-self: 'initial'
+PASS Test absolute positioned elements align-self: 'initial'
+PASS Test absolute positioned grid items align-self: 'initial'
+PASS Test absolute positioned flex items align-self: 'initial'
 

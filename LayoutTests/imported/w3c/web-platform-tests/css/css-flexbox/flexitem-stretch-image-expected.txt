@@ -1,5 +1,5 @@
 
-FAIL .flexbox 1 assert_equals: 
+FAIL .flexbox 1 assert_equals:
 <div class="flexbox">
   <img data-expected-display="block" data-expected-width="345" data-expected-height="345" style="flex: 1 0 auto;" src="support/100x100-blue.png">
   <img data-expected-display="block" data-expected-width="255" data-expected-height="345" style="flex: 1 0 auto;" src="support/10x10-green.png">

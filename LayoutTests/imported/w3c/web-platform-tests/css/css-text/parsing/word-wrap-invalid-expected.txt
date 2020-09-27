@@ -1,5 +1,5 @@
 
-PASS e.style['word-wrap'] = "auto" should not set the property value 
-PASS e.style['word-wrap'] = "normal break-word" should not set the property value 
-PASS e.style['word-wrap'] = "anywhere anywhere" should not set the property value 
+PASS e.style['word-wrap'] = "auto" should not set the property value
+PASS e.style['word-wrap'] = "normal break-word" should not set the property value
+PASS e.style['word-wrap'] = "anywhere anywhere" should not set the property value
 

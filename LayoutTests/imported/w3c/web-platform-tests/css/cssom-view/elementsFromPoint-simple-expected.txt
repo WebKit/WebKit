@@ -1,8 +1,8 @@
 
-PASS elementsFromPoint for each corner of a simple div 
-PASS elementsFromPoint for each corner of a div that has a pseudo-element 
-PASS elementsFromPoint for each corner of a div that is between another div and its pseudo-element 
-PASS elementsFromPoint for each corner of a div that has a margin 
-PASS elementsFromPoint for each corner of a div with pointer-events:none 
-PASS elementsFromPoint for each corner of a div with a 3d transform 
+PASS elementsFromPoint for each corner of a simple div
+PASS elementsFromPoint for each corner of a div that has a pseudo-element
+PASS elementsFromPoint for each corner of a div that is between another div and its pseudo-element
+PASS elementsFromPoint for each corner of a div that has a margin
+PASS elementsFromPoint for each corner of a div with pointer-events:none
+PASS elementsFromPoint for each corner of a div with a 3d transform
 

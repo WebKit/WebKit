@@ -1,6 +1,6 @@
 
-PASS Smooth scrollIntoView should scroll the element to the 'nearest' position 
-PASS Smooth scrollIntoView should scroll the element to the 'start' position 
-PASS Smooth scrollIntoView should scroll the element to the 'center' position 
-PASS Smooth scrollIntoView should scroll the element to the 'end' position 
+PASS Smooth scrollIntoView should scroll the element to the 'nearest' position
+PASS Smooth scrollIntoView should scroll the element to the 'start' position
+PASS Smooth scrollIntoView should scroll the element to the 'center' position
+PASS Smooth scrollIntoView should scroll the element to the 'end' position
 

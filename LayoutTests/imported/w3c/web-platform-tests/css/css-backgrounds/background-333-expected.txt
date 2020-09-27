@@ -1,10 +1,10 @@
 
-PASS background_specified_color_image 
-PASS background_specified_color_position 
-PASS background_specified_color_size 
-PASS background_specified_color_repeat 
-PASS background_specified_color_attachment 
-PASS background_specified_color_origin 
-PASS background_specified_color_clip 
-PASS background_specified_color_color 
+PASS background_specified_color_image
+PASS background_specified_color_position
+PASS background_specified_color_size
+PASS background_specified_color_repeat
+PASS background_specified_color_attachment
+PASS background_specified_color_origin
+PASS background_specified_color_clip
+PASS background_specified_color_color
 

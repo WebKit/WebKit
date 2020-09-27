@@ -1,8 +1,8 @@
 
-PASS e.style['clear'] = "none" should set the property value 
-PASS e.style['clear'] = "left" should set the property value 
-PASS e.style['clear'] = "right" should set the property value 
-PASS e.style['clear'] = "both" should set the property value 
+PASS e.style['clear'] = "none" should set the property value
+PASS e.style['clear'] = "left" should set the property value
+PASS e.style['clear'] = "right" should set the property value
+PASS e.style['clear'] = "both" should set the property value
 FAIL e.style['clear'] = "inline-start" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['clear'] = "inline-end" should set the property value assert_not_equals: property should be set got disallowed value ""
 

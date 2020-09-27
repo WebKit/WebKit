@@ -1,3 +1,3 @@
 
-PASS CSS charset: page utf-16, CSS bomless utf-16be 
+PASS CSS charset: page utf-16, CSS bomless utf-16be
 

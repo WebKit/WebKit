@@ -1,8 +1,8 @@
 
-PASS Property text-transform value 'none' 
-PASS Property text-transform value 'capitalize' 
-PASS Property text-transform value 'uppercase' 
-PASS Property text-transform value 'lowercase' 
+PASS Property text-transform value 'none'
+PASS Property text-transform value 'capitalize'
+PASS Property text-transform value 'uppercase'
+PASS Property text-transform value 'lowercase'
 FAIL Property text-transform value 'full-width' assert_true: 'full-width' is a supported value for text-transform. expected true got false
 FAIL Property text-transform value 'full-size-kana' assert_true: 'full-size-kana' is a supported value for text-transform. expected true got false
 FAIL Property text-transform value 'capitalize full-width' assert_true: 'capitalize full-width' is a supported value for text-transform. expected true got false

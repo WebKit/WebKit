@@ -1,5 +1,5 @@
 
-PASS e.style['inset-start'] = "min-content" should not set the property value 
-PASS e.style['inset-start'] = "60" should not set the property value 
-PASS e.style['inset-start'] = "10px 20%" should not set the property value 
+PASS e.style['inset-start'] = "min-content" should not set the property value
+PASS e.style['inset-start'] = "60" should not set the property value
+PASS e.style['inset-start'] = "10px 20%" should not set the property value
 

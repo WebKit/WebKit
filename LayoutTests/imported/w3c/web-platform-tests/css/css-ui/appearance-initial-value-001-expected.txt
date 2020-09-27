@@ -1,6 +1,6 @@
 
 FAIL support for appearance assert_equals: expected "button" but got ""
 FAIL initial value for appearance assert_equals: expected "none" but got ""
-PASS support for -webkit-appearance 
-PASS initial value for -webkit-appearance 
+PASS support for -webkit-appearance
+PASS initial value for -webkit-appearance
 

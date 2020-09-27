@@ -1,4 +1,4 @@
 
-PASS e.style['text-orientation'] = "auto" should not set the property value 
-PASS e.style['text-orientation'] = "mixed upright" should not set the property value 
+PASS e.style['text-orientation'] = "auto" should not set the property value
+PASS e.style['text-orientation'] = "mixed upright" should not set the property value
 

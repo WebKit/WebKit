@@ -1,15 +1,15 @@
 
-PASS e.style['font-weight'] = "normal" should set the property value 
-PASS e.style['font-weight'] = "bold" should set the property value 
-PASS e.style['font-weight'] = "bolder" should set the property value 
-PASS e.style['font-weight'] = "lighter" should set the property value 
-PASS e.style['font-weight'] = "100" should set the property value 
-PASS e.style['font-weight'] = "200" should set the property value 
-PASS e.style['font-weight'] = "300" should set the property value 
-PASS e.style['font-weight'] = "400" should set the property value 
-PASS e.style['font-weight'] = "500" should set the property value 
-PASS e.style['font-weight'] = "600" should set the property value 
-PASS e.style['font-weight'] = "700" should set the property value 
-PASS e.style['font-weight'] = "800" should set the property value 
-PASS e.style['font-weight'] = "900" should set the property value 
+PASS e.style['font-weight'] = "normal" should set the property value
+PASS e.style['font-weight'] = "bold" should set the property value
+PASS e.style['font-weight'] = "bolder" should set the property value
+PASS e.style['font-weight'] = "lighter" should set the property value
+PASS e.style['font-weight'] = "100" should set the property value
+PASS e.style['font-weight'] = "200" should set the property value
+PASS e.style['font-weight'] = "300" should set the property value
+PASS e.style['font-weight'] = "400" should set the property value
+PASS e.style['font-weight'] = "500" should set the property value
+PASS e.style['font-weight'] = "600" should set the property value
+PASS e.style['font-weight'] = "700" should set the property value
+PASS e.style['font-weight'] = "800" should set the property value
+PASS e.style['font-weight'] = "900" should set the property value
 

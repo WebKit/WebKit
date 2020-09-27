@@ -1,7 +1,7 @@
 
-PASS A new ready promise is created when setting animation-play-state: running 
-PASS ready promise is rejected when an animation is canceled by resetting the animation property 
-PASS ready promise is rejected when an animation is canceled by updating the animation property 
-PASS A new ready promise is created when setting animation-play-state: paused 
-PASS Pausing twice re-uses the same Promise 
+PASS A new ready promise is created when setting animation-play-state: running
+PASS ready promise is rejected when an animation is canceled by resetting the animation property
+PASS ready promise is rejected when an animation is canceled by updating the animation property
+PASS A new ready promise is created when setting animation-play-state: paused
+PASS Pausing twice re-uses the same Promise
 

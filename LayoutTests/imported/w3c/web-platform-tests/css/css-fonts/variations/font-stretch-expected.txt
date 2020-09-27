@@ -1,54 +1,54 @@
 Abc
 AbcAbcAbc
 
-PASS @supports: 100 - only percentages, not numbers allowed 
-PASS @supports: -1% - negative values are illegal 
+PASS @supports: 100 - only percentages, not numbers allowed
+PASS @supports: -1% - negative values are illegal
 FAIL @supports: 0% - zero is legal assert_equals: zero is legal expected true but got false
 FAIL @getComputedStyle: 0% - zero is legal assert_equals: zero is legal expected "0%" but got "normal"
-PASS @supports: 1% - legal percentage 
-PASS @getComputedStyle: 1% - legal percentage 
-PASS @supports: 10% - legal percentage 
-PASS @getComputedStyle: 10% - legal percentage 
-PASS @supports: 100% - legal percentage 
+PASS @supports: 1% - legal percentage
+PASS @getComputedStyle: 1% - legal percentage
+PASS @supports: 10% - legal percentage
+PASS @getComputedStyle: 10% - legal percentage
+PASS @supports: 100% - legal percentage
 FAIL @getComputedStyle: 100% - legal percentage assert_equals: legal percentage expected "100%" but got "normal"
-PASS @supports: 1000% - legal percentage 
-PASS @getComputedStyle: 1000% - legal percentage 
-PASS @supports: 1e9% - huge legal percentage 
+PASS @supports: 1000% - legal percentage
+PASS @getComputedStyle: 1000% - legal percentage
+PASS @supports: 1e9% - huge legal percentage
 FAIL @getComputedStyle: 1e9% - huge legal percentage assert_equals: huge legal percentage expected "1e+009%" but got "8191.75%"
-PASS @supports: ultra-condensed - legal enum 
+PASS @supports: ultra-condensed - legal enum
 FAIL @getComputedStyle: ultra-condensed - legal enum assert_equals: legal enum expected "50%" but got "ultra-condensed"
-PASS @supports: extra-condensed - legal enum 
+PASS @supports: extra-condensed - legal enum
 FAIL @getComputedStyle: extra-condensed - legal enum assert_equals: legal enum expected "62.5%" but got "extra-condensed"
-PASS @supports: condensed - legal enum 
+PASS @supports: condensed - legal enum
 FAIL @getComputedStyle: condensed - legal enum assert_equals: legal enum expected "75%" but got "condensed"
-PASS @supports: semi-condensed - legal enum 
+PASS @supports: semi-condensed - legal enum
 FAIL @getComputedStyle: semi-condensed - legal enum assert_equals: legal enum expected "87.5%" but got "semi-condensed"
-PASS @supports: normal - legal enum 
+PASS @supports: normal - legal enum
 FAIL @getComputedStyle: normal - legal enum assert_equals: legal enum expected "100%" but got "normal"
-PASS @supports: semi-expanded - legal enum 
+PASS @supports: semi-expanded - legal enum
 FAIL @getComputedStyle: semi-expanded - legal enum assert_equals: legal enum expected "112.5%" but got "semi-expanded"
-PASS @supports: expanded - legal enum 
+PASS @supports: expanded - legal enum
 FAIL @getComputedStyle: expanded - legal enum assert_equals: legal enum expected "125%" but got "expanded"
-PASS @supports: extra-expanded - legal enum 
+PASS @supports: extra-expanded - legal enum
 FAIL @getComputedStyle: extra-expanded - legal enum assert_equals: legal enum expected "150%" but got "extra-expanded"
-PASS @supports: ultra-expanded - legal enum 
+PASS @supports: ultra-expanded - legal enum
 FAIL @getComputedStyle: ultra-expanded - legal enum assert_equals: legal enum expected "200%" but got "ultra-expanded"
-PASS @supports: narrower - deprecated 
-PASS @supports: wider - deprecated 
-PASS @supports: calc(200.5%) - Simple calc value 
-PASS @getComputedStyle: calc(200.5%) - Simple calc value 
-PASS @supports: calc(50%*2 - 20%) - Valid calc expression 
-PASS @getComputedStyle: calc(50%*2 - 20%) - Valid calc expression 
+PASS @supports: narrower - deprecated
+PASS @supports: wider - deprecated
+PASS @supports: calc(200.5%) - Simple calc value
+PASS @getComputedStyle: calc(200.5%) - Simple calc value
+PASS @supports: calc(50%*2 - 20%) - Valid calc expression
+PASS @getComputedStyle: calc(50%*2 - 20%) - Valid calc expression
 FAIL @supports: calc(-100%) - Negative calc value (to be clamped) assert_equals: Negative calc value (to be clamped) expected true but got false
 FAIL @getComputedStyle: calc(-100%) - Negative calc value (to be clamped) assert_equals: Negative calc value (to be clamped) expected "0%" but got "80%"
 FAIL @supports: calc(50% - 50%*2) - Negative calc expression (to be clamped) assert_equals: Negative calc expression (to be clamped) expected true but got false
 FAIL @getComputedStyle: calc(50% - 50%*2) - Negative calc expression (to be clamped) assert_equals: Negative calc expression (to be clamped) expected "0%" but got "80%"
-PASS @supports: calc(100) - Unit-less calc value 
-PASS @supports: calc(100px) - Calc value with units 
-PASS @supports: 100% 700% - Extra percentage after numeric value 
-PASS @supports: 100% 100 - Extra content after numeric value 
-PASS @supports: condensed expanded - Extra content after keyword value 
-PASS @supports: calc(100%) 100% - Extra content after calc value 
+PASS @supports: calc(100) - Unit-less calc value
+PASS @supports: calc(100px) - Calc value with units
+PASS @supports: 100% 700% - Extra percentage after numeric value
+PASS @supports: 100% 100 - Extra content after numeric value
+PASS @supports: condensed expanded - Extra content after keyword value
+PASS @supports: calc(100%) 100% - Extra content after calc value
 FAIL Test font-stretch for overridden number condensed assert_equals: Overridden value for condensed should match expected value. expected "125%" but got "expanded"
 FAIL Test font-stretch for overridden enum name resolved to number condensed assert_equals: Inherited value condensed should match expected value. expected "125%" but got "expanded"
 FAIL Test font-stretch for inherited named enum resolved to number condensed assert_equals: Inherited value condensed should match expected value. expected "75%" but got "condensed"

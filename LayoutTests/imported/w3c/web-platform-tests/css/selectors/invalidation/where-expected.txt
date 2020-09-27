@@ -5,9 +5,9 @@ Green
 Red
 Yellow
 
-PASS Preconditions. 
-PASS Invalidate :where() for simple selector arguments. 
-PASS Invalidate :where() for compound selector arguments. 
-PASS Invalidate :where() for complex selector arguments. 
-PASS Invalidate nested :where(). 
+PASS Preconditions.
+PASS Invalidate :where() for simple selector arguments.
+PASS Invalidate :where() for compound selector arguments.
+PASS Invalidate :where() for complex selector arguments.
+PASS Invalidate nested :where().
 

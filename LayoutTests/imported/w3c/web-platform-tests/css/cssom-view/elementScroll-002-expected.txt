@@ -1,6 +1,6 @@
 
-PASS simple scroll with style: 'margin' and 'overflow: scroll' 
-PASS simple scroll with style: 'margin' and 'overflow: hidden' 
-PASS simple scroll with style: 'padding' and 'overflow: scroll' 
-PASS simple scroll with style: 'padding' and 'overflow: hidden' 
+PASS simple scroll with style: 'margin' and 'overflow: scroll'
+PASS simple scroll with style: 'margin' and 'overflow: hidden'
+PASS simple scroll with style: 'padding' and 'overflow: scroll'
+PASS simple scroll with style: 'padding' and 'overflow: hidden'
 

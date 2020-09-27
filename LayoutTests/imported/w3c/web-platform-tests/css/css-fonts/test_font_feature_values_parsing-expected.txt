@@ -1,8 +1,8 @@
 
-PASS basic parse tests - @font-feature-values; 
-PASS basic parse tests - @font-feature-values bongo; 
-PASS basic parse tests - @font-feature-value {;} 
-PASS basic parse tests - @font-features-values {;} 
+PASS basic parse tests - @font-feature-values;
+PASS basic parse tests - @font-feature-values bongo;
+PASS basic parse tests - @font-feature-value {;}
+PASS basic parse tests - @font-features-values {;}
 FAIL basic parse tests - @font-feature-values bongo {  } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo { ; } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo { ,; } assert_true: unexpected syntax error expected true got false
@@ -38,12 +38,12 @@ FAIL basic parse tests - @font-feature-values bongo { @styleset { abc: 1 2 3 ass
 FAIL basic parse tests - @font-feature-values bongo { @styleset { ok-1: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo { @annotation { ok-1: 3; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo { @stylistic { blah: 3; } } assert_true: unexpected syntax error expected true got false
-FAIL basic parse tests - @font-feature-values bongo { 
+FAIL basic parse tests - @font-feature-values bongo {
 @styleset
   { blah: 3; super-blah: 4 5;
   more-blah: 5 6 7;
  } } assert_true: unexpected syntax error expected true got false
-FAIL basic parse tests - @font-feature-values bongo { 
+FAIL basic parse tests - @font-feature-values bongo {
 @styleset
   {
  blah:
@@ -100,16 +100,16 @@ FAIL basic parse tests - @font-feature-values "bongo" { @styleset { blah: 1; } }
 FAIL basic parse tests - @font-feature-values 'bongo' { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values \62 ongo { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo, super bongo, bongo the supreme { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
-PASS basic parse tests - @font-feature-values bongo,, super bongo { @styleset { blah: 1; } } 
-PASS basic parse tests - @font-feature-values bongo,* { @styleset { blah: 1; } } 
-PASS basic parse tests - @font-feature-values bongo, sans-serif { @styleset { blah: 1; } } 
-PASS basic parse tests - @font-feature-values serif, sans-serif { @styleset { blah: 1; } } 
+PASS basic parse tests - @font-feature-values bongo,, super bongo { @styleset { blah: 1; } }
+PASS basic parse tests - @font-feature-values bongo,* { @styleset { blah: 1; } }
+PASS basic parse tests - @font-feature-values bongo, sans-serif { @styleset { blah: 1; } }
+PASS basic parse tests - @font-feature-values serif, sans-serif { @styleset { blah: 1; } }
 FAIL basic parse tests - @font-feature-values 'serif', 'sans-serif' { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo, "super bongo", 'bongo the supreme' { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values 毎日カレーを食べたい！ { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values 毎日カレーを食べたい！, 納豆嫌い { @styleset { blah: 1; } } assert_true: unexpected syntax error expected true got false
-PASS basic parse tests - @font-feature-values bongo, "super" bongo, bongo the supreme { @styleset { blah: 1; } } 
-PASS basic parse tests - @font-feature-values --bongo { @styleset { blah: 1; } } 
+PASS basic parse tests - @font-feature-values bongo, "super" bongo, bongo the supreme { @styleset { blah: 1; } }
+PASS basic parse tests - @font-feature-values --bongo { @styleset { blah: 1; } }
 FAIL basic parse tests - @font-feature-values bongo { @styleset { blah: 1; blah: 1; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo { @styleset { blah: 1; de-blah: 1; blah: 2; } } assert_true: unexpected syntax error expected true got false
 FAIL basic parse tests - @font-feature-values bongo { @styleset { \tra-la: 1; } } assert_true: unexpected syntax error expected true got false

@@ -1,14 +1,14 @@
 
-PASS 'autoFillColumns' with: grid-template-columns: repeat(auto-fill, 10px); and grid-template-rows: 20px; 
-PASS 'autoFitColumns' with: grid-template-columns: repeat(auto-fit, 10px); and grid-template-rows: 20px; 
-PASS 'autoFillRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fill, 10px); 
-PASS 'autoFitRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fit, 10px); 
-PASS 'autoFillColumns' with: grid-template-columns: repeat(auto-fill, 9px); and grid-template-rows: 20px; 
-PASS 'autoFitColumns' with: grid-template-columns: repeat(auto-fit, 9px); and grid-template-rows: 20px; 
-PASS 'autoFillRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fill, 9px); 
-PASS 'autoFitRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fit, 9px); 
-PASS 'autoFillColumns' with: grid-template-columns: repeat(auto-fill, 30px); and grid-template-rows: 20px; 
-PASS 'autoFitColumns' with: grid-template-columns: repeat(auto-fit, 30px); and grid-template-rows: 20px; 
-PASS 'autoFillRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fill, 30px); 
-PASS 'autoFitRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fit, 30px); 
-   
+PASS 'autoFillColumns' with: grid-template-columns: repeat(auto-fill, 10px); and grid-template-rows: 20px;
+PASS 'autoFitColumns' with: grid-template-columns: repeat(auto-fit, 10px); and grid-template-rows: 20px;
+PASS 'autoFillRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fill, 10px);
+PASS 'autoFitRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fit, 10px);
+PASS 'autoFillColumns' with: grid-template-columns: repeat(auto-fill, 9px); and grid-template-rows: 20px;
+PASS 'autoFitColumns' with: grid-template-columns: repeat(auto-fit, 9px); and grid-template-rows: 20px;
+PASS 'autoFillRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fill, 9px);
+PASS 'autoFitRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fit, 9px);
+PASS 'autoFillColumns' with: grid-template-columns: repeat(auto-fill, 30px); and grid-template-rows: 20px;
+PASS 'autoFitColumns' with: grid-template-columns: repeat(auto-fit, 30px); and grid-template-rows: 20px;
+PASS 'autoFillRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fill, 30px);
+PASS 'autoFitRows' with: grid-template-columns: 20px; and grid-template-rows: repeat(auto-fit, 30px);
+

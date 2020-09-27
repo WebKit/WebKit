@@ -12,11 +12,11 @@ FAIL Compositing: property <row-gap> underlying [100px] from add [10px] to add [
 FAIL Compositing: property <row-gap> underlying [50px] from add [100px] to replace [200px] at (-0.3) should be [135px] assert_equals: expected "135px " but got "70px "
 FAIL Compositing: property <row-gap> underlying [50px] from add [100px] to replace [200px] at (0) should be [150px] assert_equals: expected "150px " but got "100px "
 FAIL Compositing: property <row-gap> underlying [50px] from add [100px] to replace [200px] at (0.5) should be [175px] assert_equals: expected "175px " but got "150px "
-PASS Compositing: property <row-gap> underlying [50px] from add [100px] to replace [200px] at (1) should be [200px] 
+PASS Compositing: property <row-gap> underlying [50px] from add [100px] to replace [200px] at (1) should be [200px]
 FAIL Compositing: property <row-gap> underlying [50px] from add [100px] to replace [200px] at (1.5) should be [225px] assert_equals: expected "225px " but got "250px "
 FAIL Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (-0.3) should be [200px] assert_equals: expected "200px " but got "normal "
 FAIL Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (0) should be [200px] assert_equals: expected "200px " but got "normal "
-PASS Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (0.5) should be [normal] 
-PASS Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (1) should be [normal] 
-PASS Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (1.5) should be [normal] 
+PASS Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (0.5) should be [normal]
+PASS Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (1) should be [normal]
+PASS Compositing: property <row-gap> underlying [100px] from add [100px] to add [normal] at (1.5) should be [normal]
 

@@ -1,9 +1,9 @@
 
-PASS e.style['aspect-ratio'] = "auto / 5" should not set the property value 
-PASS e.style['aspect-ratio'] = "auto / 16" should not set the property value 
-PASS e.style['aspect-ratio'] = "16 9" should not set the property value 
-PASS e.style['aspect-ratio'] = "16px / 9px" should not set the property value 
-PASS e.style['aspect-ratio'] = "16 / -9" should not set the property value 
-PASS e.style['aspect-ratio'] = "1 invalid" should not set the property value 
-PASS e.style['aspect-ratio'] = "invalid 1.5" should not set the property value 
+PASS e.style['aspect-ratio'] = "auto / 5" should not set the property value
+PASS e.style['aspect-ratio'] = "auto / 16" should not set the property value
+PASS e.style['aspect-ratio'] = "16 9" should not set the property value
+PASS e.style['aspect-ratio'] = "16px / 9px" should not set the property value
+PASS e.style['aspect-ratio'] = "16 / -9" should not set the property value
+PASS e.style['aspect-ratio'] = "1 invalid" should not set the property value
+PASS e.style['aspect-ratio'] = "invalid 1.5" should not set the property value
 

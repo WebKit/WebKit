@@ -1,12 +1,12 @@
 
-PASS Number of arguments 
-PASS String conversion 
-PASS Null bytes 
-PASS Replacement character 
-PASS Number prefix 
-PASS Letter number prefix 
-PASS Dash number prefix 
-PASS Double dash prefix 
-PASS Various tests 
-PASS Surrogates 
+PASS Number of arguments
+PASS String conversion
+PASS Null bytes
+PASS Replacement character
+PASS Number prefix
+PASS Letter number prefix
+PASS Dash number prefix
+PASS Double dash prefix
+PASS Various tests
+PASS Surrogates
 

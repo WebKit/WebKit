@@ -1,4 +1,4 @@
 
-PASS e.style['flex-wrap'] = "auto" should not set the property value 
-PASS e.style['flex-wrap'] = "nowrap wrap" should not set the property value 
+PASS e.style['flex-wrap'] = "auto" should not set the property value
+PASS e.style['flex-wrap'] = "nowrap wrap" should not set the property value
 

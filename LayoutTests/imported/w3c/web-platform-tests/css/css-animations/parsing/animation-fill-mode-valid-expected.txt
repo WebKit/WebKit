@@ -1,7 +1,7 @@
 
-PASS e.style['animation-fill-mode'] = "none" should set the property value 
-PASS e.style['animation-fill-mode'] = "forwards" should set the property value 
-PASS e.style['animation-fill-mode'] = "backwards" should set the property value 
-PASS e.style['animation-fill-mode'] = "both" should set the property value 
-PASS e.style['animation-fill-mode'] = "none, forwards, backwards, both" should set the property value 
+PASS e.style['animation-fill-mode'] = "none" should set the property value
+PASS e.style['animation-fill-mode'] = "forwards" should set the property value
+PASS e.style['animation-fill-mode'] = "backwards" should set the property value
+PASS e.style['animation-fill-mode'] = "both" should set the property value
+PASS e.style['animation-fill-mode'] = "none, forwards, backwards, both" should set the property value
 

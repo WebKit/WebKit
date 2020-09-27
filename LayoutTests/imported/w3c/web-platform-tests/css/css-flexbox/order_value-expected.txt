@@ -1,5 +1,5 @@
 
-PASS CSS Flexible Box Test: order_check 
+PASS CSS Flexible Box Test: order_check
 1
 2
 3

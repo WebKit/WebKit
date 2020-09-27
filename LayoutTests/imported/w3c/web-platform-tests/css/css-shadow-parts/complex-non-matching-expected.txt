@@ -1,4 +1,4 @@
 The following text should be green:
 
-PASS Non-matching complex selector for host does not style 
+PASS Non-matching complex selector for host does not style
 

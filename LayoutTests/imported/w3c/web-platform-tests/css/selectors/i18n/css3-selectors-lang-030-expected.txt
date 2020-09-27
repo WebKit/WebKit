@@ -1,4 +1,4 @@
  
 
-PASS A lang|= value and a lang attribute value will NOT match if their region subtags differ. 
+PASS A lang|= value and a lang attribute value will NOT match if their region subtags differ.
 

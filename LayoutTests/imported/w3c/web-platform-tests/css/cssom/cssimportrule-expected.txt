@@ -1,11 +1,11 @@
 
-PASS CSSRule and CSSImportRule types 
-PASS Type of CSSRule#type and constant values 
-PASS Existence and writability of CSSRule attributes 
-PASS Values of CSSRule attributes 
-PASS Existence and writability of CSSImportRule attributes 
-PASS Values of CSSImportRule attributes 
-PASS CSSImportRule : MediaList mediaText attribute should be updated due to [PutForwards] 
-PASS CSSStyleDeclaration cssText attribute should be updated due to [PutForwards] 
-PASS StyleSheet : MediaList mediaText attribute should be updated due to [PutForwards] 
+PASS CSSRule and CSSImportRule types
+PASS Type of CSSRule#type and constant values
+PASS Existence and writability of CSSRule attributes
+PASS Values of CSSRule attributes
+PASS Existence and writability of CSSImportRule attributes
+PASS Values of CSSImportRule attributes
+PASS CSSImportRule : MediaList mediaText attribute should be updated due to [PutForwards]
+PASS CSSStyleDeclaration cssText attribute should be updated due to [PutForwards]
+PASS StyleSheet : MediaList mediaText attribute should be updated due to [PutForwards]
 

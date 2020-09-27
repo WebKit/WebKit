@@ -1,170 +1,170 @@
 
-PASS Checking place-items: normal left 
-PASS Checking place-items: normal right 
+PASS Checking place-items: normal left
+PASS Checking place-items: normal right
 FAIL Checking place-items: normal normal assert_in_array: place-items resolved value value "normal normal" not in array ["", "normal"]
-PASS Checking place-items: normal stretch 
-PASS Checking place-items: normal start 
-PASS Checking place-items: normal end 
-PASS Checking place-items: normal self-start 
-PASS Checking place-items: normal self-end 
-PASS Checking place-items: normal center 
-PASS Checking place-items: normal flex-start 
-PASS Checking place-items: normal flex-end 
-PASS Checking place-items: normal baseline 
-PASS Checking place-items: normal first baseline 
-PASS Checking place-items: normal last baseline 
-PASS Checking place-items: stretch left 
-PASS Checking place-items: stretch right 
-PASS Checking place-items: stretch normal 
+PASS Checking place-items: normal stretch
+PASS Checking place-items: normal start
+PASS Checking place-items: normal end
+PASS Checking place-items: normal self-start
+PASS Checking place-items: normal self-end
+PASS Checking place-items: normal center
+PASS Checking place-items: normal flex-start
+PASS Checking place-items: normal flex-end
+PASS Checking place-items: normal baseline
+PASS Checking place-items: normal first baseline
+PASS Checking place-items: normal last baseline
+PASS Checking place-items: stretch left
+PASS Checking place-items: stretch right
+PASS Checking place-items: stretch normal
 FAIL Checking place-items: stretch stretch assert_in_array: place-items resolved value value "stretch stretch" not in array ["", "stretch"]
-PASS Checking place-items: stretch start 
-PASS Checking place-items: stretch end 
-PASS Checking place-items: stretch self-start 
-PASS Checking place-items: stretch self-end 
-PASS Checking place-items: stretch center 
-PASS Checking place-items: stretch flex-start 
-PASS Checking place-items: stretch flex-end 
-PASS Checking place-items: stretch baseline 
-PASS Checking place-items: stretch first baseline 
-PASS Checking place-items: stretch last baseline 
-PASS Checking place-items: start left 
-PASS Checking place-items: start right 
-PASS Checking place-items: start normal 
-PASS Checking place-items: start stretch 
+PASS Checking place-items: stretch start
+PASS Checking place-items: stretch end
+PASS Checking place-items: stretch self-start
+PASS Checking place-items: stretch self-end
+PASS Checking place-items: stretch center
+PASS Checking place-items: stretch flex-start
+PASS Checking place-items: stretch flex-end
+PASS Checking place-items: stretch baseline
+PASS Checking place-items: stretch first baseline
+PASS Checking place-items: stretch last baseline
+PASS Checking place-items: start left
+PASS Checking place-items: start right
+PASS Checking place-items: start normal
+PASS Checking place-items: start stretch
 FAIL Checking place-items: start start assert_in_array: place-items resolved value value "start start" not in array ["", "start"]
-PASS Checking place-items: start end 
-PASS Checking place-items: start self-start 
-PASS Checking place-items: start self-end 
-PASS Checking place-items: start center 
-PASS Checking place-items: start flex-start 
-PASS Checking place-items: start flex-end 
-PASS Checking place-items: start baseline 
-PASS Checking place-items: start first baseline 
-PASS Checking place-items: start last baseline 
-PASS Checking place-items: end left 
-PASS Checking place-items: end right 
-PASS Checking place-items: end normal 
-PASS Checking place-items: end stretch 
-PASS Checking place-items: end start 
+PASS Checking place-items: start end
+PASS Checking place-items: start self-start
+PASS Checking place-items: start self-end
+PASS Checking place-items: start center
+PASS Checking place-items: start flex-start
+PASS Checking place-items: start flex-end
+PASS Checking place-items: start baseline
+PASS Checking place-items: start first baseline
+PASS Checking place-items: start last baseline
+PASS Checking place-items: end left
+PASS Checking place-items: end right
+PASS Checking place-items: end normal
+PASS Checking place-items: end stretch
+PASS Checking place-items: end start
 FAIL Checking place-items: end end assert_in_array: place-items resolved value value "end end" not in array ["", "end"]
-PASS Checking place-items: end self-start 
-PASS Checking place-items: end self-end 
-PASS Checking place-items: end center 
-PASS Checking place-items: end flex-start 
-PASS Checking place-items: end flex-end 
-PASS Checking place-items: end baseline 
-PASS Checking place-items: end first baseline 
-PASS Checking place-items: end last baseline 
-PASS Checking place-items: self-start left 
-PASS Checking place-items: self-start right 
-PASS Checking place-items: self-start normal 
-PASS Checking place-items: self-start stretch 
-PASS Checking place-items: self-start start 
-PASS Checking place-items: self-start end 
+PASS Checking place-items: end self-start
+PASS Checking place-items: end self-end
+PASS Checking place-items: end center
+PASS Checking place-items: end flex-start
+PASS Checking place-items: end flex-end
+PASS Checking place-items: end baseline
+PASS Checking place-items: end first baseline
+PASS Checking place-items: end last baseline
+PASS Checking place-items: self-start left
+PASS Checking place-items: self-start right
+PASS Checking place-items: self-start normal
+PASS Checking place-items: self-start stretch
+PASS Checking place-items: self-start start
+PASS Checking place-items: self-start end
 FAIL Checking place-items: self-start self-start assert_in_array: place-items resolved value value "self-start self-start" not in array ["", "self-start"]
-PASS Checking place-items: self-start self-end 
-PASS Checking place-items: self-start center 
-PASS Checking place-items: self-start flex-start 
-PASS Checking place-items: self-start flex-end 
-PASS Checking place-items: self-start baseline 
-PASS Checking place-items: self-start first baseline 
-PASS Checking place-items: self-start last baseline 
-PASS Checking place-items: self-end left 
-PASS Checking place-items: self-end right 
-PASS Checking place-items: self-end normal 
-PASS Checking place-items: self-end stretch 
-PASS Checking place-items: self-end start 
-PASS Checking place-items: self-end end 
-PASS Checking place-items: self-end self-start 
+PASS Checking place-items: self-start self-end
+PASS Checking place-items: self-start center
+PASS Checking place-items: self-start flex-start
+PASS Checking place-items: self-start flex-end
+PASS Checking place-items: self-start baseline
+PASS Checking place-items: self-start first baseline
+PASS Checking place-items: self-start last baseline
+PASS Checking place-items: self-end left
+PASS Checking place-items: self-end right
+PASS Checking place-items: self-end normal
+PASS Checking place-items: self-end stretch
+PASS Checking place-items: self-end start
+PASS Checking place-items: self-end end
+PASS Checking place-items: self-end self-start
 FAIL Checking place-items: self-end self-end assert_in_array: place-items resolved value value "self-end self-end" not in array ["", "self-end"]
-PASS Checking place-items: self-end center 
-PASS Checking place-items: self-end flex-start 
-PASS Checking place-items: self-end flex-end 
-PASS Checking place-items: self-end baseline 
-PASS Checking place-items: self-end first baseline 
-PASS Checking place-items: self-end last baseline 
-PASS Checking place-items: center left 
-PASS Checking place-items: center right 
-PASS Checking place-items: center normal 
-PASS Checking place-items: center stretch 
-PASS Checking place-items: center start 
-PASS Checking place-items: center end 
-PASS Checking place-items: center self-start 
-PASS Checking place-items: center self-end 
+PASS Checking place-items: self-end center
+PASS Checking place-items: self-end flex-start
+PASS Checking place-items: self-end flex-end
+PASS Checking place-items: self-end baseline
+PASS Checking place-items: self-end first baseline
+PASS Checking place-items: self-end last baseline
+PASS Checking place-items: center left
+PASS Checking place-items: center right
+PASS Checking place-items: center normal
+PASS Checking place-items: center stretch
+PASS Checking place-items: center start
+PASS Checking place-items: center end
+PASS Checking place-items: center self-start
+PASS Checking place-items: center self-end
 FAIL Checking place-items: center center assert_in_array: place-items resolved value value "center center" not in array ["", "center"]
-PASS Checking place-items: center flex-start 
-PASS Checking place-items: center flex-end 
-PASS Checking place-items: center baseline 
-PASS Checking place-items: center first baseline 
-PASS Checking place-items: center last baseline 
-PASS Checking place-items: flex-start left 
-PASS Checking place-items: flex-start right 
-PASS Checking place-items: flex-start normal 
-PASS Checking place-items: flex-start stretch 
-PASS Checking place-items: flex-start start 
-PASS Checking place-items: flex-start end 
-PASS Checking place-items: flex-start self-start 
-PASS Checking place-items: flex-start self-end 
-PASS Checking place-items: flex-start center 
+PASS Checking place-items: center flex-start
+PASS Checking place-items: center flex-end
+PASS Checking place-items: center baseline
+PASS Checking place-items: center first baseline
+PASS Checking place-items: center last baseline
+PASS Checking place-items: flex-start left
+PASS Checking place-items: flex-start right
+PASS Checking place-items: flex-start normal
+PASS Checking place-items: flex-start stretch
+PASS Checking place-items: flex-start start
+PASS Checking place-items: flex-start end
+PASS Checking place-items: flex-start self-start
+PASS Checking place-items: flex-start self-end
+PASS Checking place-items: flex-start center
 FAIL Checking place-items: flex-start flex-start assert_in_array: place-items resolved value value "flex-start flex-start" not in array ["", "flex-start"]
-PASS Checking place-items: flex-start flex-end 
-PASS Checking place-items: flex-start baseline 
-PASS Checking place-items: flex-start first baseline 
-PASS Checking place-items: flex-start last baseline 
-PASS Checking place-items: flex-end left 
-PASS Checking place-items: flex-end right 
-PASS Checking place-items: flex-end normal 
-PASS Checking place-items: flex-end stretch 
-PASS Checking place-items: flex-end start 
-PASS Checking place-items: flex-end end 
-PASS Checking place-items: flex-end self-start 
-PASS Checking place-items: flex-end self-end 
-PASS Checking place-items: flex-end center 
-PASS Checking place-items: flex-end flex-start 
+PASS Checking place-items: flex-start flex-end
+PASS Checking place-items: flex-start baseline
+PASS Checking place-items: flex-start first baseline
+PASS Checking place-items: flex-start last baseline
+PASS Checking place-items: flex-end left
+PASS Checking place-items: flex-end right
+PASS Checking place-items: flex-end normal
+PASS Checking place-items: flex-end stretch
+PASS Checking place-items: flex-end start
+PASS Checking place-items: flex-end end
+PASS Checking place-items: flex-end self-start
+PASS Checking place-items: flex-end self-end
+PASS Checking place-items: flex-end center
+PASS Checking place-items: flex-end flex-start
 FAIL Checking place-items: flex-end flex-end assert_in_array: place-items resolved value value "flex-end flex-end" not in array ["", "flex-end"]
-PASS Checking place-items: flex-end baseline 
-PASS Checking place-items: flex-end first baseline 
-PASS Checking place-items: flex-end last baseline 
-PASS Checking place-items: baseline left 
-PASS Checking place-items: baseline right 
-PASS Checking place-items: baseline normal 
-PASS Checking place-items: baseline stretch 
-PASS Checking place-items: baseline start 
-PASS Checking place-items: baseline end 
-PASS Checking place-items: baseline self-start 
-PASS Checking place-items: baseline self-end 
-PASS Checking place-items: baseline center 
-PASS Checking place-items: baseline flex-start 
-PASS Checking place-items: baseline flex-end 
+PASS Checking place-items: flex-end baseline
+PASS Checking place-items: flex-end first baseline
+PASS Checking place-items: flex-end last baseline
+PASS Checking place-items: baseline left
+PASS Checking place-items: baseline right
+PASS Checking place-items: baseline normal
+PASS Checking place-items: baseline stretch
+PASS Checking place-items: baseline start
+PASS Checking place-items: baseline end
+PASS Checking place-items: baseline self-start
+PASS Checking place-items: baseline self-end
+PASS Checking place-items: baseline center
+PASS Checking place-items: baseline flex-start
+PASS Checking place-items: baseline flex-end
 FAIL Checking place-items: baseline baseline assert_in_array: place-items resolved value value "baseline baseline" not in array ["", "baseline"]
 FAIL Checking place-items: baseline first baseline assert_in_array: place-items resolved value value "baseline baseline" not in array ["", "baseline"]
-PASS Checking place-items: baseline last baseline 
-PASS Checking place-items: first baseline left 
-PASS Checking place-items: first baseline right 
-PASS Checking place-items: first baseline normal 
-PASS Checking place-items: first baseline stretch 
-PASS Checking place-items: first baseline start 
-PASS Checking place-items: first baseline end 
-PASS Checking place-items: first baseline self-start 
-PASS Checking place-items: first baseline self-end 
-PASS Checking place-items: first baseline center 
-PASS Checking place-items: first baseline flex-start 
-PASS Checking place-items: first baseline flex-end 
+PASS Checking place-items: baseline last baseline
+PASS Checking place-items: first baseline left
+PASS Checking place-items: first baseline right
+PASS Checking place-items: first baseline normal
+PASS Checking place-items: first baseline stretch
+PASS Checking place-items: first baseline start
+PASS Checking place-items: first baseline end
+PASS Checking place-items: first baseline self-start
+PASS Checking place-items: first baseline self-end
+PASS Checking place-items: first baseline center
+PASS Checking place-items: first baseline flex-start
+PASS Checking place-items: first baseline flex-end
 FAIL Checking place-items: first baseline baseline assert_in_array: place-items resolved value value "baseline baseline" not in array ["", "baseline"]
 FAIL Checking place-items: first baseline first baseline assert_in_array: place-items resolved value value "baseline baseline" not in array ["", "baseline"]
-PASS Checking place-items: first baseline last baseline 
-PASS Checking place-items: last baseline left 
-PASS Checking place-items: last baseline right 
-PASS Checking place-items: last baseline normal 
-PASS Checking place-items: last baseline stretch 
-PASS Checking place-items: last baseline start 
-PASS Checking place-items: last baseline end 
-PASS Checking place-items: last baseline self-start 
-PASS Checking place-items: last baseline self-end 
-PASS Checking place-items: last baseline center 
-PASS Checking place-items: last baseline flex-start 
-PASS Checking place-items: last baseline flex-end 
-PASS Checking place-items: last baseline baseline 
-PASS Checking place-items: last baseline first baseline 
+PASS Checking place-items: first baseline last baseline
+PASS Checking place-items: last baseline left
+PASS Checking place-items: last baseline right
+PASS Checking place-items: last baseline normal
+PASS Checking place-items: last baseline stretch
+PASS Checking place-items: last baseline start
+PASS Checking place-items: last baseline end
+PASS Checking place-items: last baseline self-start
+PASS Checking place-items: last baseline self-end
+PASS Checking place-items: last baseline center
+PASS Checking place-items: last baseline flex-start
+PASS Checking place-items: last baseline flex-end
+PASS Checking place-items: last baseline baseline
+PASS Checking place-items: last baseline first baseline
 FAIL Checking place-items: last baseline last baseline assert_in_array: place-items resolved value value "last baseline last baseline" not in array ["", "last baseline"]
 

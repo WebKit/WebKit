@@ -1,4 +1,4 @@
 
-PASS Instant scrolling of an element with default scroll-behavior 
-PASS Smooth scrolling of an element with default scroll-behavior 
+PASS Instant scrolling of an element with default scroll-behavior
+PASS Smooth scrolling of an element with default scroll-behavior
 

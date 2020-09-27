@@ -1,12 +1,12 @@
 
-PASS 30FB  KATAKANA MIDDLE DOT may appear at line start if zh and loose 
-PASS FF1A  FULLWIDTH COLON may appear at line start if zh and loose 
-PASS FF1B  FULLWIDTH SEMICOLON may appear at line start if zh and loose 
-PASS FF65  HALFWIDTH KATAKANA MIDDLE DOT may appear at line start if zh and loose 
-PASS 203C  DOUBLE EXCLAMATION MARK may appear at line start if zh and loose 
-PASS 2047  DOUBLE QUESTION MARK may appear at line start if zh and loose 
-PASS 2048  QUESTION EXCLAMATION MARK may appear at line start if zh and loose 
-PASS 2049  EXCLAMATION QUESTION MARK may appear at line start if zh and loose 
-PASS FF01  FULLWIDTH EXCLAMATION MARK may appear at line start if zh and loose 
-PASS FF1F  FULLWIDTH QUESTION MARK may appear at line start if zh and loose 
+PASS 30FB  KATAKANA MIDDLE DOT may appear at line start if zh and loose
+PASS FF1A  FULLWIDTH COLON may appear at line start if zh and loose
+PASS FF1B  FULLWIDTH SEMICOLON may appear at line start if zh and loose
+PASS FF65  HALFWIDTH KATAKANA MIDDLE DOT may appear at line start if zh and loose
+PASS 203C  DOUBLE EXCLAMATION MARK may appear at line start if zh and loose
+PASS 2047  DOUBLE QUESTION MARK may appear at line start if zh and loose
+PASS 2048  QUESTION EXCLAMATION MARK may appear at line start if zh and loose
+PASS 2049  EXCLAMATION QUESTION MARK may appear at line start if zh and loose
+PASS FF01  FULLWIDTH EXCLAMATION MARK may appear at line start if zh and loose
+PASS FF1F  FULLWIDTH QUESTION MARK may appear at line start if zh and loose
 

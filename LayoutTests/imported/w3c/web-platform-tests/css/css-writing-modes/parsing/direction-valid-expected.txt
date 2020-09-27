@@ -1,4 +1,4 @@
 
-PASS e.style['direction'] = "ltr" should set the property value 
-PASS e.style['direction'] = "rtl" should set the property value 
+PASS e.style['direction'] = "ltr" should set the property value
+PASS e.style['direction'] = "rtl" should set the property value
 

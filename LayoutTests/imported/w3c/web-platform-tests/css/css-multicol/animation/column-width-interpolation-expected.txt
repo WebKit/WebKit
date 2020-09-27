@@ -1,156 +1,156 @@
 
 FAIL CSS Transitions: property <column-width> from neutral to [20px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 190px "
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (-1) should be [1em] 
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (-0.3) should be [7px] 
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (0) should be [10px] 
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (0.3) should be [13px] 
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (0.6) should be [16px] 
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (1) should be [20px] 
-PASS CSS Transitions: property <column-width> from neutral to [20px] at (1.5) should be [25px] 
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (-1) should be [1em]
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (-0.3) should be [7px]
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (0) should be [10px]
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (0.3) should be [13px]
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (0.6) should be [16px]
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (1) should be [20px]
+PASS CSS Transitions: property <column-width> from neutral to [20px] at (1.5) should be [25px]
 FAIL CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 190px "
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (-1) should be [1em] 
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (-0.3) should be [7px] 
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (0) should be [10px] 
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (0.3) should be [13px] 
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (0.6) should be [16px] 
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (1) should be [20px] 
-PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (1.5) should be [25px] 
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (-1) should be [1em]
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (-0.3) should be [7px]
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (0) should be [10px]
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (0.3) should be [13px]
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (0.6) should be [16px]
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (1) should be [20px]
+PASS CSS Transitions with transition: all: property <column-width> from neutral to [20px] at (1.5) should be [25px]
 FAIL CSS Animations: property <column-width> from neutral to [20px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 190px "
-PASS CSS Animations: property <column-width> from neutral to [20px] at (-1) should be [1em] 
-PASS CSS Animations: property <column-width> from neutral to [20px] at (-0.3) should be [7px] 
-PASS CSS Animations: property <column-width> from neutral to [20px] at (0) should be [10px] 
-PASS CSS Animations: property <column-width> from neutral to [20px] at (0.3) should be [13px] 
-PASS CSS Animations: property <column-width> from neutral to [20px] at (0.6) should be [16px] 
-PASS CSS Animations: property <column-width> from neutral to [20px] at (1) should be [20px] 
-PASS CSS Animations: property <column-width> from neutral to [20px] at (1.5) should be [25px] 
+PASS CSS Animations: property <column-width> from neutral to [20px] at (-1) should be [1em]
+PASS CSS Animations: property <column-width> from neutral to [20px] at (-0.3) should be [7px]
+PASS CSS Animations: property <column-width> from neutral to [20px] at (0) should be [10px]
+PASS CSS Animations: property <column-width> from neutral to [20px] at (0.3) should be [13px]
+PASS CSS Animations: property <column-width> from neutral to [20px] at (0.6) should be [16px]
+PASS CSS Animations: property <column-width> from neutral to [20px] at (1) should be [20px]
+PASS CSS Animations: property <column-width> from neutral to [20px] at (1.5) should be [25px]
 FAIL Web Animations: property <column-width> from neutral to [20px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 190px "
 FAIL Web Animations: property <column-width> from neutral to [20px] at (-1) should be [1em] assert_equals: expected "0px " but got "- 400px "
 FAIL Web Animations: property <column-width> from neutral to [20px] at (-0.3) should be [7px] assert_equals: expected "7px " but got "- 526px "
 FAIL Web Animations: property <column-width> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10px " but got "- 526px "
 FAIL Web Animations: property <column-width> from neutral to [20px] at (0.3) should be [13px] assert_equals: expected "13px " but got "- 362.2px "
 FAIL Web Animations: property <column-width> from neutral to [20px] at (0.6) should be [16px] assert_equals: expected "16px " but got "- 132.88px "
-PASS Web Animations: property <column-width> from neutral to [20px] at (1) should be [20px] 
+PASS Web Animations: property <column-width> from neutral to [20px] at (1) should be [20px]
 FAIL Web Animations: property <column-width> from neutral to [20px] at (1.5) should be [25px] assert_equals: expected "25px " but got "20px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "- 6px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "0px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS CSS Transitions: property <column-width> from [initial] to [20px] at (1) should be [20px] 
+PASS CSS Transitions: property <column-width> from [initial] to [20px] at (1) should be [20px]
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "- 6px "
 FAIL CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "0px "
 FAIL CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "
 FAIL CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (1) should be [20px] 
+PASS CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (1) should be [20px]
 FAIL CSS Transitions with transition: all: property <column-width> from [initial] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL CSS Animations: property <column-width> from [initial] to [20px] at (-0.3) should be [initial] assert_equals: expected "auto " but got "- 6px "
 FAIL CSS Animations: property <column-width> from [initial] to [20px] at (0) should be [initial] assert_equals: expected "auto " but got "0px "
 FAIL CSS Animations: property <column-width> from [initial] to [20px] at (0.3) should be [initial] assert_equals: expected "auto " but got "6px "
 FAIL CSS Animations: property <column-width> from [initial] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL CSS Animations: property <column-width> from [initial] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS CSS Animations: property <column-width> from [initial] to [20px] at (1) should be [20px] 
+PASS CSS Animations: property <column-width> from [initial] to [20px] at (1) should be [20px]
 FAIL CSS Animations: property <column-width> from [initial] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL Web Animations: property <column-width> from [initial] to [20px] at (-0.3) should be [initial] assert_equals: expected "auto " but got "- 6px "
 FAIL Web Animations: property <column-width> from [initial] to [20px] at (0) should be [initial] assert_equals: expected "auto " but got "0px "
 FAIL Web Animations: property <column-width> from [initial] to [20px] at (0.3) should be [initial] assert_equals: expected "auto " but got "6px "
 FAIL Web Animations: property <column-width> from [initial] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL Web Animations: property <column-width> from [initial] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS Web Animations: property <column-width> from [initial] to [20px] at (1) should be [20px] 
+PASS Web Animations: property <column-width> from [initial] to [20px] at (1) should be [20px]
 FAIL Web Animations: property <column-width> from [initial] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (-20) should be [230px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (-1) should be [40px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (0) should be [30px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (0.3) should be [27px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (0.6) should be [24px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (1) should be [20px] 
-PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (1.5) should be [15px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (-20) should be [230px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (-1) should be [40px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (0) should be [30px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (0.3) should be [27px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (0.6) should be [24px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (1) should be [20px] 
-PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (1.5) should be [15px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (-20) should be [230px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (-1) should be [40px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (0) should be [30px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (0.3) should be [27px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (0.6) should be [24px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (1) should be [20px] 
-PASS CSS Animations: property <column-width> from [inherit] to [20px] at (1.5) should be [15px] 
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (-20) should be [230px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (-1) should be [40px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (0) should be [30px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (0.3) should be [27px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (0.6) should be [24px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (1) should be [20px]
+PASS CSS Transitions: property <column-width> from [inherit] to [20px] at (1.5) should be [15px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (-20) should be [230px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (-1) should be [40px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (0) should be [30px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (0.3) should be [27px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (0.6) should be [24px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (1) should be [20px]
+PASS CSS Transitions with transition: all: property <column-width> from [inherit] to [20px] at (1.5) should be [15px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (-20) should be [230px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (-1) should be [40px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (0) should be [30px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (0.3) should be [27px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (0.6) should be [24px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (1) should be [20px]
+PASS CSS Animations: property <column-width> from [inherit] to [20px] at (1.5) should be [15px]
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (-20) should be [230px] assert_equals: expected "230px " but got "- 190px "
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (-1) should be [40px] assert_equals: expected "40px " but got "- 400px "
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (-0.3) should be [33px] assert_equals: expected "33px " but got "- 526px "
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (0) should be [30px] assert_equals: expected "30px " but got "- 526px "
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (0.3) should be [27px] assert_equals: expected "27px " but got "- 362.2px "
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (0.6) should be [24px] assert_equals: expected "24px " but got "- 132.88px "
-PASS Web Animations: property <column-width> from [inherit] to [20px] at (1) should be [20px] 
+PASS Web Animations: property <column-width> from [inherit] to [20px] at (1) should be [20px]
 FAIL Web Animations: property <column-width> from [inherit] to [20px] at (1.5) should be [15px] assert_equals: expected "15px " but got "20px "
 FAIL CSS Transitions: property <column-width> from [unset] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "- 6px "
 FAIL CSS Transitions: property <column-width> from [unset] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "0px "
 FAIL CSS Transitions: property <column-width> from [unset] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "
 FAIL CSS Transitions: property <column-width> from [unset] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL CSS Transitions: property <column-width> from [unset] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS CSS Transitions: property <column-width> from [unset] to [20px] at (1) should be [20px] 
+PASS CSS Transitions: property <column-width> from [unset] to [20px] at (1) should be [20px]
 FAIL CSS Transitions: property <column-width> from [unset] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "- 6px "
 FAIL CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "0px "
 FAIL CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "
 FAIL CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (1) should be [20px] 
+PASS CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (1) should be [20px]
 FAIL CSS Transitions with transition: all: property <column-width> from [unset] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL CSS Animations: property <column-width> from [unset] to [20px] at (-0.3) should be [unset] assert_equals: expected "auto " but got "- 6px "
 FAIL CSS Animations: property <column-width> from [unset] to [20px] at (0) should be [unset] assert_equals: expected "auto " but got "0px "
 FAIL CSS Animations: property <column-width> from [unset] to [20px] at (0.3) should be [unset] assert_equals: expected "auto " but got "6px "
 FAIL CSS Animations: property <column-width> from [unset] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL CSS Animations: property <column-width> from [unset] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS CSS Animations: property <column-width> from [unset] to [20px] at (1) should be [20px] 
+PASS CSS Animations: property <column-width> from [unset] to [20px] at (1) should be [20px]
 FAIL CSS Animations: property <column-width> from [unset] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL Web Animations: property <column-width> from [unset] to [20px] at (-0.3) should be [unset] assert_equals: expected "auto " but got "- 6px "
 FAIL Web Animations: property <column-width> from [unset] to [20px] at (0) should be [unset] assert_equals: expected "auto " but got "0px "
 FAIL Web Animations: property <column-width> from [unset] to [20px] at (0.3) should be [unset] assert_equals: expected "auto " but got "6px "
 FAIL Web Animations: property <column-width> from [unset] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "10px "
 FAIL Web Animations: property <column-width> from [unset] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "12px "
-PASS Web Animations: property <column-width> from [unset] to [20px] at (1) should be [20px] 
+PASS Web Animations: property <column-width> from [unset] to [20px] at (1) should be [20px]
 FAIL Web Animations: property <column-width> from [unset] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "30px "
 FAIL CSS Transitions: property <column-width> from [50px] to [100px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 950px "
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (-1) should be [1em] 
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (-0.3) should be [35px] 
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (0) should be [50px] 
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (0.3) should be [65px] 
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (0.6) should be [80px] 
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (1) should be [100px] 
-PASS CSS Transitions: property <column-width> from [50px] to [100px] at (1.5) should be [125px] 
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (-1) should be [1em]
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (-0.3) should be [35px]
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (0) should be [50px]
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (0.3) should be [65px]
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (0.6) should be [80px]
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (1) should be [100px]
+PASS CSS Transitions: property <column-width> from [50px] to [100px] at (1.5) should be [125px]
 FAIL CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 950px "
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (-1) should be [1em] 
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (-0.3) should be [35px] 
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (0) should be [50px] 
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (0.3) should be [65px] 
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (0.6) should be [80px] 
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (1) should be [100px] 
-PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (1.5) should be [125px] 
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (-1) should be [1em]
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (-0.3) should be [35px]
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (0) should be [50px]
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (0.3) should be [65px]
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (0.6) should be [80px]
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (1) should be [100px]
+PASS CSS Transitions with transition: all: property <column-width> from [50px] to [100px] at (1.5) should be [125px]
 FAIL CSS Animations: property <column-width> from [50px] to [100px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 950px "
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (-1) should be [1em] 
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (-0.3) should be [35px] 
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (0) should be [50px] 
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (0.3) should be [65px] 
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (0.6) should be [80px] 
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (1) should be [100px] 
-PASS CSS Animations: property <column-width> from [50px] to [100px] at (1.5) should be [125px] 
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (-1) should be [1em]
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (-0.3) should be [35px]
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (0) should be [50px]
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (0.3) should be [65px]
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (0.6) should be [80px]
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (1) should be [100px]
+PASS CSS Animations: property <column-width> from [50px] to [100px] at (1.5) should be [125px]
 FAIL Web Animations: property <column-width> from [50px] to [100px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 950px "
-PASS Web Animations: property <column-width> from [50px] to [100px] at (-1) should be [1em] 
-PASS Web Animations: property <column-width> from [50px] to [100px] at (-0.3) should be [35px] 
-PASS Web Animations: property <column-width> from [50px] to [100px] at (0) should be [50px] 
-PASS Web Animations: property <column-width> from [50px] to [100px] at (0.3) should be [65px] 
-PASS Web Animations: property <column-width> from [50px] to [100px] at (0.6) should be [80px] 
-PASS Web Animations: property <column-width> from [50px] to [100px] at (1) should be [100px] 
-PASS Web Animations: property <column-width> from [50px] to [100px] at (1.5) should be [125px] 
+PASS Web Animations: property <column-width> from [50px] to [100px] at (-1) should be [1em]
+PASS Web Animations: property <column-width> from [50px] to [100px] at (-0.3) should be [35px]
+PASS Web Animations: property <column-width> from [50px] to [100px] at (0) should be [50px]
+PASS Web Animations: property <column-width> from [50px] to [100px] at (0.3) should be [65px]
+PASS Web Animations: property <column-width> from [50px] to [100px] at (0.6) should be [80px]
+PASS Web Animations: property <column-width> from [50px] to [100px] at (1) should be [100px]
+PASS Web Animations: property <column-width> from [50px] to [100px] at (1.5) should be [125px]
 FAIL CSS Transitions: property <column-width> from [50px] to [auto] at (-0.3) should be [auto] assert_equals: expected "auto " but got "65px "
 FAIL CSS Transitions: property <column-width> from [50px] to [auto] at (0) should be [auto] assert_equals: expected "auto " but got "50px "
 FAIL CSS Transitions: property <column-width> from [50px] to [auto] at (0.3) should be [auto] assert_equals: expected "auto " but got "35px "
@@ -166,14 +166,14 @@ FAIL CSS Transitions with transition: all: property <column-width> from [50px] t
 FAIL CSS Transitions with transition: all: property <column-width> from [50px] to [auto] at (1) should be [auto] assert_equals: expected "auto " but got "0px "
 FAIL CSS Transitions with transition: all: property <column-width> from [50px] to [auto] at (1.5) should be [auto] assert_equals: expected "auto " but got "- 25px "
 FAIL CSS Animations: property <column-width> from [50px] to [auto] at (-0.3) should be [50px] assert_equals: expected "50px " but got "65px "
-PASS CSS Animations: property <column-width> from [50px] to [auto] at (0) should be [50px] 
+PASS CSS Animations: property <column-width> from [50px] to [auto] at (0) should be [50px]
 FAIL CSS Animations: property <column-width> from [50px] to [auto] at (0.3) should be [50px] assert_equals: expected "50px " but got "35px "
 FAIL CSS Animations: property <column-width> from [50px] to [auto] at (0.5) should be [auto] assert_equals: expected "auto " but got "25px "
 FAIL CSS Animations: property <column-width> from [50px] to [auto] at (0.6) should be [auto] assert_equals: expected "auto " but got "20px "
 FAIL CSS Animations: property <column-width> from [50px] to [auto] at (1) should be [auto] assert_equals: expected "auto " but got "0px "
 FAIL CSS Animations: property <column-width> from [50px] to [auto] at (1.5) should be [auto] assert_equals: expected "auto " but got "- 25px "
 FAIL Web Animations: property <column-width> from [50px] to [auto] at (-0.3) should be [50px] assert_equals: expected "50px " but got "65px "
-PASS Web Animations: property <column-width> from [50px] to [auto] at (0) should be [50px] 
+PASS Web Animations: property <column-width> from [50px] to [auto] at (0) should be [50px]
 FAIL Web Animations: property <column-width> from [50px] to [auto] at (0.3) should be [50px] assert_equals: expected "50px " but got "35px "
 FAIL Web Animations: property <column-width> from [50px] to [auto] at (0.5) should be [auto] assert_equals: expected "auto " but got "25px "
 FAIL Web Animations: property <column-width> from [50px] to [auto] at (0.6) should be [auto] assert_equals: expected "auto " but got "20px "

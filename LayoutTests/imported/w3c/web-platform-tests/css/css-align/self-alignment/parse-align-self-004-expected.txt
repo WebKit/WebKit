@@ -1,30 +1,30 @@
 
-PASS Checking invalid combination - align-self: legacy 
-PASS Checking invalid combination - align-self: space-around 
-PASS Checking invalid combination - align-self: left 
-PASS Checking invalid combination - align-self: safe right 
-PASS Checking invalid combination - align-self: auto safe 
-PASS Checking invalid combination - align-self: auto left 
-PASS Checking invalid combination - align-self: normal unsafe 
-PASS Checking invalid combination - align-self: normal stretch 
-PASS Checking invalid combination - align-self: baseline normal 
-PASS Checking invalid combination - align-self: baseline center 
-PASS Checking invalid combination - align-self: first baseline center 
-PASS Checking invalid combination - align-self: last baseline center 
-PASS Checking invalid combination - align-self: baseline last 
-PASS Checking invalid combination - align-self: baseline first 
-PASS Checking invalid combination - align-self: stretch unsafe 
-PASS Checking invalid combination - align-self: stretch right 
-PASS Checking invalid combination - align-self: unsafe unsafe 
-PASS Checking invalid combination - align-self: unsafe safe 
-PASS Checking invalid combination - align-self: center start 
-PASS Checking invalid combination - align-self: unsafe stretch 
-PASS Checking invalid combination - align-self: safe stretch 
-PASS Checking invalid combination - align-self: baseline safe 
-PASS Checking invalid combination - align-self: unsafe baseline 
-PASS Checking invalid combination - align-self: unsafe safe left 
-PASS Checking invalid combination - align-self: unsafe left safe 
-PASS Checking invalid combination - align-self: left safe unsafe safe 
-PASS Checking invalid combination - align-self: start safe 
-PASS Checking invalid combination - align-self: safe 
+PASS Checking invalid combination - align-self: legacy
+PASS Checking invalid combination - align-self: space-around
+PASS Checking invalid combination - align-self: left
+PASS Checking invalid combination - align-self: safe right
+PASS Checking invalid combination - align-self: auto safe
+PASS Checking invalid combination - align-self: auto left
+PASS Checking invalid combination - align-self: normal unsafe
+PASS Checking invalid combination - align-self: normal stretch
+PASS Checking invalid combination - align-self: baseline normal
+PASS Checking invalid combination - align-self: baseline center
+PASS Checking invalid combination - align-self: first baseline center
+PASS Checking invalid combination - align-self: last baseline center
+PASS Checking invalid combination - align-self: baseline last
+PASS Checking invalid combination - align-self: baseline first
+PASS Checking invalid combination - align-self: stretch unsafe
+PASS Checking invalid combination - align-self: stretch right
+PASS Checking invalid combination - align-self: unsafe unsafe
+PASS Checking invalid combination - align-self: unsafe safe
+PASS Checking invalid combination - align-self: center start
+PASS Checking invalid combination - align-self: unsafe stretch
+PASS Checking invalid combination - align-self: safe stretch
+PASS Checking invalid combination - align-self: baseline safe
+PASS Checking invalid combination - align-self: unsafe baseline
+PASS Checking invalid combination - align-self: unsafe safe left
+PASS Checking invalid combination - align-self: unsafe left safe
+PASS Checking invalid combination - align-self: left safe unsafe safe
+PASS Checking invalid combination - align-self: start safe
+PASS Checking invalid combination - align-self: safe
 

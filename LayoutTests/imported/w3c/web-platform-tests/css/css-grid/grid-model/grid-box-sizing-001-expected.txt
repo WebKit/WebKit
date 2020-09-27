@@ -1,88 +1,88 @@
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-FAIL .grid 5 assert_equals: 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+FAIL .grid 5 assert_equals:
 <div class="grid wholeWidth" style="bottom: 0;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 6 assert_equals: 
+FAIL .grid 6 assert_equals:
 <div class="grid wholeWidth" style="bottom: 0;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 7 assert_equals: 
+FAIL .grid 7 assert_equals:
 <div class="grid wholeWidth" style="bottom: 0; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 8 assert_equals: 
+FAIL .grid 8 assert_equals:
 <div class="grid wholeWidth" style="bottom: 0; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-PASS .grid 9 
-PASS .grid 10 
-PASS .grid 11 
-PASS .grid 12 
-FAIL .grid 13 assert_equals: 
+PASS .grid 9
+PASS .grid 10
+PASS .grid 11
+PASS .grid 12
+FAIL .grid 13 assert_equals:
 <div class="grid wholeHeight" style="width: 200px;" data-expected-width="246" data-expected-height="100">
     <div class="item" data-expected-width="200" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 14 assert_equals: 
+FAIL .grid 14 assert_equals:
 <div class="grid wholeHeight" style="min-width: 200px;" data-expected-width="246" data-expected-height="100">
     <div class="item" data-expected-width="200" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 15 assert_equals: 
+FAIL .grid 15 assert_equals:
 <div class="grid wholeHeight" style="width: 200px; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 16 assert_equals: 
+FAIL .grid 16 assert_equals:
 <div class="grid wholeHeight" style="min-width: 200px; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 17 assert_equals: 
+FAIL .grid 17 assert_equals:
 <div class="grid wholeHeight" style="right: 0;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 18 assert_equals: 
+FAIL .grid 18 assert_equals:
 <div class="grid wholeHeight" style="right: 0;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 19 assert_equals: 
+FAIL .grid 19 assert_equals:
 <div class="grid wholeHeight" style="right: 0; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 20 assert_equals: 
+FAIL .grid 20 assert_equals:
 <div class="grid wholeHeight" style="right: 0; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 21 assert_equals: 
+FAIL .grid 21 assert_equals:
 <div class="grid wholeHeight" style="width: 200px; right: 0;" data-expected-width="246" data-expected-height="100">
     <div class="item" data-expected-width="200" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 22 assert_equals: 
+FAIL .grid 22 assert_equals:
 <div class="grid wholeHeight" style="min-width: 200px; right: 0;" data-expected-width="246" data-expected-height="100">
     <div class="item" data-expected-width="200" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 23 assert_equals: 
+FAIL .grid 23 assert_equals:
 <div class="grid wholeHeight" style="width: 200px; right: 0; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>
 height expected 56 but got 0
-FAIL .grid 24 assert_equals: 
+FAIL .grid 24 assert_equals:
 <div class="grid wholeHeight" style="min-width: 200px; right: 0; box-sizing: border-box;" data-expected-width="200" data-expected-height="100">
     <div class="item" data-expected-width="154" data-expected-height="56"></div>
   </div>

@@ -75,28 +75,28 @@ baseline is not applied initially, but orthogonal items force repeating the trac
 É
 ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
 
-PASS .inline-grid 1 
-PASS .inline-grid 2 
-PASS .inline-grid 3 
-PASS .inline-grid 4 
-PASS .inline-grid 5 
-PASS .inline-grid 6 
-PASS .inline-grid 7 
-PASS .inline-grid 8 
-PASS .inline-grid 9 
-PASS .inline-grid 10 
-PASS .inline-grid 11 
-PASS .inline-grid 12 
-PASS .inline-grid 13 
-PASS .inline-grid 14 
-PASS .inline-grid 15 
-PASS .inline-grid 16 
-PASS .inline-grid 17 
-PASS .inline-grid 18 
-PASS .inline-grid 19 
-PASS .inline-grid 20 
-PASS .inline-grid 21 
-PASS .inline-grid 22 
-PASS .inline-grid 23 
-PASS .inline-grid 24 
+PASS .inline-grid 1
+PASS .inline-grid 2
+PASS .inline-grid 3
+PASS .inline-grid 4
+PASS .inline-grid 5
+PASS .inline-grid 6
+PASS .inline-grid 7
+PASS .inline-grid 8
+PASS .inline-grid 9
+PASS .inline-grid 10
+PASS .inline-grid 11
+PASS .inline-grid 12
+PASS .inline-grid 13
+PASS .inline-grid 14
+PASS .inline-grid 15
+PASS .inline-grid 16
+PASS .inline-grid 17
+PASS .inline-grid 18
+PASS .inline-grid 19
+PASS .inline-grid 20
+PASS .inline-grid 21
+PASS .inline-grid 22
+PASS .inline-grid 23
+PASS .inline-grid 24
 

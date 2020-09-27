@@ -7,15 +7,15 @@ FAIL Compositing: property <font-variation-settings> underlying ['test' 50] from
 FAIL Compositing: property <font-variation-settings> underlying ['test' 50] from add ['test' 100] to replace ['test' 200] at (-0.3) should be ['test' 135] assert_equals: expected "\" test \" 135 " but got "\" test \" 70 "
 FAIL Compositing: property <font-variation-settings> underlying ['test' 50] from add ['test' 100] to replace ['test' 200] at (0) should be ['test' 150] assert_equals: expected "\" test \" 150 " but got "\" test \" 100 "
 FAIL Compositing: property <font-variation-settings> underlying ['test' 50] from add ['test' 100] to replace ['test' 200] at (0.5) should be ['test' 175] assert_equals: expected "\" test \" 175 " but got "\" test \" 150 "
-PASS Compositing: property <font-variation-settings> underlying ['test' 50] from add ['test' 100] to replace ['test' 200] at (1) should be ['test' 200] 
+PASS Compositing: property <font-variation-settings> underlying ['test' 50] from add ['test' 100] to replace ['test' 200] at (1) should be ['test' 200]
 FAIL Compositing: property <font-variation-settings> underlying ['test' 50] from add ['test' 100] to replace ['test' 200] at (1.5) should be ['test' 225] assert_equals: expected "\" test \" 225 " but got "\" test \" 250 "
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (-0.3) should be [normal] 
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (0) should be [normal] 
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (-0.3) should be [normal]
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (0) should be [normal]
 FAIL Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (0.5) should be ['test' 200] assert_equals: expected "\" test \" 200 " but got "normal "
 FAIL Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (1) should be ['test' 200] assert_equals: expected "\" test \" 200 " but got "normal "
 FAIL Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to replace ['test' 200] at (1.5) should be ['test' 200] assert_equals: expected "\" test \" 200 " but got "normal "
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (-0.3) should be [normal] 
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (0) should be [normal] 
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (-0.3) should be [normal]
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (0) should be [normal]
 FAIL Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (0.5) should be ['test' 300] assert_equals: expected "\" test \" 300 " but got "normal "
 FAIL Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (1) should be ['test' 300] assert_equals: expected "\" test \" 300 " but got "normal "
 FAIL Compositing: property <font-variation-settings> underlying ['test' 100] from add [normal] to add ['test' 200] at (1.5) should be ['test' 300] assert_equals: expected "\" test \" 300 " but got "normal "
@@ -24,9 +24,9 @@ FAIL Compositing: property <font-variation-settings> underlying ['aaaa' 100, 'bb
 FAIL Compositing: property <font-variation-settings> underlying ['aaaa' 100, 'bbbb' 200] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (0.5) should be ['aaaa' 125, 'bbbb' 275] assert_equals: expected "\" bbbb \" 275 , \" aaaa \" 125 " but got "\" bbbb \" 75 , \" aaaa \" 25 "
 FAIL Compositing: property <font-variation-settings> underlying ['aaaa' 100, 'bbbb' 200] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (1) should be ['aaaa' 130, 'bbbb' 300] assert_equals: expected "\" bbbb \" 300 , \" aaaa \" 130 " but got "\" bbbb \" 100 , \" aaaa \" 30 "
 FAIL Compositing: property <font-variation-settings> underlying ['aaaa' 100, 'bbbb' 200] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (1.5) should be ['aaaa' 135, 'bbbb' 325] assert_equals: expected "\" bbbb \" 325 , \" aaaa \" 135 " but got "\" bbbb \" 125 , \" aaaa \" 35 "
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (-0.3) should be ['aaaa' 17, 'bbbb' 35] 
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (0) should be ['aaaa' 20, 'bbbb' 50] 
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (0.5) should be ['aaaa' 25, 'bbbb' 75] 
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (1) should be ['aaaa' 30, 'bbbb' 100] 
-PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (1.5) should be ['aaaa' 35, 'bbbb' 125] 
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (-0.3) should be ['aaaa' 17, 'bbbb' 35]
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (0) should be ['aaaa' 20, 'bbbb' 50]
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (0.5) should be ['aaaa' 25, 'bbbb' 75]
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (1) should be ['aaaa' 30, 'bbbb' 100]
+PASS Compositing: property <font-variation-settings> underlying ['test' 100] from add ['aaaa' 20, 'bbbb' 50] to add ['aaaa' 30, 'bbbb' 100] at (1.5) should be ['aaaa' 35, 'bbbb' 125]
 

@@ -1,3 +1,3 @@
 
-PASS Logical properties in enumeration of computed style 
+PASS Logical properties in enumeration of computed style
 

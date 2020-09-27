@@ -1,19 +1,19 @@
 
-PASS e.style['padding-block-start'] = "none" should not set the property value 
-PASS e.style['padding-block-start'] = "-10px" should not set the property value 
-PASS e.style['padding-block-end'] = "1px 2px" should not set the property value 
-PASS e.style['padding-block-end'] = "auto" should not set the property value 
-PASS e.style['padding-block-end'] = "10" should not set the property value 
-PASS e.style['padding-block-end'] = "1px, 2px" should not set the property value 
-PASS e.style['padding-inline-start'] = "20% calc(10px - 0.5em)" should not set the property value 
-PASS e.style['padding-inline-start'] = "2px auto" should not set the property value 
-PASS e.style['padding-inline-end'] = "-20%" should not set the property value 
-PASS e.style['padding-inline-end'] = "10px, auto" should not set the property value 
-PASS e.style['padding-block'] = "none" should not set the property value 
-PASS e.style['padding-block'] = "20% -10px" should not set the property value 
-PASS e.style['padding-block'] = "auto, -10px" should not set the property value 
-PASS e.style['padding-block'] = "20%, calc(10px - 0.5em)" should not set the property value 
-PASS e.style['padding-inline'] = "10px auto 20px" should not set the property value 
-PASS e.style['padding-inline'] = "1px 2px 3px" should not set the property value 
-PASS e.style['padding-inline'] = "-20% calc(20% + 10px)" should not set the property value 
+PASS e.style['padding-block-start'] = "none" should not set the property value
+PASS e.style['padding-block-start'] = "-10px" should not set the property value
+PASS e.style['padding-block-end'] = "1px 2px" should not set the property value
+PASS e.style['padding-block-end'] = "auto" should not set the property value
+PASS e.style['padding-block-end'] = "10" should not set the property value
+PASS e.style['padding-block-end'] = "1px, 2px" should not set the property value
+PASS e.style['padding-inline-start'] = "20% calc(10px - 0.5em)" should not set the property value
+PASS e.style['padding-inline-start'] = "2px auto" should not set the property value
+PASS e.style['padding-inline-end'] = "-20%" should not set the property value
+PASS e.style['padding-inline-end'] = "10px, auto" should not set the property value
+PASS e.style['padding-block'] = "none" should not set the property value
+PASS e.style['padding-block'] = "20% -10px" should not set the property value
+PASS e.style['padding-block'] = "auto, -10px" should not set the property value
+PASS e.style['padding-block'] = "20%, calc(10px - 0.5em)" should not set the property value
+PASS e.style['padding-inline'] = "10px auto 20px" should not set the property value
+PASS e.style['padding-inline'] = "1px 2px 3px" should not set the property value
+PASS e.style['padding-inline'] = "-20% calc(20% + 10px)" should not set the property value
 

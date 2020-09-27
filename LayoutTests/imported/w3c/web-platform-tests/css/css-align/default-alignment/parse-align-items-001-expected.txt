@@ -1,19 +1,19 @@
 
-PASS Checking align-items: normal 
-PASS Checking align-items: stretch 
-PASS Checking align-items: start 
-PASS Checking align-items: end 
-PASS Checking align-items: self-start 
-PASS Checking align-items: self-end 
-PASS Checking align-items: center 
-PASS Checking align-items: flex-start 
-PASS Checking align-items: flex-end 
-PASS Checking align-items: baseline 
-PASS Checking align-items: first baseline 
-PASS Checking align-items: last baseline 
-PASS Checking align-items: safe flex-end 
-PASS Checking align-items: unsafe end 
-PASS Checking align-items: safe end 
-PASS Checking align-items: unsafe flex-start 
-PASS Checking align-items: safe center 
+PASS Checking align-items: normal
+PASS Checking align-items: stretch
+PASS Checking align-items: start
+PASS Checking align-items: end
+PASS Checking align-items: self-start
+PASS Checking align-items: self-end
+PASS Checking align-items: center
+PASS Checking align-items: flex-start
+PASS Checking align-items: flex-end
+PASS Checking align-items: baseline
+PASS Checking align-items: first baseline
+PASS Checking align-items: last baseline
+PASS Checking align-items: safe flex-end
+PASS Checking align-items: unsafe end
+PASS Checking align-items: safe end
+PASS Checking align-items: unsafe flex-start
+PASS Checking align-items: safe center
 

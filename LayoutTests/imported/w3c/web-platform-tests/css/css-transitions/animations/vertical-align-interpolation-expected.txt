@@ -3,40 +3,40 @@ FAIL CSS Transitions: property <vertical-align> from neutral to [40px] at (-0.5)
 FAIL CSS Transitions: property <vertical-align> from neutral to [40px] at (0) should be [10px] assert_equals: expected "10px " but got "40px "
 FAIL CSS Transitions: property <vertical-align> from neutral to [40px] at (0.3) should be [19px] assert_equals: expected "19px " but got "40px "
 FAIL CSS Transitions: property <vertical-align> from neutral to [40px] at (0.6) should be [28px] assert_equals: expected "28px " but got "40px "
-PASS CSS Transitions: property <vertical-align> from neutral to [40px] at (1) should be [40px] 
+PASS CSS Transitions: property <vertical-align> from neutral to [40px] at (1) should be [40px]
 FAIL CSS Transitions: property <vertical-align> from neutral to [40px] at (1.5) should be [55px] assert_equals: expected "55px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (-0.5) should be [-5px] assert_equals: expected "- 5px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (0) should be [10px] assert_equals: expected "10px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (0.3) should be [19px] assert_equals: expected "19px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (0.6) should be [28px] assert_equals: expected "28px " but got "40px "
-PASS CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (1) should be [40px] 
+PASS CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (1) should be [40px]
 FAIL CSS Transitions with transition: all: property <vertical-align> from neutral to [40px] at (1.5) should be [55px] assert_equals: expected "55px " but got "40px "
 FAIL CSS Animations: property <vertical-align> from neutral to [40px] at (-0.5) should be [-5px] assert_equals: expected "- 5px " but got "10px "
-PASS CSS Animations: property <vertical-align> from neutral to [40px] at (0) should be [10px] 
+PASS CSS Animations: property <vertical-align> from neutral to [40px] at (0) should be [10px]
 FAIL CSS Animations: property <vertical-align> from neutral to [40px] at (0.3) should be [19px] assert_equals: expected "19px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from neutral to [40px] at (0.6) should be [28px] assert_equals: expected "28px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from neutral to [40px] at (1) should be [40px] assert_equals: expected "40px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from neutral to [40px] at (1.5) should be [55px] assert_equals: expected "55px " but got "10px "
 FAIL Web Animations: property <vertical-align> from neutral to [40px] at (-0.5) should be [-5px] assert_equals: expected "- 5px " but got "10px "
-PASS Web Animations: property <vertical-align> from neutral to [40px] at (0) should be [10px] 
+PASS Web Animations: property <vertical-align> from neutral to [40px] at (0) should be [10px]
 FAIL Web Animations: property <vertical-align> from neutral to [40px] at (0.3) should be [19px] assert_equals: expected "19px " but got "10px "
 FAIL Web Animations: property <vertical-align> from neutral to [40px] at (0.6) should be [28px] assert_equals: expected "28px " but got "10px "
 FAIL Web Animations: property <vertical-align> from neutral to [40px] at (1) should be [40px] assert_equals: expected "40px " but got "10px "
 FAIL Web Animations: property <vertical-align> from neutral to [40px] at (1.5) should be [55px] assert_equals: expected "55px " but got "10px "
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (-0.3) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0.3) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0.5) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0.6) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (1) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (1.5) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (-0.3) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0.3) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0.5) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0.6) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (1) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (1.5) should be [40px] 
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (-0.3) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0.3) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0.5) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (0.6) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (1) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [initial] to [40px] at (1.5) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (-0.3) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0.3) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0.5) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (0.6) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (1) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [initial] to [40px] at (1.5) should be [40px]
 FAIL CSS Animations: property <vertical-align> from [initial] to [40px] at (-0.3) should be [initial] assert_equals: expected "baseline " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [initial] to [40px] at (0) should be [initial] assert_equals: expected "baseline " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [initial] to [40px] at (0.3) should be [initial] assert_equals: expected "baseline " but got "10px "
@@ -55,40 +55,40 @@ FAIL CSS Transitions: property <vertical-align> from [inherit] to [40px] at (-0.
 FAIL CSS Transitions: property <vertical-align> from [inherit] to [40px] at (0) should be [100px] assert_equals: expected "100px " but got "40px "
 FAIL CSS Transitions: property <vertical-align> from [inherit] to [40px] at (0.3) should be [82px] assert_equals: expected "82px " but got "40px "
 FAIL CSS Transitions: property <vertical-align> from [inherit] to [40px] at (0.6) should be [64px] assert_equals: expected "64px " but got "40px "
-PASS CSS Transitions: property <vertical-align> from [inherit] to [40px] at (1) should be [40px] 
+PASS CSS Transitions: property <vertical-align> from [inherit] to [40px] at (1) should be [40px]
 FAIL CSS Transitions: property <vertical-align> from [inherit] to [40px] at (1.5) should be [10px] assert_equals: expected "10px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (-0.5) should be [130px] assert_equals: expected "130px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (0) should be [100px] assert_equals: expected "100px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (0.3) should be [82px] assert_equals: expected "82px " but got "40px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (0.6) should be [64px] assert_equals: expected "64px " but got "40px "
-PASS CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (1) should be [40px] 
+PASS CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (1) should be [40px]
 FAIL CSS Transitions with transition: all: property <vertical-align> from [inherit] to [40px] at (1.5) should be [10px] assert_equals: expected "10px " but got "40px "
 FAIL CSS Animations: property <vertical-align> from [inherit] to [40px] at (-0.5) should be [130px] assert_equals: expected "130px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [inherit] to [40px] at (0) should be [100px] assert_equals: expected "100px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [inherit] to [40px] at (0.3) should be [82px] assert_equals: expected "82px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [inherit] to [40px] at (0.6) should be [64px] assert_equals: expected "64px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [inherit] to [40px] at (1) should be [40px] assert_equals: expected "40px " but got "10px "
-PASS CSS Animations: property <vertical-align> from [inherit] to [40px] at (1.5) should be [10px] 
+PASS CSS Animations: property <vertical-align> from [inherit] to [40px] at (1.5) should be [10px]
 FAIL Web Animations: property <vertical-align> from [inherit] to [40px] at (-0.5) should be [130px] assert_equals: expected "130px " but got "10px "
 FAIL Web Animations: property <vertical-align> from [inherit] to [40px] at (0) should be [100px] assert_equals: expected "100px " but got "10px "
 FAIL Web Animations: property <vertical-align> from [inherit] to [40px] at (0.3) should be [82px] assert_equals: expected "82px " but got "10px "
 FAIL Web Animations: property <vertical-align> from [inherit] to [40px] at (0.6) should be [64px] assert_equals: expected "64px " but got "10px "
 FAIL Web Animations: property <vertical-align> from [inherit] to [40px] at (1) should be [40px] assert_equals: expected "40px " but got "10px "
-PASS Web Animations: property <vertical-align> from [inherit] to [40px] at (1.5) should be [10px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (-0.3) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0.3) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0.5) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0.6) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (1) should be [40px] 
-PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (1.5) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (-0.3) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0.3) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0.5) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0.6) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (1) should be [40px] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (1.5) should be [40px] 
+PASS Web Animations: property <vertical-align> from [inherit] to [40px] at (1.5) should be [10px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (-0.3) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0.3) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0.5) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (0.6) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (1) should be [40px]
+PASS CSS Transitions: property <vertical-align> from [unset] to [40px] at (1.5) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (-0.3) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0.3) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0.5) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (0.6) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (1) should be [40px]
+PASS CSS Transitions with transition: all: property <vertical-align> from [unset] to [40px] at (1.5) should be [40px]
 FAIL CSS Animations: property <vertical-align> from [unset] to [40px] at (-0.3) should be [unset] assert_equals: expected "baseline " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [unset] to [40px] at (0) should be [unset] assert_equals: expected "baseline " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [unset] to [40px] at (0.3) should be [unset] assert_equals: expected "baseline " but got "10px "
@@ -107,13 +107,13 @@ FAIL CSS Transitions: property <vertical-align> from [0px] to [100px] at (-0.5) 
 FAIL CSS Transitions: property <vertical-align> from [0px] to [100px] at (0) should be [0px] assert_equals: expected "0px " but got "100px "
 FAIL CSS Transitions: property <vertical-align> from [0px] to [100px] at (0.3) should be [30px] assert_equals: expected "30px " but got "100px "
 FAIL CSS Transitions: property <vertical-align> from [0px] to [100px] at (0.6) should be [60px] assert_equals: expected "60px " but got "100px "
-PASS CSS Transitions: property <vertical-align> from [0px] to [100px] at (1) should be [100px] 
+PASS CSS Transitions: property <vertical-align> from [0px] to [100px] at (1) should be [100px]
 FAIL CSS Transitions: property <vertical-align> from [0px] to [100px] at (1.5) should be [150px] assert_equals: expected "150px " but got "100px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (-0.5) should be [-50px] assert_equals: expected "- 50px " but got "100px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (0) should be [0px] assert_equals: expected "0px " but got "100px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (0.3) should be [30px] assert_equals: expected "30px " but got "100px "
 FAIL CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (0.6) should be [60px] assert_equals: expected "60px " but got "100px "
-PASS CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (1) should be [100px] 
+PASS CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (1) should be [100px]
 FAIL CSS Transitions with transition: all: property <vertical-align> from [0px] to [100px] at (1.5) should be [150px] assert_equals: expected "150px " but got "100px "
 FAIL CSS Animations: property <vertical-align> from [0px] to [100px] at (-0.5) should be [-50px] assert_equals: expected "- 50px " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [0px] to [100px] at (0) should be [0px] assert_equals: expected "0px " but got "10px "
@@ -147,20 +147,20 @@ FAIL Web Animations: property <vertical-align> from [40px] to [40%] at (0) shoul
 FAIL Web Animations: property <vertical-align> from [40px] to [40%] at (0.3) should be [calc(28px + 12%)] assert_equals: expected "" but got "10px "
 FAIL Web Animations: property <vertical-align> from [40px] to [40%] at (1) should be [calc(0px + 40%)] assert_equals: expected "" but got "10px "
 FAIL Web Animations: property <vertical-align> from [40px] to [40%] at (1.5) should be [calc(-20px + 60%)] assert_equals: expected "" but got "10px "
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (-0.3) should be [40%] 
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0) should be [40%] 
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0.3) should be [40%] 
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0.5) should be [40%] 
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0.6) should be [40%] 
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (1) should be [40%] 
-PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (1.5) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (-0.3) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0.3) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0.5) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0.6) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (1) should be [40%] 
-PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (1.5) should be [40%] 
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (-0.3) should be [40%]
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0) should be [40%]
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0.3) should be [40%]
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0.5) should be [40%]
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (0.6) should be [40%]
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (1) should be [40%]
+PASS CSS Transitions: property <vertical-align> from [super] to [40%] at (1.5) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (-0.3) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0.3) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0.5) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (0.6) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (1) should be [40%]
+PASS CSS Transitions with transition: all: property <vertical-align> from [super] to [40%] at (1.5) should be [40%]
 FAIL CSS Animations: property <vertical-align> from [super] to [40%] at (-0.3) should be [super] assert_equals: expected "super " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [super] to [40%] at (0) should be [super] assert_equals: expected "super " but got "10px "
 FAIL CSS Animations: property <vertical-align> from [super] to [40%] at (0.3) should be [super] assert_equals: expected "super " but got "10px "

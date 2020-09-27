@@ -1,4 +1,4 @@
 
-PASS e.style['direction'] = "auto" should not set the property value 
-PASS e.style['direction'] = "ltr rtl" should not set the property value 
+PASS e.style['direction'] = "auto" should not set the property value
+PASS e.style['direction'] = "ltr rtl" should not set the property value
 

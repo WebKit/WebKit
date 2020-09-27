@@ -159,166 +159,166 @@ CONSOLE MESSAGE: Retrieving vertical-align property. Result: 80px
 CONSOLE MESSAGE: div.style.wordSpacing = 10vmax
 CONSOLE MESSAGE: Retrieving word-spacing property. Result: 80px
 
-PASS vw length applied to width 
-PASS vw length applied to width: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to height 
-PASS vw length applied to height: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to min-width 
-PASS vw length applied to min-width: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to min-height 
-PASS vw length applied to min-height: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to max-width 
-PASS vw length applied to max-width: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to max-height 
-PASS vw length applied to max-height: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to margin-top 
-PASS vw length applied to margin-top: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to padding-top 
-PASS vw length applied to padding-top: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to border-top-width 
-PASS vw length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to font-size 
-PASS vw length applied to font-size: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to line-height 
-PASS vw length applied to line-height: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to border-spacing 
-PASS vw length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to top 
-PASS vw length applied to top: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to right 
-PASS vw length applied to right: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to bottom 
-PASS vw length applied to bottom: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to left 
-PASS vw length applied to left: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to letter-spacing 
-PASS vw length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to text-indent 
-PASS vw length applied to text-indent: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to vertical-align 
-PASS vw length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
-PASS vw length applied to word-spacing 
-PASS vw length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to width 
-PASS vh length applied to width: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to height 
-PASS vh length applied to height: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to min-width 
-PASS vh length applied to min-width: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to min-height 
-PASS vh length applied to min-height: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to max-width 
-PASS vh length applied to max-width: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to max-height 
-PASS vh length applied to max-height: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to margin-top 
-PASS vh length applied to margin-top: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to padding-top 
-PASS vh length applied to padding-top: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to border-top-width 
-PASS vh length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to font-size 
-PASS vh length applied to font-size: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to line-height 
-PASS vh length applied to line-height: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to border-spacing 
-PASS vh length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to top 
-PASS vh length applied to top: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to right 
-PASS vh length applied to right: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to bottom 
-PASS vh length applied to bottom: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to left 
-PASS vh length applied to left: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to letter-spacing 
-PASS vh length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to text-indent 
-PASS vh length applied to text-indent: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to vertical-align 
-PASS vh length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
-PASS vh length applied to word-spacing 
-PASS vh length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to width 
-PASS vmin length applied to width: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to height 
-PASS vmin length applied to height: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to min-width 
-PASS vmin length applied to min-width: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to min-height 
-PASS vmin length applied to min-height: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to max-width 
-PASS vmin length applied to max-width: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to max-height 
-PASS vmin length applied to max-height: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to margin-top 
-PASS vmin length applied to margin-top: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to padding-top 
-PASS vmin length applied to padding-top: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to border-top-width 
-PASS vmin length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to font-size 
-PASS vmin length applied to font-size: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to line-height 
-PASS vmin length applied to line-height: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to border-spacing 
-PASS vmin length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to top 
-PASS vmin length applied to top: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to right 
-PASS vmin length applied to right: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to bottom 
-PASS vmin length applied to bottom: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to left 
-PASS vmin length applied to left: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to letter-spacing 
-PASS vmin length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to text-indent 
-PASS vmin length applied to text-indent: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to vertical-align 
-PASS vmin length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
-PASS vmin length applied to word-spacing 
-PASS vmin length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to width 
-PASS vmax length applied to width: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to height 
-PASS vmax length applied to height: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to min-width 
-PASS vmax length applied to min-width: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to min-height 
-PASS vmax length applied to min-height: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to max-width 
-PASS vmax length applied to max-width: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to max-height 
-PASS vmax length applied to max-height: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to margin-top 
-PASS vmax length applied to margin-top: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to padding-top 
-PASS vmax length applied to padding-top: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to border-top-width 
-PASS vmax length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to font-size 
-PASS vmax length applied to font-size: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to line-height 
-PASS vmax length applied to line-height: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to border-spacing 
-PASS vmax length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to top 
-PASS vmax length applied to top: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to right 
-PASS vmax length applied to right: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to bottom 
-PASS vmax length applied to bottom: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to left 
-PASS vmax length applied to left: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to letter-spacing 
-PASS vmax length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to text-indent 
-PASS vmax length applied to text-indent: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to vertical-align 
-PASS vmax length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
-PASS vmax length applied to word-spacing 
-PASS vmax length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to width
+PASS vw length applied to width: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to height
+PASS vw length applied to height: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to min-width
+PASS vw length applied to min-width: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to min-height
+PASS vw length applied to min-height: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to max-width
+PASS vw length applied to max-width: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to max-height
+PASS vw length applied to max-height: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to margin-top
+PASS vw length applied to margin-top: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to padding-top
+PASS vw length applied to padding-top: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to border-top-width
+PASS vw length applied to border-top-width: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to font-size
+PASS vw length applied to font-size: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to line-height
+PASS vw length applied to line-height: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to border-spacing
+PASS vw length applied to border-spacing: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to top
+PASS vw length applied to top: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to right
+PASS vw length applied to right: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to bottom
+PASS vw length applied to bottom: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to left
+PASS vw length applied to left: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to letter-spacing
+PASS vw length applied to letter-spacing: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to text-indent
+PASS vw length applied to text-indent: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to vertical-align
+PASS vw length applied to vertical-align: getComputedStyle returns a non-zero px-based value
+PASS vw length applied to word-spacing
+PASS vw length applied to word-spacing: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to width
+PASS vh length applied to width: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to height
+PASS vh length applied to height: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to min-width
+PASS vh length applied to min-width: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to min-height
+PASS vh length applied to min-height: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to max-width
+PASS vh length applied to max-width: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to max-height
+PASS vh length applied to max-height: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to margin-top
+PASS vh length applied to margin-top: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to padding-top
+PASS vh length applied to padding-top: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to border-top-width
+PASS vh length applied to border-top-width: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to font-size
+PASS vh length applied to font-size: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to line-height
+PASS vh length applied to line-height: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to border-spacing
+PASS vh length applied to border-spacing: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to top
+PASS vh length applied to top: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to right
+PASS vh length applied to right: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to bottom
+PASS vh length applied to bottom: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to left
+PASS vh length applied to left: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to letter-spacing
+PASS vh length applied to letter-spacing: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to text-indent
+PASS vh length applied to text-indent: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to vertical-align
+PASS vh length applied to vertical-align: getComputedStyle returns a non-zero px-based value
+PASS vh length applied to word-spacing
+PASS vh length applied to word-spacing: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to width
+PASS vmin length applied to width: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to height
+PASS vmin length applied to height: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to min-width
+PASS vmin length applied to min-width: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to min-height
+PASS vmin length applied to min-height: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to max-width
+PASS vmin length applied to max-width: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to max-height
+PASS vmin length applied to max-height: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to margin-top
+PASS vmin length applied to margin-top: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to padding-top
+PASS vmin length applied to padding-top: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to border-top-width
+PASS vmin length applied to border-top-width: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to font-size
+PASS vmin length applied to font-size: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to line-height
+PASS vmin length applied to line-height: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to border-spacing
+PASS vmin length applied to border-spacing: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to top
+PASS vmin length applied to top: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to right
+PASS vmin length applied to right: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to bottom
+PASS vmin length applied to bottom: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to left
+PASS vmin length applied to left: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to letter-spacing
+PASS vmin length applied to letter-spacing: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to text-indent
+PASS vmin length applied to text-indent: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to vertical-align
+PASS vmin length applied to vertical-align: getComputedStyle returns a non-zero px-based value
+PASS vmin length applied to word-spacing
+PASS vmin length applied to word-spacing: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to width
+PASS vmax length applied to width: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to height
+PASS vmax length applied to height: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to min-width
+PASS vmax length applied to min-width: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to min-height
+PASS vmax length applied to min-height: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to max-width
+PASS vmax length applied to max-width: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to max-height
+PASS vmax length applied to max-height: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to margin-top
+PASS vmax length applied to margin-top: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to padding-top
+PASS vmax length applied to padding-top: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to border-top-width
+PASS vmax length applied to border-top-width: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to font-size
+PASS vmax length applied to font-size: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to line-height
+PASS vmax length applied to line-height: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to border-spacing
+PASS vmax length applied to border-spacing: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to top
+PASS vmax length applied to top: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to right
+PASS vmax length applied to right: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to bottom
+PASS vmax length applied to bottom: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to left
+PASS vmax length applied to left: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to letter-spacing
+PASS vmax length applied to letter-spacing: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to text-indent
+PASS vmax length applied to text-indent: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to vertical-align
+PASS vmax length applied to vertical-align: getComputedStyle returns a non-zero px-based value
+PASS vmax length applied to word-spacing
+PASS vmax length applied to word-spacing: getComputedStyle returns a non-zero px-based value
 Checks viewport units. Also re-check with zoom in/out.
 
 Test the Web Forward!

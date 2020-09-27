@@ -17,12 +17,12 @@ Direction: RTL | Self Alignment: center | auto size items | 1 auto-margin
 Direction: RTL | Self Alignment: start | auto size items | 4 auto-margin
 
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
-PASS .grid 6 
-PASS .grid 7 
-PASS .grid 8 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+PASS .grid 8
 

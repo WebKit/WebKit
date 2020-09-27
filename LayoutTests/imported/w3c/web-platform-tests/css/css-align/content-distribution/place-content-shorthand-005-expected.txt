@@ -1,4 +1,4 @@
 
-PASS Check place-content: inherit - align-content resolved value 
-PASS Check place-content: inherit - justify-content resolved value 
+PASS Check place-content: inherit - align-content resolved value
+PASS Check place-content: inherit - justify-content resolved value
 

@@ -1,4 +1,4 @@
  
 
-PASS A lang|= value that matches an identical lang attribute value on the same element will produce styling. 
+PASS A lang|= value that matches an identical lang attribute value on the same element will produce styling.
 

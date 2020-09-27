@@ -1,16 +1,16 @@
 
 FAIL linebreak only assert_equals: expected 96 but got 103
-PASS zwsp retained 1 
+PASS zwsp retained 1
 FAIL spaces linebreak assert_equals: expected 96 but got 103
-PASS zwsp retained 2 
+PASS zwsp retained 2
 FAIL linebreak spaces assert_equals: expected 96 but got 103
-PASS zwsp retained 3 
+PASS zwsp retained 3
 FAIL spaces linebreak spaces assert_equals: expected 96 but got 103
-PASS zwsp retained 4 
+PASS zwsp retained 4
 FAIL multiple linebreaks assert_equals: expected 96 but got 103
-PASS zwsp retained 5 
+PASS zwsp retained 5
 FAIL multiple linebreaks + spaces assert_equals: expected 96 but got 103
-PASS zwsp retained 6 
+PASS zwsp retained 6
 ภาษา ​ไทย
 ภาษา ​ไทย
 ภาษา ​ไทย

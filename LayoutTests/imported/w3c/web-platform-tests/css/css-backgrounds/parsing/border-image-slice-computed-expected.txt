@@ -1,7 +1,7 @@
 
-PASS Property border-image-slice value '1' 
-PASS Property border-image-slice value '1 2%' 
-PASS Property border-image-slice value '1 2% 3' 
-PASS Property border-image-slice value '1 2% 3 4%' 
-PASS Property border-image-slice value '1% 2 3% 4 fill' 
+PASS Property border-image-slice value '1'
+PASS Property border-image-slice value '1 2%'
+PASS Property border-image-slice value '1 2% 3'
+PASS Property border-image-slice value '1 2% 3 4%'
+PASS Property border-image-slice value '1% 2 3% 4 fill'
 

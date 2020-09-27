@@ -1,37 +1,37 @@
 
-PASS pre test setup 
-PASS backgroundAttachment should be applied to first-letter pseudo elements. 
-PASS backgroundBlendMode should be applied to first-letter pseudo elements. 
-PASS backgroundClip should be applied to first-letter pseudo elements. 
-PASS backgroundColor should be applied to first-letter pseudo elements. 
-PASS backgroundImage should be applied to first-letter pseudo elements. 
-PASS backgroundOrigin should be applied to first-letter pseudo elements. 
-PASS backgroundPosition should be applied to first-letter pseudo elements. 
-PASS backgroundRepeat should be applied to first-letter pseudo elements. 
-PASS backgroundSize should be applied to first-letter pseudo elements. 
-PASS border should be applied to first-letter pseudo elements. 
-PASS borderImage should be applied to first-letter pseudo elements. 
-PASS borderRadius should be applied to first-letter pseudo elements. 
-PASS boxShadow should be applied to first-letter pseudo elements. 
-PASS color should be applied to first-letter pseudo elements. 
-PASS float should be applied to first-letter pseudo elements. 
+PASS pre test setup
+PASS backgroundAttachment should be applied to first-letter pseudo elements.
+PASS backgroundBlendMode should be applied to first-letter pseudo elements.
+PASS backgroundClip should be applied to first-letter pseudo elements.
+PASS backgroundColor should be applied to first-letter pseudo elements.
+PASS backgroundImage should be applied to first-letter pseudo elements.
+PASS backgroundOrigin should be applied to first-letter pseudo elements.
+PASS backgroundPosition should be applied to first-letter pseudo elements.
+PASS backgroundRepeat should be applied to first-letter pseudo elements.
+PASS backgroundSize should be applied to first-letter pseudo elements.
+PASS border should be applied to first-letter pseudo elements.
+PASS borderImage should be applied to first-letter pseudo elements.
+PASS borderRadius should be applied to first-letter pseudo elements.
+PASS boxShadow should be applied to first-letter pseudo elements.
+PASS color should be applied to first-letter pseudo elements.
+PASS float should be applied to first-letter pseudo elements.
 FAIL font should be applied to first-letter pseudo elements. assert_equals: expected "italic small-caps 900 10px / 20px sans-serif" but got "italic small-caps 900 normal 10px/20px sans-serif"
-PASS fontFeatureSettings should be applied to first-letter pseudo elements. 
+PASS fontFeatureSettings should be applied to first-letter pseudo elements.
 FAIL fontSizeAdjust should be applied to first-letter pseudo elements. assert_equals: expected (string) "0.5" but got (undefined) undefined
-PASS fontKerning should be applied to first-letter pseudo elements. 
-PASS fontVariationSettings should be applied to first-letter pseudo elements. 
-PASS letterSpacing should be applied to first-letter pseudo elements. 
-PASS margin should be applied to first-letter pseudo elements. 
-PASS padding should be applied to first-letter pseudo elements. 
-PASS opacity should be applied to first-letter pseudo elements. 
+PASS fontKerning should be applied to first-letter pseudo elements.
+PASS fontVariationSettings should be applied to first-letter pseudo elements.
+PASS letterSpacing should be applied to first-letter pseudo elements.
+PASS margin should be applied to first-letter pseudo elements.
+PASS padding should be applied to first-letter pseudo elements.
+PASS opacity should be applied to first-letter pseudo elements.
 FAIL textDecoration should be applied to first-letter pseudo elements. assert_equals: expected "overline wavy rgb(10, 20, 30)" but got "none"
 FAIL textJustify should be applied to first-letter pseudo elements. assert_equals: expected (string) "inter-word" but got (undefined) undefined
-PASS textShadow should be applied to first-letter pseudo elements. 
-PASS textTransform should be applied to first-letter pseudo elements. 
-PASS textUnderlinePosition should be applied to first-letter pseudo elements. 
-PASS verticalAlign should be applied to first-letter pseudo elements. 
-PASS wordSpacing should be applied to first-letter pseudo elements. 
+PASS textShadow should be applied to first-letter pseudo elements.
+PASS textTransform should be applied to first-letter pseudo elements.
+PASS textUnderlinePosition should be applied to first-letter pseudo elements.
+PASS verticalAlign should be applied to first-letter pseudo elements.
+PASS wordSpacing should be applied to first-letter pseudo elements.
 FAIL transition should not be applied to first-letter pseudo elements. assert_equals: expected "all 0s ease 0s" but got "transform 1s ease 0s"
-PASS transform should not be applied to first-letter pseudo elements. 
+PASS transform should not be applied to first-letter pseudo elements.
 FAIL wordBreak should not be applied to first-letter pseudo elements. assert_equals: expected "normal" but got "break-all"
 

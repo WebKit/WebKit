@@ -1,8 +1,8 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial namespace CSS: original namespace defined 
-PASS Partial namespace CSS: member names are unique 
-PASS CSS namespace: operation escape(CSSOMString) 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial namespace CSS: original namespace defined
+PASS Partial namespace CSS: member names are unique
+PASS CSS namespace: operation escape(CSSOMString)
 FAIL CSS namespace: attribute elementSources assert_own_property: CSS does not have property "elementSources" expected property "elementSources" missing
 

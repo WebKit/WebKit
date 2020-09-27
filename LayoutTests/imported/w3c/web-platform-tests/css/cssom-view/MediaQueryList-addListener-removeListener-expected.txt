@@ -1,9 +1,9 @@
 
-PASS listeners are called when <iframe> is resized 
-PASS listeners are called correct number of times 
-PASS listeners are called in order they were added 
-PASS listener that was added twice is called only once 
-PASS listeners are called in order their MQLs were created 
-PASS removing listener from one MQL doesn't remove it from all MQLs 
-PASS MediaQueryList::removeListener removes added listener 
+PASS listeners are called when <iframe> is resized
+PASS listeners are called correct number of times
+PASS listeners are called in order they were added
+PASS listener that was added twice is called only once
+PASS listeners are called in order their MQLs were created
+PASS removing listener from one MQL doesn't remove it from all MQLs
+PASS MediaQueryList::removeListener removes added listener
 

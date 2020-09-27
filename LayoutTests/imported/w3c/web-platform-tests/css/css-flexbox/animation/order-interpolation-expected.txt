@@ -4,25 +4,25 @@ FAIL CSS Transitions: property <order> from neutral to [20] at (-0.5) should be 
 FAIL CSS Transitions: property <order> from neutral to [20] at (0) should be [10] assert_equals: expected "10 " but got "20 "
 FAIL CSS Transitions: property <order> from neutral to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "20 "
 FAIL CSS Transitions: property <order> from neutral to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "20 "
-PASS CSS Transitions: property <order> from neutral to [20] at (1) should be [20] 
+PASS CSS Transitions: property <order> from neutral to [20] at (1) should be [20]
 FAIL CSS Transitions: property <order> from neutral to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from neutral to [20] at (-3) should be [-20] assert_equals: expected "- 20 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from neutral to [20] at (-0.5) should be [5] assert_equals: expected "5 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from neutral to [20] at (0) should be [10] assert_equals: expected "10 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from neutral to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from neutral to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "20 "
-PASS CSS Transitions with transition: all: property <order> from neutral to [20] at (1) should be [20] 
+PASS CSS Transitions with transition: all: property <order> from neutral to [20] at (1) should be [20]
 FAIL CSS Transitions with transition: all: property <order> from neutral to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "20 "
 FAIL CSS Animations: property <order> from neutral to [20] at (-3) should be [-20] assert_equals: expected "- 20 " but got "10 "
 FAIL CSS Animations: property <order> from neutral to [20] at (-0.5) should be [5] assert_equals: expected "5 " but got "10 "
-PASS CSS Animations: property <order> from neutral to [20] at (0) should be [10] 
+PASS CSS Animations: property <order> from neutral to [20] at (0) should be [10]
 FAIL CSS Animations: property <order> from neutral to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "10 "
 FAIL CSS Animations: property <order> from neutral to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "10 "
 FAIL CSS Animations: property <order> from neutral to [20] at (1) should be [20] assert_equals: expected "20 " but got "10 "
 FAIL CSS Animations: property <order> from neutral to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "10 "
 FAIL Web Animations: property <order> from neutral to [20] at (-3) should be [-20] assert_equals: expected "- 20 " but got "10 "
 FAIL Web Animations: property <order> from neutral to [20] at (-0.5) should be [5] assert_equals: expected "5 " but got "10 "
-PASS Web Animations: property <order> from neutral to [20] at (0) should be [10] 
+PASS Web Animations: property <order> from neutral to [20] at (0) should be [10]
 FAIL Web Animations: property <order> from neutral to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "10 "
 FAIL Web Animations: property <order> from neutral to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "10 "
 FAIL Web Animations: property <order> from neutral to [20] at (1) should be [20] assert_equals: expected "20 " but got "10 "
@@ -32,14 +32,14 @@ FAIL CSS Transitions: property <order> from [initial] to [20] at (-0.5) should b
 FAIL CSS Transitions: property <order> from [initial] to [20] at (0) should be [0] assert_equals: expected "0 " but got "20 "
 FAIL CSS Transitions: property <order> from [initial] to [20] at (0.3) should be [6] assert_equals: expected "6 " but got "20 "
 FAIL CSS Transitions: property <order> from [initial] to [20] at (0.6) should be [12] assert_equals: expected "12 " but got "20 "
-PASS CSS Transitions: property <order> from [initial] to [20] at (1) should be [20] 
+PASS CSS Transitions: property <order> from [initial] to [20] at (1) should be [20]
 FAIL CSS Transitions: property <order> from [initial] to [20] at (1.5) should be [30] assert_equals: expected "30 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [initial] to [20] at (-3) should be [-60] assert_equals: expected "- 60 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [initial] to [20] at (-0.5) should be [-10] assert_equals: expected "- 10 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [initial] to [20] at (0) should be [0] assert_equals: expected "0 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [initial] to [20] at (0.3) should be [6] assert_equals: expected "6 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [initial] to [20] at (0.6) should be [12] assert_equals: expected "12 " but got "20 "
-PASS CSS Transitions with transition: all: property <order> from [initial] to [20] at (1) should be [20] 
+PASS CSS Transitions with transition: all: property <order> from [initial] to [20] at (1) should be [20]
 FAIL CSS Transitions with transition: all: property <order> from [initial] to [20] at (1.5) should be [30] assert_equals: expected "30 " but got "20 "
 FAIL CSS Animations: property <order> from [initial] to [20] at (-3) should be [-60] assert_equals: expected "- 60 " but got "10 "
 FAIL CSS Animations: property <order> from [initial] to [20] at (-0.5) should be [-10] assert_equals: expected "- 10 " but got "10 "
@@ -60,14 +60,14 @@ FAIL CSS Transitions: property <order> from [inherit] to [20] at (-0.5) should b
 FAIL CSS Transitions: property <order> from [inherit] to [20] at (0) should be [30] assert_equals: expected "30 " but got "20 "
 FAIL CSS Transitions: property <order> from [inherit] to [20] at (0.3) should be [27] assert_equals: expected "27 " but got "20 "
 FAIL CSS Transitions: property <order> from [inherit] to [20] at (0.6) should be [24] assert_equals: expected "24 " but got "20 "
-PASS CSS Transitions: property <order> from [inherit] to [20] at (1) should be [20] 
+PASS CSS Transitions: property <order> from [inherit] to [20] at (1) should be [20]
 FAIL CSS Transitions: property <order> from [inherit] to [20] at (1.5) should be [15] assert_equals: expected "15 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [inherit] to [20] at (-3) should be [60] assert_equals: expected "60 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [inherit] to [20] at (-0.5) should be [35] assert_equals: expected "35 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [inherit] to [20] at (0) should be [30] assert_equals: expected "30 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [inherit] to [20] at (0.3) should be [27] assert_equals: expected "27 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [inherit] to [20] at (0.6) should be [24] assert_equals: expected "24 " but got "20 "
-PASS CSS Transitions with transition: all: property <order> from [inherit] to [20] at (1) should be [20] 
+PASS CSS Transitions with transition: all: property <order> from [inherit] to [20] at (1) should be [20]
 FAIL CSS Transitions with transition: all: property <order> from [inherit] to [20] at (1.5) should be [15] assert_equals: expected "15 " but got "20 "
 FAIL CSS Animations: property <order> from [inherit] to [20] at (-3) should be [60] assert_equals: expected "60 " but got "10 "
 FAIL CSS Animations: property <order> from [inherit] to [20] at (-0.5) should be [35] assert_equals: expected "35 " but got "10 "
@@ -88,14 +88,14 @@ FAIL CSS Transitions: property <order> from [unset] to [20] at (-0.5) should be 
 FAIL CSS Transitions: property <order> from [unset] to [20] at (0) should be [0] assert_equals: expected "0 " but got "20 "
 FAIL CSS Transitions: property <order> from [unset] to [20] at (0.3) should be [6] assert_equals: expected "6 " but got "20 "
 FAIL CSS Transitions: property <order> from [unset] to [20] at (0.6) should be [12] assert_equals: expected "12 " but got "20 "
-PASS CSS Transitions: property <order> from [unset] to [20] at (1) should be [20] 
+PASS CSS Transitions: property <order> from [unset] to [20] at (1) should be [20]
 FAIL CSS Transitions: property <order> from [unset] to [20] at (1.5) should be [30] assert_equals: expected "30 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [unset] to [20] at (-3) should be [-60] assert_equals: expected "- 60 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [unset] to [20] at (-0.5) should be [-10] assert_equals: expected "- 10 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [unset] to [20] at (0) should be [0] assert_equals: expected "0 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [unset] to [20] at (0.3) should be [6] assert_equals: expected "6 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [unset] to [20] at (0.6) should be [12] assert_equals: expected "12 " but got "20 "
-PASS CSS Transitions with transition: all: property <order> from [unset] to [20] at (1) should be [20] 
+PASS CSS Transitions with transition: all: property <order> from [unset] to [20] at (1) should be [20]
 FAIL CSS Transitions with transition: all: property <order> from [unset] to [20] at (1.5) should be [30] assert_equals: expected "30 " but got "20 "
 FAIL CSS Animations: property <order> from [unset] to [20] at (-3) should be [-60] assert_equals: expected "- 60 " but got "10 "
 FAIL CSS Animations: property <order> from [unset] to [20] at (-0.5) should be [-10] assert_equals: expected "- 10 " but got "10 "
@@ -116,25 +116,25 @@ FAIL CSS Transitions: property <order> from [10] to [20] at (-0.5) should be [5]
 FAIL CSS Transitions: property <order> from [10] to [20] at (0) should be [10] assert_equals: expected "10 " but got "20 "
 FAIL CSS Transitions: property <order> from [10] to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "20 "
 FAIL CSS Transitions: property <order> from [10] to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "20 "
-PASS CSS Transitions: property <order> from [10] to [20] at (1) should be [20] 
+PASS CSS Transitions: property <order> from [10] to [20] at (1) should be [20]
 FAIL CSS Transitions: property <order> from [10] to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [10] to [20] at (-3) should be [-20] assert_equals: expected "- 20 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [10] to [20] at (-0.5) should be [5] assert_equals: expected "5 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [10] to [20] at (0) should be [10] assert_equals: expected "10 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [10] to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "20 "
 FAIL CSS Transitions with transition: all: property <order> from [10] to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "20 "
-PASS CSS Transitions with transition: all: property <order> from [10] to [20] at (1) should be [20] 
+PASS CSS Transitions with transition: all: property <order> from [10] to [20] at (1) should be [20]
 FAIL CSS Transitions with transition: all: property <order> from [10] to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "20 "
 FAIL CSS Animations: property <order> from [10] to [20] at (-3) should be [-20] assert_equals: expected "- 20 " but got "10 "
 FAIL CSS Animations: property <order> from [10] to [20] at (-0.5) should be [5] assert_equals: expected "5 " but got "10 "
-PASS CSS Animations: property <order> from [10] to [20] at (0) should be [10] 
+PASS CSS Animations: property <order> from [10] to [20] at (0) should be [10]
 FAIL CSS Animations: property <order> from [10] to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "10 "
 FAIL CSS Animations: property <order> from [10] to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "10 "
 FAIL CSS Animations: property <order> from [10] to [20] at (1) should be [20] assert_equals: expected "20 " but got "10 "
 FAIL CSS Animations: property <order> from [10] to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "10 "
 FAIL Web Animations: property <order> from [10] to [20] at (-3) should be [-20] assert_equals: expected "- 20 " but got "10 "
 FAIL Web Animations: property <order> from [10] to [20] at (-0.5) should be [5] assert_equals: expected "5 " but got "10 "
-PASS Web Animations: property <order> from [10] to [20] at (0) should be [10] 
+PASS Web Animations: property <order> from [10] to [20] at (0) should be [10]
 FAIL Web Animations: property <order> from [10] to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "10 "
 FAIL Web Animations: property <order> from [10] to [20] at (0.6) should be [16] assert_equals: expected "16 " but got "10 "
 FAIL Web Animations: property <order> from [10] to [20] at (1) should be [20] assert_equals: expected "20 " but got "10 "
@@ -144,14 +144,14 @@ FAIL CSS Transitions: property <order> from [2] to [4] at (-0.5) should be [1] a
 FAIL CSS Transitions: property <order> from [2] to [4] at (0) should be [2] assert_equals: expected "2 " but got "4 "
 FAIL CSS Transitions: property <order> from [2] to [4] at (0.3) should be [3] assert_equals: expected "3 " but got "4 "
 FAIL CSS Transitions: property <order> from [2] to [4] at (0.6) should be [3] assert_equals: expected "3 " but got "4 "
-PASS CSS Transitions: property <order> from [2] to [4] at (1) should be [4] 
+PASS CSS Transitions: property <order> from [2] to [4] at (1) should be [4]
 FAIL CSS Transitions: property <order> from [2] to [4] at (1.5) should be [5] assert_equals: expected "5 " but got "4 "
 FAIL CSS Transitions with transition: all: property <order> from [2] to [4] at (-3) should be [-4] assert_equals: expected "- 4 " but got "4 "
 FAIL CSS Transitions with transition: all: property <order> from [2] to [4] at (-0.5) should be [1] assert_equals: expected "1 " but got "4 "
 FAIL CSS Transitions with transition: all: property <order> from [2] to [4] at (0) should be [2] assert_equals: expected "2 " but got "4 "
 FAIL CSS Transitions with transition: all: property <order> from [2] to [4] at (0.3) should be [3] assert_equals: expected "3 " but got "4 "
 FAIL CSS Transitions with transition: all: property <order> from [2] to [4] at (0.6) should be [3] assert_equals: expected "3 " but got "4 "
-PASS CSS Transitions with transition: all: property <order> from [2] to [4] at (1) should be [4] 
+PASS CSS Transitions with transition: all: property <order> from [2] to [4] at (1) should be [4]
 FAIL CSS Transitions with transition: all: property <order> from [2] to [4] at (1.5) should be [5] assert_equals: expected "5 " but got "4 "
 FAIL CSS Animations: property <order> from [2] to [4] at (-3) should be [-4] assert_equals: expected "- 4 " but got "10 "
 FAIL CSS Animations: property <order> from [2] to [4] at (-0.5) should be [1] assert_equals: expected "1 " but got "10 "

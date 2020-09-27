@@ -1,20 +1,20 @@
 
-PASS Default grid-column-gap is 'normal' 
-PASS grid-column-gap accepts pixels 
-PASS grid-column-gap accepts em 
-PASS grid-column-gap accepts vw 
-PASS grid-column-gap accepts percentage 
-PASS grid-column-gap accepts calc() 
-PASS grid-column-gap accepts calc() mixing fixed and percentage values 
-PASS Initial grid-column-gap is 'normal' 
-PASS Initial grid-column-gap is 'normal' 2 
-PASS Initial inherited grid-column-gap is 'normal' 
-PASS grid-column-gap is inheritable 
-PASS Negative grid-column-gap is invalid 
-PASS 'max-content' grid-column-gap is invalid 
-PASS 'none' grid-column-gap is invalid 
-PASS grid-column-gap with multiple values is invalid 
-PASS Angle grid-column-gap is invalid 
-PASS Resolution grid-column-gap is invalid 
-PASS Time grid-column-gap is invalid 
+PASS Default grid-column-gap is 'normal'
+PASS grid-column-gap accepts pixels
+PASS grid-column-gap accepts em
+PASS grid-column-gap accepts vw
+PASS grid-column-gap accepts percentage
+PASS grid-column-gap accepts calc()
+PASS grid-column-gap accepts calc() mixing fixed and percentage values
+PASS Initial grid-column-gap is 'normal'
+PASS Initial grid-column-gap is 'normal' 2
+PASS Initial inherited grid-column-gap is 'normal'
+PASS grid-column-gap is inheritable
+PASS Negative grid-column-gap is invalid
+PASS 'max-content' grid-column-gap is invalid
+PASS 'none' grid-column-gap is invalid
+PASS grid-column-gap with multiple values is invalid
+PASS Angle grid-column-gap is invalid
+PASS Resolution grid-column-gap is invalid
+PASS Time grid-column-gap is invalid
 

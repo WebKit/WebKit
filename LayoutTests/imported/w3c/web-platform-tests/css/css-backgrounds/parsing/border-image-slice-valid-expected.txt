@@ -1,6 +1,6 @@
 
-PASS e.style['border-image-slice'] = "1" should set the property value 
-PASS e.style['border-image-slice'] = "1 2% 3 4%" should set the property value 
-PASS e.style['border-image-slice'] = "1 2% 3 4% fill" should set the property value 
-PASS e.style['border-image-slice'] = "fill 1 2% 3 4%" should set the property value 
+PASS e.style['border-image-slice'] = "1" should set the property value
+PASS e.style['border-image-slice'] = "1 2% 3 4%" should set the property value
+PASS e.style['border-image-slice'] = "1 2% 3 4% fill" should set the property value
+PASS e.style['border-image-slice'] = "fill 1 2% 3 4%" should set the property value
 

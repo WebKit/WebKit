@@ -1,6 +1,6 @@
 
-PASS Property column-count value 'auto' 
-PASS Property column-count value '1' 
-PASS Property column-count value '234' 
-PASS Property column-count value 'calc(1 + 234)' 
+PASS Property column-count value 'auto'
+PASS Property column-count value '1'
+PASS Property column-count value '234'
+PASS Property column-count value 'calc(1 + 234)'
 

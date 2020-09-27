@@ -1,5 +1,5 @@
 
-PASS before reaching the sticking point the sticky box should not be offset 
-PASS after reaching the sticking point the sticky box should be offset 
-PASS the sticky box should not be pushed outside its containing block 
+PASS before reaching the sticking point the sticky box should not be offset
+PASS after reaching the sticking point the sticky box should be offset
+PASS the sticky box should not be pushed outside its containing block
 

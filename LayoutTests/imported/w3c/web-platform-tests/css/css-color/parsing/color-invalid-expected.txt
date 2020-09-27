@@ -1,12 +1,12 @@
 
-PASS e.style['color'] = "auto" should not set the property value 
-PASS e.style['color'] = "123" should not set the property value 
-PASS e.style['color'] = "#12" should not set the property value 
-PASS e.style['color'] = "#123456789" should not set the property value 
-PASS e.style['color'] = "rgb" should not set the property value 
-PASS e.style['color'] = "rgb(1)" should not set the property value 
-PASS e.style['color'] = "rgb(1,2,3,4,5)" should not set the property value 
-PASS e.style['color'] = "hsla(1,2,3,4,5)" should not set the property value 
-PASS e.style['color'] = "rgb(10%, 20, 30%)" should not set the property value 
-PASS e.style['color'] = "rgba(-2, 300, 400%, -0.5)" should not set the property value 
+PASS e.style['color'] = "auto" should not set the property value
+PASS e.style['color'] = "123" should not set the property value
+PASS e.style['color'] = "#12" should not set the property value
+PASS e.style['color'] = "#123456789" should not set the property value
+PASS e.style['color'] = "rgb" should not set the property value
+PASS e.style['color'] = "rgb(1)" should not set the property value
+PASS e.style['color'] = "rgb(1,2,3,4,5)" should not set the property value
+PASS e.style['color'] = "hsla(1,2,3,4,5)" should not set the property value
+PASS e.style['color'] = "rgb(10%, 20, 30%)" should not set the property value
+PASS e.style['color'] = "rgba(-2, 300, 400%, -0.5)" should not set the property value
 

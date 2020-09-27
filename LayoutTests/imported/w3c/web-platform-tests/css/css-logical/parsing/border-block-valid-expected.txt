@@ -1,8 +1,8 @@
 
-PASS e.style['border-block'] = "1px dotted red" should set the property value 
-PASS e.style['border-block'] = "double" should set the property value 
-PASS e.style['border-block-start'] = "green double thin" should set the property value 
-PASS e.style['border-block-start'] = "green" should set the property value 
-PASS e.style['border-block-end'] = "thin" should set the property value 
-PASS e.style['border-block-end'] = "calc(10px - 0.5em) dotted red" should set the property value 
+PASS e.style['border-block'] = "1px dotted red" should set the property value
+PASS e.style['border-block'] = "double" should set the property value
+PASS e.style['border-block-start'] = "green double thin" should set the property value
+PASS e.style['border-block-start'] = "green" should set the property value
+PASS e.style['border-block-end'] = "thin" should set the property value
+PASS e.style['border-block-end'] = "calc(10px - 0.5em) dotted red" should set the property value
 

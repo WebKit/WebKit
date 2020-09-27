@@ -1,11 +1,11 @@
 
-PASS e.style['font-variation-settings'] = "700" should not set the property value 
-PASS e.style['font-variation-settings'] = "\"XHGT\"" should not set the property value 
-PASS e.style['font-variation-settings'] = "wght 700" should not set the property value 
-PASS e.style['font-variation-settings'] = "normal, \"wght\" 700" should not set the property value 
-PASS e.style['font-variation-settings'] = "\"wgt\" 700" should not set the property value 
-PASS e.style['font-variation-settings'] = "\"XHGTX\" 0.7" should not set the property value 
-PASS e.style['font-variation-settings'] = "\"abc\u0001F\" 0.5" should not set the property value 
-PASS e.style['font-variation-settings'] = "\"abc\u0007F\" 0.5" should not set the property value 
-PASS e.style['font-variation-settings'] = "\"abcA9\" 0.5" should not set the property value 
+PASS e.style['font-variation-settings'] = "700" should not set the property value
+PASS e.style['font-variation-settings'] = "\"XHGT\"" should not set the property value
+PASS e.style['font-variation-settings'] = "wght 700" should not set the property value
+PASS e.style['font-variation-settings'] = "normal, \"wght\" 700" should not set the property value
+PASS e.style['font-variation-settings'] = "\"wgt\" 700" should not set the property value
+PASS e.style['font-variation-settings'] = "\"XHGTX\" 0.7" should not set the property value
+PASS e.style['font-variation-settings'] = "\"abc\u0001F\" 0.5" should not set the property value
+PASS e.style['font-variation-settings'] = "\"abc\u0007F\" 0.5" should not set the property value
+PASS e.style['font-variation-settings'] = "\"abcA9\" 0.5" should not set the property value
 

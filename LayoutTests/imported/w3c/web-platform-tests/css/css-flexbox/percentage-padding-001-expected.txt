@@ -1,4 +1,4 @@
 If the item's % padding is calculated correctly, there is a blue square on the left and an orange square on the right, both 50x50.
 
-PASS x-flexbox 1 
+PASS x-flexbox 1
 

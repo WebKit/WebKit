@@ -1,4 +1,4 @@
 
-PASS e.style['font-optical-sizing'] = "normal" should not set the property value 
-PASS e.style['font-optical-sizing'] = "auto none" should not set the property value 
+PASS e.style['font-optical-sizing'] = "normal" should not set the property value
+PASS e.style['font-optical-sizing'] = "auto none" should not set the property value
 

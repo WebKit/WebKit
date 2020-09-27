@@ -1,10 +1,10 @@
 
-PASS text-orientation initial value 
-PASS text-orientation: upright 
-PASS text-orientation: sideways 
-PASS text-orientation should inherit 
-PASS text-orientation: mixed 
-PASS text-orientation: initial 
-PASS text-orientation: inherit 
-PASS text-orientation: foo 
+PASS text-orientation initial value
+PASS text-orientation: upright
+PASS text-orientation: sideways
+PASS text-orientation should inherit
+PASS text-orientation: mixed
+PASS text-orientation: initial
+PASS text-orientation: inherit
+PASS text-orientation: foo
 

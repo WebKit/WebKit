@@ -1,6 +1,6 @@
 
-PASS Inherited registered custom property can be reverted 
-PASS Non-inherited registered custom property can be reverted 
+PASS Inherited registered custom property can be reverted
+PASS Non-inherited registered custom property can be reverted
 FAIL Non-inherited registered custom property can be reverted in animation assert_equals: expected "50px" but got "0px"
 FAIL Inherited registered custom property can be reverted in animation assert_equals: expected "50px" but got "0px"
 

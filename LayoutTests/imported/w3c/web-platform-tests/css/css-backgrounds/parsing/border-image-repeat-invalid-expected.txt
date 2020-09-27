@@ -1,4 +1,4 @@
 
-PASS e.style['border-image-repeat'] = "auto" should not set the property value 
-PASS e.style['border-image-repeat'] = "stretch repeat round" should not set the property value 
+PASS e.style['border-image-repeat'] = "auto" should not set the property value
+PASS e.style['border-image-repeat'] = "stretch repeat round" should not set the property value
 

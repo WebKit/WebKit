@@ -9,12 +9,12 @@ FAIL Property place-items value 'self-start' assert_equals: expected "self-start
 FAIL Property place-items value 'flex-end' assert_equals: expected "flex-end" but got "flex-end flex-end"
 FAIL Property place-items value 'unsafe center unsafe center' assert_equals: expected "unsafe center" but got "unsafe center unsafe center"
 FAIL Property place-items value 'safe self-end' assert_equals: expected "safe self-end" but got "safe self-end safe self-end"
-PASS Property place-items value 'stretch baseline' 
-PASS Property place-items value 'last baseline center' 
-PASS Property place-items value 'safe self-end normal' 
-PASS Property place-items value 'normal right' 
-PASS Property place-items value 'baseline unsafe left' 
-PASS Property place-items value 'flex-end legacy' 
-PASS Property place-items value 'stretch legacy left' 
-PASS Property place-items value 'first baseline right legacy' 
+PASS Property place-items value 'stretch baseline'
+PASS Property place-items value 'last baseline center'
+PASS Property place-items value 'safe self-end normal'
+PASS Property place-items value 'normal right'
+PASS Property place-items value 'baseline unsafe left'
+PASS Property place-items value 'flex-end legacy'
+PASS Property place-items value 'stretch legacy left'
+PASS Property place-items value 'first baseline right legacy'
 

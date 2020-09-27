@@ -1,4 +1,4 @@
 foo
 
-PASS this test passes if it does not crash 
+PASS this test passes if it does not crash
 

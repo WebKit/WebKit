@@ -1,14 +1,14 @@
 
-PASS e.style['color'] = "ActiveText" should set the property value 
-PASS e.style['color'] = "ButtonFace" should set the property value 
-PASS e.style['color'] = "ButtonText" should set the property value 
-PASS e.style['color'] = "Canvas" should set the property value 
-PASS e.style['color'] = "CanvasText" should set the property value 
-PASS e.style['color'] = "Field" should set the property value 
-PASS e.style['color'] = "FieldText" should set the property value 
-PASS e.style['color'] = "GrayText" should set the property value 
-PASS e.style['color'] = "Highlight" should set the property value 
-PASS e.style['color'] = "HighlightText" should set the property value 
-PASS e.style['color'] = "LinkText" should set the property value 
-PASS e.style['color'] = "VisitedText" should set the property value 
+PASS e.style['color'] = "ActiveText" should set the property value
+PASS e.style['color'] = "ButtonFace" should set the property value
+PASS e.style['color'] = "ButtonText" should set the property value
+PASS e.style['color'] = "Canvas" should set the property value
+PASS e.style['color'] = "CanvasText" should set the property value
+PASS e.style['color'] = "Field" should set the property value
+PASS e.style['color'] = "FieldText" should set the property value
+PASS e.style['color'] = "GrayText" should set the property value
+PASS e.style['color'] = "Highlight" should set the property value
+PASS e.style['color'] = "HighlightText" should set the property value
+PASS e.style['color'] = "LinkText" should set the property value
+PASS e.style['color'] = "VisitedText" should set the property value
 

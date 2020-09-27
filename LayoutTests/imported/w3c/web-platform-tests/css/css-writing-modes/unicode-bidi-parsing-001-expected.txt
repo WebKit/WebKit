@@ -1,7 +1,7 @@
 
-PASS Initial value of unicode-bidi 
-PASS unicode-bidi: embed; unicode-bidi: normal 
-PASS unicode-bidi: embed 
-PASS unicode-bidi: bidi-override 
-PASS unicode-bidi should not inherit 
+PASS Initial value of unicode-bidi
+PASS unicode-bidi: embed; unicode-bidi: normal
+PASS unicode-bidi: embed
+PASS unicode-bidi: bidi-override
+PASS unicode-bidi should not inherit
 

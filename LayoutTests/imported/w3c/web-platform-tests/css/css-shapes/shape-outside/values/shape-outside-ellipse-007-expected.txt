@@ -1,20 +1,20 @@
 
-PASS ellipse(foo) - invalid 
-PASS ellipse(10) - invalid 
-PASS ellipse(20px 30px 40px) - invalid 
-PASS ellipse(20% 30% 40%) - invalid 
-PASS ellipse(20px, 30px, 40px) - invalid 
-PASS ellipse(20%, 30%, 40%) - invalid 
-PASS ellipse(20px 30px closest-side) - invalid 
-PASS ellipse(20px 30px farthest-side) - invalid 
-PASS ellipse(closest-side 20px 30px) - invalid 
-PASS ellipse(farthest-side 20px 30px) - invalid 
-PASS ellipse(20% 30% closest-side) - invalid 
-PASS ellipse(20% 30% farthest-side) - invalid 
-PASS ellipse(closest-side 20% 30%) - invalid 
-PASS ellipse(farthest-side 20% 30%) - invalid 
-PASS ellipse(closest-side farthest-side 20px) - invalid 
-PASS ellipse(closest-side farthest-side 20%) - invalid 
-PASS ellipse(farthest-side closest-side closest-side) - invalid 
-PASS ellipse(farthest-side, closest-side, closest-side) - invalid 
+PASS ellipse(foo) - invalid
+PASS ellipse(10) - invalid
+PASS ellipse(20px 30px 40px) - invalid
+PASS ellipse(20% 30% 40%) - invalid
+PASS ellipse(20px, 30px, 40px) - invalid
+PASS ellipse(20%, 30%, 40%) - invalid
+PASS ellipse(20px 30px closest-side) - invalid
+PASS ellipse(20px 30px farthest-side) - invalid
+PASS ellipse(closest-side 20px 30px) - invalid
+PASS ellipse(farthest-side 20px 30px) - invalid
+PASS ellipse(20% 30% closest-side) - invalid
+PASS ellipse(20% 30% farthest-side) - invalid
+PASS ellipse(closest-side 20% 30%) - invalid
+PASS ellipse(farthest-side 20% 30%) - invalid
+PASS ellipse(closest-side farthest-side 20px) - invalid
+PASS ellipse(closest-side farthest-side 20%) - invalid
+PASS ellipse(farthest-side closest-side closest-side) - invalid
+PASS ellipse(farthest-side, closest-side, closest-side) - invalid
 

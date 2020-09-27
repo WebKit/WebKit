@@ -1,7 +1,7 @@
 
-PASS Property top value 'auto' 
-PASS Property top value 'calc(10px + 0.5em)' 
-PASS Property top value 'calc(10px - 0.5em)' 
-PASS Property top value '-40%' 
-PASS Property top value 'calc(50% + 60px)' 
+PASS Property top value 'auto'
+PASS Property top value 'calc(10px + 0.5em)'
+PASS Property top value 'calc(10px - 0.5em)'
+PASS Property top value '-40%'
+PASS Property top value 'calc(50% + 60px)'
 

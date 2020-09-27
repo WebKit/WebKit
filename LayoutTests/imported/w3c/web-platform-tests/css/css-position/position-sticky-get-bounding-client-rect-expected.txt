@@ -1,5 +1,5 @@
 
-PASS sticky positioned element should be observable by getBoundingClientRect. 
-PASS getBoundingClientRect should be correct for sticky after script insertion 
-PASS getBoundingClientRect should be correct for sticky after script-caused layout 
+PASS sticky positioned element should be observable by getBoundingClientRect.
+PASS getBoundingClientRect should be correct for sticky after script insertion
+PASS getBoundingClientRect should be correct for sticky after script-caused layout
 

@@ -1,4 +1,4 @@
 Should see a green square below.
 
-PASS Style should've changed to a green background 
+PASS Style should've changed to a green background
 

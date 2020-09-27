@@ -1,14 +1,14 @@
 
-PASS e.style['inset-block'] = "10px" should set inset-block-end 
-PASS e.style['inset-block'] = "10px" should set inset-block-start 
-PASS e.style['inset-block'] = "10px" should not set unrelated longhands 
-PASS e.style['inset-block'] = "20% auto" should set inset-block-end 
-PASS e.style['inset-block'] = "20% auto" should set inset-block-start 
-PASS e.style['inset-block'] = "20% auto" should not set unrelated longhands 
-PASS e.style['inset-inline'] = "30%" should set inset-inline-end 
-PASS e.style['inset-inline'] = "30%" should set inset-inline-start 
-PASS e.style['inset-inline'] = "30%" should not set unrelated longhands 
-PASS e.style['inset-inline'] = "auto 40px" should set inset-inline-end 
-PASS e.style['inset-inline'] = "auto 40px" should set inset-inline-start 
-PASS e.style['inset-inline'] = "auto 40px" should not set unrelated longhands 
+PASS e.style['inset-block'] = "10px" should set inset-block-end
+PASS e.style['inset-block'] = "10px" should set inset-block-start
+PASS e.style['inset-block'] = "10px" should not set unrelated longhands
+PASS e.style['inset-block'] = "20% auto" should set inset-block-end
+PASS e.style['inset-block'] = "20% auto" should set inset-block-start
+PASS e.style['inset-block'] = "20% auto" should not set unrelated longhands
+PASS e.style['inset-inline'] = "30%" should set inset-inline-end
+PASS e.style['inset-inline'] = "30%" should set inset-inline-start
+PASS e.style['inset-inline'] = "30%" should not set unrelated longhands
+PASS e.style['inset-inline'] = "auto 40px" should set inset-inline-end
+PASS e.style['inset-inline'] = "auto 40px" should set inset-inline-start
+PASS e.style['inset-inline'] = "auto 40px" should not set unrelated longhands
 

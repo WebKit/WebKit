@@ -3,7 +3,7 @@ Some text
 Some text
 Text underText over
 
-PASS elementsFromPoint for a point inside a <text> 
+PASS elementsFromPoint for a point inside a <text>
 FAIL elementsFromPoint for a point inside a <tspan> nested in a <text> without content assert_equals: document.elementsFromPoint(125,185) expected "tspan#tspan1, svg#svg, DIV#sandbox, BODY, HTML" but got "tspan#tspan1, text#text2, svg#svg, DIV#sandbox, BODY, HTML"
 FAIL elementsFromPoint for a point inside a <textPath> nested in a <text> without content assert_equals: document.elementsFromPoint(125,245) expected "textPath#textpath1, svg#svg, DIV#sandbox, BODY, HTML" but got "textPath#textpath1, text#text3, svg#svg, DIV#sandbox, BODY, HTML"
 FAIL elementsFromPoint for a point inside an overlapping <tspan> nested in a <text> assert_equals: document.elementsFromPoint(125,305) expected "tspan#tspan2, text#text4, svg#svg, DIV#sandbox, BODY, HTML" but got "text#text4, tspan#tspan2, text#text4, svg#svg, DIV#sandbox, BODY, HTML"

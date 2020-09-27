@@ -1,6 +1,6 @@
 
-PASS e.style['height'] = "none" should not set the property value 
-PASS e.style['height'] = "min-content max-content" should not set the property value 
-PASS e.style['height'] = "-10%" should not set the property value 
-PASS e.style['height'] = "-0.5em" should not set the property value 
+PASS e.style['height'] = "none" should not set the property value
+PASS e.style['height'] = "min-content max-content" should not set the property value
+PASS e.style['height'] = "-10%" should not set the property value
+PASS e.style['height'] = "-0.5em" should not set the property value
 

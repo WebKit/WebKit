@@ -1,32 +1,32 @@
 
-FAIL .grid 1 assert_equals: 
+FAIL .grid 1 assert_equals:
 <div class="grid">
   <div class="paddingLeft50Percent" data-expected-padding-left="50" data-expected-width="60" data-expected-height="10">X</div>
   <div data-offset-x="0" data-offset-y="10" data-expected-width="100" data-expected-height="10"></div>
 </div>
 width expected 60 but got 50
-FAIL .grid 2 assert_equals: 
+FAIL .grid 2 assert_equals:
 <div class="grid">
   <div class="paddingRight50Percent" data-expected-padding-right="50" data-expected-width="60" data-expected-height="10">X</div>
   <div data-offset-x="0" data-offset-y="10" data-expected-width="100" data-expected-height="10"></div>
 </div>
 width expected 60 but got 50
-PASS .grid 3 
-PASS .grid 4 
-FAIL .grid 5 assert_equals: 
+PASS .grid 3
+PASS .grid 4
+FAIL .grid 5 assert_equals:
 <div class="grid directionRTL">
   <div class="paddingLeft50Percent" data-expected-padding-left="50" data-expected-width="60" data-expected-height="10">X</div>
   <div data-offset-x="400" data-offset-y="10" data-expected-width="100" data-expected-height="10"></div>
 </div>
 width expected 60 but got 50
-FAIL .grid 6 assert_equals: 
+FAIL .grid 6 assert_equals:
 <div class="grid directionRTL">
   <div class="paddingRight50Percent" data-expected-padding-right="50" data-expected-width="60" data-expected-height="10">X</div>
   <div data-offset-x="400" data-offset-y="10" data-expected-width="100" data-expected-height="10"></div>
 </div>
 width expected 60 but got 50
-PASS .grid 7 
-PASS .grid 8 
+PASS .grid 7
+PASS .grid 8
 Direction LTR
 
 Item padding-left: 50%;

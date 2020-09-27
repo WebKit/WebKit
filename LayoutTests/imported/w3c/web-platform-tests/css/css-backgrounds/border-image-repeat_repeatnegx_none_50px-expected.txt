@@ -1,3 +1,3 @@
 
-PASS  CSS Background Border Test: "border-image-repeat:repeat-x;height:200px;width:200px;border-image-source:none;border-image-width:50px" on test div 
+PASS  CSS Background Border Test: "border-image-repeat:repeat-x;height:200px;width:200px;border-image-source:none;border-image-width:50px" on test div
 

@@ -1,12 +1,12 @@
 
-PASS no-break space 
-PASS en space 
-PASS em space 
-PASS thin space 
-PASS zero width space 
-PASS narrow no-break space 
-PASS ideographic space 
-PASS ideographic space inside ideographic text 
+PASS no-break space
+PASS en space
+PASS em space
+PASS thin space
+PASS zero width space
+PASS narrow no-break space
+PASS ideographic space
+PASS ideographic space inside ideographic text
 hello   there
 hello   there
 hello   there

@@ -1,8 +1,8 @@
 
-PASS sheet_property 
-PASS sheet_property_updates 
-PASS CSSStyleSheet_properties 
-PASS CSSStyleSheet_property_values 
-PASS StyleSheet_properties 
-PASS StyleSheet_property_values 
+PASS sheet_property
+PASS sheet_property_updates
+PASS CSSStyleSheet_properties
+PASS CSSStyleSheet_property_values
+PASS StyleSheet_properties
+PASS StyleSheet_property_values
 

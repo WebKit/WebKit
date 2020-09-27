@@ -1,13 +1,13 @@
 
-PASS Test default caret-color 
-PASS Test caret-color: initial 
-PASS Test caret-color: inherit 
-PASS Test caret-color: auto 
-PASS Test caret-color: currentcolor 
-PASS Test caret-color: lime 
-PASS Reset caret-color: initial 
-PASS Test caret-color: rgb(0, 100, 100) 
-PASS Test caret-color: initial (inherited) 
-PASS Test caret-color: inherit (inherited) 
-PASS Test caret-color: blue (inherited) 
+PASS Test default caret-color
+PASS Test caret-color: initial
+PASS Test caret-color: inherit
+PASS Test caret-color: auto
+PASS Test caret-color: currentcolor
+PASS Test caret-color: lime
+PASS Reset caret-color: initial
+PASS Test caret-color: rgb(0, 100, 100)
+PASS Test caret-color: initial (inherited)
+PASS Test caret-color: inherit (inherited)
+PASS Test caret-color: blue (inherited)
 

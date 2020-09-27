@@ -1,5 +1,5 @@
 
-PASS e.style['visibility'] = "visible" should set the property value 
-PASS e.style['visibility'] = "hidden" should set the property value 
-PASS e.style['visibility'] = "collapse" should set the property value 
+PASS e.style['visibility'] = "visible" should set the property value
+PASS e.style['visibility'] = "hidden" should set the property value
+PASS e.style['visibility'] = "collapse" should set the property value
 

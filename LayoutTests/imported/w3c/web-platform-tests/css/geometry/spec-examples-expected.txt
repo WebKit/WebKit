@@ -1,9 +1,9 @@
 
-PASS matrixTransform 
-PASS DOMQuad 
-PASS DOMQuad irregular 
-PASS DOMMatrix 2D transformation 
-PASS DOMMatrix 3D transformation 
-PASS DOMMatrix NaN 
-PASS DOMMatrix mutable 
+PASS matrixTransform
+PASS DOMQuad
+PASS DOMQuad irregular
+PASS DOMMatrix 2D transformation
+PASS DOMMatrix 3D transformation
+PASS DOMMatrix NaN
+PASS DOMMatrix mutable
 

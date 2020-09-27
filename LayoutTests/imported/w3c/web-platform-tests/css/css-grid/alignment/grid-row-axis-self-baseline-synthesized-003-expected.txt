@@ -7,8 +7,8 @@ VerticalLR grid and item with relative height
 VerticalRL grid and item with relative height
 É É ÉÉ
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
 

@@ -1,4 +1,4 @@
 The following text should be green:
 
-PASS Part in selected host changed color via part IDL attribute setter. 
+PASS Part in selected host changed color via part IDL attribute setter.
 

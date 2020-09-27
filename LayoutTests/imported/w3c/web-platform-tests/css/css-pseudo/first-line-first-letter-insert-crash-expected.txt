@@ -1,5 +1,5 @@
 testsup
 
 
-PASS Should not crash when inserting an element inside a :first-line pseudo. 
+PASS Should not crash when inserting an element inside a :first-line pseudo.
 

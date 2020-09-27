@@ -1,10 +1,10 @@
 
-PASS Property flex-basis value '1px' 
-PASS Property flex-basis value '400%' 
-PASS Property flex-basis value 'auto' 
-PASS Property flex-basis value 'calc(10px + 0.5em)' 
-PASS Property flex-basis value 'calc(10px - 0.5em)' 
-PASS Property flex-basis value 'calc(10%)' 
-PASS Property flex-basis value 'calc(0% + 10px)' 
+PASS Property flex-basis value '1px'
+PASS Property flex-basis value '400%'
+PASS Property flex-basis value 'auto'
+PASS Property flex-basis value 'calc(10px + 0.5em)'
+PASS Property flex-basis value 'calc(10px - 0.5em)'
+PASS Property flex-basis value 'calc(10%)'
+PASS Property flex-basis value 'calc(0% + 10px)'
 FAIL Property flex-basis value 'calc(10% + 0px)' assert_equals: expected "10%" but got "calc(10% + 0px)"
 

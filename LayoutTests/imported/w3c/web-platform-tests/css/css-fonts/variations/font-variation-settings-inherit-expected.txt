@@ -1,6 +1,6 @@
 Abc Abc
 
-PASS Test font-variation-settings for duplicates using 'yyyy' 1, 'yyyy' 2 
-PASS Test font-variation-settings for child inheritance 
-PASS Test font-variation-settings for child override 
+PASS Test font-variation-settings for duplicates using 'yyyy' 1, 'yyyy' 2
+PASS Test font-variation-settings for child inheritance
+PASS Test font-variation-settings for child override
 

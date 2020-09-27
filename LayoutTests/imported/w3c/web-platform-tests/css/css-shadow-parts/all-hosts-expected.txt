@@ -1,5 +1,5 @@
-The following text should be green: The following text should be green: 
+The following text should be green: The following text should be green:
 
-PASS ::part with host selector styles in first host 
-PASS ::part with host selector styles in second host 
+PASS ::part with host selector styles in first host
+PASS ::part with host selector styles in second host
 

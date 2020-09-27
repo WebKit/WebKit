@@ -1,6 +1,6 @@
 
-PASS e.style['font-synthesis'] = "none" should set the property value 
-PASS e.style['font-synthesis'] = "weight" should set the property value 
-PASS e.style['font-synthesis'] = "style" should set the property value 
+PASS e.style['font-synthesis'] = "none" should set the property value
+PASS e.style['font-synthesis'] = "weight" should set the property value
+PASS e.style['font-synthesis'] = "style" should set the property value
 FAIL e.style['font-synthesis'] = "style weight" should set the property value assert_equals: serialization should be canonical expected "weight style" but got "style weight"
 

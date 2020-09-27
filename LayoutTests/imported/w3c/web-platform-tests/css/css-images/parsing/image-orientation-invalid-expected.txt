@@ -1,14 +1,14 @@
 
-PASS e.style['image-orientation'] = "auto" should not set the property value 
-PASS e.style['image-orientation'] = "0" should not set the property value 
-PASS e.style['image-orientation'] = "0 flip" should not set the property value 
-PASS e.style['image-orientation'] = "0deg from-image" should not set the property value 
-PASS e.style['image-orientation'] = "flip 0deg" should not set the property value 
-PASS e.style['image-orientation'] = "flip from-image" should not set the property value 
-PASS e.style['image-orientation'] = "from-image 0deg" should not set the property value 
-PASS e.style['image-orientation'] = "from-image flip" should not set the property value 
-PASS e.style['image-orientation'] = "30deg" should not set the property value 
-PASS e.style['image-orientation'] = "flip" should not set the property value 
-PASS e.style['image-orientation'] = "0deg flip" should not set the property value 
-PASS e.style['image-orientation'] = "-1.25turn flip" should not set the property value 
+PASS e.style['image-orientation'] = "auto" should not set the property value
+PASS e.style['image-orientation'] = "0" should not set the property value
+PASS e.style['image-orientation'] = "0 flip" should not set the property value
+PASS e.style['image-orientation'] = "0deg from-image" should not set the property value
+PASS e.style['image-orientation'] = "flip 0deg" should not set the property value
+PASS e.style['image-orientation'] = "flip from-image" should not set the property value
+PASS e.style['image-orientation'] = "from-image 0deg" should not set the property value
+PASS e.style['image-orientation'] = "from-image flip" should not set the property value
+PASS e.style['image-orientation'] = "30deg" should not set the property value
+PASS e.style['image-orientation'] = "flip" should not set the property value
+PASS e.style['image-orientation'] = "0deg flip" should not set the property value
+PASS e.style['image-orientation'] = "-1.25turn flip" should not set the property value
 

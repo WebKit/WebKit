@@ -1,7 +1,7 @@
 
-PASS -0.5 - inline - invalid 
-PASS -100 - inline - invalid 
-PASS nonNumber - inline - invalid 
-PASS 3/4 - inline - invalid 
-PASS 20% - inline - invalid 
+PASS -0.5 - inline - invalid
+PASS -100 - inline - invalid
+PASS nonNumber - inline - invalid
+PASS 3/4 - inline - invalid
+PASS 20% - inline - invalid
 

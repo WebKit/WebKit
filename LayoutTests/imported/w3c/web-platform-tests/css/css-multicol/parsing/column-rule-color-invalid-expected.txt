@@ -1,5 +1,5 @@
 
-PASS e.style['column-rule-color'] = "auto" should not set the property value 
-PASS e.style['column-rule-color'] = "green blue" should not set the property value 
-PASS e.style['column-rule-color'] = "green, blue" should not set the property value 
+PASS e.style['column-rule-color'] = "auto" should not set the property value
+PASS e.style['column-rule-color'] = "green blue" should not set the property value
+PASS e.style['column-rule-color'] = "green, blue" should not set the property value
 

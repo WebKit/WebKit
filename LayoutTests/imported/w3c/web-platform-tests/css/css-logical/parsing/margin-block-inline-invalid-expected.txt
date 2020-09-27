@@ -1,9 +1,9 @@
 
-PASS e.style['margin-block-start'] = "none" should not set the property value 
-PASS e.style['margin-block-end'] = "10" should not set the property value 
-PASS e.style['margin-inline-start'] = "20% calc(10px - 0.5em)" should not set the property value 
-PASS e.style['margin-inline-end'] = "10px, auto" should not set the property value 
-PASS e.style['margin-block'] = "none" should not set the property value 
-PASS e.style['margin-block'] = "20%, calc(10px - 0.5em)" should not set the property value 
-PASS e.style['margin-inline'] = "10px auto 20px" should not set the property value 
+PASS e.style['margin-block-start'] = "none" should not set the property value
+PASS e.style['margin-block-end'] = "10" should not set the property value
+PASS e.style['margin-inline-start'] = "20% calc(10px - 0.5em)" should not set the property value
+PASS e.style['margin-inline-end'] = "10px, auto" should not set the property value
+PASS e.style['margin-block'] = "none" should not set the property value
+PASS e.style['margin-block'] = "20%, calc(10px - 0.5em)" should not set the property value
+PASS e.style['margin-inline'] = "10px auto 20px" should not set the property value
 

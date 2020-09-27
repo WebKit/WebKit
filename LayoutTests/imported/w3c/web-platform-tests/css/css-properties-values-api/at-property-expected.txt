@@ -23,8 +23,8 @@ FAIL Attribute 'inherits' returns expected value for [1] undefined is not an obj
 FAIL Attribute 'inherits' returns expected value for ["true"] undefined is not an object (evaluating 'rule.inherits')
 FAIL Attribute 'inherits' returns expected value for ["false"] undefined is not an object (evaluating 'rule.inherits')
 FAIL Attribute 'inherits' returns expected value for [calc(0)] undefined is not an object (evaluating 'rule.inherits')
-PASS Invalid property name does not parse [foo] 
-PASS Invalid property name does not parse [-foo] 
+PASS Invalid property name does not parse [foo]
+PASS Invalid property name does not parse [-foo]
 FAIL Rule applied [*, if(){}, false] assert_equals: expected "if(){}" but got ""
 FAIL Rule applied [<angle>, 42deg, false] assert_equals: expected "42deg" but got ""
 FAIL Rule applied [<angle>, 1turn, false] assert_equals: expected "360deg" but got ""
@@ -48,17 +48,17 @@ FAIL Rule applied [<transform-list>, rotateX(0deg) translateX(10px), false] asse
 FAIL Rule applied [<url>, url("http://a/"), false] assert_equals: expected "url(\"http://a/\")" but got ""
 FAIL Rule applied [<color>, tomato, false] assert_equals: expected "rgb(255, 99, 71)" but got ""
 FAIL Rule applied [<color>, tomato, true] assert_equals: expected "rgb(255, 99, 71)" but got ""
-PASS Rule applied for "*", even with no initial value 
-PASS Rule not applied [undefined, green, false] 
-PASS Rule not applied [<color>, undefined, false] 
-PASS Rule not applied [<color>, green, undefined] 
-PASS Rule not applied [<gandalf>, grey, false] 
-PASS Rule not applied [gandalf, grey, false] 
-PASS Rule not applied [<color>, notacolor, false] 
-PASS Rule not applied [<length>, 10em, false] 
+PASS Rule applied for "*", even with no initial value
+PASS Rule not applied [undefined, green, false]
+PASS Rule not applied [<color>, undefined, false]
+PASS Rule not applied [<color>, green, undefined]
+PASS Rule not applied [<gandalf>, grey, false]
+PASS Rule not applied [gandalf, grey, false]
+PASS Rule not applied [<color>, notacolor, false]
+PASS Rule not applied [<length>, 10em, false]
 FAIL Non-inherited properties do not inherit assert_equals: expected "40px" but got " 40px"
 FAIL Inherited properties inherit assert_equals: expected "40px" but got " 40px"
 FAIL Initial values substituted as computed value assert_equals: expected "rgb(0, 128, 0)" but got ""
-PASS Non-universal registration are invalid without an initial value 
+PASS Non-universal registration are invalid without an initial value
 FAIL Initial value may be omitted for universal registration assert_equals: expected "" but got " calc(1px + 1px)"
 

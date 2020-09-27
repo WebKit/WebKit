@@ -1,16 +1,16 @@
 
- 
 
-PASS Initial State 
-PASS Focus 'target1' 
-PASS Focus 'target2' 
-PASS Focus 'target1' again 
-PASS Focus 'target2' again 
-PASS Focus 'target1' once again 
-PASS Detach 'container1' from the document 
-PASS Try to focus 'target1' 
-PASS Focus 'target2' once again 
-PASS Attach 'container1' in 'container2' 
-PASS Focus 'target1' for the last time 
-PASS Move 'target1' in 'container2' 
+
+PASS Initial State
+PASS Focus 'target1'
+PASS Focus 'target2'
+PASS Focus 'target1' again
+PASS Focus 'target2' again
+PASS Focus 'target1' once again
+PASS Detach 'container1' from the document
+PASS Try to focus 'target1'
+PASS Focus 'target2' once again
+PASS Attach 'container1' in 'container2'
+PASS Focus 'target1' for the last time
+PASS Move 'target1' in 'container2'
 

@@ -1,11 +1,11 @@
 
-PASS e.style['background-color'] = "currentcolor" should set the property value 
-PASS e.style['background-color'] = "currentColor" should set the property value 
-PASS e.style['background-color'] = "red" should set the property value 
-PASS e.style['background-color'] = "#00FF00" should set the property value 
-PASS e.style['background-color'] = "rgb(0, 0, 255)" should set the property value 
-PASS e.style['background-color'] = "rgb(100%, 100%, 0%)" should set the property value 
-PASS e.style['background-color'] = "hsl(120, 100%, 50%)" should set the property value 
-PASS e.style['background-color'] = "teal" should set the property value 
-PASS e.style['background-color'] = "transparent" should set the property value 
+PASS e.style['background-color'] = "currentcolor" should set the property value
+PASS e.style['background-color'] = "currentColor" should set the property value
+PASS e.style['background-color'] = "red" should set the property value
+PASS e.style['background-color'] = "#00FF00" should set the property value
+PASS e.style['background-color'] = "rgb(0, 0, 255)" should set the property value
+PASS e.style['background-color'] = "rgb(100%, 100%, 0%)" should set the property value
+PASS e.style['background-color'] = "hsl(120, 100%, 50%)" should set the property value
+PASS e.style['background-color'] = "teal" should set the property value
+PASS e.style['background-color'] = "transparent" should set the property value
 

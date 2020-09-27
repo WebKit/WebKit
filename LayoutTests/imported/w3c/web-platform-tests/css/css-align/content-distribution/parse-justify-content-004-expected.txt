@@ -1,43 +1,43 @@
 
-PASS Checking invalid combination - justify-content: auto 
-PASS Checking invalid combination - justify-content: legacy 
-PASS Checking invalid combination - justify-content: self-start 
-PASS Checking invalid combination - justify-content: baseline 
-PASS Checking invalid combination - justify-content: first baseline 
-PASS Checking invalid combination - justify-content: last baseline 
-PASS Checking invalid combination - justify-content: auto safe 
-PASS Checking invalid combination - justify-content: auto left 
-PASS Checking invalid combination - justify-content: normal unsafe 
-PASS Checking invalid combination - justify-content: normal stretch 
-PASS Checking invalid combination - justify-content: baseline normal 
-PASS Checking invalid combination - justify-content: baseline center 
-PASS Checking invalid combination - justify-content: first baseline center 
-PASS Checking invalid combination - justify-content: last baseline center 
-PASS Checking invalid combination - justify-content: baseline last 
-PASS Checking invalid combination - justify-content: baseline first 
-PASS Checking invalid combination - justify-content: stretch unsafe 
-PASS Checking invalid combination - justify-content: stretch right 
-PASS Checking invalid combination - justify-content: unsafe unsafe 
-PASS Checking invalid combination - justify-content: unsafe safe 
-PASS Checking invalid combination - justify-content: center start 
-PASS Checking invalid combination - justify-content: unsafe stretch 
-PASS Checking invalid combination - justify-content: safe stretch 
-PASS Checking invalid combination - justify-content: baseline safe 
-PASS Checking invalid combination - justify-content: unsafe baseline 
-PASS Checking invalid combination - justify-content: unsafe safe left 
-PASS Checking invalid combination - justify-content: unsafe left safe 
-PASS Checking invalid combination - justify-content: left safe unsafe safe 
-PASS Checking invalid combination - justify-content: start safe 
-PASS Checking invalid combination - justify-content: safe 
-PASS Checking invalid combination - justify-content: space-between left 
-PASS Checking invalid combination - justify-content: space-around center 
-PASS Checking invalid combination - justify-content: space-evenly right 
-PASS Checking invalid combination - justify-content: stretch safe start 
-PASS Checking invalid combination - justify-content: space-around unsafe 
-PASS Checking invalid combination - justify-content: space-evenly safe flex-start 
-PASS Checking invalid combination - justify-content: space-between safe 
-PASS Checking invalid combination - justify-content: space-between stretch 
-PASS Checking invalid combination - justify-content: stretch start 
-PASS Checking invalid combination - justify-content: stretch baseline 
-PASS Checking invalid combination - justify-content: first baseline space-around 
+PASS Checking invalid combination - justify-content: auto
+PASS Checking invalid combination - justify-content: legacy
+PASS Checking invalid combination - justify-content: self-start
+PASS Checking invalid combination - justify-content: baseline
+PASS Checking invalid combination - justify-content: first baseline
+PASS Checking invalid combination - justify-content: last baseline
+PASS Checking invalid combination - justify-content: auto safe
+PASS Checking invalid combination - justify-content: auto left
+PASS Checking invalid combination - justify-content: normal unsafe
+PASS Checking invalid combination - justify-content: normal stretch
+PASS Checking invalid combination - justify-content: baseline normal
+PASS Checking invalid combination - justify-content: baseline center
+PASS Checking invalid combination - justify-content: first baseline center
+PASS Checking invalid combination - justify-content: last baseline center
+PASS Checking invalid combination - justify-content: baseline last
+PASS Checking invalid combination - justify-content: baseline first
+PASS Checking invalid combination - justify-content: stretch unsafe
+PASS Checking invalid combination - justify-content: stretch right
+PASS Checking invalid combination - justify-content: unsafe unsafe
+PASS Checking invalid combination - justify-content: unsafe safe
+PASS Checking invalid combination - justify-content: center start
+PASS Checking invalid combination - justify-content: unsafe stretch
+PASS Checking invalid combination - justify-content: safe stretch
+PASS Checking invalid combination - justify-content: baseline safe
+PASS Checking invalid combination - justify-content: unsafe baseline
+PASS Checking invalid combination - justify-content: unsafe safe left
+PASS Checking invalid combination - justify-content: unsafe left safe
+PASS Checking invalid combination - justify-content: left safe unsafe safe
+PASS Checking invalid combination - justify-content: start safe
+PASS Checking invalid combination - justify-content: safe
+PASS Checking invalid combination - justify-content: space-between left
+PASS Checking invalid combination - justify-content: space-around center
+PASS Checking invalid combination - justify-content: space-evenly right
+PASS Checking invalid combination - justify-content: stretch safe start
+PASS Checking invalid combination - justify-content: space-around unsafe
+PASS Checking invalid combination - justify-content: space-evenly safe flex-start
+PASS Checking invalid combination - justify-content: space-between safe
+PASS Checking invalid combination - justify-content: space-between stretch
+PASS Checking invalid combination - justify-content: stretch start
+PASS Checking invalid combination - justify-content: stretch baseline
+PASS Checking invalid combination - justify-content: first baseline space-around
 

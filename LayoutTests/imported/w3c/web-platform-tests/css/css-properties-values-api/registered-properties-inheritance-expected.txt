@@ -1,9 +1,9 @@
 
-PASS Registered properties are correctly inherited (or not) depending on the inherits flag. 
-PASS Explicitly inheriting from a parent with an invalid value results in initial value. 
-PASS Explicitly inheriting from a parent with no value results in initial value. 
-PASS Reference to undefined variable results in inherited value 
-PASS Reference to syntax-incompatible variable results in inherited value 
-PASS Font-relative units are absolutized before before inheritance 
-PASS Calc expressions are resolved before inheritance 
+PASS Registered properties are correctly inherited (or not) depending on the inherits flag.
+PASS Explicitly inheriting from a parent with an invalid value results in initial value.
+PASS Explicitly inheriting from a parent with no value results in initial value.
+PASS Reference to undefined variable results in inherited value
+PASS Reference to syntax-incompatible variable results in inherited value
+PASS Font-relative units are absolutized before before inheritance
+PASS Calc expressions are resolved before inheritance
 

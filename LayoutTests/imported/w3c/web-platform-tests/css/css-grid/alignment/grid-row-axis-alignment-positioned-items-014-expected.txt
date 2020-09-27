@@ -8,7 +8,7 @@ X XXX X
 XX XXXX XX XXX X
 X XXX
 X
-XX XXX 
+XX XXX
 
 o X XX XXX X
 X XXX X
@@ -22,8 +22,8 @@ X XXX
 X
 XX XXX
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
 

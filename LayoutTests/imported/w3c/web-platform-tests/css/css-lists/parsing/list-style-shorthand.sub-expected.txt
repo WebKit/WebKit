@@ -1,6 +1,6 @@
 
-PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should set list-style-image 
-PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should set list-style-position 
-PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should set list-style-type 
-PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should not set unrelated longhands 
+PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should set list-style-image
+PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should set list-style-position
+PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should set list-style-type
+PASS e.style['list-style'] = "square url(\"https://localhost/\") inside" should not set unrelated longhands
 

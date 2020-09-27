@@ -1,4 +1,4 @@
 
-PASS 301C WAVE DASH may appear at line start if ja and normal 
-PASS 30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN may appear at line start if ja and normal 
+PASS 301C WAVE DASH may appear at line start if ja and normal
+PASS 30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN may appear at line start if ja and normal
 

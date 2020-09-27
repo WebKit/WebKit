@@ -1,4 +1,4 @@
 
-PASS Check place-content: initial - align-content expanded value 
-PASS Check place-content: initial - justify-content expanded value 
+PASS Check place-content: initial - align-content expanded value
+PASS Check place-content: initial - justify-content expanded value
 

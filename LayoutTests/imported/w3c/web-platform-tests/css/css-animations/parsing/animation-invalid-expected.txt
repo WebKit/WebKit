@@ -1,10 +1,10 @@
 
-PASS e.style['animation'] = "1s 2s 3s" should not set the property value 
-PASS e.style['animation'] = "-1s -2s" should not set the property value 
-PASS e.style['animation'] = "steps(1) steps(2)" should not set the property value 
-PASS e.style['animation'] = "1 2" should not set the property value 
-PASS e.style['animation'] = "reverse alternate anim" should not set the property value 
-PASS e.style['animation'] = "both backwards anim" should not set the property value 
-PASS e.style['animation'] = "paused running anim" should not set the property value 
-PASS e.style['animation'] = "anim1 anim2" should not set the property value 
+PASS e.style['animation'] = "1s 2s 3s" should not set the property value
+PASS e.style['animation'] = "-1s -2s" should not set the property value
+PASS e.style['animation'] = "steps(1) steps(2)" should not set the property value
+PASS e.style['animation'] = "1 2" should not set the property value
+PASS e.style['animation'] = "reverse alternate anim" should not set the property value
+PASS e.style['animation'] = "both backwards anim" should not set the property value
+PASS e.style['animation'] = "paused running anim" should not set the property value
+PASS e.style['animation'] = "anim1 anim2" should not set the property value
 

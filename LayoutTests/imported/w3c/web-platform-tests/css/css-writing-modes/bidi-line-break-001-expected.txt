@@ -1,25 +1,25 @@
 
-PASS 
+PASS
     <span class="isolate" dir="ltr">00</span> <span class="isolate" dir="ltr">00</span>
-   
-PASS 
+
+PASS
     <span class="embed" dir="ltr">00</span> <span class="embed" dir="ltr">00</span>
-   
-PASS 
+
+PASS
     <span dir="ltr">00</span> <span dir="ltr">00</span>
-   
-PASS 
+
+PASS
     <bdi dir="ltr">00</bdi> <bdi dir="ltr">00</bdi>
-   
-PASS 
+
+PASS
     <bdo dir="ltr">00</bdo> <bdo dir="ltr">00</bdo>
-   
-PASS 
+
+PASS
     <span class="isolate" dir="ltr">00 </span><span class="isolate" dir="ltr">00</span>
-   
-PASS 
+
+PASS
     <span class="embed" dir="ltr">00 </span><span class="embed" dir="ltr">00</span>
-   
+
 00 00
 00 00
 00 00

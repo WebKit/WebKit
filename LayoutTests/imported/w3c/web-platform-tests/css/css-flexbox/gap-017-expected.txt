@@ -1,6 +1,6 @@
 
 
-FAIL .button 1 assert_equals: 
+FAIL .button 1 assert_equals:
 <button class="button" data-expected-height="100">
   <div class="item"></div>
   <div class="item"></div>

@@ -1,7 +1,7 @@
 
-PASS Property letter-spacing value 'normal' 
-PASS Property letter-spacing value '0px' 
-PASS Property letter-spacing value '10px' 
-PASS Property letter-spacing value '-20px' 
-PASS Property letter-spacing value 'calc(10px - 0.5em)' 
+PASS Property letter-spacing value 'normal'
+PASS Property letter-spacing value '0px'
+PASS Property letter-spacing value '10px'
+PASS Property letter-spacing value '-20px'
+PASS Property letter-spacing value 'calc(10px - 0.5em)'
 

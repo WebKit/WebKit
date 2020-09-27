@@ -1,18 +1,18 @@
 
-PASS rule_type 
-PASS rule_length 
-PASS insert_import_throws 
-PASS insert_index_throws1 
-PASS insert_index_throws2 
-PASS insert_media_succeed 
-PASS insert_style_succeed 
-PASS insert_bad_media_throw 
-PASS insert_empty_throw 
-PASS insert_garbage_after_media_throw 
-PASS insert_garbage_after_style_throw 
-PASS insert_two_media_throw 
-PASS insert_style_media_throw 
-PASS insert_media_style_throw 
-PASS insert_two_style_throw 
-PASS insert_retval 
+PASS rule_type
+PASS rule_length
+PASS insert_import_throws
+PASS insert_index_throws1
+PASS insert_index_throws2
+PASS insert_media_succeed
+PASS insert_style_succeed
+PASS insert_bad_media_throw
+PASS insert_empty_throw
+PASS insert_garbage_after_media_throw
+PASS insert_garbage_after_style_throw
+PASS insert_two_media_throw
+PASS insert_style_media_throw
+PASS insert_media_style_throw
+PASS insert_two_style_throw
+PASS insert_retval
 

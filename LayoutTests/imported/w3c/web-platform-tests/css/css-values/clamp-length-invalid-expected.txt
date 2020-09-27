@@ -1,14 +1,14 @@
 
-PASS e.style['letter-spacing'] = "clamp()" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp( )" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(,)" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(1px, )" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(, 1px)" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(1px, 1px)" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(1px, , 1px)" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(, 1px, 1px)" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(1px, 1px, )" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(1px, 1px, 1px, )" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(1px 1px 1px)" should not set the property value 
-PASS e.style['letter-spacing'] = "clamp(0, 10rem, 100%)" should not set the property value 
+PASS e.style['letter-spacing'] = "clamp()" should not set the property value
+PASS e.style['letter-spacing'] = "clamp( )" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(,)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(1px, )" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(, 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(1px, 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(1px, , 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(, 1px, 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(1px, 1px, )" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(1px, 1px, 1px, )" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(1px 1px 1px)" should not set the property value
+PASS e.style['letter-spacing'] = "clamp(0, 10rem, 100%)" should not set the property value
 

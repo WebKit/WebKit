@@ -1,66 +1,66 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface mixin GlobalEventHandlers: original interface mixin defined 
-PASS Partial interface mixin GlobalEventHandlers: member names are unique 
-PASS Partial interface Document: member names are unique 
-PASS Partial interface Document[2]: member names are unique 
-PASS Partial interface Window: member names are unique 
-PASS Document includes GlobalEventHandlers: member names are unique 
-PASS Document includes DocumentAndElementEventHandlers: member names are unique 
-PASS Document includes NonElementParentNode: member names are unique 
-PASS Document includes ParentNode: member names are unique 
-PASS Document includes XPathEvaluatorBase: member names are unique 
-PASS HTMLElement includes GlobalEventHandlers: member names are unique 
-PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 
-PASS HTMLElement includes ElementContentEditable: member names are unique 
-PASS HTMLElement includes HTMLOrSVGElement: member names are unique 
-PASS Window includes GlobalEventHandlers: member names are unique 
-PASS Window includes WindowEventHandlers: member names are unique 
-PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
-PASS Window includes AnimationFrameProvider: member names are unique 
-PASS Window includes WindowSessionStorage: member names are unique 
-PASS Window includes WindowLocalStorage: member names are unique 
-PASS Element includes ParentNode: member names are unique 
-PASS Element includes NonDocumentTypeChildNode: member names are unique 
-PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slottable: member names are unique 
-PASS TransitionEvent interface: existence and properties of interface object 
-PASS TransitionEvent interface object length 
-PASS TransitionEvent interface object name 
-PASS TransitionEvent interface: existence and properties of interface prototype object 
-PASS TransitionEvent interface: existence and properties of interface prototype object's "constructor" property 
-PASS TransitionEvent interface: existence and properties of interface prototype object's @@unscopables property 
-PASS TransitionEvent interface: attribute propertyName 
-PASS TransitionEvent interface: attribute elapsedTime 
-PASS TransitionEvent interface: attribute pseudoElement 
-PASS TransitionEvent must be primary interface of new TransitionEvent("transitionend") 
-PASS Stringification of new TransitionEvent("transitionend") 
-PASS TransitionEvent interface: new TransitionEvent("transitionend") must inherit property "propertyName" with the proper type 
-PASS TransitionEvent interface: new TransitionEvent("transitionend") must inherit property "elapsedTime" with the proper type 
-PASS TransitionEvent interface: new TransitionEvent("transitionend") must inherit property "pseudoElement" with the proper type 
-PASS HTMLElement interface: attribute ontransitionrun 
-PASS HTMLElement interface: attribute ontransitionstart 
-PASS HTMLElement interface: attribute ontransitionend 
-PASS HTMLElement interface: attribute ontransitioncancel 
-PASS HTMLElement interface: document must inherit property "ontransitionrun" with the proper type 
-PASS HTMLElement interface: document must inherit property "ontransitionstart" with the proper type 
-PASS HTMLElement interface: document must inherit property "ontransitionend" with the proper type 
-PASS HTMLElement interface: document must inherit property "ontransitioncancel" with the proper type 
-PASS Window interface: attribute ontransitionrun 
-PASS Window interface: attribute ontransitionstart 
-PASS Window interface: attribute ontransitionend 
-PASS Window interface: attribute ontransitioncancel 
-PASS Window interface: window must inherit property "ontransitionrun" with the proper type 
-PASS Window interface: window must inherit property "ontransitionstart" with the proper type 
-PASS Window interface: window must inherit property "ontransitionend" with the proper type 
-PASS Window interface: window must inherit property "ontransitioncancel" with the proper type 
-PASS Document interface: attribute ontransitionrun 
-PASS Document interface: attribute ontransitionstart 
-PASS Document interface: attribute ontransitionend 
-PASS Document interface: attribute ontransitioncancel 
-PASS Document interface: document must inherit property "ontransitionrun" with the proper type 
-PASS Document interface: document must inherit property "ontransitionstart" with the proper type 
-PASS Document interface: document must inherit property "ontransitionend" with the proper type 
-PASS Document interface: document must inherit property "ontransitioncancel" with the proper type 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface mixin GlobalEventHandlers: original interface mixin defined
+PASS Partial interface mixin GlobalEventHandlers: member names are unique
+PASS Partial interface Document: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Window: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS TransitionEvent interface: existence and properties of interface object
+PASS TransitionEvent interface object length
+PASS TransitionEvent interface object name
+PASS TransitionEvent interface: existence and properties of interface prototype object
+PASS TransitionEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS TransitionEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS TransitionEvent interface: attribute propertyName
+PASS TransitionEvent interface: attribute elapsedTime
+PASS TransitionEvent interface: attribute pseudoElement
+PASS TransitionEvent must be primary interface of new TransitionEvent("transitionend")
+PASS Stringification of new TransitionEvent("transitionend")
+PASS TransitionEvent interface: new TransitionEvent("transitionend") must inherit property "propertyName" with the proper type
+PASS TransitionEvent interface: new TransitionEvent("transitionend") must inherit property "elapsedTime" with the proper type
+PASS TransitionEvent interface: new TransitionEvent("transitionend") must inherit property "pseudoElement" with the proper type
+PASS HTMLElement interface: attribute ontransitionrun
+PASS HTMLElement interface: attribute ontransitionstart
+PASS HTMLElement interface: attribute ontransitionend
+PASS HTMLElement interface: attribute ontransitioncancel
+PASS HTMLElement interface: document must inherit property "ontransitionrun" with the proper type
+PASS HTMLElement interface: document must inherit property "ontransitionstart" with the proper type
+PASS HTMLElement interface: document must inherit property "ontransitionend" with the proper type
+PASS HTMLElement interface: document must inherit property "ontransitioncancel" with the proper type
+PASS Window interface: attribute ontransitionrun
+PASS Window interface: attribute ontransitionstart
+PASS Window interface: attribute ontransitionend
+PASS Window interface: attribute ontransitioncancel
+PASS Window interface: window must inherit property "ontransitionrun" with the proper type
+PASS Window interface: window must inherit property "ontransitionstart" with the proper type
+PASS Window interface: window must inherit property "ontransitionend" with the proper type
+PASS Window interface: window must inherit property "ontransitioncancel" with the proper type
+PASS Document interface: attribute ontransitionrun
+PASS Document interface: attribute ontransitionstart
+PASS Document interface: attribute ontransitionend
+PASS Document interface: attribute ontransitioncancel
+PASS Document interface: document must inherit property "ontransitionrun" with the proper type
+PASS Document interface: document must inherit property "ontransitionstart" with the proper type
+PASS Document interface: document must inherit property "ontransitionend" with the proper type
+PASS Document interface: document must inherit property "ontransitioncancel" with the proper type
 

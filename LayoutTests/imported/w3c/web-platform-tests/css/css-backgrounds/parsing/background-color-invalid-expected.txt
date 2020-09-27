@@ -1,5 +1,5 @@
 
-PASS e.style['background-color'] = "none" should not set the property value 
-PASS e.style['background-color'] = "black white" should not set the property value 
-PASS e.style['background-color'] = "black, white" should not set the property value 
+PASS e.style['background-color'] = "none" should not set the property value
+PASS e.style['background-color'] = "black white" should not set the property value
+PASS e.style['background-color'] = "black, white" should not set the property value
 

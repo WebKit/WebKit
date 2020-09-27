@@ -8,5 +8,5 @@ FAIL Property font-stretch value 'semi-expanded' assert_equals: expected "112.5%
 FAIL Property font-stretch value 'expanded' assert_equals: expected "125%" but got "expanded"
 FAIL Property font-stretch value 'extra-expanded' assert_equals: expected "150%" but got "extra-expanded"
 FAIL Property font-stretch value 'ultra-expanded' assert_equals: expected "200%" but got "ultra-expanded"
-PASS Property font-stretch value '234.5%' 
+PASS Property font-stretch value '234.5%'
 

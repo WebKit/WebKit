@@ -1,6 +1,6 @@
 
-PASS elementsFromPoint for a point inside two rects 
-PASS elementsFromPoint for a point inside two rects that are inside a <g> 
-PASS elementsFromPoint for a point inside two images 
-PASS elementsFromPoint for a point inside transformed rects and <g> 
+PASS elementsFromPoint for a point inside two rects
+PASS elementsFromPoint for a point inside two rects that are inside a <g>
+PASS elementsFromPoint for a point inside two images
+PASS elementsFromPoint for a point inside transformed rects and <g>
 

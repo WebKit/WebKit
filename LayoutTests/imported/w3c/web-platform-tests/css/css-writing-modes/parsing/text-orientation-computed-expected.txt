@@ -1,5 +1,5 @@
 
-PASS Property text-orientation value 'mixed' 
-PASS Property text-orientation value 'upright' 
-PASS Property text-orientation value 'sideways' 
+PASS Property text-orientation value 'mixed'
+PASS Property text-orientation value 'upright'
+PASS Property text-orientation value 'sideways'
 

@@ -1,4 +1,4 @@
 
-PASS currentTime can be used to seek a CSS animation 
-PASS Setting currentTime to null on a CSS animation throws 
+PASS currentTime can be used to seek a CSS animation
+PASS Setting currentTime to null on a CSS animation throws
 

@@ -2,5 +2,5 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS CSS Transitions Test: Transitioning before load event 
+PASS CSS Transitions Test: Transitioning before load event
 

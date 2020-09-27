@@ -1,45 +1,45 @@
 
-PASS delay of a new animation 
-PASS Negative delay of a new animation 
-PASS Positive delay of a new animation 
-PASS endDelay of a new animation 
-PASS fill of a new animation 
-PASS iterationStart of a new animation 
-PASS iterations of a new animation 
-PASS iterations of a finitely repeating animation 
-PASS iterations of an infinitely repeating animation 
-PASS duration of a new animation 
-PASS direction of a new animation 
-PASS easing of a new animation 
-PASS endTime of an new animation 
-PASS endTime of an animation with a negative delay 
-PASS endTime of an infinitely repeating animation 
-PASS endTime of an infinitely repeating zero-duration animation 
-PASS endTime of an animation that finishes before its startTime 
-PASS activeDuration of a new animation 
-PASS activeDuration of an infinitely repeating animation 
-PASS activeDuration of an infinitely repeating zero-duration animation 
-PASS activeDuration of an animation with zero iterations 
-PASS localTime of a new animation 
-PASS localTime of an animation is always equal to currentTime 
-PASS localTime reflects playbackRate immediately 
-PASS localTime of an AnimationEffect without an Animation 
-PASS progress of an animation with different fill modes 
-PASS progress of an integral repeating animation with normal direction 
-PASS progress of an infinitely repeating zero-duration animation 
-PASS progress of a finitely repeating zero-duration animation 
-PASS progress of a non-integral repeating zero-duration animation 
-PASS Progress of a non-integral repeating zero-duration animation with reversing direction 
-PASS progress of a non-integral repeating animation with alternate direction 
-PASS progress of a non-integral repeating animation with alternate-reversing direction 
-PASS progress of a non-integral repeating zero-duration animation with alternate direction 
-PASS progress of a non-integral repeating zero-duration animation with alternate-reverse direction 
-PASS currentIteration of a new animation with no backwards fill is unresolved in before phase 
-PASS currentIteration of a new animation is zero 
-PASS currentIteration of an infinitely repeating zero-duration animation 
-PASS currentIteration of a finitely repeating zero-duration animation 
-PASS currentIteration of an animation with a non-integral iteration count 
-PASS currentIteration of an animation with an integral iteration count 
-PASS currentIteration of an animation with a default iteration count 
-PASS currentIteration of an AnimationEffect without an Animation 
+PASS delay of a new animation
+PASS Negative delay of a new animation
+PASS Positive delay of a new animation
+PASS endDelay of a new animation
+PASS fill of a new animation
+PASS iterationStart of a new animation
+PASS iterations of a new animation
+PASS iterations of a finitely repeating animation
+PASS iterations of an infinitely repeating animation
+PASS duration of a new animation
+PASS direction of a new animation
+PASS easing of a new animation
+PASS endTime of an new animation
+PASS endTime of an animation with a negative delay
+PASS endTime of an infinitely repeating animation
+PASS endTime of an infinitely repeating zero-duration animation
+PASS endTime of an animation that finishes before its startTime
+PASS activeDuration of a new animation
+PASS activeDuration of an infinitely repeating animation
+PASS activeDuration of an infinitely repeating zero-duration animation
+PASS activeDuration of an animation with zero iterations
+PASS localTime of a new animation
+PASS localTime of an animation is always equal to currentTime
+PASS localTime reflects playbackRate immediately
+PASS localTime of an AnimationEffect without an Animation
+PASS progress of an animation with different fill modes
+PASS progress of an integral repeating animation with normal direction
+PASS progress of an infinitely repeating zero-duration animation
+PASS progress of a finitely repeating zero-duration animation
+PASS progress of a non-integral repeating zero-duration animation
+PASS Progress of a non-integral repeating zero-duration animation with reversing direction
+PASS progress of a non-integral repeating animation with alternate direction
+PASS progress of a non-integral repeating animation with alternate-reversing direction
+PASS progress of a non-integral repeating zero-duration animation with alternate direction
+PASS progress of a non-integral repeating zero-duration animation with alternate-reverse direction
+PASS currentIteration of a new animation with no backwards fill is unresolved in before phase
+PASS currentIteration of a new animation is zero
+PASS currentIteration of an infinitely repeating zero-duration animation
+PASS currentIteration of a finitely repeating zero-duration animation
+PASS currentIteration of an animation with a non-integral iteration count
+PASS currentIteration of an animation with an integral iteration count
+PASS currentIteration of an animation with a default iteration count
+PASS currentIteration of an AnimationEffect without an Animation
 

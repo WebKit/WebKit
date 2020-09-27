@@ -1,9 +1,9 @@
 
-PASS e.style['width'] = "auto" should set the property value 
-PASS e.style['width'] = "10px" should set the property value 
-PASS e.style['width'] = "20%" should set the property value 
-PASS e.style['width'] = "calc(2em + 3ex)" should set the property value 
-PASS e.style['width'] = "min-content" should set the property value 
-PASS e.style['width'] = "max-content" should set the property value 
-PASS e.style['width'] = "fit-content" should set the property value 
+PASS e.style['width'] = "auto" should set the property value
+PASS e.style['width'] = "10px" should set the property value
+PASS e.style['width'] = "20%" should set the property value
+PASS e.style['width'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['width'] = "min-content" should set the property value
+PASS e.style['width'] = "max-content" should set the property value
+PASS e.style['width'] = "fit-content" should set the property value
 

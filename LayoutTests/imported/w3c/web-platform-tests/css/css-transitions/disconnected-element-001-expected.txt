@@ -1,8 +1,8 @@
 
-PASS Transitions do not run on an element not in the document 
-PASS Transitions do not run for an element newly added to the document 
-PASS Transitions do not run for an element newly removed from the document 
-PASS Transitions are canceled when an element is removed from the document 
-PASS Transitions are canceled when an element is re-parented 
-PASS Transitions are canceled when an element is re-parented to the same node 
+PASS Transitions do not run on an element not in the document
+PASS Transitions do not run for an element newly added to the document
+PASS Transitions do not run for an element newly removed from the document
+PASS Transitions are canceled when an element is removed from the document
+PASS Transitions are canceled when an element is re-parented
+PASS Transitions are canceled when an element is re-parented to the same node
 

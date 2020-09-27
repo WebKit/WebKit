@@ -1,9 +1,9 @@
 
-PASS e.style['border-color'] = "currentcolor" should set the property value 
-PASS e.style['border-color'] = "currentColor" should set the property value 
-PASS e.style['border-color'] = "red yellow green blue" should set the property value 
-PASS e.style['border-top-color'] = "red" should set the property value 
-PASS e.style['border-right-color'] = "yellow" should set the property value 
-PASS e.style['border-bottom-color'] = "green" should set the property value 
-PASS e.style['border-left-color'] = "blue" should set the property value 
+PASS e.style['border-color'] = "currentcolor" should set the property value
+PASS e.style['border-color'] = "currentColor" should set the property value
+PASS e.style['border-color'] = "red yellow green blue" should set the property value
+PASS e.style['border-top-color'] = "red" should set the property value
+PASS e.style['border-right-color'] = "yellow" should set the property value
+PASS e.style['border-bottom-color'] = "green" should set the property value
+PASS e.style['border-left-color'] = "blue" should set the property value
 

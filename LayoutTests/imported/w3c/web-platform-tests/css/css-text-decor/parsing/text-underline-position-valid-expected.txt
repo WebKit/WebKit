@@ -1,7 +1,7 @@
 
-PASS e.style['text-underline-position'] = "auto" should set the property value 
-PASS e.style['text-underline-position'] = "under" should set the property value 
-PASS e.style['text-underline-position'] = "from-font" should set the property value 
+PASS e.style['text-underline-position'] = "auto" should set the property value
+PASS e.style['text-underline-position'] = "under" should set the property value
+PASS e.style['text-underline-position'] = "from-font" should set the property value
 FAIL e.style['text-underline-position'] = "left" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['text-underline-position'] = "right" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['text-underline-position'] = "under left" should set the property value assert_not_equals: property should be set got disallowed value ""

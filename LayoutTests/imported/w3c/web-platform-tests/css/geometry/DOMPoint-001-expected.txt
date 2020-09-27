@@ -1,20 +1,20 @@
 Test DOMPoint and DOMPointReadOnly interfaces
 
 
-PASS testConstructor0 
-PASS testConstructor1 
-PASS testConstructor2 
-PASS testConstructor3 
-PASS testConstructor4 
-PASS testConstructor5 
+PASS testConstructor0
+PASS testConstructor1
+PASS testConstructor2
+PASS testConstructor3
+PASS testConstructor4
+PASS testConstructor5
 FAIL testConstructorDictionary0 assert_equals: Expected value for x is NaN expected NaN but got 0
 FAIL testConstructorDictionary1 assert_equals: Expected value for x is NaN expected NaN but got 1
 FAIL testConstructorDictionary2 assert_equals: Expected value for x is NaN expected NaN but got 1
-PASS testConstructor2undefined 
-PASS testConstructorUndefined1 
+PASS testConstructor2undefined
+PASS testConstructorUndefined1
 FAIL testConstructorUndefined2 assert_equals: Expected value for y is 0 expected 0 but got NaN
-PASS DOMPointReadOnly constructor with no values 
-PASS DOMPointReadOnly constructor with 4 values 
-PASS testAttributesUndefined 
-PASS testAttributesNaNInfinity 
+PASS DOMPointReadOnly constructor with no values
+PASS DOMPointReadOnly constructor with 4 values
+PASS testAttributesUndefined
+PASS testAttributesNaNInfinity
 

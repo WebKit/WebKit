@@ -1,11 +1,11 @@
 
-PASS transition:all changing padding-left 
-PASS transition:all changing padding 
-PASS transition:all changing padding but not padding-bottom 
-PASS transition:padding changing padding-left 
-PASS transition:padding changing padding 
-PASS transition:padding changing padding but not padding-bottom 
-PASS transition:padding-left changing padding-left 
-PASS transition:padding-left changing padding 
-PASS transition:padding-left changing padding but not padding-bottom 
+PASS transition:all changing padding-left
+PASS transition:all changing padding
+PASS transition:all changing padding but not padding-bottom
+PASS transition:padding changing padding-left
+PASS transition:padding changing padding
+PASS transition:padding changing padding but not padding-bottom
+PASS transition:padding-left changing padding-left
+PASS transition:padding-left changing padding
+PASS transition:padding-left changing padding but not padding-bottom
 

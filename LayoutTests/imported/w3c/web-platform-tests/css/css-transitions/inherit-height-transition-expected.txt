@@ -1,4 +1,4 @@
 You should only see a flash of red.
 
-PASS Transitioned height, explicitly inherited down two DOM levels, should inherit correctly 
+PASS Transitioned height, explicitly inherited down two DOM levels, should inherit correctly
 

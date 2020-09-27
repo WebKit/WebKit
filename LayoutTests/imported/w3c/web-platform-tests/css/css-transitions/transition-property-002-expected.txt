@@ -1,9 +1,9 @@
 
 FAIL parse 'none, all' assert_equals: expected "none, all" but got "all"
 FAIL parse 'all, none' assert_equals: expected "all, none" but got "all"
-PASS parse 'foobar' 
+PASS parse 'foobar'
 FAIL parse 'all, foobar' assert_equals: expected "all, foobar" but got "foobar"
 FAIL parse 'foobar, all' assert_equals: expected "foobar, all" but got "all"
-PASS parse 'inherit' 
-PASS parse 'initial' 
+PASS parse 'inherit'
+PASS parse 'initial'
 

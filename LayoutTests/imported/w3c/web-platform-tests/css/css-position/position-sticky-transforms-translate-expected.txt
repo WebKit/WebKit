@@ -1,5 +1,5 @@
 
-PASS Translation transform can move sticky element past sticking point 
-PASS Stuck elements can still be moved via translations 
+PASS Translation transform can move sticky element past sticking point
+PASS Stuck elements can still be moved via translations
 FAIL The sticky element should stick before the container is offset by a translation assert_equals: expected 150 but got 100
 

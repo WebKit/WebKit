@@ -1,9 +1,9 @@
 
-PASS Property text-align value 'start' 
-PASS Property text-align value 'end' 
-PASS Property text-align value 'left' 
-PASS Property text-align value 'right' 
-PASS Property text-align value 'center' 
-PASS Property text-align value 'justify' 
+PASS Property text-align value 'start'
+PASS Property text-align value 'end'
+PASS Property text-align value 'left'
+PASS Property text-align value 'right'
+PASS Property text-align value 'center'
+PASS Property text-align value 'justify'
 FAIL Property text-align value 'match-parent' assert_true: 'match-parent' is a supported value for text-align. expected true got false
 

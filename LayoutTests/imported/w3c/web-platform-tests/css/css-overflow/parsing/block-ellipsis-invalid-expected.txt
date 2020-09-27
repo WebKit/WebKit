@@ -1,7 +1,7 @@
 
-PASS e.style['block-ellipsis'] = "hidden" should not set the property value 
-PASS e.style['block-ellipsis'] = "none auto" should not set the property value 
-PASS e.style['block-ellipsis'] = "auto \"string\"" should not set the property value 
-PASS e.style['block-ellipsis'] = "\"string\" none" should not set the property value 
-PASS e.style['block-ellipsis'] = "\"first\" \"second\"" should not set the property value 
+PASS e.style['block-ellipsis'] = "hidden" should not set the property value
+PASS e.style['block-ellipsis'] = "none auto" should not set the property value
+PASS e.style['block-ellipsis'] = "auto \"string\"" should not set the property value
+PASS e.style['block-ellipsis'] = "\"string\" none" should not set the property value
+PASS e.style['block-ellipsis'] = "\"first\" \"second\"" should not set the property value
 

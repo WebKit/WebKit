@@ -3,6 +3,6 @@ X XXX
 X
 XX XXX
 
-PASS .before 1 
-PASS .after 2 
+PASS .before 1
+PASS .after 2
 

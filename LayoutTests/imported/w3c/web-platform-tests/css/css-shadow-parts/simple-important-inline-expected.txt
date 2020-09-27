@@ -1,4 +1,4 @@
-The following text should be red: 
+The following text should be red:
 
-PASS Part in selected host is not styled 
+PASS Part in selected host is not styled
 

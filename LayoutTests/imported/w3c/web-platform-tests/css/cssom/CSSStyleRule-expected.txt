@@ -1,12 +1,12 @@
 
-PASS CSSRule and CSSStyleRule types 
-PASS Type of CSSRule#type and constant values 
-PASS Existence of CSSRule attributes 
-PASS Writability of CSSRule attributes 
-PASS Values of CSSRule attributes 
-PASS Existence and type of CSSStyleRule attributes 
-PASS Assigning to CSSStyleRule.style assigns to cssText; CSSStyleRule.style returns the same object 
-PASS Values of CSSStyleRule attributes 
-PASS Mutability of CSSStyleRule's style attribute 
-PASS CSSStyleRule's style has [PutForwards] 
+PASS CSSRule and CSSStyleRule types
+PASS Type of CSSRule#type and constant values
+PASS Existence of CSSRule attributes
+PASS Writability of CSSRule attributes
+PASS Values of CSSRule attributes
+PASS Existence and type of CSSStyleRule attributes
+PASS Assigning to CSSStyleRule.style assigns to cssText; CSSStyleRule.style returns the same object
+PASS Values of CSSStyleRule attributes
+PASS Mutability of CSSStyleRule's style attribute
+PASS CSSStyleRule's style has [PutForwards]
 

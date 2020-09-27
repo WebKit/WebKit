@@ -7,5 +7,5 @@ There should be three columns below. The text in each column should match the co
 3
 3
 
-PASS Check that orphans and widows don't make a multicol container taller than necessary 
+PASS Check that orphans and widows don't make a multicol container taller than necessary
 

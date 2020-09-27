@@ -1,19 +1,19 @@
 
-PASS Checking justify-content: normal 
-PASS Checking justify-content: left 
-PASS Checking justify-content: right 
-PASS Checking justify-content: start 
-PASS Checking justify-content: end 
-PASS Checking justify-content: center 
-PASS Checking justify-content: flex-start 
-PASS Checking justify-content: flex-end 
-PASS Checking justify-content: stretch 
-PASS Checking justify-content: space-around 
-PASS Checking justify-content: space-between 
-PASS Checking justify-content: space-evenly 
-PASS Checking justify-content: safe flex-end 
-PASS Checking justify-content: unsafe end 
-PASS Checking justify-content: safe end 
-PASS Checking justify-content: unsafe flex-start 
-PASS Checking justify-content: safe center 
+PASS Checking justify-content: normal
+PASS Checking justify-content: left
+PASS Checking justify-content: right
+PASS Checking justify-content: start
+PASS Checking justify-content: end
+PASS Checking justify-content: center
+PASS Checking justify-content: flex-start
+PASS Checking justify-content: flex-end
+PASS Checking justify-content: stretch
+PASS Checking justify-content: space-around
+PASS Checking justify-content: space-between
+PASS Checking justify-content: space-evenly
+PASS Checking justify-content: safe flex-end
+PASS Checking justify-content: unsafe end
+PASS Checking justify-content: safe end
+PASS Checking justify-content: unsafe flex-start
+PASS Checking justify-content: safe center
 

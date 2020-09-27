@@ -1,10 +1,10 @@
 
-PASS Property max-width value 'none' 
-PASS Property max-width value 'min-content' 
-PASS Property max-width value 'max-content' 
-PASS Property max-width value '10px' 
-PASS Property max-width value '20%' 
-PASS Property max-width value 'calc(10% + 40px)' 
-PASS Property max-width value 'calc(10px - 0.5em)' 
-PASS Property max-width value 'calc(10px + 0.5em)' 
+PASS Property max-width value 'none'
+PASS Property max-width value 'min-content'
+PASS Property max-width value 'max-content'
+PASS Property max-width value '10px'
+PASS Property max-width value '20%'
+PASS Property max-width value 'calc(10% + 40px)'
+PASS Property max-width value 'calc(10px - 0.5em)'
+PASS Property max-width value 'calc(10px + 0.5em)'
 

@@ -1,6 +1,6 @@
 
-PASS e.style['font-language-override'] = "auto" should not set the property value 
-PASS e.style['font-language-override'] = "normal \"ksw\"" should not set the property value 
-PASS e.style['font-language-override'] = "\"tr\"" should not set the property value 
-PASS e.style['font-language-override'] = "\"1 %\"" should not set the property value 
+PASS e.style['font-language-override'] = "auto" should not set the property value
+PASS e.style['font-language-override'] = "normal \"ksw\"" should not set the property value
+PASS e.style['font-language-override'] = "\"tr\"" should not set the property value
+PASS e.style['font-language-override'] = "\"1 %\"" should not set the property value
 

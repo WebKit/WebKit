@@ -1,12 +1,12 @@
 
-PASS Reverted computed values for outside symbol 
-PASS Reverted computed values for outside decimal 
-PASS Reverted computed values for outside string 
-PASS Reverted computed values for outside marker 
-PASS Reverted computed values for inside symbol 
-PASS Reverted computed values for inside decimal 
-PASS Reverted computed values for inside string 
-PASS Reverted computed values for inside marker 
+PASS Reverted computed values for outside symbol
+PASS Reverted computed values for outside decimal
+PASS Reverted computed values for outside string
+PASS Reverted computed values for outside marker
+PASS Reverted computed values for inside symbol
+PASS Reverted computed values for inside decimal
+PASS Reverted computed values for inside string
+PASS Reverted computed values for inside marker
 outside symbol
 outside decimal
 outside string

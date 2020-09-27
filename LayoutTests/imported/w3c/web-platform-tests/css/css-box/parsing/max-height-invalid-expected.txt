@@ -1,14 +1,14 @@
 
-PASS e.style['max-height'] = "complex" should not set the property value 
-PASS e.style['max-height'] = "auto" should not set the property value 
-PASS e.style['max-height'] = "none available" should not set the property value 
-PASS e.style['max-height'] = "max-content 10px" should not set the property value 
-PASS e.style['max-height'] = "20% available" should not set the property value 
-PASS e.style['max-height'] = "-10px" should not set the property value 
-PASS e.style['max-height'] = "-20%" should not set the property value 
-PASS e.style['max-height'] = "60" should not set the property value 
-PASS e.style['max-height'] = "10px 20%" should not set the property value 
-PASS e.style['max-height'] = "content-box border-box" should not set the property value 
-PASS e.style['max-height'] = "10px border-box 20%" should not set the property value 
-PASS e.style['max-height'] = "content-box 20% border-box" should not set the property value 
+PASS e.style['max-height'] = "complex" should not set the property value
+PASS e.style['max-height'] = "auto" should not set the property value
+PASS e.style['max-height'] = "none available" should not set the property value
+PASS e.style['max-height'] = "max-content 10px" should not set the property value
+PASS e.style['max-height'] = "20% available" should not set the property value
+PASS e.style['max-height'] = "-10px" should not set the property value
+PASS e.style['max-height'] = "-20%" should not set the property value
+PASS e.style['max-height'] = "60" should not set the property value
+PASS e.style['max-height'] = "10px 20%" should not set the property value
+PASS e.style['max-height'] = "content-box border-box" should not set the property value
+PASS e.style['max-height'] = "10px border-box 20%" should not set the property value
+PASS e.style['max-height'] = "content-box 20% border-box" should not set the property value
 

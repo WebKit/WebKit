@@ -1,3 +1,3 @@
 
-PASS flexbox | computed style | display: inline-flex 
+PASS flexbox | computed style | display: inline-flex
 

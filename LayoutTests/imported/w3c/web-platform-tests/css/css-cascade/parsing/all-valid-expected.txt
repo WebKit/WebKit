@@ -1,5 +1,5 @@
 
-PASS e.style['all'] = "initial" should set the property value 
-PASS e.style['all'] = "inherit" should set the property value 
-PASS e.style['all'] = "unset" should set the property value 
+PASS e.style['all'] = "initial" should set the property value
+PASS e.style['all'] = "inherit" should set the property value
+PASS e.style['all'] = "unset" should set the property value
 

@@ -1,4 +1,4 @@
 XXX
 
-PASS Very long line with `text-indent` should not crash 
+PASS Very long line with `text-indent` should not crash
 

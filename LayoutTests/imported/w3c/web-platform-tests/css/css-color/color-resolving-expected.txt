@@ -1,131 +1,131 @@
 
-PASS Should not parse invalid keyword:  
+PASS Should not parse invalid keyword:
 PASS Should not parse invalid keyword:  /* hey */
- 
-PASS Should not parse invalid keyword: 4 
-PASS Should not parse invalid keyword: top 
-PASS Should parse to completely transparent: /**/transparent 
-PASS Should parse to completely transparent: transparent 
+
+PASS Should not parse invalid keyword: 4
+PASS Should not parse invalid keyword: top
+PASS Should parse to completely transparent: /**/transparent
+PASS Should parse to completely transparent: transparent
 PASS Should parse to completely transparent:  transparent
- 
-PASS Should parse to completely transparent: TransParent 
-PASS Should be same as parent color: currentColor 
-PASS Should be same as parent color: CURRENTcolor 
-PASS Should not parse invalid keyword: current-Color 
-PASS Should parse as correct value: black 
-PASS Should parse as correct value: white 
-PASS Should parse as correct value: fuchsia 
-PASS Should parse as correct value: cyan 
-PASS Should parse as cyan: CyAn 
-PASS Should not parse invalid hex: # 
-PASS Should not parse invalid hex: #f 
-PASS Should not parse invalid hex: #ff 
-PASS Valid 3-digit hex: #fff 
-PASS Should not parse invalid hex: #ffg 
-PASS Valid 4-digit hex: #ffff 
-PASS Should not parse invalid hex: #fffg 
-PASS Should not parse invalid hex: #fffff 
-PASS Valid 6-digit hex: #ffffff 
-PASS Should not parse invalid hex: #fffffg 
-PASS Should not parse invalid hex: #fffffff 
-PASS Valid 8-digit hex: #ffffffff 
-PASS Should not parse invalid hex: #fffffffg 
-PASS Should not parse invalid hex: #fffffffff 
-PASS Valid 6-digit hex: #FFCc99 
-PASS Valid 3-digit hex: #369 
-PASS Valid numbers should be parsed: rgb(00, 51, 102) 
-PASS Correct escape sequences should still parse: r\gb(00, 51, 102) 
-PASS Correct escape sequences should still parse: r\67 b(00, 51, 102) 
-PASS Capitalization should not affect parsing: RGB(153, 204, 255) 
-PASS Capitalization should not affect parsing: rgB(0, 0, 0) 
-PASS Capitalization should not affect parsing: rgB(0, 51, 255) 
-PASS Lack of whitespace should not affect parsing: rgb(0,51,255) 
-PASS Whitespace should not affect parsing: rgb(0	,  51 ,255) 
-PASS Comments should be allowed within function: rgb(/* R */0, /* G */51, /* B */255) 
-PASS Invalid values should be clamped to 0 and 255 respectively: rgb(-51, 306, 0) 
-PASS Valid percentages should be parsed: rgb(42%, 3%, 50%) 
-PASS Capitalization should not affect parsing: RGB(100%, 100%, 100%) 
-PASS Capitalization should not affect parsing: rgB(0%, 0%, 0%) 
-PASS Capitalization should not affect parsing: rgB(10%, 20%, 30%) 
-PASS Whitespace should not affect parsing: rgb(10%,20%,30%) 
-PASS Whitespace should not affect parsing: rgb(10%	,  20% ,30%) 
-PASS Comments should not affect parsing: rgb(/* R */ 10%, /* G */ 20%, /* B */ 30%) 
-PASS Invalid values should be clamped to 0 and 255 respectively: rgb(-12%, 110%, 1400%) 
-PASS Values must be all numbers or all percentages: rgb(10%, 50%, 0) 
-PASS Values must be all numbers or all percentages: rgb(255, 50%, 0%) 
-PASS Comma optional syntax requires no commas at all: rgb(0, 0 0) 
-PASS Angles are not accepted in the rgb function: rgb(0, 0, 0deg) 
-PASS Keywords are not accepted in the rgb function: rgb(0, 0, light) 
-PASS The rgb function requires 3 or 4 arguments: rgb() 
-PASS The rgb function requires 3 or 4 arguments: rgb(0) 
-PASS The rgb function requires 3 or 4 arguments: rgb(0, 0) 
-PASS The rgb function requires 3 or 4 arguments: rgb(0%) 
-PASS The rgb function requires 3 or 4 arguments: rgb(0%, 0%) 
-PASS RGB and RGBA are synonyms: rgb(0, 0, 0, 0) 
-PASS RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0%) 
-PASS RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0) 
-PASS Valid numbers should be parsed: rgba(0, 0, 0, 0) 
-PASS Valid numbers should be parsed: rgba(204, 0, 102, 0.3) 
-PASS Capitalization should not affect parsing: RGBA(255, 255, 255, 0) 
-PASS Capitalization should not affect parsing: rgBA(0, 51, 255, 1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, 1.1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, 37) 
-PASS Valid numbers should be parsed: rgba(0, 51, 255, 0.42) 
-PASS Valid numbers should be parsed: rgba(0, 51, 255, 0) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, -0.1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, -139) 
-PASS Capitalization should not affect parsing: RGBA(100%, 100%, 100%, 0) 
-PASS Valid percentages should be parsed: rgba(42%, 3%, 50%, 0.3) 
-PASS Capitalization should not affect parsing: rgBA(0%, 20%, 100%, 1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, 1.1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, 37) 
-PASS Valid percentages should be parsed: rgba(0%, 20%, 100%, 0.42) 
-PASS Valid percentages should be parsed: rgba(0%, 20%, 100%, 0) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, -0.1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, -139) 
-PASS Percent alpha values are accepted in rgb/rgba: rgba(255, 255, 255, 0%) 
-PASS Percent alpha values are accepted in rgb/rgba: rgba(0%, 0%, 0%, 0%) 
-PASS RGB and RGBA are synonyms: rgba(0%, 0%, 0%) 
-PASS RGB and RGBA are synonyms: rgba(0, 0, 0) 
-PASS Values must be all numbers or all percentages: rgba(10%, 50%, 0, 1) 
-PASS Values must be all numbers or all percentages: rgba(255, 50%, 0%, 1) 
-PASS Comma optional syntax requires no commas at all: rgba(0, 0, 0 0) 
-PASS Angles are not accepted in the rgb function: rgba(0, 0, 0, 0deg) 
-PASS Keywords are not accepted in the rgb function: rgba(0, 0, 0, light) 
-PASS The rgba function requires 3 or 4 arguments: rgba() 
-PASS The rgba function requires 3 or 4 arguments: rgba(0) 
-PASS The rgba function requires 3 or 4 arguments: rgba(0, 0, 0, 0, 0) 
-PASS The rgba function requires 3 or 4 arguments: rgba(0%) 
-PASS The rgba function requires 3 or 4 arguments: rgba(0%, 0%) 
-PASS The rgba function requires 3 or 4 arguments: rgba(0%, 0%, 0%, 0%, 0%) 
-PASS Capitalization should not affect parsing: HSL(0, 0%, 0%) 
-PASS Capitalization should not affect parsing: hsL(0, 100%, 50%) 
-PASS Valid numbers should be parsed: hsl(60, 100%, 37.5%) 
-PASS Angles are represented as a part of a circle and wrap around: hsl(780, 100%, 37.5%) 
-PASS Angles are represented as a part of a circle and wrap around: hsl(-300, 100%, 37.5%) 
-PASS Valid numbers should be parsed: hsl(300, 50%, 50%) 
-PASS Angles are accepted in HSL/HSLA: hsl(30deg, 100%, 100%) 
-PASS HSL and HSLA are synonyms: hsl(0, 0%, 0%, 0%) 
-PASS The second and third parameters of hsl/hsla must be a percent: hsl(10, 50%, 0) 
-PASS The first parameter of hsl/hsla must be a number or angle: hsl(50%, 50%, 0%) 
-PASS Comma optional syntax requires no commas at all: hsl(0, 0% 0%) 
-PASS Keywords are not accepted in the hsl function: hsl(0, 0%, light) 
-PASS The hsl function requires 3 or 4 arguments: hsl() 
-PASS The hsl function requires 3 or 4 arguments: hsl(0) 
-PASS The hsl function requires 3 or 4 arguments: hsl(0, 0%) 
-PASS Angles are represented as a part of a circle and wrap around: HSLA(-300, 100%, 37.5%, 1) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: hsLA(-300, 100%, 37.5%, 12) 
-PASS Angles are represented as a part of a circle and wrap around: hsla(-300, 100%, 37.5%, 0.2) 
-PASS Angles are represented as a part of a circle and wrap around: hsla(-300, 100%, 37.5%, 0) 
-PASS Invalid alpha values should be clamped to 0 and 1 respectively: hsla(-300, 100%, 37.5%, -3) 
-PASS Percent alpha values are accepted in hsl/hsla: hsla(0, 0%, 0%, 50%) 
-PASS Angles are accepted in HSL/HSLA: hsla(30deg, 100%, 100%, 1) 
-PASS The second and third parameters of hsl/hsla must be a percent: hsla(10, 50%, 0, 1) 
-PASS The first parameter of hsl/hsla must be a number or angle: hsla(50%, 50%, 0%, 1) 
-PASS Comma optional syntax requires no commas at all: hsla(0, 0% 0%, 1) 
-PASS Keywords are not accepted in the hsla function: hsla(0, 0%, light, 1) 
-PASS The hsla function requires 3 or 4 arguments: hsla() 
-PASS The hsla function requires 3 or 4 arguments: hsla(0) 
-PASS The hsla function requires 3 or 4 arguments: hsla(0, 0%) 
-PASS The hsla function requires 3 or 4 arguments: hsla(0, 0%, 0%, 1, 0%) 
+
+PASS Should parse to completely transparent: TransParent
+PASS Should be same as parent color: currentColor
+PASS Should be same as parent color: CURRENTcolor
+PASS Should not parse invalid keyword: current-Color
+PASS Should parse as correct value: black
+PASS Should parse as correct value: white
+PASS Should parse as correct value: fuchsia
+PASS Should parse as correct value: cyan
+PASS Should parse as cyan: CyAn
+PASS Should not parse invalid hex: #
+PASS Should not parse invalid hex: #f
+PASS Should not parse invalid hex: #ff
+PASS Valid 3-digit hex: #fff
+PASS Should not parse invalid hex: #ffg
+PASS Valid 4-digit hex: #ffff
+PASS Should not parse invalid hex: #fffg
+PASS Should not parse invalid hex: #fffff
+PASS Valid 6-digit hex: #ffffff
+PASS Should not parse invalid hex: #fffffg
+PASS Should not parse invalid hex: #fffffff
+PASS Valid 8-digit hex: #ffffffff
+PASS Should not parse invalid hex: #fffffffg
+PASS Should not parse invalid hex: #fffffffff
+PASS Valid 6-digit hex: #FFCc99
+PASS Valid 3-digit hex: #369
+PASS Valid numbers should be parsed: rgb(00, 51, 102)
+PASS Correct escape sequences should still parse: r\gb(00, 51, 102)
+PASS Correct escape sequences should still parse: r\67 b(00, 51, 102)
+PASS Capitalization should not affect parsing: RGB(153, 204, 255)
+PASS Capitalization should not affect parsing: rgB(0, 0, 0)
+PASS Capitalization should not affect parsing: rgB(0, 51, 255)
+PASS Lack of whitespace should not affect parsing: rgb(0,51,255)
+PASS Whitespace should not affect parsing: rgb(0	,  51 ,255)
+PASS Comments should be allowed within function: rgb(/* R */0, /* G */51, /* B */255)
+PASS Invalid values should be clamped to 0 and 255 respectively: rgb(-51, 306, 0)
+PASS Valid percentages should be parsed: rgb(42%, 3%, 50%)
+PASS Capitalization should not affect parsing: RGB(100%, 100%, 100%)
+PASS Capitalization should not affect parsing: rgB(0%, 0%, 0%)
+PASS Capitalization should not affect parsing: rgB(10%, 20%, 30%)
+PASS Whitespace should not affect parsing: rgb(10%,20%,30%)
+PASS Whitespace should not affect parsing: rgb(10%	,  20% ,30%)
+PASS Comments should not affect parsing: rgb(/* R */ 10%, /* G */ 20%, /* B */ 30%)
+PASS Invalid values should be clamped to 0 and 255 respectively: rgb(-12%, 110%, 1400%)
+PASS Values must be all numbers or all percentages: rgb(10%, 50%, 0)
+PASS Values must be all numbers or all percentages: rgb(255, 50%, 0%)
+PASS Comma optional syntax requires no commas at all: rgb(0, 0 0)
+PASS Angles are not accepted in the rgb function: rgb(0, 0, 0deg)
+PASS Keywords are not accepted in the rgb function: rgb(0, 0, light)
+PASS The rgb function requires 3 or 4 arguments: rgb()
+PASS The rgb function requires 3 or 4 arguments: rgb(0)
+PASS The rgb function requires 3 or 4 arguments: rgb(0, 0)
+PASS The rgb function requires 3 or 4 arguments: rgb(0%)
+PASS The rgb function requires 3 or 4 arguments: rgb(0%, 0%)
+PASS RGB and RGBA are synonyms: rgb(0, 0, 0, 0)
+PASS RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0%)
+PASS RGB and RGBA are synonyms: rgb(0%, 0%, 0%, 0)
+PASS Valid numbers should be parsed: rgba(0, 0, 0, 0)
+PASS Valid numbers should be parsed: rgba(204, 0, 102, 0.3)
+PASS Capitalization should not affect parsing: RGBA(255, 255, 255, 0)
+PASS Capitalization should not affect parsing: rgBA(0, 51, 255, 1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, 1.1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, 37)
+PASS Valid numbers should be parsed: rgba(0, 51, 255, 0.42)
+PASS Valid numbers should be parsed: rgba(0, 51, 255, 0)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, -0.1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0, 51, 255, -139)
+PASS Capitalization should not affect parsing: RGBA(100%, 100%, 100%, 0)
+PASS Valid percentages should be parsed: rgba(42%, 3%, 50%, 0.3)
+PASS Capitalization should not affect parsing: rgBA(0%, 20%, 100%, 1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, 1.1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, 37)
+PASS Valid percentages should be parsed: rgba(0%, 20%, 100%, 0.42)
+PASS Valid percentages should be parsed: rgba(0%, 20%, 100%, 0)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, -0.1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: rgba(0%, 20%, 100%, -139)
+PASS Percent alpha values are accepted in rgb/rgba: rgba(255, 255, 255, 0%)
+PASS Percent alpha values are accepted in rgb/rgba: rgba(0%, 0%, 0%, 0%)
+PASS RGB and RGBA are synonyms: rgba(0%, 0%, 0%)
+PASS RGB and RGBA are synonyms: rgba(0, 0, 0)
+PASS Values must be all numbers or all percentages: rgba(10%, 50%, 0, 1)
+PASS Values must be all numbers or all percentages: rgba(255, 50%, 0%, 1)
+PASS Comma optional syntax requires no commas at all: rgba(0, 0, 0 0)
+PASS Angles are not accepted in the rgb function: rgba(0, 0, 0, 0deg)
+PASS Keywords are not accepted in the rgb function: rgba(0, 0, 0, light)
+PASS The rgba function requires 3 or 4 arguments: rgba()
+PASS The rgba function requires 3 or 4 arguments: rgba(0)
+PASS The rgba function requires 3 or 4 arguments: rgba(0, 0, 0, 0, 0)
+PASS The rgba function requires 3 or 4 arguments: rgba(0%)
+PASS The rgba function requires 3 or 4 arguments: rgba(0%, 0%)
+PASS The rgba function requires 3 or 4 arguments: rgba(0%, 0%, 0%, 0%, 0%)
+PASS Capitalization should not affect parsing: HSL(0, 0%, 0%)
+PASS Capitalization should not affect parsing: hsL(0, 100%, 50%)
+PASS Valid numbers should be parsed: hsl(60, 100%, 37.5%)
+PASS Angles are represented as a part of a circle and wrap around: hsl(780, 100%, 37.5%)
+PASS Angles are represented as a part of a circle and wrap around: hsl(-300, 100%, 37.5%)
+PASS Valid numbers should be parsed: hsl(300, 50%, 50%)
+PASS Angles are accepted in HSL/HSLA: hsl(30deg, 100%, 100%)
+PASS HSL and HSLA are synonyms: hsl(0, 0%, 0%, 0%)
+PASS The second and third parameters of hsl/hsla must be a percent: hsl(10, 50%, 0)
+PASS The first parameter of hsl/hsla must be a number or angle: hsl(50%, 50%, 0%)
+PASS Comma optional syntax requires no commas at all: hsl(0, 0% 0%)
+PASS Keywords are not accepted in the hsl function: hsl(0, 0%, light)
+PASS The hsl function requires 3 or 4 arguments: hsl()
+PASS The hsl function requires 3 or 4 arguments: hsl(0)
+PASS The hsl function requires 3 or 4 arguments: hsl(0, 0%)
+PASS Angles are represented as a part of a circle and wrap around: HSLA(-300, 100%, 37.5%, 1)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: hsLA(-300, 100%, 37.5%, 12)
+PASS Angles are represented as a part of a circle and wrap around: hsla(-300, 100%, 37.5%, 0.2)
+PASS Angles are represented as a part of a circle and wrap around: hsla(-300, 100%, 37.5%, 0)
+PASS Invalid alpha values should be clamped to 0 and 1 respectively: hsla(-300, 100%, 37.5%, -3)
+PASS Percent alpha values are accepted in hsl/hsla: hsla(0, 0%, 0%, 50%)
+PASS Angles are accepted in HSL/HSLA: hsla(30deg, 100%, 100%, 1)
+PASS The second and third parameters of hsl/hsla must be a percent: hsla(10, 50%, 0, 1)
+PASS The first parameter of hsl/hsla must be a number or angle: hsla(50%, 50%, 0%, 1)
+PASS Comma optional syntax requires no commas at all: hsla(0, 0% 0%, 1)
+PASS Keywords are not accepted in the hsla function: hsla(0, 0%, light, 1)
+PASS The hsla function requires 3 or 4 arguments: hsla()
+PASS The hsla function requires 3 or 4 arguments: hsla(0)
+PASS The hsla function requires 3 or 4 arguments: hsla(0, 0%)
+PASS The hsla function requires 3 or 4 arguments: hsla(0, 0%, 0%, 1, 0%)
 

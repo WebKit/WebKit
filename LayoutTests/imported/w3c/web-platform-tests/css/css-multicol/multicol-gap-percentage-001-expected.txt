@@ -1,16 +1,16 @@
 
-PASS .multicol 1 
-PASS .multicol 2 
-PASS .multicol 3 
-PASS .multicol 4 
-PASS .multicol 5 
-PASS .multicol 6 
-PASS .multicol 7 
-PASS .multicol 8 
-PASS .multicol 9 
-PASS .multicol 10 
-PASS .multicol 11 
-PASS .multicol 12 
+PASS .multicol 1
+PASS .multicol 2
+PASS .multicol 3
+PASS .multicol 4
+PASS .multicol 5
+PASS .multicol 6
+PASS .multicol 7
+PASS .multicol 8
+PASS .multicol 9
+PASS .multicol 10
+PASS .multicol 11
+PASS .multicol 12
 Multicol container: fixed width
 
 X
@@ -23,10 +23,10 @@ Multicol container: intrinsic width
 
 X
 X
- 
+
 XX X X
 XX X X
- 
+
 XXXXX
 XXXXX
 Multicol container: auto width

@@ -1,5 +1,5 @@
 
-PASS e.style['animation-duration'] = "3s" should set the property value 
-PASS e.style['animation-duration'] = "500ms" should set the property value 
-PASS e.style['animation-duration'] = "1s, 2s, 3s" should set the property value 
+PASS e.style['animation-duration'] = "3s" should set the property value
+PASS e.style['animation-duration'] = "500ms" should set the property value
+PASS e.style['animation-duration'] = "1s, 2s, 3s" should set the property value
 

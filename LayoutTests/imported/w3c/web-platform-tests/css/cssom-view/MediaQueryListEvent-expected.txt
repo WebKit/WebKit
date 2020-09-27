@@ -1,8 +1,8 @@
 
-PASS type can be different from "change" 
-PASS init dictionary default values 
-PASS init dictionary overrides 
-PASS argument of addListener 
-PASS argument of onchange 
-PASS constructor of "change" event 
+PASS type can be different from "change"
+PASS init dictionary default values
+PASS init dictionary overrides
+PASS argument of addListener
+PASS argument of onchange
+PASS constructor of "change" event
 

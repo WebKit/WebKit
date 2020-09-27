@@ -1,7 +1,7 @@
 
-PASS e.style['float'] = "left" should set the property value 
-PASS e.style['float'] = "right" should set the property value 
-PASS e.style['float'] = "none" should set the property value 
+PASS e.style['float'] = "left" should set the property value
+PASS e.style['float'] = "right" should set the property value
+PASS e.style['float'] = "none" should set the property value
 FAIL e.style['float'] = "inline-start" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['float'] = "inline-end" should set the property value assert_not_equals: property should be set got disallowed value ""
 

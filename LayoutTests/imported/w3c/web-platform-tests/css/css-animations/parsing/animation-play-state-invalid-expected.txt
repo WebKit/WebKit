@@ -1,6 +1,6 @@
 
-PASS e.style['animation-play-state'] = "auto" should not set the property value 
-PASS e.style['animation-play-state'] = "paused running" should not set the property value 
-PASS e.style['animation-play-state'] = "paused, initial" should not set the property value 
-PASS e.style['animation-play-state'] = "initial, paused" should not set the property value 
+PASS e.style['animation-play-state'] = "auto" should not set the property value
+PASS e.style['animation-play-state'] = "paused running" should not set the property value
+PASS e.style['animation-play-state'] = "paused, initial" should not set the property value
+PASS e.style['animation-play-state'] = "initial, paused" should not set the property value
 

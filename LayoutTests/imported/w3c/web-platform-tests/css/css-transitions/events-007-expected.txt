@@ -1,3 +1,3 @@
 
-PASS transitionend should not be fired if the element is made display:none during the transition 
+PASS transitionend should not be fired if the element is made display:none during the transition
 

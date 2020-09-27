@@ -1,12 +1,12 @@
 
-PASS After setting a transition's effect to null, it still reports the original transition property 
-PASS After setting a transition's effect to null, it becomes finished 
-PASS After setting a transition's effect to null, style is updated 
+PASS After setting a transition's effect to null, it still reports the original transition property
+PASS After setting a transition's effect to null, it becomes finished
+PASS After setting a transition's effect to null, style is updated
 FAIL After setting a transition's effect to null, a new transition can be started assert_equals: expected "100px" but got "0px"
-PASS After setting a transition's effect to null, it should be possible to interrupt that transition 
-PASS After setting a new keyframe effect with a shorter duration, the transition becomes finished 
-PASS After setting a new keyframe effect targeting different properties, the transition continues to report the original transition property 
-PASS After setting a new keyframe effect on a play-pending transition, the transition remains pending 
-PASS A transition with no effect still returns the original transitionProperty 
+PASS After setting a transition's effect to null, it should be possible to interrupt that transition
+PASS After setting a new keyframe effect with a shorter duration, the transition becomes finished
+PASS After setting a new keyframe effect targeting different properties, the transition continues to report the original transition property
+PASS After setting a new keyframe effect on a play-pending transition, the transition remains pending
+PASS A transition with no effect still returns the original transitionProperty
 FAIL A transition with a replaced effect still exhibits the regular transition reversing behavior assert_approx_equals: expected 80240.33876954127 +/- 1 but got 100000
 

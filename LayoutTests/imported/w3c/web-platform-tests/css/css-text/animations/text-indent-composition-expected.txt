@@ -9,10 +9,10 @@ FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to r
 FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (0) should be [300px] assert_equals: expected "300px " but got "50px "
 FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (0.3) should be [240px] assert_equals: expected "240px " but got "65px "
 FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (0.6) should be [180px] assert_equals: expected "180px " but got "80px "
-PASS Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (1) should be [100px] 
+PASS Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (1) should be [100px]
 FAIL Compositing: property <text-indent> underlying [250px] from add [50px] to replace [100px] at (1.5) should be [0px] assert_equals: expected "0px " but got "125px "
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (-0.3) should be [-160%] assert_equals: expected "- 160 % " but got "- 145 % "
-PASS Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0) should be [-100%] 
+PASS Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0) should be [-100%]
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.3) should be [-40%] assert_equals: expected "- 40 % " but got "- 55 % "
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.5) should be [0%] assert_equals: expected "0 % " but got "- 25 % "
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.6) should be [20%] assert_equals: expected "20 % " but got "- 10 % "

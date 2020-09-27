@@ -1,3 +1,3 @@
 
-PASS sticky offset should not affect the position of other elements. 
+PASS sticky offset should not affect the position of other elements.
 

@@ -7,10 +7,10 @@ writing-mode: vertical-lr;
 writing-mode: vertical-rl;
 
 
-PASS writing-mode:horizontal-tb; direction:ltr 
-PASS writing-mode:horizontal-tb; direction:rtl 
-PASS writing-mode:vertical-lr; direction:ltr 
-PASS writing-mode:vertical-lr; direction:rtl 
+PASS writing-mode:horizontal-tb; direction:ltr
+PASS writing-mode:horizontal-tb; direction:rtl
+PASS writing-mode:vertical-lr; direction:ltr
+PASS writing-mode:vertical-lr; direction:rtl
 FAIL writing-mode:vertical-rl; direction:ltr assert_approx_equals: ending scrollLeft expected -165 +/- 0.5 but got -150
 FAIL writing-mode:vertical-rl; direction:rtl assert_approx_equals: ending scrollLeft expected -165 +/- 0.5 but got -150
 

@@ -1,5 +1,5 @@
 
-PASS e.style['font-style'] = "normal" should set the property value 
-PASS e.style['font-style'] = "italic" should set the property value 
-PASS e.style['font-style'] = "oblique" should set the property value 
+PASS e.style['font-style'] = "normal" should set the property value
+PASS e.style['font-style'] = "italic" should set the property value
+PASS e.style['font-style'] = "oblique" should set the property value
 

@@ -1,6 +1,6 @@
 
-PASS e.style['shape-margin'] = "0" should set the property value 
-PASS e.style['shape-margin'] = "10px" should set the property value 
-PASS e.style['shape-margin'] = "20em" should set the property value 
-PASS e.style['shape-margin'] = "37.5%" should set the property value 
+PASS e.style['shape-margin'] = "0" should set the property value
+PASS e.style['shape-margin'] = "10px" should set the property value
+PASS e.style['shape-margin'] = "20em" should set the property value
+PASS e.style['shape-margin'] = "37.5%" should set the property value
 

@@ -1,29 +1,29 @@
 
-PASS addition of 2 angle units: deg plus deg 
-PASS addition of 2 angle units: deg plus rad 
-PASS addition of 2 angle units: deg plus grad 
-PASS addition of 2 angle units: deg plus turn 
-PASS addition of 2 angle units: rad plus rad 
-PASS addition of 2 angle units: rad plus grad 
-PASS addition of 2 angle units: rad plus turn 
-PASS addition of 2 angle units: grad plus grad 
-PASS addition of 2 angle units: grad plus turn 
-PASS substraction of angle unit: deg minus deg 
-PASS substraction of angle unit: deg minus rad 
-PASS substraction of angle unit: deg minus grad 
-PASS substraction of angle unit: deg minus turn 
-PASS substraction of angle unit: rad minus rad 
-PASS substraction of angle unit: rad minus grad 
-PASS substraction of angle unit: rad minus turn 
-PASS substraction of angle unit: grad minus grad 
-PASS substraction of angle unit: grad minus turn 
-PASS multiplication of angle unit: deg multiplied by int 
-PASS multiplication of angle unit: int multiplied by rad 
-PASS multiplication of angle unit: grad multiplied by int 
-PASS multiplication of angle unit: int multiplied by turn 
-PASS division of angle unit: deg divided by int 
-PASS division of angle unit: rad divided by int 
-PASS division of angle unit: grad divided by int 
-PASS division of angle unit: turn divided by int 
-PASS conversion of angle unit: grad into deg 
+PASS addition of 2 angle units: deg plus deg
+PASS addition of 2 angle units: deg plus rad
+PASS addition of 2 angle units: deg plus grad
+PASS addition of 2 angle units: deg plus turn
+PASS addition of 2 angle units: rad plus rad
+PASS addition of 2 angle units: rad plus grad
+PASS addition of 2 angle units: rad plus turn
+PASS addition of 2 angle units: grad plus grad
+PASS addition of 2 angle units: grad plus turn
+PASS substraction of angle unit: deg minus deg
+PASS substraction of angle unit: deg minus rad
+PASS substraction of angle unit: deg minus grad
+PASS substraction of angle unit: deg minus turn
+PASS substraction of angle unit: rad minus rad
+PASS substraction of angle unit: rad minus grad
+PASS substraction of angle unit: rad minus turn
+PASS substraction of angle unit: grad minus grad
+PASS substraction of angle unit: grad minus turn
+PASS multiplication of angle unit: deg multiplied by int
+PASS multiplication of angle unit: int multiplied by rad
+PASS multiplication of angle unit: grad multiplied by int
+PASS multiplication of angle unit: int multiplied by turn
+PASS division of angle unit: deg divided by int
+PASS division of angle unit: rad divided by int
+PASS division of angle unit: grad divided by int
+PASS division of angle unit: turn divided by int
+PASS conversion of angle unit: grad into deg
 

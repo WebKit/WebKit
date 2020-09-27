@@ -1,9 +1,9 @@
 
-PASS Property transition value '1s' 
-PASS Property transition value 'cubic-bezier(0, -2, 1, 3)' 
-PASS Property transition value '1s -3s' 
-PASS Property transition value 'none' 
-PASS Property transition value 'top' 
-PASS Property transition value '1s -3s cubic-bezier(0, -2, 1, 3) top' 
-PASS Property transition value '1s -3s, cubic-bezier(0, -2, 1, 3) top' 
+PASS Property transition value '1s'
+PASS Property transition value 'cubic-bezier(0, -2, 1, 3)'
+PASS Property transition value '1s -3s'
+PASS Property transition value 'none'
+PASS Property transition value 'top'
+PASS Property transition value '1s -3s cubic-bezier(0, -2, 1, 3) top'
+PASS Property transition value '1s -3s, cubic-bezier(0, -2, 1, 3) top'
 

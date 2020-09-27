@@ -1,4 +1,4 @@
 
-PASS Check place-items: initial - align-items expanded value 
-PASS Check place-items: initial - justify-items expanded value 
+PASS Check place-items: initial - align-items expanded value
+PASS Check place-items: initial - justify-items expanded value
 

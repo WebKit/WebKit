@@ -1,4 +1,4 @@
 
-PASS Check initial color. 
-PASS Check that color changes correctly after shadow stylesheet selector and #container class is changed. 
+PASS Check initial color.
+PASS Check that color changes correctly after shadow stylesheet selector and #container class is changed.
 

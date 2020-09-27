@@ -1,170 +1,170 @@
 
-PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px] 
-PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (0) should be [1px] 
-PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px] 
-PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px] 
-PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (1) should be [2px] 
-PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (0) should be [1px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (1) should be [2px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px] 
-PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px] 
-PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (0) should be [1px] 
-PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px] 
-PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px] 
-PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (1) should be [2px] 
-PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px] 
-PASS Web Animations: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px] 
+PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px]
+PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (0) should be [1px]
+PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px]
+PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px]
+PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (1) should be [2px]
+PASS CSS Transitions: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (0) should be [1px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (1) should be [2px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px]
+PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px]
+PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (0) should be [1px]
+PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px]
+PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px]
+PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (1) should be [2px]
+PASS CSS Animations: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px]
+PASS Web Animations: property <border-image-outset> from neutral to [2px] at (-0.3) should be [0.7px]
 FAIL Web Animations: property <border-image-outset> from neutral to [2px] at (0) should be [1px] assert_equals: expected "1px " but got "0.7px "
 FAIL Web Animations: property <border-image-outset> from neutral to [2px] at (0.3) should be [1.3px] assert_equals: expected "1.3px " but got "1.09px "
 FAIL Web Animations: property <border-image-outset> from neutral to [2px] at (0.6) should be [1.6px] assert_equals: expected "1.6px " but got "1.64px "
-PASS Web Animations: property <border-image-outset> from neutral to [2px] at (1) should be [2px] 
+PASS Web Animations: property <border-image-outset> from neutral to [2px] at (1) should be [2px]
 FAIL Web Animations: property <border-image-outset> from neutral to [2px] at (1.5) should be [2.5px] assert_equals: expected "2.5px " but got "2px "
 FAIL CSS Transitions: property <border-image-outset> from [initial] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS CSS Transitions: property <border-image-outset> from [initial] to [2] at (0) should be [0] 
+PASS CSS Transitions: property <border-image-outset> from [initial] to [2] at (0) should be [0]
 FAIL CSS Transitions: property <border-image-outset> from [initial] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL CSS Transitions: property <border-image-outset> from [initial] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS CSS Transitions: property <border-image-outset> from [initial] to [2] at (1) should be [2] 
-PASS CSS Transitions: property <border-image-outset> from [initial] to [2] at (1.5) should be [3] 
+PASS CSS Transitions: property <border-image-outset> from [initial] to [2] at (1) should be [2]
+PASS CSS Transitions: property <border-image-outset> from [initial] to [2] at (1.5) should be [3]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (0) should be [0] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (0) should be [0]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (1) should be [2] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (1.5) should be [3] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (1) should be [2]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [initial] to [2] at (1.5) should be [3]
 FAIL CSS Animations: property <border-image-outset> from [initial] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS CSS Animations: property <border-image-outset> from [initial] to [2] at (0) should be [0] 
+PASS CSS Animations: property <border-image-outset> from [initial] to [2] at (0) should be [0]
 FAIL CSS Animations: property <border-image-outset> from [initial] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL CSS Animations: property <border-image-outset> from [initial] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS CSS Animations: property <border-image-outset> from [initial] to [2] at (1) should be [2] 
-PASS CSS Animations: property <border-image-outset> from [initial] to [2] at (1.5) should be [3] 
+PASS CSS Animations: property <border-image-outset> from [initial] to [2] at (1) should be [2]
+PASS CSS Animations: property <border-image-outset> from [initial] to [2] at (1.5) should be [3]
 FAIL Web Animations: property <border-image-outset> from [initial] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS Web Animations: property <border-image-outset> from [initial] to [2] at (0) should be [0] 
+PASS Web Animations: property <border-image-outset> from [initial] to [2] at (0) should be [0]
 FAIL Web Animations: property <border-image-outset> from [initial] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL Web Animations: property <border-image-outset> from [initial] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS Web Animations: property <border-image-outset> from [initial] to [2] at (1) should be [2] 
-PASS Web Animations: property <border-image-outset> from [initial] to [2] at (1.5) should be [3] 
-PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px] 
-PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px] 
-PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px] 
-PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px] 
-PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px] 
+PASS Web Animations: property <border-image-outset> from [initial] to [2] at (1) should be [2]
+PASS Web Animations: property <border-image-outset> from [initial] to [2] at (1.5) should be [3]
+PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px]
+PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px]
+PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px]
+PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px]
+PASS CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px]
 FAIL CSS Transitions: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 2px "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 2px "
-PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px] 
-PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px] 
-PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px] 
-PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px] 
-PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px] 
+PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px]
+PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px]
+PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px]
+PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px]
+PASS CSS Animations: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px]
 FAIL CSS Animations: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 2px "
 FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (-0.3) should be [12.4px] assert_equals: expected "12.4px " but got "0.7px "
 FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (0) should be [10px] assert_equals: expected "10px " but got "0.7px "
 FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (0.3) should be [7.6px] assert_equals: expected "7.6px " but got "1.09px "
 FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (0.6) should be [5.2px] assert_equals: expected "5.2px " but got "1.64px "
-PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px] 
+PASS Web Animations: property <border-image-outset> from [inherit] to [2px] at (1) should be [2px]
 FAIL Web Animations: property <border-image-outset> from [inherit] to [2px] at (1.5) should be [0px] assert_equals: expected "0px " but got "2px "
 FAIL CSS Transitions: property <border-image-outset> from [unset] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (0) should be [0] 
+PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (0) should be [0]
 FAIL CSS Transitions: property <border-image-outset> from [unset] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL CSS Transitions: property <border-image-outset> from [unset] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (1) should be [2] 
-PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (1.5) should be [3] 
+PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (1) should be [2]
+PASS CSS Transitions: property <border-image-outset> from [unset] to [2] at (1.5) should be [3]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (0) should be [0] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (0) should be [0]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (1) should be [2] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (1.5) should be [3] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (1) should be [2]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [unset] to [2] at (1.5) should be [3]
 FAIL CSS Animations: property <border-image-outset> from [unset] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS CSS Animations: property <border-image-outset> from [unset] to [2] at (0) should be [0] 
+PASS CSS Animations: property <border-image-outset> from [unset] to [2] at (0) should be [0]
 FAIL CSS Animations: property <border-image-outset> from [unset] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL CSS Animations: property <border-image-outset> from [unset] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS CSS Animations: property <border-image-outset> from [unset] to [2] at (1) should be [2] 
-PASS CSS Animations: property <border-image-outset> from [unset] to [2] at (1.5) should be [3] 
+PASS CSS Animations: property <border-image-outset> from [unset] to [2] at (1) should be [2]
+PASS CSS Animations: property <border-image-outset> from [unset] to [2] at (1.5) should be [3]
 FAIL Web Animations: property <border-image-outset> from [unset] to [2] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.6 "
-PASS Web Animations: property <border-image-outset> from [unset] to [2] at (0) should be [0] 
+PASS Web Animations: property <border-image-outset> from [unset] to [2] at (0) should be [0]
 FAIL Web Animations: property <border-image-outset> from [unset] to [2] at (0.3) should be [0.6] assert_equals: expected "0 " but got "0.6 "
 FAIL Web Animations: property <border-image-outset> from [unset] to [2] at (0.6) should be [1.2] assert_equals: expected "1 " but got "1.2 "
-PASS Web Animations: property <border-image-outset> from [unset] to [2] at (1) should be [2] 
-PASS Web Animations: property <border-image-outset> from [unset] to [2] at (1.5) should be [3] 
+PASS Web Animations: property <border-image-outset> from [unset] to [2] at (1) should be [2]
+PASS Web Animations: property <border-image-outset> from [unset] to [2] at (1.5) should be [3]
 FAIL CSS Transitions: property <border-image-outset> from [0px] to [5px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 1.5px "
-PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (0) should be [0px] 
-PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px] 
-PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px] 
-PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (1) should be [5px] 
-PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px] 
+PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (0) should be [0px]
+PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px]
+PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px]
+PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (1) should be [5px]
+PASS CSS Transitions: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 1.5px "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (0) should be [0px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (1) should be [5px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (0) should be [0px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (1) should be [5px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px]
 FAIL CSS Animations: property <border-image-outset> from [0px] to [5px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 1.5px "
-PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (0) should be [0px] 
-PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px] 
-PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px] 
-PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (1) should be [5px] 
-PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px] 
+PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (0) should be [0px]
+PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px]
+PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px]
+PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (1) should be [5px]
+PASS CSS Animations: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px]
 FAIL Web Animations: property <border-image-outset> from [0px] to [5px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 1.5px "
-PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (0) should be [0px] 
-PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px] 
-PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px] 
-PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (1) should be [5px] 
-PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px] 
+PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (0) should be [0px]
+PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (0.3) should be [1.5px]
+PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (0.6) should be [3px]
+PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (1) should be [5px]
+PASS Web Animations: property <border-image-outset> from [0px] to [5px] at (1.5) should be [7.5px]
 FAIL CSS Transitions: property <border-image-outset> from [0] to [1] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.3 "
-PASS CSS Transitions: property <border-image-outset> from [0] to [1] at (0) should be [0] 
+PASS CSS Transitions: property <border-image-outset> from [0] to [1] at (0) should be [0]
 FAIL CSS Transitions: property <border-image-outset> from [0] to [1] at (0.3) should be [0.3] assert_equals: expected "0 " but got "0.3 "
 FAIL CSS Transitions: property <border-image-outset> from [0] to [1] at (0.6) should be [0.6] assert_equals: expected "0 " but got "0.6 "
-PASS CSS Transitions: property <border-image-outset> from [0] to [1] at (1) should be [1] 
+PASS CSS Transitions: property <border-image-outset> from [0] to [1] at (1) should be [1]
 FAIL CSS Transitions: property <border-image-outset> from [0] to [1] at (1.5) should be [1.5] assert_equals: expected "1 " but got "1.5 "
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.3 "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (0) should be [0] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (0) should be [0]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (0.3) should be [0.3] assert_equals: expected "0 " but got "0.3 "
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (0.6) should be [0.6] assert_equals: expected "0 " but got "0.6 "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (1) should be [1] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (1) should be [1]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [0] to [1] at (1.5) should be [1.5] assert_equals: expected "1 " but got "1.5 "
 FAIL CSS Animations: property <border-image-outset> from [0] to [1] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.3 "
-PASS CSS Animations: property <border-image-outset> from [0] to [1] at (0) should be [0] 
+PASS CSS Animations: property <border-image-outset> from [0] to [1] at (0) should be [0]
 FAIL CSS Animations: property <border-image-outset> from [0] to [1] at (0.3) should be [0.3] assert_equals: expected "0 " but got "0.3 "
 FAIL CSS Animations: property <border-image-outset> from [0] to [1] at (0.6) should be [0.6] assert_equals: expected "0 " but got "0.6 "
-PASS CSS Animations: property <border-image-outset> from [0] to [1] at (1) should be [1] 
+PASS CSS Animations: property <border-image-outset> from [0] to [1] at (1) should be [1]
 FAIL CSS Animations: property <border-image-outset> from [0] to [1] at (1.5) should be [1.5] assert_equals: expected "1 " but got "1.5 "
 FAIL Web Animations: property <border-image-outset> from [0] to [1] at (-0.3) should be [0] assert_equals: expected "0 " but got "- 0.3 "
-PASS Web Animations: property <border-image-outset> from [0] to [1] at (0) should be [0] 
+PASS Web Animations: property <border-image-outset> from [0] to [1] at (0) should be [0]
 FAIL Web Animations: property <border-image-outset> from [0] to [1] at (0.3) should be [0.3] assert_equals: expected "0 " but got "0.3 "
 FAIL Web Animations: property <border-image-outset> from [0] to [1] at (0.6) should be [0.6] assert_equals: expected "0 " but got "0.6 "
-PASS Web Animations: property <border-image-outset> from [0] to [1] at (1) should be [1] 
+PASS Web Animations: property <border-image-outset> from [0] to [1] at (1) should be [1]
 FAIL Web Animations: property <border-image-outset> from [0] to [1] at (1.5) should be [1.5] assert_equals: expected "1 " but got "1.5 "
 FAIL CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (-0.3) should be [0 0 0px 0px] assert_equals: expected "0 0 0px 0px " but got "- 29 - 28 - 27px - 26px "
-PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px] 
-PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px] 
-PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px] 
-PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px] 
-PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px] 
+PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px]
+PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px]
+PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px]
+PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px]
+PASS CSS Transitions: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px]
 FAIL CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (-0.3) should be [0 0 0px 0px] assert_equals: expected "0 0 0px 0px " but got "- 29 - 28 - 27px - 26px "
-PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px] 
-PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px] 
+PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px]
+PASS CSS Transitions with transition: all: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px]
 FAIL CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (-0.3) should be [0 0 0px 0px] assert_equals: expected "0 0 0px 0px " but got "- 29 - 28 - 27px - 26px "
-PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px] 
-PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px] 
-PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px] 
-PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px] 
-PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px] 
+PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px]
+PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px]
+PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px]
+PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px]
+PASS CSS Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px]
 FAIL Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (-0.3) should be [0 0 0px 0px] assert_equals: expected "0 0 0px 0px " but got "- 29 - 28 - 27px - 26px "
-PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px] 
-PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px] 
-PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px] 
-PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px] 
-PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px] 
+PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0) should be [1 2 3px 4px]
+PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.3) should be [31 32 33px 34px]
+PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (0.6) should be [61 62 63px 64px]
+PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1) should be [101 102 103px 104px]
+PASS Web Animations: property <border-image-outset> from [1 2 3px 4px] to [101 102 103px 104px] at (1.5) should be [151 152 153px 154px]
 

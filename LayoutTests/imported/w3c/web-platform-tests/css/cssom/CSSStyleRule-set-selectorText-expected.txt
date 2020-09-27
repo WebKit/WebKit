@@ -1,84 +1,84 @@
 
-PASS CSSStyleRule: Can read selectorText value. 
-PASS CSSStyleRule: Invalid CSS selector:  
-PASS CSSStyleRule: Invalid CSS selector:   
-PASS CSSStyleRule: Invalid CSS selector: !! 
-PASS CSSStyleRule: Invalid CSS selector: 123 
-PASS CSSStyleRule: Invalid CSS selector: - 
-PASS CSSStyleRule: Invalid CSS selector: $ 
-PASS CSSStyleRule: Invalid CSS selector: : 
-PASS CSSStyleRule: Invalid CSS selector: :: 
-PASS CSSStyleRule: Invalid CSS selector: ::: 
-PASS CSSStyleRule: Invalid CSS selector: ::gibberish 
-PASS CSSStyleRule: Invalid CSS selector: :gibberish 
-PASS CSSStyleRule: Invalid CSS selector: . 
-PASS CSSStyleRule: Invalid CSS selector: # 
-PASS CSSStyleRule: Invalid CSS selector: [] 
-PASS CSSStyleRule: Invalid CSS selector: [ 
-PASS CSSStyleRule: Invalid CSS selector: () 
-PASS CSSStyleRule: Invalid CSS selector: ( 
-PASS CSSStyleRule: Invalid CSS selector: {} 
-PASS CSSStyleRule: Invalid CSS selector: { 
-PASS CSSStyleRule: selectorText value: |#container| isMatch: true 
-PASS CSSStyleRule: selectorText value: |#container  | isMatch: true 
-PASS CSSStyleRule: selectorText value: |  #container | isMatch: true 
-PASS CSSStyleRule: selectorText value: |.style1| isMatch: true 
-PASS CSSStyleRule: selectorText value: |div.style1| isMatch: true 
-PASS CSSStyleRule: selectorText value: |div:not(#non-existing-id)| isMatch: true 
-PASS CSSStyleRule: selectorText value: |div| isMatch: true 
-PASS CSSStyleRule: selectorText value: |*| isMatch: true 
-PASS CSSStyleRule: selectorText value: |#no-match| isMatch: false 
-PASS CSSStyleRule: selectorText value: |ÇĞıİ| isMatch: false 
-PASS CSSStyleRule: selectorText value: |🤓| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[language]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[language-no]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[lang="zh-CN"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang="ab-CD"]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[segment~="43"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[segment~="42"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang|="zh"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang|="zh-CN"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang|="ab"]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[lang|="z"]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[lang^="z"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang^="ab"]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[segment$="43"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[segment$="3"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[segment$="42"]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |[lang*="-"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang*="h-"]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[lang*="ab"]| isMatch: false 
-PASS CSSStyleRule: selectorText value: |*|div| isMatch: true 
-PASS CSSStyleRule: selectorText value: ||div| isMatch: false 
-PASS CSSStyleRule: selectorText value: |*|a| isMatch: false 
-PASS CSSStyleRule: selectorText value: |*|*| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[*|lang]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |[|lang]| isMatch: true 
-PASS CSSStyleRule: selectorText value: |:active| isMatch: false 
-PASS CSSStyleRule: selectorText value: |:not(:active)| isMatch: true 
-PASS CSSStyleRule: selectorText value: |*:not(:active)| isMatch: true 
-PASS CSSStyleRule: selectorText value: |div:not(:active)| isMatch: true 
-PASS CSSStyleRule: selectorText value: |div:active| isMatch: false 
-PASS CSSStyleRule: selectorText value: |span div| isMatch: true 
-PASS CSSStyleRule: selectorText value: |span  div  | isMatch: true 
-PASS CSSStyleRule: selectorText value: |span > div| isMatch: true 
-PASS CSSStyleRule: selectorText value: |div div| isMatch: false 
-PASS CSSStyleRule: selectorText value: |div > div| isMatch: false 
-PASS CSSStyleRule: selectorText value: |p + div| isMatch: true 
-PASS CSSStyleRule: selectorText value: |span + div| isMatch: false 
-PASS CSSStyleRule: selectorText value: |p ~ div| isMatch: true 
-PASS CSSStyleRule: selectorText value: |span ~ div| isMatch: false 
+PASS CSSStyleRule: Can read selectorText value.
+PASS CSSStyleRule: Invalid CSS selector:
+PASS CSSStyleRule: Invalid CSS selector:
+PASS CSSStyleRule: Invalid CSS selector: !!
+PASS CSSStyleRule: Invalid CSS selector: 123
+PASS CSSStyleRule: Invalid CSS selector: -
+PASS CSSStyleRule: Invalid CSS selector: $
+PASS CSSStyleRule: Invalid CSS selector: :
+PASS CSSStyleRule: Invalid CSS selector: ::
+PASS CSSStyleRule: Invalid CSS selector: :::
+PASS CSSStyleRule: Invalid CSS selector: ::gibberish
+PASS CSSStyleRule: Invalid CSS selector: :gibberish
+PASS CSSStyleRule: Invalid CSS selector: .
+PASS CSSStyleRule: Invalid CSS selector: #
+PASS CSSStyleRule: Invalid CSS selector: []
+PASS CSSStyleRule: Invalid CSS selector: [
+PASS CSSStyleRule: Invalid CSS selector: ()
+PASS CSSStyleRule: Invalid CSS selector: (
+PASS CSSStyleRule: Invalid CSS selector: {}
+PASS CSSStyleRule: Invalid CSS selector: {
+PASS CSSStyleRule: selectorText value: |#container| isMatch: true
+PASS CSSStyleRule: selectorText value: |#container  | isMatch: true
+PASS CSSStyleRule: selectorText value: |  #container | isMatch: true
+PASS CSSStyleRule: selectorText value: |.style1| isMatch: true
+PASS CSSStyleRule: selectorText value: |div.style1| isMatch: true
+PASS CSSStyleRule: selectorText value: |div:not(#non-existing-id)| isMatch: true
+PASS CSSStyleRule: selectorText value: |div| isMatch: true
+PASS CSSStyleRule: selectorText value: |*| isMatch: true
+PASS CSSStyleRule: selectorText value: |#no-match| isMatch: false
+PASS CSSStyleRule: selectorText value: |ÇĞıİ| isMatch: false
+PASS CSSStyleRule: selectorText value: |🤓| isMatch: false
+PASS CSSStyleRule: selectorText value: |[language]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[language-no]| isMatch: false
+PASS CSSStyleRule: selectorText value: |[lang="zh-CN"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang="ab-CD"]| isMatch: false
+PASS CSSStyleRule: selectorText value: |[segment~="43"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[segment~="42"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang|="zh"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang|="zh-CN"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang|="ab"]| isMatch: false
+PASS CSSStyleRule: selectorText value: |[lang|="z"]| isMatch: false
+PASS CSSStyleRule: selectorText value: |[lang^="z"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang^="ab"]| isMatch: false
+PASS CSSStyleRule: selectorText value: |[segment$="43"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[segment$="3"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[segment$="42"]| isMatch: false
+PASS CSSStyleRule: selectorText value: |[lang*="-"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang*="h-"]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[lang*="ab"]| isMatch: false
+PASS CSSStyleRule: selectorText value: |*|div| isMatch: true
+PASS CSSStyleRule: selectorText value: ||div| isMatch: false
+PASS CSSStyleRule: selectorText value: |*|a| isMatch: false
+PASS CSSStyleRule: selectorText value: |*|*| isMatch: true
+PASS CSSStyleRule: selectorText value: |[*|lang]| isMatch: true
+PASS CSSStyleRule: selectorText value: |[|lang]| isMatch: true
+PASS CSSStyleRule: selectorText value: |:active| isMatch: false
+PASS CSSStyleRule: selectorText value: |:not(:active)| isMatch: true
+PASS CSSStyleRule: selectorText value: |*:not(:active)| isMatch: true
+PASS CSSStyleRule: selectorText value: |div:not(:active)| isMatch: true
+PASS CSSStyleRule: selectorText value: |div:active| isMatch: false
+PASS CSSStyleRule: selectorText value: |span div| isMatch: true
+PASS CSSStyleRule: selectorText value: |span  div  | isMatch: true
+PASS CSSStyleRule: selectorText value: |span > div| isMatch: true
+PASS CSSStyleRule: selectorText value: |div div| isMatch: false
+PASS CSSStyleRule: selectorText value: |div > div| isMatch: false
+PASS CSSStyleRule: selectorText value: |p + div| isMatch: true
+PASS CSSStyleRule: selectorText value: |span + div| isMatch: false
+PASS CSSStyleRule: selectorText value: |p ~ div| isMatch: true
+PASS CSSStyleRule: selectorText value: |span ~ div| isMatch: false
 FAIL CSSStyleRule: selectorText value: |:lang(zh-CN)| isMatch: true assert_equals: expected ":lang(zh-CN)" but got ":lang(\"zh-CN\")"
 FAIL CSSStyleRule: selectorText value: |:lang(zh)| isMatch: true assert_equals: expected ":lang(zh)" but got ":lang(\"zh\")"
 FAIL CSSStyleRule: selectorText value: |:lang(tr-AZ)| isMatch: false assert_equals: expected ":lang(tr-AZ)" but got ":lang(\"tr-AZ\")"
-PASS CSSStyleRule: selectorText value: |::after| isMatch: false 
-PASS CSSStyleRule: selectorText value: |:after| isMatch: false 
-PASS CSSStyleRule: selectorText value: |::before| isMatch: false 
-PASS CSSStyleRule: selectorText value: |:before| isMatch: false 
-PASS CSSStyleRule: selectorText value: |::first-letter| isMatch: false 
-PASS CSSStyleRule: selectorText value: |:first-letter| isMatch: false 
-PASS CSSStyleRule: selectorText value: |::first-line| isMatch: false 
-PASS CSSStyleRule: selectorText value: |:first-line| isMatch: false 
-PASS CSSStyleRule: selectorText value: |div:focus:not([lang="zh-CN"])| isMatch: false 
-PASS CSSStyleRule: selectorText value: |div[lang="zh-CN"]:not(:focus)| isMatch: true 
+PASS CSSStyleRule: selectorText value: |::after| isMatch: false
+PASS CSSStyleRule: selectorText value: |:after| isMatch: false
+PASS CSSStyleRule: selectorText value: |::before| isMatch: false
+PASS CSSStyleRule: selectorText value: |:before| isMatch: false
+PASS CSSStyleRule: selectorText value: |::first-letter| isMatch: false
+PASS CSSStyleRule: selectorText value: |:first-letter| isMatch: false
+PASS CSSStyleRule: selectorText value: |::first-line| isMatch: false
+PASS CSSStyleRule: selectorText value: |:first-line| isMatch: false
+PASS CSSStyleRule: selectorText value: |div:focus:not([lang="zh-CN"])| isMatch: false
+PASS CSSStyleRule: selectorText value: |div[lang="zh-CN"]:not(:focus)| isMatch: true
 

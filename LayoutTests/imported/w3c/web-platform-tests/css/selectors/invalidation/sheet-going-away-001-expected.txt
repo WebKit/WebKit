@@ -1,4 +1,4 @@
 Should have a green background.
 
-PASS Style should be recomputed correctly when the stylesheet it depends on goes away 
+PASS Style should be recomputed correctly when the stylesheet it depends on goes away
 

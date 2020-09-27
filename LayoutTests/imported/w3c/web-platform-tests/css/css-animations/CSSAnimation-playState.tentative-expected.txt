@@ -1,7 +1,7 @@
 
-PASS A new CSS animation is initially play-pending 
-PASS Animation returns correct playState when paused 
-PASS Animation.playState updates when paused by script 
-PASS Animation.playState updates when resumed by setting style 
-PASS Animation returns correct playState when canceled 
+PASS A new CSS animation is initially play-pending
+PASS Animation returns correct playState when paused
+PASS Animation.playState updates when paused by script
+PASS Animation.playState updates when resumed by setting style
+PASS Animation returns correct playState when canceled
 

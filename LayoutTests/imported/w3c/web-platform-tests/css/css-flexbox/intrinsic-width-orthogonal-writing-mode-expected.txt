@@ -1,17 +1,17 @@
 
-PASS .inline-flexbox 1 
-FAIL .inline-flexbox 2 assert_equals: 
+PASS .inline-flexbox 1
+FAIL .inline-flexbox 2 assert_equals:
 <div class="inline-flexbox" data-expected-width="20">
     <div class="vertical" style="line-height: 20px;">Some text</div>
 </div>
 width expected 20 but got 0
-FAIL .inline-flexbox 3 assert_equals: 
+FAIL .inline-flexbox 3 assert_equals:
 <div class="inline-flexbox" data-expected-width="20">
     <span class="vertical" data-expected-width="20" style="line-height: 20px;">Some text</span>
 </div>
 width expected 20 but got 0
- 
+
 Some text
- 
+
 Some text
 

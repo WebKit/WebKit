@@ -1,11 +1,11 @@
 
-PASS e.style['padding-block-start'] = "0" should set the property value 
-PASS e.style['padding-block-start'] = "calc(20% + 10px)" should set the property value 
-PASS e.style['padding-block-end'] = "10px" should set the property value 
-PASS e.style['padding-inline-start'] = "20%" should set the property value 
-PASS e.style['padding-inline-end'] = "calc(2em + 2ex)" should set the property value 
-PASS e.style['padding-block'] = "10px" should set the property value 
-PASS e.style['padding-block'] = "10px 20%" should set the property value 
-PASS e.style['padding-inline'] = "20%" should set the property value 
-PASS e.style['padding-inline'] = "20% calc(20% + 10px)" should set the property value 
+PASS e.style['padding-block-start'] = "0" should set the property value
+PASS e.style['padding-block-start'] = "calc(20% + 10px)" should set the property value
+PASS e.style['padding-block-end'] = "10px" should set the property value
+PASS e.style['padding-inline-start'] = "20%" should set the property value
+PASS e.style['padding-inline-end'] = "calc(2em + 2ex)" should set the property value
+PASS e.style['padding-block'] = "10px" should set the property value
+PASS e.style['padding-block'] = "10px 20%" should set the property value
+PASS e.style['padding-inline'] = "20%" should set the property value
+PASS e.style['padding-inline'] = "20% calc(20% + 10px)" should set the property value
 

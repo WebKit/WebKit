@@ -1,5 +1,5 @@
 
-PASS Property shape-margin value 'calc(10px + 0.5em)' 
-PASS Property shape-margin value 'calc(10px - 0.5em)' 
-PASS Property shape-margin value '50%' 
+PASS Property shape-margin value 'calc(10px + 0.5em)'
+PASS Property shape-margin value 'calc(10px - 0.5em)'
+PASS Property shape-margin value '50%'
 

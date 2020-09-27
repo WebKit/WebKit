@@ -1,18 +1,18 @@
 
-PASS circle(foo) - invalid 
-PASS circle(10) - invalid 
-PASS circle(20px 30px) - invalid 
-PASS circle(20% 30%) - invalid 
-PASS circle(20px, 30px) - invalid 
-PASS circle(20%, 30%) - invalid 
-PASS circle(20px closest-side) - invalid 
-PASS circle(20px farthest-side) - invalid 
-PASS circle(closest-side 20px) - invalid 
-PASS circle(farthest-side 20px) - invalid 
-PASS circle(20% closest-side) - invalid 
-PASS circle(20% farthest-side) - invalid 
-PASS circle(closest-side 20%) - invalid 
-PASS circle(farthest-side 20%) - invalid 
-PASS circle(closest-side farthest-side) - invalid 
-PASS circle(farthest-side closest-side) - invalid 
+PASS circle(foo) - invalid
+PASS circle(10) - invalid
+PASS circle(20px 30px) - invalid
+PASS circle(20% 30%) - invalid
+PASS circle(20px, 30px) - invalid
+PASS circle(20%, 30%) - invalid
+PASS circle(20px closest-side) - invalid
+PASS circle(20px farthest-side) - invalid
+PASS circle(closest-side 20px) - invalid
+PASS circle(farthest-side 20px) - invalid
+PASS circle(20% closest-side) - invalid
+PASS circle(20% farthest-side) - invalid
+PASS circle(closest-side 20%) - invalid
+PASS circle(farthest-side 20%) - invalid
+PASS circle(closest-side farthest-side) - invalid
+PASS circle(farthest-side closest-side) - invalid
 

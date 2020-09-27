@@ -1,28 +1,28 @@
 
-PASS Default gap is 'normal' 
-PASS gap accepts pixels 
-PASS gap accepts pixels 2 
-PASS gap accepts pixels combined with percentage 
-PASS gap accepts em 
-PASS gap accepts em 2 
-PASS gap accepts vw 
-PASS gap accepts vw and vh 
-PASS gap accepts percentage 
-PASS gap accepts percentage 2 
-PASS gap accepts calc() 
-PASS gap accepts calc() mixing fixed and percentage values 
-PASS gap accepts calc() 2 
-PASS Initial gap is 'normal' 
-PASS Initial gap is 'normal' 2 
-PASS Initial inherited gap is 'normal' 
-PASS gap is inheritable 
-PASS Negative gap is invalid 
-PASS 'max-content' gap is invalid 
-PASS 'none' gap is invalid 
-PASS Angle gap is invalid 
-PASS Resolution gap is invalid 
-PASS Time gap is invalid 
-PASS gap with three values is invalid 
-PASS gap with slash is invalid 
-PASS gap with one wrong value is invalid 
+PASS Default gap is 'normal'
+PASS gap accepts pixels
+PASS gap accepts pixels 2
+PASS gap accepts pixels combined with percentage
+PASS gap accepts em
+PASS gap accepts em 2
+PASS gap accepts vw
+PASS gap accepts vw and vh
+PASS gap accepts percentage
+PASS gap accepts percentage 2
+PASS gap accepts calc()
+PASS gap accepts calc() mixing fixed and percentage values
+PASS gap accepts calc() 2
+PASS Initial gap is 'normal'
+PASS Initial gap is 'normal' 2
+PASS Initial inherited gap is 'normal'
+PASS gap is inheritable
+PASS Negative gap is invalid
+PASS 'max-content' gap is invalid
+PASS 'none' gap is invalid
+PASS Angle gap is invalid
+PASS Resolution gap is invalid
+PASS Time gap is invalid
+PASS gap with three values is invalid
+PASS gap with slash is invalid
+PASS gap with one wrong value is invalid
 

@@ -4,9 +4,9 @@
 1234567 567
 1234 567
 
-PASS CSS Test: Positions of trailing collapsible spaces 
-PASS CSS Test: Positions of trailing collapsible spaces 1 
-PASS CSS Test: Positions of trailing collapsible spaces 2 
-PASS CSS Test: Positions of trailing collapsible spaces 3 
-PASS CSS Test: Positions of trailing collapsible spaces 4 
+PASS CSS Test: Positions of trailing collapsible spaces
+PASS CSS Test: Positions of trailing collapsible spaces 1
+PASS CSS Test: Positions of trailing collapsible spaces 2
+PASS CSS Test: Positions of trailing collapsible spaces 3
+PASS CSS Test: Positions of trailing collapsible spaces 4
 

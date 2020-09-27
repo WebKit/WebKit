@@ -1,4 +1,4 @@
 success if does not crash
 
-PASS Chrome crash with inline  
+PASS Chrome crash with inline
 

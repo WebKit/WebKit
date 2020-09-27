@@ -1,10 +1,10 @@
 
-PASS Property inset value 'auto' 
-PASS Property inset value '-10px' 
-PASS Property inset value 'calc(10px - 0.5em) -20%' 
-PASS Property inset value 'auto auto' 
-PASS Property inset value '10px calc(10px - 0.5em) -30px' 
-PASS Property inset value 'auto auto auto' 
-PASS Property inset value '10px 20px auto -30px' 
-PASS Property inset value 'auto auto auto auto' 
+PASS Property inset value 'auto'
+PASS Property inset value '-10px'
+PASS Property inset value 'calc(10px - 0.5em) -20%'
+PASS Property inset value 'auto auto'
+PASS Property inset value '10px calc(10px - 0.5em) -30px'
+PASS Property inset value 'auto auto auto'
+PASS Property inset value '10px 20px auto -30px'
+PASS Property inset value 'auto auto auto auto'
 

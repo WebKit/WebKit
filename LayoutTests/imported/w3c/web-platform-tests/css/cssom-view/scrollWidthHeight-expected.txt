@@ -1,13 +1,13 @@
 
-PASS elemSimple.clientHeight is the height of the padding edge 
-PASS elemSimple.scrollHeight is its clientHeight 
-PASS elemSimple.clientWidth is the width of the padding edge 
-PASS elemSimple.scrollWidth is its clientWidth 
-PASS elemOverflow.clientHeight is the height of the padding edge 
-PASS elemOverflow.clientWidth is the width of the padding edge 
-PASS elemOverflow.scrollHeight is the width of its scrolled contents (ignoring padding, since we overflowed) 
-PASS elemNestedOverflow.clientHeight is the height of the padding edge 
-PASS elemNestedOverflow.scrollHeight is the height of its scrolled contents (ignoring padding, since we overflowed) 
-PASS elemNestedOverflow.clientWidth is the height of the padding edge 
-PASS elemNestedOverflow.scrollWidth is the width of its scrolled contents (ignoring padding, since we overflowed) 
+PASS elemSimple.clientHeight is the height of the padding edge
+PASS elemSimple.scrollHeight is its clientHeight
+PASS elemSimple.clientWidth is the width of the padding edge
+PASS elemSimple.scrollWidth is its clientWidth
+PASS elemOverflow.clientHeight is the height of the padding edge
+PASS elemOverflow.clientWidth is the width of the padding edge
+PASS elemOverflow.scrollHeight is the width of its scrolled contents (ignoring padding, since we overflowed)
+PASS elemNestedOverflow.clientHeight is the height of the padding edge
+PASS elemNestedOverflow.scrollHeight is the height of its scrolled contents (ignoring padding, since we overflowed)
+PASS elemNestedOverflow.clientWidth is the height of the padding edge
+PASS elemNestedOverflow.scrollWidth is the width of its scrolled contents (ignoring padding, since we overflowed)
 

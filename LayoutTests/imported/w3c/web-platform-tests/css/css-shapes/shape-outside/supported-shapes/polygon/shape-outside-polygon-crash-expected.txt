@@ -1,5 +1,5 @@
 x
 y
 
-PASS Test passes if the renderer does not crash. 
+PASS Test passes if the renderer does not crash.
 

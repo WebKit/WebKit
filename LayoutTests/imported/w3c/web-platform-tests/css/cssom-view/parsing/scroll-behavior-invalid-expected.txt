@@ -1,5 +1,5 @@
 
-PASS e.style['scroll-behavior'] = "normal" should not set the property value 
-PASS e.style['scroll-behavior'] = "auto smooth" should not set the property value 
-PASS e.style['scroll-behavior'] = "auto, smooth" should not set the property value 
+PASS e.style['scroll-behavior'] = "normal" should not set the property value
+PASS e.style['scroll-behavior'] = "auto smooth" should not set the property value
+PASS e.style['scroll-behavior'] = "auto, smooth" should not set the property value
 

@@ -1,5 +1,5 @@
 
-PASS e.style['inset'] = "none" should not set the property value 
-PASS e.style['inset'] = "20%, calc(10px - 0.5em)" should not set the property value 
-PASS e.style['inset'] = "10px auto 20px auto 30px" should not set the property value 
+PASS e.style['inset'] = "none" should not set the property value
+PASS e.style['inset'] = "20%, calc(10px - 0.5em)" should not set the property value
+PASS e.style['inset'] = "10px auto 20px auto 30px" should not set the property value
 

@@ -3,6 +3,6 @@ Both bars should be the same width
 Content
 Content
 
-PASS .flexbox 1 
-PASS .flexbox 2 
+PASS .flexbox 1
+PASS .flexbox 2
 

@@ -2,5 +2,5 @@ A
 A
 
 FAIL font-weight animation assert_equals: Font weight before animation expected "400" but got "normal"
-PASS font-weight transition 
+PASS font-weight transition
 

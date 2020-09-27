@@ -1,4 +1,4 @@
 
 
-PASS Viewport units are correctly updated after resize even if a font load has happened before 
+PASS Viewport units are correctly updated after resize even if a font load has happened before
 

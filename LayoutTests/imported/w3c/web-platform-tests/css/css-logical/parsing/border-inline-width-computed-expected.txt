@@ -1,13 +1,13 @@
 
-PASS Property border-inline-start-width value 'calc(10px + 0.5em)' 
-PASS Property border-inline-start-width value 'calc(10px - 0.5em)' 
-PASS Property border-inline-start-width value 'thin' 
-PASS Property border-inline-start-width value 'medium' 
-PASS Property border-inline-end-width value 'calc(10px + 0.5em)' 
-PASS Property border-inline-end-width value 'calc(10px - 0.5em)' 
-PASS Property border-inline-end-width value 'thick' 
-PASS Property border-inline-width value '10px' 
-PASS Property border-inline-width value '10px 20px' 
-PASS Property border-inline-width value '10px 10px' 
-PASS width is zero if the border block style is none or hidden 
+PASS Property border-inline-start-width value 'calc(10px + 0.5em)'
+PASS Property border-inline-start-width value 'calc(10px - 0.5em)'
+PASS Property border-inline-start-width value 'thin'
+PASS Property border-inline-start-width value 'medium'
+PASS Property border-inline-end-width value 'calc(10px + 0.5em)'
+PASS Property border-inline-end-width value 'calc(10px - 0.5em)'
+PASS Property border-inline-end-width value 'thick'
+PASS Property border-inline-width value '10px'
+PASS Property border-inline-width value '10px 20px'
+PASS Property border-inline-width value '10px 10px'
+PASS width is zero if the border block style is none or hidden
 

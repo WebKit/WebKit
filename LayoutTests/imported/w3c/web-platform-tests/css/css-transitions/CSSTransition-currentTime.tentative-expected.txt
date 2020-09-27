@@ -1,7 +1,7 @@
 
-PASS currentTime can be used to seek a CSS transition 
-PASS Skipping forwards through transition 
-PASS Skipping backwards through transition 
-PASS Setting currentTime to null on a CSS transition throws 
+PASS currentTime can be used to seek a CSS transition
+PASS Skipping forwards through transition
+PASS Skipping backwards through transition
+PASS Setting currentTime to null on a CSS transition throws
 FAIL Transition reversing behavior respects currentTime and uses the transition's current position. assert_approx_equals: The reversed transition has correctly reduced duration expected 31535.681250589303 +/- 1 but got 100000
 

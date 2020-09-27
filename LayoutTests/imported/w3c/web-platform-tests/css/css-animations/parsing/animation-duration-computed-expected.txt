@@ -1,5 +1,5 @@
 
-PASS Property animation-duration value '500ms' 
-PASS Property animation-duration value 'calc(2 * 3s)' 
-PASS Property animation-duration value '20s, 10s' 
+PASS Property animation-duration value '500ms'
+PASS Property animation-duration value 'calc(2 * 3s)'
+PASS Property animation-duration value '20s, 10s'
 

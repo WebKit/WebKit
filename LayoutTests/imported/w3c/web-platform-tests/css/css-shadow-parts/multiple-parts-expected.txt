@@ -1,6 +1,6 @@
-The following text should match its stated colour: 
+The following text should match its stated colour:
 
-PASS Double-part in selected host is styled 
-PASS Single-part-1 in selected host is not styled 
-PASS Single-part-2 in selected host is not styled 
+PASS Double-part in selected host is styled
+PASS Single-part-1 in selected host is not styled
+PASS Single-part-2 in selected host is not styled
 

@@ -1,6 +1,6 @@
 
-PASS Property background-clip value 'border-box' 
-PASS Property background-clip value 'padding-box' 
-PASS Property background-clip value 'content-box' 
-PASS Property background-clip value 'border-box, padding-box, content-box' 
+PASS Property background-clip value 'border-box'
+PASS Property background-clip value 'padding-box'
+PASS Property background-clip value 'content-box'
+PASS Property background-clip value 'border-box, padding-box, content-box'
 

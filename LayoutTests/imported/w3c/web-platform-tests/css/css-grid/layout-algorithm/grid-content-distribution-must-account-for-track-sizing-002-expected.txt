@@ -1,4 +1,4 @@
 XXX XX X XX X XXX
 
-PASS .grid 1 
+PASS .grid 1
 

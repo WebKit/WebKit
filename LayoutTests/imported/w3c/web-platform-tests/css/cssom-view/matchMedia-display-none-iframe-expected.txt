@@ -1,4 +1,4 @@
 
-PASS matchMedia should work in display: none iframes 
-PASS matchMedia should assume a 0x0 viewport in display: none iframes 
+PASS matchMedia should work in display: none iframes
+PASS matchMedia should assume a 0x0 viewport in display: none iframes
 

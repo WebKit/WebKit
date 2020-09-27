@@ -1,4 +1,4 @@
  
 
-PASS A [lang|='es'] value that matches an identical xml:lang attribute value will NOT produce styling in pages served as HTML. 
+PASS A [lang|='es'] value that matches an identical xml:lang attribute value will NOT produce styling in pages served as HTML.
 

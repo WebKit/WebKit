@@ -7,8 +7,8 @@ Horizontal grid and verticalLR item with relative width
  VerticalRL grid and item with fixed height
 É É ÉÉ
 
-PASS .inline-grid 1 
-PASS .inline-grid 2 
-PASS .inline-grid 3 
-PASS .inline-grid 4 
+PASS .inline-grid 1
+PASS .inline-grid 2
+PASS .inline-grid 3
+PASS .inline-grid 4
 

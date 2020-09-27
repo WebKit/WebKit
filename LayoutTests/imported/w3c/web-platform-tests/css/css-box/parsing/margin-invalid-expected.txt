@@ -1,9 +1,9 @@
 
-PASS e.style['margin'] = "available" should not set the property value 
-PASS e.style['margin'] = "10px border-box" should not set the property value 
-PASS e.style['margin'] = "1% 2% 3% 4% 5%" should not set the property value 
-PASS e.style['margin-top'] = "calc(2em + 3ex) auto" should not set the property value 
-PASS e.style['margin-right'] = "auto calc(2em + 3ex) 20%" should not set the property value 
-PASS e.style['margin-bottom'] = "10px 20% calc(2em + 3ex) auto" should not set the property value 
-PASS e.style['margin-bottom-left'] = "none" should not set the property value 
+PASS e.style['margin'] = "available" should not set the property value
+PASS e.style['margin'] = "10px border-box" should not set the property value
+PASS e.style['margin'] = "1% 2% 3% 4% 5%" should not set the property value
+PASS e.style['margin-top'] = "calc(2em + 3ex) auto" should not set the property value
+PASS e.style['margin-right'] = "auto calc(2em + 3ex) 20%" should not set the property value
+PASS e.style['margin-bottom'] = "10px 20% calc(2em + 3ex) auto" should not set the property value
+PASS e.style['margin-bottom-left'] = "none" should not set the property value
 

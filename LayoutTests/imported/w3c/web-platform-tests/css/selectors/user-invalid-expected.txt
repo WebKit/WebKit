@@ -1,5 +1,5 @@
 
 
 FAIL :user-invalid selector should be supported The string did not match the expected pattern.
-PASS :user-error selector should not be supported 
+PASS :user-error selector should not be supported
 

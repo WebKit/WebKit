@@ -6,5 +6,5 @@ If the element that says "I will be focused programmatically." has a red outline
 Click me.
 I will be focused programmatically.
 
-PASS Programmatic focus after click should not match :focus-visible 
+PASS Programmatic focus after click should not match :focus-visible
 

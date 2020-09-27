@@ -1,9 +1,9 @@
 
-PASS Test 'initial' value when nothing is specified 
-PASS Test justify-content: 'initial' 
-PASS Test grid items justify-content: 'initial' 
-PASS Test flex items justify-content: 'initial' 
-PASS Test absolute positioned elements justify-content: 'initial' 
-PASS Test absolute positioned grid items justify-content: 'initial' 
-PASS Test absolute positioned flex items justify-content: 'initial' 
+PASS Test 'initial' value when nothing is specified
+PASS Test justify-content: 'initial'
+PASS Test grid items justify-content: 'initial'
+PASS Test flex items justify-content: 'initial'
+PASS Test absolute positioned elements justify-content: 'initial'
+PASS Test absolute positioned grid items justify-content: 'initial'
+PASS Test absolute positioned flex items justify-content: 'initial'
 

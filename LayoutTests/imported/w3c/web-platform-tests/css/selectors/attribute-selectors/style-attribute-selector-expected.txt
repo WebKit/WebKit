@@ -1,13 +1,13 @@
 
-PASS Match style attribute with no value 
-PASS Match style attribute with empty value 
-PASS Match style attribute with background value 
-PASS Initially no style attribute to match 
-PASS Dynamically change style with Element.setAttribute 
-PASS Dynamically change style with Element.style 
-PASS Dynamically change style with Element.style.property 
-PASS Dynamically remove style with Element.removeAttribute 
-PASS Dynamically remove style with Element.style 
-PASS Dynamically remove style with Element.style.property 
-PASS Dynamically remove style with Element.style.removeProperty 
+PASS Match style attribute with no value
+PASS Match style attribute with empty value
+PASS Match style attribute with background value
+PASS Initially no style attribute to match
+PASS Dynamically change style with Element.setAttribute
+PASS Dynamically change style with Element.style
+PASS Dynamically change style with Element.style.property
+PASS Dynamically remove style with Element.removeAttribute
+PASS Dynamically remove style with Element.style
+PASS Dynamically remove style with Element.style.property
+PASS Dynamically remove style with Element.style.removeProperty
 

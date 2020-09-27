@@ -1,9 +1,9 @@
 
-PASS Type of #s-0 is expected to be namespace rule 
-PASS Type of #s-1 is expected to be @import rule 
-PASS Type of #s-2 is expected to be style rule 
-PASS Type of #s-3 is expected to be style rule 
-PASS Type of #s-4 is expected to be @font-face rule 
-PASS Type of #s-5 is expected to be media rule 
-PASS Type of #s-6 is expected to be page rule 
+PASS Type of #s-0 is expected to be namespace rule
+PASS Type of #s-1 is expected to be @import rule
+PASS Type of #s-2 is expected to be style rule
+PASS Type of #s-3 is expected to be style rule
+PASS Type of #s-4 is expected to be @font-face rule
+PASS Type of #s-5 is expected to be media rule
+PASS Type of #s-6 is expected to be page rule
 

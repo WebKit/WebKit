@@ -1,4 +1,4 @@
 
-PASS e.style['shape-image-threshold'] = "auto" should not set the property value 
-PASS e.style['shape-image-threshold'] = "10px" should not set the property value 
+PASS e.style['shape-image-threshold'] = "auto" should not set the property value
+PASS e.style['shape-image-threshold'] = "10px" should not set the property value
 

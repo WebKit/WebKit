@@ -1,10 +1,10 @@
 
-PASS Property margin value '10px' 
-PASS Property margin value '10px 20px 30px 40px' 
-PASS Property margin value 'calc(0.5em + 10px)' 
-PASS Property margin value '30%' 
-PASS Property margin-top value '10px' 
-PASS Property margin-right value '20px' 
-PASS Property margin-bottom value '30px' 
-PASS Property margin-left value '40px' 
+PASS Property margin value '10px'
+PASS Property margin value '10px 20px 30px 40px'
+PASS Property margin value 'calc(0.5em + 10px)'
+PASS Property margin value '30%'
+PASS Property margin-top value '10px'
+PASS Property margin-right value '20px'
+PASS Property margin-bottom value '30px'
+PASS Property margin-left value '40px'
 

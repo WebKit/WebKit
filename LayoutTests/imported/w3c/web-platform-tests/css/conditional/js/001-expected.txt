@@ -1,13 +1,13 @@
 
-PASS nested @supports serialize properly 
+PASS nested @supports serialize properly
 FAIL @keyframes nested in @supports serialize properly assert_equals: expected "@media all { @supports (padding: 0) { @keyframes foo { 0% { top: 0px; left: 0px; } 100% { top: 100px; left: 100px; } } } }" but got "@media all { @supports (padding: 0) { @-webkit-keyframes foo { 0% { top: 0px; left: 0px; } 100% { top: 100px; left: 100px; } } } }"
-PASS The style sheet structure is properly represented 
-PASS Deleting the top level of a nested structue works 
-PASS Rule insertion works in nested @supports rules 
-PASS Insertion @supports rules into another @supports rule works 
-PASS Deletion of a nested @supports rule works 
-PASS Inserting @font-face inside @supports works 
-PASS Inserting an @supports inside a style rule should fail 
-PASS 'and' arguments in @supports serialize in the correct order and with extra parentheses 
-PASS 'or' arguments in @supports serialize in the correct order and with extra parentheses 
+PASS The style sheet structure is properly represented
+PASS Deleting the top level of a nested structue works
+PASS Rule insertion works in nested @supports rules
+PASS Insertion @supports rules into another @supports rule works
+PASS Deletion of a nested @supports rule works
+PASS Inserting @font-face inside @supports works
+PASS Inserting an @supports inside a style rule should fail
+PASS 'and' arguments in @supports serialize in the correct order and with extra parentheses
+PASS 'or' arguments in @supports serialize in the correct order and with extra parentheses
 

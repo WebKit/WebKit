@@ -1,4 +1,4 @@
 
-PASS e.style['font-size-adjust'] = "auto" should not set the property value 
-PASS e.style['font-size-adjust'] = "-10" should not set the property value 
+PASS e.style['font-size-adjust'] = "auto" should not set the property value
+PASS e.style['font-size-adjust'] = "-10" should not set the property value
 

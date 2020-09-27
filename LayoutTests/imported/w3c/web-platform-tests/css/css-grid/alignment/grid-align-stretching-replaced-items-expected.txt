@@ -19,10 +19,10 @@ The blue image's original size is 100px x 100px, auto-margins prevent stretching
 
 
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
-PASS .grid 6 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
 

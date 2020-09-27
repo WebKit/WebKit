@@ -1,5 +1,5 @@
 
-PASS e.style['order'] = "0" should set the property value 
-PASS e.style['order'] = "123" should set the property value 
-PASS e.style['order'] = "-45" should set the property value 
+PASS e.style['order'] = "0" should set the property value
+PASS e.style['order'] = "123" should set the property value
+PASS e.style['order'] = "-45" should set the property value
 

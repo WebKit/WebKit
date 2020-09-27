@@ -1,14 +1,14 @@
 
-PASS Property margin-block-start value '10px' 
+PASS Property margin-block-start value '10px'
 FAIL Property margin-block-end value '10%' assert_equals: expected "20px" but got "0px"
-PASS Property margin-inline-start value '30px' 
-PASS Property margin-inline-end value '1em' 
+PASS Property margin-inline-start value '30px'
+PASS Property margin-inline-end value '1em'
 FAIL Property margin-block-start value 'calc(10% + 40px)' assert_equals: expected "60px" but got "0px"
-PASS Property margin-block-end value 'calc(10px + 0.5em)' 
-PASS Property margin-inline-start value 'calc(10px + 0.5em)' 
+PASS Property margin-block-end value 'calc(10px + 0.5em)'
+PASS Property margin-inline-start value 'calc(10px + 0.5em)'
 FAIL Property margin-inline-end value 'calc(10% + 40px)' assert_equals: expected "60px" but got "40px"
-PASS Property margin-block value '10px' 
-PASS Property margin-block value '10px 20px' 
-PASS Property margin-inline value '30px' 
-PASS Property margin-inline value '30px 40px' 
+PASS Property margin-block value '10px'
+PASS Property margin-block value '10px 20px'
+PASS Property margin-inline value '30px'
+PASS Property margin-inline value '30px 40px'
 

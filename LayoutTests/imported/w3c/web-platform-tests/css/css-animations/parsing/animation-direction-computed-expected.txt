@@ -1,3 +1,3 @@
 
-PASS Property animation-direction value 'normal, reverse, alternate, alternate-reverse' 
+PASS Property animation-direction value 'normal, reverse, alternate, alternate-reverse'
 

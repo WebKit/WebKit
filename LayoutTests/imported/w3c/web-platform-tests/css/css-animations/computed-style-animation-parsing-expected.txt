@@ -1,5 +1,5 @@
 
-PASS Test animation name being empty. 
+PASS Test animation name being empty.
 FAIL Test a non-conflicting animation name. assert_equals: computedStyle2.animationName expected "myShorthandAnim" but got "none"
 FAIL Test an animation name that is the same as a possible animation fill-mode. assert_equals: computedStyle2.animationName expected "forwards" but got "none"
 FAIL Test an animation name that is the same as a possible animation direction. assert_equals: computedStyle2.animationName expected "normal" but got "none"

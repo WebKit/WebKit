@@ -1,4 +1,4 @@
 
-PASS @font-face declarations are instances of CSSFontFaceRule 
-PASS The style attribute must return a CSSStyleDeclaration block 
+PASS @font-face declarations are instances of CSSFontFaceRule
+PASS The style attribute must return a CSSStyleDeclaration block
 

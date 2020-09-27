@@ -1,158 +1,158 @@
 
-PASS CSS Transitions: property <column-count> from neutral to [20] at (-0.5) should be [5] 
-PASS CSS Transitions: property <column-count> from neutral to [20] at (0) should be [10] 
-PASS CSS Transitions: property <column-count> from neutral to [20] at (0.3) should be [13] 
-PASS CSS Transitions: property <column-count> from neutral to [20] at (0.7) should be [17] 
-PASS CSS Transitions: property <column-count> from neutral to [20] at (1) should be [20] 
-PASS CSS Transitions: property <column-count> from neutral to [20] at (1.5) should be [25] 
-PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (-0.5) should be [5] 
-PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (0) should be [10] 
-PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (0.3) should be [13] 
-PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (0.7) should be [17] 
-PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (1) should be [20] 
-PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (1.5) should be [25] 
-PASS CSS Animations: property <column-count> from neutral to [20] at (-0.5) should be [5] 
-PASS CSS Animations: property <column-count> from neutral to [20] at (0) should be [10] 
-PASS CSS Animations: property <column-count> from neutral to [20] at (0.3) should be [13] 
-PASS CSS Animations: property <column-count> from neutral to [20] at (0.7) should be [17] 
-PASS CSS Animations: property <column-count> from neutral to [20] at (1) should be [20] 
-PASS CSS Animations: property <column-count> from neutral to [20] at (1.5) should be [25] 
-PASS Web Animations: property <column-count> from neutral to [20] at (-0.5) should be [5] 
+PASS CSS Transitions: property <column-count> from neutral to [20] at (-0.5) should be [5]
+PASS CSS Transitions: property <column-count> from neutral to [20] at (0) should be [10]
+PASS CSS Transitions: property <column-count> from neutral to [20] at (0.3) should be [13]
+PASS CSS Transitions: property <column-count> from neutral to [20] at (0.7) should be [17]
+PASS CSS Transitions: property <column-count> from neutral to [20] at (1) should be [20]
+PASS CSS Transitions: property <column-count> from neutral to [20] at (1.5) should be [25]
+PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (-0.5) should be [5]
+PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (0) should be [10]
+PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (0.3) should be [13]
+PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (0.7) should be [17]
+PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (1) should be [20]
+PASS CSS Transitions with transition: all: property <column-count> from neutral to [20] at (1.5) should be [25]
+PASS CSS Animations: property <column-count> from neutral to [20] at (-0.5) should be [5]
+PASS CSS Animations: property <column-count> from neutral to [20] at (0) should be [10]
+PASS CSS Animations: property <column-count> from neutral to [20] at (0.3) should be [13]
+PASS CSS Animations: property <column-count> from neutral to [20] at (0.7) should be [17]
+PASS CSS Animations: property <column-count> from neutral to [20] at (1) should be [20]
+PASS CSS Animations: property <column-count> from neutral to [20] at (1.5) should be [25]
+PASS Web Animations: property <column-count> from neutral to [20] at (-0.5) should be [5]
 FAIL Web Animations: property <column-count> from neutral to [20] at (0) should be [10] assert_equals: expected "10 " but got "5 "
 FAIL Web Animations: property <column-count> from neutral to [20] at (0.3) should be [13] assert_equals: expected "13 " but got "10 "
-PASS Web Animations: property <column-count> from neutral to [20] at (0.7) should be [17] 
-PASS Web Animations: property <column-count> from neutral to [20] at (1) should be [20] 
+PASS Web Animations: property <column-count> from neutral to [20] at (0.7) should be [17]
+PASS Web Animations: property <column-count> from neutral to [20] at (1) should be [20]
 FAIL Web Animations: property <column-count> from neutral to [20] at (1.5) should be [25] assert_equals: expected "25 " but got "20 "
 FAIL CSS Transitions: property <column-count> from [auto] to [20] at (-0.3) should be [20] assert_equals: expected "20 " but got "65530 "
 FAIL CSS Transitions: property <column-count> from [auto] to [20] at (0) should be [20] assert_equals: expected "20 " but got "0 "
 FAIL CSS Transitions: property <column-count> from [auto] to [20] at (0.3) should be [20] assert_equals: expected "20 " but got "6 "
 FAIL CSS Transitions: property <column-count> from [auto] to [20] at (0.5) should be [20] assert_equals: expected "20 " but got "10 "
 FAIL CSS Transitions: property <column-count> from [auto] to [20] at (0.6) should be [20] assert_equals: expected "20 " but got "12 "
-PASS CSS Transitions: property <column-count> from [auto] to [20] at (1) should be [20] 
+PASS CSS Transitions: property <column-count> from [auto] to [20] at (1) should be [20]
 FAIL CSS Transitions: property <column-count> from [auto] to [20] at (1.5) should be [20] assert_equals: expected "20 " but got "30 "
 FAIL CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (-0.3) should be [20] assert_equals: expected "20 " but got "65530 "
 FAIL CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (0) should be [20] assert_equals: expected "20 " but got "0 "
 FAIL CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (0.3) should be [20] assert_equals: expected "20 " but got "6 "
 FAIL CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (0.5) should be [20] assert_equals: expected "20 " but got "10 "
 FAIL CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (0.6) should be [20] assert_equals: expected "20 " but got "12 "
-PASS CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (1) should be [20] 
+PASS CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (1) should be [20]
 FAIL CSS Transitions with transition: all: property <column-count> from [auto] to [20] at (1.5) should be [20] assert_equals: expected "20 " but got "30 "
 FAIL CSS Animations: property <column-count> from [auto] to [20] at (-0.3) should be [auto] assert_equals: expected "auto " but got "65530 "
 FAIL CSS Animations: property <column-count> from [auto] to [20] at (0) should be [auto] assert_equals: expected "auto " but got "0 "
 FAIL CSS Animations: property <column-count> from [auto] to [20] at (0.3) should be [auto] assert_equals: expected "auto " but got "6 "
 FAIL CSS Animations: property <column-count> from [auto] to [20] at (0.5) should be [20] assert_equals: expected "20 " but got "10 "
 FAIL CSS Animations: property <column-count> from [auto] to [20] at (0.6) should be [20] assert_equals: expected "20 " but got "12 "
-PASS CSS Animations: property <column-count> from [auto] to [20] at (1) should be [20] 
+PASS CSS Animations: property <column-count> from [auto] to [20] at (1) should be [20]
 FAIL CSS Animations: property <column-count> from [auto] to [20] at (1.5) should be [20] assert_equals: expected "20 " but got "30 "
 FAIL Web Animations: property <column-count> from [auto] to [20] at (-0.3) should be [auto] assert_equals: expected "auto " but got "65530 "
 FAIL Web Animations: property <column-count> from [auto] to [20] at (0) should be [auto] assert_equals: expected "auto " but got "0 "
 FAIL Web Animations: property <column-count> from [auto] to [20] at (0.3) should be [auto] assert_equals: expected "auto " but got "6 "
 FAIL Web Animations: property <column-count> from [auto] to [20] at (0.5) should be [20] assert_equals: expected "20 " but got "10 "
 FAIL Web Animations: property <column-count> from [auto] to [20] at (0.6) should be [20] assert_equals: expected "20 " but got "12 "
-PASS Web Animations: property <column-count> from [auto] to [20] at (1) should be [20] 
+PASS Web Animations: property <column-count> from [auto] to [20] at (1) should be [20]
 FAIL Web Animations: property <column-count> from [auto] to [20] at (1.5) should be [20] assert_equals: expected "20 " but got "30 "
-PASS CSS Transitions: property <column-count> from [inherit] to [20] at (-0.5) should be [35] 
-PASS CSS Transitions: property <column-count> from [inherit] to [20] at (0) should be [30] 
-PASS CSS Transitions: property <column-count> from [inherit] to [20] at (0.3) should be [27] 
-PASS CSS Transitions: property <column-count> from [inherit] to [20] at (0.7) should be [23] 
-PASS CSS Transitions: property <column-count> from [inherit] to [20] at (1) should be [20] 
-PASS CSS Transitions: property <column-count> from [inherit] to [20] at (1.5) should be [15] 
-PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (-0.5) should be [35] 
-PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0) should be [30] 
-PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0.3) should be [27] 
-PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0.7) should be [23] 
-PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (1) should be [20] 
-PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (1.5) should be [15] 
-PASS CSS Animations: property <column-count> from [inherit] to [20] at (-0.5) should be [35] 
-PASS CSS Animations: property <column-count> from [inherit] to [20] at (0) should be [30] 
-PASS CSS Animations: property <column-count> from [inherit] to [20] at (0.3) should be [27] 
-PASS CSS Animations: property <column-count> from [inherit] to [20] at (0.7) should be [23] 
-PASS CSS Animations: property <column-count> from [inherit] to [20] at (1) should be [20] 
-PASS CSS Animations: property <column-count> from [inherit] to [20] at (1.5) should be [15] 
+PASS CSS Transitions: property <column-count> from [inherit] to [20] at (-0.5) should be [35]
+PASS CSS Transitions: property <column-count> from [inherit] to [20] at (0) should be [30]
+PASS CSS Transitions: property <column-count> from [inherit] to [20] at (0.3) should be [27]
+PASS CSS Transitions: property <column-count> from [inherit] to [20] at (0.7) should be [23]
+PASS CSS Transitions: property <column-count> from [inherit] to [20] at (1) should be [20]
+PASS CSS Transitions: property <column-count> from [inherit] to [20] at (1.5) should be [15]
+PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (-0.5) should be [35]
+PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0) should be [30]
+PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0.3) should be [27]
+PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0.7) should be [23]
+PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (1) should be [20]
+PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (1.5) should be [15]
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (-0.5) should be [35]
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (0) should be [30]
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (0.3) should be [27]
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (0.7) should be [23]
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (1) should be [20]
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (1.5) should be [15]
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (-0.5) should be [35] assert_equals: expected "35 " but got "5 "
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (0) should be [30] assert_equals: expected "30 " but got "5 "
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (0.3) should be [27] assert_equals: expected "27 " but got "10 "
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (0.7) should be [23] assert_equals: expected "23 " but got "17 "
-PASS Web Animations: property <column-count> from [inherit] to [20] at (1) should be [20] 
+PASS Web Animations: property <column-count> from [inherit] to [20] at (1) should be [20]
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (1.5) should be [15] assert_equals: expected "15 " but got "20 "
-PASS CSS Transitions: property <column-count> from [10] to [1] at (-0.5) should be [15] 
-PASS CSS Transitions: property <column-count> from [10] to [1] at (0) should be [10] 
-PASS CSS Transitions: property <column-count> from [10] to [1] at (0.3) should be [7] 
-PASS CSS Transitions: property <column-count> from [10] to [1] at (0.7) should be [4] 
-PASS CSS Transitions: property <column-count> from [10] to [1] at (1) should be [1] 
+PASS CSS Transitions: property <column-count> from [10] to [1] at (-0.5) should be [15]
+PASS CSS Transitions: property <column-count> from [10] to [1] at (0) should be [10]
+PASS CSS Transitions: property <column-count> from [10] to [1] at (0.3) should be [7]
+PASS CSS Transitions: property <column-count> from [10] to [1] at (0.7) should be [4]
+PASS CSS Transitions: property <column-count> from [10] to [1] at (1) should be [1]
 FAIL CSS Transitions: property <column-count> from [10] to [1] at (1.5) should be [1] assert_equals: expected "1 " but got "65532 "
-PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (-0.5) should be [15] 
-PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (0) should be [10] 
-PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (0.3) should be [7] 
-PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (0.7) should be [4] 
-PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (1) should be [1] 
+PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (-0.5) should be [15]
+PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (0) should be [10]
+PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (0.3) should be [7]
+PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (0.7) should be [4]
+PASS CSS Transitions with transition: all: property <column-count> from [10] to [1] at (1) should be [1]
 FAIL CSS Transitions with transition: all: property <column-count> from [10] to [1] at (1.5) should be [1] assert_equals: expected "1 " but got "65532 "
-PASS CSS Animations: property <column-count> from [10] to [1] at (-0.5) should be [15] 
-PASS CSS Animations: property <column-count> from [10] to [1] at (0) should be [10] 
-PASS CSS Animations: property <column-count> from [10] to [1] at (0.3) should be [7] 
-PASS CSS Animations: property <column-count> from [10] to [1] at (0.7) should be [4] 
-PASS CSS Animations: property <column-count> from [10] to [1] at (1) should be [1] 
+PASS CSS Animations: property <column-count> from [10] to [1] at (-0.5) should be [15]
+PASS CSS Animations: property <column-count> from [10] to [1] at (0) should be [10]
+PASS CSS Animations: property <column-count> from [10] to [1] at (0.3) should be [7]
+PASS CSS Animations: property <column-count> from [10] to [1] at (0.7) should be [4]
+PASS CSS Animations: property <column-count> from [10] to [1] at (1) should be [1]
 FAIL CSS Animations: property <column-count> from [10] to [1] at (1.5) should be [1] assert_equals: expected "1 " but got "65532 "
-PASS Web Animations: property <column-count> from [10] to [1] at (-0.5) should be [15] 
-PASS Web Animations: property <column-count> from [10] to [1] at (0) should be [10] 
-PASS Web Animations: property <column-count> from [10] to [1] at (0.3) should be [7] 
-PASS Web Animations: property <column-count> from [10] to [1] at (0.7) should be [4] 
-PASS Web Animations: property <column-count> from [10] to [1] at (1) should be [1] 
+PASS Web Animations: property <column-count> from [10] to [1] at (-0.5) should be [15]
+PASS Web Animations: property <column-count> from [10] to [1] at (0) should be [10]
+PASS Web Animations: property <column-count> from [10] to [1] at (0.3) should be [7]
+PASS Web Animations: property <column-count> from [10] to [1] at (0.7) should be [4]
+PASS Web Animations: property <column-count> from [10] to [1] at (1) should be [1]
 FAIL Web Animations: property <column-count> from [10] to [1] at (1.5) should be [1] assert_equals: expected "1 " but got "65532 "
 FAIL CSS Transitions: property <column-count> from [initial] to [5] at (-0.3) should be [5] assert_equals: expected "5 " but got "65535 "
 FAIL CSS Transitions: property <column-count> from [initial] to [5] at (0) should be [5] assert_equals: expected "5 " but got "0 "
 FAIL CSS Transitions: property <column-count> from [initial] to [5] at (0.3) should be [5] assert_equals: expected "5 " but got "2 "
 FAIL CSS Transitions: property <column-count> from [initial] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL CSS Transitions: property <column-count> from [initial] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS CSS Transitions: property <column-count> from [initial] to [5] at (1) should be [5] 
+PASS CSS Transitions: property <column-count> from [initial] to [5] at (1) should be [5]
 FAIL CSS Transitions: property <column-count> from [initial] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (-0.3) should be [5] assert_equals: expected "5 " but got "65535 "
 FAIL CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (0) should be [5] assert_equals: expected "5 " but got "0 "
 FAIL CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (0.3) should be [5] assert_equals: expected "5 " but got "2 "
 FAIL CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (1) should be [5] 
+PASS CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (1) should be [5]
 FAIL CSS Transitions with transition: all: property <column-count> from [initial] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL CSS Animations: property <column-count> from [initial] to [5] at (-0.3) should be [initial] assert_equals: expected "auto " but got "65535 "
 FAIL CSS Animations: property <column-count> from [initial] to [5] at (0) should be [initial] assert_equals: expected "auto " but got "0 "
 FAIL CSS Animations: property <column-count> from [initial] to [5] at (0.3) should be [initial] assert_equals: expected "auto " but got "2 "
 FAIL CSS Animations: property <column-count> from [initial] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL CSS Animations: property <column-count> from [initial] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS CSS Animations: property <column-count> from [initial] to [5] at (1) should be [5] 
+PASS CSS Animations: property <column-count> from [initial] to [5] at (1) should be [5]
 FAIL CSS Animations: property <column-count> from [initial] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL Web Animations: property <column-count> from [initial] to [5] at (-0.3) should be [initial] assert_equals: expected "auto " but got "65535 "
 FAIL Web Animations: property <column-count> from [initial] to [5] at (0) should be [initial] assert_equals: expected "auto " but got "0 "
 FAIL Web Animations: property <column-count> from [initial] to [5] at (0.3) should be [initial] assert_equals: expected "auto " but got "2 "
 FAIL Web Animations: property <column-count> from [initial] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL Web Animations: property <column-count> from [initial] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS Web Animations: property <column-count> from [initial] to [5] at (1) should be [5] 
+PASS Web Animations: property <column-count> from [initial] to [5] at (1) should be [5]
 FAIL Web Animations: property <column-count> from [initial] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL CSS Transitions: property <column-count> from [unset] to [5] at (-0.3) should be [5] assert_equals: expected "5 " but got "65535 "
 FAIL CSS Transitions: property <column-count> from [unset] to [5] at (0) should be [5] assert_equals: expected "5 " but got "0 "
 FAIL CSS Transitions: property <column-count> from [unset] to [5] at (0.3) should be [5] assert_equals: expected "5 " but got "2 "
 FAIL CSS Transitions: property <column-count> from [unset] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL CSS Transitions: property <column-count> from [unset] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS CSS Transitions: property <column-count> from [unset] to [5] at (1) should be [5] 
+PASS CSS Transitions: property <column-count> from [unset] to [5] at (1) should be [5]
 FAIL CSS Transitions: property <column-count> from [unset] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (-0.3) should be [5] assert_equals: expected "5 " but got "65535 "
 FAIL CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (0) should be [5] assert_equals: expected "5 " but got "0 "
 FAIL CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (0.3) should be [5] assert_equals: expected "5 " but got "2 "
 FAIL CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (1) should be [5] 
+PASS CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (1) should be [5]
 FAIL CSS Transitions with transition: all: property <column-count> from [unset] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL CSS Animations: property <column-count> from [unset] to [5] at (-0.3) should be [unset] assert_equals: expected "auto " but got "65535 "
 FAIL CSS Animations: property <column-count> from [unset] to [5] at (0) should be [unset] assert_equals: expected "auto " but got "0 "
 FAIL CSS Animations: property <column-count> from [unset] to [5] at (0.3) should be [unset] assert_equals: expected "auto " but got "2 "
 FAIL CSS Animations: property <column-count> from [unset] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL CSS Animations: property <column-count> from [unset] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS CSS Animations: property <column-count> from [unset] to [5] at (1) should be [5] 
+PASS CSS Animations: property <column-count> from [unset] to [5] at (1) should be [5]
 FAIL CSS Animations: property <column-count> from [unset] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 FAIL Web Animations: property <column-count> from [unset] to [5] at (-0.3) should be [unset] assert_equals: expected "auto " but got "65535 "
 FAIL Web Animations: property <column-count> from [unset] to [5] at (0) should be [unset] assert_equals: expected "auto " but got "0 "
 FAIL Web Animations: property <column-count> from [unset] to [5] at (0.3) should be [unset] assert_equals: expected "auto " but got "2 "
 FAIL Web Animations: property <column-count> from [unset] to [5] at (0.5) should be [5] assert_equals: expected "5 " but got "3 "
 FAIL Web Animations: property <column-count> from [unset] to [5] at (0.6) should be [5] assert_equals: expected "5 " but got "3 "
-PASS Web Animations: property <column-count> from [unset] to [5] at (1) should be [5] 
+PASS Web Animations: property <column-count> from [unset] to [5] at (1) should be [5]
 FAIL Web Animations: property <column-count> from [unset] to [5] at (1.5) should be [5] assert_equals: expected "5 " but got "8 "
 

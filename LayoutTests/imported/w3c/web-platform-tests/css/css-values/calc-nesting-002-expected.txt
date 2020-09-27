@@ -1,8 +1,8 @@
 
-PASS testing calc(20px + calc(80px)) 
-PASS testing calc(calc(100px)) 
-PASS testing calc(calc(2) * calc(50px) 
-PASS testing calc(calc(150px*2/3) 
-PASS testing calc(calc(2 * calc(calc(3)) + 4) * 10px) 
-PASS testing calc(50px + calc(40%)) 
+PASS testing calc(20px + calc(80px))
+PASS testing calc(calc(100px))
+PASS testing calc(calc(2) * calc(50px)
+PASS testing calc(calc(150px*2/3)
+PASS testing calc(calc(2 * calc(calc(3)) + 4) * 10px)
+PASS testing calc(50px + calc(40%))
 

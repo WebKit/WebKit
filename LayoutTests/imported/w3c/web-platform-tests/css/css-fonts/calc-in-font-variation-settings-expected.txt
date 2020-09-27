@@ -1,3 +1,3 @@
 
-PASS calc() in font-variation-settings 
+PASS calc() in font-variation-settings
 

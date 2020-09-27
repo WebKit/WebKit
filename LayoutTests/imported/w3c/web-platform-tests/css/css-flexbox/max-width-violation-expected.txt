@@ -1,6 +1,6 @@
 
-PASS .columns 1 
-PASS .columns 2 
+PASS .columns 1
+PASS .columns 2
 You should see no red
 
 Column 1

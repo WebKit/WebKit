@@ -1,6 +1,6 @@
 
-PASS e.style['flex-shrink'] = "2e3.4" should not set the property value 
-PASS e.style['flex-shrink'] = "-+5" should not set the property value 
-PASS e.style['flex-shrink'] = "6 7" should not set the property value 
-PASS e.style['flex-shrink'] = "1." should not set the property value 
+PASS e.style['flex-shrink'] = "2e3.4" should not set the property value
+PASS e.style['flex-shrink'] = "-+5" should not set the property value
+PASS e.style['flex-shrink'] = "6 7" should not set the property value
+PASS e.style['flex-shrink'] = "1." should not set the property value
 

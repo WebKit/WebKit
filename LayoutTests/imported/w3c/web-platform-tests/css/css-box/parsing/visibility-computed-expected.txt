@@ -1,5 +1,5 @@
 
-PASS Property visibility value 'visible' 
-PASS Property visibility value 'hidden' 
-PASS Property visibility value 'collapse' 
+PASS Property visibility value 'visible'
+PASS Property visibility value 'hidden'
+PASS Property visibility value 'collapse'
 

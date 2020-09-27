@@ -1,4 +1,4 @@
 
-PASS e.style['border-style'] = "auto" should not set the property value 
-PASS e.style['border-style'] = "solid double groove ridge none" should not set the property value 
+PASS e.style['border-style'] = "auto" should not set the property value
+PASS e.style['border-style'] = "solid double groove ridge none" should not set the property value
 

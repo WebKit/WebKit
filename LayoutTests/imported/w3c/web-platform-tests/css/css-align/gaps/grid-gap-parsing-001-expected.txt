@@ -1,28 +1,28 @@
 
-PASS Default grid-gap is 'normal' 
-PASS grid-gap accepts pixels 
-PASS grid-gap accepts pixels 2 
-PASS grid-gap accepts pixels combined with percentage 
-PASS grid-gap accepts em 
-PASS grid-gap accepts em 2 
-PASS grid-gap accepts vw 
-PASS grid-gap accepts vw and vh 
-PASS grid-gap accepts percentage 
-PASS grid-gap accepts percentage 2 
-PASS grid-gap accepts calc() 
-PASS grid-gap accepts calc() mixing fixed and percentage values 
-PASS grid-gap accepts calc() 2 
-PASS Initial grid-gap is 'normal' 
-PASS Initial grid-gap is 'normal' 2 
-PASS Initial inherited grid-gap is 'normal' 
-PASS grid-gap is inheritable 
-PASS Negative grid-gap is invalid 
-PASS 'max-content' grid-gap is invalid 
-PASS 'none' grid-gap is invalid 
-PASS Angle grid-gap is invalid 
-PASS Resolution grid-gap is invalid 
-PASS Time grid-gap is invalid 
-PASS grid-gap with three values is invalid 
-PASS grid-gap with slash is invalid 
-PASS grid-gap with one wrong value is invalid 
+PASS Default grid-gap is 'normal'
+PASS grid-gap accepts pixels
+PASS grid-gap accepts pixels 2
+PASS grid-gap accepts pixels combined with percentage
+PASS grid-gap accepts em
+PASS grid-gap accepts em 2
+PASS grid-gap accepts vw
+PASS grid-gap accepts vw and vh
+PASS grid-gap accepts percentage
+PASS grid-gap accepts percentage 2
+PASS grid-gap accepts calc()
+PASS grid-gap accepts calc() mixing fixed and percentage values
+PASS grid-gap accepts calc() 2
+PASS Initial grid-gap is 'normal'
+PASS Initial grid-gap is 'normal' 2
+PASS Initial inherited grid-gap is 'normal'
+PASS grid-gap is inheritable
+PASS Negative grid-gap is invalid
+PASS 'max-content' grid-gap is invalid
+PASS 'none' grid-gap is invalid
+PASS Angle grid-gap is invalid
+PASS Resolution grid-gap is invalid
+PASS Time grid-gap is invalid
+PASS grid-gap with three values is invalid
+PASS grid-gap with slash is invalid
+PASS grid-gap with one wrong value is invalid
 

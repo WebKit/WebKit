@@ -1,5 +1,5 @@
 
-PASS Returned CSS transitions have the correct Animation.target 
-PASS effect.target should return the same CSSPseudoElement object each time 
-PASS effect.target from the script-generated animation should return the same CSSPseudoElement object as that from the CSS generated transition 
+PASS Returned CSS transitions have the correct Animation.target
+PASS effect.target should return the same CSSPseudoElement object each time
+PASS effect.target from the script-generated animation should return the same CSSPseudoElement object as that from the CSS generated transition
 

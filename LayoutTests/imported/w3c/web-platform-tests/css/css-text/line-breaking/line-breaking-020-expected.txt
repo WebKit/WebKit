@@ -1,5 +1,5 @@
 abschließend geklärt. Allerdings scheint eine gewisse genetische Veranlagung eine Zahl der Typ-1-Diabetiker gerade unter Kleinkindern stetig wächst. Daher rücken auch Virusinfektionen in den Fokus
 
 
-PASS CSS Text Test: Simple line breaking test 
+PASS CSS Text Test: Simple line breaking test
 

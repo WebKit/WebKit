@@ -1,4 +1,4 @@
 
-PASS e.style['text-overflow'] = "clip" should set the property value 
-PASS e.style['text-overflow'] = "ellipsis" should set the property value 
+PASS e.style['text-overflow'] = "clip" should set the property value
+PASS e.style['text-overflow'] = "ellipsis" should set the property value
 

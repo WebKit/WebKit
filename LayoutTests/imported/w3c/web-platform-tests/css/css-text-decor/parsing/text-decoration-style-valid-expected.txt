@@ -1,7 +1,7 @@
 
-PASS e.style['text-decoration-style'] = "solid" should set the property value 
-PASS e.style['text-decoration-style'] = "double" should set the property value 
-PASS e.style['text-decoration-style'] = "dotted" should set the property value 
-PASS e.style['text-decoration-style'] = "dashed" should set the property value 
-PASS e.style['text-decoration-style'] = "wavy" should set the property value 
+PASS e.style['text-decoration-style'] = "solid" should set the property value
+PASS e.style['text-decoration-style'] = "double" should set the property value
+PASS e.style['text-decoration-style'] = "dotted" should set the property value
+PASS e.style['text-decoration-style'] = "dashed" should set the property value
+PASS e.style['text-decoration-style'] = "wavy" should set the property value
 

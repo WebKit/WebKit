@@ -1,3 +1,3 @@
 
-PASS attribute selectors with missing right tokens succeed 
+PASS attribute selectors with missing right tokens succeed
 

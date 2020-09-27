@@ -1,4 +1,4 @@
 
-PASS e.style['clear'] = "auto" should not set the property value 
-PASS e.style['clear'] = "left right" should not set the property value 
+PASS e.style['clear'] = "auto" should not set the property value
+PASS e.style['clear'] = "left right" should not set the property value
 

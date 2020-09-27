@@ -1,9 +1,9 @@
 
-PASS Property min-height value 'min-content' 
-PASS Property min-height value 'max-content' 
-PASS Property min-height value '10px' 
-PASS Property min-height value '20%' 
-PASS Property min-height value 'calc(10% + 40px)' 
-PASS Property min-height value 'calc(10px - 0.5em)' 
-PASS Property min-height value 'calc(10px + 0.5em)' 
+PASS Property min-height value 'min-content'
+PASS Property min-height value 'max-content'
+PASS Property min-height value '10px'
+PASS Property min-height value '20%'
+PASS Property min-height value 'calc(10% + 40px)'
+PASS Property min-height value 'calc(10px - 0.5em)'
+PASS Property min-height value 'calc(10px + 0.5em)'
 

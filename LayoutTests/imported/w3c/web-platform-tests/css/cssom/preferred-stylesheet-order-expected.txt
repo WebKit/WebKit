@@ -1,4 +1,4 @@
 This text should be green
 
-PASS Preferred stylesheet where insertion order is reversed tree order 
+PASS Preferred stylesheet where insertion order is reversed tree order
 

@@ -1,10 +1,10 @@
 
-PASS e.style['font-feature-settings'] = "normal" should set the property value 
-PASS e.style['font-feature-settings'] = "\"dlig\" 1" should set the property value 
-PASS e.style['font-feature-settings'] = "\"smcp\" on" should set the property value 
-PASS e.style['font-feature-settings'] = "'c2sc'" should set the property value 
-PASS e.style['font-feature-settings'] = "\"liga\" off" should set the property value 
-PASS e.style['font-feature-settings'] = "\"tnum\", 'hist'" should set the property value 
+PASS e.style['font-feature-settings'] = "normal" should set the property value
+PASS e.style['font-feature-settings'] = "\"dlig\" 1" should set the property value
+PASS e.style['font-feature-settings'] = "\"smcp\" on" should set the property value
+PASS e.style['font-feature-settings'] = "'c2sc'" should set the property value
+PASS e.style['font-feature-settings'] = "\"liga\" off" should set the property value
+PASS e.style['font-feature-settings'] = "\"tnum\", 'hist'" should set the property value
 FAIL e.style['font-feature-settings'] = "\"PKRN\"" should set the property value assert_equals: serialization should be canonical expected "\"PKRN\"" but got "\"pkrn\""
-PASS e.style['font-feature-settings'] = "\"dlig\" 1, \"smcp\" on, \"dlig\" 0" should set the property value 
+PASS e.style['font-feature-settings'] = "\"dlig\" 1, \"smcp\" on, \"dlig\" 0" should set the property value
 

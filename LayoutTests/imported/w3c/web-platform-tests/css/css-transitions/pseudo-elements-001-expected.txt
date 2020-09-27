@@ -1,7 +1,7 @@
 
-PASS transition padding-left on :before / values 
-PASS transition padding-left on :after / values 
-PASS transition padding-left on :before, changing content / values 
-PASS transition padding-left on :after, changing content / values 
+PASS transition padding-left on :before / values
+PASS transition padding-left on :after / values
+PASS transition padding-left on :before, changing content / values
+PASS transition padding-left on :after, changing content / values
 Text sample
 

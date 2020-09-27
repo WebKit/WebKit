@@ -9,14 +9,14 @@ Inside 3
 Image Inside 1
 Image Inside 2
 
-PASS <li>Outside 1</li> 
-PASS <li>Outside 2</li> 
-PASS <li>Outside 3</li> 
-PASS <li>Image Outside 1</li> 
-PASS <li>Image Outside 2</li> 
-PASS <li>Inside 1</li> 
-PASS <li>Inside 2</li> 
-PASS <li>Inside 3</li> 
-PASS <li>Image Inside 1</li> 
-PASS <li>Image Inside 2</li> 
+PASS <li>Outside 1</li>
+PASS <li>Outside 2</li>
+PASS <li>Outside 3</li>
+PASS <li>Image Outside 1</li>
+PASS <li>Image Outside 2</li>
+PASS <li>Inside 1</li>
+PASS <li>Inside 2</li>
+PASS <li>Inside 3</li>
+PASS <li>Image Inside 1</li>
+PASS <li>Image Inside 2</li>
 

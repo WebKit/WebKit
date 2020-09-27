@@ -1,5 +1,5 @@
 
-PASS e.style['outline'] = "invert solid rgba(10, 20, 30, 0.4)" should not set the property value 
-PASS e.style['outline'] = "double invert groove" should not set the property value 
-PASS e.style['outline'] = "thin outset thick" should not set the property value 
+PASS e.style['outline'] = "invert solid rgba(10, 20, 30, 0.4)" should not set the property value
+PASS e.style['outline'] = "double invert groove" should not set the property value
+PASS e.style['outline'] = "thin outset thick" should not set the property value
 

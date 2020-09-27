@@ -1,13 +1,13 @@
 
-PASS e.style['animation'] = "1s" should set the property value 
-PASS e.style['animation'] = "cubic-bezier(0, -2, 1, 3)" should set the property value 
-PASS e.style['animation'] = "1s -3s" should set the property value 
-PASS e.style['animation'] = "4" should set the property value 
-PASS e.style['animation'] = "reverse" should set the property value 
-PASS e.style['animation'] = "both" should set the property value 
-PASS e.style['animation'] = "paused" should set the property value 
-PASS e.style['animation'] = "none" should set the property value 
-PASS e.style['animation'] = "anim" should set the property value 
+PASS e.style['animation'] = "1s" should set the property value
+PASS e.style['animation'] = "cubic-bezier(0, -2, 1, 3)" should set the property value
+PASS e.style['animation'] = "1s -3s" should set the property value
+PASS e.style['animation'] = "4" should set the property value
+PASS e.style['animation'] = "reverse" should set the property value
+PASS e.style['animation'] = "both" should set the property value
+PASS e.style['animation'] = "paused" should set the property value
+PASS e.style['animation'] = "none" should set the property value
+PASS e.style['animation'] = "anim" should set the property value
 FAIL e.style['animation'] = "anim paused both reverse 4 1s -3s cubic-bezier(0, -2, 1, 3)" should set the property value assert_equals: serialization should be canonical expected "1s cubic-bezier(0, -2, 1, 3) -3s 4 reverse both paused anim" but got "anim 1s cubic-bezier(0, -2, 1, 3) -3s 4 reverse both paused"
 FAIL e.style['animation'] = "anim paused both reverse, 4 1s -3s cubic-bezier(0, -2, 1, 3)" should set the property value assert_equals: serialization should be canonical expected "0s ease 0s 1 reverse both paused anim, 1s cubic-bezier(0, -2, 1, 3) -3s 4 normal none running none" but got "anim reverse both paused, 1s cubic-bezier(0, -2, 1, 3) -3s 4"
 

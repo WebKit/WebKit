@@ -1,4 +1,4 @@
 
-PASS e.style['border-image-source'] = "auto" should not set the property value 
-PASS e.style['border-image-source'] = "none, url(\"http://www.example.com/\")" should not set the property value 
+PASS e.style['border-image-source'] = "auto" should not set the property value
+PASS e.style['border-image-source'] = "none, url(\"http://www.example.com/\")" should not set the property value
 

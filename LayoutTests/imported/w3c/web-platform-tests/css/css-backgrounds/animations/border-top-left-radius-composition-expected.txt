@@ -7,7 +7,7 @@ FAIL Compositing: property <border-top-left-radius> underlying [40px 40px] from 
 FAIL Compositing: property <border-top-left-radius> underlying [40px 40px] from add [60px 60px] to add [160px 160px] at (1) should be [200px] assert_equals: expected "200px " but got "160px "
 FAIL Compositing: property <border-top-left-radius> underlying [40px 40px] from add [60px 60px] to add [160px 160px] at (1.25) should be [225px] assert_equals: expected "225px " but got "185px "
 FAIL Compositing: property <border-top-left-radius> underlying [40px 140px] from replace [100px 120px] to add [160px 60px] at (-0.25) should be [75px 100px] assert_equals: expected "75px 100px " but got "85px 135px "
-PASS Compositing: property <border-top-left-radius> underlying [40px 140px] from replace [100px 120px] to add [160px 60px] at (0) should be [100px 120px] 
+PASS Compositing: property <border-top-left-radius> underlying [40px 140px] from replace [100px 120px] to add [160px 60px] at (0) should be [100px 120px]
 FAIL Compositing: property <border-top-left-radius> underlying [40px 140px] from replace [100px 120px] to add [160px 60px] at (0.25) should be [125px 140px] assert_equals: expected "125px 140px " but got "115px 105px "
 FAIL Compositing: property <border-top-left-radius> underlying [40px 140px] from replace [100px 120px] to add [160px 60px] at (0.5) should be [150px 160px] assert_equals: expected "150px 160px " but got "130px 90px "
 FAIL Compositing: property <border-top-left-radius> underlying [40px 140px] from replace [100px 120px] to add [160px 60px] at (0.75) should be [175px 180px] assert_equals: expected "175px 180px " but got "145px 75px "
@@ -18,6 +18,6 @@ FAIL Compositing: property <border-top-left-radius> underlying [40px 60px] from 
 FAIL Compositing: property <border-top-left-radius> underlying [40px 60px] from add [60px 140px] to replace [200px 120px] at (0.25) should be [125px 180px] assert_equals: expected "125px 180px " but got "95px 135px "
 FAIL Compositing: property <border-top-left-radius> underlying [40px 60px] from add [60px 140px] to replace [200px 120px] at (0.5) should be [150px 160px] assert_equals: expected "150px 160px " but got "130px "
 FAIL Compositing: property <border-top-left-radius> underlying [40px 60px] from add [60px 140px] to replace [200px 120px] at (0.75) should be [175px 140px] assert_equals: expected "175px 140px " but got "165px 125px "
-PASS Compositing: property <border-top-left-radius> underlying [40px 60px] from add [60px 140px] to replace [200px 120px] at (1) should be [200px 120px] 
+PASS Compositing: property <border-top-left-radius> underlying [40px 60px] from add [60px 140px] to replace [200px 120px] at (1) should be [200px 120px]
 FAIL Compositing: property <border-top-left-radius> underlying [40px 60px] from add [60px 140px] to replace [200px 120px] at (1.25) should be [225px 100px] assert_equals: expected "225px 100px " but got "235px 115px "
 

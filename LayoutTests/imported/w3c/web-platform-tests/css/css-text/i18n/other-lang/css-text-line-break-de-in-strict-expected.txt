@@ -1,7 +1,7 @@
 
-PASS 2024  ONE DOT LEADER may NOT appear at line start if de and strict 
-PASS 2025  TWO DOT LEADER may NOT appear at line start if de and strict 
-PASS 2026  HORIZONTAL ELLIPSIS may NOT appear at line start if de and strict 
-PASS 22EF  MIDLINE HORIZONTAL ELLIPSIS may NOT appear at line start if de and strict 
-PASS FE19  PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS may NOT appear at line start if de and strict 
+PASS 2024  ONE DOT LEADER may NOT appear at line start if de and strict
+PASS 2025  TWO DOT LEADER may NOT appear at line start if de and strict
+PASS 2026  HORIZONTAL ELLIPSIS may NOT appear at line start if de and strict
+PASS 22EF  MIDLINE HORIZONTAL ELLIPSIS may NOT appear at line start if de and strict
+PASS FE19  PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS may NOT appear at line start if de and strict
 

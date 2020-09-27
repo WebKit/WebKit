@@ -1,11 +1,11 @@
 
-PASS play() overrides animation-play-state 
-PASS play() does NOT override the animation-play-state if there was an error 
-PASS pause() overrides animation-play-state 
-PASS reverse() overrides animation-play-state when it starts playing the animation 
-PASS reverse() does NOT override animation-play-state if the animation is already running 
-PASS Setting the startTime to null overrides animation-play-state if the animation is already running 
-PASS Setting the startTime to non-null overrides animation-play-state if the animation is paused 
-PASS Setting the startTime to non-null does NOT override the animation-play-state if the animation is already running 
-PASS Setting the current time completes a pending pause 
+PASS play() overrides animation-play-state
+PASS play() does NOT override the animation-play-state if there was an error
+PASS pause() overrides animation-play-state
+PASS reverse() overrides animation-play-state when it starts playing the animation
+PASS reverse() does NOT override animation-play-state if the animation is already running
+PASS Setting the startTime to null overrides animation-play-state if the animation is already running
+PASS Setting the startTime to non-null overrides animation-play-state if the animation is paused
+PASS Setting the startTime to non-null does NOT override the animation-play-state if the animation is already running
+PASS Setting the current time completes a pending pause
 

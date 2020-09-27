@@ -1,4 +1,4 @@
 123 56  Flash and
 
-PASS CSS Text Test: A combination of `overflow-wrap: break-word` and `white-space` should not crash 
+PASS CSS Text Test: A combination of `overflow-wrap: break-word` and `white-space` should not crash
 
