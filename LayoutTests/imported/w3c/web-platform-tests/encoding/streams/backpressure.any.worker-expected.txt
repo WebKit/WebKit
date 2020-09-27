@@ -1,6 +1,6 @@
 
-PASS write() should not complete until read relieves backpressure for TextDecoderStream 
-PASS additional writes should wait for backpressure to be relieved for class TextDecoderStream 
-PASS write() should not complete until read relieves backpressure for TextEncoderStream 
-PASS additional writes should wait for backpressure to be relieved for class TextEncoderStream 
+PASS write() should not complete until read relieves backpressure for TextDecoderStream
+PASS additional writes should wait for backpressure to be relieved for class TextDecoderStream
+PASS write() should not complete until read relieves backpressure for TextEncoderStream
+PASS additional writes should wait for backpressure to be relieved for class TextEncoderStream
 

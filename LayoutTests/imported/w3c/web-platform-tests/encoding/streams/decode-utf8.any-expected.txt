@@ -1,12 +1,12 @@
 
-PASS decoding one UTF-8 chunk should give one output string - ArrayBuffer 
-PASS decoding an empty chunk should give no output chunks - ArrayBuffer 
-PASS an initial empty chunk should be ignored - ArrayBuffer 
-PASS a trailing empty chunk should be ignored- ArrayBuffer 
-PASS decoding one UTF-8 chunk should give one output string - SharedArrayBuffer 
-PASS decoding an empty chunk should give no output chunks - SharedArrayBuffer 
-PASS an initial empty chunk should be ignored - SharedArrayBuffer 
-PASS a trailing empty chunk should be ignored- SharedArrayBuffer 
-PASS decoding a transferred Uint8Array chunk should give no output 
-PASS decoding a transferred ArrayBuffer chunk should give no output 
+PASS decoding one UTF-8 chunk should give one output string - ArrayBuffer
+PASS decoding an empty chunk should give no output chunks - ArrayBuffer
+PASS an initial empty chunk should be ignored - ArrayBuffer
+PASS a trailing empty chunk should be ignored- ArrayBuffer
+PASS decoding one UTF-8 chunk should give one output string - SharedArrayBuffer
+PASS decoding an empty chunk should give no output chunks - SharedArrayBuffer
+PASS an initial empty chunk should be ignored - SharedArrayBuffer
+PASS a trailing empty chunk should be ignored- SharedArrayBuffer
+PASS decoding a transferred Uint8Array chunk should give no output
+PASS decoding a transferred ArrayBuffer chunk should give no output
 

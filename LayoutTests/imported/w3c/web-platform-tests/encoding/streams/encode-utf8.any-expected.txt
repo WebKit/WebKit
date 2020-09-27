@@ -1,21 +1,21 @@
 
-PASS encoding one string of UTF-8 should give one complete chunk 
-PASS a character split between chunks should be correctly encoded 
-PASS a character following one split between chunks should be correctly encoded 
-PASS two consecutive astral characters each split down the middle should be correctly reassembled 
-PASS two consecutive astral characters each split down the middle with an invalid surrogate in the middle should be correctly encoded 
-PASS a stream ending in a leading surrogate should emit a replacement character as a final chunk 
-PASS an unmatched surrogate at the end of a chunk followed by an astral character in the next chunk should be replaced with the replacement character at the start of the next output chunk 
-PASS an unmatched surrogate at the end of a chunk followed by an ascii character in the next chunk should be replaced with the replacement character at the start of the next output chunk 
-PASS an unmatched surrogate at the end of a chunk followed by a plane 1 character split into two chunks should result in the encoded plane 1 character appearing in the last output chunk 
-PASS two leading chunks should result in two replacement characters 
-PASS a non-terminal unpaired leading surrogate should immediately be replaced 
-PASS a terminal unpaired trailing surrogate should immediately be replaced 
-PASS a leading surrogate chunk should be carried past empty chunks 
-PASS a leading surrogate chunk should error when it is clear it didn't form a pair 
-PASS an empty string should result in no output chunk 
-PASS a leading empty chunk should be ignored 
-PASS a trailing empty chunk should be ignored 
-PASS a plain ASCII chunk should be converted 
-PASS characters in the ISO-8859-1 range should be encoded correctly 
+PASS encoding one string of UTF-8 should give one complete chunk
+PASS a character split between chunks should be correctly encoded
+PASS a character following one split between chunks should be correctly encoded
+PASS two consecutive astral characters each split down the middle should be correctly reassembled
+PASS two consecutive astral characters each split down the middle with an invalid surrogate in the middle should be correctly encoded
+PASS a stream ending in a leading surrogate should emit a replacement character as a final chunk
+PASS an unmatched surrogate at the end of a chunk followed by an astral character in the next chunk should be replaced with the replacement character at the start of the next output chunk
+PASS an unmatched surrogate at the end of a chunk followed by an ascii character in the next chunk should be replaced with the replacement character at the start of the next output chunk
+PASS an unmatched surrogate at the end of a chunk followed by a plane 1 character split into two chunks should result in the encoded plane 1 character appearing in the last output chunk
+PASS two leading chunks should result in two replacement characters
+PASS a non-terminal unpaired leading surrogate should immediately be replaced
+PASS a terminal unpaired trailing surrogate should immediately be replaced
+PASS a leading surrogate chunk should be carried past empty chunks
+PASS a leading surrogate chunk should error when it is clear it didn't form a pair
+PASS an empty string should result in no output chunk
+PASS a leading empty chunk should be ignored
+PASS a trailing empty chunk should be ignored
+PASS a plain ASCII chunk should be converted
+PASS characters in the ISO-8859-1 range should be encoded correctly
 

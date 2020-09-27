@@ -1,8 +1,8 @@
 
-PASS a chunk that cannot be converted to a string should error the streams 
-PASS input of type undefined should be converted correctly to string 
-PASS input of type null should be converted correctly to string 
-PASS input of type numeric should be converted correctly to string 
-PASS input of type object should be converted correctly to string 
-PASS input of type array should be converted correctly to string 
+PASS a chunk that cannot be converted to a string should error the streams
+PASS input of type undefined should be converted correctly to string
+PASS input of type null should be converted correctly to string
+PASS input of type numeric should be converted correctly to string
+PASS input of type object should be converted correctly to string
+PASS input of type array should be converted correctly to string
 

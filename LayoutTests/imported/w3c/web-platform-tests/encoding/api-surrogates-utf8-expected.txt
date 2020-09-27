@@ -1,8 +1,8 @@
 
-PASS Invalid surrogates encoded into UTF-8: Sanity check 
-PASS Invalid surrogates encoded into UTF-8: Surrogate half (low) 
-PASS Invalid surrogates encoded into UTF-8: Surrogate half (high) 
-PASS Invalid surrogates encoded into UTF-8: Surrogate half (low), in a string 
-PASS Invalid surrogates encoded into UTF-8: Surrogate half (high), in a string 
-PASS Invalid surrogates encoded into UTF-8: Wrong order 
+PASS Invalid surrogates encoded into UTF-8: Sanity check
+PASS Invalid surrogates encoded into UTF-8: Surrogate half (low)
+PASS Invalid surrogates encoded into UTF-8: Surrogate half (high)
+PASS Invalid surrogates encoded into UTF-8: Surrogate half (low), in a string
+PASS Invalid surrogates encoded into UTF-8: Surrogate half (high), in a string
+PASS Invalid surrogates encoded into UTF-8: Wrong order
 

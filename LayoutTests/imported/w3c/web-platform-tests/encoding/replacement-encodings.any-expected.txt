@@ -1,14 +1,14 @@
 
-PASS csiso2022kr - non-empty input decodes to one replacement character. 
-PASS csiso2022kr - empty input decodes to empty output. 
-PASS hz-gb-2312 - non-empty input decodes to one replacement character. 
-PASS hz-gb-2312 - empty input decodes to empty output. 
-PASS iso-2022-cn - non-empty input decodes to one replacement character. 
-PASS iso-2022-cn - empty input decodes to empty output. 
-PASS iso-2022-cn-ext - non-empty input decodes to one replacement character. 
-PASS iso-2022-cn-ext - empty input decodes to empty output. 
-PASS iso-2022-kr - non-empty input decodes to one replacement character. 
-PASS iso-2022-kr - empty input decodes to empty output. 
-PASS replacement - non-empty input decodes to one replacement character. 
-PASS replacement - empty input decodes to empty output. 
+PASS csiso2022kr - non-empty input decodes to one replacement character.
+PASS csiso2022kr - empty input decodes to empty output.
+PASS hz-gb-2312 - non-empty input decodes to one replacement character.
+PASS hz-gb-2312 - empty input decodes to empty output.
+PASS iso-2022-cn - non-empty input decodes to one replacement character.
+PASS iso-2022-cn - empty input decodes to empty output.
+PASS iso-2022-cn-ext - non-empty input decodes to one replacement character.
+PASS iso-2022-cn-ext - empty input decodes to empty output.
+PASS iso-2022-kr - non-empty input decodes to one replacement character.
+PASS iso-2022-kr - empty input decodes to empty output.
+PASS replacement - non-empty input decodes to one replacement character.
+PASS replacement - empty input decodes to empty output.
 

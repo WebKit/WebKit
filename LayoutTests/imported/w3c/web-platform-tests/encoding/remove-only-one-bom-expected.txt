@@ -1,6 +1,6 @@
-  
 
-PASS Should have removed only one BOM from frame 0 
-PASS Should have removed only one BOM from frame 1 
-PASS Should have removed only one BOM from frame 2 
+
+PASS Should have removed only one BOM from frame 0
+PASS Should have removed only one BOM from frame 1
+PASS Should have removed only one BOM from frame 2
 

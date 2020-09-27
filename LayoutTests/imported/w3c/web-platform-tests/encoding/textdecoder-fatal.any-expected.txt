@@ -1,38 +1,38 @@
 
-PASS Fatal flag: utf-8 - invalid code 
-PASS Fatal flag: utf-8 - ends early 
-PASS Fatal flag: utf-8 - ends early 2 
-PASS Fatal flag: utf-8 - invalid trail 
-PASS Fatal flag: utf-8 - invalid trail 2 
-PASS Fatal flag: utf-8 - invalid trail 3 
-PASS Fatal flag: utf-8 - invalid trail 4 
-PASS Fatal flag: utf-8 - invalid trail 5 
-PASS Fatal flag: utf-8 - invalid trail 6 
-PASS Fatal flag: utf-8 - > 0x10FFFF 
-PASS Fatal flag: utf-8 - obsolete lead byte 
-PASS Fatal flag: utf-8 - overlong U+0000 - 2 bytes 
-PASS Fatal flag: utf-8 - overlong U+0000 - 3 bytes 
-PASS Fatal flag: utf-8 - overlong U+0000 - 4 bytes 
-PASS Fatal flag: utf-8 - overlong U+0000 - 5 bytes 
-PASS Fatal flag: utf-8 - overlong U+0000 - 6 bytes 
-PASS Fatal flag: utf-8 - overlong U+007F - 2 bytes 
-PASS Fatal flag: utf-8 - overlong U+007F - 3 bytes 
-PASS Fatal flag: utf-8 - overlong U+007F - 4 bytes 
-PASS Fatal flag: utf-8 - overlong U+007F - 5 bytes 
-PASS Fatal flag: utf-8 - overlong U+007F - 6 bytes 
-PASS Fatal flag: utf-8 - overlong U+07FF - 3 bytes 
-PASS Fatal flag: utf-8 - overlong U+07FF - 4 bytes 
-PASS Fatal flag: utf-8 - overlong U+07FF - 5 bytes 
-PASS Fatal flag: utf-8 - overlong U+07FF - 6 bytes 
-PASS Fatal flag: utf-8 - overlong U+FFFF - 4 bytes 
-PASS Fatal flag: utf-8 - overlong U+FFFF - 5 bytes 
-PASS Fatal flag: utf-8 - overlong U+FFFF - 6 bytes 
-PASS Fatal flag: utf-8 - overlong U+10FFFF - 5 bytes 
-PASS Fatal flag: utf-8 - overlong U+10FFFF - 6 bytes 
-PASS Fatal flag: utf-8 - lead surrogate 
-PASS Fatal flag: utf-8 - trail surrogate 
-PASS Fatal flag: utf-8 - surrogate pair 
-PASS Fatal flag: utf-16le - truncated code unit 
-PASS The fatal attribute of TextDecoder 
-PASS Error seen with fatal does not prevent future decodes 
+PASS Fatal flag: utf-8 - invalid code
+PASS Fatal flag: utf-8 - ends early
+PASS Fatal flag: utf-8 - ends early 2
+PASS Fatal flag: utf-8 - invalid trail
+PASS Fatal flag: utf-8 - invalid trail 2
+PASS Fatal flag: utf-8 - invalid trail 3
+PASS Fatal flag: utf-8 - invalid trail 4
+PASS Fatal flag: utf-8 - invalid trail 5
+PASS Fatal flag: utf-8 - invalid trail 6
+PASS Fatal flag: utf-8 - > 0x10FFFF
+PASS Fatal flag: utf-8 - obsolete lead byte
+PASS Fatal flag: utf-8 - overlong U+0000 - 2 bytes
+PASS Fatal flag: utf-8 - overlong U+0000 - 3 bytes
+PASS Fatal flag: utf-8 - overlong U+0000 - 4 bytes
+PASS Fatal flag: utf-8 - overlong U+0000 - 5 bytes
+PASS Fatal flag: utf-8 - overlong U+0000 - 6 bytes
+PASS Fatal flag: utf-8 - overlong U+007F - 2 bytes
+PASS Fatal flag: utf-8 - overlong U+007F - 3 bytes
+PASS Fatal flag: utf-8 - overlong U+007F - 4 bytes
+PASS Fatal flag: utf-8 - overlong U+007F - 5 bytes
+PASS Fatal flag: utf-8 - overlong U+007F - 6 bytes
+PASS Fatal flag: utf-8 - overlong U+07FF - 3 bytes
+PASS Fatal flag: utf-8 - overlong U+07FF - 4 bytes
+PASS Fatal flag: utf-8 - overlong U+07FF - 5 bytes
+PASS Fatal flag: utf-8 - overlong U+07FF - 6 bytes
+PASS Fatal flag: utf-8 - overlong U+FFFF - 4 bytes
+PASS Fatal flag: utf-8 - overlong U+FFFF - 5 bytes
+PASS Fatal flag: utf-8 - overlong U+FFFF - 6 bytes
+PASS Fatal flag: utf-8 - overlong U+10FFFF - 5 bytes
+PASS Fatal flag: utf-8 - overlong U+10FFFF - 6 bytes
+PASS Fatal flag: utf-8 - lead surrogate
+PASS Fatal flag: utf-8 - trail surrogate
+PASS Fatal flag: utf-8 - surrogate pair
+PASS Fatal flag: utf-16le - truncated code unit
+PASS The fatal attribute of TextDecoder
+PASS Error seen with fatal does not prevent future decodes
 

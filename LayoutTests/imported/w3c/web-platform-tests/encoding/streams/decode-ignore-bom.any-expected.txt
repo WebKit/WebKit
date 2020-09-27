@@ -1,14 +1,14 @@
 
-PASS ignoreBOM should work for encoding utf-8, split at character 0 
-PASS ignoreBOM should work for encoding utf-8, split at character 1 
-PASS ignoreBOM should work for encoding utf-8, split at character 2 
-PASS ignoreBOM should work for encoding utf-8, split at character 3 
-PASS ignoreBOM should work for encoding utf-16le, split at character 0 
-PASS ignoreBOM should work for encoding utf-16le, split at character 1 
-PASS ignoreBOM should work for encoding utf-16le, split at character 2 
-PASS ignoreBOM should work for encoding utf-16le, split at character 3 
-PASS ignoreBOM should work for encoding utf-16be, split at character 0 
-PASS ignoreBOM should work for encoding utf-16be, split at character 1 
-PASS ignoreBOM should work for encoding utf-16be, split at character 2 
-PASS ignoreBOM should work for encoding utf-16be, split at character 3 
+PASS ignoreBOM should work for encoding utf-8, split at character 0
+PASS ignoreBOM should work for encoding utf-8, split at character 1
+PASS ignoreBOM should work for encoding utf-8, split at character 2
+PASS ignoreBOM should work for encoding utf-8, split at character 3
+PASS ignoreBOM should work for encoding utf-16le, split at character 0
+PASS ignoreBOM should work for encoding utf-16le, split at character 1
+PASS ignoreBOM should work for encoding utf-16le, split at character 2
+PASS ignoreBOM should work for encoding utf-16le, split at character 3
+PASS ignoreBOM should work for encoding utf-16be, split at character 0
+PASS ignoreBOM should work for encoding utf-16be, split at character 1
+PASS ignoreBOM should work for encoding utf-16be, split at character 2
+PASS ignoreBOM should work for encoding utf-16be, split at character 3
 

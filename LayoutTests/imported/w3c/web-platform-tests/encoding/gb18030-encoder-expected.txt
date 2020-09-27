@@ -1,8 +1,8 @@
 
-PASS gb18030 encoder: very basic 
-PASS gb18030 encoder: Euro 
-PASS gb18030 encoder: character 
-PASS gb18030 encoder: PUA 
-PASS gb18030 encoder: PUA #2 
-PASS gb18030 encoder: poo 
+PASS gb18030 encoder: very basic
+PASS gb18030 encoder: Euro
+PASS gb18030 encoder: character
+PASS gb18030 encoder: PUA
+PASS gb18030 encoder: PUA #2
+PASS gb18030 encoder: poo
 

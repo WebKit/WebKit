@@ -1,15 +1,15 @@
 
-PASS TextDecoderStream should be able to decode UTF-16BE 
-PASS TextDecoderStream should be able to decode invalid sequences in UTF-16BE 
-PASS TextDecoderStream should be able to reject invalid sequences in UTF-16BE 
-PASS TextDecoderStream should be able to decode UTF-16LE 
-PASS TextDecoderStream should be able to decode invalid sequences in UTF-16LE 
-PASS TextDecoderStream should be able to reject invalid sequences in UTF-16LE 
-PASS TextDecoderStream should be able to decode Shift_JIS 
-PASS TextDecoderStream should be able to decode invalid sequences in Shift_JIS 
-PASS TextDecoderStream should be able to reject invalid sequences in Shift_JIS 
-PASS TextDecoderStream should be able to decode ISO-2022-JP 
-PASS TextDecoderStream should be able to decode invalid sequences in ISO-2022-JP 
-PASS TextDecoderStream should be able to reject invalid sequences in ISO-2022-JP 
-PASS TextDecoderStream should be able to decode ISO-8859-14 
+PASS TextDecoderStream should be able to decode UTF-16BE
+PASS TextDecoderStream should be able to decode invalid sequences in UTF-16BE
+PASS TextDecoderStream should be able to reject invalid sequences in UTF-16BE
+PASS TextDecoderStream should be able to decode UTF-16LE
+PASS TextDecoderStream should be able to decode invalid sequences in UTF-16LE
+PASS TextDecoderStream should be able to reject invalid sequences in UTF-16LE
+PASS TextDecoderStream should be able to decode Shift_JIS
+PASS TextDecoderStream should be able to decode invalid sequences in Shift_JIS
+PASS TextDecoderStream should be able to reject invalid sequences in Shift_JIS
+PASS TextDecoderStream should be able to decode ISO-2022-JP
+PASS TextDecoderStream should be able to decode invalid sequences in ISO-2022-JP
+PASS TextDecoderStream should be able to reject invalid sequences in ISO-2022-JP
+PASS TextDecoderStream should be able to decode ISO-8859-14
 

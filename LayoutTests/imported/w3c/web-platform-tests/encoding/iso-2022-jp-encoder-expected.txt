@@ -1,6 +1,6 @@
 
-PASS iso-2022-jp encoder: very basic 
-PASS iso-2022-jp encoder: basics 
-PASS iso-2022-jp encoder: SO/SI ESC 
-PASS iso-2022-jp encoder: U+FFFD 
+PASS iso-2022-jp encoder: very basic
+PASS iso-2022-jp encoder: basics
+PASS iso-2022-jp encoder: SO/SI ESC
+PASS iso-2022-jp encoder: U+FFFD
 

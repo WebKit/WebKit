@@ -1,81 +1,81 @@
 
-PASS Encoding argument supported for decode: UTF-8 
-PASS Encoding argument not considered for encode: UTF-8 
-PASS Encoding argument supported for decode: IBM866 
-PASS Encoding argument not considered for encode: IBM866 
-PASS Encoding argument supported for decode: ISO-8859-2 
-PASS Encoding argument not considered for encode: ISO-8859-2 
-PASS Encoding argument supported for decode: ISO-8859-3 
-PASS Encoding argument not considered for encode: ISO-8859-3 
-PASS Encoding argument supported for decode: ISO-8859-4 
-PASS Encoding argument not considered for encode: ISO-8859-4 
-PASS Encoding argument supported for decode: ISO-8859-5 
-PASS Encoding argument not considered for encode: ISO-8859-5 
-PASS Encoding argument supported for decode: ISO-8859-6 
-PASS Encoding argument not considered for encode: ISO-8859-6 
-PASS Encoding argument supported for decode: ISO-8859-7 
-PASS Encoding argument not considered for encode: ISO-8859-7 
-PASS Encoding argument supported for decode: ISO-8859-8 
-PASS Encoding argument not considered for encode: ISO-8859-8 
-PASS Encoding argument supported for decode: ISO-8859-8-I 
-PASS Encoding argument not considered for encode: ISO-8859-8-I 
-PASS Encoding argument supported for decode: ISO-8859-10 
-PASS Encoding argument not considered for encode: ISO-8859-10 
-PASS Encoding argument supported for decode: ISO-8859-13 
-PASS Encoding argument not considered for encode: ISO-8859-13 
-PASS Encoding argument supported for decode: ISO-8859-14 
-PASS Encoding argument not considered for encode: ISO-8859-14 
-PASS Encoding argument supported for decode: ISO-8859-15 
-PASS Encoding argument not considered for encode: ISO-8859-15 
-PASS Encoding argument supported for decode: ISO-8859-16 
-PASS Encoding argument not considered for encode: ISO-8859-16 
-PASS Encoding argument supported for decode: KOI8-R 
-PASS Encoding argument not considered for encode: KOI8-R 
-PASS Encoding argument supported for decode: KOI8-U 
-PASS Encoding argument not considered for encode: KOI8-U 
-PASS Encoding argument supported for decode: macintosh 
-PASS Encoding argument not considered for encode: macintosh 
-PASS Encoding argument supported for decode: windows-874 
-PASS Encoding argument not considered for encode: windows-874 
-PASS Encoding argument supported for decode: windows-1250 
-PASS Encoding argument not considered for encode: windows-1250 
-PASS Encoding argument supported for decode: windows-1251 
-PASS Encoding argument not considered for encode: windows-1251 
-PASS Encoding argument supported for decode: windows-1252 
-PASS Encoding argument not considered for encode: windows-1252 
-PASS Encoding argument supported for decode: windows-1253 
-PASS Encoding argument not considered for encode: windows-1253 
-PASS Encoding argument supported for decode: windows-1254 
-PASS Encoding argument not considered for encode: windows-1254 
-PASS Encoding argument supported for decode: windows-1255 
-PASS Encoding argument not considered for encode: windows-1255 
-PASS Encoding argument supported for decode: windows-1256 
-PASS Encoding argument not considered for encode: windows-1256 
-PASS Encoding argument supported for decode: windows-1257 
-PASS Encoding argument not considered for encode: windows-1257 
-PASS Encoding argument supported for decode: windows-1258 
-PASS Encoding argument not considered for encode: windows-1258 
-PASS Encoding argument supported for decode: x-mac-cyrillic 
-PASS Encoding argument not considered for encode: x-mac-cyrillic 
-PASS Encoding argument supported for decode: GBK 
-PASS Encoding argument not considered for encode: GBK 
-PASS Encoding argument supported for decode: gb18030 
-PASS Encoding argument not considered for encode: gb18030 
-PASS Encoding argument supported for decode: Big5 
-PASS Encoding argument not considered for encode: Big5 
-PASS Encoding argument supported for decode: EUC-JP 
-PASS Encoding argument not considered for encode: EUC-JP 
-PASS Encoding argument supported for decode: ISO-2022-JP 
-PASS Encoding argument not considered for encode: ISO-2022-JP 
-PASS Encoding argument supported for decode: Shift_JIS 
-PASS Encoding argument not considered for encode: Shift_JIS 
-PASS Encoding argument supported for decode: EUC-KR 
-PASS Encoding argument not considered for encode: EUC-KR 
-PASS Encoding argument not considered for encode: replacement 
-PASS Encoding argument supported for decode: UTF-16BE 
-PASS Encoding argument not considered for encode: UTF-16BE 
-PASS Encoding argument supported for decode: UTF-16LE 
-PASS Encoding argument not considered for encode: UTF-16LE 
-PASS Encoding argument supported for decode: x-user-defined 
-PASS Encoding argument not considered for encode: x-user-defined 
+PASS Encoding argument supported for decode: UTF-8
+PASS Encoding argument not considered for encode: UTF-8
+PASS Encoding argument supported for decode: IBM866
+PASS Encoding argument not considered for encode: IBM866
+PASS Encoding argument supported for decode: ISO-8859-2
+PASS Encoding argument not considered for encode: ISO-8859-2
+PASS Encoding argument supported for decode: ISO-8859-3
+PASS Encoding argument not considered for encode: ISO-8859-3
+PASS Encoding argument supported for decode: ISO-8859-4
+PASS Encoding argument not considered for encode: ISO-8859-4
+PASS Encoding argument supported for decode: ISO-8859-5
+PASS Encoding argument not considered for encode: ISO-8859-5
+PASS Encoding argument supported for decode: ISO-8859-6
+PASS Encoding argument not considered for encode: ISO-8859-6
+PASS Encoding argument supported for decode: ISO-8859-7
+PASS Encoding argument not considered for encode: ISO-8859-7
+PASS Encoding argument supported for decode: ISO-8859-8
+PASS Encoding argument not considered for encode: ISO-8859-8
+PASS Encoding argument supported for decode: ISO-8859-8-I
+PASS Encoding argument not considered for encode: ISO-8859-8-I
+PASS Encoding argument supported for decode: ISO-8859-10
+PASS Encoding argument not considered for encode: ISO-8859-10
+PASS Encoding argument supported for decode: ISO-8859-13
+PASS Encoding argument not considered for encode: ISO-8859-13
+PASS Encoding argument supported for decode: ISO-8859-14
+PASS Encoding argument not considered for encode: ISO-8859-14
+PASS Encoding argument supported for decode: ISO-8859-15
+PASS Encoding argument not considered for encode: ISO-8859-15
+PASS Encoding argument supported for decode: ISO-8859-16
+PASS Encoding argument not considered for encode: ISO-8859-16
+PASS Encoding argument supported for decode: KOI8-R
+PASS Encoding argument not considered for encode: KOI8-R
+PASS Encoding argument supported for decode: KOI8-U
+PASS Encoding argument not considered for encode: KOI8-U
+PASS Encoding argument supported for decode: macintosh
+PASS Encoding argument not considered for encode: macintosh
+PASS Encoding argument supported for decode: windows-874
+PASS Encoding argument not considered for encode: windows-874
+PASS Encoding argument supported for decode: windows-1250
+PASS Encoding argument not considered for encode: windows-1250
+PASS Encoding argument supported for decode: windows-1251
+PASS Encoding argument not considered for encode: windows-1251
+PASS Encoding argument supported for decode: windows-1252
+PASS Encoding argument not considered for encode: windows-1252
+PASS Encoding argument supported for decode: windows-1253
+PASS Encoding argument not considered for encode: windows-1253
+PASS Encoding argument supported for decode: windows-1254
+PASS Encoding argument not considered for encode: windows-1254
+PASS Encoding argument supported for decode: windows-1255
+PASS Encoding argument not considered for encode: windows-1255
+PASS Encoding argument supported for decode: windows-1256
+PASS Encoding argument not considered for encode: windows-1256
+PASS Encoding argument supported for decode: windows-1257
+PASS Encoding argument not considered for encode: windows-1257
+PASS Encoding argument supported for decode: windows-1258
+PASS Encoding argument not considered for encode: windows-1258
+PASS Encoding argument supported for decode: x-mac-cyrillic
+PASS Encoding argument not considered for encode: x-mac-cyrillic
+PASS Encoding argument supported for decode: GBK
+PASS Encoding argument not considered for encode: GBK
+PASS Encoding argument supported for decode: gb18030
+PASS Encoding argument not considered for encode: gb18030
+PASS Encoding argument supported for decode: Big5
+PASS Encoding argument not considered for encode: Big5
+PASS Encoding argument supported for decode: EUC-JP
+PASS Encoding argument not considered for encode: EUC-JP
+PASS Encoding argument supported for decode: ISO-2022-JP
+PASS Encoding argument not considered for encode: ISO-2022-JP
+PASS Encoding argument supported for decode: Shift_JIS
+PASS Encoding argument not considered for encode: Shift_JIS
+PASS Encoding argument supported for decode: EUC-KR
+PASS Encoding argument not considered for encode: EUC-KR
+PASS Encoding argument not considered for encode: replacement
+PASS Encoding argument supported for decode: UTF-16BE
+PASS Encoding argument not considered for encode: UTF-16BE
+PASS Encoding argument supported for decode: UTF-16LE
+PASS Encoding argument not considered for encode: UTF-16LE
+PASS Encoding argument supported for decode: x-user-defined
+PASS Encoding argument not considered for encode: x-user-defined
 

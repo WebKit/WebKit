@@ -1,9 +1,9 @@
 
-PASS USVString handling: lone surrogate lead 
-PASS USVString handling: lone surrogate trail 
-PASS USVString handling: unmatched surrogate lead 
-PASS USVString handling: unmatched surrogate trail 
-PASS USVString handling: swapped surrogate pair 
-PASS USVString handling: properly encoded MUSICAL SYMBOL G CLEF (U+1D11E) 
-PASS USVString default 
+PASS USVString handling: lone surrogate lead
+PASS USVString handling: lone surrogate trail
+PASS USVString handling: unmatched surrogate lead
+PASS USVString handling: unmatched surrogate trail
+PASS USVString handling: swapped surrogate pair
+PASS USVString handling: properly encoded MUSICAL SYMBOL G CLEF (U+1D11E)
+PASS USVString default
 

@@ -1,30 +1,30 @@
 
-PASS encoding attribute should have correct value for 'unicode-1-1-utf-8' 
-PASS encoding attribute should have correct value for 'iso-8859-2' 
-PASS encoding attribute should have correct value for 'ascii' 
-PASS encoding attribute should have correct value for 'utf-16' 
-PASS setting fatal to 'false' should set the attribute to false 
-PASS setting ignoreBOM to 'false' should set the attribute to false 
-PASS setting fatal to '0' should set the attribute to false 
-PASS setting ignoreBOM to '0' should set the attribute to false 
-PASS setting fatal to '' should set the attribute to false 
-PASS setting ignoreBOM to '' should set the attribute to false 
-PASS setting fatal to 'undefined' should set the attribute to false 
-PASS setting ignoreBOM to 'undefined' should set the attribute to false 
-PASS setting fatal to 'null' should set the attribute to false 
-PASS setting ignoreBOM to 'null' should set the attribute to false 
-PASS setting fatal to 'true' should set the attribute to true 
-PASS setting ignoreBOM to 'true' should set the attribute to true 
-PASS setting fatal to '1' should set the attribute to true 
-PASS setting ignoreBOM to '1' should set the attribute to true 
-PASS setting fatal to '[object Object]' should set the attribute to true 
-PASS setting ignoreBOM to '[object Object]' should set the attribute to true 
-PASS setting fatal to '' should set the attribute to true 
-PASS setting ignoreBOM to '' should set the attribute to true 
-PASS setting fatal to 'yes' should set the attribute to true 
-PASS setting ignoreBOM to 'yes' should set the attribute to true 
-PASS constructing with an invalid encoding should throw 
-PASS constructing with a non-stringifiable encoding should throw 
-PASS a throwing fatal member should cause the constructor to throw 
-PASS a throwing ignoreBOM member should cause the constructor to throw 
+PASS encoding attribute should have correct value for 'unicode-1-1-utf-8'
+PASS encoding attribute should have correct value for 'iso-8859-2'
+PASS encoding attribute should have correct value for 'ascii'
+PASS encoding attribute should have correct value for 'utf-16'
+PASS setting fatal to 'false' should set the attribute to false
+PASS setting ignoreBOM to 'false' should set the attribute to false
+PASS setting fatal to '0' should set the attribute to false
+PASS setting ignoreBOM to '0' should set the attribute to false
+PASS setting fatal to '' should set the attribute to false
+PASS setting ignoreBOM to '' should set the attribute to false
+PASS setting fatal to 'undefined' should set the attribute to false
+PASS setting ignoreBOM to 'undefined' should set the attribute to false
+PASS setting fatal to 'null' should set the attribute to false
+PASS setting ignoreBOM to 'null' should set the attribute to false
+PASS setting fatal to 'true' should set the attribute to true
+PASS setting ignoreBOM to 'true' should set the attribute to true
+PASS setting fatal to '1' should set the attribute to true
+PASS setting ignoreBOM to '1' should set the attribute to true
+PASS setting fatal to '[object Object]' should set the attribute to true
+PASS setting ignoreBOM to '[object Object]' should set the attribute to true
+PASS setting fatal to '' should set the attribute to true
+PASS setting ignoreBOM to '' should set the attribute to true
+PASS setting fatal to 'yes' should set the attribute to true
+PASS setting ignoreBOM to 'yes' should set the attribute to true
+PASS constructing with an invalid encoding should throw
+PASS constructing with a non-stringifiable encoding should throw
+PASS a throwing fatal member should cause the constructor to throw
+PASS a throwing ignoreBOM member should cause the constructor to throw
 

@@ -1,4 +1,4 @@
 
-PASS TextEncoderStream readable and writable properties must pass brand checks 
-PASS TextDecoderStream readable and writable properties must pass brand checks 
+PASS TextEncoderStream readable and writable properties must pass brand checks
+PASS TextDecoderStream readable and writable properties must pass brand checks
 

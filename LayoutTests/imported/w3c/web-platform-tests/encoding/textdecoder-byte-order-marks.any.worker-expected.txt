@@ -1,5 +1,5 @@
 
-PASS Byte-order marks: utf-8 
-PASS Byte-order marks: utf-16le 
-PASS Byte-order marks: utf-16be 
+PASS Byte-order marks: utf-8
+PASS Byte-order marks: utf-16le
+PASS Byte-order marks: utf-16be
 

@@ -1,8 +1,8 @@
 
-PASS gbk encoder: very basic 
-PASS gbk encoder: Euro 
-PASS gbk encoder: character 
-PASS gbk encoder: PUA 
-PASS gbk encoder: PUA #2 
-PASS gbk encoder: poo 
+PASS gbk encoder: very basic
+PASS gbk encoder: Euro
+PASS gbk encoder: character
+PASS gbk encoder: PUA
+PASS gbk encoder: PUA #2
+PASS gbk encoder: poo
 

@@ -1,16 +1,16 @@
 
-PASS UTF-7 should not be supported 
-PASS utf-7 should not be supported 
-PASS UTF-32 with BOM should decode as UTF-16LE 
-PASS UTF-32 with no BOM should decode as UTF-8 
-PASS utf-32 with BOM should decode as UTF-16LE 
-PASS utf-32 with no BOM should decode as UTF-8 
-PASS UTF-32LE with BOM should decode as UTF-16LE 
-PASS UTF-32LE with no BOM should decode as UTF-8 
-PASS utf-32le with BOM should decode as UTF-16LE 
-PASS utf-32le with no BOM should decode as UTF-8 
-PASS UTF-32be with no BOM should decode as UTF-8 
-PASS UTF-32be with BOM should decode as UTF-8 
-PASS utf-32be with no BOM should decode as UTF-8 
-PASS utf-32be with BOM should decode as UTF-8 
+PASS UTF-7 should not be supported
+PASS utf-7 should not be supported
+PASS UTF-32 with BOM should decode as UTF-16LE
+PASS UTF-32 with no BOM should decode as UTF-8
+PASS utf-32 with BOM should decode as UTF-16LE
+PASS utf-32 with no BOM should decode as UTF-8
+PASS UTF-32LE with BOM should decode as UTF-16LE
+PASS UTF-32LE with no BOM should decode as UTF-8
+PASS utf-32le with BOM should decode as UTF-16LE
+PASS utf-32le with no BOM should decode as UTF-8
+PASS UTF-32be with no BOM should decode as UTF-8
+PASS UTF-32be with BOM should decode as UTF-8
+PASS utf-32be with no BOM should decode as UTF-8
+PASS utf-32be with BOM should decode as UTF-8
 

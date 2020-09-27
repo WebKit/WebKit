@@ -1,4 +1,4 @@
 
-PASS Modify buffer after passing it in (ArrayBuffer) 
-PASS Modify buffer after passing it in (SharedArrayBuffer) 
+PASS Modify buffer after passing it in (ArrayBuffer)
+PASS Modify buffer after passing it in (SharedArrayBuffer)
 

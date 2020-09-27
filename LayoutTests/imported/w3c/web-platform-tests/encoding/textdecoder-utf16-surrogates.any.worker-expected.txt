@@ -1,12 +1,12 @@
 
-PASS utf-16le - lone surrogate lead 
-PASS utf-16le - lone surrogate lead (fatal flag set) 
-PASS utf-16le - lone surrogate trail 
-PASS utf-16le - lone surrogate trail (fatal flag set) 
-PASS utf-16le - unmatched surrogate lead 
-PASS utf-16le - unmatched surrogate lead (fatal flag set) 
-PASS utf-16le - unmatched surrogate trail 
-PASS utf-16le - unmatched surrogate trail (fatal flag set) 
-PASS utf-16le - swapped surrogate pair 
-PASS utf-16le - swapped surrogate pair (fatal flag set) 
+PASS utf-16le - lone surrogate lead
+PASS utf-16le - lone surrogate lead (fatal flag set)
+PASS utf-16le - lone surrogate trail
+PASS utf-16le - lone surrogate trail (fatal flag set)
+PASS utf-16le - unmatched surrogate lead
+PASS utf-16le - unmatched surrogate lead (fatal flag set)
+PASS utf-16le - unmatched surrogate trail
+PASS utf-16le - unmatched surrogate trail (fatal flag set)
+PASS utf-16le - swapped surrogate pair
+PASS utf-16le - swapped surrogate pair (fatal flag set)
 

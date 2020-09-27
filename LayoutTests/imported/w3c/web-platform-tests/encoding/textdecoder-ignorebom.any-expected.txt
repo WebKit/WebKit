@@ -1,6 +1,6 @@
 
-PASS BOM is ignored if ignoreBOM option is specified: utf-8 
-PASS BOM is ignored if ignoreBOM option is specified: utf-16le 
-PASS BOM is ignored if ignoreBOM option is specified: utf-16be 
-PASS The ignoreBOM attribute of TextDecoder 
+PASS BOM is ignored if ignoreBOM option is specified: utf-8
+PASS BOM is ignored if ignoreBOM option is specified: utf-16le
+PASS BOM is ignored if ignoreBOM option is specified: utf-16be
+PASS The ignoreBOM attribute of TextDecoder
 

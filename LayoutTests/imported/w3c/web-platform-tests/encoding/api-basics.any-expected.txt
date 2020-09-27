@@ -1,8 +1,8 @@
 
-PASS Default encodings 
-PASS Default inputs 
-PASS Encode/decode round trip: utf-8 
-PASS Decode sample: utf-16le 
-PASS Decode sample: utf-16be 
-PASS Decode sample: utf-16 
+PASS Default encodings
+PASS Default inputs
+PASS Encode/decode round trip: utf-8
+PASS Decode sample: utf-16le
+PASS Decode sample: utf-16be
+PASS Decode sample: utf-16
 
