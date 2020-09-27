@@ -1,10 +1,10 @@
 
-PASS ascii: 0E 24 42 79 56 1B 28 42 
-PASS roman: 1B 28 4A 0F 1B 28 42 
-PASS katakana: 1B 28 49 65 1B 28 42 
-PASS lead byte and trail byte 1B: 1B 24 42 7F 56 1B 28 42 
-PASS trail byte null index code point: 1B 24 42 24 74 
-PASS trail byte out of range: 1B 24 42 79 7F 1B 28 42 
-PASS escape start: 1B 65 79 56 1B 28 42 
-PASS escape: 1B 24 65 79 56 1B 28 42 
+PASS ascii: 0E 24 42 79 56 1B 28 42
+PASS roman: 1B 28 4A 0F 1B 28 42
+PASS katakana: 1B 28 49 65 1B 28 42
+PASS lead byte and trail byte 1B: 1B 24 42 7F 56 1B 28 42
+PASS trail byte null index code point: 1B 24 42 24 74
+PASS trail byte out of range: 1B 24 42 79 7F 1B 28 42
+PASS escape start: 1B 65 79 56 1B 28 42
+PASS escape: 1B 24 65 79 56 1B 28 42
 
