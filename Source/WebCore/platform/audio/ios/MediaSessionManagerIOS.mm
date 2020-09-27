@@ -205,8 +205,8 @@ void MediaSessionManageriOS::activeVideoRouteDidChange(SupportsAirPlayVideo supp
     if (!nowPlayingSession)
         return;
 
-    nowPlayingSession->setShouldPlayToPlaybackTarget(supportsAirPlayVideo == SupportsAirPlayVideo::Yes);
     nowPlayingSession->setPlaybackTarget(WTFMove(playbackTarget));
+    nowPlayingSession->setShouldPlayToPlaybackTarget(supportsAirPlayVideo == SupportsAirPlayVideo::Yes);
 }
 
 void MediaSessionManageriOS::applicationWillEnterForeground(SuspendedUnderLock isSuspendedUnderLock)
