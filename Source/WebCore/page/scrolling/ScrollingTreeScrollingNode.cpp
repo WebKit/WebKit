@@ -54,7 +54,7 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
         m_scrollableAreaSize = state.scrollableAreaSize();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
-        if (scrollingTree().isRubberBandInProgress())
+        if (scrollingTree().isRubberBandInProgressForNode(scrollingNodeID()))
             m_totalContentsSizeForRubberBand = m_totalContentsSize;
         else
             m_totalContentsSizeForRubberBand = state.totalContentsSize();

@@ -148,12 +148,13 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_overflowScrollDelta = FloatSize();
 
         stopSnapRubberbandTimer();
-
+        updateRubberBandingState();
         return true;
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
         snapRubberBand();
+        updateRubberBandingState();
         return true;
     }
 
@@ -317,6 +318,8 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_lastMomentumScrollTimestamp = { };
     }
 
+    updateRubberBandingState();
+
     return handled;
 }
 #endif // PLATFORM(MAC)
@@ -412,6 +415,8 @@ void ScrollController::snapRubberBandTimerFired()
                 m_startTime = { };
                 m_startStretch = { };
                 m_origVelocity = { };
+
+                updateRubberBandingState();
                 return;
             }
 
@@ -452,11 +457,20 @@ void ScrollController::snapRubberBandTimerFired()
     } else {
         m_startTime = MonotonicTime::now();
         m_startStretch = { };
-        if (!isRubberBandInProgress())
+        if (!isRubberBandInProgressInternal())
             stopSnapRubberbandTimer();
     }
+
+    updateRubberBandingState();
 }
 #endif
+
+void ScrollController::scrollPositionChanged()
+{
+#if ENABLE(RUBBER_BANDING)
+    updateRubberBandingState();
+#endif
+}
 
 bool ScrollController::usesScrollSnap() const
 {
@@ -479,10 +493,7 @@ bool ScrollController::isUserScrollInProgress() const
 bool ScrollController::isRubberBandInProgress() const
 {
 #if ENABLE(RUBBER_BANDING) && PLATFORM(MAC)
-    if (!m_inScrollGesture && !m_momentumScrollInProgress && !m_snapRubberbandTimer)
-        return false;
-
-    return !m_client.stretchAmount().isZero();
+    return m_isRubberBanding;
 #else
     return false;
 #endif
@@ -517,12 +528,12 @@ void ScrollController::startSnapRubberbandTimer()
 void ScrollController::stopSnapRubberbandTimer()
 {
     m_client.didStopRubberbandSnapAnimation();
-    
+
     if (m_snapRubberbandTimer) {
         m_snapRubberbandTimer->stop();
         m_snapRubberbandTimer = nullptr;
     }
-    
+
     m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
@@ -554,6 +565,24 @@ bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheel
 bool ScrollController::shouldRubberBandInDirection(ScrollDirection direction) const
 {
     return m_client.shouldRubberBandInDirection(direction);
+}
+
+bool ScrollController::isRubberBandInProgressInternal() const
+{
+    if (!m_inScrollGesture && !m_momentumScrollInProgress && !m_snapRubberbandTimer)
+        return false;
+
+    return !m_client.stretchAmount().isZero();
+}
+
+void ScrollController::updateRubberBandingState()
+{
+    bool isRubberBanding = isRubberBandInProgressInternal();
+    if (isRubberBanding == m_isRubberBanding)
+        return;
+    
+    m_isRubberBanding = isRubberBanding;
+    m_client.rubberBandingStateChanged(m_isRubberBanding);
 }
 
 #endif // ENABLE(RUBBER_BANDING)
@@ -717,6 +746,8 @@ void ScrollController::updateGestureInProgressState(const PlatformWheelEvent& wh
         m_inScrollGesture = true;
     else if (wheelEvent.isEndOfNonMomentumScroll() || wheelEvent.isGestureCancel() || wheelEvent.isEndOfMomentumScroll())
         m_inScrollGesture = false;
+
+    updateRubberBandingState();
 }
 
 void ScrollController::startScrollSnapTimer()

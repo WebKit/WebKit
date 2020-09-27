@@ -2632,7 +2632,7 @@ bool FrameView::isRubberBandInProgress() const
 
     if (auto scrollingCoordinator = this->scrollingCoordinator()) {
         if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
-            return scrollingCoordinator->isRubberBandInProgress();
+            return scrollingCoordinator->isRubberBandInProgress(scrollingNodeID());
     }
 
     if (auto scrollAnimator = existingScrollAnimator())

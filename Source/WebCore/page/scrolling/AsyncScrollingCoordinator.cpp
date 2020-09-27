@@ -839,10 +839,10 @@ bool AsyncScrollingCoordinator::isUserScrollInProgress(ScrollingNodeID nodeID) c
     return false;
 }
 
-bool AsyncScrollingCoordinator::isRubberBandInProgress() const
+bool AsyncScrollingCoordinator::isRubberBandInProgress(ScrollingNodeID nodeID) const
 {
     if (m_scrollingTree)
-        return m_scrollingTree->isRubberBandInProgress();
+        return m_scrollingTree->isRubberBandInProgressForNode(nodeID);
 
     return false;
 }

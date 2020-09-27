@@ -143,6 +143,8 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollingL
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons());
 
+    m_delegate.currentScrollPositionChanged();
+
     if (isRootNode())
         updateMainFramePinAndRubberbandState();
 
@@ -224,9 +226,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition() const
 void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinAndRubberbandState()
 {
     ASSERT(isRootNode());
-
     scrollingTree().setMainFramePinnedState(edgePinnedState());
-    scrollingTree().setMainFrameIsRubberBanding(isRubberBanding());
 }
 
 unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
