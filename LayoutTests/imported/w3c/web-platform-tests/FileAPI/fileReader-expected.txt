@@ -1,6 +1,6 @@
 
-PASS FileReader interface object 
-PASS no-argument FileReader constructor 
+PASS FileReader interface object
+PASS no-argument FileReader constructor
 FAIL FileReader States -- abort assert_unreached: abort event should fire sync Reached unreachable code
 FAIL FileReader States -- events assert_equals: expected 1 but got 2
 

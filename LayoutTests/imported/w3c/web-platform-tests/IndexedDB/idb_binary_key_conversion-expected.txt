@@ -1,7 +1,7 @@
 
-PASS Empty ArrayBuffer 
-PASS ArrayBuffer 
-PASS DataView 
-PASS TypedArray(Int8Array) 
-PASS Array of TypedArray(Int8Array) 
+PASS Empty ArrayBuffer
+PASS ArrayBuffer
+PASS DataView
+PASS TypedArray(Int8Array)
+PASS Array of TypedArray(Int8Array)
 

@@ -1,10 +1,10 @@
 
-PASS innerHTML in XHTML 
-PASS innerHTML in XHTML 1 
-PASS innerHTML in XHTML 2 
-PASS innerHTML in XHTML 3 
-PASS innerHTML in XHTML 4 
-PASS innerHTML in XHTML 5 
-PASS innerHTML in XHTML 6 
-PASS innerHTML in XHTML 7 
+PASS innerHTML in XHTML
+PASS innerHTML in XHTML 1
+PASS innerHTML in XHTML 2
+PASS innerHTML in XHTML 3
+PASS innerHTML in XHTML 4
+PASS innerHTML in XHTML 5
+PASS innerHTML in XHTML 6
+PASS innerHTML in XHTML 7
 

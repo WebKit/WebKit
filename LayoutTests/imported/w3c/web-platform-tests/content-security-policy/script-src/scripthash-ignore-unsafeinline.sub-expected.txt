@@ -1,5 +1,5 @@
 This tests that a valid hash value disables inline JavaScript, even if 'unsafe-inline' is present.
 
 
-PASS Expecting alerts: ["PASS (1/1)"] 
+PASS Expecting alerts: ["PASS (1/1)"]
 

@@ -4,5 +4,5 @@ CONSOLE MESSAGE: Refused to load because it does not appear in the object-src di
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should block the object and fire a spv 
+NOTRUN Should block the object and fire a spv
 

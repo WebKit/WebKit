@@ -1,3 +1,3 @@
 
-PASS IDBIndex.get() - throw InvalidStateError on index deleted by aborted upgrade 
+PASS IDBIndex.get() - throw InvalidStateError on index deleted by aborted upgrade
 

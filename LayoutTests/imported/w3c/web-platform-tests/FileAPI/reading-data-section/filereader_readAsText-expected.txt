@@ -1,4 +1,4 @@
 
 FAIL readAsText should correctly read UTF-8. assert_equals: expected 1 but got 2
-PASS readAsText should correctly read UTF-16. 
+PASS readAsText should correctly read UTF-16.
 

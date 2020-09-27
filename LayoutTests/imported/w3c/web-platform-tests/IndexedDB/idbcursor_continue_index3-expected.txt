@@ -1,3 +1,3 @@
 
-PASS IDBCursor.continue() - index - attempt to iterate to the previous record when the direction is set for the next record  
+PASS IDBCursor.continue() - index - attempt to iterate to the previous record when the direction is set for the next record
 

@@ -1,13 +1,13 @@
 
-PASS Reading 'nonce' content attribute and IDL attribute. 
-PASS Cloned node retains nonce. 
-PASS Cloned node retains nonce when inserted. 
-PASS Writing 'nonce' content attribute. 
+PASS Reading 'nonce' content attribute and IDL attribute.
+PASS Cloned node retains nonce.
+PASS Cloned node retains nonce when inserted.
+PASS Writing 'nonce' content attribute.
 FAIL Writing 'nonce' IDL attribute. assert_equals: expected "foo" but got "bar"
-PASS Document-written script executes. 
-PASS Document-written script's nonce value. 
+PASS Document-written script executes.
+PASS Document-written script's nonce value.
 FAIL createElement.nonce. assert_equals: expected (object) null but got (string) "abc"
-PASS setAttribute('nonce') overwrites '.nonce' upon insertion. 
-PASS createElement.setAttribute. 
-PASS Nonces leak via CSS side-channels. 
+PASS setAttribute('nonce') overwrites '.nonce' upon insertion.
+PASS createElement.setAttribute.
+PASS Nonces leak via CSS side-channels.
 

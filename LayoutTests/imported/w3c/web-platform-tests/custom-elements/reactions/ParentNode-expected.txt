@@ -1,6 +1,6 @@
 
-PASS prepend on ParentNode must enqueue a connected reaction 
-PASS prepend on ParentNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS append on ParentNode must enqueue a connected reaction 
-PASS append on ParentNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
+PASS prepend on ParentNode must enqueue a connected reaction
+PASS prepend on ParentNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS append on ParentNode must enqueue a connected reaction
+PASS append on ParentNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
 

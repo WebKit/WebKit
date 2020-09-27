@@ -2,7 +2,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Test that image does not load 
+PASS Test that image does not load
 TIMEOUT Event is fired Test timed out
-PASS Violation report status OK. 
+PASS Violation report status OK.
 

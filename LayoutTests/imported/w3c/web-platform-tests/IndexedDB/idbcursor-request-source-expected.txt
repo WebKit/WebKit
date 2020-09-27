@@ -1,4 +1,4 @@
 
-PASS The source of the request from cursor => cursor.update(0) is the cursor itself 
-PASS The source of the request from cursor => cursor.delete() is the cursor itself 
+PASS The source of the request from cursor => cursor.update(0) is the cursor itself
+PASS The source of the request from cursor => cursor.delete() is the cursor itself
 

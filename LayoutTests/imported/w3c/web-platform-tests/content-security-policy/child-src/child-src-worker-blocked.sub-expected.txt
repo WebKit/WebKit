@@ -2,5 +2,5 @@ This test used to check the child-src csp controlling worker creation. This beha
 
 
 FAIL Should throw a securitypolicyviolation event assert_equals: expected "worker-src" but got "child-src 'none'"
-PASS Should block worker because it does not match any directive including the deprecated 'child-src' 
+PASS Should block worker because it does not match any directive including the deprecated 'child-src'
 

@@ -1,10 +1,10 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Fetching a blob URL immediately before revoking it works in an iframe. 
+PASS Fetching a blob URL immediately before revoking it works in an iframe.
 TIMEOUT Fetching a blob URL immediately before revoking it works in an iframe navigation. Test timed out
-PASS Opening a blob URL in a new window immediately before revoking it works. 
+PASS Opening a blob URL in a new window immediately before revoking it works.
 FAIL Opening a blob URL in a noopener about:blank window immediately before revoking it works. Can't find variable: BroadcastChannel
-PASS Fetching a blob URL immediately before revoking it works in <script> tags. 
+PASS Fetching a blob URL immediately before revoking it works in <script> tags.
 FAIL Opening a blob URL in a new window by clicking an <a> tag works immediately before revoking the URL. Can't find variable: BroadcastChannel
 

@@ -1,6 +1,6 @@
 
-PASS Getting blob after cancelling the Response body 
-PASS Getting text after cancelling the Response body 
-PASS Getting json after cancelling the Response body 
-PASS Getting arrayBuffer after cancelling the Response body 
+PASS Getting blob after cancelling the Response body
+PASS Getting text after cancelling the Response body
+PASS Getting json after cancelling the Response body
+PASS Getting arrayBuffer after cancelling the Response body
 

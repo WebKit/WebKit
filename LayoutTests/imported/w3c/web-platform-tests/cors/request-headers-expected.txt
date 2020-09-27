@@ -1,10 +1,10 @@
 Request headers
 
 
-PASS basic request header 
-PASS Simple request headers need not be in allow-headers 
-PASS Unspecified request headers are disallowed 
-PASS Strange allowheaders (case insensitive) 
-PASS INVALID_STATE_ERR on setRequestHeader before open() 
-PASS INVALID_STATE_ERR on setRequestHeader after send() 
+PASS basic request header
+PASS Simple request headers need not be in allow-headers
+PASS Unspecified request headers are disallowed
+PASS Strange allowheaders (case insensitive)
+PASS INVALID_STATE_ERR on setRequestHeader before open()
+PASS INVALID_STATE_ERR on setRequestHeader after send()
 

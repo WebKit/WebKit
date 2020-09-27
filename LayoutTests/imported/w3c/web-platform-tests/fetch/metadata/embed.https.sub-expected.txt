@@ -2,10 +2,10 @@ Blocked access to external URL https://www.localhost:9443/fetch/metadata/resourc
 Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=post-embed-same-site-9652668c-3b07-4089-a95f-d9a532826a1b
 Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=embed-cross-site-9652668c-3b07-4089-a95f-d9a532826a1b
 Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=post-embed-cross-site-9652668c-3b07-4089-a95f-d9a532826a1b
- 
 
-PASS Wrapper: same-origin embed 
-PASS Wrapper: Navigate to same-origin embed 
+
+PASS Wrapper: same-origin embed
+PASS Wrapper: Navigate to same-origin embed
 FAIL Wrapper: same-site embed assert_not_equals: got disallowed value "No header has been recorded"
 FAIL Wrapper: Navigate to same-site embed assert_not_equals: got disallowed value "No header has been recorded"
 FAIL Wrapper: cross-site embed assert_not_equals: got disallowed value "No header has been recorded"
@@ -13,9 +13,9 @@ FAIL Wrapper: Navigate to cross-site embed assert_not_equals: got disallowed val
 FAIL same-origin embed: sec-fetch-dest assert_equals: expected "embed" but got ""
 FAIL same-origin embed: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL same-origin embed: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS same-origin embed: sec-fetch-user 
+PASS same-origin embed: sec-fetch-user
 FAIL Navigate to same-origin embed: sec-fetch-dest assert_equals: expected "embed" but got ""
 FAIL Navigate to same-origin embed: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Navigate to same-origin embed: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS Navigate to same-origin embed: sec-fetch-user 
+PASS Navigate to same-origin embed: sec-fetch-user
 

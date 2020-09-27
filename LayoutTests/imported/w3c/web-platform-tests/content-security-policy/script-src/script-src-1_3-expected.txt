@@ -1,6 +1,6 @@
 Positive test case: Inline script should run 'unsafe-inline' script-src directive.
 
 
-PASS Should not fire policy violation events 
-PASS Inline script in a script tag should  run with an unsafe-inline directive 
+PASS Should not fire policy violation events
+PASS Inline script in a script tag should  run with an unsafe-inline directive
 

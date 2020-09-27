@@ -1,3 +1,3 @@
 
-PASS Inline style attribute should apply with 'unsafe-inline' 
+PASS Inline style attribute should apply with 'unsafe-inline'
 Lorem ipsum

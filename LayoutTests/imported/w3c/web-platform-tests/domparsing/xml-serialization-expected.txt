@@ -1,19 +1,19 @@
 
-PASS Comment: containing -- 
-PASS Comment: starting with - 
-PASS Comment: ending with - 
-PASS Comment: containing --> 
-PASS DocumentType: empty public and system id 
-PASS DocumentType: empty system id 
-PASS DocumentType: empty public id 
-PASS DocumentType: non-empty public and system id 
-PASS DocumentType: 'APOSTROPHE' (U+0027) 
-PASS DocumentType: 'QUOTATION MARK' (U+0022) 
-PASS DocumentType: 'APOSTROPHE' (U+0027) and 'QUOTATION MARK' (U+0022) 
-PASS Element: href attributes are not percent-encoded 
-PASS Element: query parts in href attributes are not percent-encoded 
-PASS ProcessingInstruction: empty data 
-PASS ProcessingInstruction: non-empty data 
-PASS ProcessingInstruction: target contains xml 
-PASS ProcessingInstruction: target contains a 'COLON' (U+003A) 
+PASS Comment: containing --
+PASS Comment: starting with -
+PASS Comment: ending with -
+PASS Comment: containing -->
+PASS DocumentType: empty public and system id
+PASS DocumentType: empty system id
+PASS DocumentType: empty public id
+PASS DocumentType: non-empty public and system id
+PASS DocumentType: 'APOSTROPHE' (U+0027)
+PASS DocumentType: 'QUOTATION MARK' (U+0022)
+PASS DocumentType: 'APOSTROPHE' (U+0027) and 'QUOTATION MARK' (U+0022)
+PASS Element: href attributes are not percent-encoded
+PASS Element: query parts in href attributes are not percent-encoded
+PASS ProcessingInstruction: empty data
+PASS ProcessingInstruction: non-empty data
+PASS ProcessingInstruction: target contains xml
+PASS ProcessingInstruction: target contains a 'COLON' (U+003A)
 

@@ -1,20 +1,20 @@
 
-PASS Valid key - new Date() 
-PASS Valid key - new Date(0) 
-PASS Valid key - [] 
-PASS Valid key - new Array() 
-PASS Valid key - ["undefined"] 
-PASS Valid key - Infinity 
-PASS Valid key - -Infinity 
-PASS Valid key - 0 
-PASS Valid key - 1.5 
-PASS Valid key - 3e38 
-PASS Valid key - 3e-38 
-PASS Valid key - "foo" 
-PASS Valid key - "\n" 
-PASS Valid key - "" 
-PASS Valid key - "\"" 
-PASS Valid key - "\u1234" 
-PASS Valid key - "\u0000" 
-PASS Valid key - "NaN" 
+PASS Valid key - new Date()
+PASS Valid key - new Date(0)
+PASS Valid key - []
+PASS Valid key - new Array()
+PASS Valid key - ["undefined"]
+PASS Valid key - Infinity
+PASS Valid key - -Infinity
+PASS Valid key - 0
+PASS Valid key - 1.5
+PASS Valid key - 3e38
+PASS Valid key - 3e-38
+PASS Valid key - "foo"
+PASS Valid key - "\n"
+PASS Valid key - ""
+PASS Valid key - "\""
+PASS Valid key - "\u1234"
+PASS Valid key - "\u0000"
+PASS Valid key - "NaN"
 

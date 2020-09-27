@@ -1,4 +1,4 @@
 
-PASS Test referer header https://localhost:9443/beacon/resources/ 
-PASS Test referer header http://localhost:8800/beacon/resources/ 
+PASS Test referer header https://localhost:9443/beacon/resources/
+PASS Test referer header http://localhost:8800/beacon/resources/
 

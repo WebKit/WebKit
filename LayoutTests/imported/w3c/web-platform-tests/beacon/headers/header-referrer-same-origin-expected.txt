@@ -1,4 +1,4 @@
 
-PASS Test referer header /beacon/resources/ 
-PASS Test referer header http://127.0.0.1:8800/beacon/resources/ 
+PASS Test referer header /beacon/resources/
+PASS Test referer header http://127.0.0.1:8800/beacon/resources/
 

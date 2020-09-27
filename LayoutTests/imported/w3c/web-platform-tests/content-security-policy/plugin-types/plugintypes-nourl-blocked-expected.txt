@@ -4,5 +4,5 @@ CONSOLE MESSAGE: Refused to load because its MIME type does not appear in the pl
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should not load the object because it does not match plugin-types 
+NOTRUN Should not load the object because it does not match plugin-types
 

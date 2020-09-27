@@ -1,10 +1,10 @@
 
-PASS Must be a function according to typeof 
-PASS Must have the correct [[Prototype]] 
-PASS Must have the correct property descriptor 
-PASS Must throw a TypeError when called or constructed 
-PASS Must not have a .prototype property 
-PASS Must have an own name property equal to the interface name and with the correct descriptors 
-PASS Must have an own length property with value zero and the correct descriptors 
-PASS instanceof must throw but only when we don't bail out early 
+PASS Must be a function according to typeof
+PASS Must have the correct [[Prototype]]
+PASS Must have the correct property descriptor
+PASS Must throw a TypeError when called or constructed
+PASS Must not have a .prototype property
+PASS Must have an own name property equal to the interface name and with the correct descriptors
+PASS Must have an own length property with value zero and the correct descriptors
+PASS instanceof must throw but only when we don't bail out early
 

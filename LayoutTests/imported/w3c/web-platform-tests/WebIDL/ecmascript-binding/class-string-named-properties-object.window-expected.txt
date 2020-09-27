@@ -1,5 +1,5 @@
 
-PASS @@toStringTag exists with the appropriate descriptor 
-PASS Object.prototype.toString 
-PASS Object.prototype.toString applied after modifying @@toStringTag 
+PASS @@toStringTag exists with the appropriate descriptor
+PASS Object.prototype.toString
+PASS Object.prototype.toString applied after modifying @@toStringTag
 

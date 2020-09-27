@@ -1,6 +1,6 @@
 Tests that an SVG loaded in an iframe with a policy enforces it, not the policy enforced by this parent frame. The SVG should render and not redirect to a different resource.
 
-  
 
-PASS Expecting logs: ["TEST COMPLETE"] 
+
+PASS Expecting logs: ["TEST COMPLETE"]
 

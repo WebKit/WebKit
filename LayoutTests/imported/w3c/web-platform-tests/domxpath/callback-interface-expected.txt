@@ -3,13 +3,13 @@ CONSOLE MESSAGE: [object Object]
 CONSOLE MESSAGE: TypeError: 'lookupNamespaceURI' property of callback interface should be callable
 CONSOLE MESSAGE: TypeError: 'lookupNamespaceURI' property of callback interface should be callable
 
-PASS callable resolver 
-PASS callable resolver: result is not cached 
-PASS callable resolver: abrupt completion from Call 
-PASS callable resolver: no 'lookupNamespaceURI' lookups 
-PASS object resolver 
-PASS object resolver: 'lookupNamespaceURI' is not cached 
-PASS object resolver: abrupt completion from Get 
-PASS object resolver: 'lookupNamespaceURI' is thruthy and not callable 
-PASS object resolver: 'lookupNamespaceURI' is falsy and not callable 
+PASS callable resolver
+PASS callable resolver: result is not cached
+PASS callable resolver: abrupt completion from Call
+PASS callable resolver: no 'lookupNamespaceURI' lookups
+PASS object resolver
+PASS object resolver: 'lookupNamespaceURI' is not cached
+PASS object resolver: abrupt completion from Get
+PASS object resolver: 'lookupNamespaceURI' is thruthy and not callable
+PASS object resolver: 'lookupNamespaceURI' is falsy and not callable
 

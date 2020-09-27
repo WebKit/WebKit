@@ -1,7 +1,7 @@
 
-PASS length on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element 
-PASS The indexed setter on HTMLSelectElement must enqueue connectedCallback when inserting a custom element 
-PASS The indexed setter on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element 
-PASS add on HTMLSelectElement must enqueue connectedCallback when inserting a custom element 
-PASS remove on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element 
+PASS length on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element
+PASS The indexed setter on HTMLSelectElement must enqueue connectedCallback when inserting a custom element
+PASS The indexed setter on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element
+PASS add on HTMLSelectElement must enqueue connectedCallback when inserting a custom element
+PASS remove on HTMLSelectElement must enqueue disconnectedCallback when removing a custom element
 

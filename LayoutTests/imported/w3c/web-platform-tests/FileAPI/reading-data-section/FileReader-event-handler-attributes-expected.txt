@@ -1,8 +1,8 @@
 
-PASS FileReader.onloadstart: initial value 
-PASS FileReader.onprogress: initial value 
-PASS FileReader.onload: initial value 
-PASS FileReader.onabort: initial value 
-PASS FileReader.onerror: initial value 
-PASS FileReader.onloadend: initial value 
+PASS FileReader.onloadstart: initial value
+PASS FileReader.onprogress: initial value
+PASS FileReader.onload: initial value
+PASS FileReader.onabort: initial value
+PASS FileReader.onerror: initial value
+PASS FileReader.onloadend: initial value
 

@@ -1,4 +1,4 @@
 
-PASS IDBFactory.open() - upgradeneeded gets VersionChangeEvent 
-PASS IDBFactory.open() - upgradeneeded gets VersionChangeEvent - second upgrade 
+PASS IDBFactory.open() - upgradeneeded gets VersionChangeEvent
+PASS IDBFactory.open() - upgradeneeded gets VersionChangeEvent - second upgrade
 

@@ -1,13 +1,13 @@
 
-PASS ClipboardItem({string, Blob}) succeeds with different types 
-PASS ClipboardItem() succeeds with empty options 
+PASS ClipboardItem({string, Blob}) succeeds with different types
+PASS ClipboardItem() succeeds with empty options
 FAIL ClipboardItem({}) fails with empty dictionary input assert_throws_js: function "() => {new ClipboardItem({});}" did not throw
 FAIL ClipboardItem(Blob) fails assert_throws_js: function "() => {new ClipboardItem(blob);}" did not throw
 FAIL ClipboardItem() fails with null input assert_throws_js: function "() => {new ClipboardItem(null);}" did not throw
-PASS ClipboardItem() fails with no input 
-PASS types() returns correct values 
+PASS ClipboardItem() fails with no input
+PASS types() returns correct values
 FAIL raw() returns correct values, defaulting to false assert_equals: expected (boolean) false but got (undefined) undefined
-PASS getType(DOMString valid type) succeeds with correct output 
-PASS getType(DOMString invalid type) succeeds with correct output 
-PASS getType(DOMString type) rejects correctly when querying for missing type 
+PASS getType(DOMString valid type) succeeds with correct output
+PASS getType(DOMString invalid type) succeeds with correct output
+PASS getType(DOMString type) rejects correctly when querying for missing type
 

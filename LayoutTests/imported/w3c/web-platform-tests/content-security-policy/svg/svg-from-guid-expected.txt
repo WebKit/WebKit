@@ -2,5 +2,5 @@ Tests that an SVG loaded in an iframe with a policy enforces it, not the policy 
 
 
 
-PASS Expecting logs: ["TEST COMPLETE"] 
+PASS Expecting logs: ["TEST COMPLETE"]
 

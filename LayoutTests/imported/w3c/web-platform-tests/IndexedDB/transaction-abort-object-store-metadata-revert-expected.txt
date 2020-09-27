@@ -1,6 +1,6 @@
 
-PASS Created stores get marked as deleted after their transaction aborts 
-PASS Deleted stores get marked as not-deleted after the transaction aborts 
-PASS Created+deleted stores are still marked as deleted after their transaction aborts 
-PASS Un-instantiated deleted stores get marked as not-deleted after the transaction aborts 
+PASS Created stores get marked as deleted after their transaction aborts
+PASS Deleted stores get marked as not-deleted after the transaction aborts
+PASS Created+deleted stores are still marked as deleted after their transaction aborts
+PASS Un-instantiated deleted stores get marked as not-deleted after the transaction aborts
 

@@ -1,5 +1,5 @@
 
-PASS existence and property descriptor of DOMException 
-PASS existence and property descriptor of DOMException.prototype 
-PASS existence and property descriptor of DOMException.prototype.constructor 
+PASS existence and property descriptor of DOMException
+PASS existence and property descriptor of DOMException.prototype
+PASS existence and property descriptor of DOMException.prototype.constructor
 

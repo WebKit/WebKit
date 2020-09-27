@@ -4,6 +4,6 @@ Tests that an SVG loaded in an iframe with a policy enforces it, not the policy 
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire violation event 
+NOTRUN Should fire violation event
 PASS
 

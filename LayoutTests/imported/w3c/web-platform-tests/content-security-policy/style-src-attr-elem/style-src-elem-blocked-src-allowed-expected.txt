@@ -3,6 +3,6 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'style-src-elem'
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire a security policy violation event 
+NOTRUN Should fire a security policy violation event
 FAIL The inline style should not be applied assert_equals: expected 0 but got 1
 

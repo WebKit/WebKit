@@ -4,7 +4,7 @@ Video element src attribute must match src list - negative test
 
 Harness Error (TIMEOUT), message = null
 
-PASS Disallowed async video src 
-PASS Disallowed async video source element 
-NOTRUN Test that securitypolicyviolation events are fired 
-  
+PASS Disallowed async video src
+PASS Disallowed async video source element
+NOTRUN Test that securitypolicyviolation events are fired
+

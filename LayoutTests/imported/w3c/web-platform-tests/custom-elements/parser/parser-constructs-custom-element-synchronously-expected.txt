@@ -1,3 +1,3 @@
 
-PASS HTML parser must only append nodes that appear before a custom element before instantiating the custom element 
+PASS HTML parser must only append nodes that appear before a custom element before instantiating the custom element
 

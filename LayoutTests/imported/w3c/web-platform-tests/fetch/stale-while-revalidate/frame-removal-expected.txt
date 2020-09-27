@@ -1,4 +1,4 @@
-  
 
-PASS Frame removal should cancel its revalidations 
+
+PASS Frame removal should cancel its revalidations
 

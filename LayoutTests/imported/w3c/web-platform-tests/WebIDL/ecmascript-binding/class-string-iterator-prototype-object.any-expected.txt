@@ -1,8 +1,8 @@
 
-PASS @@toStringTag exists with the appropriate descriptor 
-PASS Object.prototype.toString 
-PASS Object.prototype.toString applied after modifying @@toStringTag 
-PASS Object.prototype.toString applied to a null-prototype instance 
-PASS Object.prototype.toString applied after nulling the prototype 
-PASS Object.prototype.toString applied after deleting @@toStringTag 
+PASS @@toStringTag exists with the appropriate descriptor
+PASS Object.prototype.toString
+PASS Object.prototype.toString applied after modifying @@toStringTag
+PASS Object.prototype.toString applied to a null-prototype instance
+PASS Object.prototype.toString applied after nulling the prototype
+PASS Object.prototype.toString applied after deleting @@toStringTag
 

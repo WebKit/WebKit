@@ -1,8 +1,8 @@
 no default src doesn't behave exactly like *
 
-This page has a CSP header but an unknown directive. This should have no impact on an img loaded from a data: uri, or an inline script, although that would be blocked by a default-src policy of *. 
+This page has a CSP header but an unknown directive. This should have no impact on an img loaded from a data: uri, or an inline script, although that would be blocked by a default-src policy of *.
 
 
-PASS Allows scripts from the same host. 
-PASS Violation report status OK. 
+PASS Allows scripts from the same host.
+PASS Violation report status OK.
 

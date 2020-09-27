@@ -3,6 +3,6 @@ Description
 This test validates that window.performance.now() follows the monotonic clock requirements.
 
 
-PASS window.performance.now() returns a positive number 
-PASS window.performance.now() difference is not negative 
+PASS window.performance.now() returns a positive number
+PASS window.performance.now() difference is not negative
 

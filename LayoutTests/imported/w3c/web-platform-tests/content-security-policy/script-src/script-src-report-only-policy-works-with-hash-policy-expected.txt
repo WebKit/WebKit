@@ -1,4 +1,4 @@
 
-PASS Test that script executes if allowed by proper hash values 
+PASS Test that script executes if allowed by proper hash values
 FAIL Test that the securitypolicyviolation event is fired assert_equals: expected "script-src-elem" but got "script-src 'nonce-abc'"
 

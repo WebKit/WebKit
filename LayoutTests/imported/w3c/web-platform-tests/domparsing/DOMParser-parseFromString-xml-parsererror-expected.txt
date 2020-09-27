@@ -1,23 +1,23 @@
 
-PASS DOMParser: <parsererror> element added on error, <span x:test="testing">1</span> 
-PASS DOMParser: <parsererror> element added on error, < span>2</span> 
-PASS DOMParser: <parsererror> element added on error, <span :test="testing">3</span> 
-PASS DOMParser: <parsererror> element added on error, <span><em>4</span></em> 
-PASS DOMParser: <parsererror> element added on error, <span>5 
-PASS DOMParser: <parsererror> element added on error, 6</span> 
-PASS DOMParser: <parsererror> element added on error, <span>7< /span> 
-PASS DOMParser: <parsererror> element added on error, <span>8</ span> 
-PASS DOMParser: <parsererror> element added on error, <span novalue>9</span> 
-PASS DOMParser: <parsererror> element added on error, <span ="noattr">10</span> 
-PASS DOMParser: <parsererror> element added on error, <span ::="test">11</span> 
-PASS DOMParser: <parsererror> element added on error, <span xmlns:="urn:x-test:test">12</span> 
-PASS DOMParser: <parsererror> element added on error, <span xmlns:xmlns="">13</span> 
-PASS DOMParser: <parsererror> element added on error, <span data-test=testing>14</span> 
-PASS DOMParser: <parsererror> element added on error, 15<span 
-PASS DOMParser: <parsererror> element added on error, <8:test xmlns:8="urn:x-test:test">16</8:test> 
-PASS DOMParser: <parsererror> element added on error, <span xmlns:p1 xmlns:p2="urn:x-test:test"/>17 
-PASS text/xml is preserved in the error document 
-PASS application/xml is preserved in the error document 
-PASS application/xhtml+xml is preserved in the error document 
-PASS image/svg+xml is preserved in the error document 
+PASS DOMParser: <parsererror> element added on error, <span x:test="testing">1</span>
+PASS DOMParser: <parsererror> element added on error, < span>2</span>
+PASS DOMParser: <parsererror> element added on error, <span :test="testing">3</span>
+PASS DOMParser: <parsererror> element added on error, <span><em>4</span></em>
+PASS DOMParser: <parsererror> element added on error, <span>5
+PASS DOMParser: <parsererror> element added on error, 6</span>
+PASS DOMParser: <parsererror> element added on error, <span>7< /span>
+PASS DOMParser: <parsererror> element added on error, <span>8</ span>
+PASS DOMParser: <parsererror> element added on error, <span novalue>9</span>
+PASS DOMParser: <parsererror> element added on error, <span ="noattr">10</span>
+PASS DOMParser: <parsererror> element added on error, <span ::="test">11</span>
+PASS DOMParser: <parsererror> element added on error, <span xmlns:="urn:x-test:test">12</span>
+PASS DOMParser: <parsererror> element added on error, <span xmlns:xmlns="">13</span>
+PASS DOMParser: <parsererror> element added on error, <span data-test=testing>14</span>
+PASS DOMParser: <parsererror> element added on error, 15<span
+PASS DOMParser: <parsererror> element added on error, <8:test xmlns:8="urn:x-test:test">16</8:test>
+PASS DOMParser: <parsererror> element added on error, <span xmlns:p1 xmlns:p2="urn:x-test:test"/>17
+PASS text/xml is preserved in the error document
+PASS application/xml is preserved in the error document
+PASS application/xhtml+xml is preserved in the error document
+PASS image/svg+xml is preserved in the error document
 

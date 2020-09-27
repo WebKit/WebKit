@@ -1,9 +1,9 @@
 Blocked access to external URL http://www.localhost:8800/fetch/api/resources/inspect-headers.py?cors&headers=cookie
 
-PASS Omit mode: no cookie sent 
+PASS Omit mode: no cookie sent
 FAIL Include mode: 1 cookie assert_equals: Request includes cookie(s) expected (string) "a=1" but got (object) null
-PASS Include mode: local cookies are not sent with remote request 
-PASS Include mode: remote cookies are not sent with local request 
-PASS Same-origin mode: cookies are discarded in cors request 
+PASS Include mode: local cookies are not sent with remote request
+PASS Include mode: remote cookies are not sent with local request
+PASS Same-origin mode: cookies are discarded in cors request
 FAIL Include mode: remote cookies are not sent with other remote request promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

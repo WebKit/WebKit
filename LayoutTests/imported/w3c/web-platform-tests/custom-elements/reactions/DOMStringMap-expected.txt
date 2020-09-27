@@ -1,10 +1,10 @@
 
-PASS setter on DOMStringMap must enqueue an attributeChanged reaction when adding an observed data attribute 
-PASS setter on DOMStringMap must not enqueue an attributeChanged reaction when adding an unobserved data attribute 
-PASS setter on DOMStringMap must enqueue an attributeChanged reaction when mutating the value of an observed data attribute 
-PASS setter on DOMStringMap must enqueue an attributeChanged reaction when mutating the value of an observed data attribute to the same value 
-PASS setter on DOMStringMap must not enqueue an attributeChanged reaction when mutating the value of an unobserved data attribute 
-PASS deleter on DOMStringMap must enqueue an attributeChanged reaction when removing an observed data attribute 
-PASS deleter on DOMStringMap must not enqueue an attributeChanged reaction when removing an unobserved data attribute 
-PASS deleter on DOMStringMap must not enqueue an attributeChanged reaction when it does not remove a data attribute 
+PASS setter on DOMStringMap must enqueue an attributeChanged reaction when adding an observed data attribute
+PASS setter on DOMStringMap must not enqueue an attributeChanged reaction when adding an unobserved data attribute
+PASS setter on DOMStringMap must enqueue an attributeChanged reaction when mutating the value of an observed data attribute
+PASS setter on DOMStringMap must enqueue an attributeChanged reaction when mutating the value of an observed data attribute to the same value
+PASS setter on DOMStringMap must not enqueue an attributeChanged reaction when mutating the value of an unobserved data attribute
+PASS deleter on DOMStringMap must enqueue an attributeChanged reaction when removing an observed data attribute
+PASS deleter on DOMStringMap must not enqueue an attributeChanged reaction when removing an unobserved data attribute
+PASS deleter on DOMStringMap must not enqueue an attributeChanged reaction when it does not remove a data attribute
 

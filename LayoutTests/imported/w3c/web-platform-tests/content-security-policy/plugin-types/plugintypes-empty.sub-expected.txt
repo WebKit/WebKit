@@ -6,5 +6,5 @@ CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/s
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should not load the object because plugin-types allows no plugins 
+NOTRUN Should not load the object because plugin-types allows no plugins
 

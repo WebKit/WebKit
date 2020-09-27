@@ -1,4 +1,4 @@
 
-PASS Load a fresh cross-origin script 
-PASS Reload same cross-origin script from the memory cache after revalidation 
+PASS Load a fresh cross-origin script
+PASS Reload same cross-origin script from the memory cache after revalidation
 

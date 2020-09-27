@@ -3,7 +3,7 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'prefetch-src'.
 
 Harness Error (TIMEOUT), message = null
 
-PASS Browser supports prefetch. 
-PASS Browser supports performance APIs. 
+PASS Browser supports prefetch.
+PASS Browser supports performance APIs.
 TIMEOUT Prefetch via `Link` header succeeds when allowed by prefetch-src Test timed out
 

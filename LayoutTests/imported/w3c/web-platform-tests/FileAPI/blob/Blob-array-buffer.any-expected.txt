@@ -1,7 +1,7 @@
 
-PASS Blob.arrayBuffer() 
-PASS Blob.arrayBuffer() empty Blob data 
-PASS Blob.arrayBuffer() non-ascii input 
-PASS Blob.arrayBuffer() non-unicode input 
-PASS Blob.arrayBuffer() concurrent reads 
+PASS Blob.arrayBuffer()
+PASS Blob.arrayBuffer() empty Blob data
+PASS Blob.arrayBuffer() non-ascii input
+PASS Blob.arrayBuffer() non-unicode input
+PASS Blob.arrayBuffer() concurrent reads
 

@@ -11,7 +11,7 @@ CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.at
 
 Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
 
-PASS Single value - name is missing 
+PASS Single value - name is missing
 FAIL Single value - empty name exists undefined is not an object (evaluating 'this.internals_.setFormValue')
 FAIL Single value - Non-empty name exists undefined is not an object (evaluating 'this.internals_.setFormValue')
 FAIL Null value should submit nothing undefined is not an object (evaluating 'this.internals_.setFormValue')

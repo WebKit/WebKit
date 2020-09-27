@@ -1,13 +1,13 @@
 
-PASS IndexedDB object store rename in new transaction 
-PASS IndexedDB object store rename in the transaction where it is created 
-PASS IndexedDB object store rename covers index 
-PASS IndexedDB object store rename covers key generator 
-PASS IndexedDB object store rename to the same name succeeds 
-PASS IndexedDB object store rename to the name of a deleted store succeeds 
-PASS IndexedDB object store swapping via renames succeeds 
-PASS IndexedDB object store rename stringifies non-string names 
-PASS IndexedDB object store can be renamed to "" 
-PASS IndexedDB object store can be renamed to "\u0000" 
-PASS IndexedDB object store can be renamed to "\uDC00\uD800" 
+PASS IndexedDB object store rename in new transaction
+PASS IndexedDB object store rename in the transaction where it is created
+PASS IndexedDB object store rename covers index
+PASS IndexedDB object store rename covers key generator
+PASS IndexedDB object store rename to the same name succeeds
+PASS IndexedDB object store rename to the name of a deleted store succeeds
+PASS IndexedDB object store swapping via renames succeeds
+PASS IndexedDB object store rename stringifies non-string names
+PASS IndexedDB object store can be renamed to ""
+PASS IndexedDB object store can be renamed to "\u0000"
+PASS IndexedDB object store can be renamed to "\uDC00\uD800"
 

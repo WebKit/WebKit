@@ -1,8 +1,8 @@
 
-PASS The last element of keypath is validated 
-PASS Key path evaluation: Exceptions from non-enumerable getters 
-PASS Key path evaluation: Exceptions from enumerable getters 
-PASS Key path evaluation: Exceptions from non-enumerable getters on prototype 
-PASS Key path evaluation: Exceptions from enumerable getters on prototype 
-PASS Array key conversion should not invoke prototype getters 
+PASS The last element of keypath is validated
+PASS Key path evaluation: Exceptions from non-enumerable getters
+PASS Key path evaluation: Exceptions from enumerable getters
+PASS Key path evaluation: Exceptions from non-enumerable getters on prototype
+PASS Key path evaluation: Exceptions from enumerable getters on prototype
+PASS Array key conversion should not invoke prototype getters
 

@@ -1,4 +1,4 @@
 
-PASS IDBFactory.deleteDatabase() in non-sandboxed iframe should not throw 
-PASS IDBFactory.deleteDatabase() in sandboxed iframe should throw SecurityError 
+PASS IDBFactory.deleteDatabase() in non-sandboxed iframe should not throw
+PASS IDBFactory.deleteDatabase() in sandboxed iframe should throw SecurityError
 

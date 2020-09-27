@@ -1,11 +1,11 @@
 
-PASS URL query:  
-PASS URL query: ?type= 
-PASS URL query: ?type=x 
-PASS URL query: ?type=x/x 
-PASS URL query: ?type=text/html 
-PASS URL query: ?type=text/json 
-PASS URL query: ?type=text/javascript 
-PASS URL query: ?type=text/ecmascript 
-PASS URL query: ?type=text/ecmascript;yay 
+PASS URL query:
+PASS URL query: ?type=
+PASS URL query: ?type=x
+PASS URL query: ?type=x/x
+PASS URL query: ?type=text/html
+PASS URL query: ?type=text/json
+PASS URL query: ?type=text/javascript
+PASS URL query: ?type=text/ecmascript
+PASS URL query: ?type=text/ecmascript;yay
 

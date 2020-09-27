@@ -1,3 +1,3 @@
 
-PASS IDBIndex.get() - returns the record  
+PASS IDBIndex.get() - returns the record
 

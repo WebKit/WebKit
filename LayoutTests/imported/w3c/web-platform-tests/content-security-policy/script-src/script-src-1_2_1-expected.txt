@@ -7,6 +7,6 @@ Inline script attached by DOM manipulation should not run without an 'unsafe-inl
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that securitypolicyviolation event is fired 
-PASS DOM manipulation inline tests 
+NOTRUN Test that securitypolicyviolation event is fired
+PASS DOM manipulation inline tests
 

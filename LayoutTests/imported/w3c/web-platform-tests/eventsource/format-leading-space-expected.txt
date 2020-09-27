@@ -1,3 +1,3 @@
 
-PASS EventSource: leading space 
+PASS EventSource: leading space
 

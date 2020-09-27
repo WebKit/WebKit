@@ -1,4 +1,4 @@
 This tests whether a deferred script load caused by a redirect is properly allowed by a nonce.
 
-PASS Expecting alerts: ["PASS"] 
+PASS Expecting alerts: ["PASS"]
 

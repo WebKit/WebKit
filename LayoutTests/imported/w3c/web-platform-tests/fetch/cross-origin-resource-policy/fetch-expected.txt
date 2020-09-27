@@ -11,16 +11,16 @@ CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/cross-origin-
 CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=same-origin denied by Cross-Origin Resource Sharing policy: Cancelled load to http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/redirect.py?corp=same-origin&redirectTo=http%3A%2F%2Flocalhost%3A8800%2Ffetch%2Fcross-origin-resource-policy%2Fresources%2Fhello.py%3Fcorp%3Dsame-origin because it violates the resource's Cross-Origin-Resource-Policy response header.
 CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/redirect.py?corp=same-origin&redirectTo=http%3A%2F%2Flocalhost%3A8800%2Ffetch%2Fcross-origin-resource-policy%2Fresources%2Fhello.py%3Fcorp%3Dsame-origin due to access control checks.
 
-PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Valid cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a redirection. 
-PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a cross-origin redirection. 
-PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' redirect response header. 
+PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Same-origin fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Cross-origin cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors fetch to a same-site URL with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Valid cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a redirection.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' response header after a cross-origin redirection.
+PASS Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' redirect response header.
 

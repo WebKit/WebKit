@@ -1,15 +1,15 @@
 
-PASS TransactionInactiveError v.s. InvalidStateError(deleted index) 
-PASS InvalidStateError(deleted source) v.s. InvalidAccessError(incorrect source) 
-PASS InvalidStateError(deleted source) v.s. InvalidAccessError(incorrect direction) 
-PASS InvalidAccessError(incorrect direction) v.s. InvalidStateError(iteration complete) 
-PASS InvalidAccessError(incorrect direction) v.s. InvalidStateError(iteration ongoing) 
-PASS InvalidAccessError(incorrect source) v.s. InvalidStateError(iteration ongoing) 
-PASS InvalidAccessError(incorrect source) v.s. InvalidStateError(iteration complete) 
-PASS InvalidStateError(iteration ongoing) v.s. DataError(unset key) 
-PASS InvalidStateError(iteration complete) v.s. DataError(unset key) 
-PASS DataError(unset key) 
-PASS DataError(unset primary key) 
-PASS DataError(keys are lower then current one) in 'next' direction 
-PASS DataError(keys are larger then current one) in 'prev' direction 
+PASS TransactionInactiveError v.s. InvalidStateError(deleted index)
+PASS InvalidStateError(deleted source) v.s. InvalidAccessError(incorrect source)
+PASS InvalidStateError(deleted source) v.s. InvalidAccessError(incorrect direction)
+PASS InvalidAccessError(incorrect direction) v.s. InvalidStateError(iteration complete)
+PASS InvalidAccessError(incorrect direction) v.s. InvalidStateError(iteration ongoing)
+PASS InvalidAccessError(incorrect source) v.s. InvalidStateError(iteration ongoing)
+PASS InvalidAccessError(incorrect source) v.s. InvalidStateError(iteration complete)
+PASS InvalidStateError(iteration ongoing) v.s. DataError(unset key)
+PASS InvalidStateError(iteration complete) v.s. DataError(unset key)
+PASS DataError(unset key)
+PASS DataError(unset primary key)
+PASS DataError(keys are lower then current one) in 'next' direction
+PASS DataError(keys are larger then current one) in 'prev' direction
 

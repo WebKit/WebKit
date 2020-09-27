@@ -1,162 +1,162 @@
 sign and verify Tests for ECDSA
 
 
-PASS ECDSA P-256 with SHA-1 verification 
-PASS ECDSA P-256 with SHA-256 verification 
-PASS ECDSA P-256 with SHA-384 verification 
-PASS ECDSA P-256 with SHA-512 verification 
-PASS ECDSA P-384 with SHA-1 verification 
-PASS ECDSA P-384 with SHA-256 verification 
-PASS ECDSA P-384 with SHA-384 verification 
-PASS ECDSA P-384 with SHA-512 verification 
+PASS ECDSA P-256 with SHA-1 verification
+PASS ECDSA P-256 with SHA-256 verification
+PASS ECDSA P-256 with SHA-384 verification
+PASS ECDSA P-256 with SHA-512 verification
+PASS ECDSA P-384 with SHA-1 verification
+PASS ECDSA P-384 with SHA-256 verification
+PASS ECDSA P-384 with SHA-384 verification
+PASS ECDSA P-384 with SHA-512 verification
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 verification assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 verification with altered signature after call 
-PASS ECDSA P-256 with SHA-256 verification with altered signature after call 
-PASS ECDSA P-256 with SHA-384 verification with altered signature after call 
-PASS ECDSA P-256 with SHA-512 verification with altered signature after call 
-PASS ECDSA P-384 with SHA-1 verification with altered signature after call 
-PASS ECDSA P-384 with SHA-256 verification with altered signature after call 
-PASS ECDSA P-384 with SHA-384 verification with altered signature after call 
-PASS ECDSA P-384 with SHA-512 verification with altered signature after call 
+PASS ECDSA P-256 with SHA-1 verification with altered signature after call
+PASS ECDSA P-256 with SHA-256 verification with altered signature after call
+PASS ECDSA P-256 with SHA-384 verification with altered signature after call
+PASS ECDSA P-256 with SHA-512 verification with altered signature after call
+PASS ECDSA P-384 with SHA-1 verification with altered signature after call
+PASS ECDSA P-384 with SHA-256 verification with altered signature after call
+PASS ECDSA P-384 with SHA-384 verification with altered signature after call
+PASS ECDSA P-384 with SHA-512 verification with altered signature after call
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification with altered signature after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification with altered signature after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification with altered signature after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 verification with altered signature after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 with altered plaintext after call 
-PASS ECDSA P-256 with SHA-256 with altered plaintext after call 
-PASS ECDSA P-256 with SHA-384 with altered plaintext after call 
-PASS ECDSA P-256 with SHA-512 with altered plaintext after call 
-PASS ECDSA P-384 with SHA-1 with altered plaintext after call 
-PASS ECDSA P-384 with SHA-256 with altered plaintext after call 
-PASS ECDSA P-384 with SHA-384 with altered plaintext after call 
-PASS ECDSA P-384 with SHA-512 with altered plaintext after call 
+PASS ECDSA P-256 with SHA-1 with altered plaintext after call
+PASS ECDSA P-256 with SHA-256 with altered plaintext after call
+PASS ECDSA P-256 with SHA-384 with altered plaintext after call
+PASS ECDSA P-256 with SHA-512 with altered plaintext after call
+PASS ECDSA P-384 with SHA-1 with altered plaintext after call
+PASS ECDSA P-384 with SHA-256 with altered plaintext after call
+PASS ECDSA P-384 with SHA-384 with altered plaintext after call
+PASS ECDSA P-384 with SHA-512 with altered plaintext after call
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 with altered plaintext after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 with altered plaintext after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 with altered plaintext after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 with altered plaintext after call assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 using privateKey to verify 
-PASS ECDSA P-256 with SHA-256 using privateKey to verify 
-PASS ECDSA P-256 with SHA-384 using privateKey to verify 
-PASS ECDSA P-256 with SHA-512 using privateKey to verify 
-PASS ECDSA P-384 with SHA-1 using privateKey to verify 
-PASS ECDSA P-384 with SHA-256 using privateKey to verify 
-PASS ECDSA P-384 with SHA-384 using privateKey to verify 
-PASS ECDSA P-384 with SHA-512 using privateKey to verify 
+PASS ECDSA P-256 with SHA-1 using privateKey to verify
+PASS ECDSA P-256 with SHA-256 using privateKey to verify
+PASS ECDSA P-256 with SHA-384 using privateKey to verify
+PASS ECDSA P-256 with SHA-512 using privateKey to verify
+PASS ECDSA P-384 with SHA-1 using privateKey to verify
+PASS ECDSA P-384 with SHA-256 using privateKey to verify
+PASS ECDSA P-384 with SHA-384 using privateKey to verify
+PASS ECDSA P-384 with SHA-512 using privateKey to verify
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 using privateKey to verify assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 using privateKey to verify assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 using privateKey to verify assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 using privateKey to verify assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 using publicKey to sign 
-PASS ECDSA P-256 with SHA-256 using publicKey to sign 
-PASS ECDSA P-256 with SHA-384 using publicKey to sign 
-PASS ECDSA P-256 with SHA-512 using publicKey to sign 
-PASS ECDSA P-384 with SHA-1 using publicKey to sign 
-PASS ECDSA P-384 with SHA-256 using publicKey to sign 
-PASS ECDSA P-384 with SHA-384 using publicKey to sign 
-PASS ECDSA P-384 with SHA-512 using publicKey to sign 
+PASS ECDSA P-256 with SHA-1 using publicKey to sign
+PASS ECDSA P-256 with SHA-256 using publicKey to sign
+PASS ECDSA P-256 with SHA-384 using publicKey to sign
+PASS ECDSA P-256 with SHA-512 using publicKey to sign
+PASS ECDSA P-384 with SHA-1 using publicKey to sign
+PASS ECDSA P-384 with SHA-256 using publicKey to sign
+PASS ECDSA P-384 with SHA-384 using publicKey to sign
+PASS ECDSA P-384 with SHA-512 using publicKey to sign
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 using publicKey to sign assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 using publicKey to sign assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 using publicKey to sign assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 using publicKey to sign assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 no verify usage 
-PASS ECDSA P-256 with SHA-256 no verify usage 
-PASS ECDSA P-256 with SHA-384 no verify usage 
-PASS ECDSA P-256 with SHA-512 no verify usage 
-PASS ECDSA P-384 with SHA-1 no verify usage 
-PASS ECDSA P-384 with SHA-256 no verify usage 
-PASS ECDSA P-384 with SHA-384 no verify usage 
-PASS ECDSA P-384 with SHA-512 no verify usage 
+PASS ECDSA P-256 with SHA-1 no verify usage
+PASS ECDSA P-256 with SHA-256 no verify usage
+PASS ECDSA P-256 with SHA-384 no verify usage
+PASS ECDSA P-256 with SHA-512 no verify usage
+PASS ECDSA P-384 with SHA-1 no verify usage
+PASS ECDSA P-384 with SHA-256 no verify usage
+PASS ECDSA P-384 with SHA-384 no verify usage
+PASS ECDSA P-384 with SHA-512 no verify usage
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 no verify usage assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 no verify usage assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 no verify usage assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 no verify usage assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 round trip 
-PASS ECDSA P-256 with SHA-256 round trip 
-PASS ECDSA P-256 with SHA-384 round trip 
-PASS ECDSA P-256 with SHA-512 round trip 
-PASS ECDSA P-384 with SHA-1 round trip 
-PASS ECDSA P-384 with SHA-256 round trip 
-PASS ECDSA P-384 with SHA-384 round trip 
-PASS ECDSA P-384 with SHA-512 round trip 
+PASS ECDSA P-256 with SHA-1 round trip
+PASS ECDSA P-256 with SHA-256 round trip
+PASS ECDSA P-256 with SHA-384 round trip
+PASS ECDSA P-256 with SHA-512 round trip
+PASS ECDSA P-384 with SHA-1 round trip
+PASS ECDSA P-384 with SHA-256 round trip
+PASS ECDSA P-384 with SHA-384 round trip
+PASS ECDSA P-384 with SHA-512 round trip
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 round trip assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 round trip assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 round trip assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 round trip assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 signing with wrong algorithm name 
-PASS ECDSA P-256 with SHA-256 signing with wrong algorithm name 
-PASS ECDSA P-256 with SHA-384 signing with wrong algorithm name 
-PASS ECDSA P-256 with SHA-512 signing with wrong algorithm name 
-PASS ECDSA P-384 with SHA-1 signing with wrong algorithm name 
-PASS ECDSA P-384 with SHA-256 signing with wrong algorithm name 
-PASS ECDSA P-384 with SHA-384 signing with wrong algorithm name 
-PASS ECDSA P-384 with SHA-512 signing with wrong algorithm name 
-PASS ECDSA P-256 with SHA-1 verifying with wrong algorithm name 
-PASS ECDSA P-256 with SHA-256 verifying with wrong algorithm name 
-PASS ECDSA P-256 with SHA-384 verifying with wrong algorithm name 
-PASS ECDSA P-256 with SHA-512 verifying with wrong algorithm name 
-PASS ECDSA P-384 with SHA-1 verifying with wrong algorithm name 
-PASS ECDSA P-384 with SHA-256 verifying with wrong algorithm name 
-PASS ECDSA P-384 with SHA-384 verifying with wrong algorithm name 
-PASS ECDSA P-384 with SHA-512 verifying with wrong algorithm name 
-PASS ECDSA P-256 with SHA-1 verification failure due to altered signature 
-PASS ECDSA P-256 with SHA-256 verification failure due to altered signature 
-PASS ECDSA P-256 with SHA-384 verification failure due to altered signature 
-PASS ECDSA P-256 with SHA-512 verification failure due to altered signature 
-PASS ECDSA P-384 with SHA-1 verification failure due to altered signature 
-PASS ECDSA P-384 with SHA-256 verification failure due to altered signature 
-PASS ECDSA P-384 with SHA-384 verification failure due to altered signature 
-PASS ECDSA P-384 with SHA-512 verification failure due to altered signature 
+PASS ECDSA P-256 with SHA-1 signing with wrong algorithm name
+PASS ECDSA P-256 with SHA-256 signing with wrong algorithm name
+PASS ECDSA P-256 with SHA-384 signing with wrong algorithm name
+PASS ECDSA P-256 with SHA-512 signing with wrong algorithm name
+PASS ECDSA P-384 with SHA-1 signing with wrong algorithm name
+PASS ECDSA P-384 with SHA-256 signing with wrong algorithm name
+PASS ECDSA P-384 with SHA-384 signing with wrong algorithm name
+PASS ECDSA P-384 with SHA-512 signing with wrong algorithm name
+PASS ECDSA P-256 with SHA-1 verifying with wrong algorithm name
+PASS ECDSA P-256 with SHA-256 verifying with wrong algorithm name
+PASS ECDSA P-256 with SHA-384 verifying with wrong algorithm name
+PASS ECDSA P-256 with SHA-512 verifying with wrong algorithm name
+PASS ECDSA P-384 with SHA-1 verifying with wrong algorithm name
+PASS ECDSA P-384 with SHA-256 verifying with wrong algorithm name
+PASS ECDSA P-384 with SHA-384 verifying with wrong algorithm name
+PASS ECDSA P-384 with SHA-512 verifying with wrong algorithm name
+PASS ECDSA P-256 with SHA-1 verification failure due to altered signature
+PASS ECDSA P-256 with SHA-256 verification failure due to altered signature
+PASS ECDSA P-256 with SHA-384 verification failure due to altered signature
+PASS ECDSA P-256 with SHA-512 verification failure due to altered signature
+PASS ECDSA P-384 with SHA-1 verification failure due to altered signature
+PASS ECDSA P-384 with SHA-256 verification failure due to altered signature
+PASS ECDSA P-384 with SHA-384 verification failure due to altered signature
+PASS ECDSA P-384 with SHA-512 verification failure due to altered signature
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification failure due to altered signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification failure due to altered signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification failure due to altered signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 verification failure due to altered signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 verification failure due to wrong hash 
-PASS ECDSA P-256 with SHA-256 verification failure due to wrong hash 
-PASS ECDSA P-256 with SHA-384 verification failure due to wrong hash 
-PASS ECDSA P-256 with SHA-512 verification failure due to wrong hash 
-PASS ECDSA P-384 with SHA-1 verification failure due to wrong hash 
-PASS ECDSA P-384 with SHA-256 verification failure due to wrong hash 
-PASS ECDSA P-384 with SHA-384 verification failure due to wrong hash 
-PASS ECDSA P-384 with SHA-512 verification failure due to wrong hash 
+PASS ECDSA P-256 with SHA-1 verification failure due to wrong hash
+PASS ECDSA P-256 with SHA-256 verification failure due to wrong hash
+PASS ECDSA P-256 with SHA-384 verification failure due to wrong hash
+PASS ECDSA P-256 with SHA-512 verification failure due to wrong hash
+PASS ECDSA P-384 with SHA-1 verification failure due to wrong hash
+PASS ECDSA P-384 with SHA-256 verification failure due to wrong hash
+PASS ECDSA P-384 with SHA-384 verification failure due to wrong hash
+PASS ECDSA P-384 with SHA-512 verification failure due to wrong hash
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification failure due to wrong hash assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification failure due to wrong hash assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification failure due to wrong hash assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 verification failure due to wrong hash assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 verification failure due to bad hash name 
-PASS ECDSA P-256 with SHA-256 verification failure due to bad hash name 
-PASS ECDSA P-256 with SHA-384 verification failure due to bad hash name 
-PASS ECDSA P-256 with SHA-512 verification failure due to bad hash name 
-PASS ECDSA P-384 with SHA-1 verification failure due to bad hash name 
-PASS ECDSA P-384 with SHA-256 verification failure due to bad hash name 
-PASS ECDSA P-384 with SHA-384 verification failure due to bad hash name 
-PASS ECDSA P-384 with SHA-512 verification failure due to bad hash name 
+PASS ECDSA P-256 with SHA-1 verification failure due to bad hash name
+PASS ECDSA P-256 with SHA-256 verification failure due to bad hash name
+PASS ECDSA P-256 with SHA-384 verification failure due to bad hash name
+PASS ECDSA P-256 with SHA-512 verification failure due to bad hash name
+PASS ECDSA P-384 with SHA-1 verification failure due to bad hash name
+PASS ECDSA P-384 with SHA-256 verification failure due to bad hash name
+PASS ECDSA P-384 with SHA-384 verification failure due to bad hash name
+PASS ECDSA P-384 with SHA-512 verification failure due to bad hash name
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification failure due to bad hash name assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification failure due to bad hash name assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification failure due to bad hash name assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 verification failure due to bad hash name assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 verification failure due to shortened signature 
-PASS ECDSA P-256 with SHA-256 verification failure due to shortened signature 
-PASS ECDSA P-256 with SHA-384 verification failure due to shortened signature 
-PASS ECDSA P-256 with SHA-512 verification failure due to shortened signature 
-PASS ECDSA P-384 with SHA-1 verification failure due to shortened signature 
-PASS ECDSA P-384 with SHA-256 verification failure due to shortened signature 
-PASS ECDSA P-384 with SHA-384 verification failure due to shortened signature 
-PASS ECDSA P-384 with SHA-512 verification failure due to shortened signature 
+PASS ECDSA P-256 with SHA-1 verification failure due to shortened signature
+PASS ECDSA P-256 with SHA-256 verification failure due to shortened signature
+PASS ECDSA P-256 with SHA-384 verification failure due to shortened signature
+PASS ECDSA P-256 with SHA-512 verification failure due to shortened signature
+PASS ECDSA P-384 with SHA-1 verification failure due to shortened signature
+PASS ECDSA P-384 with SHA-256 verification failure due to shortened signature
+PASS ECDSA P-384 with SHA-384 verification failure due to shortened signature
+PASS ECDSA P-384 with SHA-512 verification failure due to shortened signature
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification failure due to shortened signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification failure due to shortened signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification failure due to shortened signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-512 verification failure due to shortened signature assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-512. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
-PASS ECDSA P-256 with SHA-1 verification failure due to altered plaintext 
-PASS ECDSA P-256 with SHA-256 verification failure due to altered plaintext 
-PASS ECDSA P-256 with SHA-384 verification failure due to altered plaintext 
-PASS ECDSA P-256 with SHA-512 verification failure due to altered plaintext 
-PASS ECDSA P-384 with SHA-1 verification failure due to altered plaintext 
-PASS ECDSA P-384 with SHA-256 verification failure due to altered plaintext 
-PASS ECDSA P-384 with SHA-384 verification failure due to altered plaintext 
-PASS ECDSA P-384 with SHA-512 verification failure due to altered plaintext 
+PASS ECDSA P-256 with SHA-1 verification failure due to altered plaintext
+PASS ECDSA P-256 with SHA-256 verification failure due to altered plaintext
+PASS ECDSA P-256 with SHA-384 verification failure due to altered plaintext
+PASS ECDSA P-256 with SHA-512 verification failure due to altered plaintext
+PASS ECDSA P-384 with SHA-1 verification failure due to altered plaintext
+PASS ECDSA P-384 with SHA-256 verification failure due to altered plaintext
+PASS ECDSA P-384 with SHA-384 verification failure due to altered plaintext
+PASS ECDSA P-384 with SHA-512 verification failure due to altered plaintext
 FAIL importVectorKeys step: ECDSA P-521 with SHA-1 verification failure due to altered plaintext assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-1. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-256 verification failure due to altered plaintext assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-256. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code
 FAIL importVectorKeys step: ECDSA P-521 with SHA-384 verification failure due to altered plaintext assert_unreached: importVectorKeys failed for ECDSA P-521 with SHA-384. Message: ''Data provided to an operation does not meet requirements'' Reached unreachable code

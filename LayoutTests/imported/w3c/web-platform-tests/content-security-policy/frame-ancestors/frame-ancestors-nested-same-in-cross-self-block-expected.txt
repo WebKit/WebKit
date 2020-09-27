@@ -3,5 +3,5 @@ Blocked access to external URL http://www1.localhost:8801/content-security-polic
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames. 
+NOTRUN A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames.
 

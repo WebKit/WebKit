@@ -5,6 +5,6 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'style-src-attr'
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire a security policy violation for the attribute 
+NOTRUN Should fire a security policy violation for the attribute
 FAIL The attribute style should not be applied and the inline style should be applied assert_equals: expected 0 but got 10
 

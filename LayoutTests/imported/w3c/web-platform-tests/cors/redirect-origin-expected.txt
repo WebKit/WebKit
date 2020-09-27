@@ -46,45 +46,45 @@ CORS redirect handling
 
 FAIL local (*) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
 FAIL local (*) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
-PASS local (*) to remote (null), expect to fail 
-PASS local (*) to remote (none), expect to fail 
+PASS local (*) to remote (null), expect to fail
+PASS local (*) to remote (none), expect to fail
 FAIL local (http://localhost:8800) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
 FAIL local (http://localhost:8800) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
-PASS local (http://localhost:8800) to remote (null), expect to fail 
-PASS local (http://localhost:8800) to remote (none), expect to fail 
+PASS local (http://localhost:8800) to remote (null), expect to fail
+PASS local (http://localhost:8800) to remote (none), expect to fail
 FAIL local (null) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
 FAIL local (none) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
 FAIL remote (*) to local (*), expect origin=null assert_true: Got response expected true got false
-PASS remote (*) to local (http://localhost:8800), expect to fail 
+PASS remote (*) to local (http://localhost:8800), expect to fail
 FAIL remote (*) to local (null), expect origin=null assert_true: Got response expected true got false
-PASS remote (*) to local (none), expect to fail 
+PASS remote (*) to local (none), expect to fail
 FAIL remote (http://localhost:8800) to local (*), expect origin=null assert_true: Got response expected true got false
-PASS remote (http://localhost:8800) to local (http://localhost:8800), expect to fail 
+PASS remote (http://localhost:8800) to local (http://localhost:8800), expect to fail
 FAIL remote (http://localhost:8800) to local (null), expect origin=null assert_true: Got response expected true got false
-PASS remote (http://localhost:8800) to local (none), expect to fail 
-PASS remote (null) to local (*), expect to fail 
-PASS remote (none) to local (*), expect to fail 
+PASS remote (http://localhost:8800) to local (none), expect to fail
+PASS remote (null) to local (*), expect to fail
+PASS remote (none) to local (*), expect to fail
 FAIL remote (*) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
 FAIL remote (*) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
-PASS remote (*) to remote (null), expect to fail 
-PASS remote (*) to remote (none), expect to fail 
+PASS remote (*) to remote (null), expect to fail
+PASS remote (*) to remote (none), expect to fail
 FAIL remote (http://localhost:8800) to remote (*), expect origin=http://localhost:8800 assert_true: Got response expected true got false
 FAIL remote (http://localhost:8800) to remote (http://localhost:8800), expect origin=http://localhost:8800 assert_true: Got response expected true got false
-PASS remote (http://localhost:8800) to remote (null), expect to fail 
-PASS remote (http://localhost:8800) to remote (none), expect to fail 
-PASS remote (null) to remote (*), expect to fail 
-PASS remote (none) to remote (*), expect to fail 
+PASS remote (http://localhost:8800) to remote (null), expect to fail
+PASS remote (http://localhost:8800) to remote (none), expect to fail
+PASS remote (null) to remote (*), expect to fail
+PASS remote (none) to remote (*), expect to fail
 FAIL remote (*) to remote2 (*), expect origin=null assert_true: Got response expected true got false
-PASS remote (*) to remote2 (http://localhost:8800), expect to fail 
+PASS remote (*) to remote2 (http://localhost:8800), expect to fail
 FAIL remote (*) to remote2 (null), expect origin=null assert_true: Got response expected true got false
-PASS remote (*) to remote2 (none), expect to fail 
+PASS remote (*) to remote2 (none), expect to fail
 FAIL remote (http://localhost:8800) to remote2 (*), expect origin=null assert_true: Got response expected true got false
-PASS remote (http://localhost:8800) to remote2 (http://localhost:8800), expect to fail 
+PASS remote (http://localhost:8800) to remote2 (http://localhost:8800), expect to fail
 FAIL remote (http://localhost:8800) to remote2 (null), expect origin=null assert_true: Got response expected true got false
-PASS remote (http://localhost:8800) to remote2 (none), expect to fail 
-PASS remote (null) to remote2 (*), expect to fail 
-PASS remote (none) to remote2 (*), expect to fail 
-PASS remote (*) to remote (http://127.0.0.1.localhost:8800), expect to fail 
-PASS remote (*) to remote2 (http://127.0.0.1.localhost:8800), expect to fail 
-PASS remote (http://127.0.0.1.localhost:8800) to remote (*), expect to fail 
+PASS remote (http://localhost:8800) to remote2 (none), expect to fail
+PASS remote (null) to remote2 (*), expect to fail
+PASS remote (none) to remote2 (*), expect to fail
+PASS remote (*) to remote (http://127.0.0.1.localhost:8800), expect to fail
+PASS remote (*) to remote2 (http://127.0.0.1.localhost:8800), expect to fail
+PASS remote (http://127.0.0.1.localhost:8800) to remote (*), expect to fail
 

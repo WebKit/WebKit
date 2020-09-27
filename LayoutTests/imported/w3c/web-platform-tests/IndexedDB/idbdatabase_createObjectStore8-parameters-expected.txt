@@ -1,14 +1,14 @@
 
-PASS IDBObjectStoreParameters - autoInc true 
-PASS IDBObjectStoreParameters - autoInc true, keyPath null 
-PASS IDBObjectStoreParameters - autoInc true, keyPath undefined 
-PASS IDBObjectStoreParameters - autoInc true, keyPath string 
-PASS IDBObjectStoreParameters - autoInc false, keyPath empty 
-PASS IDBObjectStoreParameters - autoInc false, keyPath array 
-PASS IDBObjectStoreParameters - autoInc false, keyPath string 
-PASS IDBObjectStoreParameters - keyPath empty 
-PASS IDBObjectStoreParameters - keyPath array 
-PASS IDBObjectStoreParameters - keyPath string 
-PASS IDBObjectStoreParameters - keyPath null 
-PASS IDBObjectStoreParameters - keyPath undefined 
+PASS IDBObjectStoreParameters - autoInc true
+PASS IDBObjectStoreParameters - autoInc true, keyPath null
+PASS IDBObjectStoreParameters - autoInc true, keyPath undefined
+PASS IDBObjectStoreParameters - autoInc true, keyPath string
+PASS IDBObjectStoreParameters - autoInc false, keyPath empty
+PASS IDBObjectStoreParameters - autoInc false, keyPath array
+PASS IDBObjectStoreParameters - autoInc false, keyPath string
+PASS IDBObjectStoreParameters - keyPath empty
+PASS IDBObjectStoreParameters - keyPath array
+PASS IDBObjectStoreParameters - keyPath string
+PASS IDBObjectStoreParameters - keyPath null
+PASS IDBObjectStoreParameters - keyPath undefined
 

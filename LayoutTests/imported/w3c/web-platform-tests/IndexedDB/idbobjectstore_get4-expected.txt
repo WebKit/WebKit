@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.get() - attempt to retrieve a record that doesn't exist  
+PASS IDBObjectStore.get() - attempt to retrieve a record that doesn't exist
 

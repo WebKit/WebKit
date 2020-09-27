@@ -1,7 +1,7 @@
 
-PASS HTML parser must set the attributes 
-PASS HTML parser must append child nodes 
-PASS HTML parser must set the attributes or append children before calling constructor 
-PASS HTML parser should call connectedCallback before appending child nodes. 
-PASS HTML parser must enqueue attributeChanged reactions 
+PASS HTML parser must set the attributes
+PASS HTML parser must append child nodes
+PASS HTML parser must set the attributes or append children before calling constructor
+PASS HTML parser should call connectedCallback before appending child nodes.
+PASS HTML parser must enqueue attributeChanged reactions
 hello world

@@ -1,6 +1,6 @@
 
-PASS Getting blob after getting a locked Response body 
-PASS Getting text after getting a locked Response body 
-PASS Getting json after getting a locked Response body 
-PASS Getting arrayBuffer after getting a locked Response body 
+PASS Getting blob after getting a locked Response body
+PASS Getting text after getting a locked Response body
+PASS Getting json after getting a locked Response body
+PASS Getting arrayBuffer after getting a locked Response body
 

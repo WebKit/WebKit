@@ -1,48 +1,48 @@
 
 
-PASS text/html valid: created normally 
-PASS text/html valid: created using another iframe's DOMParser from this frame 
-PASS text/html valid: created using another iframe's DOMParser from that frame 
-PASS text/html valid: created using a parser from this frame and the method from the iframe 
-PASS text/html valid: created using a parser from the iframe and the method from this frame 
-PASS text/xml valid: created normally 
-PASS text/xml valid: created using another iframe's DOMParser from this frame 
-PASS text/xml valid: created using another iframe's DOMParser from that frame 
-PASS text/xml valid: created using a parser from this frame and the method from the iframe 
-PASS text/xml valid: created using a parser from the iframe and the method from this frame 
-PASS text/xml invalid XML: created normally 
-PASS text/xml invalid XML: created using another iframe's DOMParser from this frame 
-PASS text/xml invalid XML: created using another iframe's DOMParser from that frame 
-PASS text/xml invalid XML: created using a parser from this frame and the method from the iframe 
-PASS text/xml invalid XML: created using a parser from the iframe and the method from this frame 
-PASS application/xml valid: created normally 
-PASS application/xml valid: created using another iframe's DOMParser from this frame 
-PASS application/xml valid: created using another iframe's DOMParser from that frame 
-PASS application/xml valid: created using a parser from this frame and the method from the iframe 
-PASS application/xml valid: created using a parser from the iframe and the method from this frame 
-PASS application/xml invalid XML: created normally 
-PASS application/xml invalid XML: created using another iframe's DOMParser from this frame 
-PASS application/xml invalid XML: created using another iframe's DOMParser from that frame 
-PASS application/xml invalid XML: created using a parser from this frame and the method from the iframe 
-PASS application/xml invalid XML: created using a parser from the iframe and the method from this frame 
-PASS application/xhtml+xml valid: created normally 
-PASS application/xhtml+xml valid: created using another iframe's DOMParser from this frame 
-PASS application/xhtml+xml valid: created using another iframe's DOMParser from that frame 
-PASS application/xhtml+xml valid: created using a parser from this frame and the method from the iframe 
-PASS application/xhtml+xml valid: created using a parser from the iframe and the method from this frame 
-PASS application/xhtml+xml invalid XML: created normally 
-PASS application/xhtml+xml invalid XML: created using another iframe's DOMParser from this frame 
-PASS application/xhtml+xml invalid XML: created using another iframe's DOMParser from that frame 
-PASS application/xhtml+xml invalid XML: created using a parser from this frame and the method from the iframe 
-PASS application/xhtml+xml invalid XML: created using a parser from the iframe and the method from this frame 
-PASS image/svg+xml valid: created normally 
-PASS image/svg+xml valid: created using another iframe's DOMParser from this frame 
-PASS image/svg+xml valid: created using another iframe's DOMParser from that frame 
-PASS image/svg+xml valid: created using a parser from this frame and the method from the iframe 
-PASS image/svg+xml valid: created using a parser from the iframe and the method from this frame 
-PASS image/svg+xml invalid XML: created normally 
-PASS image/svg+xml invalid XML: created using another iframe's DOMParser from this frame 
-PASS image/svg+xml invalid XML: created using another iframe's DOMParser from that frame 
-PASS image/svg+xml invalid XML: created using a parser from this frame and the method from the iframe 
-PASS image/svg+xml invalid XML: created using a parser from the iframe and the method from this frame 
+PASS text/html valid: created normally
+PASS text/html valid: created using another iframe's DOMParser from this frame
+PASS text/html valid: created using another iframe's DOMParser from that frame
+PASS text/html valid: created using a parser from this frame and the method from the iframe
+PASS text/html valid: created using a parser from the iframe and the method from this frame
+PASS text/xml valid: created normally
+PASS text/xml valid: created using another iframe's DOMParser from this frame
+PASS text/xml valid: created using another iframe's DOMParser from that frame
+PASS text/xml valid: created using a parser from this frame and the method from the iframe
+PASS text/xml valid: created using a parser from the iframe and the method from this frame
+PASS text/xml invalid XML: created normally
+PASS text/xml invalid XML: created using another iframe's DOMParser from this frame
+PASS text/xml invalid XML: created using another iframe's DOMParser from that frame
+PASS text/xml invalid XML: created using a parser from this frame and the method from the iframe
+PASS text/xml invalid XML: created using a parser from the iframe and the method from this frame
+PASS application/xml valid: created normally
+PASS application/xml valid: created using another iframe's DOMParser from this frame
+PASS application/xml valid: created using another iframe's DOMParser from that frame
+PASS application/xml valid: created using a parser from this frame and the method from the iframe
+PASS application/xml valid: created using a parser from the iframe and the method from this frame
+PASS application/xml invalid XML: created normally
+PASS application/xml invalid XML: created using another iframe's DOMParser from this frame
+PASS application/xml invalid XML: created using another iframe's DOMParser from that frame
+PASS application/xml invalid XML: created using a parser from this frame and the method from the iframe
+PASS application/xml invalid XML: created using a parser from the iframe and the method from this frame
+PASS application/xhtml+xml valid: created normally
+PASS application/xhtml+xml valid: created using another iframe's DOMParser from this frame
+PASS application/xhtml+xml valid: created using another iframe's DOMParser from that frame
+PASS application/xhtml+xml valid: created using a parser from this frame and the method from the iframe
+PASS application/xhtml+xml valid: created using a parser from the iframe and the method from this frame
+PASS application/xhtml+xml invalid XML: created normally
+PASS application/xhtml+xml invalid XML: created using another iframe's DOMParser from this frame
+PASS application/xhtml+xml invalid XML: created using another iframe's DOMParser from that frame
+PASS application/xhtml+xml invalid XML: created using a parser from this frame and the method from the iframe
+PASS application/xhtml+xml invalid XML: created using a parser from the iframe and the method from this frame
+PASS image/svg+xml valid: created normally
+PASS image/svg+xml valid: created using another iframe's DOMParser from this frame
+PASS image/svg+xml valid: created using another iframe's DOMParser from that frame
+PASS image/svg+xml valid: created using a parser from this frame and the method from the iframe
+PASS image/svg+xml valid: created using a parser from the iframe and the method from this frame
+PASS image/svg+xml invalid XML: created normally
+PASS image/svg+xml invalid XML: created using another iframe's DOMParser from this frame
+PASS image/svg+xml invalid XML: created using another iframe's DOMParser from that frame
+PASS image/svg+xml invalid XML: created using a parser from this frame and the method from the iframe
+PASS image/svg+xml invalid XML: created using a parser from the iframe and the method from this frame
 

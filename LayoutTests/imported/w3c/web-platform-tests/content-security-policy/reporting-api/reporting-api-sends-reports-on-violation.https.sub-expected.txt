@@ -6,7 +6,7 @@ CONSOLE MESSAGE: Refused to load https://localhost:9443/content-security-policy/
 
 Harness Error (TIMEOUT), message = null
 
-PASS Test that image does not load 
+PASS Test that image does not load
 TIMEOUT Event is fired Test timed out
 FAIL Report is observable to ReportingObserver Can't find variable: ReportingObserver
 FAIL Violation report status OK. assert_equals: No such report. expected "" but got "false"

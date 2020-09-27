@@ -1,6 +1,6 @@
 data: as script src should run with a policy that specifies data: as an allowed source but not 'unsafe-inline'
 
 
-PASS Test that no report violation event was raised 
-PASS Verify that data: as script src runs with this policy 
+PASS Test that no report violation event was raised
+PASS Verify that data: as script src runs with this policy
 

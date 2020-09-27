@@ -1,45 +1,45 @@
 Downgraded then upgraded font
- 
+
 
 Harness Error (TIMEOUT), message = null
 
-PASS Https downgrade-upgrade iframe 
-PASS Https downgrade-upgrade top level navigation 
-PASS Https downgrade-upgrade embed 
-PASS Https downgrade-upgrade fetch() api 
-PASS Https downgrade-upgrade object 
-PASS Https downgrade-upgrade preload 
-PASS Https downgrade-upgrade stylesheet 
+PASS Https downgrade-upgrade iframe
+PASS Https downgrade-upgrade top level navigation
+PASS Https downgrade-upgrade embed
+PASS Https downgrade-upgrade fetch() api
+PASS Https downgrade-upgrade object
+PASS Https downgrade-upgrade preload
+PASS Https downgrade-upgrade stylesheet
 TIMEOUT Https downgrade-upgrade track Test timed out
-NOTRUN Https downgrade-upgrade image => No headers 
-PASS Https downgrade-upgrade script => No headers 
+NOTRUN Https downgrade-upgrade image => No headers
+PASS Https downgrade-upgrade script => No headers
 FAIL Https downgrade-upgrade script => No headers: sec-fetch-dest assert_equals: expected "script" but got ""
 FAIL Https downgrade-upgrade script => No headers: sec-fetch-mode assert_equals: expected "no-cors" but got ""
 FAIL Https downgrade-upgrade script => No headers: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade script => No headers: sec-fetch-user 
+PASS Https downgrade-upgrade script => No headers: sec-fetch-user
 FAIL Https downgrade-upgrade iframe: sec-fetch-dest assert_equals: expected "iframe" but got ""
 FAIL Https downgrade-upgrade iframe: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Https downgrade-upgrade iframe: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade iframe: sec-fetch-user 
+PASS Https downgrade-upgrade iframe: sec-fetch-user
 FAIL Https downgrade-upgrade top level navigation: sec-fetch-dest assert_equals: expected "document" but got ""
 FAIL Https downgrade-upgrade top level navigation: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Https downgrade-upgrade top level navigation: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade top level navigation: sec-fetch-user 
-NOTRUN Https downgrade-upgrade font => No headers 
+PASS Https downgrade-upgrade top level navigation: sec-fetch-user
+NOTRUN Https downgrade-upgrade font => No headers
 FAIL Https downgrade-upgrade embed: sec-fetch-dest assert_equals: expected "embed" but got ""
 FAIL Https downgrade-upgrade embed: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Https downgrade-upgrade embed: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade embed: sec-fetch-user 
+PASS Https downgrade-upgrade embed: sec-fetch-user
 FAIL Https downgrade-upgrade fetch() api: sec-fetch-dest assert_equals: expected "empty" but got ""
 FAIL Https downgrade-upgrade fetch() api: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL Https downgrade-upgrade fetch() api: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade fetch() api: sec-fetch-user 
+PASS Https downgrade-upgrade fetch() api: sec-fetch-user
 FAIL Https downgrade-upgrade object: sec-fetch-dest assert_equals: expected "object" but got ""
 FAIL Https downgrade-upgrade object: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Https downgrade-upgrade object: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade object: sec-fetch-user 
+PASS Https downgrade-upgrade object: sec-fetch-user
 FAIL Https downgrade-upgrade stylesheet: sec-fetch-dest assert_equals: expected "style" but got ""
 FAIL Https downgrade-upgrade stylesheet: sec-fetch-mode assert_equals: expected "no-cors" but got ""
 FAIL Https downgrade-upgrade stylesheet: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Https downgrade-upgrade stylesheet: sec-fetch-user 
+PASS Https downgrade-upgrade stylesheet: sec-fetch-user
 

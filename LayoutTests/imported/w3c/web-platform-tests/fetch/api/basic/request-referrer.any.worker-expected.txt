@@ -1,4 +1,4 @@
 
-PASS about:client referrer 
-PASS url referrer 
+PASS about:client referrer
+PASS url referrer
 

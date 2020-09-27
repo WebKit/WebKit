@@ -1,12 +1,12 @@
 
-PASS HTML parser must not instantiate custom elements inside template elements 
-PASS HTML parser must not use the registry of the owner element's document inside an iframe 
-PASS HTML parser must use the registry of the content document inside an iframe 
-PASS HTML parser must not instantiate a custom element defined inside an frame in frame element's owner document 
-PASS HTML parser must use the registry of window.document in a document created by DOMParser 
-PASS HTML parser must use the registry of window.document in a document created by document.implementation.createXHTMLDocument() 
-PASS HTML parser must use the registry of window.document in a document created by new Document 
-PASS HTML parser must use the registry of window.document in a document created by XMLHttpRequest 
-PASS document.write() must not instantiate a custom element without a defined insertion point 
-PASS document.writeln() must not instantiate a custom element without a defined insertion point 
+PASS HTML parser must not instantiate custom elements inside template elements
+PASS HTML parser must not use the registry of the owner element's document inside an iframe
+PASS HTML parser must use the registry of the content document inside an iframe
+PASS HTML parser must not instantiate a custom element defined inside an frame in frame element's owner document
+PASS HTML parser must use the registry of window.document in a document created by DOMParser
+PASS HTML parser must use the registry of window.document in a document created by document.implementation.createXHTMLDocument()
+PASS HTML parser must use the registry of window.document in a document created by new Document
+PASS HTML parser must use the registry of window.document in a document created by XMLHttpRequest
+PASS document.write() must not instantiate a custom element without a defined insertion point
+PASS document.writeln() must not instantiate a custom element without a defined insertion point
 

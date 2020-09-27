@@ -1,8 +1,8 @@
 
-PASS Same-origin image load with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Same-origin image load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
-PASS Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-origin' response header. 
-PASS Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header. 
+PASS Same-origin image load with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Same-origin image load with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Cross-origin cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header.
+PASS Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-origin' response header.
+PASS Cross-origin no-cors image load with a 'Cross-Origin-Resource-Policy: same-site' response header.
 

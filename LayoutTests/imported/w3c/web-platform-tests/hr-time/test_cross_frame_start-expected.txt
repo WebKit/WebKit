@@ -3,9 +3,9 @@ Description
 This test validates the values of the window.performance.now() are based on the current document's navigationStart.
 
 
-PASS Setup the frame 
-PASS parent performance.now() > 0 
-PASS child performance.now() > 0 
-PASS Child created at least 1 second after parent 
-PASS Child and parent time bases are correct 
+PASS Setup the frame
+PASS parent performance.now() > 0
+PASS child performance.now() > 0
+PASS Child created at least 1 second after parent
+PASS Child and parent time bases are correct
 

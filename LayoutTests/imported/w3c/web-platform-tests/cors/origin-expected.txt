@@ -3,68 +3,68 @@ Access-Control-Allow-Origin handling
 
 Harness Error (FAIL), message = 1 duplicate test name: "Disallow origin: localhost:8800"
 
-PASS Allow origin: * 
-PASS Allow origin: _*__ 
-PASS Allow origin: [tab]* 
-PASS Allow origin: http://localhost:8800 
-PASS Allow origin: _http://localhost:8800 
-PASS Allow origin: _http://localhost:8800___[tab]_ 
-PASS Allow origin: [tab]http://localhost:8800 
-PASS Disallow origin: http://127.0.0.1.localhost:8800 
-PASS Disallow origin: //localhost:8800 
-PASS Disallow origin: ://localhost:8800 
-PASS Disallow origin: ftp://localhost:8800 
-PASS Disallow origin: http:://localhost:8800 
-PASS Disallow origin: http:/localhost:8800 
-PASS Disallow origin: http:localhost:8800 
-PASS Disallow origin: localhost:8800 
-PASS Disallow origin: http://localhost:8800? 
-PASS Disallow origin: http://localhost:8800/ 
-PASS Disallow origin: http://localhost:8800 / 
-PASS Disallow origin: http://localhost:8800# 
-PASS Disallow origin: http://localhost:8800%23 
-PASS Disallow origin: http://localhost:8800:80 
-PASS Disallow origin: http://localhost:8800, * 
-PASS Disallow origin: http://localhost:8800\0 
-PASS Disallow origin: HTTP://LOCALHOST:8800 
-PASS Disallow origin: HTTP://localhost:8800 
-PASS Disallow origin: - 
-PASS Disallow origin: ** 
-PASS Disallow origin: ,* 
-PASS Disallow origin: *, 
-PASS Disallow origin: \0* 
-PASS Disallow origin: * 
-PASS Disallow origin: * 
-PASS Disallow origin: *\0 
-PASS Disallow origin: * 
-PASS Disallow origin: * 
-PASS Disallow origin: '*' 
-PASS Disallow origin: "*" 
-PASS Disallow origin: * * 
-PASS Disallow origin: * null 
-PASS Disallow origin: *http://* 
-PASS Disallow origin: *http://localhost:8800 
-PASS Disallow origin: * http://localhost:8800 
-PASS Disallow origin: *, http://localhost:8800 
-PASS Disallow origin: \0http://localhost:8800 
-PASS Disallow origin: null http://localhost:8800 
-PASS Disallow origin: http://example.net 
-PASS Disallow origin: null 
-PASS Disallow origin: null * 
-PASS Disallow origin:  
-PASS Disallow origin: http://localhost:8800/cors/origin.htm 
-PASS Disallow origin: http://localhost:8800/cors/ 
-PASS Disallow origin: http://127.0.0.1:8800/cors/ 
-PASS Disallow origin: localhost:8800 
-PASS Disallow origin: .localhost:8800 
-PASS Disallow origin: *.localhost:8800 
+PASS Allow origin: *
+PASS Allow origin: _*__
+PASS Allow origin: [tab]*
+PASS Allow origin: http://localhost:8800
+PASS Allow origin: _http://localhost:8800
+PASS Allow origin: _http://localhost:8800___[tab]_
+PASS Allow origin: [tab]http://localhost:8800
+PASS Disallow origin: http://127.0.0.1.localhost:8800
+PASS Disallow origin: //localhost:8800
+PASS Disallow origin: ://localhost:8800
+PASS Disallow origin: ftp://localhost:8800
+PASS Disallow origin: http:://localhost:8800
+PASS Disallow origin: http:/localhost:8800
+PASS Disallow origin: http:localhost:8800
+PASS Disallow origin: localhost:8800
+PASS Disallow origin: http://localhost:8800?
+PASS Disallow origin: http://localhost:8800/
+PASS Disallow origin: http://localhost:8800 /
+PASS Disallow origin: http://localhost:8800#
+PASS Disallow origin: http://localhost:8800%23
+PASS Disallow origin: http://localhost:8800:80
+PASS Disallow origin: http://localhost:8800, *
+PASS Disallow origin: http://localhost:8800\0
+PASS Disallow origin: HTTP://LOCALHOST:8800
+PASS Disallow origin: HTTP://localhost:8800
+PASS Disallow origin: -
+PASS Disallow origin: **
+PASS Disallow origin: ,*
+PASS Disallow origin: *,
+PASS Disallow origin: \0*
+PASS Disallow origin: *
+PASS Disallow origin: *
+PASS Disallow origin: *\0
+PASS Disallow origin: *
+PASS Disallow origin: *
+PASS Disallow origin: '*'
+PASS Disallow origin: "*"
+PASS Disallow origin: * *
+PASS Disallow origin: * null
+PASS Disallow origin: *http://*
+PASS Disallow origin: *http://localhost:8800
+PASS Disallow origin: * http://localhost:8800
+PASS Disallow origin: *, http://localhost:8800
+PASS Disallow origin: \0http://localhost:8800
+PASS Disallow origin: null http://localhost:8800
+PASS Disallow origin: http://example.net
+PASS Disallow origin: null
+PASS Disallow origin: null *
+PASS Disallow origin:
+PASS Disallow origin: http://localhost:8800/cors/origin.htm
+PASS Disallow origin: http://localhost:8800/cors/
+PASS Disallow origin: http://127.0.0.1:8800/cors/
+PASS Disallow origin: localhost:8800
+PASS Disallow origin: .localhost:8800
+PASS Disallow origin: *.localhost:8800
 FAIL Disallow origin: http://localhost:8800 assert_throws_dom: send function "function () { client.send() }" did not throw
-PASS Disallow origin: http://.localhost:8800 
-PASS Disallow origin: http://*.localhost:8800 
-PASS Disallow multiple headers (, *) 
-PASS Disallow multiple headers (*, ) 
-PASS Disallow multiple headers (*, *) 
-PASS Disallow multiple headers (, http://localhost:8800) 
-PASS Disallow multiple headers (*, http://localhost:8800) 
-PASS Disallow multiple headers (http://localhost:8800, http://localhost:8800) 
+PASS Disallow origin: http://.localhost:8800
+PASS Disallow origin: http://*.localhost:8800
+PASS Disallow multiple headers (, *)
+PASS Disallow multiple headers (*, )
+PASS Disallow multiple headers (*, *)
+PASS Disallow multiple headers (, http://localhost:8800)
+PASS Disallow multiple headers (*, http://localhost:8800)
+PASS Disallow multiple headers (http://localhost:8800, http://localhost:8800)
 

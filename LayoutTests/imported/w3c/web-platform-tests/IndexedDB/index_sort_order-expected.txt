@@ -1,3 +1,3 @@
 
-PASS Verify key sort order in an index is 'number < Date < DOMString'  
+PASS Verify key sort order in an index is 'number < Date < DOMString'
 

@@ -1,4 +1,4 @@
 
-PASS deleteRow() on HTMLTableSectionElement on thead must enqueue disconnectedCallback when removing a custom element 
-PASS deleteRow() on HTMLTableSectionElement on tfoot must enqueue disconnectedCallback when removing a custom element 
+PASS deleteRow() on HTMLTableSectionElement on thead must enqueue disconnectedCallback when removing a custom element
+PASS deleteRow() on HTMLTableSectionElement on tfoot must enqueue disconnectedCallback when removing a custom element
 

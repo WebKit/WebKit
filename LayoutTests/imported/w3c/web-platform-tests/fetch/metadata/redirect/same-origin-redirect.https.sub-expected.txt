@@ -1,13 +1,13 @@
 Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=redirect-same-origin-same-sitee626fe5d-142b-43ff-afc3-13f5b8ce5444
- 
+
 
 Harness Error (TIMEOUT), message = null
 
-PASS Same-Origin -> Same-Origin redirect 
+PASS Same-Origin -> Same-Origin redirect
 TIMEOUT Same-Origin -> Same-Site redirect Test timed out
-NOTRUN Same-Origin -> Cross-Site redirect 
+NOTRUN Same-Origin -> Cross-Site redirect
 FAIL undefined: sec-fetch-dest assert_equals: expected "image" but got ""
 FAIL undefined: sec-fetch-mode assert_equals: expected "no-cors" but got ""
 FAIL undefined: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS undefined: sec-fetch-user 
+PASS undefined: sec-fetch-user
 

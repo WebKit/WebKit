@@ -1,10 +1,10 @@
 
-PASS XMLHttpRequest with value x%00x needs to throw 
-PASS fetch() with value x%00x needs to throw 
-PASS XMLHttpRequest with value x%0Ax needs to throw 
-PASS fetch() with value x%0Ax needs to throw 
-PASS XMLHttpRequest with value x%0Dx needs to throw 
-PASS fetch() with value x%0Dx needs to throw 
-PASS XMLHttpRequest with all valid values 
-PASS fetch() with all valid values 
+PASS XMLHttpRequest with value x%00x needs to throw
+PASS fetch() with value x%00x needs to throw
+PASS XMLHttpRequest with value x%0Ax needs to throw
+PASS fetch() with value x%0Ax needs to throw
+PASS XMLHttpRequest with value x%0Dx needs to throw
+PASS fetch() with value x%0Dx needs to throw
+PASS XMLHttpRequest with all valid values
+PASS fetch() with all valid values
 

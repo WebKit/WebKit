@@ -1,6 +1,6 @@
 test wildcard port number matching
 
 
-PASS Test that script does not fire violation event 
-PASS Wildcard port matching works. 
+PASS Test that script does not fire violation event
+PASS Wildcard port matching works.
 

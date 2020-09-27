@@ -1,14 +1,14 @@
 
-PASS IDBIndex.get exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBIndex.get exception order: TransactionInactiveError vs. DataError 
-PASS IDBIndex.getAll exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBIndex.getAll exception order: TransactionInactiveError vs. DataError 
-PASS IDBIndex.getAllKeys exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBIndex.getAllKeys exception order: TransactionInactiveError vs. DataError 
-PASS IDBIndex.count exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBIndex.count exception order: TransactionInactiveError vs. DataError 
-PASS IDBIndex.openCursor exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBIndex.openCursor exception order: TransactionInactiveError vs. DataError 
-PASS IDBIndex.openKeyCursor exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBIndex.openKeyCursor exception order: TransactionInactiveError vs. DataError 
+PASS IDBIndex.get exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBIndex.get exception order: TransactionInactiveError vs. DataError
+PASS IDBIndex.getAll exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBIndex.getAll exception order: TransactionInactiveError vs. DataError
+PASS IDBIndex.getAllKeys exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBIndex.getAllKeys exception order: TransactionInactiveError vs. DataError
+PASS IDBIndex.count exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBIndex.count exception order: TransactionInactiveError vs. DataError
+PASS IDBIndex.openCursor exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBIndex.openCursor exception order: TransactionInactiveError vs. DataError
+PASS IDBIndex.openKeyCursor exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBIndex.openKeyCursor exception order: TransactionInactiveError vs. DataError
 

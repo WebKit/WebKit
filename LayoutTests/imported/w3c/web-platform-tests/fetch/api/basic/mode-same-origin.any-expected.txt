@@ -1,10 +1,10 @@
 
-PASS Fetch ../resources/top.txt with same-origin mode 
-PASS Fetch http://localhost:8800/fetch/api/resources/top.txt with same-origin mode 
-PASS Fetch https://localhost:9443/fetch/api/resources/top.txt with same-origin mode 
-PASS Fetch http://127.0.0.1:8800/fetch/api/resources/top.txt with same-origin mode 
-PASS Fetch /fetch/api/basic/../resources/redirect.py?location=../resources/top.txt with same-origin mode 
-PASS Fetch /fetch/api/basic/../resources/redirect.py?location=http://localhost:8800/fetch/api/resources/top.txt with same-origin mode 
-PASS Fetch /fetch/api/basic/../resources/redirect.py?location=https://localhost:9443/fetch/api/resources/top.txt with same-origin mode 
-PASS Fetch /fetch/api/basic/../resources/redirect.py?location=http://127.0.0.1:8800/fetch/api/resources/top.txt with same-origin mode 
+PASS Fetch ../resources/top.txt with same-origin mode
+PASS Fetch http://localhost:8800/fetch/api/resources/top.txt with same-origin mode
+PASS Fetch https://localhost:9443/fetch/api/resources/top.txt with same-origin mode
+PASS Fetch http://127.0.0.1:8800/fetch/api/resources/top.txt with same-origin mode
+PASS Fetch /fetch/api/basic/../resources/redirect.py?location=../resources/top.txt with same-origin mode
+PASS Fetch /fetch/api/basic/../resources/redirect.py?location=http://localhost:8800/fetch/api/resources/top.txt with same-origin mode
+PASS Fetch /fetch/api/basic/../resources/redirect.py?location=https://localhost:9443/fetch/api/resources/top.txt with same-origin mode
+PASS Fetch /fetch/api/basic/../resources/redirect.py?location=http://127.0.0.1:8800/fetch/api/resources/top.txt with same-origin mode
 

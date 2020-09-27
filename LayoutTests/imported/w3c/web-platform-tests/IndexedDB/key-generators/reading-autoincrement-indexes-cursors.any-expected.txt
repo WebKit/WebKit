@@ -1,6 +1,6 @@
 
-PASS IDBIndex.openCursor() iterates over an index on the autoincrement key 
-PASS IDBIndex.openKeyCursor() iterates over an index on the autoincrement key 
-PASS IDBIndex.openCursor() iterates over an index not covering the autoincrement key 
-PASS IDBIndex.openKeyCursor() iterates over an index not covering the autoincrement key 
+PASS IDBIndex.openCursor() iterates over an index on the autoincrement key
+PASS IDBIndex.openKeyCursor() iterates over an index on the autoincrement key
+PASS IDBIndex.openCursor() iterates over an index not covering the autoincrement key
+PASS IDBIndex.openKeyCursor() iterates over an index not covering the autoincrement key
 

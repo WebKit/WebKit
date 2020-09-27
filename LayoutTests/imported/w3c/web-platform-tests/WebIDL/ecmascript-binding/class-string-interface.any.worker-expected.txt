@@ -1,10 +1,10 @@
 
-PASS @@toStringTag exists on the prototype with the appropriate descriptor 
-PASS @@toStringTag must not exist on the instance 
-PASS Object.prototype.toString applied to the prototype 
-PASS Object.prototype.toString applied to an instance 
-PASS Object.prototype.toString applied after modifying the prototype's @@toStringTag 
-PASS Object.prototype.toString applied to the instance after modifying the instance's @@toStringTag 
-PASS Object.prototype.toString applied to a null-prototype instance 
-PASS Object.prototype.toString applied after deleting @@toStringTag 
+PASS @@toStringTag exists on the prototype with the appropriate descriptor
+PASS @@toStringTag must not exist on the instance
+PASS Object.prototype.toString applied to the prototype
+PASS Object.prototype.toString applied to an instance
+PASS Object.prototype.toString applied after modifying the prototype's @@toStringTag
+PASS Object.prototype.toString applied to the instance after modifying the instance's @@toStringTag
+PASS Object.prototype.toString applied to a null-prototype instance
+PASS Object.prototype.toString applied after deleting @@toStringTag
 

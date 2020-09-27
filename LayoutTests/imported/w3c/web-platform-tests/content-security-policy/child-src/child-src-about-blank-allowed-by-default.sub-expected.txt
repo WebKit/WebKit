@@ -1,6 +1,6 @@
 These frames should not be blocked by Content-Security-Policy. It's pointless to block about:blank iframes because blocking a frame just results in displaying about:blank anyway!
 
-  
 
-PASS Check that frames load without throwing any violation events 
+
+PASS Check that frames load without throwing any violation events
 

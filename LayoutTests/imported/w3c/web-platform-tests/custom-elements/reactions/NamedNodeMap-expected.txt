@@ -1,16 +1,16 @@
 
-PASS setNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when adding an attribute 
-PASS setNamedItem on NamedNodeMap must not enqueue an attributeChanged reaction when adding an unobserved attribute 
-PASS setNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS setNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-PASS setNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when adding an attribute 
-PASS setNamedItemNS on NamedNodeMap must not enqueue an attributeChanged reaction when adding an unobserved attribute 
-PASS setNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS setNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-PASS removeNamedItem on NamedNodeMap must not enqueue an attributeChanged reaction when removing an unobserved attribute 
-PASS removeNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when removing an existing attribute 
-PASS removeNamedItem on NamedNodeMap must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
-PASS removeNamedItemNS on NamedNodeMap must not enqueue an attributeChanged reaction when removing an unobserved attribute 
-PASS removeNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when removing an existing attribute 
-PASS removeNamedItemNS on NamedNodeMap must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
+PASS setNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when adding an attribute
+PASS setNamedItem on NamedNodeMap must not enqueue an attributeChanged reaction when adding an unobserved attribute
+PASS setNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS setNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing unobserved attribute
+PASS setNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when adding an attribute
+PASS setNamedItemNS on NamedNodeMap must not enqueue an attributeChanged reaction when adding an unobserved attribute
+PASS setNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS setNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when replacing an existing unobserved attribute
+PASS removeNamedItem on NamedNodeMap must not enqueue an attributeChanged reaction when removing an unobserved attribute
+PASS removeNamedItem on NamedNodeMap must enqueue an attributeChanged reaction when removing an existing attribute
+PASS removeNamedItem on NamedNodeMap must not enqueue an attributeChanged reaction when removing an existing unobserved attribute
+PASS removeNamedItemNS on NamedNodeMap must not enqueue an attributeChanged reaction when removing an unobserved attribute
+PASS removeNamedItemNS on NamedNodeMap must enqueue an attributeChanged reaction when removing an existing attribute
+PASS removeNamedItemNS on NamedNodeMap must not enqueue an attributeChanged reaction when removing an existing unobserved attribute
 

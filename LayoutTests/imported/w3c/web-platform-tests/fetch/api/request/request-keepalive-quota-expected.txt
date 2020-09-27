@@ -1,8 +1,8 @@
 
-PASS A Keep-Alive fetch() with a small body should succeed. 
-PASS A Keep-Alive fetch() with a body at the Quota Limit should succeed. 
-PASS A Keep-Alive fetch() with a body over the Quota Limit should reject. 
-PASS A Keep-Alive fetch() should return its allocated Quota upon promise resolution. 
-PASS A Keep-Alive fetch() should return only its allocated Quota upon promise resolution. 
-PASS A Keep-Alive fetch() should not be allowed if the Quota is used up. 
+PASS A Keep-Alive fetch() with a small body should succeed.
+PASS A Keep-Alive fetch() with a body at the Quota Limit should succeed.
+PASS A Keep-Alive fetch() with a body over the Quota Limit should reject.
+PASS A Keep-Alive fetch() should return its allocated Quota upon promise resolution.
+PASS A Keep-Alive fetch() should return only its allocated Quota upon promise resolution.
+PASS A Keep-Alive fetch() should not be allowed if the Quota is used up.
 

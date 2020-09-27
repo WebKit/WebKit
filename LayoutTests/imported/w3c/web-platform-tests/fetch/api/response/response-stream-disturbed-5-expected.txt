@@ -1,6 +1,6 @@
 
-PASS Getting a body reader after consuming as blob 
-PASS Getting a body reader after consuming as text 
-PASS Getting a body reader after consuming as json 
-PASS Getting a body reader after consuming as arrayBuffer 
+PASS Getting a body reader after consuming as blob
+PASS Getting a body reader after consuming as text
+PASS Getting a body reader after consuming as json
+PASS Getting a body reader after consuming as arrayBuffer
 

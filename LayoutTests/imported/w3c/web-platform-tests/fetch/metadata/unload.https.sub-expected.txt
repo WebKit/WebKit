@@ -1,8 +1,8 @@
 
 
-PASS Fetch from an unload handler 
+PASS Fetch from an unload handler
 FAIL undefined: sec-fetch-dest assert_equals: expected "empty" but got ""
 FAIL undefined: sec-fetch-mode assert_equals: expected "no-cors" but got ""
 FAIL undefined: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS undefined: sec-fetch-user 
+PASS undefined: sec-fetch-user
 

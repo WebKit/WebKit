@@ -4,11 +4,11 @@ Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resourc
 2
 3
 
-PASS Same-Origin font 
+PASS Same-Origin font
 FAIL Same-Site font assert_not_equals: got disallowed value "No header has been recorded"
 FAIL Cross-Site font assert_not_equals: got disallowed value "No header has been recorded"
 FAIL Same-Origin font: sec-fetch-dest assert_equals: expected "font" but got ""
 FAIL Same-Origin font: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL Same-Origin font: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS Same-Origin font: sec-fetch-user 
+PASS Same-Origin font: sec-fetch-user
 

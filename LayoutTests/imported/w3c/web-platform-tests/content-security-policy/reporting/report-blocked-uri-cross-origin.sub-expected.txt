@@ -2,5 +2,5 @@ Blocked access to external URL http://www1.localhost:8800/content-security-polic
 Blocked access to external URL http://www1.localhost:8800/content-security-policy/support/pass.png
 
 
-PASS Violation report status OK. 
+PASS Violation report status OK.
 

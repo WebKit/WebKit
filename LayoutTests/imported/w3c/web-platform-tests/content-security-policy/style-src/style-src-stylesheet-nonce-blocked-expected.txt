@@ -1,4 +1,4 @@
 
-PASS Should not load stylesheet without correct nonce 
+PASS Should not load stylesheet without correct nonce
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'nonce-nonceynonce'" but got "style-src-elem"
 Lorem ipsum

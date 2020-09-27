@@ -1,5 +1,5 @@
 
-PASS data: URIs should not match * 
-PASS blob: URIs should not match * 
-PASS filesystem URIs should not match * 
+PASS data: URIs should not match *
+PASS blob: URIs should not match *
+PASS filesystem URIs should not match *
 

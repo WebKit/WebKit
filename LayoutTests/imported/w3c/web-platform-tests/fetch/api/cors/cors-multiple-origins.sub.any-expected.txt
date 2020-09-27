@@ -1,8 +1,8 @@
 
-PASS Listing multiple origins is illegal: "",http://example.com,http://localhost:8800 
-PASS Listing multiple origins is illegal: "",http://example.com,* 
-PASS Listing multiple origins is illegal: "",http://localhost:8800,http://localhost:8800 
-PASS Listing multiple origins is illegal: *,http://example.com,* 
-PASS Listing multiple origins is illegal: *,http://example.com,http://localhost:8800 
-PASS Listing multiple origins is illegal: ,http://example.com,https://example2.com 
+PASS Listing multiple origins is illegal: "",http://example.com,http://localhost:8800
+PASS Listing multiple origins is illegal: "",http://example.com,*
+PASS Listing multiple origins is illegal: "",http://localhost:8800,http://localhost:8800
+PASS Listing multiple origins is illegal: *,http://example.com,*
+PASS Listing multiple origins is illegal: *,http://example.com,http://localhost:8800
+PASS Listing multiple origins is illegal: ,http://example.com,https://example2.com
 

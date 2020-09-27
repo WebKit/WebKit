@@ -1,12 +1,12 @@
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: Fetch API cannot load blob:http://www.localhost:8800/ due to access control checks.
 
-PASS Fetching [GET] URL.createObjectURL(blob) is OK 
-PASS Fetching [GET] blob:http://www.localhost:8800/ is KO 
-PASS Fetching [POST] URL.createObjectURL(blob) is KO 
-PASS Fetching [OPTIONS] URL.createObjectURL(blob) is KO 
-PASS Fetching [HEAD] URL.createObjectURL(blob) is KO 
-PASS Fetching [PUT] URL.createObjectURL(blob) is KO 
-PASS Fetching [DELETE] URL.createObjectURL(blob) is KO 
-PASS Fetching [INVALID] URL.createObjectURL(blob) is KO 
+PASS Fetching [GET] URL.createObjectURL(blob) is OK
+PASS Fetching [GET] blob:http://www.localhost:8800/ is KO
+PASS Fetching [POST] URL.createObjectURL(blob) is KO
+PASS Fetching [OPTIONS] URL.createObjectURL(blob) is KO
+PASS Fetching [HEAD] URL.createObjectURL(blob) is KO
+PASS Fetching [PUT] URL.createObjectURL(blob) is KO
+PASS Fetching [DELETE] URL.createObjectURL(blob) is KO
+PASS Fetching [INVALID] URL.createObjectURL(blob) is KO
 

@@ -6,6 +6,6 @@ CONSOLE MESSAGE: Refused to load https://localhost:9443/content-security-policy/
 
 Harness Error (TIMEOUT), message = null
 
-PASS Test that image does not load 
+PASS Test that image does not load
 TIMEOUT Event is fired Test timed out
 

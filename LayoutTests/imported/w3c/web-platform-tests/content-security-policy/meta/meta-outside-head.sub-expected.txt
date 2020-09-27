@@ -1,5 +1,5 @@
 This test checks that Content Security Policy delivered via a meta element is not enforced if the element is outside the document's head.
 
 
-PASS Expecting alerts: ["PASS (1/1)"] 
+PASS Expecting alerts: ["PASS (1/1)"]
 

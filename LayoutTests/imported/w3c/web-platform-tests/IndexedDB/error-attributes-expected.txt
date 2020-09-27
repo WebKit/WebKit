@@ -1,3 +1,3 @@
 
-PASS IDBRequest and IDBTransaction error properties should be DOMExceptions 
+PASS IDBRequest and IDBTransaction error properties should be DOMExceptions
 

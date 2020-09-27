@@ -1,4 +1,4 @@
 
-PASS Inline style attribute should not be applied without 'unsafe-inline' 
+PASS Inline style attribute should not be applied without 'unsafe-inline'
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'self'" but got "style-src-attr"
 Lorem ipsum

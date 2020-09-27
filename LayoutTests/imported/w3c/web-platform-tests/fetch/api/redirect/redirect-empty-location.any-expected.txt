@@ -1,4 +1,4 @@
 
-PASS redirect response with empty Location, follow mode 
-PASS redirect response with empty Location, manual mode 
+PASS redirect response with empty Location, follow mode
+PASS redirect response with empty Location, manual mode
 

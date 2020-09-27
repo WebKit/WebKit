@@ -1,4 +1,4 @@
 
-PASS Aborting before read 
+PASS Aborting before read
 FAIL Aborting after read assert_equals: Expected abort event, but got error event instead expected "abort" but got "error"
 

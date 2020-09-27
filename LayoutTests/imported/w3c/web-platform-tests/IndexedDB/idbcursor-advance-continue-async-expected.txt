@@ -1,6 +1,6 @@
 
-PASS IDBCursor asyncness - advance 
-PASS IDBCursor asyncness - continue 
-PASS IDBCursor asyncness - fresh advance still async 
-PASS IDBCursor asyncness - fresh continue still async 
+PASS IDBCursor asyncness - advance
+PASS IDBCursor asyncness - continue
+PASS IDBCursor asyncness - fresh advance still async
+PASS IDBCursor asyncness - fresh continue still async
 

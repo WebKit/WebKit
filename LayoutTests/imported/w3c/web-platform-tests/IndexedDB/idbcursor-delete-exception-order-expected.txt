@@ -1,5 +1,5 @@
 
-PASS IDBCursor.delete exception order: TransactionInactiveError vs. ReadOnlyError 
-PASS IDBCursor.delete exception order: ReadOnlyError vs. InvalidStateError #1 
-PASS IDBCursor.delete exception order: ReadOnlyError vs. InvalidStateError #2 
+PASS IDBCursor.delete exception order: TransactionInactiveError vs. ReadOnlyError
+PASS IDBCursor.delete exception order: ReadOnlyError vs. InvalidStateError #1
+PASS IDBCursor.delete exception order: ReadOnlyError vs. InvalidStateError #2
 

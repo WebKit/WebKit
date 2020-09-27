@@ -3,6 +3,6 @@
 Harness Error (TIMEOUT), message = null
 
 TIMEOUT Same-Origin embed Test timed out
-NOTRUN Same-Site embed 
-NOTRUN Cross-Site embed 
+NOTRUN Same-Site embed
+NOTRUN Cross-Site embed
 

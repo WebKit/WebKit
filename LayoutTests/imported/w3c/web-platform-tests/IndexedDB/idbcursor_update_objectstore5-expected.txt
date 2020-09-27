@@ -1,3 +1,3 @@
 
-PASS IDBCursor.update() - object store - attempt to  modify a record when object store been deleted 
+PASS IDBCursor.update() - object store - attempt to  modify a record when object store been deleted
 

@@ -1,4 +1,4 @@
 
-PASS Fetch in service worker: referrer with no-referrer policy 
-PASS Request's referrer is empty 
+PASS Fetch in service worker: referrer with no-referrer policy
+PASS Request's referrer is empty
 

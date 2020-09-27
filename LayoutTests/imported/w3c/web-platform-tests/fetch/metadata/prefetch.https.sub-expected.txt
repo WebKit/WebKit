@@ -3,7 +3,7 @@ Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resourc
 
 Harness Error (TIMEOUT), message = null
 
-PASS Browser supports prefetch. 
+PASS Browser supports prefetch.
 TIMEOUT <link rel='prefetch' href='https://localhost:9443/...'> Test timed out
 TIMEOUT <link rel='prefetch' href='https://www.localhost:9443/...'> Test timed out
 TIMEOUT <link rel='prefetch' href='https://www.127.0.0.1:9443/...'> Test timed out

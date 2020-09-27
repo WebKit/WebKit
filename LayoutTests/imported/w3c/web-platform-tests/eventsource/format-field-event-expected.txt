@@ -1,3 +1,3 @@
 
-PASS EventSource: custom event name 
+PASS EventSource: custom event name
 

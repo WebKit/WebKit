@@ -1,9 +1,9 @@
 
-PASS Already aborted request does not land in service worker 
-PASS response.arrayBuffer() rejects if already aborted 
-PASS response.blob() rejects if already aborted 
-PASS response.formData() rejects if already aborted 
-PASS response.json() rejects if already aborted 
-PASS response.text() rejects if already aborted 
-PASS Stream errors once aborted. 
+PASS Already aborted request does not land in service worker
+PASS response.arrayBuffer() rejects if already aborted
+PASS response.blob() rejects if already aborted
+PASS response.formData() rejects if already aborted
+PASS response.json() rejects if already aborted
+PASS response.text() rejects if already aborted
+PASS Stream errors once aborted.
 

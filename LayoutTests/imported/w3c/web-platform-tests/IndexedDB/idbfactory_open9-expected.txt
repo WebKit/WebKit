@@ -1,20 +1,20 @@
 
-PASS Calling open() with version argument -1 should throw TypeError. 
-PASS Calling open() with version argument -0.5 should throw TypeError. 
-PASS Calling open() with version argument 0 should throw TypeError. 
-PASS Calling open() with version argument 0.5 should throw TypeError. 
-PASS Calling open() with version argument 0.8 should throw TypeError. 
-PASS Calling open() with version argument 9007199254740992 should throw TypeError. 
-PASS Calling open() with version argument NaN should throw TypeError. 
-PASS Calling open() with version argument Infinity should throw TypeError. 
-PASS Calling open() with version argument -Infinity should throw TypeError. 
-PASS Calling open() with version argument "foo" should throw TypeError. 
-PASS Calling open() with version argument null should throw TypeError. 
-PASS Calling open() with version argument false should throw TypeError. 
-PASS Calling open() with version argument object should throw TypeError. 
-PASS Calling open() with version argument object (second) should throw TypeError. 
-PASS Calling open() with version argument object (third) should throw TypeError. 
-PASS Calling open() with version argument 1.5 should not throw. 
-PASS Calling open() with version argument 9007199254740991 should not throw. 
-PASS Calling open() with version argument undefined should not throw. 
+PASS Calling open() with version argument -1 should throw TypeError.
+PASS Calling open() with version argument -0.5 should throw TypeError.
+PASS Calling open() with version argument 0 should throw TypeError.
+PASS Calling open() with version argument 0.5 should throw TypeError.
+PASS Calling open() with version argument 0.8 should throw TypeError.
+PASS Calling open() with version argument 9007199254740992 should throw TypeError.
+PASS Calling open() with version argument NaN should throw TypeError.
+PASS Calling open() with version argument Infinity should throw TypeError.
+PASS Calling open() with version argument -Infinity should throw TypeError.
+PASS Calling open() with version argument "foo" should throw TypeError.
+PASS Calling open() with version argument null should throw TypeError.
+PASS Calling open() with version argument false should throw TypeError.
+PASS Calling open() with version argument object should throw TypeError.
+PASS Calling open() with version argument object (second) should throw TypeError.
+PASS Calling open() with version argument object (third) should throw TypeError.
+PASS Calling open() with version argument 1.5 should not throw.
+PASS Calling open() with version argument 9007199254740991 should not throw.
+PASS Calling open() with version argument undefined should not throw.
 

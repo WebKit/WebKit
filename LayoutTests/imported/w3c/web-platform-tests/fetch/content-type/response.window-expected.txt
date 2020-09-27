@@ -1,124 +1,124 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Loading JSON… 
-PASS <iframe>: separate response Content-Type:  text/plain 
-PASS <iframe>: combined response Content-Type:  text/plain 
-PASS fetch(): separate response Content-Type:  text/plain 
+PASS Loading JSON…
+PASS <iframe>: separate response Content-Type:  text/plain
+PASS <iframe>: combined response Content-Type:  text/plain
+PASS fetch(): separate response Content-Type:  text/plain
 FAIL fetch(): combined response Content-Type:  text/plain assert_equals: expected "text/plain" but got ""
 FAIL Request: combined response Content-Type:  text/plain assert_equals: expected "text/plain" but got ""
 FAIL Response: combined response Content-Type:  text/plain assert_equals: expected "text/plain" but got ""
 TIMEOUT <iframe>: separate response Content-Type: text/plain  Test timed out
-PASS <iframe>: combined response Content-Type: text/plain  
+PASS <iframe>: combined response Content-Type: text/plain
 FAIL fetch(): separate response Content-Type: text/plain  assert_equals: expected "text/plain" but got ""
-PASS fetch(): combined response Content-Type: text/plain  
+PASS fetch(): combined response Content-Type: text/plain
 FAIL Request: combined response Content-Type: text/plain  assert_equals: expected "text/plain" but got ""
 FAIL Response: combined response Content-Type: text/plain  assert_equals: expected "text/plain" but got ""
-PASS <iframe>: separate response Content-Type: text/html text/plain 
+PASS <iframe>: separate response Content-Type: text/html text/plain
 FAIL <iframe>: combined response Content-Type: text/html text/plain assert_equals: expected "<b>hi</b>\n" but got "hi\n"
-PASS fetch(): separate response Content-Type: text/html text/plain 
+PASS fetch(): separate response Content-Type: text/html text/plain
 FAIL fetch(): combined response Content-Type: text/html text/plain assert_equals: expected "text/plain" but got "text/html"
 FAIL Request: combined response Content-Type: text/html text/plain assert_equals: expected "text/plain" but got ""
 FAIL Response: combined response Content-Type: text/html text/plain assert_equals: expected "text/plain" but got ""
-PASS <iframe>: separate response Content-Type: text/plain;charset=gbk text/html 
+PASS <iframe>: separate response Content-Type: text/plain;charset=gbk text/html
 FAIL <iframe>: combined response Content-Type: text/plain;charset=gbk text/html assert_equals: expected "UTF-8" but got "GBK"
-PASS fetch(): separate response Content-Type: text/plain;charset=gbk text/html 
+PASS fetch(): separate response Content-Type: text/plain;charset=gbk text/html
 FAIL fetch(): combined response Content-Type: text/plain;charset=gbk text/html assert_equals: expected "text/html" but got "text/plain"
 FAIL Request: combined response Content-Type: text/plain;charset=gbk text/html assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: text/plain;charset=gbk text/html assert_equals: expected "text/html" but got ""
-PASS <iframe>: separate response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254 
+PASS <iframe>: separate response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254
 FAIL <iframe>: combined response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254 assert_equals: expected "WINDOWS-1254" but got "GBK"
 FAIL fetch(): separate response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254 assert_equals: expected "text/html;charset=windows-1254" but got "text/html"
 FAIL fetch(): combined response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254 assert_equals: expected "text/html;charset=windows-1254" but got "text/plain"
 FAIL Request: combined response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254 assert_equals: expected "text/html;charset=windows-1254" but got ""
 FAIL Response: combined response Content-Type: text/plain;charset=gbk text/html;charset=windows-1254 assert_equals: expected "text/html;charset=windows-1254" but got ""
 FAIL <iframe>: separate response Content-Type: text/plain;charset=gbk text/plain assert_equals: expected "GBK" but got "UTF-8"
-PASS <iframe>: combined response Content-Type: text/plain;charset=gbk text/plain 
+PASS <iframe>: combined response Content-Type: text/plain;charset=gbk text/plain
 FAIL fetch(): separate response Content-Type: text/plain;charset=gbk text/plain assert_equals: expected "text/plain;charset=gbk" but got "text/plain"
 FAIL fetch(): combined response Content-Type: text/plain;charset=gbk text/plain assert_equals: expected "text/plain;charset=gbk" but got "text/plain"
 FAIL Request: combined response Content-Type: text/plain;charset=gbk text/plain assert_equals: expected "text/plain;charset=gbk" but got ""
 FAIL Response: combined response Content-Type: text/plain;charset=gbk text/plain assert_equals: expected "text/plain;charset=gbk" but got ""
-PASS <iframe>: separate response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252 
+PASS <iframe>: separate response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252
 FAIL <iframe>: combined response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252 assert_equals: expected "WINDOWS-1252" but got "GBK"
 FAIL fetch(): separate response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252 assert_equals: expected "text/plain;charset=windows-1252" but got "text/plain"
 FAIL fetch(): combined response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252 assert_equals: expected "text/plain;charset=windows-1252" but got "text/plain"
 FAIL Request: combined response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252 assert_equals: expected "text/plain;charset=windows-1252" but got ""
 FAIL Response: combined response Content-Type: text/plain;charset=gbk text/plain;charset=windows-1252 assert_equals: expected "text/plain;charset=windows-1252" but got ""
 FAIL <iframe>: separate response Content-Type: text/html;charset=gbk text/html;x=",text/plain assert_equals: expected "GBK" but got "UTF-8"
-PASS <iframe>: combined response Content-Type: text/html;charset=gbk text/html;x=",text/plain 
+PASS <iframe>: combined response Content-Type: text/html;charset=gbk text/html;x=",text/plain
 FAIL fetch(): separate response Content-Type: text/html;charset=gbk text/html;x=",text/plain assert_equals: expected "text/html;x=\",text/plain\";charset=gbk" but got "text/html"
 FAIL fetch(): combined response Content-Type: text/html;charset=gbk text/html;x=",text/plain assert_equals: expected "text/html;x=\",text/plain\";charset=gbk" but got "text/html"
 FAIL Request: combined response Content-Type: text/html;charset=gbk text/html;x=",text/plain assert_equals: expected "text/html;x=\",text/plain\";charset=gbk" but got ""
 FAIL Response: combined response Content-Type: text/html;charset=gbk text/html;x=",text/plain assert_equals: expected "text/html;x=\",text/plain\";charset=gbk" but got ""
 FAIL <iframe>: separate response Content-Type: text/plain;charset=gbk;x=foo text/plain assert_equals: expected "GBK" but got "UTF-8"
-PASS <iframe>: combined response Content-Type: text/plain;charset=gbk;x=foo text/plain 
+PASS <iframe>: combined response Content-Type: text/plain;charset=gbk;x=foo text/plain
 FAIL fetch(): separate response Content-Type: text/plain;charset=gbk;x=foo text/plain assert_equals: expected "text/plain;charset=gbk" but got "text/plain"
 FAIL fetch(): combined response Content-Type: text/plain;charset=gbk;x=foo text/plain assert_equals: expected "text/plain;charset=gbk" but got "text/plain"
 FAIL Request: combined response Content-Type: text/plain;charset=gbk;x=foo text/plain assert_equals: expected "text/plain;charset=gbk" but got ""
 FAIL Response: combined response Content-Type: text/plain;charset=gbk;x=foo text/plain assert_equals: expected "text/plain;charset=gbk" but got ""
-PASS <iframe>: separate response Content-Type: text/html;charset=gbk text/plain text/html 
+PASS <iframe>: separate response Content-Type: text/html;charset=gbk text/plain text/html
 FAIL <iframe>: combined response Content-Type: text/html;charset=gbk text/plain text/html assert_equals: expected "UTF-8" but got "GBK"
-PASS fetch(): separate response Content-Type: text/html;charset=gbk text/plain text/html 
-PASS fetch(): combined response Content-Type: text/html;charset=gbk text/plain text/html 
+PASS fetch(): separate response Content-Type: text/html;charset=gbk text/plain text/html
+PASS fetch(): combined response Content-Type: text/html;charset=gbk text/plain text/html
 FAIL Request: combined response Content-Type: text/html;charset=gbk text/plain text/html assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: text/html;charset=gbk text/plain text/html assert_equals: expected "text/html" but got ""
 TIMEOUT <iframe>: separate response Content-Type: text/plain */* Test timed out
 TIMEOUT <iframe>: combined response Content-Type: text/plain */* Test timed out
 FAIL fetch(): separate response Content-Type: text/plain */* assert_equals: expected "text/plain" but got "*/*"
-PASS fetch(): combined response Content-Type: text/plain */* 
+PASS fetch(): combined response Content-Type: text/plain */*
 FAIL Request: combined response Content-Type: text/plain */* assert_equals: expected "text/plain" but got ""
 FAIL Response: combined response Content-Type: text/plain */* assert_equals: expected "text/plain" but got ""
 TIMEOUT <iframe>: separate response Content-Type: text/html */* Test timed out
 TIMEOUT <iframe>: combined response Content-Type: text/html */* Test timed out
 FAIL fetch(): separate response Content-Type: text/html */* assert_equals: expected "text/html" but got "*/*"
-PASS fetch(): combined response Content-Type: text/html */* 
+PASS fetch(): combined response Content-Type: text/html */*
 FAIL Request: combined response Content-Type: text/html */* assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: text/html */* assert_equals: expected "text/html" but got ""
-PASS <iframe>: separate response Content-Type: */* text/html 
+PASS <iframe>: separate response Content-Type: */* text/html
 TIMEOUT <iframe>: combined response Content-Type: */* text/html Test timed out
-PASS fetch(): separate response Content-Type: */* text/html 
+PASS fetch(): separate response Content-Type: */* text/html
 FAIL fetch(): combined response Content-Type: */* text/html assert_equals: expected "text/html" but got "*/*"
 FAIL Request: combined response Content-Type: */* text/html assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: */* text/html assert_equals: expected "text/html" but got ""
 TIMEOUT <iframe>: separate response Content-Type: text/plain */*;charset=gbk Test timed out
 TIMEOUT <iframe>: combined response Content-Type: text/plain */*;charset=gbk Test timed out
 FAIL fetch(): separate response Content-Type: text/plain */*;charset=gbk assert_equals: expected "text/plain" but got "*/*"
-PASS fetch(): combined response Content-Type: text/plain */*;charset=gbk 
+PASS fetch(): combined response Content-Type: text/plain */*;charset=gbk
 FAIL Request: combined response Content-Type: text/plain */*;charset=gbk assert_equals: expected "text/plain" but got ""
 FAIL Response: combined response Content-Type: text/plain */*;charset=gbk assert_equals: expected "text/plain" but got ""
 TIMEOUT <iframe>: separate response Content-Type: text/html */*;charset=gbk Test timed out
 TIMEOUT <iframe>: combined response Content-Type: text/html */*;charset=gbk Test timed out
 FAIL fetch(): separate response Content-Type: text/html */*;charset=gbk assert_equals: expected "text/html" but got "*/*"
-PASS fetch(): combined response Content-Type: text/html */*;charset=gbk 
+PASS fetch(): combined response Content-Type: text/html */*;charset=gbk
 FAIL Request: combined response Content-Type: text/html */*;charset=gbk assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: text/html */*;charset=gbk assert_equals: expected "text/html" but got ""
 FAIL <iframe>: separate response Content-Type: text/html;x=" text/plain assert_equals: expected "b" but got "pre"
-PASS <iframe>: combined response Content-Type: text/html;x=" text/plain 
+PASS <iframe>: combined response Content-Type: text/html;x=" text/plain
 FAIL fetch(): separate response Content-Type: text/html;x=" text/plain assert_equals: expected "text/html;x=\", text/plain\"" but got "text/plain"
 FAIL fetch(): combined response Content-Type: text/html;x=" text/plain assert_equals: expected "text/html;x=\", text/plain\"" but got "text/html"
 FAIL Request: combined response Content-Type: text/html;x=" text/plain assert_equals: expected "text/html;x=\", text/plain\"" but got ""
 FAIL Response: combined response Content-Type: text/html;x=" text/plain assert_equals: expected "text/html;x=\", text/plain\"" but got ""
 FAIL <iframe>: separate response Content-Type: text/html;" text/plain assert_equals: expected "b" but got "pre"
-PASS <iframe>: combined response Content-Type: text/html;" text/plain 
+PASS <iframe>: combined response Content-Type: text/html;" text/plain
 FAIL fetch(): separate response Content-Type: text/html;" text/plain assert_equals: expected "text/html" but got "text/plain"
-PASS fetch(): combined response Content-Type: text/html;" text/plain 
+PASS fetch(): combined response Content-Type: text/html;" text/plain
 FAIL Request: combined response Content-Type: text/html;" text/plain assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: text/html;" text/plain assert_equals: expected "text/html" but got ""
 FAIL <iframe>: separate response Content-Type: text/html;" \" text/plain assert_equals: expected "b" but got "pre"
-PASS <iframe>: combined response Content-Type: text/html;" \" text/plain 
+PASS <iframe>: combined response Content-Type: text/html;" \" text/plain
 FAIL fetch(): separate response Content-Type: text/html;" \" text/plain assert_equals: expected "text/html" but got "text/plain"
-PASS fetch(): combined response Content-Type: text/html;" \" text/plain 
+PASS fetch(): combined response Content-Type: text/html;" \" text/plain
 FAIL Request: combined response Content-Type: text/html;" \" text/plain assert_equals: expected "text/html" but got ""
 FAIL Response: combined response Content-Type: text/html;" \" text/plain assert_equals: expected "text/html" but got ""
 TIMEOUT <iframe>: separate response Content-Type: text/html;" \" text/plain ";charset=GBK Test timed out
-PASS <iframe>: combined response Content-Type: text/html;" \" text/plain ";charset=GBK 
+PASS <iframe>: combined response Content-Type: text/html;" \" text/plain ";charset=GBK
 FAIL fetch(): separate response Content-Type: text/html;" \" text/plain ";charset=GBK assert_equals: expected "text/html;charset=GBK" but got "\""
 FAIL fetch(): combined response Content-Type: text/html;" \" text/plain ";charset=GBK assert_equals: expected "text/html;charset=GBK" but got "text/html"
 FAIL Request: combined response Content-Type: text/html;" \" text/plain ";charset=GBK assert_equals: expected "text/html;charset=GBK" but got ""
 FAIL Response: combined response Content-Type: text/html;" \" text/plain ";charset=GBK assert_equals: expected "text/html;charset=GBK" but got ""
-PASS <iframe>: separate response Content-Type: text/html;" " text/plain 
+PASS <iframe>: separate response Content-Type: text/html;" " text/plain
 FAIL <iframe>: combined response Content-Type: text/html;" " text/plain assert_equals: expected "<b>hi</b>\n" but got "hi\n"
-PASS fetch(): separate response Content-Type: text/html;" " text/plain 
+PASS fetch(): separate response Content-Type: text/html;" " text/plain
 FAIL fetch(): combined response Content-Type: text/html;" " text/plain assert_equals: expected "text/plain" but got "text/html"
 FAIL Request: combined response Content-Type: text/html;" " text/plain assert_equals: expected "text/plain" but got ""
 FAIL Response: combined response Content-Type: text/html;" " text/plain assert_equals: expected "text/plain" but got ""

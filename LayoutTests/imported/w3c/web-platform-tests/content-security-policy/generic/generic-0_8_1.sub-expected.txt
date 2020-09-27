@@ -6,6 +6,6 @@ test wildcard host name matching (asterisk as part of a subdomain is not accepte
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire violation events for every failed violation 
-PASS Wildcard host matching works. 
+NOTRUN Should fire violation events for every failed violation
+PASS Wildcard host matching works.
 

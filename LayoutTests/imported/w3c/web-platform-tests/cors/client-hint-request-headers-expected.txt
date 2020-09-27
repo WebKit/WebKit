@@ -1,9 +1,9 @@
 Request headers
 
 
-PASS Unspecified request headers are disallowed 
-PASS Unextractable device-memory client hint header is disallowed 
-PASS Unextractable DPR client hint header is disallowed 
-PASS Unextractable width client hint header is disallowed 
-PASS Unextractable viewport-width client hint header is disallowed 
+PASS Unspecified request headers are disallowed
+PASS Unextractable device-memory client hint header is disallowed
+PASS Unextractable DPR client hint header is disallowed
+PASS Unextractable width client hint header is disallowed
+PASS Unextractable viewport-width client hint header is disallowed
 

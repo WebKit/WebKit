@@ -3,6 +3,6 @@ CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/s
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN First image should be blocked 
-NOTRUN Second image should be blocked 
+NOTRUN First image should be blocked
+NOTRUN Second image should be blocked
 

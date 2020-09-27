@@ -1,7 +1,7 @@
 Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://localhost:9443/fetch/sec-metadata/resources/record-header.py?file=redirect-same-site-same-origin
 Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://localhost:9443/fetch/sec-metadata/resources/record-header.py?file=redirect-same-site-same-site
 Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/record-header.py?file=redirect-same-site-cross-site
- 
+
 
 FAIL Same-Site -> Same-Origin redirect assert_equals: destination expected (string) "image" but got (undefined) undefined
 FAIL Same-Site -> Same-Site redirect assert_equals: destination expected (string) "image" but got (undefined) undefined

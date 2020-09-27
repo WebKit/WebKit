@@ -1,8 +1,8 @@
 
-PASS IndexedDB deleted object store rename throws 
-PASS IndexedDB object store rename throws in a readonly transaction 
-PASS IndexedDB object store rename throws in a readwrite transaction 
-PASS IndexedDB object store rename throws in an inactive transaction 
-PASS IndexedDB object store rename to the name of another store throws 
-PASS IndexedDB object store rename handles exceptions when stringifying names 
+PASS IndexedDB deleted object store rename throws
+PASS IndexedDB object store rename throws in a readonly transaction
+PASS IndexedDB object store rename throws in a readwrite transaction
+PASS IndexedDB object store rename throws in an inactive transaction
+PASS IndexedDB object store rename to the name of another store throws
+PASS IndexedDB object store rename handles exceptions when stringifying names
 

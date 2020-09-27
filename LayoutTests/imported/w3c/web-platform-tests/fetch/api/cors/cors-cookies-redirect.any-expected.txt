@@ -1,6 +1,6 @@
 
-PASS Set cookies 
-PASS Testing credentials after cross-origin redirection with CORS and no preflight 
-PASS Testing credentials after cross-origin redirection with CORS and preflight 
-PASS Clean cookies 
+PASS Set cookies
+PASS Testing credentials after cross-origin redirection with CORS and no preflight
+PASS Testing credentials after cross-origin redirection with CORS and preflight
+PASS Clean cookies
 

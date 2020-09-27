@@ -1,6 +1,6 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Initialize global state 
+PASS Initialize global state
 TIMEOUT HTMLLinkElement with rel=prefetch fetches with an empty string Request.destination Test timed out
 

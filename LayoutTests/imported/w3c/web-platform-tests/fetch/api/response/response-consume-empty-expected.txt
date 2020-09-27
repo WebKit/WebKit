@@ -1,16 +1,16 @@
 
-PASS Consume response's body as text 
-PASS Consume response's body as blob 
-PASS Consume response's body as arrayBuffer 
-PASS Consume response's body as json (error case) 
+PASS Consume response's body as text
+PASS Consume response's body as blob
+PASS Consume response's body as arrayBuffer
+PASS Consume response's body as json (error case)
 FAIL Consume response's body as formData with correct multipart type (error case) promise_rejects_js: function "function () { throw e }" threw undefined with type "undefined", not an object
 FAIL Consume response's body as formData with correct urlencoded type promise_test: Unhandled rejection with value: undefined
 FAIL Consume response's body as formData without correct type (error case) promise_rejects_js: function "function () { throw e }" threw undefined with type "undefined", not an object
-PASS Consume empty blob response body as arrayBuffer 
-PASS Consume empty text response body as arrayBuffer 
-PASS Consume empty blob response body as text 
-PASS Consume empty text response body as text 
-PASS Consume empty URLSearchParams response body as text 
+PASS Consume empty blob response body as arrayBuffer
+PASS Consume empty text response body as arrayBuffer
+PASS Consume empty blob response body as text
+PASS Consume empty text response body as text
+PASS Consume empty URLSearchParams response body as text
 FAIL Consume empty FormData response body as text assert_equals: Resolved value should be empty expected 0 but got 44
-PASS Consume empty ArrayBuffer response body as text 
+PASS Consume empty ArrayBuffer response body as text
 

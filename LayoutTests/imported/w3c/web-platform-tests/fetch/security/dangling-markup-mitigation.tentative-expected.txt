@@ -1,33 +1,33 @@
 
 
-PASS Fetch: /images/green-1x1.png 
-PASS Fetch: /images/gre\nen-1x1.png 
-PASS Fetch: /images/gre\ten-1x1.png 
-PASS Fetch: /images/gre\ren-1x1.png 
-PASS Fetch: /images/green-1x1.png?img=< 
-PASS Fetch: /images/green-1x1.png?img=&lt; 
-PASS Fetch: /images/green-1x1.png?img=%3C 
-PASS Fetch: /images/gr\neen-1x1.png?img=%3C 
-PASS Fetch: /images/gr\reen-1x1.png?img=%3C 
-PASS Fetch: /images/gr\teen-1x1.png?img=%3C 
-PASS Fetch: /images/green-1x1.png?img=&#10; 
-PASS Fetch: /images/gr\neen-1x1.png?img=&#10; 
-PASS Fetch: /images/gr\reen-1x1.png?img=&#10; 
-PASS Fetch: /images/gr\teen-1x1.png?img=&#10; 
+PASS Fetch: /images/green-1x1.png
+PASS Fetch: /images/gre\nen-1x1.png
+PASS Fetch: /images/gre\ten-1x1.png
+PASS Fetch: /images/gre\ren-1x1.png
+PASS Fetch: /images/green-1x1.png?img=<
+PASS Fetch: /images/green-1x1.png?img=&lt;
+PASS Fetch: /images/green-1x1.png?img=%3C
+PASS Fetch: /images/gr\neen-1x1.png?img=%3C
+PASS Fetch: /images/gr\reen-1x1.png?img=%3C
+PASS Fetch: /images/gr\teen-1x1.png?img=%3C
+PASS Fetch: /images/green-1x1.png?img=&#10;
+PASS Fetch: /images/gr\neen-1x1.png?img=&#10;
+PASS Fetch: /images/gr\reen-1x1.png?img=&#10;
+PASS Fetch: /images/gr\teen-1x1.png?img=&#10;
 FAIL Fetch: /images/gre\nen-1x1.png?img=< assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/gre\ren-1x1.png?img=< assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/gre\ten-1x1.png?img=< assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/green-1x1.png?<\n=block assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/green-1x1.png?<\r=block assert_unreached: Fetch should fail. Reached unreachable code
 FAIL Fetch: /images/green-1x1.png?<\t=block assert_unreached: Fetch should fail. Reached unreachable code
-PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;lt;b"> 
-PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b&amp;lt;c"> 
-PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=\n      ">\n     
-PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;lt;\n      ">\n     
-PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;#10;\n      ">\n     
+PASS <img id="dangling" src="/images/green-1x1.png?img=&lt;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&#10;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;lt;b">
+PASS <img id="dangling" src="/images/green-1x1.png?img=&amp;#10;b&amp;lt;c">
+PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=\n      ">\n
+PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;lt;\n      ">\n
+PASS \n      <img id="dangling" src="\n        /images/green-1x1.png?img=&amp;#10;\n      ">\n
 FAIL <img id="dangling" src="/images/green-1x1.png?img=&#10;&lt;b"> assert_equals: Height expected 0 but got 1
 FAIL <img id="dangling" src="/images/green-1x1.png?img=&lt;&#10;b"> assert_equals: Height expected 0 but got 1
 FAIL \n      <img id="dangling" src="/images/green-1x1.png?img=\n        &lt;\n        &#10;b\n      ">\n     assert_equals: Height expected 0 but got 1

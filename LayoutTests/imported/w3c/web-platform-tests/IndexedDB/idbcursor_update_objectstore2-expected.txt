@@ -1,3 +1,3 @@
 
-PASS IDBCursor.update() - object store - attempt to modify a record in a read-only transaction 
+PASS IDBCursor.update() - object store - attempt to modify a record in a read-only transaction
 

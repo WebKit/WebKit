@@ -1,15 +1,15 @@
 
-PASS Fetch with PUT with body 
-PASS Fetch with POST with text body 
-PASS Fetch with POST with URLSearchParams body 
-PASS Fetch with POST with Blob body 
-PASS Fetch with POST with ArrayBuffer body 
-PASS Fetch with POST with Uint8Array body 
-PASS Fetch with POST with Int8Array body 
-PASS Fetch with POST with Float32Array body 
-PASS Fetch with POST with Float64Array body 
-PASS Fetch with POST with DataView body 
-PASS Fetch with POST with Blob body with mime type 
+PASS Fetch with PUT with body
+PASS Fetch with POST with text body
+PASS Fetch with POST with URLSearchParams body
+PASS Fetch with POST with Blob body
+PASS Fetch with POST with ArrayBuffer body
+PASS Fetch with POST with Uint8Array body
+PASS Fetch with POST with Int8Array body
+PASS Fetch with POST with Float32Array body
+PASS Fetch with POST with Float64Array body
+PASS Fetch with POST with DataView body
+PASS Fetch with POST with Blob body with mime type
 FAIL Fetch with POST with ReadableStream promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
 FAIL Fetch with POST with ReadableStream containing String promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]

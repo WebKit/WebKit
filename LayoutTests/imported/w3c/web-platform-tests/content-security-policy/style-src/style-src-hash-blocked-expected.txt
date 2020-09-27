@@ -1,6 +1,6 @@
 
-PASS Should load the style with a correct hash 
-PASS Should not load style that does not match hash 
+PASS Should load the style with a correct hash
+PASS Should not load style that does not match hash
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'sha256-7kQ1KhZCpEzWtsa0RSpbIL7FU3kPNhE3IJMaNeTclMU='" but got "style-src-elem"
 Lorem ipsum
 Lorem ipsum

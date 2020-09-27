@@ -1,45 +1,45 @@
 Upgraded font
- 
+
 
 Harness Error (TIMEOUT), message = null
 
-PASS Http upgrade iframe 
-PASS Http upgrade top level navigation 
-PASS Http upgrade embed 
-PASS Http upgrade fetch() api 
-PASS Http upgrade object 
-PASS Http upgrade preload 
-PASS Http upgrade stylesheet 
+PASS Http upgrade iframe
+PASS Http upgrade top level navigation
+PASS Http upgrade embed
+PASS Http upgrade fetch() api
+PASS Http upgrade object
+PASS Http upgrade preload
+PASS Http upgrade stylesheet
 TIMEOUT Http upgrade track Test timed out
-NOTRUN Http upgrade image => No headers 
-PASS Http upgrade script => No headers 
+NOTRUN Http upgrade image => No headers
+PASS Http upgrade script => No headers
 FAIL Http upgrade script => No headers: sec-fetch-dest assert_equals: expected "script" but got ""
 FAIL Http upgrade script => No headers: sec-fetch-mode assert_equals: expected "no-cors" but got ""
 FAIL Http upgrade script => No headers: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade script => No headers: sec-fetch-user 
+PASS Http upgrade script => No headers: sec-fetch-user
 FAIL Http upgrade iframe: sec-fetch-dest assert_equals: expected "iframe" but got ""
 FAIL Http upgrade iframe: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Http upgrade iframe: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade iframe: sec-fetch-user 
+PASS Http upgrade iframe: sec-fetch-user
 FAIL Http upgrade top level navigation: sec-fetch-dest assert_equals: expected "document" but got ""
 FAIL Http upgrade top level navigation: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Http upgrade top level navigation: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade top level navigation: sec-fetch-user 
-NOTRUN Http upgrade font => No headers 
+PASS Http upgrade top level navigation: sec-fetch-user
+NOTRUN Http upgrade font => No headers
 FAIL Http upgrade embed: sec-fetch-dest assert_equals: expected "embed" but got ""
 FAIL Http upgrade embed: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Http upgrade embed: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade embed: sec-fetch-user 
+PASS Http upgrade embed: sec-fetch-user
 FAIL Http upgrade fetch() api: sec-fetch-dest assert_equals: expected "empty" but got ""
 FAIL Http upgrade fetch() api: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL Http upgrade fetch() api: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade fetch() api: sec-fetch-user 
+PASS Http upgrade fetch() api: sec-fetch-user
 FAIL Http upgrade object: sec-fetch-dest assert_equals: expected "object" but got ""
 FAIL Http upgrade object: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Http upgrade object: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade object: sec-fetch-user 
+PASS Http upgrade object: sec-fetch-user
 FAIL Http upgrade stylesheet: sec-fetch-dest assert_equals: expected "style" but got ""
 FAIL Http upgrade stylesheet: sec-fetch-mode assert_equals: expected "no-cors" but got ""
 FAIL Http upgrade stylesheet: sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS Http upgrade stylesheet: sec-fetch-user 
+PASS Http upgrade stylesheet: sec-fetch-user
 

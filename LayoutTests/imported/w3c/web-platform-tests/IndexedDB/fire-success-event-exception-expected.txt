@@ -1,8 +1,8 @@
 
-PASS Exception in success event handler on request 
-PASS Exception in success event listener on request 
-PASS Exception in success event listener ("handleEvent" lookup) on request 
-PASS Exception in success event listener (non-callable "handleEvent") on request 
-PASS Exception in second success event listener on request 
-PASS Exception in first success event listener, tx active in second 
+PASS Exception in success event handler on request
+PASS Exception in success event listener on request
+PASS Exception in success event listener ("handleEvent" lookup) on request
+PASS Exception in success event listener (non-callable "handleEvent") on request
+PASS Exception in second success event listener on request
+PASS Exception in first success event listener, tx active in second
 

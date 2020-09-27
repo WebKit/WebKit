@@ -4,5 +4,5 @@ CONSOLE MESSAGE: Refused to load data:application/x-shockwave-flash,asdf because
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should not load the object because it does not have a declared type 
+NOTRUN Should not load the object because it does not have a declared type
 

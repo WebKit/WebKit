@@ -1,13 +1,13 @@
 
-PASS URL query: null 
-PASS URL query:  
-PASS URL query: x 
-PASS URL query: x/x 
-PASS URL query: image/gif 
-PASS URL query: image/png 
-PASS URL query: image/png;blah 
-PASS URL query: image/svg+xml 
-PASS URL query: text/html 
-PASS URL query: application/xml 
-PASS URL query: application/blah+xml 
+PASS URL query: null
+PASS URL query:
+PASS URL query: x
+PASS URL query: x/x
+PASS URL query: image/gif
+PASS URL query: image/png
+PASS URL query: image/png;blah
+PASS URL query: image/svg+xml
+PASS URL query: text/html
+PASS URL query: application/xml
+PASS URL query: application/blah+xml
 

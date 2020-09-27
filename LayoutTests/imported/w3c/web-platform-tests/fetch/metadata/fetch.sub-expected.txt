@@ -1,12 +1,12 @@
 
-PASS http->https fetch (cross-scheme => cross-site) 
-PASS http->http fetch (non-trustworthy destination => no metadata) 
+PASS http->https fetch (cross-scheme => cross-site)
+PASS http->http fetch (non-trustworthy destination => no metadata)
 FAIL http->https fetch (cross-scheme => cross-site): sec-fetch-dest assert_equals: expected "empty" but got ""
 FAIL http->https fetch (cross-scheme => cross-site): sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL http->https fetch (cross-scheme => cross-site): sec-fetch-site assert_equals: expected "cross-site" but got ""
-PASS http->https fetch (cross-scheme => cross-site): sec-fetch-user 
-PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-dest 
-PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-mode 
-PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-site 
-PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-user 
+PASS http->https fetch (cross-scheme => cross-site): sec-fetch-user
+PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-dest
+PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-mode
+PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-site
+PASS http->http fetch (non-trustworthy destination => no metadata): sec-fetch-user
 

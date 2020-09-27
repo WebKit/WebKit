@@ -3,6 +3,6 @@ Use callbacks to show that favicons are not loaded in violation of CSP when link
 
 Harness Error (TIMEOUT), message = null
 
-PASS Test that image does not load 
-NOTRUN Test that spv event is fired 
+PASS Test that image does not load
+NOTRUN Test that spv event is fired
 

@@ -8,9 +8,9 @@ The returned status code in different scenarios
  4     yes        200       400  |    400 |
  5     yes        400         x  |      0 |
 
-PASS 1. CORS disallowed, response status 400. 
-PASS 2. CORS disallowed, preflight status 200. 
-PASS 3. CORS allowed, response status 400. 
-PASS 4. CORS allowed, preflight status 200, response status 400. 
-PASS 5. CORS allowed, preflight status 400. 
+PASS 1. CORS disallowed, response status 400.
+PASS 2. CORS disallowed, preflight status 200.
+PASS 3. CORS allowed, response status 400.
+PASS 4. CORS allowed, preflight status 200, response status 400.
+PASS 5. CORS allowed, preflight status 400.
 

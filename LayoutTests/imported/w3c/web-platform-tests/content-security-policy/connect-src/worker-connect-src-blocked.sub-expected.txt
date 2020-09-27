@@ -1,5 +1,5 @@
 This test loads a worker, which is delivered with its own policy. The worker should be blocked from making an XHR as that policy specifies a connect-src 'none', though this resource's policy is connect-src *. No report should be sent since the worker's policy doesn't specify a report-uri.
 
 
-PASS Expecting logs: ["xhr blocked","TEST COMPLETE"] 
+PASS Expecting logs: ["xhr blocked","TEST COMPLETE"]
 

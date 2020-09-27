@@ -1,4 +1,4 @@
 
-PASS Same-origin dedicated worker allowed by host-source expression. 
-PASS blob: dedicated worker allowed by 'blob:'. 
+PASS Same-origin dedicated worker allowed by host-source expression.
+PASS blob: dedicated worker allowed by 'blob:'.
 

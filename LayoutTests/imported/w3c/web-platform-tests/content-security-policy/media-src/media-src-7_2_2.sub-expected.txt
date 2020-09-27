@@ -4,7 +4,7 @@ Audio element src attribute must match src list - negative test
 
 Harness Error (TIMEOUT), message = null
 
-PASS Disallaowed audio src 
-PASS Disallowed audio source element 
-NOTRUN Test that securitypolicyviolation events are fired 
-  
+PASS Disallaowed audio src
+PASS Disallowed audio source element
+NOTRUN Test that securitypolicyviolation events are fired
+

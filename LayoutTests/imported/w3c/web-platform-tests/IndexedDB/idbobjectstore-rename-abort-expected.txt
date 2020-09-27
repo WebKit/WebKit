@@ -1,4 +1,4 @@
 
-PASS IndexedDB object store rename in aborted transaction 
-PASS IndexedDB object store creation and rename in an aborted transaction 
+PASS IndexedDB object store rename in aborted transaction
+PASS IndexedDB object store creation and rename in an aborted transaction
 

@@ -1,19 +1,19 @@
 
-PASS IDBObjectStore.getKey() - invalid parameters 
-PASS IDBObjectStore.getKey() - basic - key 
-PASS IDBObjectStore.getKey() - basic - range 
-PASS IDBObjectStore.getKey() - basic - key - no match 
-PASS IDBObjectStore.getKey() - basic - range - no match 
-PASS IDBObjectStore.getKey() - key path - key 
-PASS IDBObjectStore.getKey() - key path - range 
-PASS IDBObjectStore.getKey() - key path - key - no match 
-PASS IDBObjectStore.getKey() - key path - range - no match 
-PASS IDBObjectStore.getKey() - key generator - key 
-PASS IDBObjectStore.getKey() - key generator - range 
-PASS IDBObjectStore.getKey() - key generator - key - no match 
-PASS IDBObjectStore.getKey() - key generator - range - no match 
-PASS IDBObjectStore.getKey() - key generator and key path - key 
-PASS IDBObjectStore.getKey() - key generator and key path - range 
-PASS IDBObjectStore.getKey() - key generator and key path - key - no match 
-PASS IDBObjectStore.getKey() - key generator and key path - range - no match 
+PASS IDBObjectStore.getKey() - invalid parameters
+PASS IDBObjectStore.getKey() - basic - key
+PASS IDBObjectStore.getKey() - basic - range
+PASS IDBObjectStore.getKey() - basic - key - no match
+PASS IDBObjectStore.getKey() - basic - range - no match
+PASS IDBObjectStore.getKey() - key path - key
+PASS IDBObjectStore.getKey() - key path - range
+PASS IDBObjectStore.getKey() - key path - key - no match
+PASS IDBObjectStore.getKey() - key path - range - no match
+PASS IDBObjectStore.getKey() - key generator - key
+PASS IDBObjectStore.getKey() - key generator - range
+PASS IDBObjectStore.getKey() - key generator - key - no match
+PASS IDBObjectStore.getKey() - key generator - range - no match
+PASS IDBObjectStore.getKey() - key generator and key path - key
+PASS IDBObjectStore.getKey() - key generator and key path - range
+PASS IDBObjectStore.getKey() - key generator and key path - key - no match
+PASS IDBObjectStore.getKey() - key generator and key path - range - no match
 

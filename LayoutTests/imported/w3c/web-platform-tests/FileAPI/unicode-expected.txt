@@ -1,6 +1,6 @@
 
 FAIL Test that strings are not NFC normalized by Blob constructor assert_equals: String should not be normalized expected "ό" but got "ό"
 FAIL Test that strings are not NFC normalized by File constructor assert_equals: String should not be normalized expected "ό" but got "ό"
-PASS Test that unpaired surrogates are replaced by Blob constructor 
-PASS Test that unpaired surrogates are replaced by File constructor 
+PASS Test that unpaired surrogates are replaced by Blob constructor
+PASS Test that unpaired surrogates are replaced by File constructor
 

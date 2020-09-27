@@ -1,11 +1,11 @@
 
-PASS IndexedDB index rename in new transaction 
-PASS IndexedDB index rename in the transaction where it is created 
-PASS IndexedDB index rename to the same name succeeds 
-PASS IndexedDB index rename to the name of a deleted index succeeds 
-PASS IndexedDB index swapping via renames succeeds 
-PASS IndexedDB index rename stringifies non-string names 
-PASS IndexedDB index can be renamed to "" 
-PASS IndexedDB index can be renamed to "\u0000" 
-PASS IndexedDB index can be renamed to "\uDC00\uD800" 
+PASS IndexedDB index rename in new transaction
+PASS IndexedDB index rename in the transaction where it is created
+PASS IndexedDB index rename to the same name succeeds
+PASS IndexedDB index rename to the name of a deleted index succeeds
+PASS IndexedDB index swapping via renames succeeds
+PASS IndexedDB index rename stringifies non-string names
+PASS IndexedDB index can be renamed to ""
+PASS IndexedDB index can be renamed to "\u0000"
+PASS IndexedDB index can be renamed to "\uDC00\uD800"
 

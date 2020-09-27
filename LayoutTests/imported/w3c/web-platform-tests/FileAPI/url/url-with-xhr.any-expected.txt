@@ -1,16 +1,16 @@
 
-PASS Blob URLs can be used in XHR 
+PASS Blob URLs can be used in XHR
 FAIL XHR with a fragment should succeed promise_test: Unhandled rejection with value: "Got unexpected error event"
-PASS XHR of a revoked URL should fail 
-PASS Only exact matches should revoke URLs, using XHR 
-PASS Appending a query string should cause XHR to fail 
-PASS Appending a path should cause XHR to fail 
-PASS XHR with method "HEAD" should fail 
-PASS XHR with method "POST" should fail 
-PASS XHR with method "DELETE" should fail 
-PASS XHR with method "OPTIONS" should fail 
-PASS XHR with method "PUT" should fail 
-PASS XHR with method "CUSTOM" should fail 
-PASS XHR should return Content-Type from Blob 
+PASS XHR of a revoked URL should fail
+PASS Only exact matches should revoke URLs, using XHR
+PASS Appending a query string should cause XHR to fail
+PASS Appending a path should cause XHR to fail
+PASS XHR with method "HEAD" should fail
+PASS XHR with method "POST" should fail
+PASS XHR with method "DELETE" should fail
+PASS XHR with method "OPTIONS" should fail
+PASS XHR with method "PUT" should fail
+PASS XHR with method "CUSTOM" should fail
+PASS XHR should return Content-Type from Blob
 FAIL Revoke blob URL after open(), will fetch assert_unreached: Got unexpected error event Reached unreachable code
 

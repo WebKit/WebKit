@@ -1,4 +1,4 @@
 
 
-PASS A 'frame-ancestors' CSP directive with a value '*' should render in nested frames. 
+PASS A 'frame-ancestors' CSP directive with a value '*' should render in nested frames.
 

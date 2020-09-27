@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.put() - Attempt to put a record that does not meet the constraints of an object store's inline key requirements  
+PASS IDBObjectStore.put() - Attempt to put a record that does not meet the constraints of an object store's inline key requirements
 

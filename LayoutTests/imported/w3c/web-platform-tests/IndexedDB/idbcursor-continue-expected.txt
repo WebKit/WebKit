@@ -1,8 +1,8 @@
 
-PASS IDBCursor.continue() - continues 
-PASS IDBCursor.continue() - with given key 
-PASS IDBCursor.continue() - skip far forward 
-PASS IDBCursor.continue() - within range 
-PASS IDBCursor.continue() - within single key range 
-PASS IDBCursor.continue() - within single key range, with several results 
+PASS IDBCursor.continue() - continues
+PASS IDBCursor.continue() - with given key
+PASS IDBCursor.continue() - skip far forward
+PASS IDBCursor.continue() - within range
+PASS IDBCursor.continue() - within single key range
+PASS IDBCursor.continue() - within single key range, with several results
 

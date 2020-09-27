@@ -1,5 +1,5 @@
 
-PASS IDBCursor.primaryKey - 1 
-PASS IDBCursor.primaryKey - key 
-PASS IDBCursor.primaryKey - my,key 
+PASS IDBCursor.primaryKey - 1
+PASS IDBCursor.primaryKey - key
+PASS IDBCursor.primaryKey - my,key
 

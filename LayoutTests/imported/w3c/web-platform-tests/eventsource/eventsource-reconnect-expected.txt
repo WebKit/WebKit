@@ -1,4 +1,4 @@
 
-PASS EventSource: reconnection 200 
-PASS EventSource: reconnection, test reconnection events 
+PASS EventSource: reconnection 200
+PASS EventSource: reconnection, test reconnection events
 

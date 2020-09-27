@@ -1,5 +1,5 @@
 
-PASS IDBCursor.advance exception order: TypeError vs. TransactionInactiveError 
-PASS IDBCursor.advance exception order: TransactionInactiveError vs. InvalidStateError #1 
-PASS IDBCursor.advance exception order: TransactionInactiveError vs. InvalidStateError #2 
+PASS IDBCursor.advance exception order: TypeError vs. TransactionInactiveError
+PASS IDBCursor.advance exception order: TransactionInactiveError vs. InvalidStateError #1
+PASS IDBCursor.advance exception order: TransactionInactiveError vs. InvalidStateError #2
 

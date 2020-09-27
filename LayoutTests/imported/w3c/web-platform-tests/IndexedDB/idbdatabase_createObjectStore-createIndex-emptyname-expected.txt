@@ -1,3 +1,3 @@
 
-PASS IDBDatabase.createObjectStore() and IDBObjectStore.createIndex() - both with empty name 
+PASS IDBDatabase.createObjectStore() and IDBObjectStore.createIndex() - both with empty name
 

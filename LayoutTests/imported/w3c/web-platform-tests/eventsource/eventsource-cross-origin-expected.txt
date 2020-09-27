@@ -16,7 +16,7 @@ Harness Error (TIMEOUT), message = null
 TIMEOUT EventSource: cross-origin basic use Test timed out
 TIMEOUT EventSource: cross-origin redirect use Test timed out
 TIMEOUT EventSource: cross-origin redirect use recon Test timed out
-PASS EventSource: cross-origin allow-origin: http://example.org should fail 
-PASS EventSource: cross-origin allow-origin:'' should fail 
-PASS EventSource: cross-origin No allow-origin should fail 
+PASS EventSource: cross-origin allow-origin: http://example.org should fail
+PASS EventSource: cross-origin allow-origin:'' should fail
+PASS EventSource: cross-origin No allow-origin should fail
 

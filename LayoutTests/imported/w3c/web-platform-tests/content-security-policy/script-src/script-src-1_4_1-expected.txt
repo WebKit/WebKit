@@ -5,7 +5,7 @@ setTimeout() and setInterval() should not run without 'unsafe-eval' script-src d
 
 Harness Error (TIMEOUT), message = null
 
-PASS window.setTimeout() 
-PASS window.setInterval() 
-NOTRUN Test that securitypolicyviolation event is fired 
+PASS window.setTimeout()
+PASS window.setInterval()
+NOTRUN Test that securitypolicyviolation event is fired
 

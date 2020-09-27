@@ -1,6 +1,6 @@
 base-uri works correctly inside a sandboxed iframe.
 
 
-PASS base-uri 'self' works with same-origin sandboxed iframes. 
-PASS base-uri 'self' blocks foreign-origin sandboxed iframes. 
+PASS base-uri 'self' works with same-origin sandboxed iframes.
+PASS base-uri 'self' blocks foreign-origin sandboxed iframes.
 

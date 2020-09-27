@@ -1,152 +1,152 @@
 
-PASS Test driver 
-PASS DOMException interface: existence and properties of interface object 
-PASS DOMException interface object length 
-PASS DOMException interface object name 
-PASS DOMException interface: existence and properties of interface prototype object 
-PASS DOMException interface: existence and properties of interface prototype object's "constructor" property 
-PASS DOMException interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMException interface: attribute name 
-PASS DOMException interface: attribute message 
-PASS DOMException interface: attribute code 
-PASS DOMException interface: constant INDEX_SIZE_ERR on interface object 
-PASS DOMException interface: constant INDEX_SIZE_ERR on interface prototype object 
-PASS DOMException interface: constant DOMSTRING_SIZE_ERR on interface object 
-PASS DOMException interface: constant DOMSTRING_SIZE_ERR on interface prototype object 
-PASS DOMException interface: constant HIERARCHY_REQUEST_ERR on interface object 
-PASS DOMException interface: constant HIERARCHY_REQUEST_ERR on interface prototype object 
-PASS DOMException interface: constant WRONG_DOCUMENT_ERR on interface object 
-PASS DOMException interface: constant WRONG_DOCUMENT_ERR on interface prototype object 
-PASS DOMException interface: constant INVALID_CHARACTER_ERR on interface object 
-PASS DOMException interface: constant INVALID_CHARACTER_ERR on interface prototype object 
-PASS DOMException interface: constant NO_DATA_ALLOWED_ERR on interface object 
-PASS DOMException interface: constant NO_DATA_ALLOWED_ERR on interface prototype object 
-PASS DOMException interface: constant NO_MODIFICATION_ALLOWED_ERR on interface object 
-PASS DOMException interface: constant NO_MODIFICATION_ALLOWED_ERR on interface prototype object 
-PASS DOMException interface: constant NOT_FOUND_ERR on interface object 
-PASS DOMException interface: constant NOT_FOUND_ERR on interface prototype object 
-PASS DOMException interface: constant NOT_SUPPORTED_ERR on interface object 
-PASS DOMException interface: constant NOT_SUPPORTED_ERR on interface prototype object 
-PASS DOMException interface: constant INUSE_ATTRIBUTE_ERR on interface object 
-PASS DOMException interface: constant INUSE_ATTRIBUTE_ERR on interface prototype object 
-PASS DOMException interface: constant INVALID_STATE_ERR on interface object 
-PASS DOMException interface: constant INVALID_STATE_ERR on interface prototype object 
-PASS DOMException interface: constant SYNTAX_ERR on interface object 
-PASS DOMException interface: constant SYNTAX_ERR on interface prototype object 
-PASS DOMException interface: constant INVALID_MODIFICATION_ERR on interface object 
-PASS DOMException interface: constant INVALID_MODIFICATION_ERR on interface prototype object 
-PASS DOMException interface: constant NAMESPACE_ERR on interface object 
-PASS DOMException interface: constant NAMESPACE_ERR on interface prototype object 
-PASS DOMException interface: constant INVALID_ACCESS_ERR on interface object 
-PASS DOMException interface: constant INVALID_ACCESS_ERR on interface prototype object 
-PASS DOMException interface: constant VALIDATION_ERR on interface object 
-PASS DOMException interface: constant VALIDATION_ERR on interface prototype object 
-PASS DOMException interface: constant TYPE_MISMATCH_ERR on interface object 
-PASS DOMException interface: constant TYPE_MISMATCH_ERR on interface prototype object 
-PASS DOMException interface: constant SECURITY_ERR on interface object 
-PASS DOMException interface: constant SECURITY_ERR on interface prototype object 
-PASS DOMException interface: constant NETWORK_ERR on interface object 
-PASS DOMException interface: constant NETWORK_ERR on interface prototype object 
-PASS DOMException interface: constant ABORT_ERR on interface object 
-PASS DOMException interface: constant ABORT_ERR on interface prototype object 
-PASS DOMException interface: constant URL_MISMATCH_ERR on interface object 
-PASS DOMException interface: constant URL_MISMATCH_ERR on interface prototype object 
-PASS DOMException interface: constant QUOTA_EXCEEDED_ERR on interface object 
-PASS DOMException interface: constant QUOTA_EXCEEDED_ERR on interface prototype object 
-PASS DOMException interface: constant TIMEOUT_ERR on interface object 
-PASS DOMException interface: constant TIMEOUT_ERR on interface prototype object 
-PASS DOMException interface: constant INVALID_NODE_TYPE_ERR on interface object 
-PASS DOMException interface: constant INVALID_NODE_TYPE_ERR on interface prototype object 
-PASS DOMException interface: constant DATA_CLONE_ERR on interface object 
-PASS DOMException interface: constant DATA_CLONE_ERR on interface prototype object 
-PASS DOMException must be primary interface of new DOMException() 
-PASS Stringification of new DOMException() 
-PASS DOMException interface: new DOMException() must inherit property "name" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "message" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "code" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INDEX_SIZE_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "DOMSTRING_SIZE_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "HIERARCHY_REQUEST_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "WRONG_DOCUMENT_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INVALID_CHARACTER_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "NO_DATA_ALLOWED_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "NO_MODIFICATION_ALLOWED_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "NOT_FOUND_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "NOT_SUPPORTED_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INUSE_ATTRIBUTE_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INVALID_STATE_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "SYNTAX_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INVALID_MODIFICATION_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "NAMESPACE_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INVALID_ACCESS_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "VALIDATION_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "TYPE_MISMATCH_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "SECURITY_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "NETWORK_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "ABORT_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "URL_MISMATCH_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "QUOTA_EXCEEDED_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "TIMEOUT_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "INVALID_NODE_TYPE_ERR" with the proper type 
-PASS DOMException interface: new DOMException() must inherit property "DATA_CLONE_ERR" with the proper type 
-PASS DOMException must be primary interface of new DOMException("my message") 
-PASS Stringification of new DOMException("my message") 
-PASS DOMException interface: new DOMException("my message") must inherit property "name" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "message" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "code" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INDEX_SIZE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "DOMSTRING_SIZE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "HIERARCHY_REQUEST_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "WRONG_DOCUMENT_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_CHARACTER_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "NO_DATA_ALLOWED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "NO_MODIFICATION_ALLOWED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "NOT_FOUND_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "NOT_SUPPORTED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INUSE_ATTRIBUTE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_STATE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "SYNTAX_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_MODIFICATION_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "NAMESPACE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_ACCESS_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "VALIDATION_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "TYPE_MISMATCH_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "SECURITY_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "NETWORK_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "ABORT_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "URL_MISMATCH_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "QUOTA_EXCEEDED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "TIMEOUT_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_NODE_TYPE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message") must inherit property "DATA_CLONE_ERR" with the proper type 
-PASS DOMException must be primary interface of new DOMException("my message", "myName") 
-PASS Stringification of new DOMException("my message", "myName") 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "name" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "message" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "code" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INDEX_SIZE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "DOMSTRING_SIZE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "HIERARCHY_REQUEST_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "WRONG_DOCUMENT_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_CHARACTER_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NO_DATA_ALLOWED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NO_MODIFICATION_ALLOWED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NOT_FOUND_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NOT_SUPPORTED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INUSE_ATTRIBUTE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_STATE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "SYNTAX_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_MODIFICATION_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NAMESPACE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_ACCESS_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "VALIDATION_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "TYPE_MISMATCH_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "SECURITY_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NETWORK_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "ABORT_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "URL_MISMATCH_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "QUOTA_EXCEEDED_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "TIMEOUT_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_NODE_TYPE_ERR" with the proper type 
-PASS DOMException interface: new DOMException("my message", "myName") must inherit property "DATA_CLONE_ERR" with the proper type 
+PASS Test driver
+PASS DOMException interface: existence and properties of interface object
+PASS DOMException interface object length
+PASS DOMException interface object name
+PASS DOMException interface: existence and properties of interface prototype object
+PASS DOMException interface: existence and properties of interface prototype object's "constructor" property
+PASS DOMException interface: existence and properties of interface prototype object's @@unscopables property
+PASS DOMException interface: attribute name
+PASS DOMException interface: attribute message
+PASS DOMException interface: attribute code
+PASS DOMException interface: constant INDEX_SIZE_ERR on interface object
+PASS DOMException interface: constant INDEX_SIZE_ERR on interface prototype object
+PASS DOMException interface: constant DOMSTRING_SIZE_ERR on interface object
+PASS DOMException interface: constant DOMSTRING_SIZE_ERR on interface prototype object
+PASS DOMException interface: constant HIERARCHY_REQUEST_ERR on interface object
+PASS DOMException interface: constant HIERARCHY_REQUEST_ERR on interface prototype object
+PASS DOMException interface: constant WRONG_DOCUMENT_ERR on interface object
+PASS DOMException interface: constant WRONG_DOCUMENT_ERR on interface prototype object
+PASS DOMException interface: constant INVALID_CHARACTER_ERR on interface object
+PASS DOMException interface: constant INVALID_CHARACTER_ERR on interface prototype object
+PASS DOMException interface: constant NO_DATA_ALLOWED_ERR on interface object
+PASS DOMException interface: constant NO_DATA_ALLOWED_ERR on interface prototype object
+PASS DOMException interface: constant NO_MODIFICATION_ALLOWED_ERR on interface object
+PASS DOMException interface: constant NO_MODIFICATION_ALLOWED_ERR on interface prototype object
+PASS DOMException interface: constant NOT_FOUND_ERR on interface object
+PASS DOMException interface: constant NOT_FOUND_ERR on interface prototype object
+PASS DOMException interface: constant NOT_SUPPORTED_ERR on interface object
+PASS DOMException interface: constant NOT_SUPPORTED_ERR on interface prototype object
+PASS DOMException interface: constant INUSE_ATTRIBUTE_ERR on interface object
+PASS DOMException interface: constant INUSE_ATTRIBUTE_ERR on interface prototype object
+PASS DOMException interface: constant INVALID_STATE_ERR on interface object
+PASS DOMException interface: constant INVALID_STATE_ERR on interface prototype object
+PASS DOMException interface: constant SYNTAX_ERR on interface object
+PASS DOMException interface: constant SYNTAX_ERR on interface prototype object
+PASS DOMException interface: constant INVALID_MODIFICATION_ERR on interface object
+PASS DOMException interface: constant INVALID_MODIFICATION_ERR on interface prototype object
+PASS DOMException interface: constant NAMESPACE_ERR on interface object
+PASS DOMException interface: constant NAMESPACE_ERR on interface prototype object
+PASS DOMException interface: constant INVALID_ACCESS_ERR on interface object
+PASS DOMException interface: constant INVALID_ACCESS_ERR on interface prototype object
+PASS DOMException interface: constant VALIDATION_ERR on interface object
+PASS DOMException interface: constant VALIDATION_ERR on interface prototype object
+PASS DOMException interface: constant TYPE_MISMATCH_ERR on interface object
+PASS DOMException interface: constant TYPE_MISMATCH_ERR on interface prototype object
+PASS DOMException interface: constant SECURITY_ERR on interface object
+PASS DOMException interface: constant SECURITY_ERR on interface prototype object
+PASS DOMException interface: constant NETWORK_ERR on interface object
+PASS DOMException interface: constant NETWORK_ERR on interface prototype object
+PASS DOMException interface: constant ABORT_ERR on interface object
+PASS DOMException interface: constant ABORT_ERR on interface prototype object
+PASS DOMException interface: constant URL_MISMATCH_ERR on interface object
+PASS DOMException interface: constant URL_MISMATCH_ERR on interface prototype object
+PASS DOMException interface: constant QUOTA_EXCEEDED_ERR on interface object
+PASS DOMException interface: constant QUOTA_EXCEEDED_ERR on interface prototype object
+PASS DOMException interface: constant TIMEOUT_ERR on interface object
+PASS DOMException interface: constant TIMEOUT_ERR on interface prototype object
+PASS DOMException interface: constant INVALID_NODE_TYPE_ERR on interface object
+PASS DOMException interface: constant INVALID_NODE_TYPE_ERR on interface prototype object
+PASS DOMException interface: constant DATA_CLONE_ERR on interface object
+PASS DOMException interface: constant DATA_CLONE_ERR on interface prototype object
+PASS DOMException must be primary interface of new DOMException()
+PASS Stringification of new DOMException()
+PASS DOMException interface: new DOMException() must inherit property "name" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "message" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "code" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INDEX_SIZE_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "DOMSTRING_SIZE_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "HIERARCHY_REQUEST_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "WRONG_DOCUMENT_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INVALID_CHARACTER_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "NO_DATA_ALLOWED_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "NO_MODIFICATION_ALLOWED_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "NOT_FOUND_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "NOT_SUPPORTED_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INUSE_ATTRIBUTE_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INVALID_STATE_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "SYNTAX_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INVALID_MODIFICATION_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "NAMESPACE_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INVALID_ACCESS_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "VALIDATION_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "TYPE_MISMATCH_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "SECURITY_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "NETWORK_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "ABORT_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "URL_MISMATCH_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "QUOTA_EXCEEDED_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "TIMEOUT_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "INVALID_NODE_TYPE_ERR" with the proper type
+PASS DOMException interface: new DOMException() must inherit property "DATA_CLONE_ERR" with the proper type
+PASS DOMException must be primary interface of new DOMException("my message")
+PASS Stringification of new DOMException("my message")
+PASS DOMException interface: new DOMException("my message") must inherit property "name" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "message" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "code" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INDEX_SIZE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "DOMSTRING_SIZE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "HIERARCHY_REQUEST_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "WRONG_DOCUMENT_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_CHARACTER_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "NO_DATA_ALLOWED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "NO_MODIFICATION_ALLOWED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "NOT_FOUND_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "NOT_SUPPORTED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INUSE_ATTRIBUTE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_STATE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "SYNTAX_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_MODIFICATION_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "NAMESPACE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_ACCESS_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "VALIDATION_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "TYPE_MISMATCH_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "SECURITY_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "NETWORK_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "ABORT_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "URL_MISMATCH_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "QUOTA_EXCEEDED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "TIMEOUT_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "INVALID_NODE_TYPE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message") must inherit property "DATA_CLONE_ERR" with the proper type
+PASS DOMException must be primary interface of new DOMException("my message", "myName")
+PASS Stringification of new DOMException("my message", "myName")
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "name" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "message" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "code" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INDEX_SIZE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "DOMSTRING_SIZE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "HIERARCHY_REQUEST_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "WRONG_DOCUMENT_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_CHARACTER_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NO_DATA_ALLOWED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NO_MODIFICATION_ALLOWED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NOT_FOUND_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NOT_SUPPORTED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INUSE_ATTRIBUTE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_STATE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "SYNTAX_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_MODIFICATION_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NAMESPACE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_ACCESS_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "VALIDATION_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "TYPE_MISMATCH_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "SECURITY_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "NETWORK_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "ABORT_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "URL_MISMATCH_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "QUOTA_EXCEEDED_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "TIMEOUT_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "INVALID_NODE_TYPE_ERR" with the proper type
+PASS DOMException interface: new DOMException("my message", "myName") must inherit property "DATA_CLONE_ERR" with the proper type
 

@@ -1,5 +1,5 @@
 This tests the effect of a valid script-nonce value. It passes if no CSP violation is generated and the alerts are executed.
 
 
-PASS Expecting alerts: ["PASS (1/2)","PASS (2/2)"] 
+PASS Expecting alerts: ["PASS (1/2)","PASS (2/2)"]
 

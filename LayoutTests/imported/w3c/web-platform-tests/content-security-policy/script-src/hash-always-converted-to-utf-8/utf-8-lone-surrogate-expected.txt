@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'un
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should convert the script contents to UTF-8 before hashing 
+NOTRUN Should convert the script contents to UTF-8 before hashing
 

@@ -6,8 +6,8 @@ FAIL Basic nonce tests for div in HTML namespace assert_equals: Initial IDL attr
 FAIL Ensure that removal of content attribute does not affect IDL attribute for div in HTML namespace assert_equals: IDL attribute is modified after content attribute set expected (string) "x" but got (undefined) undefined
 FAIL Test empty nonces for div in HTML namespace assert_equals: expected (string) "" but got (undefined) undefined
 FAIL Basic nonce tests for script in HTML namespace assert_equals: Content attribute is changed after element insertion expected "" but got "x"
-PASS Ensure that removal of content attribute does not affect IDL attribute for script in HTML namespace 
-PASS Test empty nonces for script in HTML namespace 
+PASS Ensure that removal of content attribute does not affect IDL attribute for script in HTML namespace
+PASS Test empty nonces for script in HTML namespace
 FAIL Basic nonce tests for meh in SVG namespace assert_equals: Initial IDL attribute value expected (string) "" but got (undefined) undefined
 FAIL Ensure that removal of content attribute does not affect IDL attribute for meh in SVG namespace assert_equals: IDL attribute is modified after content attribute set expected (string) "x" but got (undefined) undefined
 FAIL Test empty nonces for meh in SVG namespace assert_equals: expected (string) "" but got (undefined) undefined

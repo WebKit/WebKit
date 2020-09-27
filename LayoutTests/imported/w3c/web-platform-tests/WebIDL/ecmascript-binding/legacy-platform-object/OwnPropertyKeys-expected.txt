@@ -1,7 +1,7 @@
 
-PASS must enumerate property indices in ascending numerical order 
-PASS must enumerate property names in list order 
-PASS must first enumerate property indices in ascending numerical order, then named properties in list order 
-PASS must enumerate own properties after indexed and named properties even when they're added first 
-PASS must enumerate symbols after strings, regardless of which ones got added first 
+PASS must enumerate property indices in ascending numerical order
+PASS must enumerate property names in list order
+PASS must first enumerate property indices in ascending numerical order, then named properties in list order
+PASS must enumerate own properties after indexed and named properties even when they're added first
+PASS must enumerate symbols after strings, regardless of which ones got added first
 

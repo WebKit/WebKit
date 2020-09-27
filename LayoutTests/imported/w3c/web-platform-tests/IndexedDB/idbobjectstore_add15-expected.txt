@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.add() - If the transaction this IDBObjectStore belongs to has its mode set to readonly, throw ReadOnlyError  
+PASS IDBObjectStore.add() - If the transaction this IDBObjectStore belongs to has its mode set to readonly, throw ReadOnlyError
 

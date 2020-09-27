@@ -1,5 +1,5 @@
 
-PASS Should convert the script contents to UTF-8 before hashing - latin micro sign 
-PASS Should convert the script contents to UTF-8 before hashing - greek small letter mu 
-PASS Should convert the script contents to UTF-8 before hashing - latin capital letter g with breve 
+PASS Should convert the script contents to UTF-8 before hashing - latin micro sign
+PASS Should convert the script contents to UTF-8 before hashing - greek small letter mu
+PASS Should convert the script contents to UTF-8 before hashing - latin capital letter g with breve
 

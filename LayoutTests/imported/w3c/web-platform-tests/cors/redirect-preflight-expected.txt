@@ -1,9 +1,9 @@
 Redirect with preflight
 
 
-PASS Should allow redirect 301 after succesful (200) preflight 
-PASS Should allow redirect 302 after succesful (200) preflight 
-PASS Should allow redirect 303 after succesful (200) preflight 
-PASS Should allow redirect 307 after succesful (200) preflight 
-PASS Should allow redirect 308 after succesful (200) preflight 
+PASS Should allow redirect 301 after succesful (200) preflight
+PASS Should allow redirect 302 after succesful (200) preflight
+PASS Should allow redirect 303 after succesful (200) preflight
+PASS Should allow redirect 307 after succesful (200) preflight
+PASS Should allow redirect 308 after succesful (200) preflight
 

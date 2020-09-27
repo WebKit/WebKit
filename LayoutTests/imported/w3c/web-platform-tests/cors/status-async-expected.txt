@@ -1,28 +1,28 @@
 Status returned
 
 
-PASS Status on GET 200 
-PASS Status on GET 201 
-PASS Status on GET 202 
-PASS Status on GET 203 
-PASS Status on GET 204 
-PASS Status on GET 205 
-PASS Status on GET 206 
-PASS Status on GET 209 
-PASS Status on GET 299 
-PASS Status on POST 200 
-PASS Status on HEAD 200 
-PASS Status on PUT 200 
-PASS Status on CHICKEN 200 
-PASS Status on GET 400 
-PASS Status on HEAD 401 
-PASS Status on POST 404 
-PASS Status on POST 500 
-PASS Status on PUT 699 
-PASS Status on CHICKEN 501 
-PASS Status on GET 400 (nonsimple) 
-PASS Status on HEAD 401 (nonsimple) 
-PASS Status on POST 404 (nonsimple) 
-PASS Status on PUT 699 (nonsimple) 
-PASS Status on CHICKEN 501 (nonsimple) 
+PASS Status on GET 200
+PASS Status on GET 201
+PASS Status on GET 202
+PASS Status on GET 203
+PASS Status on GET 204
+PASS Status on GET 205
+PASS Status on GET 206
+PASS Status on GET 209
+PASS Status on GET 299
+PASS Status on POST 200
+PASS Status on HEAD 200
+PASS Status on PUT 200
+PASS Status on CHICKEN 200
+PASS Status on GET 400
+PASS Status on HEAD 401
+PASS Status on POST 404
+PASS Status on POST 500
+PASS Status on PUT 699
+PASS Status on CHICKEN 501
+PASS Status on GET 400 (nonsimple)
+PASS Status on HEAD 401 (nonsimple)
+PASS Status on POST 404 (nonsimple)
+PASS Status on PUT 699 (nonsimple)
+PASS Status on CHICKEN 501 (nonsimple)
 

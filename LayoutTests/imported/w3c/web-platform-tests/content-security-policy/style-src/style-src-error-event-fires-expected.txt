@@ -4,6 +4,6 @@ CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or '
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test error event fires on stylesheet link 
-NOTRUN Test error event fires on inline style 
+NOTRUN Test error event fires on stylesheet link
+NOTRUN Test error event fires on inline style
 Lorem ipsum

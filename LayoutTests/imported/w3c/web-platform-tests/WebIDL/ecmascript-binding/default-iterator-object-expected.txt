@@ -1,5 +1,5 @@
 
-PASS Default iterator objects for an interface have the same prototype 
-PASS Object.prototype.toString returns correct value 
-PASS @@toStringTag has correct value from prototype 
+PASS Default iterator objects for an interface have the same prototype
+PASS Object.prototype.toString returns correct value
+PASS @@toStringTag has correct value from prototype
 

@@ -6,6 +6,6 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'script-src-attr
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire a security policy violation for the attribute 
-PASS Should execute the inline script block 
+NOTRUN Should fire a security policy violation for the attribute
+PASS Should execute the inline script block
 

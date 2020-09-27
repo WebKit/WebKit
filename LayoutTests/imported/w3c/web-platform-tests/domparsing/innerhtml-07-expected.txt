@@ -1,7 +1,7 @@
 
-PASS innerHTML and string conversion: null. 
-PASS innerHTML and string conversion: undefined. 
-PASS innerHTML and string conversion: number. 
-PASS innerHTML and string conversion: toString. 
-PASS innerHTML and string conversion: valueOf. 
+PASS innerHTML and string conversion: null.
+PASS innerHTML and string conversion: undefined.
+PASS innerHTML and string conversion: number.
+PASS innerHTML and string conversion: toString.
+PASS innerHTML and string conversion: valueOf.
 

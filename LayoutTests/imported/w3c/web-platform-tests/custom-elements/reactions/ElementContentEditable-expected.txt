@@ -1,4 +1,4 @@
 
-PASS contentEditable on ElementContentEditable must enqueue an attributeChanged reaction when adding contenteditable content attribute 
-PASS contentEditable on ElementContentEditable must enqueue an attributeChanged reaction when replacing an existing attribute 
+PASS contentEditable on ElementContentEditable must enqueue an attributeChanged reaction when adding contenteditable content attribute
+PASS contentEditable on ElementContentEditable must enqueue an attributeChanged reaction when replacing an existing attribute
 

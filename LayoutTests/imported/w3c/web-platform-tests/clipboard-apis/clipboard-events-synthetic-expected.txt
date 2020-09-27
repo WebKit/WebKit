@@ -1,11 +1,11 @@
 
-PASS Unspecified synthetic copy event should not be composed. 
-PASS Synthetic copy event can be explicitly composed. 
-PASS Synthetic copy event can be explicitly uncomposed. 
-PASS Unspecified synthetic cut event should not be composed. 
-PASS Synthetic cut event can be explicitly composed. 
-PASS Synthetic cut event can be explicitly uncomposed. 
-PASS Unspecified synthetic paste event should not be composed. 
-PASS Synthetic paste event can be explicitly composed. 
-PASS Synthetic paste event can be explicitly uncomposed. 
+PASS Unspecified synthetic copy event should not be composed.
+PASS Synthetic copy event can be explicitly composed.
+PASS Synthetic copy event can be explicitly uncomposed.
+PASS Unspecified synthetic cut event should not be composed.
+PASS Synthetic cut event can be explicitly composed.
+PASS Synthetic cut event can be explicitly uncomposed.
+PASS Unspecified synthetic paste event should not be composed.
+PASS Synthetic paste event can be explicitly composed.
+PASS Synthetic paste event can be explicitly uncomposed.
 

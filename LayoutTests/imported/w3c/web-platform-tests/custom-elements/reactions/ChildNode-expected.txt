@@ -1,9 +1,9 @@
 
-PASS before on ChildNode must enqueue a connected reaction 
-PASS before on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS after on ChildNode must enqueue a connected reaction 
-PASS after on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS replaceWith on ChildNode must enqueue a connected reaction 
-PASS replaceWith on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS remove on ChildNode must enqueue a disconnected reaction 
+PASS before on ChildNode must enqueue a connected reaction
+PASS before on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS after on ChildNode must enqueue a connected reaction
+PASS after on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS replaceWith on ChildNode must enqueue a connected reaction
+PASS replaceWith on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS remove on ChildNode must enqueue a disconnected reaction
 

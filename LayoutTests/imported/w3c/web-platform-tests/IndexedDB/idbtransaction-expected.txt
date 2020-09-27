@@ -1,4 +1,4 @@
 
-PASS IDBTransaction - request gotten by the handler 
-PASS IDBTransaction - request returned by open() 
+PASS IDBTransaction - request gotten by the handler
+PASS IDBTransaction - request returned by open()
 

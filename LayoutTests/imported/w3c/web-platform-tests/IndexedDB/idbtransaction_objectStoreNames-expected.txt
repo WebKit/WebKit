@@ -1,10 +1,10 @@
 
-PASS IDBTransaction.objectStoreNames - during upgrade transaction 
-PASS IDBTransaction.objectStoreNames - value after close 
-PASS IDBTransaction.objectStoreNames - transaction scope 
-PASS IDBTransaction.objectStoreNames - value after commit 
-PASS IDBTransaction.objectStoreNames - value after abort 
-PASS IDBTransaction.objectStoreNames - sorting 
-PASS IDBTransaction.objectStoreNames - no duplicates 
-PASS IDBTransaction.objectStoreNames - unusual names 
+PASS IDBTransaction.objectStoreNames - during upgrade transaction
+PASS IDBTransaction.objectStoreNames - value after close
+PASS IDBTransaction.objectStoreNames - transaction scope
+PASS IDBTransaction.objectStoreNames - value after commit
+PASS IDBTransaction.objectStoreNames - value after abort
+PASS IDBTransaction.objectStoreNames - sorting
+PASS IDBTransaction.objectStoreNames - no duplicates
+PASS IDBTransaction.objectStoreNames - unusual names
 

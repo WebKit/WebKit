@@ -1,7 +1,7 @@
 
-PASS Upgrading an element directly (example from the spec) 
-PASS Two elements as children of the upgraded node 
-PASS Two elements as descendants of the upgraded node 
-PASS Two elements as shadow-including descendants (and not descendants) of the upgraded node 
-PASS Elements inside a template contents DocumentFragment node 
+PASS Upgrading an element directly (example from the spec)
+PASS Two elements as children of the upgraded node
+PASS Two elements as descendants of the upgraded node
+PASS Two elements as shadow-including descendants (and not descendants) of the upgraded node
+PASS Elements inside a template contents DocumentFragment node
 

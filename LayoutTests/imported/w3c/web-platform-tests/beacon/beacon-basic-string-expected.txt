@@ -1,8 +1,8 @@
 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NoData 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NullData 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: UndefinedData 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallString 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumString 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeString 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NoData
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NullData
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: UndefinedData
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallString
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumString
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeString
 

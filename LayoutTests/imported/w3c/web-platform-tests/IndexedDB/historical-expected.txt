@@ -1,17 +1,17 @@
 
-PASS "errorCode" should not be supported on IDBRequest. 
-PASS "LOADING" should not be supported on IDBRequest. 
-PASS "DONE" should not be supported on IDBRequest. 
-PASS "version" should not be supported on IDBVersionChangeEvent. 
-PASS "setVersion" should not be supported on IDBDatabase. 
-PASS "NEXT" should not be supported on IDBCursor. 
-PASS "NEXT_NO_DUPLICATE" should not be supported on IDBCursor. 
-PASS "PREV" should not be supported on IDBCursor. 
-PASS "PREV_NO_DUPLICATE" should not be supported on IDBCursor. 
-PASS "READ_ONLY" should not be supported on IDBTransaction. 
-PASS "READ_WRITE" should not be supported on IDBTransaction. 
-PASS "VERSION_CHANGE" should not be supported on IDBTransaction. 
-PASS "IDBFileHandle" should not be supported 
-PASS "IDBFileRequest" should not be supported 
-PASS "IDBMutableFile" should not be supported 
+PASS "errorCode" should not be supported on IDBRequest.
+PASS "LOADING" should not be supported on IDBRequest.
+PASS "DONE" should not be supported on IDBRequest.
+PASS "version" should not be supported on IDBVersionChangeEvent.
+PASS "setVersion" should not be supported on IDBDatabase.
+PASS "NEXT" should not be supported on IDBCursor.
+PASS "NEXT_NO_DUPLICATE" should not be supported on IDBCursor.
+PASS "PREV" should not be supported on IDBCursor.
+PASS "PREV_NO_DUPLICATE" should not be supported on IDBCursor.
+PASS "READ_ONLY" should not be supported on IDBTransaction.
+PASS "READ_WRITE" should not be supported on IDBTransaction.
+PASS "VERSION_CHANGE" should not be supported on IDBTransaction.
+PASS "IDBFileHandle" should not be supported
+PASS "IDBFileRequest" should not be supported
+PASS "IDBMutableFile" should not be supported
 

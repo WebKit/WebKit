@@ -5,7 +5,7 @@ Inline script should not run without 'unsafe-inline' script-src directive, even 
 
 Harness Error (TIMEOUT), message = null
 
-PASS Inline script block 
-PASS Inline event handler 
-NOTRUN Should fire policy violation events 
+PASS Inline script block
+PASS Inline event handler
+NOTRUN Should fire policy violation events
 

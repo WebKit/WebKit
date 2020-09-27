@@ -1,10 +1,10 @@
 
-PASS Initialize global state 
-PASS Background image fetches with an "image" Request.destination 
-PASS Font loading API fetches with an "font" Request.destination 
-PASS CSS font fetches with an "font" Request.destination 
-PASS sendBeacon() fetches with an empty string Request.destination 
-PASS Cache.add() fetches with an empty string Request.destination 
-PASS importScripts() fetches with a "script" Request.destination 
-PASS @import fetches with a "style" Request.destination 
+PASS Initialize global state
+PASS Background image fetches with an "image" Request.destination
+PASS Font loading API fetches with an "font" Request.destination
+PASS CSS font fetches with an "font" Request.destination
+PASS sendBeacon() fetches with an empty string Request.destination
+PASS Cache.add() fetches with an empty string Request.destination
+PASS importScripts() fetches with a "script" Request.destination
+PASS @import fetches with a "style" Request.destination
 

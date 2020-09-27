@@ -1,9 +1,9 @@
-  
+
 
 Harness Error (TIMEOUT), message = null
 
-PASS Test that the first frame uses nonce abc 
-NOTRUN Test that the first frame does not use nonce def 
+PASS Test that the first frame uses nonce abc
+NOTRUN Test that the first frame does not use nonce def
 FAIL Test that the second frame uses nonce def assert_unreached: Unexpected message received Reached unreachable code
 FAIL Test that the second frame does not use nonce abc assert_unreached: Unexpected message received Reached unreachable code
 

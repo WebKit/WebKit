@@ -1,5 +1,5 @@
 
 
-PASS A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would block the page. 
-PASS A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would allow the page. 
+PASS A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would block the page.
+PASS A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would allow the page.
 

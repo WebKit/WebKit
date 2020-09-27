@@ -1,6 +1,6 @@
 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: EmptyFormData 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallFormData 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumFormData 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeFormData 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: EmptyFormData
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallFormData
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumFormData
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeFormData
 

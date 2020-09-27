@@ -1,4 +1,4 @@
 
-PASS Adding one item with 1000 multiEntry keys 
-PASS Getting the one item by 1000 indeced keys  
+PASS Adding one item with 1000 multiEntry keys
+PASS Getting the one item by 1000 indeced keys
 

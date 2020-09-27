@@ -1,8 +1,8 @@
 
-PASS origin-when-cross-origin policy on a same-origin URL 
-PASS origin-when-cross-origin policy on a cross-origin URL 
-PASS origin-when-cross-origin policy on a cross-origin URL after same-origin redirection 
-PASS origin-when-cross-origin policy on a same-origin URL after cross-origin redirection 
-PASS Referrer with credentials should be stripped 
-PASS Referrer with fragment ID should be stripped 
+PASS origin-when-cross-origin policy on a same-origin URL
+PASS origin-when-cross-origin policy on a cross-origin URL
+PASS origin-when-cross-origin policy on a cross-origin URL after same-origin redirection
+PASS origin-when-cross-origin policy on a same-origin URL after cross-origin redirection
+PASS Referrer with credentials should be stripped
+PASS Referrer with fragment ID should be stripped
 

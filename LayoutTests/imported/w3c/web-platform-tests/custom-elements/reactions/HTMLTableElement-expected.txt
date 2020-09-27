@@ -1,12 +1,12 @@
 
-PASS caption on HTMLTableElement must enqueue connectedCallback when inserting a custom element 
-PASS caption on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
-PASS deleteCaption() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
-PASS tHead on HTMLTableElement must enqueue connectedCallback when inserting a custom element 
-PASS tHead on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
-PASS deleteTHead() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
-PASS tFoot on HTMLTableElement must enqueue connectedCallback when inserting a custom element 
-PASS tFoot on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
-PASS deleteTFoot() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
-PASS deleteRow() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element 
+PASS caption on HTMLTableElement must enqueue connectedCallback when inserting a custom element
+PASS caption on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
+PASS deleteCaption() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
+PASS tHead on HTMLTableElement must enqueue connectedCallback when inserting a custom element
+PASS tHead on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
+PASS deleteTHead() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
+PASS tFoot on HTMLTableElement must enqueue connectedCallback when inserting a custom element
+PASS tFoot on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
+PASS deleteTFoot() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
+PASS deleteRow() on HTMLTableElement must enqueue disconnectedCallback when removing a custom element
 

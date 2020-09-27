@@ -1,5 +1,5 @@
 Even though this page has a CSP policy the blocks inline style, the style attribute on the HTML element still takes effect because it preceeds the meta element.
 
 
-PASS Expecting logs: ["PASS"] 
+PASS Expecting logs: ["PASS"]
 

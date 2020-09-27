@@ -1,4 +1,4 @@
 
-PASS Inline style element should not load without 'unsafe-inline' 
+PASS Inline style element should not load without 'unsafe-inline'
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'self'" but got "style-src-elem"
 Lorem ipsum

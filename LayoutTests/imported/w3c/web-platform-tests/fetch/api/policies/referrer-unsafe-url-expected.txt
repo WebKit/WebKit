@@ -1,3 +1,3 @@
 
-PASS Request's referrer is the full url of current document/worker 
+PASS Request's referrer is the full url of current document/worker
 

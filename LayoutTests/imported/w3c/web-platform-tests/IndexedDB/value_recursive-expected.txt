@@ -1,5 +1,5 @@
 
-PASS Recursive value - array directly contains self 
-PASS Recursive value - array indirectly contains self 
-PASS Recursive value - array member contains self 
+PASS Recursive value - array directly contains self
+PASS Recursive value - array indirectly contains self
+PASS Recursive value - array member contains self
 

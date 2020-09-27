@@ -1,5 +1,5 @@
 
-PASS innerHTML on ShadowRoot must upgrade a custom element 
-PASS innerHTML on ShadowRoot must enqueue connectedCallback on newly upgraded custom elements when the shadow root is connected 
-PASS innerHTML on ShadowRoot must enqueue disconnectedCallback when removing a custom element 
+PASS innerHTML on ShadowRoot must upgrade a custom element
+PASS innerHTML on ShadowRoot must enqueue connectedCallback on newly upgraded custom elements when the shadow root is connected
+PASS innerHTML on ShadowRoot must enqueue disconnectedCallback when removing a custom element
 

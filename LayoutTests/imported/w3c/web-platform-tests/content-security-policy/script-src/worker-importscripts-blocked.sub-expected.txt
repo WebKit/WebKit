@@ -1,4 +1,4 @@
 
-PASS Expecting logs: ["TEST COMPLETE"] 
-PASS worker-importscripts-blocked 
+PASS Expecting logs: ["TEST COMPLETE"]
+PASS worker-importscripts-blocked
 

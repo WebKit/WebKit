@@ -1,10 +1,10 @@
 
-PASS An array 
-PASS A generator 
-PASS An array with an overridden Symbol.iterator 
-PASS An object with an overriden Symbol.iterator 
-PASS An array with an overridden Symbol.iterator on the prototype 
-PASS An array with an overridden %ArrayIterator%.prototype.next 
-PASS A holey array with fallback to an accessor on the prototype 
-PASS A string array in sequence<sequence> or record 
+PASS An array
+PASS A generator
+PASS An array with an overridden Symbol.iterator
+PASS An object with an overriden Symbol.iterator
+PASS An array with an overridden Symbol.iterator on the prototype
+PASS An array with an overridden %ArrayIterator%.prototype.next
+PASS A holey array with fallback to an accessor on the prototype
+PASS A string array in sequence<sequence> or record
 

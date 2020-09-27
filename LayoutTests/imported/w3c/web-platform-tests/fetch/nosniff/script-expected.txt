@@ -1,12 +1,12 @@
 
-PASS URL query: null 
-PASS URL query:  
-PASS URL query: x 
-PASS URL query: x/x 
-PASS URL query: text/html 
-PASS URL query: text/json 
-PASS URL query: text/javascript 
-PASS URL query: text/ecmascript 
-PASS URL query: text/ecmascript;blah 
-PASS URL query: text/javascript1.0 
+PASS URL query: null
+PASS URL query:
+PASS URL query: x
+PASS URL query: x/x
+PASS URL query: text/html
+PASS URL query: text/json
+PASS URL query: text/javascript
+PASS URL query: text/ecmascript
+PASS URL query: text/ecmascript;blah
+PASS URL query: text/javascript1.0
 

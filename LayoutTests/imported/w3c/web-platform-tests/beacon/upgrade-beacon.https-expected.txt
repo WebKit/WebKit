@@ -1,5 +1,5 @@
 
 
-PASS Ensure beacon gets upgraded 
-PASS Ensure beacon gets upgraded after redirection 
+PASS Ensure beacon gets upgraded
+PASS Ensure beacon gets upgraded after redirection
 

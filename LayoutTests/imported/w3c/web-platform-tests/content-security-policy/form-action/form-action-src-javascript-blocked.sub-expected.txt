@@ -1,4 +1,4 @@
-  
+
 Tests that blocking form actions works correctly. If this test passes, a CSP violation will be generated, and will not see a JavaScript alert.
 
 

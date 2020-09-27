@@ -1,3 +1,3 @@
 
-PASS IDBCursor.delete() - index - remove a record from the object store 
+PASS IDBCursor.delete() - index - remove a record from the object store
 

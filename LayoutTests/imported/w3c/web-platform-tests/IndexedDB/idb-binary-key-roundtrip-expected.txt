@@ -1,17 +1,17 @@
 
-PASS Binary keys can be supplied using the view type Uint8Array 
-PASS Binary keys can be supplied using the view type Uint8ClampedArray 
-PASS Binary keys can be supplied using the view type Int8Array 
-PASS Binary keys can be supplied using the view type Uint16Array 
-PASS Binary keys can be supplied using the view type Int16Array 
-PASS Binary keys can be supplied using the view type Uint32Array 
-PASS Binary keys can be supplied using the view type Int32Array 
-PASS Binary keys can be supplied using the view type Float32Array 
-PASS Binary keys can be supplied using the view type Float64Array 
-PASS ArrayBuffer can be used to supply a binary key 
-PASS DataView can be used to supply a binary key 
-PASS DataView with explicit offset can be used to supply a binary key 
-PASS DataView with explicit offset and length can be used to supply a binary key 
-PASS Uint8Array with explicit offset can be used to supply a binary key 
-PASS Uint8Array with explicit offset and length can be used to supply a binary key 
+PASS Binary keys can be supplied using the view type Uint8Array
+PASS Binary keys can be supplied using the view type Uint8ClampedArray
+PASS Binary keys can be supplied using the view type Int8Array
+PASS Binary keys can be supplied using the view type Uint16Array
+PASS Binary keys can be supplied using the view type Int16Array
+PASS Binary keys can be supplied using the view type Uint32Array
+PASS Binary keys can be supplied using the view type Int32Array
+PASS Binary keys can be supplied using the view type Float32Array
+PASS Binary keys can be supplied using the view type Float64Array
+PASS ArrayBuffer can be used to supply a binary key
+PASS DataView can be used to supply a binary key
+PASS DataView with explicit offset can be used to supply a binary key
+PASS DataView with explicit offset and length can be used to supply a binary key
+PASS Uint8Array with explicit offset can be used to supply a binary key
+PASS Uint8Array with explicit offset and length can be used to supply a binary key
 

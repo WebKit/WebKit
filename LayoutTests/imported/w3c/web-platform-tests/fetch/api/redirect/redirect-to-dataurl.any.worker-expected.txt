@@ -1,7 +1,7 @@
 
-PASS Testing data URL loading after same-origin redirection (cors mode) 
-PASS Testing data URL loading after same-origin redirection (no-cors mode) 
-PASS Testing data URL loading after same-origin redirection (same-origin mode) 
-PASS Testing data URL loading after cross-origin redirection (cors mode) 
-PASS Testing data URL loading after cross-origin redirection (no-cors mode) 
+PASS Testing data URL loading after same-origin redirection (cors mode)
+PASS Testing data URL loading after same-origin redirection (no-cors mode)
+PASS Testing data URL loading after same-origin redirection (same-origin mode)
+PASS Testing data URL loading after cross-origin redirection (cors mode)
+PASS Testing data URL loading after cross-origin redirection (no-cors mode)
 

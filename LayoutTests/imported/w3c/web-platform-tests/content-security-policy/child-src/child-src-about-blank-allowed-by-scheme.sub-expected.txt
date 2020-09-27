@@ -2,5 +2,5 @@ This frame should not be blocked by Content-Security-Policy.
 
 
 
-PASS Check that frames load without throwing any violation events 
+PASS Check that frames load without throwing any violation events
 

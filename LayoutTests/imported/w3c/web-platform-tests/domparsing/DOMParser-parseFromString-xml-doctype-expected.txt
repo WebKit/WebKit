@@ -1,5 +1,5 @@
 
-PASS Doctype parsing of System Id must fail on ommitted value 
-PASS Doctype parsing of System Id can handle empty string 
-PASS Doctype parsing of System Id can handle a quoted value 
+PASS Doctype parsing of System Id must fail on ommitted value
+PASS Doctype parsing of System Id can handle empty string
+PASS Doctype parsing of System Id can handle a quoted value
 

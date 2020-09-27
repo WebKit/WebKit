@@ -1,4 +1,4 @@
 
-PASS Injected style attributes should not be applied 
+PASS Injected style attributes should not be applied
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'self'" but got "style-src-elem"
 Lorem ipsum

@@ -1,6 +1,6 @@
-a 
+a
 b
 
-PASS normalize-space() without arguments 
+PASS normalize-space() without arguments
 FAIL normalize-space() should handle only #x20, #x9, #xD, and #xA assert_equals: expected "y\v\f\x0e\x0fz" but got "y \x0e\x0fz"
 

@@ -1,5 +1,5 @@
 This test used to check the child-src csp controlling worker creation. This behaviour has been deprecated but it's still supported until the transition is done. This still tests that behaviour but we need to go through extra hoops to make sure 'script-src' does not affect the result in any way (for instance by allowing 'self').
 
 
-PASS Worker is allowed because of deprecated 'child-src' directive 
+PASS Worker is allowed because of deprecated 'child-src' directive
 

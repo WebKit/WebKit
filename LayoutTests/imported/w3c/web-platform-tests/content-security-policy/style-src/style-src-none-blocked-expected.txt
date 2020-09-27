@@ -1,4 +1,4 @@
 
-PASS Should not stylesheet when style-src is 'none' 
+PASS Should not stylesheet when style-src is 'none'
 FAIL Should fire a securitypolicyviolation event assert_equals: expected "style-src 'none'" but got "style-src-elem"
 Lorem ipsum

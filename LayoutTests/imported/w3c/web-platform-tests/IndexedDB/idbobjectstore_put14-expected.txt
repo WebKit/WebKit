@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.put() - Put a record where a value being indexed does not meet the constraints of a valid key  
+PASS IDBObjectStore.put() - Put a record where a value being indexed does not meet the constraints of a valid key
 

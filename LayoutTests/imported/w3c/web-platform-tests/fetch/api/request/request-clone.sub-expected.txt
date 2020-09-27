@@ -1,4 +1,4 @@
 
-PASS Check cloning a request 
-PASS Check cloning a request copies the headers 
+PASS Check cloning a request
+PASS Check cloning a request copies the headers
 

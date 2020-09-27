@@ -1,8 +1,8 @@
 
-PASS Blob Determing Encoding with encoding argument 
-PASS Blob Determing Encoding with type attribute 
-PASS Blob Determing Encoding with UTF-8 BOM 
-PASS Blob Determing Encoding without anything implying charset. 
-PASS Blob Determing Encoding with UTF-16BE BOM 
-PASS Blob Determing Encoding with UTF-16LE BOM 
+PASS Blob Determing Encoding with encoding argument
+PASS Blob Determing Encoding with type attribute
+PASS Blob Determing Encoding with UTF-8 BOM
+PASS Blob Determing Encoding without anything implying charset.
+PASS Blob Determing Encoding with UTF-16BE BOM
+PASS Blob Determing Encoding with UTF-16LE BOM
 

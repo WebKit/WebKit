@@ -6,6 +6,6 @@ CONSOLE MESSAGE: [Report Only] Refused to load http://localhost:8800/content-sec
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire securitypolicyviolation event 
+NOTRUN Should fire securitypolicyviolation event
 FAIL External script in a script tag with matching SRI hash should run. assert_true: External script ran. expected true got false
 

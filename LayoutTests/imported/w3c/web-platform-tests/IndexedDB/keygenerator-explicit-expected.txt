@@ -1,13 +1,13 @@
 
-PASS Key generator vs. explicit key 53 bits 
-PASS Key generator vs. explicit key greater than 53 bits, less than 64 bits 
-PASS Key generator vs. explicit key greater than 53 bits, less than 64 bits (negative) 
-PASS Key generator vs. explicit key 63 bits 
-PASS Key generator vs. explicit key 63 bits (negative) 
-PASS Key generator vs. explicit key 64 bits 
-PASS Key generator vs. explicit key 64 bits (negative) 
-PASS Key generator vs. explicit key greater than 64 bits, but still finite 
-PASS Key generator vs. explicit key greater than 64 bits, but still finite (negative) 
-PASS Key generator vs. explicit key equal to Infinity 
-PASS Key generator vs. explicit key equal to -Infinity 
+PASS Key generator vs. explicit key 53 bits
+PASS Key generator vs. explicit key greater than 53 bits, less than 64 bits
+PASS Key generator vs. explicit key greater than 53 bits, less than 64 bits (negative)
+PASS Key generator vs. explicit key 63 bits
+PASS Key generator vs. explicit key 63 bits (negative)
+PASS Key generator vs. explicit key 64 bits
+PASS Key generator vs. explicit key 64 bits (negative)
+PASS Key generator vs. explicit key greater than 64 bits, but still finite
+PASS Key generator vs. explicit key greater than 64 bits, but still finite (negative)
+PASS Key generator vs. explicit key equal to Infinity
+PASS Key generator vs. explicit key equal to -Infinity
 

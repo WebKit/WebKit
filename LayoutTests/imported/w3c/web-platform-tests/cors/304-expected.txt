@@ -1,8 +1,8 @@
 CORS - 304 Responses
 
 
-PASS A 304 response with no CORS headers inherits from the stored response 
-PASS A 304 can expand Access-Control-Expose-Headers 
-PASS A 304 can contract Access-Control-Expose-Headers 
-PASS A 304 can change Access-Control-Allow-Origin 
+PASS A 304 response with no CORS headers inherits from the stored response
+PASS A 304 can expand Access-Control-Expose-Headers
+PASS A 304 can contract Access-Control-Expose-Headers
+PASS A 304 can change Access-Control-Allow-Origin
 

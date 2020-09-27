@@ -1,5 +1,5 @@
 This tests the effect of duplicated directives. It passes if the alert_assert() is executed.
 
 
-PASS Expecting alerts: ["PASS (1/1)"] 
+PASS Expecting alerts: ["PASS (1/1)"]
 

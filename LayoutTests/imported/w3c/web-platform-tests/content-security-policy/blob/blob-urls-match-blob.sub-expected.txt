@@ -1,5 +1,5 @@
 blob: URLs are same-origin with the page in which they were created, but match only if the blob: scheme is specified.
 
 
-PASS Expecting logs: ["PASS (1/1)"] 
+PASS Expecting logs: ["PASS (1/1)"]
 

@@ -1,6 +1,6 @@
 
-PASS SecurityPolicyViolationEvent constructor should throw with no parameters 
-PASS SecurityPolicyViolationEvent constructor works with an init dict 
+PASS SecurityPolicyViolationEvent constructor should throw with no parameters
+PASS SecurityPolicyViolationEvent constructor works with an init dict
 FAIL SecurityPolicyViolationEvent constructor requires documentURI assert_throws_js: function "function () { new SecurityPolicyViolationEvent("securitypolicyviolation", {
           // documentURI: "http://example.com",
           referrer: "http://example.com",
@@ -85,10 +85,10 @@ FAIL SecurityPolicyViolationEvent constructor requires statusCode assert_throws_
           lineNumber: 1,
           columnNumber: 1,
       })}" did not throw
-PASS SecurityPolicyViolationEvent constructor does not require referrer 
-PASS SecurityPolicyViolationEvent constructor does not require blockedURI 
-PASS SecurityPolicyViolationEvent constructor does not require sourceFile 
-PASS SecurityPolicyViolationEvent constructor does not require sample 
-PASS SecurityPolicyViolationEvent constructor does not require lineNumber 
-PASS SecurityPolicyViolationEvent constructor does not require columnNumber 
+PASS SecurityPolicyViolationEvent constructor does not require referrer
+PASS SecurityPolicyViolationEvent constructor does not require blockedURI
+PASS SecurityPolicyViolationEvent constructor does not require sourceFile
+PASS SecurityPolicyViolationEvent constructor does not require sample
+PASS SecurityPolicyViolationEvent constructor does not require lineNumber
+PASS SecurityPolicyViolationEvent constructor does not require columnNumber
 

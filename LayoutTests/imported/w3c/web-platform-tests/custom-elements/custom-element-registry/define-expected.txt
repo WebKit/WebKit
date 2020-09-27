@@ -1,57 +1,57 @@
 
-PASS "window.customElements.define" should exists 
-PASS If no arguments, should throw a TypeError 
-PASS If one argument, should throw a TypeError 
-PASS If constructor is undefined, should throw a TypeError 
-PASS If constructor is null, should throw a TypeError 
-PASS If constructor is object, should throw a TypeError 
-PASS If constructor is string, should throw a TypeError 
-PASS If constructor is arrow function, should throw a TypeError 
-PASS If constructor is method, should throw a TypeError 
-PASS Element names: defining an element named a- should succeed 
-PASS Element names: defining an element named a-a should succeed 
-PASS Element names: defining an element named aa- should succeed 
-PASS Element names: defining an element named aa-a should succeed 
-PASS Element names: defining an element named a-.-_ should succeed 
-PASS Element names: defining an element named a-0123456789 should succeed 
-PASS Element names: defining an element named a-漢字 should succeed 
-PASS Element names: defining an element named a-𠀋 should succeed 
-PASS Element names: defining an element named undefined should throw a SyntaxError 
-PASS Element names: defining an element named null should throw a SyntaxError 
-PASS Element names: defining an element named  should throw a SyntaxError 
-PASS Element names: defining an element named - should throw a SyntaxError 
-PASS Element names: defining an element named a should throw a SyntaxError 
-PASS Element names: defining an element named input should throw a SyntaxError 
-PASS Element names: defining an element named mycustomelement should throw a SyntaxError 
-PASS Element names: defining an element named A should throw a SyntaxError 
-PASS Element names: defining an element named A- should throw a SyntaxError 
-PASS Element names: defining an element named 0- should throw a SyntaxError 
-PASS Element names: defining an element named a-A should throw a SyntaxError 
-PASS Element names: defining an element named a-Z should throw a SyntaxError 
-PASS Element names: defining an element named A-a should throw a SyntaxError 
-PASS Element names: defining an element named a-a× should throw a SyntaxError 
-PASS Element names: defining an element named a-a　 should throw a SyntaxError 
-PASS Element names: defining an element named a-a󰀀 should throw a SyntaxError 
-PASS Element names: defining an element named annotation-xml should throw a SyntaxError 
-PASS Element names: defining an element named color-profile should throw a SyntaxError 
-PASS Element names: defining an element named font-face should throw a SyntaxError 
-PASS Element names: defining an element named font-face-src should throw a SyntaxError 
-PASS Element names: defining an element named font-face-uri should throw a SyntaxError 
-PASS Element names: defining an element named font-face-format should throw a SyntaxError 
-PASS Element names: defining an element named font-face-name should throw a SyntaxError 
-PASS Element names: defining an element named missing-glyph should throw a SyntaxError 
-PASS If the name is already defined, should throw a NotSupportedError 
-PASS If the constructor is already defined, should throw a NotSupportedError 
+PASS "window.customElements.define" should exists
+PASS If no arguments, should throw a TypeError
+PASS If one argument, should throw a TypeError
+PASS If constructor is undefined, should throw a TypeError
+PASS If constructor is null, should throw a TypeError
+PASS If constructor is object, should throw a TypeError
+PASS If constructor is string, should throw a TypeError
+PASS If constructor is arrow function, should throw a TypeError
+PASS If constructor is method, should throw a TypeError
+PASS Element names: defining an element named a- should succeed
+PASS Element names: defining an element named a-a should succeed
+PASS Element names: defining an element named aa- should succeed
+PASS Element names: defining an element named aa-a should succeed
+PASS Element names: defining an element named a-.-_ should succeed
+PASS Element names: defining an element named a-0123456789 should succeed
+PASS Element names: defining an element named a-漢字 should succeed
+PASS Element names: defining an element named a-𠀋 should succeed
+PASS Element names: defining an element named undefined should throw a SyntaxError
+PASS Element names: defining an element named null should throw a SyntaxError
+PASS Element names: defining an element named  should throw a SyntaxError
+PASS Element names: defining an element named - should throw a SyntaxError
+PASS Element names: defining an element named a should throw a SyntaxError
+PASS Element names: defining an element named input should throw a SyntaxError
+PASS Element names: defining an element named mycustomelement should throw a SyntaxError
+PASS Element names: defining an element named A should throw a SyntaxError
+PASS Element names: defining an element named A- should throw a SyntaxError
+PASS Element names: defining an element named 0- should throw a SyntaxError
+PASS Element names: defining an element named a-A should throw a SyntaxError
+PASS Element names: defining an element named a-Z should throw a SyntaxError
+PASS Element names: defining an element named A-a should throw a SyntaxError
+PASS Element names: defining an element named a-a× should throw a SyntaxError
+PASS Element names: defining an element named a-a　 should throw a SyntaxError
+PASS Element names: defining an element named a-a󰀀 should throw a SyntaxError
+PASS Element names: defining an element named annotation-xml should throw a SyntaxError
+PASS Element names: defining an element named color-profile should throw a SyntaxError
+PASS Element names: defining an element named font-face should throw a SyntaxError
+PASS Element names: defining an element named font-face-src should throw a SyntaxError
+PASS Element names: defining an element named font-face-uri should throw a SyntaxError
+PASS Element names: defining an element named font-face-format should throw a SyntaxError
+PASS Element names: defining an element named font-face-name should throw a SyntaxError
+PASS Element names: defining an element named missing-glyph should throw a SyntaxError
+PASS If the name is already defined, should throw a NotSupportedError
+PASS If the constructor is already defined, should throw a NotSupportedError
 FAIL If extends is a-, should throw a NotSupportedError assert_throws_dom: function "() =>  {
         customElements.define('test-define-extend-valid-name', class {}, { extends: name });
       }" did not throw
-PASS If extends is a-a, should throw a NotSupportedError 
-PASS If extends is aa-, should throw a NotSupportedError 
-PASS If extends is aa-a, should throw a NotSupportedError 
-PASS If extends is a-.-_, should throw a NotSupportedError 
-PASS If extends is a-0123456789, should throw a NotSupportedError 
-PASS If extends is a-漢字, should throw a NotSupportedError 
-PASS If extends is a-𠀋, should throw a NotSupportedError 
+PASS If extends is a-a, should throw a NotSupportedError
+PASS If extends is aa-, should throw a NotSupportedError
+PASS If extends is aa-a, should throw a NotSupportedError
+PASS If extends is a-.-_, should throw a NotSupportedError
+PASS If extends is a-0123456789, should throw a NotSupportedError
+PASS If extends is a-漢字, should throw a NotSupportedError
+PASS If extends is a-𠀋, should throw a NotSupportedError
 FAIL If extends is bgsound, should throw a NotSupportedError assert_throws_dom: function "() =>  {
         customElements.define('test-define-extend-' + name, class {}, { extends: name });
       }" did not throw
@@ -73,31 +73,31 @@ FAIL If extends is spacer, should throw a NotSupportedError assert_throws_dom: f
 FAIL If extends is elementnametobeunknownelement, should throw a NotSupportedError assert_throws_dom: function "() =>  {
         customElements.define('test-define-extend-' + name, class {}, { extends: name });
       }" did not throw
-PASS If constructor.prototype throws, should rethrow 
-PASS If Type(constructor.prototype) is undefined, should throw a TypeError 
-PASS If Type(constructor.prototype) is string, should throw a TypeError 
-PASS If constructor.prototype.connectedCallback throws, should rethrow 
-PASS If constructor.prototype.connectedCallback is undefined, should succeed 
-PASS If constructor.prototype.connectedCallback is function, should succeed 
-PASS If constructor.prototype.connectedCallback is null, should throw a TypeError 
-PASS If constructor.prototype.connectedCallback is object, should throw a TypeError 
-PASS If constructor.prototype.connectedCallback is integer, should throw a TypeError 
-PASS If constructor.prototype.disconnectedCallback throws, should rethrow 
-PASS If constructor.prototype.disconnectedCallback is undefined, should succeed 
-PASS If constructor.prototype.disconnectedCallback is function, should succeed 
-PASS If constructor.prototype.disconnectedCallback is null, should throw a TypeError 
-PASS If constructor.prototype.disconnectedCallback is object, should throw a TypeError 
-PASS If constructor.prototype.disconnectedCallback is integer, should throw a TypeError 
-PASS If constructor.prototype.adoptedCallback throws, should rethrow 
-PASS If constructor.prototype.adoptedCallback is undefined, should succeed 
-PASS If constructor.prototype.adoptedCallback is function, should succeed 
-PASS If constructor.prototype.adoptedCallback is null, should throw a TypeError 
-PASS If constructor.prototype.adoptedCallback is object, should throw a TypeError 
-PASS If constructor.prototype.adoptedCallback is integer, should throw a TypeError 
-PASS If constructor.prototype.attributeChangedCallback throws, should rethrow 
-PASS If constructor.prototype.attributeChangedCallback is undefined, should succeed 
-PASS If constructor.prototype.attributeChangedCallback is function, should succeed 
-PASS If constructor.prototype.attributeChangedCallback is null, should throw a TypeError 
-PASS If constructor.prototype.attributeChangedCallback is object, should throw a TypeError 
-PASS If constructor.prototype.attributeChangedCallback is integer, should throw a TypeError 
+PASS If constructor.prototype throws, should rethrow
+PASS If Type(constructor.prototype) is undefined, should throw a TypeError
+PASS If Type(constructor.prototype) is string, should throw a TypeError
+PASS If constructor.prototype.connectedCallback throws, should rethrow
+PASS If constructor.prototype.connectedCallback is undefined, should succeed
+PASS If constructor.prototype.connectedCallback is function, should succeed
+PASS If constructor.prototype.connectedCallback is null, should throw a TypeError
+PASS If constructor.prototype.connectedCallback is object, should throw a TypeError
+PASS If constructor.prototype.connectedCallback is integer, should throw a TypeError
+PASS If constructor.prototype.disconnectedCallback throws, should rethrow
+PASS If constructor.prototype.disconnectedCallback is undefined, should succeed
+PASS If constructor.prototype.disconnectedCallback is function, should succeed
+PASS If constructor.prototype.disconnectedCallback is null, should throw a TypeError
+PASS If constructor.prototype.disconnectedCallback is object, should throw a TypeError
+PASS If constructor.prototype.disconnectedCallback is integer, should throw a TypeError
+PASS If constructor.prototype.adoptedCallback throws, should rethrow
+PASS If constructor.prototype.adoptedCallback is undefined, should succeed
+PASS If constructor.prototype.adoptedCallback is function, should succeed
+PASS If constructor.prototype.adoptedCallback is null, should throw a TypeError
+PASS If constructor.prototype.adoptedCallback is object, should throw a TypeError
+PASS If constructor.prototype.adoptedCallback is integer, should throw a TypeError
+PASS If constructor.prototype.attributeChangedCallback throws, should rethrow
+PASS If constructor.prototype.attributeChangedCallback is undefined, should succeed
+PASS If constructor.prototype.attributeChangedCallback is function, should succeed
+PASS If constructor.prototype.attributeChangedCallback is null, should throw a TypeError
+PASS If constructor.prototype.attributeChangedCallback is object, should throw a TypeError
+PASS If constructor.prototype.attributeChangedCallback is integer, should throw a TypeError
 

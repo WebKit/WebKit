@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'un
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that the javascript: src is not allowed to run 
+NOTRUN Test that the javascript: src is not allowed to run
 

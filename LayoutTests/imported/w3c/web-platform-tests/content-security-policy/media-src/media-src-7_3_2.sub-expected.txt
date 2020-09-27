@@ -4,5 +4,5 @@ Video track src attribute must match src list - negative test
 Harness Error (TIMEOUT), message = null
 
 FAIL Disallowed track element onerror handler fires. assert_unreached: Onerror event never fired for track element. Reached unreachable code
-NOTRUN Test that securitypolicyviolation events are fired 
+NOTRUN Test that securitypolicyviolation events are fired
 

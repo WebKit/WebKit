@@ -2,5 +2,5 @@ Blocked access to external URL http://www1.localhost/content-security-policy/sup
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should block the object and fire a spv 
+NOTRUN Should block the object and fire a spv
 

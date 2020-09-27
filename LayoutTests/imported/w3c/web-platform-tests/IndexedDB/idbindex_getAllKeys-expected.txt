@@ -1,15 +1,15 @@
 
-PASS Single item get 
-PASS Empty object store 
-PASS Get all keys 
-PASS Get all generated keys 
-PASS maxCount=10 
-PASS Get bound range 
-PASS Get bound range with maxCount 
-PASS Get upper excluded 
-PASS Get lower excluded 
-PASS Get bound range (generated) with maxCount 
-PASS Non existent key 
-PASS maxCount=0 
-PASS Retrieve multiEntry keys 
+PASS Single item get
+PASS Empty object store
+PASS Get all keys
+PASS Get all generated keys
+PASS maxCount=10
+PASS Get bound range
+PASS Get bound range with maxCount
+PASS Get upper excluded
+PASS Get lower excluded
+PASS Get bound range (generated) with maxCount
+PASS Non existent key
+PASS maxCount=0
+PASS Retrieve multiEntry keys
 

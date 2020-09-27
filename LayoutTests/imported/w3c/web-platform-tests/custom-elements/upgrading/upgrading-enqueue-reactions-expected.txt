@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: Exception thrown as a part of test
 
-PASS Upgrading a custom element must enqueue attributeChangedCallback on each attribute 
-PASS Upgrading a custom element not must enqueue attributeChangedCallback on unobserved attributes 
-PASS Upgrading a custom element must enqueue connectedCallback if the element in the document 
-PASS Upgrading a custom element must enqueue attributeChangedCallback before connectedCallback 
-PASS Upgrading a custom element must not invoke attributeChangedCallback and connectedCallback when the element failed to upgrade 
+PASS Upgrading a custom element must enqueue attributeChangedCallback on each attribute
+PASS Upgrading a custom element not must enqueue attributeChangedCallback on unobserved attributes
+PASS Upgrading a custom element must enqueue connectedCallback if the element in the document
+PASS Upgrading a custom element must enqueue attributeChangedCallback before connectedCallback
+PASS Upgrading a custom element must not invoke attributeChangedCallback and connectedCallback when the element failed to upgrade
 

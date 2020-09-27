@@ -1,10 +1,10 @@
 
-PASS Blob.text() 
-PASS Blob.text() empty blob data 
-PASS Blob.text() multi-element array in constructor 
-PASS Blob.text() non-unicode 
-PASS Blob.text() different charset param in type option 
-PASS Blob.text() different charset param with non-ascii input 
-PASS Blob.text() invalid utf-8 input 
-PASS Blob.text() concurrent reads 
+PASS Blob.text()
+PASS Blob.text() empty blob data
+PASS Blob.text() multi-element array in constructor
+PASS Blob.text() non-unicode
+PASS Blob.text() different charset param in type option
+PASS Blob.text() different charset param with non-ascii input
+PASS Blob.text() invalid utf-8 input
+PASS Blob.text() concurrent reads
 

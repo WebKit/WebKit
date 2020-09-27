@@ -1,6 +1,6 @@
- 
 
-PASS fetching "top.txt" without ACAO should be rejected. 
-PASS fetching "top.txt" with CORS allowing null origin should be allowed. 
-PASS fetching data url script should be allowed. 
+
+PASS fetching "top.txt" without ACAO should be rejected.
+PASS fetching "top.txt" with CORS allowing null origin should be allowed.
+PASS fetching data url script should be allowed.
 

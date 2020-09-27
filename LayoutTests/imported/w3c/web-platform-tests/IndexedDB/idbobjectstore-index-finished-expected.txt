@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore index() behavior when transaction is finished 
+PASS IDBObjectStore index() behavior when transaction is finished
 

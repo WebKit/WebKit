@@ -3,9 +3,9 @@ FAIL Reading 'nonce' content attribute and IDL attribute. assert_equals: expecte
   doc... but got null
 FAIL Cloned node retains nonce. assert_equals: expected "" but got "abc"
 FAIL Cloned node retains nonce when inserted. assert_equals: expected "" but got "abc"
-PASS Writing 'nonce' content attribute. 
+PASS Writing 'nonce' content attribute.
 FAIL Writing 'nonce' IDL attribute. assert_equals: expected "foo" but got "bar"
-PASS Document-written script executes. 
+PASS Document-written script executes.
 FAIL Document-written script's nonce value. assert_equals: expected "" but got "abc"
 FAIL createElement.nonce. assert_equals: expected (object) null but got (string) "abc"
 FAIL setAttribute('nonce') overwrites '.nonce' upon insertion. assert_equals: expected "" but got "abc"

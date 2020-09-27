@@ -1,6 +1,6 @@
 
-PASS window.open() inherits policy. 
-PASS `document.write` into `window.open()` inherits policy. 
-PASS window.open('blob:...') inherits policy. 
-PASS window.open('javascript:...') inherits policy. 
+PASS window.open() inherits policy.
+PASS `document.write` into `window.open()` inherits policy.
+PASS window.open('blob:...') inherits policy.
+PASS window.open('javascript:...') inherits policy.
 

@@ -1,20 +1,20 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface Document: original interface defined 
-PASS Partial interface Document: member names are unique 
-PASS Partial interface WorkerGlobalScope: original interface defined 
-PASS Partial interface WorkerGlobalScope: member names are unique 
-PASS Partial interface Document[2]: member names are unique 
-PASS Partial interface Document[3]: member names are unique 
-PASS Document includes GlobalEventHandlers: member names are unique 
-PASS Document includes DocumentAndElementEventHandlers: member names are unique 
-PASS Document includes NonElementParentNode: member names are unique 
-PASS Document includes ParentNode: member names are unique 
-PASS Document includes XPathEvaluatorBase: member names are unique 
-PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface WorkerGlobalScope: original interface defined
+PASS Partial interface WorkerGlobalScope: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 FAIL WorkerGlobalScope interface: attribute addressSpace assert_true: The prototype object must have a property "addressSpace" expected true got false
 FAIL WorkerGlobalScope interface: self must inherit property "addressSpace" with the proper type assert_inherits: property "addressSpace" not found in prototype chain
-PASS Node interface: existence and properties of interface object 
-PASS Document interface: existence and properties of interface object 
+PASS Node interface: existence and properties of interface object
+PASS Document interface: existence and properties of interface object
 

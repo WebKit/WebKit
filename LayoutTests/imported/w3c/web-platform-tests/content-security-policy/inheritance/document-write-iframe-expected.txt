@@ -1,11 +1,11 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
-    
+
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Image loaded in srcdoc iframe using document.write is blocked 
-NOTRUN Image loaded in normal iframe using document.write is blocked 
-NOTRUN Image loaded directly in simple srcdoc iframe is blocked 
+NOTRUN Image loaded in srcdoc iframe using document.write is blocked
+NOTRUN Image loaded in normal iframe using document.write is blocked
+NOTRUN Image loaded directly in simple srcdoc iframe is blocked
 

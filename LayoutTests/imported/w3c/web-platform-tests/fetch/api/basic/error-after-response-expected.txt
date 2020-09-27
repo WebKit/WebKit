@@ -1,4 +1,4 @@
 
-PASS Response reader read() promise should reject after a network error happening after resolving fetch promise 
-PASS Response reader closed promise should reject after a network error happening after resolving fetch promise 
+PASS Response reader read() promise should reject after a network error happening after resolving fetch promise
+PASS Response reader closed promise should reject after a network error happening after resolving fetch promise
 

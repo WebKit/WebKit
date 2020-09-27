@@ -1,12 +1,12 @@
 Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-header.py?file=object-same-site11bfaf51-5415-4f06-b3b2-a6e8c0a74922
 Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=object-cross-site11bfaf51-5415-4f06-b3b2-a6e8c0a74922
- 
 
-PASS Same-Origin object 
+
+PASS Same-Origin object
 FAIL Same-Site object assert_not_equals: got disallowed value "No header has been recorded"
 FAIL Cross-Site object assert_not_equals: got disallowed value "No header has been recorded"
 FAIL Same-Origin object: sec-fetch-dest assert_equals: expected "object" but got ""
 FAIL Same-Origin object: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL Same-Origin object: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS Same-Origin object: sec-fetch-user 
+PASS Same-Origin object: sec-fetch-user
 

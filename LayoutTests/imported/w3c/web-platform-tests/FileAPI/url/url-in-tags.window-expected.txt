@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Blob URLs can be used in <script> tags 
-PASS Blob URLs can be used in iframes, and are treated same origin 
+PASS Blob URLs can be used in <script> tags
+PASS Blob URLs can be used in iframes, and are treated same origin
 TIMEOUT Blob URL fragment is implemented. Test timed out
 

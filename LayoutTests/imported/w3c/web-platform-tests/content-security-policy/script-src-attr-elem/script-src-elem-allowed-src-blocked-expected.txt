@@ -4,5 +4,5 @@ CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'un
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should not fire a security policy violation event 
+NOTRUN Should not fire a security policy violation event
 

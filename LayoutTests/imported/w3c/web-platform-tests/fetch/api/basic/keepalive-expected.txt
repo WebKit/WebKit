@@ -1,8 +1,8 @@
 
-PASS same-origin; setting up 
-PASS cross-origin redirect; setting up 
-PASS cross-origin redirect with preflight; setting up 
-PASS same-origin 
-PASS cross-origin redirect 
-PASS cross-origin redirect with preflight 
+PASS same-origin; setting up
+PASS cross-origin redirect; setting up
+PASS cross-origin redirect with preflight; setting up
+PASS same-origin
+PASS cross-origin redirect
+PASS cross-origin redirect with preflight
 

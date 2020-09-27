@@ -1,7 +1,7 @@
 
-PASS [[GetOwnProperty]] with getters and no setters 
-PASS [[GetOwnProperty]] with named property getters and setters 
-PASS [[GetOwnProperty]] with indexed property getters and setters 
+PASS [[GetOwnProperty]] with getters and no setters
+PASS [[GetOwnProperty]] with named property getters and setters
+PASS [[GetOwnProperty]] with indexed property getters and setters
 FAIL Test [[DefineOwnProperty]] with no indexed property setter support. assert_throws: function "() =>
       Object.defineProperty(domTokenList, "0", {value: true, writable: true})" did not throw
 FAIL Test [[DefineOwnProperty]] with indexed property setter support. assert_throws: function "() =>

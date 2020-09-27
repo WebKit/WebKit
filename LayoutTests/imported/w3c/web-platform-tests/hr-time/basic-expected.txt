@@ -3,9 +3,9 @@ Description
 This test validates that window.performance.now() exist and is a function.
 
 
-PASS window.performance is defined 
-PASS High Resolution Time extension to the Performance interface 
-PASS window.performance.now() function 
-PASS window.performance.now() returns a number 
-PASS High resolution time has approximately the right relative magnitude 
+PASS window.performance is defined
+PASS High Resolution Time extension to the Performance interface
+PASS window.performance.now() function
+PASS window.performance.now() returns a number
+PASS High resolution time has approximately the right relative magnitude
 

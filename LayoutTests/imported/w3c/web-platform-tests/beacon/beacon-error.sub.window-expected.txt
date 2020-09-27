@@ -1,6 +1,6 @@
 
-PASS Verify calling 'navigator.sendBeacon()' with a large payload returns 'false'. 
-PASS Verify calling 'navigator.sendBeacon()' with an invalid URL throws an exception. 
-PASS Verify calling 'navigator.sendBeacon()' with a URL that is not a http(s) scheme throws an exception. 
-PASS Verify the behavior after the quota is exhausted. 
+PASS Verify calling 'navigator.sendBeacon()' with a large payload returns 'false'.
+PASS Verify calling 'navigator.sendBeacon()' with an invalid URL throws an exception.
+PASS Verify calling 'navigator.sendBeacon()' with a URL that is not a http(s) scheme throws an exception.
+PASS Verify the behavior after the quota is exhausted.
 

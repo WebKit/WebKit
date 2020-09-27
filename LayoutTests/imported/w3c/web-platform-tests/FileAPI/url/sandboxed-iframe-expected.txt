@@ -20,44 +20,44 @@ CONSOLE MESSAGE: Fetch API cannot load blob:null/a2a9a99e-380f-47fa-907f-132e4a9
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: Fetch API cannot load blob:null/ebacc727-d8f7-44d9-b7ca-850ec3cf3c18 due to access control checks.
 
-PASS Generated Blob URLs are unique 
-PASS Blob URL starts with "blob:" 
-PASS Blob URL starts with "blob:" for Files 
-PASS Origin of Blob URL matches our origin 
-PASS Blob URL parses correctly 
-PASS Origin of Blob URL matches our origin for Files 
-PASS Blob URLs can be used in <script> tags 
+PASS Generated Blob URLs are unique
+PASS Blob URL starts with "blob:"
+PASS Blob URL starts with "blob:" for Files
+PASS Origin of Blob URL matches our origin
+PASS Blob URL parses correctly
+PASS Origin of Blob URL matches our origin for Files
+PASS Blob URLs can be used in <script> tags
 FAIL Blob URLs can be used in iframes, and are treated same origin Sandbox access violation: Blocked a frame at "null" from accessing a cross-origin frame.  Both frames are sandboxed and lack the "allow-same-origin" flag.
 FAIL Blob URL fragment is implemented. null is not an object (evaluating 'frame.contentWindow.onscroll = t.step_func_done(() => {
     assert_equals(frame.contentWindow.scrollY, 5000);
   })')
-PASS Blob URLs can be used in XHR 
+PASS Blob URLs can be used in XHR
 FAIL XHR with a fragment should succeed promise_test: Unhandled rejection with value: "Got unexpected error event"
-PASS XHR of a revoked URL should fail 
-PASS Only exact matches should revoke URLs, using XHR 
-PASS Appending a query string should cause XHR to fail 
-PASS Appending a path should cause XHR to fail 
-PASS XHR with method "HEAD" should fail 
-PASS XHR with method "POST" should fail 
-PASS XHR with method "DELETE" should fail 
-PASS XHR with method "OPTIONS" should fail 
-PASS XHR with method "PUT" should fail 
-PASS XHR with method "CUSTOM" should fail 
-PASS XHR should return Content-Type from Blob 
+PASS XHR of a revoked URL should fail
+PASS Only exact matches should revoke URLs, using XHR
+PASS Appending a query string should cause XHR to fail
+PASS Appending a path should cause XHR to fail
+PASS XHR with method "HEAD" should fail
+PASS XHR with method "POST" should fail
+PASS XHR with method "DELETE" should fail
+PASS XHR with method "OPTIONS" should fail
+PASS XHR with method "PUT" should fail
+PASS XHR with method "CUSTOM" should fail
+PASS XHR should return Content-Type from Blob
 FAIL Revoke blob URL after open(), will fetch assert_unreached: Got unexpected error event Reached unreachable code
-PASS Blob URLs can be used in fetch 
+PASS Blob URLs can be used in fetch
 FAIL fetch with a fragment should succeed promise_test: Unhandled rejection with value: object "TypeError: Cross origin requests are only supported for HTTP."
-PASS fetch of a revoked URL should fail 
-PASS Only exact matches should revoke URLs, using fetch 
-PASS Appending a query string should cause fetch to fail 
-PASS Appending a path should cause fetch to fail 
-PASS fetch with method "HEAD" should fail 
-PASS fetch with method "POST" should fail 
-PASS fetch with method "DELETE" should fail 
-PASS fetch with method "OPTIONS" should fail 
-PASS fetch with method "PUT" should fail 
-PASS fetch with method "CUSTOM" should fail 
-PASS fetch should return Content-Type from Blob 
+PASS fetch of a revoked URL should fail
+PASS Only exact matches should revoke URLs, using fetch
+PASS Appending a query string should cause fetch to fail
+PASS Appending a path should cause fetch to fail
+PASS fetch with method "HEAD" should fail
+PASS fetch with method "POST" should fail
+PASS fetch with method "DELETE" should fail
+PASS fetch with method "OPTIONS" should fail
+PASS fetch with method "PUT" should fail
+PASS fetch with method "CUSTOM" should fail
+PASS fetch should return Content-Type from Blob
 FAIL Revoke blob URL after creating Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Cross origin requests are only supported for HTTP."
-PASS Revoke blob URL after calling fetch, fetch should succeed 
+PASS Revoke blob URL after calling fetch, fetch should succeed
 

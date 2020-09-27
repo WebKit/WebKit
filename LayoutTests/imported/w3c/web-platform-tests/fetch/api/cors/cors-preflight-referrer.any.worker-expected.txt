@@ -1,12 +1,12 @@
 
-PASS Referrer policy: no-referrer and referrer: default 
-PASS Referrer policy: no-referrer and referrer: 'myreferrer' 
-PASS Referrer policy: "" and referrer: default 
-PASS Referrer policy: "" and referrer: 'myreferrer' 
-PASS Referrer policy: origin and referrer: default 
-PASS Referrer policy: origin and referrer: 'myreferrer' 
-PASS Referrer policy: origin-when-cross-origin and referrer: default 
-PASS Referrer policy: origin-when-cross-origin and referrer: 'myreferrer' 
-PASS Referrer policy: unsafe-url and referrer: default 
-PASS Referrer policy: unsafe-url and referrer: 'myreferrer' 
+PASS Referrer policy: no-referrer and referrer: default
+PASS Referrer policy: no-referrer and referrer: 'myreferrer'
+PASS Referrer policy: "" and referrer: default
+PASS Referrer policy: "" and referrer: 'myreferrer'
+PASS Referrer policy: origin and referrer: default
+PASS Referrer policy: origin and referrer: 'myreferrer'
+PASS Referrer policy: origin-when-cross-origin and referrer: default
+PASS Referrer policy: origin-when-cross-origin and referrer: 'myreferrer'
+PASS Referrer policy: unsafe-url and referrer: default
+PASS Referrer policy: unsafe-url and referrer: 'myreferrer'
 

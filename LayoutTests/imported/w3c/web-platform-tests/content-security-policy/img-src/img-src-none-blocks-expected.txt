@@ -1,4 +1,4 @@
 
 
-PASS img-src with 'none' source should not match 
+PASS img-src with 'none' source should not match
 

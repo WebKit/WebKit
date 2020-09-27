@@ -1,52 +1,52 @@
 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, false, [sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, false, [verify, sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, false, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [verify, sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify]) 
+PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, false, [sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, false, [verify, sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, true, [verify, sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, false, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-256}, true, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [verify, sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify])
 FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [verify, sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [verify, sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [verify, sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [verify, sign]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [sign, verify, sign, sign, verify]) 
+PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [verify, sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [verify, sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [verify, sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [verify, sign])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [sign, verify, sign, sign, verify])
 FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [verify, sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [verify, sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [verify, sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [verify, sign]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [sign, verify, sign, sign, verify]) 
-PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [sign, verify, sign, sign, verify]) 
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [verify, sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [verify, sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [verify, sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [verify, sign])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [sign, verify, sign, sign, verify])
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [sign, verify, sign, sign, verify])
 FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
 FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code

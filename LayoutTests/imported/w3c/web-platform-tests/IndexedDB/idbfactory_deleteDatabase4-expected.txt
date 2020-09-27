@@ -1,4 +1,4 @@
 
-PASS Delete an existing database 
-PASS Delete a nonexistent database 
+PASS Delete an existing database
+PASS Delete a nonexistent database
 

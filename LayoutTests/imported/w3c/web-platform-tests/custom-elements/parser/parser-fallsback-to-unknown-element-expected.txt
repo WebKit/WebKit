@@ -3,8 +3,8 @@ CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be 
 CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 CONSOLE MESSAGE: Bad
 
-PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns a Text node 
-PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns non-Element object 
-PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor does not call super() 
-PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor throws an exception 
+PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns a Text node
+PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns non-Element object
+PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor does not call super()
+PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor throws an exception
 

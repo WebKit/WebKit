@@ -1,6 +1,6 @@
 
-PASS Testing response url getter with http://localhost:8800/ada 
-PASS Testing response url getter with http://localhost:8800/# 
-PASS Testing response url getter with http://localhost:8800/#ada 
-PASS Testing response url getter with http://localhost:8800#ada 
+PASS Testing response url getter with http://localhost:8800/ada
+PASS Testing response url getter with http://localhost:8800/#
+PASS Testing response url getter with http://localhost:8800/#ada
+PASS Testing response url getter with http://localhost:8800#ada
 

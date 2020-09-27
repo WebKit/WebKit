@@ -1,3 +1,3 @@
 
-PASS Properties of IDBOpenDBRequest during IDBFactory deleteDatabase() 
+PASS Properties of IDBOpenDBRequest during IDBFactory deleteDatabase()
 

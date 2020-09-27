@@ -8,5 +8,5 @@ FAIL Redirect 303 21 times assert_unreached: Should have rejected: undefined Rea
 FAIL Redirect 307 20 times assert_equals: Response's status is 200 expected 200 but got 307
 FAIL Redirect 307 21 times assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Redirect 308 20 times assert_equals: Response's status is 200 expected 200 but got 308
-PASS Redirect 308 21 times 
+PASS Redirect 308 21 times
 

@@ -1,11 +1,11 @@
 
-PASS Check default value for type attribute 
-PASS Check default value for url attribute 
-PASS Check default value for ok attribute 
-PASS Check default value for status attribute 
-PASS Check default value for statusText attribute 
-PASS Check default value for body attribute 
-PASS Check status init values and associated getter 
-PASS Check statusText init values and associated getter 
-PASS Test that Response.headers has the [SameObject] extended attribute 
+PASS Check default value for type attribute
+PASS Check default value for url attribute
+PASS Check default value for ok attribute
+PASS Check default value for status attribute
+PASS Check default value for statusText attribute
+PASS Check default value for body attribute
+PASS Check status init values and associated getter
+PASS Check statusText init values and associated getter
+PASS Test that Response.headers has the [SameObject] extended attribute
 

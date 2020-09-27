@@ -1,6 +1,6 @@
 
-PASS Parsing of initial style attribute 
-PASS Parsing of invalid style attribute 
-PASS Parsing of style attribute 
-PASS Update style.backgroundColor 
+PASS Parsing of initial style attribute
+PASS Parsing of invalid style attribute
+PASS Parsing of style attribute
+PASS Update style.backgroundColor
 

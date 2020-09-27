@@ -3,6 +3,6 @@ Video track src attribute must match src list - positive test
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN In-policy track element 
-NOTRUN Should not fire policy violation events 
+NOTRUN In-policy track element
+NOTRUN Should not fire policy violation events
 

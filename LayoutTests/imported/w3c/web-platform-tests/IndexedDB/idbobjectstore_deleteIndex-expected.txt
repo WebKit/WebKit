@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.deleteIndex() - removes the index  
+PASS IDBObjectStore.deleteIndex() - removes the index
 

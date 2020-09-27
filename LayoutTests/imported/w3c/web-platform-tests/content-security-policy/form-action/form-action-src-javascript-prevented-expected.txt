@@ -2,5 +2,5 @@
 Test that "form-action 'none'" doesn't create a violation report if the event was prevented.
 
 
-PASS The form submission should not be blocked by when javascript prevents the load. 
+PASS The form submission should not be blocked by when javascript prevents the load.
 

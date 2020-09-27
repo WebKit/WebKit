@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Refused to execute a script for an inline event handler because
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that the inline event handler is not allowed to run 
+NOTRUN Test that the inline event handler is not allowed to run
 

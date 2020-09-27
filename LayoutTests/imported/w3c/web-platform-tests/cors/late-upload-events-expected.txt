@@ -1,6 +1,6 @@
 Adding upload event listeners after send()
 
 
-PASS Late listeners: No preflight 
-PASS Late listeners: Preflight 
+PASS Late listeners: No preflight
+PASS Late listeners: Preflight
 

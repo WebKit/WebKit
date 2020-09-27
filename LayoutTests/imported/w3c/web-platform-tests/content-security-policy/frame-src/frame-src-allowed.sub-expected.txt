@@ -2,6 +2,6 @@ This iframe should be allowed.
 
 
 
-PASS Expecting logs: ["PASS IFrame #1 generated a load event."] 
-PASS Expecting alerts: ["PASS"] 
+PASS Expecting logs: ["PASS IFrame #1 generated a load event."]
+PASS Expecting alerts: ["PASS"]
 

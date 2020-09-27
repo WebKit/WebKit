@@ -1,15 +1,15 @@
 
-PASS Passing nothing to Headers constructor 
-PASS Passing undefined to Headers constructor 
-PASS Passing null to Headers constructor 
-PASS Basic operation with one property 
-PASS Basic operation with one property and a proto 
-PASS Correct operation ordering with two properties 
-PASS Correct operation ordering with two properties one of which has an invalid name 
-PASS Correct operation ordering with two properties one of which has an invalid value 
-PASS Correct operation ordering with non-enumerable properties 
-PASS Correct operation ordering with undefined descriptors 
-PASS Correct operation ordering with repeated keys 
+PASS Passing nothing to Headers constructor
+PASS Passing undefined to Headers constructor
+PASS Passing null to Headers constructor
+PASS Basic operation with one property
+PASS Basic operation with one property and a proto
+PASS Correct operation ordering with two properties
+PASS Correct operation ordering with two properties one of which has an invalid name
+PASS Correct operation ordering with two properties one of which has an invalid value
+PASS Correct operation ordering with non-enumerable properties
+PASS Correct operation ordering with undefined descriptors
+PASS Correct operation ordering with repeated keys
 FAIL Basic operation with Symbol keys assert_throws_js: function "function () { var h = new Headers(proxy); }" did not throw
 FAIL Operation with non-enumerable Symbol keys assert_equals: expected 9 but got 8
 

@@ -1,4 +1,4 @@
 
-PASS Non-unique index keys 
-PASS Unique index keys 
+PASS Non-unique index keys
+PASS Unique index keys
 

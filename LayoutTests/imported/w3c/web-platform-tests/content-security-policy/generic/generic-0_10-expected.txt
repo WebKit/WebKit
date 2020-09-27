@@ -2,5 +2,5 @@ Blocked access to external URL http://www.localhost/content-security-policy/gene
 test implicit port number matching (requires port 80)
 
 
-PASS Test that script does not fire violation event 
+PASS Test that script does not fire violation event
 

@@ -5,10 +5,10 @@ Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-ma
 Blocked access to external URL http://www1.localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&3
 Blocked access to external URL https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&4
 
-PASS Same domain basic usage 
+PASS Same domain basic usage
 FAIL Cross domain basic usage assert_true: Got CORS-allowed response expected true got false
-PASS Same domain different port 
+PASS Same domain different port
 FAIL Cross domain different port assert_true: Got CORS-allowed response expected true got false
 FAIL Cross domain different protocol assert_true: Got CORS-allowed response expected true got false
-PASS Same domain different protocol different port 
+PASS Same domain different protocol different port
 

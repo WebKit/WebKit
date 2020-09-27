@@ -5,9 +5,9 @@ Blocked access to external URL http://www1.localhost:8800/common/redirect.py?loc
 
 Harness Error (TIMEOUT), message = null
 
-PASS Direct block, same-origin = full URL in report 
+PASS Direct block, same-origin = full URL in report
 TIMEOUT Direct block, cross-origin = full URL in report Test timed out
 TIMEOUT Block after redirect, same-origin = original URL in report Test timed out
-PASS Block after redirect, cross-origin = original URL in report 
-PASS Violation report status OK. 
+PASS Block after redirect, cross-origin = original URL in report
+PASS Violation report status OK.
 

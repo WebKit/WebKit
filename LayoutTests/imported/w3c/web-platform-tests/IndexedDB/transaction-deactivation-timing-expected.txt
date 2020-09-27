@@ -1,7 +1,7 @@
 
-PASS New transactions are deactivated before next task 
-PASS New transactions are not deactivated until after the microtask checkpoint 
-PASS New transactions from microtask are deactivated before next task 
-PASS New transactions from microtask are still active through the microtask checkpoint 
-PASS Deactivation of new transactions happens at end of invocation 
+PASS New transactions are deactivated before next task
+PASS New transactions are not deactivated until after the microtask checkpoint
+PASS New transactions from microtask are deactivated before next task
+PASS New transactions from microtask are still active through the microtask checkpoint
+PASS Deactivation of new transactions happens at end of invocation
 

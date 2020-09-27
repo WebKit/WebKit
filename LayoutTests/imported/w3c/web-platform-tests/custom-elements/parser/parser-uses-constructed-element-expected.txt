@@ -1,4 +1,4 @@
 
-PASS HTML parser must use the returned value of the custom element constructor instead of the one created before super() call 
-PASS HTML parser must use the returned value of the custom element constructor instead using the one created in super() call 
+PASS HTML parser must use the returned value of the custom element constructor instead of the one created before super() call
+PASS HTML parser must use the returned value of the custom element constructor instead using the one created in super() call
 

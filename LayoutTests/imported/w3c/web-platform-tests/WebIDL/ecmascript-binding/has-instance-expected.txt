@@ -1,6 +1,6 @@
 
 
-PASS Manually-constructed prototype chains are correctly handled by instanceof 
-PASS instanceof must return false across different globals, for platform objects 
-PASS platform objects do not have Symbol.hasInstance installed 
+PASS Manually-constructed prototype chains are correctly handled by instanceof
+PASS instanceof must return false across different globals, for platform objects
+PASS platform objects do not have Symbol.hasInstance installed
 

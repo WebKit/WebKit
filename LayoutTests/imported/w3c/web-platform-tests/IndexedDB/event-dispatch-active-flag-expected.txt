@@ -1,6 +1,6 @@
 
-PASS Transactions are active during success handlers 
-PASS Transactions are active during success listeners 
-PASS Transactions are active during error handlers 
-PASS Transactions are active during error listeners 
+PASS Transactions are active during success handlers
+PASS Transactions are active during success listeners
+PASS Transactions are active during error handlers
+PASS Transactions are active during error listeners
 

@@ -1,8 +1,8 @@
 
-PASS Test content-type header for a body string 
-PASS Test content-type header for a body ArrayBufferView 
-PASS Test content-type header for a body ArrayBuffer 
-PASS Test content-type header for a body Blob 
-PASS Test content-type header for a body FormData 
-PASS Test content-type header for a body URLSearchParams 
+PASS Test content-type header for a body string
+PASS Test content-type header for a body ArrayBufferView
+PASS Test content-type header for a body ArrayBuffer
+PASS Test content-type header for a body Blob
+PASS Test content-type header for a body FormData
+PASS Test content-type header for a body URLSearchParams
 

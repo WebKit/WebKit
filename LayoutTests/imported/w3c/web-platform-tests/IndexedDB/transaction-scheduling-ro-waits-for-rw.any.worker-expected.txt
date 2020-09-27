@@ -1,3 +1,3 @@
 
-PASS readonly transaction should see the result of a previous readwrite transaction 
+PASS readonly transaction should see the result of a previous readwrite transaction
 

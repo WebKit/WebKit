@@ -4,16 +4,16 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS localhost -> localhost:9443 iframe: forced 
+PASS localhost -> localhost:9443 iframe: forced
 TIMEOUT localhost -> www.localhost:9443 iframe: forced Test timed out
 TIMEOUT localhost -> www.127.0.0.1:9443 iframe: forced Test timed out
-PASS localhost -> localhost:9443 iframe: user-activated 
+PASS localhost -> localhost:9443 iframe: user-activated
 TIMEOUT localhost -> www.localhost:9443 iframe: user-activated Test timed out
 TIMEOUT localhost -> www.127.0.0.1:9443 iframe: user-activated Test timed out
 FAIL localhost -> localhost:9443 iframe: forced: sec-fetch-dest assert_equals: expected "document" but got ""
 FAIL localhost -> localhost:9443 iframe: forced: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL localhost -> localhost:9443 iframe: forced: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS localhost -> localhost:9443 iframe: forced: sec-fetch-user 
+PASS localhost -> localhost:9443 iframe: forced: sec-fetch-user
 FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-dest assert_equals: expected "document" but got ""
 FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL localhost -> localhost:9443 iframe: user-activated: sec-fetch-site assert_equals: expected "same-origin" but got ""

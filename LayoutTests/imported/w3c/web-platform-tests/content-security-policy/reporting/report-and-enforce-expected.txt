@@ -1,6 +1,6 @@
 
 
-PASS The image should be blocked 
-PASS The stylesheet should load 
-PASS Violation report status OK. 
+PASS The image should be blocked
+PASS The stylesheet should load
+PASS Violation report status OK.
 

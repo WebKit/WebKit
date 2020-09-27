@@ -1,4 +1,4 @@
 
-PASS Check that inline is allowed since the inherited policy is report only 
-PASS Check that eval is allowed since the inherited policy is report only 
+PASS Check that inline is allowed since the inherited policy is report only
+PASS Check that eval is allowed since the inherited policy is report only
 

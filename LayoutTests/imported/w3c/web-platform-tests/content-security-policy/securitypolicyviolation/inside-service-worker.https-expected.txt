@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS No SecurityPolicyViolation event fired for successful load. 
+PASS No SecurityPolicyViolation event fired for successful load.
 TIMEOUT SecurityPolicyViolation event fired on global. Test timed out
 TIMEOUT SecurityPolicyViolation event fired on global with the correct blockedURI. Test timed out
 

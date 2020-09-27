@@ -1,6 +1,6 @@
 
-PASS indexedDB.delete called from upgradeneeded handler 
-PASS Abort transaction before deleting database in upgradeneeded handler 
-PASS Abort transaction after deleting database in upgradeneeded event handler 
-PASS transaction oncomplete ordering relative to open request onsuccess 
+PASS indexedDB.delete called from upgradeneeded handler
+PASS Abort transaction before deleting database in upgradeneeded handler
+PASS Abort transaction after deleting database in upgradeneeded event handler
+PASS transaction oncomplete ordering relative to open request onsuccess
 

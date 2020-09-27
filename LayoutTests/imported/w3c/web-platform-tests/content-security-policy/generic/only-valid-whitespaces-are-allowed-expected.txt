@@ -20,26 +20,26 @@ CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/s
 
 Harness Error (TIMEOUT), message = null
 
-PASS Should load image without any CSP - meta tag 
-PASS Should load image without any CSP - HTTP header 
-PASS Should not load image with 'none' CSP - meta tag 
-PASS Should not load image with 'none' CSP - HTTP header 
-PASS U+0009 TAB   should be properly parsed between directive name and value - meta tag 
-PASS U+0009 TAB   should be properly parsed between directive name and value - HTTP header 
-PASS U+000C FF    should be properly parsed between directive name and value - meta tag 
-PASS U+000C FF    should be properly parsed between directive name and value - HTTP header 
-PASS U+000A LF    should be properly parsed between directive name and value - meta tag 
-PASS U+000D CR    should be properly parsed between directive name and value - meta tag 
-PASS U+0020 SPACE should be properly parsed between directive name and value - meta tag 
-PASS U+0020 SPACE should be properly parsed between directive name and value - HTTP header 
-PASS U+0009 TAB   should be properly parsed inside directive value - meta tag 
-PASS U+0009 TAB   should be properly parsed inside directive value - HTTP header 
-PASS U+000C FF    should be properly parsed inside directive value - meta tag 
-PASS U+000C FF    should be properly parsed inside directive value - HTTP header 
-PASS U+000A LF    should be properly parsed inside directive value - meta tag 
-PASS U+000D CR    should be properly parsed inside directive value - meta tag 
-PASS U+0020 SPACE should be properly parsed inside directive value - meta tag 
-PASS U+0020 SPACE should be properly parsed inside directive value - HTTP header 
+PASS Should load image without any CSP - meta tag
+PASS Should load image without any CSP - HTTP header
+PASS Should not load image with 'none' CSP - meta tag
+PASS Should not load image with 'none' CSP - HTTP header
+PASS U+0009 TAB   should be properly parsed between directive name and value - meta tag
+PASS U+0009 TAB   should be properly parsed between directive name and value - HTTP header
+PASS U+000C FF    should be properly parsed between directive name and value - meta tag
+PASS U+000C FF    should be properly parsed between directive name and value - HTTP header
+PASS U+000A LF    should be properly parsed between directive name and value - meta tag
+PASS U+000D CR    should be properly parsed between directive name and value - meta tag
+PASS U+0020 SPACE should be properly parsed between directive name and value - meta tag
+PASS U+0020 SPACE should be properly parsed between directive name and value - HTTP header
+PASS U+0009 TAB   should be properly parsed inside directive value - meta tag
+PASS U+0009 TAB   should be properly parsed inside directive value - HTTP header
+PASS U+000C FF    should be properly parsed inside directive value - meta tag
+PASS U+000C FF    should be properly parsed inside directive value - HTTP header
+PASS U+000A LF    should be properly parsed inside directive value - meta tag
+PASS U+000D CR    should be properly parsed inside directive value - meta tag
+PASS U+0020 SPACE should be properly parsed inside directive value - meta tag
+PASS U+0020 SPACE should be properly parsed inside directive value - HTTP header
 TIMEOUT U+00A0 NBSP  should not be parsed between directive name and value - meta tag Test timed out
 TIMEOUT U+00A0 NBSP  should not be parsed between directive name and value - HTTP header Test timed out
 TIMEOUT U+00A0 NBSP  should not be parsed inside directive value - meta tag Test timed out

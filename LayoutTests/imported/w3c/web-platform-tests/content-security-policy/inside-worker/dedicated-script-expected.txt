@@ -4,17 +4,17 @@ Blocked access to external URL http://www.localhost:8801/content-security-policy
 
 Harness Error (FAIL), message = Error in remote http://localhost:8800/content-security-policy/inside-worker/support/script-src-self.sub.js?pipe=sub|header(Content-Security-Policy,default-src%20%27none%27): NetworkError:  A network error occurred.
 
-PASS Filesystem and blob. 
-PASS Cross-origin `importScripts()` blocked in http: 
-PASS Cross-origin `importScripts()` blocked in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
+PASS Filesystem and blob.
+PASS Cross-origin `importScripts()` blocked in http:
+PASS Cross-origin `importScripts()` blocked in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
 FAIL `eval()` blocked in http: assert_throws: `eval()` should throw 'EvalError'. function "_ => eval("1 + 1")" did not throw
-PASS `eval()` blocked in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
-PASS Cross-origin `importScripts()` blocked in http:?pipe=sub|header(Content-Security-Policy,script-src%20*) 
-PASS Cross-origin `importScripts()` blocked in blob: 
+PASS `eval()` blocked in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
+PASS Cross-origin `importScripts()` blocked in http:?pipe=sub|header(Content-Security-Policy,script-src%20*)
+PASS Cross-origin `importScripts()` blocked in blob:
 TIMEOUT `setTimeout([string])` blocked in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) Test timed out
-PASS `eval()` blocked in blob: 
+PASS `eval()` blocked in blob:
 FAIL `setTimeout([string])` blocked in http: assert_equals: expected 0 but got 1
 TIMEOUT `setTimeout([string])` blocked in blob: Test timed out
-PASS `eval()` blocked in http:?pipe=sub|header(Content-Security-Policy,script-src%20*) 
+PASS `eval()` blocked in http:?pipe=sub|header(Content-Security-Policy,script-src%20*)
 TIMEOUT `setTimeout([string])` blocked in http:?pipe=sub|header(Content-Security-Policy,script-src%20*) Test timed out
 

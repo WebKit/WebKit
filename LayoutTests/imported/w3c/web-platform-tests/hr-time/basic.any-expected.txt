@@ -1,6 +1,6 @@
 
-PASS self.performance.now() is a function that returns a number 
-PASS self.performance.now() returns a positive number 
-PASS self.performance.now() difference is not negative 
-PASS High resolution time has approximately the right relative magnitude 
+PASS self.performance.now() is a function that returns a number
+PASS self.performance.now() returns a positive number
+PASS self.performance.now() difference is not negative
+PASS High resolution time has approximately the right relative magnitude
 

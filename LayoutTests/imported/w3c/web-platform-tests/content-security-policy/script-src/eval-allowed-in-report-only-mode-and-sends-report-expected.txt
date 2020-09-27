@@ -1,4 +1,4 @@
 
-PASS Eval is allowed because the CSP is report-only 
-PASS Violation report status OK. 
+PASS Eval is allowed because the CSP is report-only
+PASS Violation report status OK.
 

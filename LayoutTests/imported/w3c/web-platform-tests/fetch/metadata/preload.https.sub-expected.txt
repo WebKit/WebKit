@@ -13,47 +13,47 @@ Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resourc
 
 Harness Error (TIMEOUT), message = null
 
-PASS Browser supports preload. 
-PASS <link rel='preload' as='fetch' href='https://localhost:9443/...'> 
+PASS Browser supports preload.
+PASS <link rel='preload' as='fetch' href='https://localhost:9443/...'>
 TIMEOUT <link rel='preload' as='fetch' href='https://www.localhost:9443/...'> Test timed out
 TIMEOUT <link rel='preload' as='fetch' href='https://www.127.0.0.1:9443/...'> Test timed out
-PASS <link rel='preload' as='font' href='https://localhost:9443/...'> 
+PASS <link rel='preload' as='font' href='https://localhost:9443/...'>
 FAIL <link rel='preload' as='font' href='https://www.localhost:9443/...'> assert_not_equals: got disallowed value "No header has been recorded"
 FAIL <link rel='preload' as='font' href='https://www.127.0.0.1:9443/...'> assert_not_equals: got disallowed value "No header has been recorded"
-PASS <link rel='preload' as='image' href='https://localhost:9443/...'> 
+PASS <link rel='preload' as='image' href='https://localhost:9443/...'>
 TIMEOUT <link rel='preload' as='image' href='https://www.localhost:9443/...'> Test timed out
 TIMEOUT <link rel='preload' as='image' href='https://www.127.0.0.1:9443/...'> Test timed out
-PASS <link rel='preload' as='script' href='https://localhost:9443/...'> 
+PASS <link rel='preload' as='script' href='https://localhost:9443/...'>
 TIMEOUT <link rel='preload' as='script' href='https://www.localhost:9443/...'> Test timed out
 TIMEOUT <link rel='preload' as='script' href='https://www.127.0.0.1:9443/...'> Test timed out
-PASS <link rel='preload' as='style' href='https://localhost:9443/...'> 
+PASS <link rel='preload' as='style' href='https://localhost:9443/...'>
 TIMEOUT <link rel='preload' as='style' href='https://www.localhost:9443/...'> Test timed out
 TIMEOUT <link rel='preload' as='style' href='https://www.127.0.0.1:9443/...'> Test timed out
-PASS <link rel='preload' as='track' href='https://localhost:9443/...'> 
+PASS <link rel='preload' as='track' href='https://localhost:9443/...'>
 TIMEOUT <link rel='preload' as='track' href='https://www.localhost:9443/...'> Test timed out
 TIMEOUT <link rel='preload' as='track' href='https://www.127.0.0.1:9443/...'> Test timed out
 FAIL preload font localhost:9443: sec-fetch-dest assert_equals: expected "font" but got ""
 FAIL preload font localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL preload font localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS preload font localhost:9443: sec-fetch-user 
+PASS preload font localhost:9443: sec-fetch-user
 FAIL preload style localhost:9443: sec-fetch-dest assert_equals: expected "style" but got ""
 FAIL preload style localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL preload style localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS preload style localhost:9443: sec-fetch-user 
+PASS preload style localhost:9443: sec-fetch-user
 FAIL preload track localhost:9443: sec-fetch-dest assert_equals: expected "track" but got ""
 FAIL preload track localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL preload track localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS preload track localhost:9443: sec-fetch-user 
+PASS preload track localhost:9443: sec-fetch-user
 FAIL preload fetch localhost:9443: sec-fetch-dest assert_equals: expected "empty" but got ""
 FAIL preload fetch localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL preload fetch localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS preload fetch localhost:9443: sec-fetch-user 
+PASS preload fetch localhost:9443: sec-fetch-user
 FAIL preload image localhost:9443: sec-fetch-dest assert_equals: expected "image" but got ""
 FAIL preload image localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL preload image localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS preload image localhost:9443: sec-fetch-user 
+PASS preload image localhost:9443: sec-fetch-user
 FAIL preload script localhost:9443: sec-fetch-dest assert_equals: expected "script" but got ""
 FAIL preload script localhost:9443: sec-fetch-mode assert_equals: expected "cors" but got ""
 FAIL preload script localhost:9443: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS preload script localhost:9443: sec-fetch-user 
+PASS preload script localhost:9443: sec-fetch-user
 

@@ -6,6 +6,6 @@ Style that does not match a 'nonce-*' expression in 'style-src' should not be ap
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire securitypolicyviolation 
-PASS stylenonce-blocked 
+NOTRUN Should fire securitypolicyviolation
+PASS stylenonce-blocked
 

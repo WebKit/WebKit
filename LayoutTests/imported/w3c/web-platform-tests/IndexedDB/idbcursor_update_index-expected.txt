@@ -1,3 +1,3 @@
 
-PASS IDBCursor.update() - index - modify a record in the object store  
+PASS IDBCursor.update() - index - modify a record in the object store
 

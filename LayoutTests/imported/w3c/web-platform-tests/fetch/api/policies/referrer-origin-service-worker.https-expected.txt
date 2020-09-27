@@ -1,5 +1,5 @@
 
-PASS Fetch in service worker: referrer with no-referrer policy 
-PASS Request's referrer is origin 
-PASS Cross-origin referrer is overridden by client origin 
+PASS Fetch in service worker: referrer with no-referrer policy
+PASS Request's referrer is origin
+PASS Cross-origin referrer is overridden by client origin
 

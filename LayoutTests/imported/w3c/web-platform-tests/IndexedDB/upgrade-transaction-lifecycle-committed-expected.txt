@@ -1,4 +1,4 @@
 
-PASS in the complete event handler for a committed transaction 
-PASS in a setTimeout(0) callback after the complete event is fired for a committed transaction 
+PASS in the complete event handler for a committed transaction
+PASS in a setTimeout(0) callback after the complete event is fired for a committed transaction
 

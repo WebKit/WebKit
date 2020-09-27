@@ -4,6 +4,6 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'navigate-to'.
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that no spv event is raised 
-PASS Violation report status OK. 
+NOTRUN Test that no spv event is raised
+PASS Violation report status OK.
 

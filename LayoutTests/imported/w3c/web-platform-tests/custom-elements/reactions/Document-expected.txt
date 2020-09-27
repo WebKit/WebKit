@@ -1,14 +1,14 @@
 
-PASS importNode on Document must not construct a new custom element when importing a custom element into a window-less document 
-PASS importNode on Document must construct a new custom element when importing a custom element from a template 
-PASS adoptNode on Document must enqueue an adopted reaction when importing a custom element 
-PASS execCommand on Document must enqueue a disconnected reaction when deleting a custom element from a contenteditable element 
-PASS title on Document must enqueue disconnectedCallback when removing a custom element 
-PASS body on Document must enqueue disconnectedCallback when removing a custom element 
-PASS body on Document must enqueue connectedCallback when inserting a custom element 
-PASS open on Document must enqueue disconnectedCallback when removing a custom element 
-PASS write on Document must enqueue disconnectedCallback when removing a custom element 
-PASS write on Document must enqueue connectedCallback after constructing a custom element 
-PASS writeln on Document must enqueue disconnectedCallback when removing a custom element 
-PASS writeln on Document must enqueue connectedCallback after constructing a custom element 
+PASS importNode on Document must not construct a new custom element when importing a custom element into a window-less document
+PASS importNode on Document must construct a new custom element when importing a custom element from a template
+PASS adoptNode on Document must enqueue an adopted reaction when importing a custom element
+PASS execCommand on Document must enqueue a disconnected reaction when deleting a custom element from a contenteditable element
+PASS title on Document must enqueue disconnectedCallback when removing a custom element
+PASS body on Document must enqueue disconnectedCallback when removing a custom element
+PASS body on Document must enqueue connectedCallback when inserting a custom element
+PASS open on Document must enqueue disconnectedCallback when removing a custom element
+PASS write on Document must enqueue disconnectedCallback when removing a custom element
+PASS write on Document must enqueue connectedCallback after constructing a custom element
+PASS writeln on Document must enqueue disconnectedCallback when removing a custom element
+PASS writeln on Document must enqueue connectedCallback after constructing a custom element
 

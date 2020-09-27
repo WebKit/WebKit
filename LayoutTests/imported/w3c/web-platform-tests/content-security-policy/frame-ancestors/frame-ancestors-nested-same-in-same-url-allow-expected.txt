@@ -1,4 +1,4 @@
 
 
-PASS A 'frame-ancestors' CSP directive with a URL value should block or allow rendering in nested frames as appropriate. 
+PASS A 'frame-ancestors' CSP directive with a URL value should block or allow rendering in nested frames as appropriate.
 

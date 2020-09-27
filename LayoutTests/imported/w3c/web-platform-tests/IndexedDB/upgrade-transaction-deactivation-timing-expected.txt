@@ -1,5 +1,5 @@
 
-PASS Upgrade transactions are active in upgradeneeded callback 
-PASS Upgrade transactions are active in upgradeneeded callback and microtasks 
-PASS Upgrade transactions are deactivated before next task 
+PASS Upgrade transactions are active in upgradeneeded callback
+PASS Upgrade transactions are active in upgradeneeded callback and microtasks
+PASS Upgrade transactions are deactivated before next task
 

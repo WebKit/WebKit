@@ -10,5 +10,5 @@ TIMEOUT back to cross-site-initiated navigation Test timed out
 FAIL back to same-origin-initiated navigation 1: sec-fetch-dest assert_equals: expected "document" but got ""
 FAIL back to same-origin-initiated navigation 1: sec-fetch-mode assert_equals: expected "navigate" but got ""
 FAIL back to same-origin-initiated navigation 1: sec-fetch-site assert_equals: expected "same-origin" but got ""
-PASS back to same-origin-initiated navigation 1: sec-fetch-user 
+PASS back to same-origin-initiated navigation 1: sec-fetch-user
 

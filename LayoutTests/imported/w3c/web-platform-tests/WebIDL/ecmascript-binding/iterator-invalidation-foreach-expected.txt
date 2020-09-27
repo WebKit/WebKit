@@ -1,5 +1,5 @@
 
-PASS forEach will not iterate over elements removed during iteration 
-PASS Removing elements already iterated over during forEach will cause iterator to skip an element 
-PASS Elements added during iteration with forEach will be reached 
+PASS forEach will not iterate over elements removed during iteration
+PASS Removing elements already iterated over during forEach will cause iterator to skip an element
+PASS Elements added during iteration with forEach will be reached
 

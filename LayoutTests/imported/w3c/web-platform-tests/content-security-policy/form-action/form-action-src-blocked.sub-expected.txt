@@ -1,5 +1,5 @@
 
-  
+
 Tests that blocking form actions works correctly.
 
 

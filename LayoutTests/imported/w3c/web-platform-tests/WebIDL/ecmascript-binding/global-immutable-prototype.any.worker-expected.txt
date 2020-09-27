@@ -1,4 +1,4 @@
 
-PASS Setting to a different prototype 
-PASS Setting to the same prototype 
+PASS Setting to a different prototype
+PASS Setting to the same prototype
 

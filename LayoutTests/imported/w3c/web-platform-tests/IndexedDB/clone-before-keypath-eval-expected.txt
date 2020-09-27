@@ -1,7 +1,7 @@
 
 FAIL Key generator and key path validity check operates on a clone assert_equals: put() operation should access primary key property once expected 1 but got 2
 FAIL Failing key path validity check operates on a clone assert_equals: put() operation should access primary key property once expected 1 but got 2
-PASS Index key path evaluations operate on a clone 
+PASS Index key path evaluations operate on a clone
 FAIL Store and index key path evaluations operate on the same clone assert_equals: put() should access primary key property once expected 1 but got 2
 FAIL Cursor update checks and keypath evaluations operate on a clone Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.
 

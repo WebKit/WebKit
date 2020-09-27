@@ -1,5 +1,5 @@
 Test that "form-action 'self'" works correctly when the form uses target="_blank". If this test passes, a new window must open after pressing "submit".
 
 
-PASS The form submission should not be blocked by the iframe's CSP. 
+PASS The form submission should not be blocked by the iframe's CSP.
 

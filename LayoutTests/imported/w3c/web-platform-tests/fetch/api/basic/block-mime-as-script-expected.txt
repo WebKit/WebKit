@@ -1,24 +1,24 @@
 
-PASS Should fail loading non-empty script with text/csv MIME type 
-PASS Should fail loading non-empty script with audio/aiff MIME type 
-PASS Should fail loading non-empty script with audio/midi MIME type 
-PASS Should fail loading non-empty script with audio/whatever MIME type 
-PASS Should fail loading non-empty script with video/avi MIME type 
-PASS Should fail loading non-empty script with video/fli MIME type 
-PASS Should fail loading non-empty script with video/whatever MIME type 
-PASS Should fail loading non-empty script with image/jpeg MIME type 
-PASS Should fail loading non-empty script with image/gif MIME type 
-PASS Should fail loading non-empty script with image/whatever MIME type 
-PASS Should fail loading empty script with text/csv MIME type 
-PASS Should fail loading empty script with audio/aiff MIME type 
-PASS Should fail loading empty script with audio/midi MIME type 
-PASS Should fail loading empty script with audio/whatever MIME type 
-PASS Should fail loading empty script with video/avi MIME type 
-PASS Should fail loading empty script with video/fli MIME type 
-PASS Should fail loading empty script with video/whatever MIME type 
-PASS Should fail loading empty script with image/jpeg MIME type 
-PASS Should fail loading empty script with image/gif MIME type 
-PASS Should fail loading empty script with image/whatever MIME type 
-PASS Should load script with text/html MIME type 
-PASS Should load script with text/plain MIME type 
+PASS Should fail loading non-empty script with text/csv MIME type
+PASS Should fail loading non-empty script with audio/aiff MIME type
+PASS Should fail loading non-empty script with audio/midi MIME type
+PASS Should fail loading non-empty script with audio/whatever MIME type
+PASS Should fail loading non-empty script with video/avi MIME type
+PASS Should fail loading non-empty script with video/fli MIME type
+PASS Should fail loading non-empty script with video/whatever MIME type
+PASS Should fail loading non-empty script with image/jpeg MIME type
+PASS Should fail loading non-empty script with image/gif MIME type
+PASS Should fail loading non-empty script with image/whatever MIME type
+PASS Should fail loading empty script with text/csv MIME type
+PASS Should fail loading empty script with audio/aiff MIME type
+PASS Should fail loading empty script with audio/midi MIME type
+PASS Should fail loading empty script with audio/whatever MIME type
+PASS Should fail loading empty script with video/avi MIME type
+PASS Should fail loading empty script with video/fli MIME type
+PASS Should fail loading empty script with video/whatever MIME type
+PASS Should fail loading empty script with image/jpeg MIME type
+PASS Should fail loading empty script with image/gif MIME type
+PASS Should fail loading empty script with image/whatever MIME type
+PASS Should load script with text/html MIME type
+PASS Should load script with text/plain MIME type
 

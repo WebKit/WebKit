@@ -3,55 +3,55 @@ CONSOLE MESSAGE: EventSource cannot load http://foo/ due to access control check
 EventSource IDL tests
 
 
-PASS EventTarget interface: existence and properties of interface object 
-PASS EventTarget interface object length 
-PASS EventTarget interface object name 
-PASS EventTarget interface: existence and properties of interface prototype object 
-PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
-PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
-PASS EventTarget interface: operation addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) 
-PASS EventTarget interface: operation removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) 
-PASS EventTarget interface: operation dispatchEvent(Event) 
-PASS EventListener interface: existence and properties of interface object 
-PASS EventListener interface: existence and properties of interface prototype object 
-PASS EventListener interface: existence and properties of interface prototype object's "constructor" property 
-PASS EventListener interface: existence and properties of interface prototype object's @@unscopables property 
-PASS EventListener interface: operation handleEvent(Event) 
-PASS EventSource interface: existence and properties of interface object 
-PASS EventSource interface object length 
-PASS EventSource interface object name 
-PASS EventSource interface: existence and properties of interface prototype object 
-PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
-PASS EventSource interface: existence and properties of interface prototype object's @@unscopables property 
-PASS EventSource interface: attribute url 
-PASS EventSource interface: attribute withCredentials 
-PASS EventSource interface: constant CONNECTING on interface object 
-PASS EventSource interface: constant CONNECTING on interface prototype object 
-PASS EventSource interface: constant OPEN on interface object 
-PASS EventSource interface: constant OPEN on interface prototype object 
-PASS EventSource interface: constant CLOSED on interface object 
-PASS EventSource interface: constant CLOSED on interface prototype object 
-PASS EventSource interface: attribute readyState 
-PASS EventSource interface: attribute onopen 
-PASS EventSource interface: attribute onmessage 
-PASS EventSource interface: attribute onerror 
-PASS EventSource interface: operation close() 
-PASS EventSource must be primary interface of new EventSource("http://foo") 
-PASS Stringification of new EventSource("http://foo") 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "url" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "withCredentials" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "CONNECTING" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "OPEN" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "CLOSED" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "readyState" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "onopen" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "onmessage" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "onerror" with the proper type 
-PASS EventSource interface: new EventSource("http://foo") must inherit property "close()" with the proper type 
-PASS EventTarget interface: new EventSource("http://foo") must inherit property "addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))" with the proper type 
-PASS EventTarget interface: calling addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) on new EventSource("http://foo") with too few arguments must throw TypeError 
-PASS EventTarget interface: new EventSource("http://foo") must inherit property "removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))" with the proper type 
-PASS EventTarget interface: calling removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) on new EventSource("http://foo") with too few arguments must throw TypeError 
-PASS EventTarget interface: new EventSource("http://foo") must inherit property "dispatchEvent(Event)" with the proper type 
-PASS EventTarget interface: calling dispatchEvent(Event) on new EventSource("http://foo") with too few arguments must throw TypeError 
+PASS EventTarget interface: existence and properties of interface object
+PASS EventTarget interface object length
+PASS EventTarget interface object name
+PASS EventTarget interface: existence and properties of interface prototype object
+PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property
+PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property
+PASS EventTarget interface: operation addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))
+PASS EventTarget interface: operation removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))
+PASS EventTarget interface: operation dispatchEvent(Event)
+PASS EventListener interface: existence and properties of interface object
+PASS EventListener interface: existence and properties of interface prototype object
+PASS EventListener interface: existence and properties of interface prototype object's "constructor" property
+PASS EventListener interface: existence and properties of interface prototype object's @@unscopables property
+PASS EventListener interface: operation handleEvent(Event)
+PASS EventSource interface: existence and properties of interface object
+PASS EventSource interface object length
+PASS EventSource interface object name
+PASS EventSource interface: existence and properties of interface prototype object
+PASS EventSource interface: existence and properties of interface prototype object's "constructor" property
+PASS EventSource interface: existence and properties of interface prototype object's @@unscopables property
+PASS EventSource interface: attribute url
+PASS EventSource interface: attribute withCredentials
+PASS EventSource interface: constant CONNECTING on interface object
+PASS EventSource interface: constant CONNECTING on interface prototype object
+PASS EventSource interface: constant OPEN on interface object
+PASS EventSource interface: constant OPEN on interface prototype object
+PASS EventSource interface: constant CLOSED on interface object
+PASS EventSource interface: constant CLOSED on interface prototype object
+PASS EventSource interface: attribute readyState
+PASS EventSource interface: attribute onopen
+PASS EventSource interface: attribute onmessage
+PASS EventSource interface: attribute onerror
+PASS EventSource interface: operation close()
+PASS EventSource must be primary interface of new EventSource("http://foo")
+PASS Stringification of new EventSource("http://foo")
+PASS EventSource interface: new EventSource("http://foo") must inherit property "url" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "withCredentials" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "CONNECTING" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "OPEN" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "CLOSED" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "readyState" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "onopen" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "onmessage" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "onerror" with the proper type
+PASS EventSource interface: new EventSource("http://foo") must inherit property "close()" with the proper type
+PASS EventTarget interface: new EventSource("http://foo") must inherit property "addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))" with the proper type
+PASS EventTarget interface: calling addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) on new EventSource("http://foo") with too few arguments must throw TypeError
+PASS EventTarget interface: new EventSource("http://foo") must inherit property "removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))" with the proper type
+PASS EventTarget interface: calling removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) on new EventSource("http://foo") with too few arguments must throw TypeError
+PASS EventTarget interface: new EventSource("http://foo") must inherit property "dispatchEvent(Event)" with the proper type
+PASS EventTarget interface: calling dispatchEvent(Event) on new EventSource("http://foo") with too few arguments must throw TypeError
 

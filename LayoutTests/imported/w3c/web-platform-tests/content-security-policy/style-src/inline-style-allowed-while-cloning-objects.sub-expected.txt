@@ -11,27 +11,27 @@ Yet another div.
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that violation report event was fired 
-PASS inline-style-allowed-while-cloning-objects 
+NOTRUN Test that violation report event was fired
+PASS inline-style-allowed-while-cloning-objects
 FAIL inline-style-allowed-while-cloning-objects 1 null is not an object (evaluating 'node2.style.background.match(/yellow/)[0]')
-PASS inline-style-allowed-while-cloning-objects 2 
+PASS inline-style-allowed-while-cloning-objects 2
 FAIL inline-style-allowed-while-cloning-objects 3 null is not an object (evaluating 'node4.style.background.match(/blue/)[0]')
-PASS inline-style-allowed-while-cloning-objects 4 
-PASS inline-style-allowed-while-cloning-objects 5 
-PASS inline-style-allowed-while-cloning-objects 6 
-PASS inline-style-allowed-while-cloning-objects 7 
-PASS inline-style-allowed-while-cloning-objects 8 
-PASS inline-style-allowed-while-cloning-objects 9 
-PASS inline-style-allowed-while-cloning-objects 10 
-PASS inline-style-allowed-while-cloning-objects 11 
-PASS inline-style-allowed-while-cloning-objects 12 
-PASS inline-style-allowed-while-cloning-objects 13 
-PASS inline-style-allowed-while-cloning-objects 14 
-PASS inline-style-allowed-while-cloning-objects 15 
-PASS inline-style-allowed-while-cloning-objects 16 
-PASS inline-style-allowed-while-cloning-objects 17 
+PASS inline-style-allowed-while-cloning-objects 4
+PASS inline-style-allowed-while-cloning-objects 5
+PASS inline-style-allowed-while-cloning-objects 6
+PASS inline-style-allowed-while-cloning-objects 7
+PASS inline-style-allowed-while-cloning-objects 8
+PASS inline-style-allowed-while-cloning-objects 9
+PASS inline-style-allowed-while-cloning-objects 10
+PASS inline-style-allowed-while-cloning-objects 11
+PASS inline-style-allowed-while-cloning-objects 12
+PASS inline-style-allowed-while-cloning-objects 13
+PASS inline-style-allowed-while-cloning-objects 14
+PASS inline-style-allowed-while-cloning-objects 15
+PASS inline-style-allowed-while-cloning-objects 16
+PASS inline-style-allowed-while-cloning-objects 17
 FAIL inline-style-allowed-while-cloning-objects 18 assert_equals: expected "rgb(238, 130, 238) none repeat scroll 0% 0% / auto padding-box border-box" but got "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box"
 FAIL inline-style-allowed-while-cloning-objects 19 assert_equals: expected "rgb(238, 130, 238) none repeat scroll 0% 0% / auto padding-box border-box" but got "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box"
-PASS inline-style-allowed-while-cloning-objects 20 
-PASS inline-style-allowed-while-cloning-objects 21 
+PASS inline-style-allowed-while-cloning-objects 20
+PASS inline-style-allowed-while-cloning-objects 21
 Yet another div.

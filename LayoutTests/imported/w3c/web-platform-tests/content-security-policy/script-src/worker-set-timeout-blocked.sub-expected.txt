@@ -1,3 +1,3 @@
 
-PASS Expecting alerts: ["setTimeout blocked"] 
+PASS Expecting alerts: ["setTimeout blocked"]
 

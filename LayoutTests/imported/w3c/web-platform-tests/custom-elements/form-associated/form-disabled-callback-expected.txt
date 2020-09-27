@@ -10,7 +10,7 @@ Harness Error (FAIL), message = TypeError: this.attachInternals is not a functio
 
 FAIL Adding/removing disabled content attribute this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
 FAIL Relationship with FIELDSET assert_true: expected true got false
-PASS A disabled form-associated custom element should not provide an entry for it 
+PASS A disabled form-associated custom element should not provide an entry for it
 FAIL A disabled form-associated custom element should not submit an entry for it assert_not_equals: got disallowed value -1
 FAIL Disabled attribute affects focus-capability this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
 FAIL Upgrading an element with disabled content attribute assert_array_equals: value is undefined, expected array

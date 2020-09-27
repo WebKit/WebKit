@@ -1,16 +1,16 @@
 
-PASS nodeValue on Node must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS nodeValue on Node must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-PASS textContent on Node must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS textContent on Node must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-PASS cloneNode on Node must enqueue an attributeChanged reaction when cloning an element with an observed attribute 
-PASS cloneNode on Node must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute 
-PASS cloneNode on Node must enqueue an attributeChanged reaction when cloning an element only for observed attributes 
-PASS insertBefore on ChildNode must enqueue a connected reaction 
-PASS insertBefore on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS appendChild on ChildNode must enqueue a connected reaction 
-PASS appendChild on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS replaceChild on ChildNode must enqueue a connected reaction 
-PASS replaceChild on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS removeChild on ChildNode must enqueue a disconnected reaction 
+PASS nodeValue on Node must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS nodeValue on Node must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute
+PASS textContent on Node must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS textContent on Node must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute
+PASS cloneNode on Node must enqueue an attributeChanged reaction when cloning an element with an observed attribute
+PASS cloneNode on Node must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute
+PASS cloneNode on Node must enqueue an attributeChanged reaction when cloning an element only for observed attributes
+PASS insertBefore on ChildNode must enqueue a connected reaction
+PASS insertBefore on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS appendChild on ChildNode must enqueue a connected reaction
+PASS appendChild on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS replaceChild on ChildNode must enqueue a connected reaction
+PASS replaceChild on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS removeChild on ChildNode must enqueue a disconnected reaction
 

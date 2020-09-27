@@ -1,8 +1,8 @@
 
-PASS URL query: first 
-PASS URL query: uppercase 
-PASS URL query: last 
-PASS URL query: quoted 
-PASS URL query: quoted-single 
-PASS URL query: no-x 
+PASS URL query: first
+PASS URL query: uppercase
+PASS URL query: last
+PASS URL query: quoted
+PASS URL query: quoted-single
+PASS URL query: no-x
 

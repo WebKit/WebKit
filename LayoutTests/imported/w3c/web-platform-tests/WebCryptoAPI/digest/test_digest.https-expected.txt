@@ -1,84 +1,84 @@
 encrypt Tests for digest method
 
 
-PASS SHA-1 with empty source data 
-PASS sha-1 with empty source data 
-PASS Sha-1 with empty source data 
-PASS SHA-1 with empty source data and altered buffer after call 
-PASS SHA-256 with empty source data 
-PASS sha-256 with empty source data 
-PASS Sha-256 with empty source data 
-PASS SHA-256 with empty source data and altered buffer after call 
-PASS SHA-384 with empty source data 
-PASS sha-384 with empty source data 
-PASS Sha-384 with empty source data 
-PASS SHA-384 with empty source data and altered buffer after call 
-PASS SHA-512 with empty source data 
-PASS sha-512 with empty source data 
-PASS Sha-512 with empty source data 
-PASS SHA-512 with empty source data and altered buffer after call 
-PASS SHA-1 with short source data 
-PASS sha-1 with short source data 
-PASS Sha-1 with short source data 
-PASS SHA-1 with short source data and altered buffer after call 
-PASS SHA-256 with short source data 
-PASS sha-256 with short source data 
-PASS Sha-256 with short source data 
-PASS SHA-256 with short source data and altered buffer after call 
-PASS SHA-384 with short source data 
-PASS sha-384 with short source data 
-PASS Sha-384 with short source data 
-PASS SHA-384 with short source data and altered buffer after call 
-PASS SHA-512 with short source data 
-PASS sha-512 with short source data 
-PASS Sha-512 with short source data 
-PASS SHA-512 with short source data and altered buffer after call 
-PASS SHA-1 with medium source data 
-PASS sha-1 with medium source data 
-PASS Sha-1 with medium source data 
-PASS SHA-1 with medium source data and altered buffer after call 
-PASS SHA-256 with medium source data 
-PASS sha-256 with medium source data 
-PASS Sha-256 with medium source data 
-PASS SHA-256 with medium source data and altered buffer after call 
-PASS SHA-384 with medium source data 
-PASS sha-384 with medium source data 
-PASS Sha-384 with medium source data 
-PASS SHA-384 with medium source data and altered buffer after call 
-PASS SHA-512 with medium source data 
-PASS sha-512 with medium source data 
-PASS Sha-512 with medium source data 
-PASS SHA-512 with medium source data and altered buffer after call 
-PASS SHA-1 with long source data 
-PASS sha-1 with long source data 
-PASS Sha-1 with long source data 
-PASS SHA-1 with long source data and altered buffer after call 
-PASS SHA-256 with long source data 
-PASS sha-256 with long source data 
-PASS Sha-256 with long source data 
-PASS SHA-256 with long source data and altered buffer after call 
-PASS SHA-384 with long source data 
-PASS sha-384 with long source data 
-PASS Sha-384 with long source data 
-PASS SHA-384 with long source data and altered buffer after call 
-PASS SHA-512 with long source data 
-PASS sha-512 with long source data 
-PASS Sha-512 with long source data 
-PASS SHA-512 with long source data and altered buffer after call 
-PASS AES-GCM with empty 
-PASS RSA-OAEP with empty 
-PASS PBKDF2 with empty 
-PASS AES-KW with empty 
-PASS AES-GCM with short 
-PASS RSA-OAEP with short 
-PASS PBKDF2 with short 
-PASS AES-KW with short 
-PASS AES-GCM with medium 
-PASS RSA-OAEP with medium 
-PASS PBKDF2 with medium 
-PASS AES-KW with medium 
-PASS AES-GCM with long 
-PASS RSA-OAEP with long 
-PASS PBKDF2 with long 
-PASS AES-KW with long 
+PASS SHA-1 with empty source data
+PASS sha-1 with empty source data
+PASS Sha-1 with empty source data
+PASS SHA-1 with empty source data and altered buffer after call
+PASS SHA-256 with empty source data
+PASS sha-256 with empty source data
+PASS Sha-256 with empty source data
+PASS SHA-256 with empty source data and altered buffer after call
+PASS SHA-384 with empty source data
+PASS sha-384 with empty source data
+PASS Sha-384 with empty source data
+PASS SHA-384 with empty source data and altered buffer after call
+PASS SHA-512 with empty source data
+PASS sha-512 with empty source data
+PASS Sha-512 with empty source data
+PASS SHA-512 with empty source data and altered buffer after call
+PASS SHA-1 with short source data
+PASS sha-1 with short source data
+PASS Sha-1 with short source data
+PASS SHA-1 with short source data and altered buffer after call
+PASS SHA-256 with short source data
+PASS sha-256 with short source data
+PASS Sha-256 with short source data
+PASS SHA-256 with short source data and altered buffer after call
+PASS SHA-384 with short source data
+PASS sha-384 with short source data
+PASS Sha-384 with short source data
+PASS SHA-384 with short source data and altered buffer after call
+PASS SHA-512 with short source data
+PASS sha-512 with short source data
+PASS Sha-512 with short source data
+PASS SHA-512 with short source data and altered buffer after call
+PASS SHA-1 with medium source data
+PASS sha-1 with medium source data
+PASS Sha-1 with medium source data
+PASS SHA-1 with medium source data and altered buffer after call
+PASS SHA-256 with medium source data
+PASS sha-256 with medium source data
+PASS Sha-256 with medium source data
+PASS SHA-256 with medium source data and altered buffer after call
+PASS SHA-384 with medium source data
+PASS sha-384 with medium source data
+PASS Sha-384 with medium source data
+PASS SHA-384 with medium source data and altered buffer after call
+PASS SHA-512 with medium source data
+PASS sha-512 with medium source data
+PASS Sha-512 with medium source data
+PASS SHA-512 with medium source data and altered buffer after call
+PASS SHA-1 with long source data
+PASS sha-1 with long source data
+PASS Sha-1 with long source data
+PASS SHA-1 with long source data and altered buffer after call
+PASS SHA-256 with long source data
+PASS sha-256 with long source data
+PASS Sha-256 with long source data
+PASS SHA-256 with long source data and altered buffer after call
+PASS SHA-384 with long source data
+PASS sha-384 with long source data
+PASS Sha-384 with long source data
+PASS SHA-384 with long source data and altered buffer after call
+PASS SHA-512 with long source data
+PASS sha-512 with long source data
+PASS Sha-512 with long source data
+PASS SHA-512 with long source data and altered buffer after call
+PASS AES-GCM with empty
+PASS RSA-OAEP with empty
+PASS PBKDF2 with empty
+PASS AES-KW with empty
+PASS AES-GCM with short
+PASS RSA-OAEP with short
+PASS PBKDF2 with short
+PASS AES-KW with short
+PASS AES-GCM with medium
+PASS RSA-OAEP with medium
+PASS PBKDF2 with medium
+PASS AES-KW with medium
+PASS AES-GCM with long
+PASS RSA-OAEP with long
+PASS PBKDF2 with long
+PASS AES-KW with long
 

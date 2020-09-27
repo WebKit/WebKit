@@ -1,13 +1,13 @@
 
 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NoData-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NullData-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: UndefinedData-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallString-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBlob-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBufferSource-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallFormData-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeEncoded-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeForm-NAVIGATE 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeText-NAVIGATE 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NoData-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: NullData-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: UndefinedData-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallString-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBlob-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBufferSource-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallFormData-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeEncoded-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeForm-NAVIGATE
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallSafeContentTypeText-NAVIGATE
 

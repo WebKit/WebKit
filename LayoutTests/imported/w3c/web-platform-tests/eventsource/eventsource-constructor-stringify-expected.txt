@@ -1,6 +1,6 @@
 
-PASS EventSource: stringify argument, object 
-PASS EventSource: stringify argument, 1 
-PASS EventSource: stringify argument, null 
-PASS EventSource: stringify argument, undefined 
+PASS EventSource: stringify argument, object
+PASS EventSource: stringify argument, 1
+PASS EventSource: stringify argument, null
+PASS EventSource: stringify argument, undefined
 

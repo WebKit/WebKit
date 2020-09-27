@@ -1,14 +1,14 @@
 
-PASS Single item get 
-PASS Single item get (generated key) 
-PASS getAllKeys on empty object store 
-PASS Get all values 
-PASS Test maxCount 
-PASS Get bound range 
-PASS Get bound range with maxCount 
-PASS Get upper excluded 
-PASS Get lower excluded 
-PASS Get bound range (generated) with maxCount 
-PASS Non existent key 
-PASS zero maxCount 
+PASS Single item get
+PASS Single item get (generated key)
+PASS getAllKeys on empty object store
+PASS Get all values
+PASS Test maxCount
+PASS Get bound range
+PASS Get bound range with maxCount
+PASS Get upper excluded
+PASS Get lower excluded
+PASS Get bound range (generated) with maxCount
+PASS Non existent key
+PASS zero maxCount
 

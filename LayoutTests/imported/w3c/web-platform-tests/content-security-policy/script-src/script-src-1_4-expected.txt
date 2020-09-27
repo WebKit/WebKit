@@ -3,7 +3,7 @@ eval() should not run without 'unsafe-eval' script-src directive.
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that securitypolicyviolation event is fired 
-PASS eval() should throw without 'unsafe-eval' keyword source in script-src directive. 
-PASS eval() should not run without 'unsafe-eval' script-src directive. 
+NOTRUN Test that securitypolicyviolation event is fired
+PASS eval() should throw without 'unsafe-eval' keyword source in script-src directive.
+PASS eval() should not run without 'unsafe-eval' script-src directive.
 

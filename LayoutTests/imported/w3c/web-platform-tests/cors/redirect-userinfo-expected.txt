@@ -1,10 +1,10 @@
 CORS userinfo redirect handling
 
 
-PASS Disallow redirect with userinfo (user:pass@) 
-PASS Disallow redirect with userinfo (user:@) 
-PASS Disallow redirect with userinfo (user@) 
-PASS Allow redirect without userinfo (:@ is trimmed during URL parsing) 
-PASS Disallow redirect with userinfo (:pass@) 
-PASS Allow redirect without userinfo (@ is trimmed during URL parsing) 
+PASS Disallow redirect with userinfo (user:pass@)
+PASS Disallow redirect with userinfo (user:@)
+PASS Disallow redirect with userinfo (user@)
+PASS Allow redirect without userinfo (:@ is trimmed during URL parsing)
+PASS Disallow redirect with userinfo (:pass@)
+PASS Allow redirect without userinfo (@ is trimmed during URL parsing)
 

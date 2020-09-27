@@ -3,28 +3,28 @@ Simple requests
 Simple requests shouldn't trigger preflight
 
 
-PASS No preflight GET and {"Accept":"test"} 
-PASS No preflight HEAD and {"Accept":"test"} 
-PASS No preflight POST and {"Accept":"test"} 
-PASS No preflight GET and {"accept-language":"test"} 
-PASS No preflight HEAD and {"accept-language":"test"} 
-PASS No preflight POST and {"accept-language":"test"} 
-PASS No preflight GET and {"CONTENT-language":"test"} 
-PASS No preflight HEAD and {"CONTENT-language":"test"} 
-PASS No preflight POST and {"CONTENT-language":"test"} 
-PASS No preflight GET and {"Content-Type":"application/x-www-form-urlencoded"} 
-PASS No preflight HEAD and {"Content-Type":"application/x-www-form-urlencoded"} 
-PASS No preflight POST and {"Content-Type":"application/x-www-form-urlencoded"} 
-PASS No preflight GET and {"content-type":"multipart/form-data"} 
-PASS No preflight HEAD and {"content-type":"multipart/form-data"} 
-PASS No preflight POST and {"content-type":"multipart/form-data"} 
-PASS No preflight GET and {"content-type":"text/plain"} 
-PASS No preflight HEAD and {"content-type":"text/plain"} 
-PASS No preflight POST and {"content-type":"text/plain"} 
-PASS No preflight GET and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} 
-PASS No preflight HEAD and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} 
-PASS No preflight POST and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"} 
-PASS No preflight Get and {"content-type":"text/plain; parameter=extra_bonus"} 
-PASS No preflight post and {"content-type":"text/plain"} 
-PASS Check simple headers (async) 
+PASS No preflight GET and {"Accept":"test"}
+PASS No preflight HEAD and {"Accept":"test"}
+PASS No preflight POST and {"Accept":"test"}
+PASS No preflight GET and {"accept-language":"test"}
+PASS No preflight HEAD and {"accept-language":"test"}
+PASS No preflight POST and {"accept-language":"test"}
+PASS No preflight GET and {"CONTENT-language":"test"}
+PASS No preflight HEAD and {"CONTENT-language":"test"}
+PASS No preflight POST and {"CONTENT-language":"test"}
+PASS No preflight GET and {"Content-Type":"application/x-www-form-urlencoded"}
+PASS No preflight HEAD and {"Content-Type":"application/x-www-form-urlencoded"}
+PASS No preflight POST and {"Content-Type":"application/x-www-form-urlencoded"}
+PASS No preflight GET and {"content-type":"multipart/form-data"}
+PASS No preflight HEAD and {"content-type":"multipart/form-data"}
+PASS No preflight POST and {"content-type":"multipart/form-data"}
+PASS No preflight GET and {"content-type":"text/plain"}
+PASS No preflight HEAD and {"content-type":"text/plain"}
+PASS No preflight POST and {"content-type":"text/plain"}
+PASS No preflight GET and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"}
+PASS No preflight HEAD and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"}
+PASS No preflight POST and {"accept":"test","accept-language":"test","content-language":"test","content-type":"text/plain; parameter=whatever"}
+PASS No preflight Get and {"content-type":"text/plain; parameter=extra_bonus"}
+PASS No preflight post and {"content-type":"text/plain"}
+PASS Check simple headers (async)
 

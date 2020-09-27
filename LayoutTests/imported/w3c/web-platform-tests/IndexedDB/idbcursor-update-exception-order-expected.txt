@@ -1,6 +1,6 @@
 
-PASS IDBCursor.update exception order: TransactionInactiveError vs. ReadOnlyError 
-PASS IDBCursor.update exception order: ReadOnlyError vs. InvalidStateError #1 
-PASS IDBCursor.update exception order: ReadOnlyError vs. InvalidStateError #2 
-PASS IDBCursor.update exception order: InvalidStateError vs. DataError 
+PASS IDBCursor.update exception order: TransactionInactiveError vs. ReadOnlyError
+PASS IDBCursor.update exception order: ReadOnlyError vs. InvalidStateError #1
+PASS IDBCursor.update exception order: ReadOnlyError vs. InvalidStateError #2
+PASS IDBCursor.update exception order: InvalidStateError vs. DataError
 

@@ -1,4 +1,4 @@
 
 
-PASS Test that the parent can navigate the child because the relevant policy belongs to the navigation initiator (in this case the parent, which has the policy `navigate-to 'self'`) 
+PASS Test that the parent can navigate the child because the relevant policy belongs to the navigation initiator (in this case the parent, which has the policy `navigate-to 'self'`)
 

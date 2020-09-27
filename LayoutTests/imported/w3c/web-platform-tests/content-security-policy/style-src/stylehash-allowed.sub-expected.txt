@@ -7,5 +7,5 @@ This tests the result of a valid style hash. It passes if this text is green, an
 This tests the result of a valid style hash. It passes if this text is green, and a "PASS" alert for p4 is fired.
 
 
-PASS Expecting alerts: ["PASS (1/4): The '#p1' element's text is green, which means the style was correctly applied.","PASS (2/4): The '#p2' element's text is green, which means the style was correctly applied.","PASS (3/4): The '#p3' element's text is green, which means the style was correctly applied.","PASS (4/4): The '#p4' element's text is green, which means the style was correctly applied."] 
+PASS Expecting alerts: ["PASS (1/4): The '#p1' element's text is green, which means the style was correctly applied.","PASS (2/4): The '#p2' element's text is green, which means the style was correctly applied.","PASS (3/4): The '#p3' element's text is green, which means the style was correctly applied.","PASS (4/4): The '#p4' element's text is green, which means the style was correctly applied."]
 

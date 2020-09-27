@@ -1,12 +1,12 @@
 
 FAIL must not set the property value when assigning to a numeric property on an object which implements an indexed property getter but not a setter when not in strict mode assert_equals: expected (undefined) undefined but got (string) "foo"
 FAIL must throw when assigning to a numeric property on an object which implements a indexed property getter but not a setter in strict mode assert_throws_js: function "function () { element.childNodes["5"] = "foo"; }" did not throw
-PASS must allow assigning to a named property on an object which implements a named property getter but not a setter when not in strict mode 
-PASS must allow assigning to a named property on an object which implements a named property getter but not a setter in strict mode 
-PASS must allow assigning to a symbol property on an object which implements an indexed property getter but not a setter when not in strict mode 
-PASS must allow assigning to a symbol property on an object which implements an indexed property getter but not a setter in strict mode 
-PASS must allow assigning to a symbol property on an object which implements indexed and named property getters but no setters when not in strict mode 
-PASS must allow assigning to a symbol property on an object which implements indexed and named property getters but no setters in strict mode 
-PASS must allow assigning to a symbol property on an object which implements indexed and named property getters and setters when not in strict mode 
-PASS must allow assigning to a symbol property on an object which implements indexed and named property getters and setters in strict mode 
+PASS must allow assigning to a named property on an object which implements a named property getter but not a setter when not in strict mode
+PASS must allow assigning to a named property on an object which implements a named property getter but not a setter in strict mode
+PASS must allow assigning to a symbol property on an object which implements an indexed property getter but not a setter when not in strict mode
+PASS must allow assigning to a symbol property on an object which implements an indexed property getter but not a setter in strict mode
+PASS must allow assigning to a symbol property on an object which implements indexed and named property getters but no setters when not in strict mode
+PASS must allow assigning to a symbol property on an object which implements indexed and named property getters but no setters in strict mode
+PASS must allow assigning to a symbol property on an object which implements indexed and named property getters and setters when not in strict mode
+PASS must allow assigning to a symbol property on an object which implements indexed and named property getters and setters in strict mode
 

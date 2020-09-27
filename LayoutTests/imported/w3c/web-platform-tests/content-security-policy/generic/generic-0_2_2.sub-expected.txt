@@ -3,6 +3,6 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Prevents access to external scripts. 
-NOTRUN Should fire violation events for every failed violation 
+PASS Prevents access to external scripts.
+NOTRUN Should fire violation events for every failed violation
 

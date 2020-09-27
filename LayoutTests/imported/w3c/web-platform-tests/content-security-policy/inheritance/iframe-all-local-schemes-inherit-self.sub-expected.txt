@@ -1,8 +1,8 @@
 
-PASS <iframe>'s about:blank inherits policy. 
-PASS <iframe srcdoc>'s inherits policy. 
-PASS <iframe src='blob:...'>'s inherits policy. 
-PASS <iframe src='data:...'>'s inherits policy. 
-PASS <iframe src='javascript:...'>'s inherits policy. 
-PASS <iframe sandbox src='blob:...'>'s inherits policy. (opaque origin sandbox) 
+PASS <iframe>'s about:blank inherits policy.
+PASS <iframe srcdoc>'s inherits policy.
+PASS <iframe src='blob:...'>'s inherits policy.
+PASS <iframe src='data:...'>'s inherits policy.
+PASS <iframe src='javascript:...'>'s inherits policy.
+PASS <iframe sandbox src='blob:...'>'s inherits policy. (opaque origin sandbox)
 

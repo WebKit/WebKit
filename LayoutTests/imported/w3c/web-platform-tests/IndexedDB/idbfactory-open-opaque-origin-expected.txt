@@ -1,4 +1,4 @@
 
-PASS IDBFactory.open() in non-sandboxed iframe should not throw 
-PASS IDBFactory.open() in sandboxed iframe should throw SecurityError 
+PASS IDBFactory.open() in non-sandboxed iframe should not throw
+PASS IDBFactory.open() in sandboxed iframe should throw SecurityError
 

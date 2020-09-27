@@ -1,5 +1,5 @@
 
-PASS Constructing a Response with a stream on which getReader() is called 
-PASS Constructing a Response with a stream on which read() is called 
-PASS Constructing a Response with a stream on which read() and releaseLock() are called 
+PASS Constructing a Response with a stream on which getReader() is called
+PASS Constructing a Response with a stream on which read() is called
+PASS Constructing a Response with a stream on which read() and releaseLock() are called
 

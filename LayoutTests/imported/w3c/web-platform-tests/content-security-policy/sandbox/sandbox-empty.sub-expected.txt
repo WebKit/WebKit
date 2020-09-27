@@ -2,5 +2,5 @@ This test passes if it does alert pass.
 
 
 
-PASS Expecting logs: ["PASS2"] 
+PASS Expecting logs: ["PASS2"]
 

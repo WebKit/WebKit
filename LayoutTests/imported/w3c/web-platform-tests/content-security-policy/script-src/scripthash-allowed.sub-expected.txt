@@ -1,5 +1,5 @@
 This tests the effect of a valid script-hash value. It passes if no CSP violation is generated, and the alert_assert() is executed.
 
 
-PASS Expecting alerts: ["PASS (1/4)","PASS (2/4)","PASS (3/4)","PASS (4/4)"] 
+PASS Expecting alerts: ["PASS (1/4)","PASS (2/4)","PASS (3/4)","PASS (4/4)"]
 

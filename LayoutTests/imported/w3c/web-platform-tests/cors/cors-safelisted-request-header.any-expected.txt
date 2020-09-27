@@ -1,17 +1,17 @@
 
-PASS Preflight for {"content-type":"text /plain"} 
-PASS Preflight for {"content-type":"text\t/\tplain"} 
-PASS No preflight for {"content-type":"text/plain;"} 
-PASS No preflight for {"content-type":"text/plain;garbage"} 
-PASS Preflight for {"content-type":"text/plain;garbage\u0001\u0002"} 
-PASS Preflight for {"content-type":"text/plain,"} 
-PASS Preflight for {"content-type":",text/plain"} 
-PASS Preflight for {"content-type":"text/plain,text/plain"} 
-PASS Preflight for {"content-type":"text/plain,x/x"} 
-PASS Preflight for {"content-type":"text/plain\u000b"} 
-PASS Preflight for {"content-type":"text/plain\f"} 
-PASS Preflight for {"content-type":"application/www-form-urlencoded"} 
-PASS Preflight for {"content-type":"application/x-www-form-urlencoded;"} 
-PASS No preflight for {"content-type":"multipart/form-data"} 
-PASS Preflight for {"content-type":"multipart/form-data;\""} 
+PASS Preflight for {"content-type":"text /plain"}
+PASS Preflight for {"content-type":"text\t/\tplain"}
+PASS No preflight for {"content-type":"text/plain;"}
+PASS No preflight for {"content-type":"text/plain;garbage"}
+PASS Preflight for {"content-type":"text/plain;garbage\u0001\u0002"}
+PASS Preflight for {"content-type":"text/plain,"}
+PASS Preflight for {"content-type":",text/plain"}
+PASS Preflight for {"content-type":"text/plain,text/plain"}
+PASS Preflight for {"content-type":"text/plain,x/x"}
+PASS Preflight for {"content-type":"text/plain\u000b"}
+PASS Preflight for {"content-type":"text/plain\f"}
+PASS Preflight for {"content-type":"application/www-form-urlencoded"}
+PASS Preflight for {"content-type":"application/x-www-form-urlencoded;"}
+PASS No preflight for {"content-type":"multipart/form-data"}
+PASS Preflight for {"content-type":"multipart/form-data;\""}
 

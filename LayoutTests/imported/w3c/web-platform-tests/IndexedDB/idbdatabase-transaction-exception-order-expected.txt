@@ -1,6 +1,6 @@
 
-PASS IDBDatabase.transaction exception order: InvalidStateError vs. NotFoundError 
-PASS IDBDatabase.transaction exception order: InvalidStateError vs. InvalidAccessError 
-PASS IDBDatabase.transaction throws exception on invalid mode 
-PASS IDBDatabase.transaction exception order: NotFoundError vs. TypeError 
+PASS IDBDatabase.transaction exception order: InvalidStateError vs. NotFoundError
+PASS IDBDatabase.transaction exception order: InvalidStateError vs. InvalidAccessError
+PASS IDBDatabase.transaction throws exception on invalid mode
+PASS IDBDatabase.transaction exception order: NotFoundError vs. TypeError
 

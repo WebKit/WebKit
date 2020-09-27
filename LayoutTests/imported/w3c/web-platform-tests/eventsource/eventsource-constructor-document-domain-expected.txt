@@ -1,3 +1,3 @@
 
-PASS EventSource: document.domain 
+PASS EventSource: document.domain
 

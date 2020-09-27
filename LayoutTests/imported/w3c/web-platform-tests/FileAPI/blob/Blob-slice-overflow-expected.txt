@@ -1,6 +1,6 @@
 
-PASS slice start is negative, relativeStart will be max((size + start), 0) 
-PASS slice start is greater than blob size, relativeStart will be min(start, size) 
-PASS slice end is negative, relativeEnd will be max((size + end), 0) 
-PASS slice end is greater than blob size, relativeEnd will be min(end, size) 
+PASS slice start is negative, relativeStart will be max((size + start), 0)
+PASS slice start is greater than blob size, relativeStart will be min(start, size)
+PASS slice end is negative, relativeEnd will be max((size + end), 0)
+PASS slice end is greater than blob size, relativeEnd will be min(end, size)
 

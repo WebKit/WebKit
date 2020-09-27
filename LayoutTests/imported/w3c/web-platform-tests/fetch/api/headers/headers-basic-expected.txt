@@ -1,21 +1,21 @@
 
-PASS Create headers from no parameter 
-PASS Create headers from undefined parameter 
-PASS Create headers from empty object 
-PASS Create headers with null should throw 
-PASS Create headers with 1 should throw 
-PASS Create headers with sequence 
-PASS Create headers with record 
-PASS Create headers with existing headers 
-PASS Create headers with existing headers with custom iterator 
-PASS Check append method 
-PASS Check set method 
-PASS Check has method 
-PASS Check delete method 
-PASS Check get method 
-PASS Check keys method 
-PASS Check values method 
-PASS Check entries method 
-PASS Check Symbol.iterator method 
-PASS Check forEach method 
+PASS Create headers from no parameter
+PASS Create headers from undefined parameter
+PASS Create headers from empty object
+PASS Create headers with null should throw
+PASS Create headers with 1 should throw
+PASS Create headers with sequence
+PASS Create headers with record
+PASS Create headers with existing headers
+PASS Create headers with existing headers with custom iterator
+PASS Check append method
+PASS Check set method
+PASS Check has method
+PASS Check delete method
+PASS Check get method
+PASS Check keys method
+PASS Check values method
+PASS Check entries method
+PASS Check Symbol.iterator method
+PASS Check forEach method
 

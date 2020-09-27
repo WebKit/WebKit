@@ -1,6 +1,6 @@
 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: EmptyBufferSource 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBufferSource 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumBufferSource 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeBufferSource 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: EmptyBufferSource
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBufferSource
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumBufferSource
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeBufferSource
 

@@ -1,5 +1,5 @@
 
-PASS Browser supports prefetch. 
-PASS Browser supports performance APIs. 
-PASS Prefetch succeeds when allowed by prefetch-src 
+PASS Browser supports prefetch.
+PASS Browser supports performance APIs.
+PASS Prefetch succeeds when allowed by prefetch-src
 

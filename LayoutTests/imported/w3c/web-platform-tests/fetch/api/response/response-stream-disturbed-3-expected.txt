@@ -1,6 +1,6 @@
 
-PASS Getting blob after reading the Response body 
-PASS Getting text after reading the Response body 
-PASS Getting json after reading the Response body 
-PASS Getting arrayBuffer after reading the Response body 
+PASS Getting blob after reading the Response body
+PASS Getting text after reading the Response body
+PASS Getting json after reading the Response body
+PASS Getting arrayBuffer after reading the Response body
 

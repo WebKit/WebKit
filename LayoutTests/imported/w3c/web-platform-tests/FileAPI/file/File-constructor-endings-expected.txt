@@ -1,47 +1,47 @@
 
-PASS Valid "endings" value: "transparent" 
-PASS Valid "endings" value: "native" 
-PASS Invalid "endings" value: null 
-PASS Invalid "endings" value: "" 
-PASS Invalid "endings" value: "invalidEnumValue" 
-PASS Invalid "endings" value: "Transparent" 
-PASS Invalid "endings" value: "NATIVE" 
-PASS Invalid "endings" value: 0 
-PASS Invalid "endings" value: {} 
-PASS Exception propagation from options 
-PASS The "endings" options property is used 
-PASS Input LF with endings unspecified 
-PASS Input LF with endings 'transparent' 
-PASS Input LF with endings 'native' 
-PASS Input CR with endings unspecified 
-PASS Input CR with endings 'transparent' 
-PASS Input CR with endings 'native' 
-PASS Input CRLF with endings unspecified 
-PASS Input CRLF with endings 'transparent' 
-PASS Input CRLF with endings 'native' 
-PASS Input CRCR with endings unspecified 
-PASS Input CRCR with endings 'transparent' 
-PASS Input CRCR with endings 'native' 
-PASS Input LFCR with endings unspecified 
-PASS Input LFCR with endings 'transparent' 
-PASS Input LFCR with endings 'native' 
-PASS Input LFLF with endings unspecified 
-PASS Input LFLF with endings 'transparent' 
-PASS Input LFLF with endings 'native' 
-PASS Input CRCRLF with endings unspecified 
-PASS Input CRCRLF with endings 'transparent' 
-PASS Input CRCRLF with endings 'native' 
-PASS Input CRLFLF with endings unspecified 
-PASS Input CRLFLF with endings 'transparent' 
-PASS Input CRLFLF with endings 'native' 
-PASS Input CRLFCR with endings unspecified 
-PASS Input CRLFCR with endings 'transparent' 
-PASS Input CRLFCR with endings 'native' 
-PASS Input CRLFCRLF with endings unspecified 
-PASS Input CRLFCRLF with endings 'transparent' 
-PASS Input CRLFCRLF with endings 'native' 
-PASS Input LFCRLFCR with endings unspecified 
-PASS Input LFCRLFCR with endings 'transparent' 
-PASS Input LFCRLFCR with endings 'native' 
-PASS CR/LF in adjacent input strings 
+PASS Valid "endings" value: "transparent"
+PASS Valid "endings" value: "native"
+PASS Invalid "endings" value: null
+PASS Invalid "endings" value: ""
+PASS Invalid "endings" value: "invalidEnumValue"
+PASS Invalid "endings" value: "Transparent"
+PASS Invalid "endings" value: "NATIVE"
+PASS Invalid "endings" value: 0
+PASS Invalid "endings" value: {}
+PASS Exception propagation from options
+PASS The "endings" options property is used
+PASS Input LF with endings unspecified
+PASS Input LF with endings 'transparent'
+PASS Input LF with endings 'native'
+PASS Input CR with endings unspecified
+PASS Input CR with endings 'transparent'
+PASS Input CR with endings 'native'
+PASS Input CRLF with endings unspecified
+PASS Input CRLF with endings 'transparent'
+PASS Input CRLF with endings 'native'
+PASS Input CRCR with endings unspecified
+PASS Input CRCR with endings 'transparent'
+PASS Input CRCR with endings 'native'
+PASS Input LFCR with endings unspecified
+PASS Input LFCR with endings 'transparent'
+PASS Input LFCR with endings 'native'
+PASS Input LFLF with endings unspecified
+PASS Input LFLF with endings 'transparent'
+PASS Input LFLF with endings 'native'
+PASS Input CRCRLF with endings unspecified
+PASS Input CRCRLF with endings 'transparent'
+PASS Input CRCRLF with endings 'native'
+PASS Input CRLFLF with endings unspecified
+PASS Input CRLFLF with endings 'transparent'
+PASS Input CRLFLF with endings 'native'
+PASS Input CRLFCR with endings unspecified
+PASS Input CRLFCR with endings 'transparent'
+PASS Input CRLFCR with endings 'native'
+PASS Input CRLFCRLF with endings unspecified
+PASS Input CRLFCRLF with endings 'transparent'
+PASS Input CRLFCRLF with endings 'native'
+PASS Input LFCRLFCR with endings unspecified
+PASS Input LFCRLFCR with endings 'transparent'
+PASS Input LFCRLFCR with endings 'native'
+PASS CR/LF in adjacent input strings
 

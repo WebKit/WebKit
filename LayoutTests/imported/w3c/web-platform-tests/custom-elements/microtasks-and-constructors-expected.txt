@@ -1,7 +1,7 @@
 
-PASS Microtasks evaluate immediately when the stack is empty inside the parser 
+PASS Microtasks evaluate immediately when the stack is empty inside the parser
 FAIL Microtasks evaluate immediately when the stack is empty inside the parser, causing the checks on no attributes to fail assert_false: The attribute must not be present expected false got true
-PASS Microtasks evaluate afterward when the stack is not empty using createElement() 
-PASS Microtasks evaluate afterward when the stack is not empty using the constructor 
-PASS Microtasks evaluate afterward when the stack is not empty due to upgrades 
+PASS Microtasks evaluate afterward when the stack is not empty using createElement()
+PASS Microtasks evaluate afterward when the stack is not empty using the constructor
+PASS Microtasks evaluate afterward when the stack is not empty due to upgrades
 

@@ -1,4 +1,4 @@
 
-PASS IndexedDB index rename in aborted transaction 
-PASS IndexedDB index creation and rename in an aborted transaction 
+PASS IndexedDB index rename in aborted transaction
+PASS IndexedDB index creation and rename in an aborted transaction
 

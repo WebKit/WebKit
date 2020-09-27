@@ -1,5 +1,5 @@
 This tests the effect of a valid script-hash value, with one valid script and several invalid ones. It passes if one alert is executed and a CSP violation is reported.
 
 
-PASS Expecting alerts: ["PASS (1/1)"] 
+PASS Expecting alerts: ["PASS (1/1)"]
 

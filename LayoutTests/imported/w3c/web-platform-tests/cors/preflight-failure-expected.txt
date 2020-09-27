@@ -1,41 +1,41 @@
 Preflight responds with non-2XX status code
 
 
-PASS Should succeed if preflight has status 200 
-PASS Should succeed if preflight has status 299 
-PASS Should throw error if preflight has status 300 
-PASS Should throw error if preflight has status 301 
-PASS Should throw error if preflight has status 302 
-PASS Should throw error if preflight has status 303 
-PASS Should throw error if preflight has status 304 
-PASS Should throw error if preflight has status 305 
-PASS Should throw error if preflight has status 306 
-PASS Should throw error if preflight has status 307 
-PASS Should throw error if preflight has status 308 
-PASS Should throw error if preflight has status 400 
-PASS Should throw error if preflight has status 401 
-PASS Should throw error if preflight has status 402 
-PASS Should throw error if preflight has status 403 
-PASS Should throw error if preflight has status 404 
-PASS Should throw error if preflight has status 405 
-PASS Should throw error if preflight has status 406 
-PASS Should throw error if preflight has status 407 
-PASS Should throw error if preflight has status 408 
-PASS Should throw error if preflight has status 409 
-PASS Should throw error if preflight has status 410 
-PASS Should throw error if preflight has status 411 
-PASS Should throw error if preflight has status 412 
-PASS Should throw error if preflight has status 413 
-PASS Should throw error if preflight has status 414 
-PASS Should throw error if preflight has status 415 
-PASS Should throw error if preflight has status 416 
-PASS Should throw error if preflight has status 417 
-PASS Should throw error if preflight has status 500 
-PASS Should throw error if preflight has status 501 
-PASS Should throw error if preflight has status 502 
-PASS Should throw error if preflight has status 503 
-PASS Should throw error if preflight has status 504 
-PASS Should throw error if preflight has status 505 
-PASS Should throw error if preflight has status 680 
-PASS Should throw error if preflight has status 790 
+PASS Should succeed if preflight has status 200
+PASS Should succeed if preflight has status 299
+PASS Should throw error if preflight has status 300
+PASS Should throw error if preflight has status 301
+PASS Should throw error if preflight has status 302
+PASS Should throw error if preflight has status 303
+PASS Should throw error if preflight has status 304
+PASS Should throw error if preflight has status 305
+PASS Should throw error if preflight has status 306
+PASS Should throw error if preflight has status 307
+PASS Should throw error if preflight has status 308
+PASS Should throw error if preflight has status 400
+PASS Should throw error if preflight has status 401
+PASS Should throw error if preflight has status 402
+PASS Should throw error if preflight has status 403
+PASS Should throw error if preflight has status 404
+PASS Should throw error if preflight has status 405
+PASS Should throw error if preflight has status 406
+PASS Should throw error if preflight has status 407
+PASS Should throw error if preflight has status 408
+PASS Should throw error if preflight has status 409
+PASS Should throw error if preflight has status 410
+PASS Should throw error if preflight has status 411
+PASS Should throw error if preflight has status 412
+PASS Should throw error if preflight has status 413
+PASS Should throw error if preflight has status 414
+PASS Should throw error if preflight has status 415
+PASS Should throw error if preflight has status 416
+PASS Should throw error if preflight has status 417
+PASS Should throw error if preflight has status 500
+PASS Should throw error if preflight has status 501
+PASS Should throw error if preflight has status 502
+PASS Should throw error if preflight has status 503
+PASS Should throw error if preflight has status 504
+PASS Should throw error if preflight has status 505
+PASS Should throw error if preflight has status 680
+PASS Should throw error if preflight has status 790
 

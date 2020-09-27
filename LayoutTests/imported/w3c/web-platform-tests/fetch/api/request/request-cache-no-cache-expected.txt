@@ -1,6 +1,6 @@
 
-PASS RequestCache "no-cache" mode revalidates stale responses found in the cache with Etag and stale response 
-PASS RequestCache "no-cache" mode revalidates stale responses found in the cache with Last-Modified and stale response 
-PASS RequestCache "no-cache" mode revalidates fresh responses found in the cache with Etag and fresh response 
-PASS RequestCache "no-cache" mode revalidates fresh responses found in the cache with Last-Modified and fresh response 
+PASS RequestCache "no-cache" mode revalidates stale responses found in the cache with Etag and stale response
+PASS RequestCache "no-cache" mode revalidates stale responses found in the cache with Last-Modified and stale response
+PASS RequestCache "no-cache" mode revalidates fresh responses found in the cache with Etag and fresh response
+PASS RequestCache "no-cache" mode revalidates fresh responses found in the cache with Last-Modified and fresh response
 

@@ -4,6 +4,6 @@ data: as script src should not run with a policy that doesn't specify data: as a
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that securitypolicyviolation event is fired 
-PASS Verify that data: as script src doesn't run with this policy 
+NOTRUN Test that securitypolicyviolation event is fired
+PASS Verify that data: as script src doesn't run with this policy
 

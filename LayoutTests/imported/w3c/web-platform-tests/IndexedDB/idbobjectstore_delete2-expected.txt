@@ -1,3 +1,3 @@
 
-PASS IDBObjectStore.delete() - key doesn't match any records  
+PASS IDBObjectStore.delete() - key doesn't match any records
 

@@ -1,21 +1,21 @@
 
-PASS Keypath - my.key 
-PASS Keypath - my.køi 
-PASS Keypath - my.key_ya 
-PASS Keypath - public.key$ya 
-PASS Keypath - true.$ 
-PASS Keypath - my._ 
-PASS Keypath - delete.a7 
-PASS Keypath - p.p.p.p.p.p.p.p.p.p.p.p.p.p 
-PASS Keypath - str.length 
-PASS Keypath - arr.length 
-PASS Keypath - length 
-PASS Keypath - '' uses value as key 
-PASS Keypath - [''] uses value as [key] 
-PASS Keypath - ['x', 'y'] 
-PASS Keypath - [['x'], 'y'] (stringifies) 
-PASS Keypath - ['x', {toString->'y'}] (stringifies) 
-PASS Keypath - name,type 
-PASS Keypath - name,type.name 
-PASS Keypath - array loop -> stringify becomes [''] 
+PASS Keypath - my.key
+PASS Keypath - my.køi
+PASS Keypath - my.key_ya
+PASS Keypath - public.key$ya
+PASS Keypath - true.$
+PASS Keypath - my._
+PASS Keypath - delete.a7
+PASS Keypath - p.p.p.p.p.p.p.p.p.p.p.p.p.p
+PASS Keypath - str.length
+PASS Keypath - arr.length
+PASS Keypath - length
+PASS Keypath - '' uses value as key
+PASS Keypath - [''] uses value as [key]
+PASS Keypath - ['x', 'y']
+PASS Keypath - [['x'], 'y'] (stringifies)
+PASS Keypath - ['x', {toString->'y'}] (stringifies)
+PASS Keypath - name,type
+PASS Keypath - name,type.name
+PASS Keypath - array loop -> stringify becomes ['']
 

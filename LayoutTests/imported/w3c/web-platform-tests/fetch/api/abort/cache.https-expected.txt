@@ -1,4 +1,4 @@
 
-PASS Signals are not stored in the cache API 
-PASS Signals are not stored in the cache API, even if they're already aborted 
+PASS Signals are not stored in the cache API
+PASS Signals are not stored in the cache API, even if they're already aborted
 

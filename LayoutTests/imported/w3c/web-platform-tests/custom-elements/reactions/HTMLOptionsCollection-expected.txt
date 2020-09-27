@@ -1,7 +1,7 @@
 
-PASS length on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element 
-PASS The indexed setter on HTMLOptionsCollection must enqueue connectedCallback when inserting a custom element 
-PASS The indexed setter on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element 
-PASS add on HTMLOptionsCollection must enqueue connectedCallback when inserting a custom element 
-PASS remove on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element 
+PASS length on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element
+PASS The indexed setter on HTMLOptionsCollection must enqueue connectedCallback when inserting a custom element
+PASS The indexed setter on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element
+PASS add on HTMLOptionsCollection must enqueue connectedCallback when inserting a custom element
+PASS remove on HTMLOptionsCollection must enqueue disconnectedCallback when removing a custom element
 

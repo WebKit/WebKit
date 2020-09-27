@@ -1,5 +1,5 @@
 
-PASS IDBCursor continuePrimaryKey() on object store cursor 
-PASS IDBCursor continuePrimaryKey() on "nextunique" cursor 
-PASS IDBCursor continuePrimaryKey() on "prevunique" cursor 
+PASS IDBCursor continuePrimaryKey() on object store cursor
+PASS IDBCursor continuePrimaryKey() on "nextunique" cursor
+PASS IDBCursor continuePrimaryKey() on "prevunique" cursor
 

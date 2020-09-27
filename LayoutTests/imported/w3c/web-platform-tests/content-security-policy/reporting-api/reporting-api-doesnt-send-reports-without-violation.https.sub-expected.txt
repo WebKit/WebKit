@@ -1,5 +1,5 @@
 
 
-PASS Test that image loads 
-PASS Violation report status OK. 
+PASS Test that image loads
+PASS Violation report status OK.
 

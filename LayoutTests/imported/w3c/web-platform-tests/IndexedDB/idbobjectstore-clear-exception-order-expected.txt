@@ -1,4 +1,4 @@
 
-PASS IDBObjectStore.clear exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBObjectStore.clear exception order: TransactionInactiveError vs. ReadOnlyError 
+PASS IDBObjectStore.clear exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBObjectStore.clear exception order: TransactionInactiveError vs. ReadOnlyError
 

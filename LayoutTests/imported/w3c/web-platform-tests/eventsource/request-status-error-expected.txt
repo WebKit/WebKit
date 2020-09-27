@@ -1,9 +1,9 @@
 
-PASS EventSource: incorrect HTTP status code (204) 
-PASS EventSource: incorrect HTTP status code (205) 
-PASS EventSource: incorrect HTTP status code (210) 
-PASS EventSource: incorrect HTTP status code (299) 
-PASS EventSource: incorrect HTTP status code (404) 
-PASS EventSource: incorrect HTTP status code (410) 
-PASS EventSource: incorrect HTTP status code (503) 
+PASS EventSource: incorrect HTTP status code (204)
+PASS EventSource: incorrect HTTP status code (205)
+PASS EventSource: incorrect HTTP status code (210)
+PASS EventSource: incorrect HTTP status code (299)
+PASS EventSource: incorrect HTTP status code (404)
+PASS EventSource: incorrect HTTP status code (410)
+PASS EventSource: incorrect HTTP status code (503)
 

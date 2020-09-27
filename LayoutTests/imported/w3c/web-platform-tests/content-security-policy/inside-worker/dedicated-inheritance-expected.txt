@@ -12,30 +12,30 @@ CONSOLE MESSAGE: Blocked by Content Security Policy.
 
 Harness Error (FAIL), message = Error in remote http://localhost:8800/content-security-policy/inside-worker/support/connect-src-self.sub.js?pipe=sub|header(Content-Security-Policy,default-src%20%27none%27): NetworkError:  A network error occurred.
 
-PASS Filesystem and blob. 
+PASS Filesystem and blob.
 TIMEOUT Same-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27) Test timed out
-PASS Same-origin 'fetch()' in http: 
-PASS Same-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*) 
-PASS Same-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
-PASS Same-origin XHR in http: 
-PASS Same-origin XHR in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
-PASS Same-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*) 
+PASS Same-origin 'fetch()' in http:
+PASS Same-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*)
+PASS Same-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
+PASS Same-origin XHR in http:
+PASS Same-origin XHR in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
+PASS Same-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*)
 FAIL Same-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27) assert_unreached: Reached unreachable code
-PASS Cross-origin 'fetch()' in http: 
-PASS Cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*) 
-PASS Cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
-PASS Cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27) 
-PASS Cross-origin XHR in http: 
-PASS Cross-origin XHR in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
-PASS Cross-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*) 
-PASS Cross-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27) 
-PASS Same-origin => cross-origin 'fetch()' in http: 
-PASS Same-origin => cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,default-src%20*) 
-PASS Same-origin => cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*) 
-PASS Same-origin => cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27) 
-PASS Same-origin 'fetch()' in blob: 
-PASS Same-origin XHR in blob: 
-PASS Cross-origin 'fetch()' in blob: 
-PASS Cross-origin XHR in blob: 
-PASS Same-origin => cross-origin 'fetch()' in blob: 
+PASS Cross-origin 'fetch()' in http:
+PASS Cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*)
+PASS Cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
+PASS Cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27)
+PASS Cross-origin XHR in http:
+PASS Cross-origin XHR in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
+PASS Cross-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*)
+PASS Cross-origin XHR in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27)
+PASS Same-origin => cross-origin 'fetch()' in http:
+PASS Same-origin => cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,default-src%20*)
+PASS Same-origin => cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20*)
+PASS Same-origin => cross-origin 'fetch()' in http:?pipe=sub|header(Content-Security-Policy,connect-src%20%27none%27)
+PASS Same-origin 'fetch()' in blob:
+PASS Same-origin XHR in blob:
+PASS Cross-origin 'fetch()' in blob:
+PASS Cross-origin XHR in blob:
+PASS Same-origin => cross-origin 'fetch()' in blob:
 

@@ -8,7 +8,7 @@ Style correctly whitelisted via a 'nonce-*' expression in 'style-src' should be 
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Should fire securitypolicyviolation 
-PASS stylenonce-allowed 
-PASS stylenonce-allowed 1 
+NOTRUN Should fire securitypolicyviolation
+PASS stylenonce-allowed
+PASS stylenonce-allowed 1
 

@@ -1,8 +1,8 @@
 
-PASS Generated Blob URLs are unique 
-PASS Blob URL starts with "blob:" 
-PASS Blob URL starts with "blob:" for Files 
-PASS Origin of Blob URL matches our origin 
-PASS Blob URL parses correctly 
-PASS Origin of Blob URL matches our origin for Files 
+PASS Generated Blob URLs are unique
+PASS Blob URL starts with "blob:"
+PASS Blob URL starts with "blob:" for Files
+PASS Origin of Blob URL matches our origin
+PASS Blob URL parses correctly
+PASS Origin of Blob URL matches our origin for Files
 

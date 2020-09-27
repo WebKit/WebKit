@@ -1,3 +1,3 @@
 
-PASS IDBIndex.openKeyCursor() - throw DataError when using a invalid key 
+PASS IDBIndex.openKeyCursor() - throw DataError when using a invalid key
 

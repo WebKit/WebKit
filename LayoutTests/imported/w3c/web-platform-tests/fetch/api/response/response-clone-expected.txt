@@ -1,20 +1,20 @@
 
-PASS Check Response's clone with default values, without body 
-PASS Check Response's clone has the expected attribute values 
-PASS Check orginal response's body after cloning 
-PASS Check cloned response's body 
-PASS Cannot clone a disturbed response 
-PASS Cloned responses should provide the same data 
-PASS Cancelling stream should not affect cloned one 
-PASS Check response clone use structureClone for teed ReadableStreams (Int8Arraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Int16Arraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Int32Arraychunk) 
+PASS Check Response's clone with default values, without body
+PASS Check Response's clone has the expected attribute values
+PASS Check orginal response's body after cloning
+PASS Check cloned response's body
+PASS Cannot clone a disturbed response
+PASS Cloned responses should provide the same data
+PASS Cancelling stream should not affect cloned one
+PASS Check response clone use structureClone for teed ReadableStreams (Int8Arraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Int16Arraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Int32Arraychunk)
 FAIL Check response clone use structureClone for teed ReadableStreams (ArrayBufferchunk) assert_array_equals: Cloned buffer chunks have the same content value is object "[object ArrayBuffer]", expected array
-PASS Check response clone use structureClone for teed ReadableStreams (Uint8Arraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Uint8ClampedArraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Uint16Arraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Uint32Arraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Float32Arraychunk) 
-PASS Check response clone use structureClone for teed ReadableStreams (Float64Arraychunk) 
+PASS Check response clone use structureClone for teed ReadableStreams (Uint8Arraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Uint8ClampedArraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Uint16Arraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Uint32Arraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Float32Arraychunk)
+PASS Check response clone use structureClone for teed ReadableStreams (Float64Arraychunk)
 FAIL Check response clone use structureClone for teed ReadableStreams (DataViewchunk) assert_array_equals: Cloned buffer chunks have the same content value is object "[object DataView]", expected array
 

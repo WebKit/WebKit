@@ -1,6 +1,6 @@
 
-PASS Compare in unsigned octet values (in the range [0, 255]) 
-PASS Compare values in then same length 
-PASS Compare values in different lengths 
-PASS Compare when the values in the range of their minimal length are the same 
+PASS Compare in unsigned octet values (in the range [0, 255])
+PASS Compare values in then same length
+PASS Compare values in different lengths
+PASS Compare when the values in the range of their minimal length are the same
 

@@ -1,5 +1,5 @@
 
-PASS Explicit Primary Key 
-PASS Auto-Increment Primary Key 
-PASS Auto-Increment Primary Key - invalid key values elsewhere 
+PASS Explicit Primary Key
+PASS Auto-Increment Primary Key
+PASS Auto-Increment Primary Key - invalid key values elsewhere
 

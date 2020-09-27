@@ -1,17 +1,17 @@
 
-PASS HTMLElement constructor must throw a TypeError when NewTarget is equal to itself 
-PASS HTMLElement constructor must throw a TypeError when NewTarget is equal to itself via a Proxy object 
-PASS HTMLElement constructor must throw TypeError when it has not been defined by customElements.define 
-PASS Custom element constructor must throw TypeError when it does not extend HTMLElement 
-PASS Custom element constructor must throw TypeError when it does not extend the proper element interface 
-PASS HTMLElement constructor must infer the tag name from the element interface 
-PASS HTMLElement constructor must allow subclassing a custom element 
-PASS HTMLElement constructor must allow subclassing an user-defined subclass of HTMLElement 
-PASS HTMLElement constructor must only get .prototype once, calling proxy constructor directly 
-PASS HTMLElement constructor must only get .prototype once, calling proxy constructor via Reflect 
-PASS HTMLElement constructor must only get .prototype once, calling proxy constructor via Reflect with no inheritance 
+PASS HTMLElement constructor must throw a TypeError when NewTarget is equal to itself
+PASS HTMLElement constructor must throw a TypeError when NewTarget is equal to itself via a Proxy object
+PASS HTMLElement constructor must throw TypeError when it has not been defined by customElements.define
+PASS Custom element constructor must throw TypeError when it does not extend HTMLElement
+PASS Custom element constructor must throw TypeError when it does not extend the proper element interface
+PASS HTMLElement constructor must infer the tag name from the element interface
+PASS HTMLElement constructor must allow subclassing a custom element
+PASS HTMLElement constructor must allow subclassing an user-defined subclass of HTMLElement
+PASS HTMLElement constructor must only get .prototype once, calling proxy constructor directly
+PASS HTMLElement constructor must only get .prototype once, calling proxy constructor via Reflect
+PASS HTMLElement constructor must only get .prototype once, calling proxy constructor via Reflect with no inheritance
 FAIL HTMLElement constructor must not get .prototype until it finishes its extends sanity checks, calling proxy constructor directly assert_throws_js: Should not be able to construct an HTMLElement named 'button' function "function () { new countingProxy() }" did not throw
 FAIL HTMLElement constructor must not get .prototype until it finishes its extends sanity checks, calling via Reflect assert_throws_js: Should not be able to construct an HTMLElement named 'button' function "function () { Reflect.construct(HTMLElement, [], countingProxy) }" did not throw
-PASS HTMLElement constructor must not get .prototype until it finishes its registration sanity checks, calling proxy constructor directly 
-PASS HTMLElement constructor must not get .prototype until it finishes its registration  sanity checks, calling via Reflect 
+PASS HTMLElement constructor must not get .prototype until it finishes its registration sanity checks, calling proxy constructor directly
+PASS HTMLElement constructor must not get .prototype until it finishes its registration  sanity checks, calling via Reflect
 

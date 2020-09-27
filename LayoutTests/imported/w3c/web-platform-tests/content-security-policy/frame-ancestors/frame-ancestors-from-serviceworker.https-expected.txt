@@ -1,5 +1,5 @@
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
 
-NOTRUN A 'frame-ancestors' CSP directive set from a serviceworker response with a value 'none' should block rendering. 
+NOTRUN A 'frame-ancestors' CSP directive set from a serviceworker response with a value 'none' should block rendering.
 

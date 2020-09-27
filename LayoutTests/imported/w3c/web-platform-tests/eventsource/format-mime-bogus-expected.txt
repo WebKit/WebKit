@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: EventSource's response has a MIME type ("x bogus") that is not "text/event-stream". Aborting the connection.
 
-PASS EventSource: bogus MIME type 
+PASS EventSource: bogus MIME type
 

@@ -1,4 +1,4 @@
 
-PASS Literal: Only ' and " should be handled as literal quotes. 
+PASS Literal: Only ' and " should be handled as literal quotes.
 FAIL ExprWhitespace: Only #x20 #x9 #xD or #xA must be handled as a whitespace. assert_throws_dom: function "() => { parse('\x0B\x0C .'); }" did not throw
 

@@ -1,32 +1,32 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined 
-PASS Partial interface mixin WindowOrWorkerGlobalScope: member names are unique 
-PASS Partial interface Window: member names are unique 
-PASS Window includes GlobalEventHandlers: member names are unique 
-PASS Window includes WindowEventHandlers: member names are unique 
-PASS Window includes WindowOrWorkerGlobalScope: member names are unique 
-PASS Window includes AnimationFrameProvider: member names are unique 
-PASS Window includes WindowSessionStorage: member names are unique 
-PASS Window includes WindowLocalStorage: member names are unique 
-PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique 
-PASS Performance interface: existence and properties of interface object 
-PASS Performance interface object length 
-PASS Performance interface object name 
-PASS Performance interface: existence and properties of interface prototype object 
-PASS Performance interface: existence and properties of interface prototype object's "constructor" property 
-PASS Performance interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Performance interface: operation now() 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined
+PASS Partial interface mixin WindowOrWorkerGlobalScope: member names are unique
+PASS Partial interface Window: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS Performance interface: existence and properties of interface object
+PASS Performance interface object length
+PASS Performance interface object name
+PASS Performance interface: existence and properties of interface prototype object
+PASS Performance interface: existence and properties of interface prototype object's "constructor" property
+PASS Performance interface: existence and properties of interface prototype object's @@unscopables property
+PASS Performance interface: operation now()
 FAIL Performance interface: attribute timeOrigin assert_true: The prototype object must have a property "timeOrigin" expected true got false
-PASS Performance interface: operation toJSON() 
-PASS Performance must be primary interface of performance 
-PASS Stringification of performance 
-PASS Performance interface: performance must inherit property "now()" with the proper type 
+PASS Performance interface: operation toJSON()
+PASS Performance must be primary interface of performance
+PASS Stringification of performance
+PASS Performance interface: performance must inherit property "now()" with the proper type
 FAIL Performance interface: performance must inherit property "timeOrigin" with the proper type assert_inherits: property "timeOrigin" not found in prototype chain
-PASS Performance interface: performance must inherit property "toJSON()" with the proper type 
+PASS Performance interface: performance must inherit property "toJSON()" with the proper type
 FAIL Performance interface: default toJSON operation on performance assert_true: property "timeOrigin" should be present in the output of Performance.prototype.toJSON() expected true got false
-PASS Window interface: attribute performance 
-PASS Window interface: self must inherit property "performance" with the proper type 
-PASS WorkerGlobalScope interface: existence and properties of interface object 
+PASS Window interface: attribute performance
+PASS Window interface: self must inherit property "performance" with the proper type
+PASS WorkerGlobalScope interface: existence and properties of interface object
 

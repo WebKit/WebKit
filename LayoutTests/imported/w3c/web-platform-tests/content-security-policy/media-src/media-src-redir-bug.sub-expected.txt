@@ -8,8 +8,8 @@ Harness Error (TIMEOUT), message = null
 FAIL In-policy async video src assert_unreached: Media error handler shouldn't be triggered for allowed domain. Reached unreachable code
 FAIL in-policy async video src w/redir assert_unreached: Media error handler shouldn't be triggered for allowed domain. Reached unreachable code
 FAIL In-policy async video source element assert_unreached: Media error handler shouldn't be triggered for allowed domain. Reached unreachable code
-NOTRUN In-policy async video source element w/redir 
-NOTRUN Should not fire policy violation events 
+NOTRUN In-policy async video source element w/redir
+NOTRUN Should not fire policy violation events
 This test tests a buggy interaction in Chrome 46. Two hosts (self and www2) are both allowed as media-src, but only one (self) is allowed for connect-src. If a video src starts on an allowed host (self), and is redirected to another allowed media-src host, it should succeed. But a bug causes the redirect to be done in a fetch context to which connect-src is being applied instead, so the load is blocked. (This test passes in Firefox 45, modulo an event listener not firing.)
 
-  
+

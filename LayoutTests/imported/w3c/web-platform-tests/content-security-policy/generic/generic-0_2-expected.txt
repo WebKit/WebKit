@@ -1,6 +1,6 @@
 'self' keyword positive test
 
 
-PASS Should fire violation events for every failed violation 
-PASS Allows scripts from the same host. 
+PASS Should fire violation events for every failed violation
+PASS Allows scripts from the same host.
 

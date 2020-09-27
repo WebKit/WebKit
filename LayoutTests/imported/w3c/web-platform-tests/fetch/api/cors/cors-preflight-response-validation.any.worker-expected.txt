@@ -1,4 +1,4 @@
 
-PASS Preflight response with a bad Access-Control-Allow-Headers 
-PASS Preflight response with a bad Access-Control-Allow-Methods 
+PASS Preflight response with a bad Access-Control-Allow-Headers
+PASS Preflight response with a bad Access-Control-Allow-Methods
 

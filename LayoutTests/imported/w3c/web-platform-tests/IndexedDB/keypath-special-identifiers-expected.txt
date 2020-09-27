@@ -1,8 +1,8 @@
 
-PASS Type: String, identifier: length 
-PASS Type: Array, identifier: length 
-PASS Type: Blob, identifier: size 
-PASS Type: Blob, identifier: type 
-PASS Type: File, identifier: name 
-PASS Type: File, identifier: lastModified 
+PASS Type: String, identifier: length
+PASS Type: Array, identifier: length
+PASS Type: Blob, identifier: size
+PASS Type: Blob, identifier: type
+PASS Type: File, identifier: name
+PASS Type: File, identifier: lastModified
 

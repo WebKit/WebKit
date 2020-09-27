@@ -3,7 +3,7 @@ CONSOLE MESSAGE: EventSource cannot load http://www2.localhost:8800/eventsource/
 
 Harness Error (TIMEOUT), message = null
 
-PASS EventSource: Cache-Control 
+PASS EventSource: Cache-Control
 TIMEOUT EventSource: Cache-Control 1 Test timed out
-PASS EventSource: Cache-Control 2 
+PASS EventSource: Cache-Control 2
 

@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/fail.png because it does not appear in the img-src directive of the Content Security Policy.
-  
+
 
 Harness Error (TIMEOUT), message = null
 
-PASS Test that parent document image loads 
-PASS Test that embedded iframe document image does not load 
-NOTRUN Test that spv event is fired 
+PASS Test that parent document image loads
+PASS Test that embedded iframe document image does not load
+NOTRUN Test that spv event is fired
 

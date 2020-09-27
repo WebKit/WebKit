@@ -5,7 +5,7 @@ Original Image:
 
 Image after copy/paste:
 
- 
+
 
 FAIL Verify write and read clipboard [image/png Blob] promise_test: Unhandled rejection with value: object "Error: unimplemented"
 FAIL Verify write error on malformed data [image/png ClipboardItem] promise_test: Unhandled rejection with value: object "Error: unimplemented"

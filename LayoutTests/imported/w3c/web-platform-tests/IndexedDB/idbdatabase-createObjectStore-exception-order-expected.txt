@@ -1,6 +1,6 @@
 
-PASS IDBDatabase.createObjectStore exception order: InvalidStateError vs. TransactionInactiveError 
-PASS IDBDatabase.createObjectStore exception order: TransactionInactiveError vs. SyntaxError 
-PASS IDBDatabase.createObjectStore exception order: SyntaxError vs. ConstraintError 
-PASS IDBDatabase.createObjectStore exception order: ConstraintError vs. InvalidAccessError 
+PASS IDBDatabase.createObjectStore exception order: InvalidStateError vs. TransactionInactiveError
+PASS IDBDatabase.createObjectStore exception order: TransactionInactiveError vs. SyntaxError
+PASS IDBDatabase.createObjectStore exception order: SyntaxError vs. ConstraintError
+PASS IDBDatabase.createObjectStore exception order: ConstraintError vs. InvalidAccessError
 

@@ -1,6 +1,6 @@
 
-PASS Conversion to a dictionary works 
-PASS Conversion to a sequence works 
-PASS Can convert a RegExp to a USVString 
-PASS Can be used as an object implementing a callback interface 
+PASS Conversion to a dictionary works
+PASS Conversion to a sequence works
+PASS Can convert a RegExp to a USVString
+PASS Can be used as an object implementing a callback interface
 

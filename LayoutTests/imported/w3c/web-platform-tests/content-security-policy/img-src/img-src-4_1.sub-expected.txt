@@ -1,5 +1,5 @@
 
-PASS img-src for relative path should load 
-PASS img-src from unapproved domains should not load 
-PASS img-src from approved domains should load 
+PASS img-src for relative path should load
+PASS img-src from unapproved domains should not load
+PASS img-src from approved domains should load
 

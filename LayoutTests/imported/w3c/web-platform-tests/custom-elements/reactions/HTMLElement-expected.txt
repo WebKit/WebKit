@@ -1,22 +1,22 @@
 
-PASS title on HTMLElement must enqueue an attributeChanged reaction when adding title content attribute 
-PASS title on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS lang on HTMLElement must enqueue an attributeChanged reaction when adding lang content attribute 
-PASS lang on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS translate on HTMLElement must enqueue an attributeChanged reaction when adding translate content attribute 
-PASS translate on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS dir on HTMLElement must enqueue an attributeChanged reaction when adding dir content attribute 
-PASS dir on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS hidden on HTMLElement must enqueue an attributeChanged reaction when adding hidden content attribute 
-PASS hidden on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS tabIndex on HTMLElement must enqueue an attributeChanged reaction when adding tabindex content attribute 
-PASS tabIndex on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS accessKey on HTMLElement must enqueue an attributeChanged reaction when adding accesskey content attribute 
-PASS accessKey on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS draggable on HTMLElement must enqueue an attributeChanged reaction when adding draggable content attribute 
-PASS draggable on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS spellcheck on HTMLElement must enqueue an attributeChanged reaction when adding spellcheck content attribute 
-PASS spellcheck on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute 
-PASS innerText on HTMLElement must enqueue a disconnected reaction 
-PASS outerText on HTMLElement must enqueue a disconnected reaction 
+PASS title on HTMLElement must enqueue an attributeChanged reaction when adding title content attribute
+PASS title on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS lang on HTMLElement must enqueue an attributeChanged reaction when adding lang content attribute
+PASS lang on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS translate on HTMLElement must enqueue an attributeChanged reaction when adding translate content attribute
+PASS translate on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS dir on HTMLElement must enqueue an attributeChanged reaction when adding dir content attribute
+PASS dir on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS hidden on HTMLElement must enqueue an attributeChanged reaction when adding hidden content attribute
+PASS hidden on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS tabIndex on HTMLElement must enqueue an attributeChanged reaction when adding tabindex content attribute
+PASS tabIndex on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS accessKey on HTMLElement must enqueue an attributeChanged reaction when adding accesskey content attribute
+PASS accessKey on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS draggable on HTMLElement must enqueue an attributeChanged reaction when adding draggable content attribute
+PASS draggable on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS spellcheck on HTMLElement must enqueue an attributeChanged reaction when adding spellcheck content attribute
+PASS spellcheck on HTMLElement must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS innerText on HTMLElement must enqueue a disconnected reaction
+PASS outerText on HTMLElement must enqueue a disconnected reaction
 

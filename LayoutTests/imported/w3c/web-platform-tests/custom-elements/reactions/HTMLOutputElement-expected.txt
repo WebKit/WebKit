@@ -1,4 +1,4 @@
 
-PASS value on HTMLOutputElement must enqueue disconnectedCallback when removing a custom element 
-PASS defaultValue on HTMLOutputElement must enqueue disconnectedCallback when removing a custom element 
+PASS value on HTMLOutputElement must enqueue disconnectedCallback when removing a custom element
+PASS defaultValue on HTMLOutputElement must enqueue disconnectedCallback when removing a custom element
 

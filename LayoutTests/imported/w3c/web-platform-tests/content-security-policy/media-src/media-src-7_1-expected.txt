@@ -5,5 +5,5 @@ Harness Error (TIMEOUT), message = null
 
 FAIL In-policy async video src assert_unreached: Media error handler should be triggered for non-allowed domain. Reached unreachable code
 FAIL In-policy async video source element assert_unreached: Media error handler should be triggered for non-allowed domain. Reached unreachable code
-NOTRUN Should not fire policy violation events 
-  
+NOTRUN Should not fire policy violation events
+

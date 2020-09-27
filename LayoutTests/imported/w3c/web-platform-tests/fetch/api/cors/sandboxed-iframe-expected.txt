@@ -1,4 +1,4 @@
 
 
-PASS CORS with sandboxed iframe 
+PASS CORS with sandboxed iframe
 

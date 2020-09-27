@@ -1,4 +1,4 @@
 
-PASS The current number of a key generator is reverted when a versionchange transaction aborts 
-PASS The current number of a key generator is reverted when a readwrite transaction aborts 
+PASS The current number of a key generator is reverted when a versionchange transaction aborts
+PASS The current number of a key generator is reverted when a readwrite transaction aborts
 

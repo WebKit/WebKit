@@ -1,12 +1,12 @@
 
-PASS deleteContents on Range must enqueue a disconnected reaction 
-PASS extractContents on Range must enqueue a disconnected reaction 
-PASS cloneContents on Range must enqueue an attributeChanged reaction when cloning an element with an observed attribute 
-PASS cloneContents on Range must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute 
-PASS cloneContents on Range must enqueue an attributeChanged reaction when cloning an element only for observed attributes 
-PASS insertNode on Range must enqueue a connected reaction 
-PASS insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS surroundContents on Range must enqueue a connected reaction 
-PASS surroundContents on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS createContextualFragment on Range must construct a custom element 
+PASS deleteContents on Range must enqueue a disconnected reaction
+PASS extractContents on Range must enqueue a disconnected reaction
+PASS cloneContents on Range must enqueue an attributeChanged reaction when cloning an element with an observed attribute
+PASS cloneContents on Range must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute
+PASS cloneContents on Range must enqueue an attributeChanged reaction when cloning an element only for observed attributes
+PASS insertNode on Range must enqueue a connected reaction
+PASS insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS surroundContents on Range must enqueue a connected reaction
+PASS surroundContents on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document
+PASS createContextualFragment on Range must construct a custom element
 

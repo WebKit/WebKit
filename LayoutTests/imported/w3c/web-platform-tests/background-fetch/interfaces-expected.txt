@@ -3,10 +3,10 @@ idlharness test
 This test validates the WebIDL included in the Background Fetch API (Documents).
 
 
-PASS Exposed interfaces in a Document. 
+PASS Exposed interfaces in a Document.
 FAIL ServiceWorkerRegistration interface: attribute backgroundFetch assert_true: The prototype object must have a property "backgroundFetch" expected true got false
 PASS Unscopable handled correctly for backgroundFetch property on ServiceWorkerRegistration
-PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface object
 FAIL BackgroundFetchManager interface: existence and properties of interface object assert_own_property: self does not have own property "BackgroundFetchManager" expected property "BackgroundFetchManager" missing
 FAIL BackgroundFetchManager interface object length assert_own_property: self does not have own property "BackgroundFetchManager" expected property "BackgroundFetchManager" missing
 FAIL BackgroundFetchManager interface object name assert_own_property: self does not have own property "BackgroundFetchManager" expected property "BackgroundFetchManager" missing
@@ -67,10 +67,10 @@ FAIL BackgroundFetchActiveFetch interface: existence and properties of interface
 FAIL BackgroundFetchActiveFetch interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "BackgroundFetchActiveFetch" expected property "BackgroundFetchActiveFetch" missing
 FAIL BackgroundFetchActiveFetch interface: attribute responseReady assert_own_property: self does not have own property "BackgroundFetchActiveFetch" expected property "BackgroundFetchActiveFetch" missing
 PASS Unscopable handled correctly for responseReady property on BackgroundFetchActiveFetch
-PASS BackgroundFetchEvent interface: existence and properties of interface object 
-PASS BackgroundFetchSettledEvent interface: existence and properties of interface object 
-PASS BackgroundFetchSettledFetches interface: existence and properties of interface object 
-PASS BackgroundFetchSettledFetch interface: existence and properties of interface object 
-PASS BackgroundFetchUpdateEvent interface: existence and properties of interface object 
-PASS BackgroundFetchClickEvent interface: existence and properties of interface object 
+PASS BackgroundFetchEvent interface: existence and properties of interface object
+PASS BackgroundFetchSettledEvent interface: existence and properties of interface object
+PASS BackgroundFetchSettledFetches interface: existence and properties of interface object
+PASS BackgroundFetchSettledFetch interface: existence and properties of interface object
+PASS BackgroundFetchUpdateEvent interface: existence and properties of interface object
+PASS BackgroundFetchClickEvent interface: existence and properties of interface object
 

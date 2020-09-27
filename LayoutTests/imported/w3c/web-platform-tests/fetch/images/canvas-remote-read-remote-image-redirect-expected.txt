@@ -1,3 +1,3 @@
 
-PASS Load a no-cors image from a same-origin URL that redirects to a cross-origin URL that redirects to the initial origin 
+PASS Load a no-cors image from a same-origin URL that redirects to a cross-origin URL that redirects to the initial origin
 

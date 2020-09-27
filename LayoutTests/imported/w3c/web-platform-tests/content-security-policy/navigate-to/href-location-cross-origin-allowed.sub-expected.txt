@@ -4,5 +4,5 @@ Blocked access to external URL http://www1.localhost:8800/content-security-polic
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN Test that the child iframe navigation is allowed 
+NOTRUN Test that the child iframe navigation is allowed
 

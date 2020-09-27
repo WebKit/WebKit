@@ -3,5 +3,5 @@ Test passes if both style and image are blocked and a report is generated for th
 
 
 FAIL Expecting logs: ["TEST COMPLETE", "violated-directive=img-src", "violated-directive=style-src-elem"] assert_unreached: Logging timeout, expected logs violated-directive=img-src,violated-directive=style-src-elem not sent. Reached unreachable code
-PASS combine-header-and-meta-policies 
+PASS combine-header-and-meta-policies
 

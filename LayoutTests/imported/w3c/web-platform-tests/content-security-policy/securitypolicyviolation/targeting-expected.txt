@@ -11,12 +11,12 @@ Click me!
 
 Harness Error (TIMEOUT), message = null
 
-NOTRUN These tests should not fail. 
+NOTRUN These tests should not fail.
 FAIL Inline violations target the right element. assert_equals: expected "inline" but got ""
 TIMEOUT Correct targeting inside shadow tree (inline handler). Test timed out
 TIMEOUT Correct targeting inside shadow tree (style). Test timed out
 TIMEOUT Elements created in this document, but pushed into a same-origin frame trigger on that frame's document, not on this frame's document. Test timed out
-PASS Inline event handlers for disconnected elements target the document. 
-PASS Inline event handlers for elements disconnected after triggering target the document. 
-PASS Inline event handlers for elements in a DocumentFragment target the document. 
+PASS Inline event handlers for disconnected elements target the document.
+PASS Inline event handlers for elements disconnected after triggering target the document.
+PASS Inline event handlers for elements in a DocumentFragment target the document.
 

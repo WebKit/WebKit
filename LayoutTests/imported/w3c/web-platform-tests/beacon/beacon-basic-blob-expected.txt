@@ -1,6 +1,6 @@
 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: EmptyBlob 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBlob 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumBlob 
-PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeBlob 
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: EmptyBlob
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: SmallBlob
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: MediumBlob
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeBlob
 
