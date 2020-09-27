@@ -1,3 +1,22 @@
+2020-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Add .ccls config file
+        https://bugs.webkit.org/show_bug.cgi?id=216877
+
+        Reviewed by Darin Adler.
+
+        ccls is a stand-alone server implementing the Language Server Protocol for C, C++, and
+        Objective-C languages. It can be used with any editor which provides an LSP client
+        implementation. It originates from cquery.
+
+        https://github.com/MaskRay/ccls/wiki
+
+        It's basically used to provide semantic highlighting and code navigation. Many IDEs support
+        LSP nowadays.
+
+        * .ccls: Added.
+        * .gitignore:
+
 2020-09-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         make_names.pl no longer needs C preprocessor
