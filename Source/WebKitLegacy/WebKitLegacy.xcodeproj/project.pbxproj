@@ -229,6 +229,7 @@
 		7C023A29251BB5E500BA7BB6 /* WebPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023A28251BB5E500BA7BB6 /* WebPreferencesInternal.h */; };
 		7C023A2F251C05FC00BA7BB6 /* WebPreferencesDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023A2E251C05D500BA7BB6 /* WebPreferencesDefinitions.h */; };
 		7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1FB3C11846E8E1001A03D8 /* WebAllowDenyPolicyListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C671126251FE40F004F4536 /* WebPreferencesInternalFeatures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C671125251FE406004F4536 /* WebPreferencesInternalFeatures.mm */; };
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */; };
 		9321D5921A391DC3008052BE /* WebImmediateActionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5911A391DB8008052BE /* WebImmediateActionController.h */; };
@@ -1005,6 +1006,8 @@
 		7C671117251C2459004F4536 /* generate-webkitversion.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = "generate-webkitversion.pl"; path = "scripts/generate-webkitversion.pl"; sourceTree = "<group>"; };
 		7C671118251C2459004F4536 /* postprocess-header-rule */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "postprocess-header-rule"; path = "scripts/postprocess-header-rule"; sourceTree = "<group>"; };
 		7C671119251C2483004F4536 /* check-xcfilelists.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "check-xcfilelists.sh"; path = "scripts/check-xcfilelists.sh"; sourceTree = "<group>"; };
+		7C671123251FB237004F4536 /* WebPreferencesInternalFeatures.mm.erb */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPreferencesInternalFeatures.mm.erb; sourceTree = "<group>"; };
+		7C671125251FE406004F4536 /* WebPreferencesInternalFeatures.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPreferencesInternalFeatures.mm; path = WebPreferencesInternalFeatures.mm; sourceTree = "<group>"; };
 		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptDebugDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		833987810543012D00EE146E /* WebDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1945,6 +1948,7 @@
 			children = (
 				7C023A2C251C05AC00BA7BB6 /* WebPreferencesDefinitions.h.erb */,
 				7C023216251B96E400BA7BB6 /* WebPreferencesExperimentalFeatures.mm.erb */,
+				7C671123251FB237004F4536 /* WebPreferencesInternalFeatures.mm.erb */,
 				7C023A25251BADD100BA7BB6 /* WebViewPreferencesChangedGenerated.mm.erb */,
 			);
 			path = PreferencesTemplates;
@@ -1956,6 +1960,7 @@
 				7C0239EA251BA01A00BA7BB6 /* unified-sources */,
 				7C023A2E251C05D500BA7BB6 /* WebPreferencesDefinitions.h */,
 				7C023A05251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm */,
+				7C671125251FE406004F4536 /* WebPreferencesInternalFeatures.mm */,
 				7C023A26251BAF2200BA7BB6 /* WebViewPreferencesChangedGenerated.mm */,
 			);
 			name = "Derived Sources";
@@ -3456,6 +3461,7 @@
 				"$(SRCROOT)/mac/Scripts/GeneratePreferences.rb",
 				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb",
 				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb",
+				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesInternalFeatures.mm.erb",
 				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.mm.erb",
 			);
 			name = "Generate Preferences";
@@ -3464,11 +3470,12 @@
 			outputPaths = (
 				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebPreferencesDefinitions.h",
 				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebPreferencesExperimentalFeatures.mm",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebPreferencesInternalFeatures.mm",
 				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebViewPreferencesChangedGenerated.mm",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\n${SRCROOT}/mac/Scripts/GeneratePreferences.rb --frontend WebKitLegacy --template WebPreferencesDefinitions.h --template WebPreferencesExperimentalFeatures.mm --template WebViewPreferencesChangedGenerated.mm --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${SRCROOT}/mac/WebView/WebPreferences.yaml --debug ${SRCROOT}/mac/WebView/WebPreferencesDebug.yaml --experimental ${SRCROOT}/mac/WebView/WebPreferencesExperimental.yaml --internal ${SRCROOT}/mac/WebView/WebPreferencesInternal.yaml\n";
+			shellScript = "set -e\n\n${SRCROOT}/mac/Scripts/GeneratePreferences.rb --frontend WebKitLegacy --template WebPreferencesDefinitions.h --template WebPreferencesExperimentalFeatures.mm --template WebPreferencesInternalFeatures.mm --template WebViewPreferencesChangedGenerated.mm --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${SRCROOT}/mac/WebView/WebPreferences.yaml --debug ${SRCROOT}/mac/WebView/WebPreferencesDebug.yaml --experimental ${SRCROOT}/mac/WebView/WebPreferencesExperimental.yaml --internal ${SRCROOT}/mac/WebView/WebPreferencesInternal.yaml\n";
 		};
 		A13EE61D185AE82700556064 /* Postprocess Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3651,6 +3658,7 @@
 				939810F80824BF01008DF038 /* WebPreferences.mm in Sources */,
 				7C023A24251BA43E00BA7BB6 /* WebPreferencesDefaultValues.mm in Sources */,
 				7C023A06251BA18C00BA7BB6 /* WebPreferencesExperimentalFeatures.mm in Sources */,
+				7C671126251FE40F004F4536 /* WebPreferencesInternalFeatures.mm in Sources */,
 				1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.mm in Sources */,
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,

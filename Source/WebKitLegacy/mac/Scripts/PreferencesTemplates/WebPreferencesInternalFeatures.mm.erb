@@ -1,4 +1,6 @@
 /*
+ * <%= @warning %>
+ *
  * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +25,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "WebPreferencesPrivate.h"
 
-#include <wtf/Forward.h>
+#import "WebFeatureInternal.h"
+#import "WebPreferencesDefinitions.h"
 
-#if PLATFORM(MAC)
-#define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED true
-#else
-#define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED false
+using namespace WebKit;
+
+@implementation WebPreferences (WebPrivateInternalFeatures)
+
++ (NSArray<WebFeature *> *)_internalFeatures
+{
+    static NSArray<WebFeature *> *features = @[
+<%- for @pref in @internalFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+        [[WebFeature alloc] initWithKey:@"<%= @pref.name %>" name:@<%= @pref.humanReadableName %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>],
+<%- if @pref.condition -%>
 #endif
+<%- end -%>
+<%- end -%>
+    ];
 
-#if PLATFORM(IOS_FAMILY)
-#define EXPERIMENTAL_FULLSCREEN_API_HIDDEN false
-#else
-#define EXPERIMENTAL_FULLSCREEN_API_HIDDEN true
-#endif
+    return features;
+}
 
-namespace WebKit {
-
-#if PLATFORM(COCOA) && HAVE(SYSTEM_FEATURE_FLAGS)
-bool isFeatureFlagEnabled(const String&);
-#endif
-
-#if ENABLE(WEBGPU)
-bool defaultWebGPUEnabled();
-#endif
-
-#if HAVE(INCREMENTAL_PDF_APIS)
-bool defaultIncrementalPDFEnabled();
-#endif
-
-#if ENABLE(WEBXR)
-bool defaultWebXREnabled();
-#endif
-
-} // namespace WebKit
+@end

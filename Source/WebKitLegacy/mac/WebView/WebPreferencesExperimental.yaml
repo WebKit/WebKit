@@ -37,21 +37,21 @@ AccessibilityObjectModelEnabled:
     WebKit:
       default: false
 
-AdClickAttributionEnabled:
+AdClickAttributionDebugModeEnabled:
   type: bool
-  humanReadableName: "Ad Click Attribution"
-  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
+  humanReadableName: "Ad Click Attribution Debug Mode"
+  humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
+  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       default: false
 
-AdClickAttributionDebugModeEnabled:
+AdClickAttributionEnabled:
   type: bool
-  humanReadableName: "Ad Click Attribution Debug Mode"
-  humanReadableDescription: "Enable Ad Click Attribution Debug Mode"
-  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "Ad Click Attribution"
+  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -90,28 +90,6 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
       default: true
     WebKit:
       default: true
-
-CoreImageAcceleratedFilterRenderEnabled:
-  type: bool
-  humanReadableName: "CoreImage-Accelerated Filter Rendering"
-  humanReadableDescription: "Accelerated CSS and SVG filter rendering using CoreImage"
-  condition: ENABLE(CORE_IMAGE_ACCELERATED_FILTER_RENDER)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
-CoreMathMLEnabled:
-  type: bool
-  humanReadableName: "MathML Core"
-  humanReadableDescription: "Disable features removed from the MathML Core spec."
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      "PLATFORM(GTK) || PLATFORM(WPE)": true
-      default: false
 
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
@@ -169,6 +147,28 @@ CSSTypedOMEnabled:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      default: false
+
+CoreImageAcceleratedFilterRenderEnabled:
+  type: bool
+  humanReadableName: "CoreImage-Accelerated Filter Rendering"
+  humanReadableDescription: "Accelerated CSS and SVG filter rendering using CoreImage"
+  condition: ENABLE(CORE_IMAGE_ACCELERATED_FILTER_RENDER)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+CoreMathMLEnabled:
+  type: bool
+  humanReadableName: "MathML Core"
+  humanReadableDescription: "Disable features removed from the MathML Core spec."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 DialogElementEnabled:
@@ -253,17 +253,6 @@ GoogleAntiFlickerOptimizationQuirkEnabled:
     WebKit:
       default: true
 
-HighlightAPIEnabled:
-  type: bool
-  humanReadableName: "Highlight API"
-  humanReadableDescription: "Highlight API support"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 HDRMediaCapabilitiesEnabled:
   type: bool
@@ -299,6 +288,17 @@ HTTPSUpgradeEnabled:
     WebKit:
       default: false
 
+HighlightAPIEnabled:
+  type: bool
+  humanReadableName: "Highlight API"
+  humanReadableDescription: "Highlight API support"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 # FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 ImageBitmapEnabled:
   type: bool
@@ -311,6 +311,17 @@ ImageBitmapEnabled:
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)" : true
       default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+InProcessCookieCacheEnabled:
+  type: bool
+  humanReadableName: "In-Process Cookie Cache"
+  humanReadableDescription: "In-Process DOM Cookie Cache"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
 
 IncrementalPDFLoadingEnabled:
   type: bool
@@ -333,17 +344,6 @@ IntersectionObserverEnabled:
   defaultValue:
     WebKitLegacy:
       default: false
-    WebKit:
-      default: true
-
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-InProcessCookieCacheEnabled:
-  type: bool
-  humanReadableName: "In-Process Cookie Cache"
-  humanReadableDescription: "In-Process DOM Cookie Cache"
-  defaultValue:
-    WebKitLegacy:
-      default: true
     WebKit:
       default: true
 
@@ -684,17 +684,6 @@ UserGesturePromisePropagationEnabled:
     WebKit:
       default: true
 
-VisualViewportAPIEnabled:
-  type: bool
-  humanReadableName: "Visual Viewport API"
-  humanReadableDescription: "Enable Visual Viewport API"
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)" : false
-      default: true
-    WebKit:
-      default: true
-
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 VP9DecoderEnabled:
   type: bool
@@ -721,6 +710,16 @@ VP9SWDecoderEnabledOnBattery:
     WebKit:
       default: WebKit::defaultVP9SWDecoderEnabledOnBattery()
 
+VisualViewportAPIEnabled:
+  type: bool
+  humanReadableName: "Visual Viewport API"
+  humanReadableDescription: "Enable Visual Viewport API"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)" : false
+      default: true
+    WebKit:
+      default: true
 
 # FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 WebAnimationsCompositeOperationsEnabled:
@@ -835,19 +834,6 @@ WebRTCH265CodecEnabled:
     WebKit:
       default: false
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebRTCVP9CodecEnabled:
-  type: bool
-  humanReadableName: "WebRTC VP9 codec"
-  humanReadableDescription: "Enable WebRTC VP9 codec"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool
@@ -860,6 +846,19 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
       default: false
     WebKit:
       default: WebKit::defaultWebRTCCodecsInGPUProcess()
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebRTCVP9CodecEnabled:
+  type: bool
+  humanReadableName: "WebRTC VP9 codec"
+  humanReadableDescription: "Enable WebRTC VP9 codec"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
 
 WebShareFileAPIEnabled:
   type: bool

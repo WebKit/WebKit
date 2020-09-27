@@ -467,7 +467,6 @@ public:
         @YES, WebKitUsesPageCachePreferenceKey,
         @(cacheModelForMainBundle()), WebKitCacheModelPreferenceKey,
         @YES, WebKitPageCacheSupportsPluginsPreferenceKey,
-        @NO, WebKitDeveloperExtrasEnabledPreferenceKey,
         @(0), WebKitJavaScriptRuntimeFlagsPreferenceKey,
         @YES, WebKitAuthorAndUserStylesEnabledPreferenceKey,
         @YES, WebKitDOMTimersThrottlingEnabledPreferenceKey,
@@ -478,19 +477,11 @@ public:
         @NO, WebKitJavaScriptCanAccessClipboardPreferenceKey,
         @YES, WebKitXSSAuditorEnabledPreferenceKey,
         @YES, WebKitAcceleratedCompositingEnabledPreferenceKey,
-        [NSNumber numberWithBool:DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED], WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey,
-        @NO, WebKitDisplayListDrawingEnabledPreferenceKey,
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-        @YES, WebKitAcceleratedDrawingEnabledPreferenceKey,
         @YES, WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
 #else
-        @NO, WebKitAcceleratedDrawingEnabledPreferenceKey,
         @NO, WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
 #endif
-        @NO, WebKitShowDebugBordersPreferenceKey,
-        @YES, WebKitSimpleLineLayoutEnabledPreferenceKey,
-        @NO, WebKitSimpleLineLayoutDebugBordersEnabledPreferenceKey,
-        @NO, WebKitShowRepaintCounterPreferenceKey,
         @YES, WebKitWebGLEnabledPreferenceKey,
         @YES, WebKitForceWebGLUsesLowPowerPreferenceKey,
         @NO, WebKitAccelerated2dCanvasEnabledPreferenceKey,
@@ -503,10 +494,8 @@ public:
 #else
         @(static_cast<uint32_t>(FrameFlattening::Disabled)), WebKitFrameFlatteningPreferenceKey,
 #endif
-        @NO, WebKitAsyncFrameScrollingEnabledPreferenceKey,
         @NO, WebKitSpatialNavigationEnabledPreferenceKey,
         @NO, WebKitDNSPrefetchingEnabledPreferenceKey,
-        @NO, WebKitFullScreenEnabledPreferenceKey,
         @NO, WebKitAsynchronousSpellCheckingEnabledPreferenceKey,
         @YES, WebKitHyperlinkAuditingEnabledPreferenceKey,
         @NO, WebKitUsePreHTML5ParserQuirksKey,
@@ -602,14 +591,11 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-        @NO, WebKitMockCaptureDevicesEnabledPreferenceKey,
         @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
-        @YES, WebKitMediaCaptureRequiresSecureConnectionPreferenceKey,
 #endif
         @YES, WebKitDataTransferItemsEnabledPreferenceKey,
         @NO, WebKitCustomPasteboardDataEnabledPreferenceKey,
         @YES, WebKitModernMediaControlsEnabledPreferenceKey,
-        @YES, WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey,
 
         @NO, WebKitCacheAPIEnabledPreferenceKey,
 
@@ -618,7 +604,6 @@ public:
 #endif
         @NO, WebKitDirectoryUploadEnabledPreferenceKey,
 
-        @YES, WebKitCSSOMViewScrollingAPIEnabledPreferenceKey,
         @YES, WebKitNeedsStorageAccessFromFileURLsQuirkKey,
         @NO, WebKitAllowCrossOriginSubresourcesToAskForCredentialsKey,
 #if ENABLE(MEDIA_STREAM)
@@ -628,9 +613,6 @@ public:
 #if ENABLE(WEB_RTC)
         @YES, WebKitPeerConnectionEnabledPreferenceKey,
 #endif
-        @YES, WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
-        @NO, WebKitCSSLogicalEnabledPreferenceKey,
-        @NO, WebKitLineHeightUnitsEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
         @YES, WebKitLegacyEncryptedMediaAPIEnabledKey,
         @NO, WebKitEncryptedMediaAPIEnabledKey,
@@ -641,7 +623,6 @@ public:
         @YES, WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey,
         @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
-        @YES, WebKitAriaReflectionEnabledPreferenceKey,
         @NO, WebKitMediaCapabilitiesEnabledPreferenceKey,
         @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
         @(webSQLEnabled), WebKitWebSQLEnabledPreferenceKey,
@@ -3231,15 +3212,6 @@ static NSString *classIBCreatorID = nil;
     if (!IBCreatorID)
         return key;
     return [IBCreatorID stringByAppendingString:key];
-}
-
-@end
-
-@implementation WebPreferences (WebPrivateInternalDebugFeatures)
-
-+ (NSArray<WebFeature *> *)_internalDebugFeatures
-{
-    return @[];
 }
 
 @end

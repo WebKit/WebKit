@@ -21,4 +21,144 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-# Debug Preferences go here.
+AcceleratedDrawingEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
+      default: false
+    WebKit:
+      default: true
+
+DeveloperExtrasEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
+DisableScreenSizeOverride:
+  type: bool
+  webcoreBinding: DeprecatedGlobalSettings
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+DisplayListDrawingEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+ForceAlwaysUserScalable:
+  type: bool
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
+IsInAppBrowserPrivacyEnabled:
+  type: bool
+  humanReadableName: "In-App Browser Privacy"
+  humanReadableDescription: "Enable In-App Browser Privacy"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultInAppBrowserPrivacy()
+
+LogsPageMessagesToSystemConsoleEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+NeedsInAppBrowserPrivacyQuirks:
+  type: bool
+  humanReadableName: "Needs In-App Browser Privacy Quirks"
+  humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+ResourceUsageOverlayVisible:
+  type: bool
+  condition: ENABLE(RESOURCE_USAGE)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: WebKit has an alternate name for this called 'CompositingBordersVisible'. We should standardize on one name.
+ShowDebugBorders:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: WebKit has an alternate name for this called 'CompositingRepaintCountersVisible'. We should standardize on one name.
+ShowRepaintCounter:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+SimpleLineLayoutDebugBordersEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+SubpixelAntialiasedLayerTextEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(MAC)": true
+      default: false
+    WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+TiledScrollingIndicatorVisible:
+  type: bool
+  webcoreName: showTiledScrollingIndicator
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+VisibleDebugOverlayRegions:
+  type: uint32_t
+  defaultValue:
+    WebKitLegacy:
+      default: 0
+    WebKit:
+      default: 0
+

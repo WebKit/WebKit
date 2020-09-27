@@ -598,8 +598,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 + (NSArray<WebFeature *> *)_experimentalFeatures;
 @end
 
-@interface WebPreferences (WebPrivateInternalDebugFeatures)
-+ (NSArray<WebFeature *> *)_internalDebugFeatures;
+@interface WebPreferences (WebPrivateInternalFeatures)
++ (NSArray<WebFeature *> *)_internalFeatures;
 @end
 
 @interface WebPreferences (WebPrivateFeatures)

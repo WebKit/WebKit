@@ -64,33 +64,30 @@ end
 
 FileUtils.mkdir_p(options[:outputDirectory])
 
-parsedBasePreferences = begin
-  YAML.load_file(options[:basePreferences])
-rescue ArgumentError => e
-  puts "Could not parse input file: #{e.message}"
-  exit(-1)
+def load(path)
+  parsed = begin
+    YAML.load_file(path)
+  rescue ArgumentError => e
+    puts "ERROR: Could not parse input file: #{e.message}"
+    exit(-1)
+  end
+  if parsed
+    previousName = nil
+    parsed.keys.each do |name|
+      if previousName != nil and previousName > name
+        puts "ERROR: Input file #{path} is not sorted. First out of order name found is '#{name}'."
+        exit(-1)
+      end
+      previousName = name
+    end
+  end
+  parsed
 end
 
-parsedDebugPreferences = begin
-  YAML.load_file(options[:debugPreferences])
-rescue ArgumentError => e
-  puts "Could not parse input file: #{e.message}"
-  exit(-1)
-end
-
-parsedExperimentalPreferences = begin
-  YAML.load_file(options[:experimentalPreferences])
-rescue ArgumentError => e
-  puts "Could not parse input file: #{e.message}"
-  exit(-1)
-end
-
-parsedInternalPreferences = begin
-  YAML.load_file(options[:internalPreferences])
-rescue ArgumentError => e
-  puts "Could not parse input file: #{e.message}"
-  exit(-1)
-end
+parsedBasePreferences = load(options[:basePreferences])
+parsedDebugPreferences = load(options[:debugPreferences])
+parsedExperimentalPreferences = load(options[:experimentalPreferences])
+parsedInternalPreferences = load(options[:internalPreferences])
 
 
 class Preference
@@ -168,7 +165,7 @@ class Preferences
     @preferencesNotDebug = []
     @preferencesDebug = []
     @experimentalFeatures = []
-    @internalDebugFeatures = []
+    @internalFeatures = []
 
     if parsedBasePreferences
       parsedBasePreferences.each do |name, options|
@@ -195,7 +192,7 @@ class Preferences
       parsedInternalPreferences.each do |name, options|
         preference = Preference.new(name, options, @frontend)
         @preferences << preference
-        @internalDebugFeatures << preference
+        @internalFeatures << preference
       end
     end
 
@@ -203,7 +200,7 @@ class Preferences
     @preferencesNotDebug.sort! { |x, y| x.name <=> y.name }
     @preferencesDebug.sort! { |x, y| x.name <=> y.name }
     @experimentalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
-    @internalDebugFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
+    @internalFeatures.sort! { |x, y| x.name <=> y.name }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }

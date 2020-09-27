@@ -31,7 +31,7 @@
 
 // Default initialization of WebPreferences' internal dictionary.
 
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @preferences do -%>
 <%-   if @pref.condition -%>
 #if <%= @pref.condition %>
 <%-   end -%>
@@ -58,7 +58,7 @@
 <%- end -%>
 
 #define INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES \
-<%- for @pref in @experimentalFeatures do -%>
+<%- for @pref in @preferences do -%>
     @(DEFAULT_VALUE_FOR_<%= @pref.name %>), @"WebKit<%= @pref.name %>", \
 <%- end -%>
     \

@@ -1,5 +1,15 @@
 2020-09-26  Sam Weinig  <weinig@apple.com>
 
+        [Preferences] Generate Debug and Internal preferences for WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=217015
+
+        Reviewed by Darin Adler.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        Adds generation of WebPreferencesInternalFeatures.mm from WebPreferencesInternalFeatures.mm.erb.
+
+2020-09-26  Sam Weinig  <weinig@apple.com>
+
         [Preferences] It should be possible to have different default values for WebKitLegacy and WebKit in preference yaml files
         https://bugs.webkit.org/show_bug.cgi?id=216987
 
