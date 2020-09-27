@@ -232,13 +232,14 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 
     if (m_shouldComputeOutputSampleOffset) {
         uint64_t buffered = endFrame - startFrame;
-        if (buffered < sampleCount * 2) {
+        if (buffered < sampleCount * 2 || (m_endFrameWhenNotEnoughData && m_endFrameWhenNotEnoughData == endFrame)) {
             AudioSampleBufferList::zeroABL(buffer, byteCount);
             sampleCount = 0;
             return false;
         }
 
         m_shouldComputeOutputSampleOffset = false;
+        m_endFrameWhenNotEnoughData = 0;
 
         m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
         m_outputSampleOffset -= computeOffsetDelay(m_outputDescription->sampleRate(), m_lastPushedSampleCount);
@@ -257,6 +258,9 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         if (timeStamp < startFrame || timeStamp >= endFrame) {
             // We are out of the window, let's restart the offset computation.
             m_shouldComputeOutputSampleOffset = true;
+
+            if (timeStamp >= endFrame)
+                m_endFrameWhenNotEnoughData = endFrame;
         } else {
             // We are too close from endFrame, let's back up a little bit.
             uint64_t framesAvailable = endFrame - timeStamp;
