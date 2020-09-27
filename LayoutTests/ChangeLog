@@ -1,3 +1,13 @@
+2020-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Create inline boxes for hard line breaks(<br>) and word wrap opportunities (<wbr>)
+        https://bugs.webkit.org/show_bug.cgi?id=217023
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/br-and-wbr-simple-expected.html: Added.
+        * fast/layoutformattingcontext/br-and-wbr-simple.html: Added.
+
 2020-09-27  Rob Buis  <rbuis@igalia.com>
 
         Alias WebKitCSSMatrix to DOMMatrix

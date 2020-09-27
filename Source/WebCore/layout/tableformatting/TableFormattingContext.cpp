@@ -124,7 +124,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                 // the padding box to vertically align the table cell content.
                 auto& formattingState = layoutState().establishedFormattingState(cellBox);
                 for (auto* child = cellBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
-                    if (child->isAnonymous() || child->isLineBreakBox())
+                    if (child->isInlineTextBox())
                         continue;
                     formattingState.boxGeometry(*child).moveVertically(intrinsicPaddingTop);
                 }

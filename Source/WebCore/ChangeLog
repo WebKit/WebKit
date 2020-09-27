@@ -1,3 +1,32 @@
+2020-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Create inline boxes for hard line breaks(<br>) and word wrap opportunities (<wbr>)
+        https://bugs.webkit.org/show_bug.cgi?id=217023
+
+        Reviewed by Antti Koivisto.
+
+        Both hard <br> and the word break opportunity layout boxes generate inline boxes and get computed box geometries.
+        It enables us to answer questions like element.offsetTop/offsetLeft.
+
+        Test: fast/layoutformattingcontext/br-and-wbr-simple.html
+
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::boxGeometry):
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructInlineBoxes):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::isLineBreak const):
+        (WebCore::Layout::Line::Run::isSoftLineBreak const):
+        (WebCore::Layout::Line::Run::isHardLineBreak const):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+
 2020-09-27  Rob Buis  <rbuis@igalia.com>
 
         Alias WebKitCSSMatrix to DOMMatrix

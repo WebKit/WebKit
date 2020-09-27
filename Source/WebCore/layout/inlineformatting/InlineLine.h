@@ -65,7 +65,9 @@ public:
     struct Run {
         bool isText() const { return m_type == InlineItem::Type::Text; }
         bool isBox() const { return m_type == InlineItem::Type::Box; }
-        bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak || m_type == InlineItem::Type::SoftLineBreak; }
+        bool isLineBreak() const { return isHardLineBreak() || isSoftLineBreak(); }
+        bool isSoftLineBreak() const  { return m_type == InlineItem::Type::SoftLineBreak; }
+        bool isHardLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
         bool isWordBreakOpportunity() const { return m_type == InlineItem::Type::WordBreakOpportunity; }
         bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
         bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }

@@ -113,9 +113,16 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 computeWidthAndMargin(*layoutBox, constraints.horizontal);
                 computeHeightAndMargin(*layoutBox, constraints.horizontal);
             }
+        } else if (layoutBox->isLineBreakBox()) {
+            auto& boxGeometry = formattingState().boxGeometry(*layoutBox);
+            boxGeometry.setHorizontalMargin({ });
+            boxGeometry.setBorder({ });
+            boxGeometry.setPadding({ });
+            boxGeometry.setContentBoxWidth({ });
+            boxGeometry.setVerticalMargin({ });
         } else if (layoutBox->isInlineBox()) {
-            // Text wrapper boxes (anonymous inline level boxes) and <br>s don't have box geometries (they only generate runs).
-            if (!layoutBox->isInlineTextBox() && !layoutBox->isLineBreakBox()) {
+            // Text wrapper boxes (anonymous inline level boxes) don't have box geometries (they only generate runs).
+            if (!layoutBox->isInlineTextBox()) {
                 // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and padding.
                 computeBorderAndPadding(*layoutBox, constraints.horizontal);
                 computeHorizontalMargin(*layoutBox, constraints.horizontal);
@@ -206,7 +213,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // In order to compute the max/min widths, we need to compute margins, borders and padding for certain inline boxes first.
     while (layoutBox) {
-        if (layoutBox->isInlineTextBox() || layoutBox->isLineBreakBox()) {
+        if (layoutBox->isInlineTextBox()) {
             layoutBox = nextInlineLevelBoxToLayout(*layoutBox, root());
             continue;
         }
@@ -427,6 +434,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
         auto lineIndex = formattingState.lines().size();
         // Create the inline runs on the current line. This is mostly text and atomic inline runs.
         for (auto& lineRun : lineContent.runs) {
+            // FIXME: We should not need to construct a line run for <br>.
             if (lineRun.isText() || lineRun.isLineBreak())
                 formattingState.addLineRun({ lineIndex, lineRun.layoutBox(), lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
             else if (lineRun.isBox())
@@ -460,6 +468,10 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
                 boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
                 continue;
+            }
+            if (layoutBox.isLineBreakBox()) {
+                boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
+                boxGeometry.setContentBoxHeight(toLayoutUnit(inlineBox->logicalHeight()));
             }
             auto marginBoxWidth = inlineBox->logicalWidth();
             auto contentBoxWidth = marginBoxWidth - (boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0));

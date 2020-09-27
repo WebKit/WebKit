@@ -225,8 +225,8 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
 
     for (auto& run : runs) {
         auto& inlineLevelBox = run.layoutBox();
+        auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
         if (run.isBox()) {
-            auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(inlineLevelBox);
             auto logicalHeight = inlineLevelBoxGeometry.marginBoxHeight();
             auto baseline = logicalHeight;
@@ -253,7 +253,6 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
                 inlineBox->setIsNonEmpty();
             lineBox.addInlineBox(WTFMove(inlineBox));
         } else if (run.isContainerStart()) {
-            auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
             lineBox.addInlineBox(LineBox::InlineBox::createBoxForInlineBox(inlineLevelBox, logicalLeft, initialLogicalWidth));
@@ -261,7 +260,7 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = lineBox.inlineBoxForLayoutBox(inlineLevelBox);
             inlineBox.setLogicalWidth(run.logicalRight() - inlineBox.logicalLeft());
-        } else if (run.isText() || run.isLineBreak()) {
+        } else if (run.isText() || run.isSoftLineBreak()) {
             auto& parentBox = inlineLevelBox.parent();
             auto& parentInlineBox = &parentBox == &rootBox() ? lineBox.rootInlineBox() : lineBox.inlineBoxForLayoutBox(parentBox);
             if (parentInlineBox.isEmpty()) {
@@ -269,7 +268,15 @@ void LineBoxBuilder::constructInlineBoxes(LineBox& lineBox, const Line::RunList&
                 parentInlineBox.setIsNonEmpty();
                 adjustVerticalGeometryForNonEmptyInlineBox(parentInlineBox);
             }
-        }
+        } else if (run.isHardLineBreak()) {
+            auto inlineBox = LineBox::InlineBox::createBoxForInlineBox(inlineLevelBox, logicalLeft, { });
+            inlineBox->setIsNonEmpty();
+            adjustVerticalGeometryForNonEmptyInlineBox(*inlineBox);
+            lineBox.addInlineBox(WTFMove(inlineBox));
+        } else if (run.isWordBreakOpportunity())
+            lineBox.addInlineBox(LineBox::InlineBox::createBoxForInlineBox(inlineLevelBox, logicalLeft, { }));
+        else
+            ASSERT_NOT_REACHED();
     }
 }
 
