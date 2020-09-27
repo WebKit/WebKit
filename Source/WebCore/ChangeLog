@@ -1,5 +1,38 @@
 2020-09-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267148. rdar://problem/69594002
+
+    [macOS] Limit reported macOS release to 10.15 series
+    https://bugs.webkit.org/show_bug.cgi?id=216593
+    <rdar://problem/68937905>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    If the reported system OS is 11.0 (or beyond) report the last stable release
+    of macOS.
+    
+    * platform/mac/UserAgentMac.mm:
+    (WebCore::standardUserAgentWithApplicationName):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267148 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-16  Brent Fulgham  <bfulgham@apple.com>
+
+            [macOS] Limit reported macOS release to 10.15 series
+            https://bugs.webkit.org/show_bug.cgi?id=216593
+            <rdar://problem/68937905>
+
+            Reviewed by Maciej Stachowiak.
+
+            If the reported system OS is 11.0 (or beyond) report the last stable release
+            of macOS.
+
+            * platform/mac/UserAgentMac.mm:
+            (WebCore::standardUserAgentWithApplicationName):
+
+2020-09-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267002. rdar://problem/69594199
 
     Overflow:scroll rubberbanding is interrupted by post-layout scrolling
