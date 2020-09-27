@@ -9,12 +9,10 @@ Release the first button to complete the test
 
 Pointer Lock Pointer Events pointermove on button state changes Tests
 
-The following pointer types were detected: (none).
+The following pointer types were detected: mouse.
 
 Refresh the page to run the tests again.
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN pointer locked pointermove events received for button state changes
+PASS pointer locked pointermove events received for button state changes 
 

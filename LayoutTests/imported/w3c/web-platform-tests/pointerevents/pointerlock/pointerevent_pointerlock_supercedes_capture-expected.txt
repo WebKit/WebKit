@@ -8,5 +8,5 @@ Move the mouse inside the green rectangle.
 Test passes if the pointer capture is not set when the green rectangle gets the pointer lock.
 
 
-FAIL mouse no pointercapture while pointerlock assert_equals: Pointer is unlocked expected 2 but got 0
+FAIL mouse no pointercapture while pointerlock assert_greater_than: More than 1 pointermove has been received after unlocked expected a number greater than 1 but got 0
 

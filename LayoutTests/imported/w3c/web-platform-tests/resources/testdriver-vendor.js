@@ -7,13 +7,21 @@ function logDebug(callback)
         console.log(callback());
 }
 
+function pause(duration) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, duration);
+    });
+}
+
 function dispatchMouseActions(actions)
 {
     if (!window.eventSender)
         return Promise.reject(new Error("window.eventSender is undefined."));
 
     return new Promise(resolve => {
-        setTimeout(() => {
+        setTimeout(async () => {
             eventSender.dragMode = false;
 
             for (let action of actions) {
@@ -38,7 +46,8 @@ function dispatchMouseActions(actions)
                     eventSender.mouseUp(action.button);
                     break;
                 case "pause":
-                    // FIXME: What should we do here?
+                    logDebug(() => `pause(${action.duration})`);
+                    await pause(action.duration);
                     break;
                 default:
                     return Promise.reject(new Error(`Unknown action type "${action.type}".`));

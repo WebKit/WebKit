@@ -1,3 +1,19 @@
+2020-09-27  Cathie Chen  <cathiechen@igalia.com>
+
+        Add support to pause in testdriver.js
+        https://bugs.webkit.org/show_bug.cgi?id=216933
+
+        Reviewed by Darin Adler
+
+        While simulating a mouse action, pause in dispatchMouseActions() is needed. Otherwise, the events are sent
+        without delay, the simulation might not be effective. The patch uses JS setTimeout to simulate a pause.
+
+        * web-platform-tests/pointerevents/pointerlock/pointerevent_pointerlock_supercedes_capture-expected.txt:
+        * web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_on_chorded_mouse_button_when_locked-expected.txt:
+        * web-platform-tests/resources/testdriver-vendor.js:
+        (pause): Use setTimeout to simulate a pause.
+        (dispatchMouseActions):
+
 2020-09-27  Rob Buis  <rbuis@igalia.com>
 
         Alias WebKitCSSMatrix to DOMMatrix
