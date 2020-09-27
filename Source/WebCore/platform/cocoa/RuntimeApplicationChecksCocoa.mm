@@ -428,6 +428,12 @@ bool IOSApplication::isJWLibrary()
     return isJWLibrary;
 }
 
+bool IOSApplication::isPaperIO()
+{
+    static bool isPaperIO = applicationBundleIsEqualTo("io.voodoo.paperio"_s);
+    return isPaperIO;
+}
+
 #endif
 
 } // namespace WebCore
