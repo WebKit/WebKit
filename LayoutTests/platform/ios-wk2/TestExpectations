@@ -1873,3 +1873,6 @@ fast/text/international/complex-character-based-fallback.html [ Failure ]
 
 #rdar://69407691 REGRESSION: [ iOS wk2 ] http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
 http/wpt/cache-storage/quota-third-party.https.html [ Pass Failure ]
+
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]

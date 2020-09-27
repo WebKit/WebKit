@@ -74,16 +74,22 @@ bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const FrameVie
 
 bool RemoteScrollingCoordinator::isRubberBandInProgress(ScrollingNodeID nodeID) const
 {
+    if (!nodeID)
+        return false;
     return m_nodesWithActiveRubberBanding.contains(nodeID);
 }
 
 bool RemoteScrollingCoordinator::isUserScrollInProgress(ScrollingNodeID nodeID) const
 {
+    if (!nodeID)
+        return false;
     return m_nodesWithActiveUserScrolls.contains(nodeID);
 }
 
 bool RemoteScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID nodeID) const
 {
+    if (!nodeID)
+        return false;
     return m_nodesWithActiveScrollSnap.contains(nodeID);
 }
 
