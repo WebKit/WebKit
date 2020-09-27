@@ -1,9 +1,9 @@
 
-PASS When an event is created, returnValue should be initialized to true. 
-PASS preventDefault() should not change returnValue if cancelable is false. 
-PASS returnValue=false should have no effect if cancelable is false. 
-PASS preventDefault() should change returnValue if cancelable is true. 
-PASS returnValue should change returnValue if cancelable is true. 
-PASS initEvent should unset returnValue. 
-PASS returnValue=true should have no effect once the canceled flag was set. 
+PASS When an event is created, returnValue should be initialized to true.
+PASS preventDefault() should not change returnValue if cancelable is false.
+PASS returnValue=false should have no effect if cancelable is false.
+PASS preventDefault() should change returnValue if cancelable is true.
+PASS returnValue should change returnValue if cancelable is true.
+PASS initEvent should unset returnValue.
+PASS returnValue=true should have no effect once the canceled flag was set.
 

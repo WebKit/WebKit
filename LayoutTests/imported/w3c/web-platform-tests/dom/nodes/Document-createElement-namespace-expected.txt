@@ -1,53 +1,53 @@
 
-PASS Created element's namespace in current document 
-PASS Created element's namespace in created HTML document 
-PASS Created element's namespace in created XML document 
-PASS Created element's namespace in created XHTML document 
-PASS Created element's namespace in created SVG document 
-PASS Created element's namespace in created MathML document 
-PASS Created element's namespace in created HTML document by DOMParser ('text/html') 
-PASS Created element's namespace in created XML document by DOMParser ('text/xml') 
-PASS Created element's namespace in created XML document by DOMParser ('application/xml') 
-PASS Created element's namespace in created XHTML document by DOMParser ('application/xhtml+xml') 
-PASS Created element's namespace in created SVG document by DOMParser ('image/svg+xml') 
-PASS Created element's namespace in empty.html 
-PASS Created element's namespace in empty.xhtml 
-PASS Created element's namespace in empty.xml 
-PASS Created element's namespace in empty.svg 
-PASS Created element's namespace in minimal_html.html 
-PASS Created element's namespace in minimal_html.xhtml 
-PASS Created element's namespace in minimal_html.xml 
-PASS Created element's namespace in minimal_html.svg 
-PASS Created element's namespace in xhtml.html 
-PASS Created element's namespace in xhtml.xhtml 
-PASS Created element's namespace in xhtml.xml 
-PASS Created element's namespace in xhtml.svg 
-PASS Created element's namespace in svg.html 
-PASS Created element's namespace in svg.xhtml 
-PASS Created element's namespace in svg.xml 
-PASS Created element's namespace in svg.svg 
-PASS Created element's namespace in mathml.html 
-PASS Created element's namespace in mathml.xhtml 
-PASS Created element's namespace in mathml.xml 
-PASS Created element's namespace in mathml.svg 
-PASS Created element's namespace in bare_xhtml.html 
-PASS Created element's namespace in bare_xhtml.xhtml 
-PASS Created element's namespace in bare_xhtml.xml 
-PASS Created element's namespace in bare_xhtml.svg 
-PASS Created element's namespace in bare_svg.html 
-PASS Created element's namespace in bare_svg.xhtml 
-PASS Created element's namespace in bare_svg.xml 
-PASS Created element's namespace in bare_svg.svg 
-PASS Created element's namespace in bare_mathml.html 
-PASS Created element's namespace in bare_mathml.xhtml 
-PASS Created element's namespace in bare_mathml.xml 
-PASS Created element's namespace in bare_mathml.svg 
-PASS Created element's namespace in xhtml_ns_removed.html 
-PASS Created element's namespace in xhtml_ns_removed.xhtml 
-PASS Created element's namespace in xhtml_ns_removed.xml 
-PASS Created element's namespace in xhtml_ns_removed.svg 
-PASS Created element's namespace in xhtml_ns_changed.html 
-PASS Created element's namespace in xhtml_ns_changed.xhtml 
-PASS Created element's namespace in xhtml_ns_changed.xml 
-PASS Created element's namespace in xhtml_ns_changed.svg 
+PASS Created element's namespace in current document
+PASS Created element's namespace in created HTML document
+PASS Created element's namespace in created XML document
+PASS Created element's namespace in created XHTML document
+PASS Created element's namespace in created SVG document
+PASS Created element's namespace in created MathML document
+PASS Created element's namespace in created HTML document by DOMParser ('text/html')
+PASS Created element's namespace in created XML document by DOMParser ('text/xml')
+PASS Created element's namespace in created XML document by DOMParser ('application/xml')
+PASS Created element's namespace in created XHTML document by DOMParser ('application/xhtml+xml')
+PASS Created element's namespace in created SVG document by DOMParser ('image/svg+xml')
+PASS Created element's namespace in empty.html
+PASS Created element's namespace in empty.xhtml
+PASS Created element's namespace in empty.xml
+PASS Created element's namespace in empty.svg
+PASS Created element's namespace in minimal_html.html
+PASS Created element's namespace in minimal_html.xhtml
+PASS Created element's namespace in minimal_html.xml
+PASS Created element's namespace in minimal_html.svg
+PASS Created element's namespace in xhtml.html
+PASS Created element's namespace in xhtml.xhtml
+PASS Created element's namespace in xhtml.xml
+PASS Created element's namespace in xhtml.svg
+PASS Created element's namespace in svg.html
+PASS Created element's namespace in svg.xhtml
+PASS Created element's namespace in svg.xml
+PASS Created element's namespace in svg.svg
+PASS Created element's namespace in mathml.html
+PASS Created element's namespace in mathml.xhtml
+PASS Created element's namespace in mathml.xml
+PASS Created element's namespace in mathml.svg
+PASS Created element's namespace in bare_xhtml.html
+PASS Created element's namespace in bare_xhtml.xhtml
+PASS Created element's namespace in bare_xhtml.xml
+PASS Created element's namespace in bare_xhtml.svg
+PASS Created element's namespace in bare_svg.html
+PASS Created element's namespace in bare_svg.xhtml
+PASS Created element's namespace in bare_svg.xml
+PASS Created element's namespace in bare_svg.svg
+PASS Created element's namespace in bare_mathml.html
+PASS Created element's namespace in bare_mathml.xhtml
+PASS Created element's namespace in bare_mathml.xml
+PASS Created element's namespace in bare_mathml.svg
+PASS Created element's namespace in xhtml_ns_removed.html
+PASS Created element's namespace in xhtml_ns_removed.xhtml
+PASS Created element's namespace in xhtml_ns_removed.xml
+PASS Created element's namespace in xhtml_ns_removed.svg
+PASS Created element's namespace in xhtml_ns_changed.html
+PASS Created element's namespace in xhtml_ns_changed.xhtml
+PASS Created element's namespace in xhtml_ns_changed.xml
+PASS Created element's namespace in xhtml_ns_changed.svg
 

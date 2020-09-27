@@ -1,3 +1,3 @@
 
-PASS Check that removing a node and then adopting its parent into a different window/document doesn't crash. 
+PASS Check that removing a node and then adopting its parent into a different window/document doesn't crash.
 

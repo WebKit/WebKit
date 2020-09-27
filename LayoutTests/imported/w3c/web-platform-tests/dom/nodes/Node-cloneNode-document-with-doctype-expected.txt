@@ -1,5 +1,5 @@
 
-PASS Created with the createDocument/createDocumentType 
-PASS Created with the createHTMLDocument 
-PASS Created with DOMParser 
+PASS Created with the createDocument/createDocumentType
+PASS Created with the createHTMLDocument
+PASS Created with DOMParser
 

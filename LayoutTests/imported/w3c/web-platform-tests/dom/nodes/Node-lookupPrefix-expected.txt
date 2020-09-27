@@ -1,13 +1,13 @@
 
-PASS Node.lookupPrefix 
-PASS Node.lookupPrefix 1 
-PASS Node.lookupPrefix 2 
-PASS Node.lookupPrefix 3 
-PASS Node.lookupPrefix 4 
-PASS Node.lookupPrefix 5 
-PASS Node.lookupPrefix 6 
-PASS Node.lookupPrefix 7 
-PASS Node.lookupPrefix 8 
-PASS Node.lookupPrefix 9 
-PASS Node.lookupPrefix 10 
+PASS Node.lookupPrefix
+PASS Node.lookupPrefix 1
+PASS Node.lookupPrefix 2
+PASS Node.lookupPrefix 3
+PASS Node.lookupPrefix 4
+PASS Node.lookupPrefix 5
+PASS Node.lookupPrefix 6
+PASS Node.lookupPrefix 7
+PASS Node.lookupPrefix 8
+PASS Node.lookupPrefix 9
+PASS Node.lookupPrefix 10
 

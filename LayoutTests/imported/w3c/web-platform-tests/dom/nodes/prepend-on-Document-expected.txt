@@ -1,7 +1,7 @@
 
-PASS Document.prepend() without any argument, on a Document having no child. 
-PASS Document.prepend() with only one element as an argument, on a Document having no child. 
-PASS Document.append() with only one element as an argument, on a Document having one child. 
-PASS Document.prepend() with text as an argument, on a Document having no child. 
-PASS Document.prepend() with two elements as the argument, on a Document having no child. 
+PASS Document.prepend() without any argument, on a Document having no child.
+PASS Document.prepend() with only one element as an argument, on a Document having no child.
+PASS Document.append() with only one element as an argument, on a Document having one child.
+PASS Document.prepend() with text as an argument, on a Document having no child.
+PASS Document.prepend() with two elements as the argument, on a Document having no child.
 

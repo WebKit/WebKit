@@ -1,18 +1,18 @@
 
-PASS basic with click() 
-PASS basic with dispatchEvent() 
-PASS basic with wrong event class 
-PASS look at parents only when event bubbles 
+PASS basic with click()
+PASS basic with dispatchEvent()
+PASS basic with wrong event class
+PASS look at parents only when event bubbles
 FAIL look at parents when event bubbles assert_true: expected true got false
-PASS pick the first with activation behavior <input type=checkbox> 
-PASS pick the first with activation behavior <a href> 
-PASS event state during post-click handling 
-PASS redispatch during post-click handling 
-PASS disabled checkbox still has activation behavior 
-PASS disabled checkbox still has activation behavior, part 2 
-PASS disconnected checkbox should be checked 
-PASS disconnected radio should be checked 
-PASS disconnected checkbox should be checked from dispatchEvent(new MouseEvent('click')) 
-PASS disconnected radio should be checked from dispatchEvent(new MouseEvent('click')) 
-PASS disconnected form should not submit 
+PASS pick the first with activation behavior <input type=checkbox>
+PASS pick the first with activation behavior <a href>
+PASS event state during post-click handling
+PASS redispatch during post-click handling
+PASS disabled checkbox still has activation behavior
+PASS disabled checkbox still has activation behavior, part 2
+PASS disconnected checkbox should be checked
+PASS disconnected radio should be checked
+PASS disconnected checkbox should be checked from dispatchEvent(new MouseEvent('click'))
+PASS disconnected radio should be checked from dispatchEvent(new MouseEvent('click'))
+PASS disconnected form should not submit
 

@@ -1,9 +1,9 @@
 
-PASS For Element nodes, nodeName should return the same as tagName. 
-PASS For Text nodes, nodeName should return "#text". 
-PASS For ProcessingInstruction nodes, nodeName should return the target. 
-PASS For Comment nodes, nodeName should return "#comment". 
-PASS For Document nodes, nodeName should return "#document". 
-PASS For DocumentType nodes, nodeName should return the name. 
-PASS For DocumentFragment nodes, nodeName should return "#document-fragment". 
+PASS For Element nodes, nodeName should return the same as tagName.
+PASS For Text nodes, nodeName should return "#text".
+PASS For ProcessingInstruction nodes, nodeName should return the target.
+PASS For Comment nodes, nodeName should return "#comment".
+PASS For Document nodes, nodeName should return "#document".
+PASS For DocumentType nodes, nodeName should return the name.
+PASS For DocumentFragment nodes, nodeName should return "#document-fragment".
 

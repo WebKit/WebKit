@@ -1,11 +1,11 @@
 
-PASS doctypes should be compared on reference 
-PASS elements should be compared on reference (namespaced element) 
-PASS elements should be compared on reference (namespaced attribute) 
-PASS processing instructions should be compared on reference 
-PASS text nodes should be compared on reference 
-PASS comments should be compared on reference 
-PASS document fragments should be compared on reference 
-PASS documents should be compared on reference 
-PASS attributes should be compared on reference 
+PASS doctypes should be compared on reference
+PASS elements should be compared on reference (namespaced element)
+PASS elements should be compared on reference (namespaced attribute)
+PASS processing instructions should be compared on reference
+PASS text nodes should be compared on reference
+PASS comments should be compared on reference
+PASS document fragments should be compared on reference
+PASS documents should be compared on reference
+PASS attributes should be compared on reference
 

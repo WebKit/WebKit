@@ -1,6 +1,6 @@
 
-PASS Constants for eventPhase on Event interface object. 
-PASS Constants for eventPhase on Event prototype object. 
-PASS Constants for eventPhase on Event object. 
-PASS Constants for eventPhase on CustomEvent object. 
+PASS Constants for eventPhase on Event interface object.
+PASS Constants for eventPhase on Event prototype object.
+PASS Constants for eventPhase on Event object.
+PASS Constants for eventPhase on CustomEvent object.
 

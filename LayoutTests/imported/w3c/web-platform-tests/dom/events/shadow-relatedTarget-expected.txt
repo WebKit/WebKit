@@ -1,5 +1,5 @@
 
 
 FAIL relatedTarget should not leak at capturing phase, at window object. assert_equals: expected Element node <div id="host"></div> but got Element node <input id="shadowInput"></input>
-PASS relatedTarget should not leak at target. 
+PASS relatedTarget should not leak at target.
 

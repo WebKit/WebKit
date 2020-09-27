@@ -1,15 +1,15 @@
 
-PASS onanimationend and onwebkitanimationend are not aliases 
-PASS dispatchEvent of a webkitAnimationEnd event does trigger a prefixed event handler or listener 
-PASS dispatchEvent of a webkitAnimationEnd event does not trigger an unprefixed event handler or listener 
-PASS dispatchEvent of an animationend event does not trigger a prefixed event handler or listener 
-PASS onwebkitanimationend event handler should trigger for an animation 
-PASS onwebkitanimationend event handler should not trigger if an unprefixed event handler also exists 
-PASS onwebkitanimationend event handler should not trigger if an unprefixed listener also exists 
-PASS event types for prefixed and unprefixed animationend event handlers should be named appropriately 
-PASS webkitAnimationEnd event listener should trigger for an animation 
-PASS webkitAnimationEnd event listener should not trigger if an unprefixed listener also exists 
-PASS webkitAnimationEnd event listener should not trigger if an unprefixed event handler also exists 
-PASS event types for prefixed and unprefixed animationend event listeners should be named appropriately 
-PASS webkitAnimationEnd event listener is case sensitive 
+PASS onanimationend and onwebkitanimationend are not aliases
+PASS dispatchEvent of a webkitAnimationEnd event does trigger a prefixed event handler or listener
+PASS dispatchEvent of a webkitAnimationEnd event does not trigger an unprefixed event handler or listener
+PASS dispatchEvent of an animationend event does not trigger a prefixed event handler or listener
+PASS onwebkitanimationend event handler should trigger for an animation
+PASS onwebkitanimationend event handler should not trigger if an unprefixed event handler also exists
+PASS onwebkitanimationend event handler should not trigger if an unprefixed listener also exists
+PASS event types for prefixed and unprefixed animationend event handlers should be named appropriately
+PASS webkitAnimationEnd event listener should trigger for an animation
+PASS webkitAnimationEnd event listener should not trigger if an unprefixed listener also exists
+PASS webkitAnimationEnd event listener should not trigger if an unprefixed event handler also exists
+PASS event types for prefixed and unprefixed animationend event listeners should be named appropriately
+PASS webkitAnimationEnd event listener is case sensitive
 

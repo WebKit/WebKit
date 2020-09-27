@@ -1,5 +1,5 @@
 Test of nextElementSibling
 
 
-PASS nextElementSibling 
+PASS nextElementSibling
 The result of this test is unknown.

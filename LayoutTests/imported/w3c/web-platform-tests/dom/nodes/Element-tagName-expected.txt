@@ -1,8 +1,8 @@
 
-PASS tagName should upper-case for HTML elements in HTML documents. 
-PASS tagName should not upper-case for SVG elements in HTML documents. 
-PASS tagName should not upper-case for other non-HTML namespaces 
-PASS tagName should be updated when changing ownerDocument 
-PASS tagName should be updated when changing ownerDocument (createDocument without prefix) 
-PASS tagName should be updated when changing ownerDocument (createDocument with prefix) 
+PASS tagName should upper-case for HTML elements in HTML documents.
+PASS tagName should not upper-case for SVG elements in HTML documents.
+PASS tagName should not upper-case for other non-HTML namespaces
+PASS tagName should be updated when changing ownerDocument
+PASS tagName should be updated when changing ownerDocument (createDocument without prefix)
+PASS tagName should be updated when changing ownerDocument (createDocument with prefix)
 

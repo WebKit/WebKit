@@ -1,46 +1,46 @@
 MutationObservers: attributes mutations
 
 
-PASS attributes Element.id: update, no oldValue, mutation 
-PASS attributes Element.id: update mutation 
-PASS attributes Element.id: empty string update mutation 
-PASS attributes Element.id: same value mutation 
-PASS attributes Element.unknown: IDL attribute no mutation 
-PASS attributes HTMLInputElement.type: type update mutation 
-PASS attributes Element.className: new value mutation 
-PASS attributes Element.className: empty string update mutation 
-PASS attributes Element.className: same value mutation 
-PASS attributes Element.className: same multiple values mutation 
-PASS attributes Element.classList.add: single token addition mutation 
-PASS attributes Element.classList.add: multiple tokens addition mutation 
-PASS attributes Element.classList.add: syntax err/no mutation 
-PASS attributes Element.classList.add: invalid character/no mutation 
-PASS attributes Element.classList.add: same value mutation 
-PASS attributes Element.classList.remove: single token removal mutation 
-PASS attributes Element.classList.remove: multiple tokens removal mutation 
-PASS attributes Element.classList.remove: missing token removal mutation 
-PASS attributes Element.classList.toggle: token removal mutation 
-PASS attributes Element.classList.toggle: token addition mutation 
-PASS attributes Element.classList.toggle: forced token removal mutation 
-PASS attributes Element.classList.toggle: forced missing token removal no mutation 
-PASS attributes Element.classList.toggle: forced existing token addition no mutation 
-PASS attributes Element.classList.toggle: forced token addition mutation 
-PASS attributes Element.attributes.value: update mutation 
-PASS attributes Element.attributes.value: same id mutation 
-PASS attributes Element.setAttribute: id mutation 
-PASS attributes Element.setAttribute: same class mutation 
-PASS attributes Element.setAttribute: classname mutation 
-PASS attributes Element.removeAttribute: removal mutation 
-PASS attributes Element.removeAttribute: removal no mutation 
-PASS childList HTMLInputElement.removeAttribute: type removal mutation 
-PASS attributes Element.setAttributeNS: creation mutation 
-PASS attributes Element.setAttributeNS: prefixed attribute creation mutation 
-PASS attributes Element.removeAttributeNS: removal mutation 
-PASS attributes Element.removeAttributeNS: removal no mutation 
-PASS attributes Element.removeAttributeNS: prefixed attribute removal no mutation 
-PASS attributes/attributeFilter Element.id/Element.className: update mutation 
-PASS attributes/attributeFilter Element.id/Element.className: multiple filter update mutation 
-PASS attributeOldValue alone Element.id: update mutation 
-PASS attributeFilter alone Element.id/Element.className: multiple filter update mutation 
-PASS childList false: no childList mutation 
+PASS attributes Element.id: update, no oldValue, mutation
+PASS attributes Element.id: update mutation
+PASS attributes Element.id: empty string update mutation
+PASS attributes Element.id: same value mutation
+PASS attributes Element.unknown: IDL attribute no mutation
+PASS attributes HTMLInputElement.type: type update mutation
+PASS attributes Element.className: new value mutation
+PASS attributes Element.className: empty string update mutation
+PASS attributes Element.className: same value mutation
+PASS attributes Element.className: same multiple values mutation
+PASS attributes Element.classList.add: single token addition mutation
+PASS attributes Element.classList.add: multiple tokens addition mutation
+PASS attributes Element.classList.add: syntax err/no mutation
+PASS attributes Element.classList.add: invalid character/no mutation
+PASS attributes Element.classList.add: same value mutation
+PASS attributes Element.classList.remove: single token removal mutation
+PASS attributes Element.classList.remove: multiple tokens removal mutation
+PASS attributes Element.classList.remove: missing token removal mutation
+PASS attributes Element.classList.toggle: token removal mutation
+PASS attributes Element.classList.toggle: token addition mutation
+PASS attributes Element.classList.toggle: forced token removal mutation
+PASS attributes Element.classList.toggle: forced missing token removal no mutation
+PASS attributes Element.classList.toggle: forced existing token addition no mutation
+PASS attributes Element.classList.toggle: forced token addition mutation
+PASS attributes Element.attributes.value: update mutation
+PASS attributes Element.attributes.value: same id mutation
+PASS attributes Element.setAttribute: id mutation
+PASS attributes Element.setAttribute: same class mutation
+PASS attributes Element.setAttribute: classname mutation
+PASS attributes Element.removeAttribute: removal mutation
+PASS attributes Element.removeAttribute: removal no mutation
+PASS childList HTMLInputElement.removeAttribute: type removal mutation
+PASS attributes Element.setAttributeNS: creation mutation
+PASS attributes Element.setAttributeNS: prefixed attribute creation mutation
+PASS attributes Element.removeAttributeNS: removal mutation
+PASS attributes Element.removeAttributeNS: removal no mutation
+PASS attributes Element.removeAttributeNS: prefixed attribute removal no mutation
+PASS attributes/attributeFilter Element.id/Element.className: update mutation
+PASS attributes/attributeFilter Element.id/Element.className: multiple filter update mutation
+PASS attributeOldValue alone Element.id: update mutation
+PASS attributeFilter alone Element.id/Element.className: multiple filter update mutation
+PASS childList false: no childList mutation
 

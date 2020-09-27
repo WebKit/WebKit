@@ -1,8 +1,8 @@
 
-PASS Split text after end of data 
-PASS Split empty text 
-PASS Split text at beginning 
-PASS Split text at end 
-PASS Split root 
-PASS Split child 
+PASS Split text after end of data
+PASS Split empty text
+PASS Split text at beginning
+PASS Split text at end
+PASS Split root
+PASS Split child
 

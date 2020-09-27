@@ -1,10 +1,10 @@
 
-PASS cancelBubble must be false when an event is initially created. 
-PASS Initializing an event must set cancelBubble to false. 
-PASS stopPropagation() must set cancelBubble to true. 
-PASS stopImmediatePropagation() must set cancelBubble to true. 
-PASS Event.cancelBubble=false must have no effect. 
-PASS Event.cancelBubble=false must have no effect during event propagation. 
-PASS cancelBubble must be false after an event has been dispatched. 
-PASS Event.cancelBubble=true must set the stop propagation flag. 
+PASS cancelBubble must be false when an event is initially created.
+PASS Initializing an event must set cancelBubble to false.
+PASS stopPropagation() must set cancelBubble to true.
+PASS stopImmediatePropagation() must set cancelBubble to true.
+PASS Event.cancelBubble=false must have no effect.
+PASS Event.cancelBubble=false must have no effect during event propagation.
+PASS cancelBubble must be false after an event has been dispatched.
+PASS Event.cancelBubble=true must set the stop propagation flag.
 

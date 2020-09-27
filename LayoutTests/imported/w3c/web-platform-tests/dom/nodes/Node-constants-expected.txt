@@ -1,10 +1,10 @@
 
-PASS Constants for nodeType on Node interface object. 
-PASS Constants for nodeType on Node prototype object. 
-PASS Constants for nodeType on Element object. 
-PASS Constants for nodeType on Text object. 
-PASS Constants for createDocumentPosition on Node interface object. 
-PASS Constants for createDocumentPosition on Node prototype object. 
-PASS Constants for createDocumentPosition on Element object. 
-PASS Constants for createDocumentPosition on Text object. 
+PASS Constants for nodeType on Node interface object.
+PASS Constants for nodeType on Node prototype object.
+PASS Constants for nodeType on Element object.
+PASS Constants for nodeType on Text object.
+PASS Constants for createDocumentPosition on Node interface object.
+PASS Constants for createDocumentPosition on Node prototype object.
+PASS Constants for createDocumentPosition on Element object.
+PASS Constants for createDocumentPosition on Text object.
 

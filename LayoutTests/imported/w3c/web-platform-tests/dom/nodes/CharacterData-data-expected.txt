@@ -1,18 +1,18 @@
 
-PASS Text.data initial value 
-PASS Text.data = null 
-PASS Text.data = undefined 
-PASS Text.data = 0 
-PASS Text.data = '' 
-PASS Text.data = '--' 
-PASS Text.data = '資料' 
-PASS Text.data = '🌠 test 🌠 TEST' 
-PASS Comment.data initial value 
-PASS Comment.data = null 
-PASS Comment.data = undefined 
-PASS Comment.data = 0 
-PASS Comment.data = '' 
-PASS Comment.data = '--' 
-PASS Comment.data = '資料' 
-PASS Comment.data = '🌠 test 🌠 TEST' 
+PASS Text.data initial value
+PASS Text.data = null
+PASS Text.data = undefined
+PASS Text.data = 0
+PASS Text.data = ''
+PASS Text.data = '--'
+PASS Text.data = '資料'
+PASS Text.data = '🌠 test 🌠 TEST'
+PASS Comment.data initial value
+PASS Comment.data = null
+PASS Comment.data = undefined
+PASS Comment.data = 0
+PASS Comment.data = ''
+PASS Comment.data = '--'
+PASS Comment.data = '資料'
+PASS Comment.data = '🌠 test 🌠 TEST'
 

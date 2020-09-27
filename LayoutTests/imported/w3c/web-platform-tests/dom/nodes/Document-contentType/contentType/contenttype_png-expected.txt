@@ -1,3 +1,3 @@
 
-PASS PNG document.contentType === 'image/png' 
+PASS PNG document.contentType === 'image/png'
 

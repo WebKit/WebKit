@@ -1,5 +1,5 @@
 
-PASS get elements in document 
+PASS get elements in document
 test link #foo
 text
 text caption

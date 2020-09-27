@@ -1,4 +1,4 @@
 
-PASS HTMLCollection as a prototype should not allow getting .length on the base object 
-PASS HTMLCollection as a prototype and setting own properties 
+PASS HTMLCollection as a prototype should not allow getting .length on the base object
+PASS HTMLCollection as a prototype and setting own properties
 

@@ -1,6 +1,6 @@
 
-PASS Adopting an Element called 'x<' should work. 
-PASS Adopting an Element called ':good:times:' should work. 
-PASS Explicitly adopting a DocumentType should work. 
-PASS Adopting a Document should throw. 
+PASS Adopting an Element called 'x<' should work.
+PASS Adopting an Element called ':good:times:' should work.
+PASS Explicitly adopting a DocumentType should work.
+PASS Adopting a Document should throw.
 

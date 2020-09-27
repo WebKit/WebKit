@@ -1,12 +1,12 @@
 
-PASS HTML element with uppercase tag name matches in XHTML documents 
-PASS Element in non-HTML namespace, no prefix, lowercase name 
-PASS Element in non-HTML namespace, no prefix, uppercase name 
-PASS Element in non-HTML namespace, prefix, lowercase name 
-PASS Element in non-HTML namespace, prefix, uppercase name 
-PASS Element in HTML namespace, no prefix, non-ascii characters in name 
-PASS Element in non-HTML namespace, non-ascii characters in name 
-PASS Element in HTML namespace, prefix, non-ascii characters in name 
-PASS Element in non-HTML namespace, prefix, non-ascii characters in name 
-PASS getElementsByTagName('*') 
+PASS HTML element with uppercase tag name matches in XHTML documents
+PASS Element in non-HTML namespace, no prefix, lowercase name
+PASS Element in non-HTML namespace, no prefix, uppercase name
+PASS Element in non-HTML namespace, prefix, lowercase name
+PASS Element in non-HTML namespace, prefix, uppercase name
+PASS Element in HTML namespace, no prefix, non-ascii characters in name
+PASS Element in non-HTML namespace, non-ascii characters in name
+PASS Element in HTML namespace, prefix, non-ascii characters in name
+PASS Element in non-HTML namespace, prefix, non-ascii characters in name
+PASS getElementsByTagName('*')
 

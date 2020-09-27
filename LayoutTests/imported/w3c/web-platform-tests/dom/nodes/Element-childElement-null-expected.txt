@@ -1,5 +1,5 @@
 Test of firstElementChild and lastChildElement returning null
 
 
-PASS Null test 
+PASS Null test
 Test.

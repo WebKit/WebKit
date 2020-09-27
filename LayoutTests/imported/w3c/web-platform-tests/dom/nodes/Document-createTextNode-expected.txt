@@ -1,8 +1,8 @@
 
-PASS createTextNode("\v") 
-PASS createTextNode("a -- b") 
-PASS createTextNode("a-") 
-PASS createTextNode("-b") 
-PASS createTextNode(null) 
-PASS createTextNode(undefined) 
+PASS createTextNode("\v")
+PASS createTextNode("a -- b")
+PASS createTextNode("a-")
+PASS createTextNode("-b")
+PASS createTextNode(null)
+PASS createTextNode(undefined)
 

@@ -1,5 +1,5 @@
 
-PASS Range.comparePoint 
-PASS Range.comparePoint 1 
-PASS Range.comparePoint 2 
+PASS Range.comparePoint
+PASS Range.comparePoint 1
+PASS Range.comparePoint 2
 

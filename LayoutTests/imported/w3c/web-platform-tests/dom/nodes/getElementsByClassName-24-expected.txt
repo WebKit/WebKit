@@ -1,5 +1,5 @@
 
-PASS handle unicode chars 
+PASS handle unicode chars
 ΔЙあ叶葉 말 link
 text
 ΔЙあ叶葉 קم

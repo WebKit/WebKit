@@ -2,10 +2,10 @@ CONSOLE MESSAGE: [object Object]
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 
-PASS calls `handleEvent` method of `EventListener` 
-PASS performs `Get` every time event is dispatched 
-PASS doesn't call `handleEvent` method on callable `EventListener` 
-PASS rethrows errors when getting `handleEvent` 
-PASS throws if `handleEvent` is falsy and not callable 
-PASS throws if `handleEvent` is thruthy and not callable 
+PASS calls `handleEvent` method of `EventListener`
+PASS performs `Get` every time event is dispatched
+PASS doesn't call `handleEvent` method on callable `EventListener`
+PASS rethrows errors when getting `handleEvent`
+PASS throws if `handleEvent` is falsy and not callable
+PASS throws if `handleEvent` is thruthy and not callable
 

@@ -1,4 +1,4 @@
 
-PASS hasAttribute should check for attribute presence, irrespective of namespace 
-PASS hasAttribute should work with all attribute casings 
+PASS hasAttribute should check for attribute presence, irrespective of namespace
+PASS hasAttribute should work with all attribute casings
 

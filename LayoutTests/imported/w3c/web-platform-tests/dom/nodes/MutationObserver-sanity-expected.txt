@@ -1,15 +1,15 @@
 
-PASS Should throw if none of childList, attributes, characterData are true 
-PASS Should not throw if childList is true 
-PASS Should not throw if attributes is true 
-PASS Should not throw if characterData is true 
-PASS Should not throw if attributeOldValue is true and attributes is omitted 
-PASS Should not throw if characterDataOldValue is true and characterData is omitted 
-PASS Should not throw if attributeFilter is present and attributes is omitted 
-PASS Should throw if attributeOldValue is true and attributes is false 
-PASS Should not throw if attributeOldValue and attributes are both true 
-PASS Should throw if attributeFilter is present and attributes is false 
-PASS Should not throw if attributeFilter is present and attributes is true 
-PASS Should throw if characterDataOldValue is true and characterData is false 
-PASS Should not throw if characterDataOldValue is true and characterData is true 
+PASS Should throw if none of childList, attributes, characterData are true
+PASS Should not throw if childList is true
+PASS Should not throw if attributes is true
+PASS Should not throw if characterData is true
+PASS Should not throw if attributeOldValue is true and attributes is omitted
+PASS Should not throw if characterDataOldValue is true and characterData is omitted
+PASS Should not throw if attributeFilter is present and attributes is omitted
+PASS Should throw if attributeOldValue is true and attributes is false
+PASS Should not throw if attributeOldValue and attributes are both true
+PASS Should throw if attributeFilter is present and attributes is false
+PASS Should not throw if attributeFilter is present and attributes is true
+PASS Should throw if characterDataOldValue is true and characterData is false
+PASS Should not throw if characterDataOldValue is true and characterData is true
 

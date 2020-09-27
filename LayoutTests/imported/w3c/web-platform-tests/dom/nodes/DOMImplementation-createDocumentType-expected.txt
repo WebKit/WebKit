@@ -1,84 +1,84 @@
 
-PASS DOMImplementation.createDocumentType(qualifiedName, publicId, systemId) 
-PASS createDocumentType("", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("test:root", "1234", "") should work 
-PASS createDocumentType("test:root", "1234", "test") should work 
-PASS createDocumentType("test:root", "test", "") should work 
-PASS createDocumentType("test:root", "test", "test") should work 
-PASS createDocumentType("_:_", "", "") should work 
-PASS createDocumentType("_:h0", "", "") should work 
-PASS createDocumentType("_:test", "", "") should work 
-PASS createDocumentType("_:_.", "", "") should work 
-PASS createDocumentType("_:a-", "", "") should work 
-PASS createDocumentType("l_:_", "", "") should work 
-PASS createDocumentType("ns:_0", "", "") should work 
-PASS createDocumentType("ns:a0", "", "") should work 
-PASS createDocumentType("ns0:test", "", "") should work 
-PASS createDocumentType("ns:EEE.", "", "") should work 
-PASS createDocumentType("ns:_-", "", "") should work 
-PASS createDocumentType("a.b:c", "", "") should work 
-PASS createDocumentType("a-b:c.j", "", "") should work 
-PASS createDocumentType("a-b:c", "", "") should work 
-PASS createDocumentType("foo", "", "") should work 
-PASS createDocumentType("1foo", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("foo1", "", "") should work 
-PASS createDocumentType("f1oo", "", "") should work 
-PASS createDocumentType("@foo", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("foo@", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("f@oo", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:{", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:}", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:~", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:'", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:!", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:@", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:#", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:$", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:%", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:^", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:&", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:*", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:(", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:)", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:+", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:=", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:[", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:]", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:\\", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:/", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:;", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:`", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:<", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:>", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:,", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:a ", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("edi:\"", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("{", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("}", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("'", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("~", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("`", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("@", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("#", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("$", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("%", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("^", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("&", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("*", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("(", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType(")", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("f:oo", "", "") should work 
-PASS createDocumentType(":foo", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("foo:", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("prefix::local", "", "") should throw INVALID_CHARACTER_ERR 
-PASS createDocumentType("foo", "foo", "") should work 
-PASS createDocumentType("foo", "", "foo") should work 
-PASS createDocumentType("foo", "f'oo", "") should work 
-PASS createDocumentType("foo", "", "f'oo") should work 
-PASS createDocumentType("foo", "f\"oo", "") should work 
-PASS createDocumentType("foo", "", "f\"oo") should work 
-PASS createDocumentType("foo", "f'o\"o", "") should work 
-PASS createDocumentType("foo", "", "f'o\"o") should work 
-PASS createDocumentType("foo", "foo>", "") should work 
-PASS createDocumentType("foo", "", "foo>") should work 
+PASS DOMImplementation.createDocumentType(qualifiedName, publicId, systemId)
+PASS createDocumentType("", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("test:root", "1234", "") should work
+PASS createDocumentType("test:root", "1234", "test") should work
+PASS createDocumentType("test:root", "test", "") should work
+PASS createDocumentType("test:root", "test", "test") should work
+PASS createDocumentType("_:_", "", "") should work
+PASS createDocumentType("_:h0", "", "") should work
+PASS createDocumentType("_:test", "", "") should work
+PASS createDocumentType("_:_.", "", "") should work
+PASS createDocumentType("_:a-", "", "") should work
+PASS createDocumentType("l_:_", "", "") should work
+PASS createDocumentType("ns:_0", "", "") should work
+PASS createDocumentType("ns:a0", "", "") should work
+PASS createDocumentType("ns0:test", "", "") should work
+PASS createDocumentType("ns:EEE.", "", "") should work
+PASS createDocumentType("ns:_-", "", "") should work
+PASS createDocumentType("a.b:c", "", "") should work
+PASS createDocumentType("a-b:c.j", "", "") should work
+PASS createDocumentType("a-b:c", "", "") should work
+PASS createDocumentType("foo", "", "") should work
+PASS createDocumentType("1foo", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo1", "", "") should work
+PASS createDocumentType("f1oo", "", "") should work
+PASS createDocumentType("@foo", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo@", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("f@oo", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:{", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:}", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:~", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:'", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:!", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:@", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:#", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:$", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:%", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:^", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:&", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:*", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:(", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:)", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:+", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:=", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:[", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:]", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:\\", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:/", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:;", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:`", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:<", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:>", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:,", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:a ", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("edi:\"", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("{", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("}", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("'", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("~", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("`", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("@", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("#", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("$", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("%", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("^", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("&", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("*", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("(", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType(")", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("f:oo", "", "") should work
+PASS createDocumentType(":foo", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo:", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("prefix::local", "", "") should throw INVALID_CHARACTER_ERR
+PASS createDocumentType("foo", "foo", "") should work
+PASS createDocumentType("foo", "", "foo") should work
+PASS createDocumentType("foo", "f'oo", "") should work
+PASS createDocumentType("foo", "", "f'oo") should work
+PASS createDocumentType("foo", "f\"oo", "") should work
+PASS createDocumentType("foo", "", "f\"oo") should work
+PASS createDocumentType("foo", "f'o\"o", "") should work
+PASS createDocumentType("foo", "", "f'o\"o") should work
+PASS createDocumentType("foo", "foo>", "") should work
+PASS createDocumentType("foo", "", "foo>") should work
 

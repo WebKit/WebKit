@@ -1,5 +1,5 @@
 
-PASS generic element listed 
+PASS generic element listed
 te xt
 te; xt test link #foo dummy tag
 text

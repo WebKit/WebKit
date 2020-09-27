@@ -1,14 +1,14 @@
 
-PASS When the parent is null, parentElement should be null 
-PASS When the parent is a document, parentElement should be null (doctype) 
-PASS When the parent is a document, parentElement should be null (element) 
-PASS When the parent is a document, parentElement should be null (comment) 
-PASS parentElement should return null for children of DocumentFragments (element) 
-PASS parentElement should return null for children of DocumentFragments (text) 
-PASS parentElement should work correctly with DocumentFragments (element) 
-PASS parentElement should work correctly with DocumentFragments (text) 
-PASS parentElement should work correctly in disconnected subtrees (element) 
-PASS parentElement should work correctly in disconnected subtrees (text) 
-PASS parentElement should work correctly in a document (element) 
-PASS parentElement should work correctly in a document (text) 
+PASS When the parent is null, parentElement should be null
+PASS When the parent is a document, parentElement should be null (doctype)
+PASS When the parent is a document, parentElement should be null (element)
+PASS When the parent is a document, parentElement should be null (comment)
+PASS parentElement should return null for children of DocumentFragments (element)
+PASS parentElement should return null for children of DocumentFragments (text)
+PASS parentElement should work correctly with DocumentFragments (element)
+PASS parentElement should work correctly with DocumentFragments (text)
+PASS parentElement should work correctly in disconnected subtrees (element)
+PASS parentElement should work correctly in disconnected subtrees (text)
+PASS parentElement should work correctly in a document (element)
+PASS parentElement should work correctly in a document (text)
 

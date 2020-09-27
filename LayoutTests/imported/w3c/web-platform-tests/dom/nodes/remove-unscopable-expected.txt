@@ -1,8 +1,8 @@
 
-PASS before() should be unscopable 
-PASS after() should be unscopable 
-PASS replaceWith() should be unscopable 
-PASS remove() should be unscopable 
-PASS prepend() should be unscopable 
-PASS append() should be unscopable 
+PASS before() should be unscopable
+PASS after() should be unscopable
+PASS replaceWith() should be unscopable
+PASS remove() should be unscopable
+PASS prepend() should be unscopable
+PASS append() should be unscopable
 

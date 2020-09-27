@@ -1,5 +1,5 @@
 
-PASS multiple class attributes 
+PASS multiple class attributes
 te xt
 te; xt test link #foo
 text

@@ -1,3 +1,3 @@
 
-PASS querySelector/querySelectorAll should not include their thisArg 
+PASS querySelector/querySelectorAll should not include their thisArg
 

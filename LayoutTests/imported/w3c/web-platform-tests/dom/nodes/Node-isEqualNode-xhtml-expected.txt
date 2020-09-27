@@ -1,16 +1,16 @@
 
-PASS Node.isEqualNode 
-PASS Node.isEqualNode 1 
-PASS Node.isEqualNode 2 
-PASS Node.isEqualNode 3 
-PASS Node.isEqualNode 4 
-PASS Node.isEqualNode 5 
-PASS Node.isEqualNode 6 
-PASS isEqualNode should return true when the attributes are in a different order 
-PASS isEqualNode should return true if elements have same namespace, prefix, and local name 
-PASS isEqualNode should return false if elements have different namespace 
-PASS isEqualNode should return false if elements have different prefix 
-PASS isEqualNode should return false if elements have different local name 
-PASS isEqualNode should return true when the attributes have different prefixes 
-PASS isEqualNode should return true when only the internal subsets of DocumentTypes differ. 
- 
+PASS Node.isEqualNode
+PASS Node.isEqualNode 1
+PASS Node.isEqualNode 2
+PASS Node.isEqualNode 3
+PASS Node.isEqualNode 4
+PASS Node.isEqualNode 5
+PASS Node.isEqualNode 6
+PASS isEqualNode should return true when the attributes are in a different order
+PASS isEqualNode should return true if elements have same namespace, prefix, and local name
+PASS isEqualNode should return false if elements have different namespace
+PASS isEqualNode should return false if elements have different prefix
+PASS isEqualNode should return false if elements have different local name
+PASS isEqualNode should return true when the attributes have different prefixes
+PASS isEqualNode should return true when only the internal subsets of DocumentTypes differ.
+

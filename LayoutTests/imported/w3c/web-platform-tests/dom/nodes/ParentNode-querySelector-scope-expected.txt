@@ -1,6 +1,6 @@
 hello
 
 
-PASS querySelector 
-PASS querySelectorAll 
+PASS querySelector
+PASS querySelectorAll
 

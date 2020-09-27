@@ -1,83 +1,83 @@
 
-PASS For an empty Element, textContent should be the empty string 
-PASS For an empty DocumentFragment, textContent should be the empty string 
-PASS Element with children 
-PASS Element with descendants 
-PASS DocumentFragment with children 
-PASS DocumentFragment with descendants 
-PASS For an empty Text, textContent should be the empty string 
-PASS For an empty ProcessingInstruction, textContent should be the empty string 
-PASS For an empty Comment, textContent should be the empty string 
-PASS For a Text with data, textContent should be that data 
-PASS For a ProcessingInstruction with data, textContent should be that data 
-PASS For a Comment with data, textContent should be that data 
-PASS For Documents created by parser, textContent should be null 
-PASS For Documents created by createDocument, textContent should be null 
-PASS For Documents created by createHTMLDocument, textContent should be null 
-PASS For DocumentType created by parser, textContent should be null 
-PASS For DocumentType created by script, textContent should be null 
-PASS Element without children set to null 
-PASS Element with empty text node as child set to null 
-PASS Element with children set to null 
-PASS Element with descendants set to null 
-PASS DocumentFragment without children set to null 
-PASS DocumentFragment with empty text node as child set to null 
-PASS DocumentFragment with children set to null 
-PASS DocumentFragment with descendants set to null 
-PASS Element without children set to undefined 
-PASS Element with empty text node as child set to undefined 
-PASS Element with children set to undefined 
-PASS Element with descendants set to undefined 
-PASS DocumentFragment without children set to undefined 
-PASS DocumentFragment with empty text node as child set to undefined 
-PASS DocumentFragment with children set to undefined 
-PASS DocumentFragment with descendants set to undefined 
-PASS Element without children set to "" 
-PASS Element with empty text node as child set to "" 
-PASS Element with children set to "" 
-PASS Element with descendants set to "" 
-PASS DocumentFragment without children set to "" 
-PASS DocumentFragment with empty text node as child set to "" 
-PASS DocumentFragment with children set to "" 
-PASS DocumentFragment with descendants set to "" 
-PASS Element without children set to 42 
-PASS Element with empty text node as child set to 42 
-PASS Element with children set to 42 
-PASS Element with descendants set to 42 
-PASS DocumentFragment without children set to 42 
-PASS DocumentFragment with empty text node as child set to 42 
-PASS DocumentFragment with children set to 42 
-PASS DocumentFragment with descendants set to 42 
-PASS Element without children set to "abc" 
-PASS Element with empty text node as child set to "abc" 
-PASS Element with children set to "abc" 
-PASS Element with descendants set to "abc" 
-PASS DocumentFragment without children set to "abc" 
-PASS DocumentFragment with empty text node as child set to "abc" 
-PASS DocumentFragment with children set to "abc" 
-PASS DocumentFragment with descendants set to "abc" 
-PASS Element without children set to "<b>xyz</b>" 
-PASS Element with empty text node as child set to "<b>xyz</b>" 
-PASS Element with children set to "<b>xyz</b>" 
-PASS Element with descendants set to "<b>xyz</b>" 
-PASS DocumentFragment without children set to "<b>xyz</b>" 
-PASS DocumentFragment with empty text node as child set to "<b>xyz</b>" 
-PASS DocumentFragment with children set to "<b>xyz</b>" 
-PASS DocumentFragment with descendants set to "<b>xyz</b>" 
-PASS Element without children set to "d\0e" 
-PASS Element with empty text node as child set to "d\0e" 
-PASS Element with children set to "d\0e" 
-PASS Element with descendants set to "d\0e" 
-PASS DocumentFragment without children set to "d\0e" 
-PASS DocumentFragment with empty text node as child set to "d\0e" 
-PASS DocumentFragment with children set to "d\0e" 
-PASS DocumentFragment with descendants set to "d\0e" 
-PASS For a Text, textContent should set the data 
-PASS For a ProcessingInstruction, textContent should set the data 
-PASS For a Comment, textContent should set the data 
-PASS For Documents created by parser, setting textContent should do nothing 
-PASS For Documents created by createDocument, setting textContent should do nothing 
-PASS For Documents created by createHTMLDocument, setting textContent should do nothing 
-PASS For DocumentType created by parser, setting textContent should do nothing 
-PASS For DocumentType created by script, setting textContent should do nothing 
+PASS For an empty Element, textContent should be the empty string
+PASS For an empty DocumentFragment, textContent should be the empty string
+PASS Element with children
+PASS Element with descendants
+PASS DocumentFragment with children
+PASS DocumentFragment with descendants
+PASS For an empty Text, textContent should be the empty string
+PASS For an empty ProcessingInstruction, textContent should be the empty string
+PASS For an empty Comment, textContent should be the empty string
+PASS For a Text with data, textContent should be that data
+PASS For a ProcessingInstruction with data, textContent should be that data
+PASS For a Comment with data, textContent should be that data
+PASS For Documents created by parser, textContent should be null
+PASS For Documents created by createDocument, textContent should be null
+PASS For Documents created by createHTMLDocument, textContent should be null
+PASS For DocumentType created by parser, textContent should be null
+PASS For DocumentType created by script, textContent should be null
+PASS Element without children set to null
+PASS Element with empty text node as child set to null
+PASS Element with children set to null
+PASS Element with descendants set to null
+PASS DocumentFragment without children set to null
+PASS DocumentFragment with empty text node as child set to null
+PASS DocumentFragment with children set to null
+PASS DocumentFragment with descendants set to null
+PASS Element without children set to undefined
+PASS Element with empty text node as child set to undefined
+PASS Element with children set to undefined
+PASS Element with descendants set to undefined
+PASS DocumentFragment without children set to undefined
+PASS DocumentFragment with empty text node as child set to undefined
+PASS DocumentFragment with children set to undefined
+PASS DocumentFragment with descendants set to undefined
+PASS Element without children set to ""
+PASS Element with empty text node as child set to ""
+PASS Element with children set to ""
+PASS Element with descendants set to ""
+PASS DocumentFragment without children set to ""
+PASS DocumentFragment with empty text node as child set to ""
+PASS DocumentFragment with children set to ""
+PASS DocumentFragment with descendants set to ""
+PASS Element without children set to 42
+PASS Element with empty text node as child set to 42
+PASS Element with children set to 42
+PASS Element with descendants set to 42
+PASS DocumentFragment without children set to 42
+PASS DocumentFragment with empty text node as child set to 42
+PASS DocumentFragment with children set to 42
+PASS DocumentFragment with descendants set to 42
+PASS Element without children set to "abc"
+PASS Element with empty text node as child set to "abc"
+PASS Element with children set to "abc"
+PASS Element with descendants set to "abc"
+PASS DocumentFragment without children set to "abc"
+PASS DocumentFragment with empty text node as child set to "abc"
+PASS DocumentFragment with children set to "abc"
+PASS DocumentFragment with descendants set to "abc"
+PASS Element without children set to "<b>xyz</b>"
+PASS Element with empty text node as child set to "<b>xyz</b>"
+PASS Element with children set to "<b>xyz</b>"
+PASS Element with descendants set to "<b>xyz</b>"
+PASS DocumentFragment without children set to "<b>xyz</b>"
+PASS DocumentFragment with empty text node as child set to "<b>xyz</b>"
+PASS DocumentFragment with children set to "<b>xyz</b>"
+PASS DocumentFragment with descendants set to "<b>xyz</b>"
+PASS Element without children set to "d\0e"
+PASS Element with empty text node as child set to "d\0e"
+PASS Element with children set to "d\0e"
+PASS Element with descendants set to "d\0e"
+PASS DocumentFragment without children set to "d\0e"
+PASS DocumentFragment with empty text node as child set to "d\0e"
+PASS DocumentFragment with children set to "d\0e"
+PASS DocumentFragment with descendants set to "d\0e"
+PASS For a Text, textContent should set the data
+PASS For a ProcessingInstruction, textContent should set the data
+PASS For a Comment, textContent should set the data
+PASS For Documents created by parser, setting textContent should do nothing
+PASS For Documents created by createDocument, setting textContent should do nothing
+PASS For Documents created by createHTMLDocument, setting textContent should do nothing
+PASS For DocumentType created by parser, setting textContent should do nothing
+PASS For DocumentType created by script, setting textContent should do nothing
 

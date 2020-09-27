@@ -1,27 +1,27 @@
 MutationObservers: characterData mutations
 
 
-PASS characterData Text.data: simple mutation without oldValue 
-PASS characterData Text.data: simple mutation 
-PASS characterData Text.appendData: simple mutation 
-PASS characterData Text.appendData: empty string mutation 
-PASS characterData Text.appendData: null string mutation 
-PASS characterData Text.insertData: simple mutation 
-PASS characterData Text.insertData: empty string mutation 
-PASS characterData Text.insertData: null string mutation 
-PASS characterData Text.deleteData: simple mutation 
-PASS characterData Text.deleteData: empty mutation 
-PASS characterData Text.replaceData: simple mutation 
-PASS characterData Text.replaceData: empty mutation 
-PASS characterData ProcessingInstruction: data mutations 
-PASS characterData Comment: data mutations 
-PASS Range (r70) is created 
-PASS characterData Range.deleteContents: child and data removal mutation 
-PASS Range (r71) is created 
-PASS characterData Range.deleteContents: child and data removal mutation (2) 
-PASS Range (r80) is created 
-PASS characterData Range.extractContents: child and data removal mutation 
-PASS Range (r81) is created 
-PASS characterData Range.extractContents: child and data removal mutation (2) 
-PASS characterData/characterDataOldValue alone Text.data: simple mutation 
+PASS characterData Text.data: simple mutation without oldValue
+PASS characterData Text.data: simple mutation
+PASS characterData Text.appendData: simple mutation
+PASS characterData Text.appendData: empty string mutation
+PASS characterData Text.appendData: null string mutation
+PASS characterData Text.insertData: simple mutation
+PASS characterData Text.insertData: empty string mutation
+PASS characterData Text.insertData: null string mutation
+PASS characterData Text.deleteData: simple mutation
+PASS characterData Text.deleteData: empty mutation
+PASS characterData Text.replaceData: simple mutation
+PASS characterData Text.replaceData: empty mutation
+PASS characterData ProcessingInstruction: data mutations
+PASS characterData Comment: data mutations
+PASS Range (r70) is created
+PASS characterData Range.deleteContents: child and data removal mutation
+PASS Range (r71) is created
+PASS characterData Range.deleteContents: child and data removal mutation (2)
+PASS Range (r80) is created
+PASS characterData Range.extractContents: child and data removal mutation
+PASS Range (r81) is created
+PASS characterData Range.extractContents: child and data removal mutation (2)
+PASS characterData/characterDataOldValue alone Text.data: simple mutation
 

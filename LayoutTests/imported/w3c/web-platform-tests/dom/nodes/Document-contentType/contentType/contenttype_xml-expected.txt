@@ -1,3 +1,3 @@
 
-PASS XML document.contentType === 'application/xml' 
+PASS XML document.contentType === 'application/xml'
 

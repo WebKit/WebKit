@@ -1,5 +1,5 @@
 
-PASS get class from children of element 
+PASS get class from children of element
 test link #foo
 text
 text caption

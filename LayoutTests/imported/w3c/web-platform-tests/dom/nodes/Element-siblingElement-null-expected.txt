@@ -1,5 +1,5 @@
 Test of previousElementSibling and nextElementSibling returning null
 
 
-PASS Null test 
+PASS Null test
 The result of this test is unknown.

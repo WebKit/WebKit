@@ -1,9 +1,9 @@
 
-PASS createCDATASection("\v") 
-PASS createCDATASection("a -- b") 
-PASS createCDATASection("a-") 
-PASS createCDATASection("-b") 
-PASS createCDATASection(null) 
-PASS createCDATASection(undefined) 
-PASS Creating a CDATA section containing the string "]]>" must throw 
+PASS createCDATASection("\v")
+PASS createCDATASection("a -- b")
+PASS createCDATASection("a-")
+PASS createCDATASection("-b")
+PASS createCDATASection(null)
+PASS createCDATASection(undefined)
+PASS Creating a CDATA section containing the string "]]>" must throw
 

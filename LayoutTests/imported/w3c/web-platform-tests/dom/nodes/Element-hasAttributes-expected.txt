@@ -1,5 +1,5 @@
 
 
-PASS element.hasAttributes() must return false when the element does not have attribute. 
-PASS element.hasAttributes() must return true when the element has attribute. 
+PASS element.hasAttributes() must return false when the element does not have attribute.
+PASS element.hasAttributes() must return true when the element has attribute.
 

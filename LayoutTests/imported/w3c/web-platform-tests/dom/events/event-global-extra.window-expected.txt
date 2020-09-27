@@ -1,7 +1,7 @@
 
 FAIL window.event for constructors from another global: EventTarget assert_equals: expected (undefined) undefined but got (object) object "[object Event]"
 FAIL window.event for constructors from another global: XMLHttpRequest assert_equals: expected (undefined) undefined but got (object) object "[object Event]"
-PASS window.event and element from another document 
+PASS window.event and element from another document
 FAIL window.event and moving an element post-dispatch assert_equals: expected (object) object "[object Event]" but got (undefined) undefined
 FAIL window.event should not be affected by nodes moving post-dispatch assert_equals: expected (undefined) undefined but got (object) object "[object Event]"
 FAIL Listener from a different global assert_equals: expected (object) object "[object Event]" but got (undefined) undefined

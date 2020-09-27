@@ -1,7 +1,7 @@
 
-PASS Required arguments to createTreeWalker should be required. 
-PASS Optional arguments to createTreeWalker should be optional (1 passed). 
-PASS Optional arguments to createTreeWalker should be optional (2 passed). 
-PASS Optional arguments to createTreeWalker should be optional (3 passed, null). 
-PASS Optional arguments to createTreeWalker should be optional (3 passed, function). 
+PASS Required arguments to createTreeWalker should be required.
+PASS Optional arguments to createTreeWalker should be optional (1 passed).
+PASS Optional arguments to createTreeWalker should be optional (2 passed).
+PASS Optional arguments to createTreeWalker should be optional (3 passed, null).
+PASS Optional arguments to createTreeWalker should be optional (3 passed, function).
 

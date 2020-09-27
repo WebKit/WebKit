@@ -1,5 +1,5 @@
 Test of firstElementChild with namespaces
 
 
-PASS firstElementChild with namespaces 
+PASS firstElementChild with namespaces
 The result of this test is logged above.

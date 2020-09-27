@@ -1,7 +1,7 @@
 
-PASS Supports passive option on addEventListener only 
-PASS preventDefault should be ignored if-and-only-if the passive option is true 
-PASS returnValue should be ignored if-and-only-if the passive option is true 
-PASS passive behavior of one listener should be unaffected by the presence of other listeners 
-PASS Equivalence of option values 
+PASS Supports passive option on addEventListener only
+PASS preventDefault should be ignored if-and-only-if the passive option is true
+PASS returnValue should be ignored if-and-only-if the passive option is true
+PASS passive behavior of one listener should be unaffected by the presence of other listeners
+PASS Equivalence of option values
 

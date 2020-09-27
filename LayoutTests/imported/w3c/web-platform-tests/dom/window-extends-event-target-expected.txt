@@ -1,5 +1,5 @@
 
-PASS EventTarget methods on Window instances are inherited from the EventTarget prototype 
-PASS window.addEventListener respects custom `this` 
-PASS window.addEventListener treats nullish `this` as `window` 
+PASS EventTarget methods on Window instances are inherited from the EventTarget prototype
+PASS window.addEventListener respects custom `this`
+PASS window.addEventListener treats nullish `this` as `window`
 

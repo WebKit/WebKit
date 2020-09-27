@@ -1,11 +1,11 @@
 
-PASS doctypes should be compared on name, public ID, and system ID 
-PASS elements should be compared on namespace, namespace prefix, local name, and number of attributes 
-PASS elements should be compared on attribute namespace, local name, and value 
-PASS processing instructions should be compared on target and data 
-PASS text nodes should be compared on data 
-PASS comments should be compared on data 
-PASS document fragments should not be compared based on properties 
-PASS documents should not be compared based on properties 
-PASS node equality testing should test descendant equality too 
+PASS doctypes should be compared on name, public ID, and system ID
+PASS elements should be compared on namespace, namespace prefix, local name, and number of attributes
+PASS elements should be compared on attribute namespace, local name, and value
+PASS processing instructions should be compared on target and data
+PASS text nodes should be compared on data
+PASS comments should be compared on data
+PASS document fragments should not be compared based on properties
+PASS documents should not be compared based on properties
+PASS node equality testing should test descendant equality too
 

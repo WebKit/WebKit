@@ -1,17 +1,17 @@
 raclettegateau aux pommes
 
-PASS insertAdjacentElement(beforebegin, [object HTMLHeadingElement] ) 
-PASS insertAdjacentText(beforebegin, raclette ) 
-PASS insertAdjacentElement(afterbegin, [object HTMLHeadingElement] ) 
-PASS insertAdjacentText(afterbegin, tartiflette ) 
-PASS insertAdjacentElement(beforeend, [object HTMLHeadingElement] ) 
-PASS insertAdjacentText(beforeend, lasagne ) 
-PASS insertAdjacentElement(afterend, [object HTMLHeadingElement] ) 
-PASS insertAdjacentText(afterend, gateau aux pommes ) 
-PASS invalid object argument insertAdjacentElement 
-PASS invalid caller object insertAdjacentElement 
-PASS invalid caller object insertAdjacentText 
-PASS invalid syntax for insertAdjacentElement 
-PASS invalid syntax for insertAdjacentText 
-PASS insertAdjacentText should return null 
+PASS insertAdjacentElement(beforebegin, [object HTMLHeadingElement] )
+PASS insertAdjacentText(beforebegin, raclette )
+PASS insertAdjacentElement(afterbegin, [object HTMLHeadingElement] )
+PASS insertAdjacentText(afterbegin, tartiflette )
+PASS insertAdjacentElement(beforeend, [object HTMLHeadingElement] )
+PASS insertAdjacentText(beforeend, lasagne )
+PASS insertAdjacentElement(afterend, [object HTMLHeadingElement] )
+PASS insertAdjacentText(afterend, gateau aux pommes )
+PASS invalid object argument insertAdjacentElement
+PASS invalid caller object insertAdjacentElement
+PASS invalid caller object insertAdjacentText
+PASS invalid syntax for insertAdjacentElement
+PASS invalid syntax for insertAdjacentText
+PASS insertAdjacentText should return null
 

@@ -1,16 +1,16 @@
 
-PASS Document.getElementsByTagNameNS 
-PASS getElementsByTagNameNS('*', 'body') 
-PASS Empty string namespace 
-PASS body element in test namespace, no prefix 
-PASS body element in test namespace, prefix 
-PASS BODY element in test namespace, no prefix 
-PASS abc element in html namespace 
-PASS ABC element in html namespace 
-PASS AÇ, case sensitivity 
-PASS BODY element in test namespace, prefix 
-PASS getElementsByTagNameNS('http://www.w3.org/1999/xhtml', '*') 
-PASS getElementsByTagNameNS('*', '*') 
-PASS Empty lists 
-PASS getElementsByTagNameNS() should be a live collection 
+PASS Document.getElementsByTagNameNS
+PASS getElementsByTagNameNS('*', 'body')
+PASS Empty string namespace
+PASS body element in test namespace, no prefix
+PASS body element in test namespace, prefix
+PASS BODY element in test namespace, no prefix
+PASS abc element in html namespace
+PASS ABC element in html namespace
+PASS AÇ, case sensitivity
+PASS BODY element in test namespace, prefix
+PASS getElementsByTagNameNS('http://www.w3.org/1999/xhtml', '*')
+PASS getElementsByTagNameNS('*', '*')
+PASS Empty lists
+PASS getElementsByTagNameNS() should be a live collection
 

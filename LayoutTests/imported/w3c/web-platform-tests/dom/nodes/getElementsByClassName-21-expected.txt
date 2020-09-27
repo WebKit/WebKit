@@ -1,5 +1,5 @@
 
-PASS delete element from collection 
+PASS delete element from collection
 test link #foo
 text
 text caption

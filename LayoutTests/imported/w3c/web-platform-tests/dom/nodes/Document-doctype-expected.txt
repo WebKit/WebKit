@@ -1,4 +1,4 @@
 
-PASS Window document with doctype 
-PASS new Document() 
+PASS Window document with doctype
+PASS new Document()
 

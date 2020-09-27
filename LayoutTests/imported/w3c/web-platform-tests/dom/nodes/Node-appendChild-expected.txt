@@ -1,13 +1,13 @@
 
-PASS WebIDL tests 
-PASS Appending to a leaf node. 
-PASS Appending null to a text node 
-PASS Appending to a text node 
-PASS Appending null to a comment 
-PASS Appending to a comment 
-PASS Appending null to a doctype 
-PASS Appending to a doctype 
-PASS Appending a document 
-PASS Adopting an orphan 
-PASS Adopting a non-orphan 
+PASS WebIDL tests
+PASS Appending to a leaf node.
+PASS Appending null to a text node
+PASS Appending to a text node
+PASS Appending null to a comment
+PASS Appending to a comment
+PASS Appending null to a doctype
+PASS Appending to a doctype
+PASS Appending a document
+PASS Adopting an orphan
+PASS Adopting a non-orphan
 

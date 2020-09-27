@@ -1,5 +1,5 @@
 Test of firstElementChild
 
 
-PASS firstElementChild 
+PASS firstElementChild
 The result of this test is logged above.

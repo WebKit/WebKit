@@ -1,7 +1,7 @@
 
-PASS getRootNode() must return context object's shadow-including root if options's composed is true, and context object's root otherwise 
-PASS getRootNode() must return the context object when it does not have any parent 
-PASS getRootNode() must return the parent node of the context object when the context object has a single ancestor not in a document 
-PASS getRootNode() must return the document when a node is in document 
-PASS getRootNode() must return a document fragment when a node is in the fragment 
+PASS getRootNode() must return context object's shadow-including root if options's composed is true, and context object's root otherwise
+PASS getRootNode() must return the context object when it does not have any parent
+PASS getRootNode() must return the parent node of the context object when the context object has a single ancestor not in a document
+PASS getRootNode() must return the document when a node is in document
+PASS getRootNode() must return a document fragment when a node is in the fragment
 

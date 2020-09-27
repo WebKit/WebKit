@@ -1,5 +1,5 @@
 
-PASS get elements in document then add element to collection 
+PASS get elements in document then add element to collection
 test link #foo
 text
 text caption

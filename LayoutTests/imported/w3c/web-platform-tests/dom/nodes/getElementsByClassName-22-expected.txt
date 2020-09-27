@@ -1,5 +1,5 @@
 
-PASS move item in collection order 
+PASS move item in collection order
 test link #foo
 text caption
 TEXT head

@@ -1,9 +1,9 @@
 
-PASS Text.nodeValue 
-PASS Comment.nodeValue 
-PASS ProcessingInstruction.nodeValue 
-PASS Element.nodeValue 
-PASS Document.nodeValue 
-PASS DocumentFragment.nodeValue 
-PASS DocumentType.nodeValue 
+PASS Text.nodeValue
+PASS Comment.nodeValue
+PASS ProcessingInstruction.nodeValue
+PASS Element.nodeValue
+PASS Document.nodeValue
+PASS DocumentFragment.nodeValue
+PASS DocumentType.nodeValue
 

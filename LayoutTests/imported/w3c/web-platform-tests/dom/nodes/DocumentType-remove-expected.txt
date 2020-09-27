@@ -1,6 +1,6 @@
 
-PASS doctype should support remove() 
-PASS remove() should work if doctype doesn't have a parent 
-PASS remove() should work if doctype does have a parent 
-PASS remove() should work if doctype does have a parent and siblings 
+PASS doctype should support remove()
+PASS remove() should work if doctype doesn't have a parent
+PASS remove() should work if doctype does have a parent
+PASS remove() should work if doctype does have a parent and siblings
 

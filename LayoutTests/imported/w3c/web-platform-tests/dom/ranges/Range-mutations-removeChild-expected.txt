@@ -1,22 +1,22 @@
 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (paras[0], 0) 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (paras[0], 0) 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on paras[0] from 0 to 1 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range on paras[0] from 0 to 1 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (paras[0], 1) 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (paras[0], 1) 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (testDiv, 0) 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (testDiv, 0) 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on testDiv from 0 to 1 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range on testDiv from 0 to 1 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (testDiv, 1) 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (testDiv, 1) 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on testDiv from 0 to 2 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range on testDiv from 0 to 2 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on testDiv from 1 to 2 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range on testDiv from 1 to 2 
-PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (testDiv, 2) 
-PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (testDiv, 2) 
-PASS foreignDoc.documentElement.parentNode.removeChild(foreignDoc.documentElement), with unselected range on foreignDoc from 0 to foreignDoc.childNodes.length 
-PASS foreignDoc.documentElement.parentNode.removeChild(foreignDoc.documentElement), with selected range on foreignDoc from 0 to foreignDoc.childNodes.length 
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (paras[0], 0)
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (paras[0], 0)
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on paras[0] from 0 to 1
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range on paras[0] from 0 to 1
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (paras[0], 1)
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (paras[0], 1)
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (testDiv, 0)
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (testDiv, 0)
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on testDiv from 0 to 1
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range on testDiv from 0 to 1
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (testDiv, 1)
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (testDiv, 1)
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on testDiv from 0 to 2
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range on testDiv from 0 to 2
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range on testDiv from 1 to 2
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range on testDiv from 1 to 2
+PASS paras[0].parentNode.removeChild(paras[0]), with unselected range collapsed at (testDiv, 2)
+PASS paras[0].parentNode.removeChild(paras[0]), with selected range collapsed at (testDiv, 2)
+PASS foreignDoc.documentElement.parentNode.removeChild(foreignDoc.documentElement), with unselected range on foreignDoc from 0 to foreignDoc.childNodes.length
+PASS foreignDoc.documentElement.parentNode.removeChild(foreignDoc.documentElement), with selected range on foreignDoc from 0 to foreignDoc.childNodes.length
 

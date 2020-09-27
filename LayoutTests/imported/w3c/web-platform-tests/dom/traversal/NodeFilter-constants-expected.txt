@@ -1,4 +1,4 @@
 
-PASS Constants for acceptNode on NodeFilter interface object. 
-PASS Constants for whatToShow on NodeFilter interface object. 
+PASS Constants for acceptNode on NodeFilter interface object.
+PASS Constants for whatToShow on NodeFilter interface object.
 

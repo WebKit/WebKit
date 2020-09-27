@@ -2,7 +2,7 @@
 FAIL Reset if target pointed to a shadow tree assert_equals: expected null but got DocumentFragment node with 1 child
 FAIL Retarget a shadow-tree relatedTarget assert_equals: expected Element node <div><p></p></div> but got DocumentFragment node with 1 child
 FAIL Reset if target pointed to a shadow tree pre-dispatch assert_equals: expected null but got Element node <div></div>
-PASS Retarget a shadow-tree relatedTarget, part 2 
+PASS Retarget a shadow-tree relatedTarget, part 2
 FAIL Reset targets on early return assert_equals: expected null but got Element node <div><p></p></div>
 FAIL Reset targets before activation behavior assert_equals: expected null but got Element node <input type="checkbox"></input>
 

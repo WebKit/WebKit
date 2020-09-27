@@ -1,8 +1,8 @@
 
-PASS Detached Range 
-PASS Normal Ranges 
-PASS Range.commonAncestorContainer 
-PASS Range.commonAncestorContainer 1 
-PASS Range.commonAncestorContainer 2 
-PASS Range.commonAncestorContainer 3 
+PASS Detached Range
+PASS Normal Ranges
+PASS Range.commonAncestorContainer
+PASS Range.commonAncestorContainer 1
+PASS Range.commonAncestorContainer 2
+PASS Range.commonAncestorContainer 3
 

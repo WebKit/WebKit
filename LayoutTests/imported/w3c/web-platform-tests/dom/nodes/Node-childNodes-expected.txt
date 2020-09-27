@@ -1,8 +1,8 @@
 
-PASS Caching of Node.childNodes 
-PASS Node.childNodes on an Element. 
-PASS Node.childNodes on a DocumentFragment. 
-PASS Node.childNodes on a Document. 
-PASS Iterator behavior of Node.childNodes 
-PASS Node.childNodes should be a live collection 
+PASS Caching of Node.childNodes
+PASS Node.childNodes on an Element.
+PASS Node.childNodes on a DocumentFragment.
+PASS Node.childNodes on a Document.
+PASS Iterator behavior of Node.childNodes
+PASS Node.childNodes should be a live collection
 

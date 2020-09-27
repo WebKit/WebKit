@@ -1,118 +1,118 @@
 
-PASS paras[0].firstChild.splitText(376), with unselected range on paras[0].firstChild from 0 to 1 
-PASS paras[0].firstChild.splitText(376), with selected range on paras[0].firstChild from 0 to 1 
-PASS paras[0].firstChild.splitText(0), with unselected range collapsed at (paras[0].firstChild, 0) 
-PASS paras[0].firstChild.splitText(0), with selected range collapsed at (paras[0].firstChild, 0) 
-PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0].firstChild, 1) 
-PASS paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0].firstChild, 1) 
-PASS paras[0].firstChild.splitText(paras[0].firstChild.length), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length) 
-PASS paras[0].firstChild.splitText(paras[0].firstChild.length), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length) 
-PASS paras[0].firstChild.splitText(1), with unselected range on paras[0].firstChild from 1 to 3 
-PASS paras[0].firstChild.splitText(1), with selected range on paras[0].firstChild from 1 to 3 
-PASS paras[0].firstChild.splitText(2), with unselected range on paras[0].firstChild from 1 to 3 
-PASS paras[0].firstChild.splitText(2), with selected range on paras[0].firstChild from 1 to 3 
-PASS paras[0].firstChild.splitText(3), with unselected range on paras[0].firstChild from 1 to 3 
-PASS paras[0].firstChild.splitText(3), with selected range on paras[0].firstChild from 1 to 3 
-PASS paras[1].firstChild.splitText(376), with unselected range on paras[1].firstChild from 0 to 1 
-PASS paras[1].firstChild.splitText(376), with selected range on paras[1].firstChild from 0 to 1 
-PASS paras[1].firstChild.splitText(0), with unselected range collapsed at (paras[1].firstChild, 0) 
-PASS paras[1].firstChild.splitText(0), with selected range collapsed at (paras[1].firstChild, 0) 
-PASS paras[1].firstChild.splitText(1), with unselected range collapsed at (paras[1].firstChild, 1) 
-PASS paras[1].firstChild.splitText(1), with selected range collapsed at (paras[1].firstChild, 1) 
-PASS paras[1].firstChild.splitText(paras[1].firstChild.length), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length) 
-PASS paras[1].firstChild.splitText(paras[1].firstChild.length), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length) 
-PASS paras[1].firstChild.splitText(1), with unselected range on paras[1].firstChild from 1 to 3 
-PASS paras[1].firstChild.splitText(1), with selected range on paras[1].firstChild from 1 to 3 
-PASS paras[1].firstChild.splitText(2), with unselected range on paras[1].firstChild from 1 to 3 
-PASS paras[1].firstChild.splitText(2), with selected range on paras[1].firstChild from 1 to 3 
-PASS paras[1].firstChild.splitText(3), with unselected range on paras[1].firstChild from 1 to 3 
-PASS paras[1].firstChild.splitText(3), with selected range on paras[1].firstChild from 1 to 3 
-PASS foreignTextNode.splitText(376), with unselected range on foreignTextNode from 0 to 1 
-PASS foreignTextNode.splitText(376), with selected range on foreignTextNode from 0 to 1 
-PASS foreignTextNode.splitText(0), with unselected range collapsed at (foreignTextNode, 0) 
-PASS foreignTextNode.splitText(0), with selected range collapsed at (foreignTextNode, 0) 
-PASS foreignTextNode.splitText(1), with unselected range collapsed at (foreignTextNode, 1) 
-PASS foreignTextNode.splitText(1), with selected range collapsed at (foreignTextNode, 1) 
-PASS foreignTextNode.splitText(foreignTextNode.length), with unselected range collapsed at (foreignTextNode, foreignTextNode.length) 
-PASS foreignTextNode.splitText(foreignTextNode.length), with selected range collapsed at (foreignTextNode, foreignTextNode.length) 
-PASS foreignTextNode.splitText(1), with unselected range on foreignTextNode from 1 to 3 
-PASS foreignTextNode.splitText(1), with selected range on foreignTextNode from 1 to 3 
-PASS foreignTextNode.splitText(2), with unselected range on foreignTextNode from 1 to 3 
-PASS foreignTextNode.splitText(2), with selected range on foreignTextNode from 1 to 3 
-PASS foreignTextNode.splitText(3), with unselected range on foreignTextNode from 1 to 3 
-PASS foreignTextNode.splitText(3), with selected range on foreignTextNode from 1 to 3 
-PASS xmlTextNode.splitText(376), with unselected range on xmlTextNode from 0 to 1 
-PASS xmlTextNode.splitText(376), with selected range on xmlTextNode from 0 to 1 
-PASS xmlTextNode.splitText(0), with unselected range collapsed at (xmlTextNode, 0) 
-PASS xmlTextNode.splitText(0), with selected range collapsed at (xmlTextNode, 0) 
-PASS xmlTextNode.splitText(1), with unselected range collapsed at (xmlTextNode, 1) 
-PASS xmlTextNode.splitText(1), with selected range collapsed at (xmlTextNode, 1) 
-PASS xmlTextNode.splitText(xmlTextNode.length), with unselected range collapsed at (xmlTextNode, xmlTextNode.length) 
-PASS xmlTextNode.splitText(xmlTextNode.length), with selected range collapsed at (xmlTextNode, xmlTextNode.length) 
-PASS xmlTextNode.splitText(1), with unselected range on xmlTextNode from 1 to 3 
-PASS xmlTextNode.splitText(1), with selected range on xmlTextNode from 1 to 3 
-PASS xmlTextNode.splitText(2), with unselected range on xmlTextNode from 1 to 3 
-PASS xmlTextNode.splitText(2), with selected range on xmlTextNode from 1 to 3 
-PASS xmlTextNode.splitText(3), with unselected range on xmlTextNode from 1 to 3 
-PASS xmlTextNode.splitText(3), with selected range on xmlTextNode from 1 to 3 
-PASS detachedTextNode.splitText(376), with unselected range on detachedTextNode from 0 to 1 
-PASS detachedTextNode.splitText(376), with selected range on detachedTextNode from 0 to 1 
-PASS detachedTextNode.splitText(0), with unselected range collapsed at (detachedTextNode, 0) 
-PASS detachedTextNode.splitText(0), with selected range collapsed at (detachedTextNode, 0) 
-PASS detachedTextNode.splitText(1), with unselected range collapsed at (detachedTextNode, 1) 
-PASS detachedTextNode.splitText(1), with selected range collapsed at (detachedTextNode, 1) 
-PASS detachedTextNode.splitText(detachedTextNode.length), with unselected range collapsed at (detachedTextNode, detachedTextNode.length) 
-PASS detachedTextNode.splitText(detachedTextNode.length), with selected range collapsed at (detachedTextNode, detachedTextNode.length) 
-PASS detachedTextNode.splitText(1), with unselected range on detachedTextNode from 1 to 3 
-PASS detachedTextNode.splitText(1), with selected range on detachedTextNode from 1 to 3 
-PASS detachedTextNode.splitText(2), with unselected range on detachedTextNode from 1 to 3 
-PASS detachedTextNode.splitText(2), with selected range on detachedTextNode from 1 to 3 
-PASS detachedTextNode.splitText(3), with unselected range on detachedTextNode from 1 to 3 
-PASS detachedTextNode.splitText(3), with selected range on detachedTextNode from 1 to 3 
-PASS detachedForeignTextNode.splitText(376), with unselected range on detachedForeignTextNode from 0 to 1 
-PASS detachedForeignTextNode.splitText(376), with selected range on detachedForeignTextNode from 0 to 1 
-PASS detachedForeignTextNode.splitText(0), with unselected range collapsed at (detachedForeignTextNode, 0) 
-PASS detachedForeignTextNode.splitText(0), with selected range collapsed at (detachedForeignTextNode, 0) 
-PASS detachedForeignTextNode.splitText(1), with unselected range collapsed at (detachedForeignTextNode, 1) 
-PASS detachedForeignTextNode.splitText(1), with selected range collapsed at (detachedForeignTextNode, 1) 
-PASS detachedForeignTextNode.splitText(detachedForeignTextNode.length), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length) 
-PASS detachedForeignTextNode.splitText(detachedForeignTextNode.length), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length) 
-PASS detachedForeignTextNode.splitText(1), with unselected range on detachedForeignTextNode from 1 to 3 
-PASS detachedForeignTextNode.splitText(1), with selected range on detachedForeignTextNode from 1 to 3 
-PASS detachedForeignTextNode.splitText(2), with unselected range on detachedForeignTextNode from 1 to 3 
-PASS detachedForeignTextNode.splitText(2), with selected range on detachedForeignTextNode from 1 to 3 
-PASS detachedForeignTextNode.splitText(3), with unselected range on detachedForeignTextNode from 1 to 3 
-PASS detachedForeignTextNode.splitText(3), with selected range on detachedForeignTextNode from 1 to 3 
-PASS detachedXmlTextNode.splitText(376), with unselected range on detachedXmlTextNode from 0 to 1 
-PASS detachedXmlTextNode.splitText(376), with selected range on detachedXmlTextNode from 0 to 1 
-PASS detachedXmlTextNode.splitText(0), with unselected range collapsed at (detachedXmlTextNode, 0) 
-PASS detachedXmlTextNode.splitText(0), with selected range collapsed at (detachedXmlTextNode, 0) 
-PASS detachedXmlTextNode.splitText(1), with unselected range collapsed at (detachedXmlTextNode, 1) 
-PASS detachedXmlTextNode.splitText(1), with selected range collapsed at (detachedXmlTextNode, 1) 
-PASS detachedXmlTextNode.splitText(detachedXmlTextNode.length), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length) 
-PASS detachedXmlTextNode.splitText(detachedXmlTextNode.length), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length) 
-PASS detachedXmlTextNode.splitText(1), with unselected range on detachedXmlTextNode from 1 to 3 
-PASS detachedXmlTextNode.splitText(1), with selected range on detachedXmlTextNode from 1 to 3 
-PASS detachedXmlTextNode.splitText(2), with unselected range on detachedXmlTextNode from 1 to 3 
-PASS detachedXmlTextNode.splitText(2), with selected range on detachedXmlTextNode from 1 to 3 
-PASS detachedXmlTextNode.splitText(3), with unselected range on detachedXmlTextNode from 1 to 3 
-PASS detachedXmlTextNode.splitText(3), with selected range on detachedXmlTextNode from 1 to 3 
-PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 0) 
-PASS paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0], 0) 
-PASS paras[0].firstChild.splitText(1), with unselected range on paras[0] from 0 to 1 
-PASS paras[0].firstChild.splitText(1), with selected range on paras[0] from 0 to 1 
-PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 1) 
-PASS paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0], 1) 
-PASS paras[0].firstChild.splitText(1), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) 
-PASS paras[0].firstChild.splitText(1), with selected range from (paras[0].firstChild, 1) to (paras[0], 1) 
-PASS paras[0].firstChild.splitText(2), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) 
-PASS paras[0].firstChild.splitText(2), with selected range from (paras[0].firstChild, 1) to (paras[0], 1) 
-PASS paras[0].firstChild.splitText(3), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) 
-PASS paras[0].firstChild.splitText(3), with selected range from (paras[0].firstChild, 1) to (paras[0], 1) 
-PASS paras[0].firstChild.splitText(1), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3) 
-PASS paras[0].firstChild.splitText(1), with selected range from (paras[0], 0) to (paras[0].firstChild, 3) 
-PASS paras[0].firstChild.splitText(2), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3) 
-PASS paras[0].firstChild.splitText(2), with selected range from (paras[0], 0) to (paras[0].firstChild, 3) 
-PASS paras[0].firstChild.splitText(3), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3) 
-PASS paras[0].firstChild.splitText(3), with selected range from (paras[0], 0) to (paras[0].firstChild, 3) 
+PASS paras[0].firstChild.splitText(376), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.splitText(376), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.splitText(0), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.splitText(0), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.splitText(paras[0].firstChild.length), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.splitText(paras[0].firstChild.length), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.splitText(1), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.splitText(1), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.splitText(2), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.splitText(2), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.splitText(3), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.splitText(3), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[1].firstChild.splitText(376), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.splitText(376), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.splitText(0), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.splitText(0), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.splitText(1), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.splitText(1), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.splitText(paras[1].firstChild.length), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.splitText(paras[1].firstChild.length), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.splitText(1), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.splitText(1), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.splitText(2), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.splitText(2), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.splitText(3), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.splitText(3), with selected range on paras[1].firstChild from 1 to 3
+PASS foreignTextNode.splitText(376), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.splitText(376), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.splitText(0), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.splitText(0), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.splitText(1), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.splitText(1), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.splitText(foreignTextNode.length), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.splitText(foreignTextNode.length), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.splitText(1), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.splitText(1), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.splitText(2), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.splitText(2), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.splitText(3), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.splitText(3), with selected range on foreignTextNode from 1 to 3
+PASS xmlTextNode.splitText(376), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.splitText(376), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.splitText(0), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.splitText(0), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.splitText(1), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.splitText(1), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.splitText(xmlTextNode.length), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.splitText(xmlTextNode.length), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.splitText(1), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.splitText(1), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.splitText(2), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.splitText(2), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.splitText(3), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.splitText(3), with selected range on xmlTextNode from 1 to 3
+PASS detachedTextNode.splitText(376), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.splitText(376), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.splitText(0), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.splitText(0), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.splitText(1), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.splitText(1), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.splitText(detachedTextNode.length), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.splitText(detachedTextNode.length), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.splitText(1), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.splitText(1), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.splitText(2), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.splitText(2), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.splitText(3), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.splitText(3), with selected range on detachedTextNode from 1 to 3
+PASS detachedForeignTextNode.splitText(376), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.splitText(376), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.splitText(0), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.splitText(0), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.splitText(1), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.splitText(1), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.splitText(detachedForeignTextNode.length), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.splitText(detachedForeignTextNode.length), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.splitText(1), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.splitText(1), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.splitText(2), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.splitText(2), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.splitText(3), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.splitText(3), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedXmlTextNode.splitText(376), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.splitText(376), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.splitText(0), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.splitText(0), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.splitText(1), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.splitText(1), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.splitText(detachedXmlTextNode.length), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.splitText(detachedXmlTextNode.length), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.splitText(1), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.splitText(1), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.splitText(2), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.splitText(2), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.splitText(3), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.splitText(3), with selected range on detachedXmlTextNode from 1 to 3
+PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.splitText(1), with unselected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.splitText(1), with selected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.splitText(1), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.splitText(1), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.splitText(2), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.splitText(2), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.splitText(3), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.splitText(3), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.splitText(1), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.splitText(1), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.splitText(2), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.splitText(2), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.splitText(3), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.splitText(3), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
 

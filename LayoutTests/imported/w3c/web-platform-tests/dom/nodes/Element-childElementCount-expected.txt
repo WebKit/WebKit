@@ -1,5 +1,5 @@
 Test of childElementCount
 
 
-PASS childElementCount 
+PASS childElementCount
 The result of this test is given above.

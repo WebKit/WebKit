@@ -1,25 +1,25 @@
 
-PASS Interface objects properties should not be Enumerable 
-PASS Should be able to delete Event. 
-PASS Should be able to delete CustomEvent. 
-PASS Should be able to delete EventTarget. 
-PASS Should be able to delete AbortController. 
-PASS Should be able to delete AbortSignal. 
-PASS Should be able to delete Node. 
-PASS Should be able to delete Document. 
-PASS Should be able to delete DOMImplementation. 
-PASS Should be able to delete DocumentFragment. 
-PASS Should be able to delete ProcessingInstruction. 
-PASS Should be able to delete DocumentType. 
-PASS Should be able to delete Element. 
-PASS Should be able to delete Attr. 
-PASS Should be able to delete CharacterData. 
-PASS Should be able to delete Text. 
-PASS Should be able to delete Comment. 
-PASS Should be able to delete NodeIterator. 
-PASS Should be able to delete TreeWalker. 
-PASS Should be able to delete NodeFilter. 
-PASS Should be able to delete NodeList. 
-PASS Should be able to delete HTMLCollection. 
-PASS Should be able to delete DOMTokenList. 
+PASS Interface objects properties should not be Enumerable
+PASS Should be able to delete Event.
+PASS Should be able to delete CustomEvent.
+PASS Should be able to delete EventTarget.
+PASS Should be able to delete AbortController.
+PASS Should be able to delete AbortSignal.
+PASS Should be able to delete Node.
+PASS Should be able to delete Document.
+PASS Should be able to delete DOMImplementation.
+PASS Should be able to delete DocumentFragment.
+PASS Should be able to delete ProcessingInstruction.
+PASS Should be able to delete DocumentType.
+PASS Should be able to delete Element.
+PASS Should be able to delete Attr.
+PASS Should be able to delete CharacterData.
+PASS Should be able to delete Text.
+PASS Should be able to delete Comment.
+PASS Should be able to delete NodeIterator.
+PASS Should be able to delete TreeWalker.
+PASS Should be able to delete NodeFilter.
+PASS Should be able to delete NodeList.
+PASS Should be able to delete HTMLCollection.
+PASS Should be able to delete DOMTokenList.
 

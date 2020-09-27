@@ -1,5 +1,5 @@
 
-PASS multiple defined classes 
+PASS multiple defined classes
 test link #foo
 text
 text caption

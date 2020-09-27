@@ -1,20 +1,20 @@
 
-PASS Calling document.getElementById with an empty string argument. 
-PASS Calling document.getElementById with a null argument. 
-PASS Calling document.getElementById with an undefined argument. 
-PASS on static page 
-PASS Document.getElementById with a script-inserted element 
-PASS update `id` attribute via setAttribute/removeAttribute 
-PASS Ensure that the id attribute only affects elements present in a document 
-PASS in tree order, within the context object's tree 
-PASS Modern browsers optimize this method with using internal id cache. This test checks that their optimization should effect only append to `Document`, not append to `Node`. 
-PASS changing attribute's value via `Attr` gotten from `Element.attribute`. 
-PASS add id attribute via innerHTML 
-PASS remove id attribute via innerHTML 
-PASS add id attribute via outerHTML 
-PASS remove id attribute via outerHTML 
-PASS update `id` attribute via element.id 
-PASS where insertion order and tree order don't match 
-PASS Inserting an id by inserting its parent node 
-PASS Document.getElementById must not return nodes not present in document 
+PASS Calling document.getElementById with an empty string argument.
+PASS Calling document.getElementById with a null argument.
+PASS Calling document.getElementById with an undefined argument.
+PASS on static page
+PASS Document.getElementById with a script-inserted element
+PASS update `id` attribute via setAttribute/removeAttribute
+PASS Ensure that the id attribute only affects elements present in a document
+PASS in tree order, within the context object's tree
+PASS Modern browsers optimize this method with using internal id cache. This test checks that their optimization should effect only append to `Document`, not append to `Node`.
+PASS changing attribute's value via `Attr` gotten from `Element.attribute`.
+PASS add id attribute via innerHTML
+PASS remove id attribute via innerHTML
+PASS add id attribute via outerHTML
+PASS remove id attribute via outerHTML
+PASS update `id` attribute via element.id
+PASS where insertion order and tree order don't match
+PASS Inserting an id by inserting its parent node
+PASS Document.getElementById must not return nodes not present in document
 

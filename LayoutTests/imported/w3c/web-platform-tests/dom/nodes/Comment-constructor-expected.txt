@@ -1,18 +1,18 @@
 
-PASS new Comment(): prototype chain 
-PASS new Comment(): instanceof 
-PASS new Comment(): no arguments 
-PASS new Comment(): undefined 
-PASS new Comment(): null 
-PASS new Comment(): 42 
-PASS new Comment(): "" 
-PASS new Comment(): "-" 
-PASS new Comment(): "--" 
-PASS new Comment(): "-->" 
-PASS new Comment(): "<!--" 
-PASS new Comment(): "\0" 
-PASS new Comment(): "\0test" 
-PASS new Comment(): "&amp;" 
-PASS new Comment(): two arguments 
-PASS new Comment() should get the correct ownerDocument across globals 
+PASS new Comment(): prototype chain
+PASS new Comment(): instanceof
+PASS new Comment(): no arguments
+PASS new Comment(): undefined
+PASS new Comment(): null
+PASS new Comment(): 42
+PASS new Comment(): ""
+PASS new Comment(): "-"
+PASS new Comment(): "--"
+PASS new Comment(): "-->"
+PASS new Comment(): "<!--"
+PASS new Comment(): "\0"
+PASS new Comment(): "\0test"
+PASS new Comment(): "&amp;"
+PASS new Comment(): two arguments
+PASS new Comment() should get the correct ownerDocument across globals
 

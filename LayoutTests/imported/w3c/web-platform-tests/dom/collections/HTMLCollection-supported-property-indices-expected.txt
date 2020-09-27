@@ -1,8 +1,8 @@
 
-PASS Handling of property names that look like negative integers 
-PASS Handling of property names that look like small nonnegative integers 
-PASS Handling of property names that look like integers around 2^31 
-PASS Handling of property names that look like integers around 2^32 
+PASS Handling of property names that look like negative integers
+PASS Handling of property names that look like small nonnegative integers
+PASS Handling of property names that look like integers around 2^31
+PASS Handling of property names that look like integers around 2^32
 FAIL Trying to set an expando that would shadow an already-existing indexed property assert_throws_js: function "function () {
     "use strict";
     elements[0] = 5;

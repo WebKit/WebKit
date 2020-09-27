@@ -1,7 +1,7 @@
 
-PASS No 'deep' argument. 
-PASS Undefined 'deep' argument. 
-PASS True 'deep' argument. 
-PASS False 'deep' argument. 
-PASS Import an Attr node with namespace/prefix correctly. 
+PASS No 'deep' argument.
+PASS Undefined 'deep' argument.
+PASS True 'deep' argument.
+PASS False 'deep' argument.
+PASS Import an Attr node with namespace/prefix correctly.
 

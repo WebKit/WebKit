@@ -1,6 +1,6 @@
 
-PASS Object.getOwnPropertyNames on NamedNodeMap 
-PASS Object.getOwnPropertyNames on NamedNodeMap of input 
-PASS Object.getOwnPropertyNames on NamedNodeMap after attribute removal 
+PASS Object.getOwnPropertyNames on NamedNodeMap
+PASS Object.getOwnPropertyNames on NamedNodeMap of input
+PASS Object.getOwnPropertyNames on NamedNodeMap after attribute removal
 Simple
 

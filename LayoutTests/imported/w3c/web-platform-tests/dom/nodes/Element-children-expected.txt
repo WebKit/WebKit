@@ -1,4 +1,4 @@
 
-PASS HTMLCollection edge cases 
-PASS HTMLCollection edge cases 1 
+PASS HTMLCollection edge cases
+PASS HTMLCollection edge cases 1
 

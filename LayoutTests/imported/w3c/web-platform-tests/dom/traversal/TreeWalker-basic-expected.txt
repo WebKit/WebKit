@@ -1,8 +1,8 @@
 
-PASS Construct a TreeWalker by document.createTreeWalker(root). 
-PASS Construct a TreeWalker by document.createTreeWalker(root, null, null). 
-PASS Construct a TreeWalker by document.createTreeWalker(root, undefined, undefined). 
-PASS Give an invalid root node to document.createTreeWalker(). 
-PASS Walk over nodes. 
-PASS Optional arguments to createTreeWalker should be optional (3 passed, null). 
+PASS Construct a TreeWalker by document.createTreeWalker(root).
+PASS Construct a TreeWalker by document.createTreeWalker(root, null, null).
+PASS Construct a TreeWalker by document.createTreeWalker(root, undefined, undefined).
+PASS Give an invalid root node to document.createTreeWalker().
+PASS Walk over nodes.
+PASS Optional arguments to createTreeWalker should be optional (3 passed, null).
 This test checks the basic functionality of TreeWalker.

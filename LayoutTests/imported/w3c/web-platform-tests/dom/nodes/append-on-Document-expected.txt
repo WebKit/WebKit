@@ -1,7 +1,7 @@
 
-PASS Document.append() without any argument, on a Document having no child. 
-PASS Document.append() with only one element as an argument, on a Document having no child. 
-PASS Document.append() with only one element as an argument, on a Document having one child. 
-PASS Document.append() with text as an argument, on a Document having no child. 
-PASS Document.append() with two elements as the argument, on a Document having no child. 
+PASS Document.append() without any argument, on a Document having no child.
+PASS Document.append() with only one element as an argument, on a Document having no child.
+PASS Document.append() with only one element as an argument, on a Document having one child.
+PASS Document.append() with text as an argument, on a Document having no child.
+PASS Document.append() with two elements as the argument, on a Document having no child.
 

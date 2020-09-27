@@ -1,8 +1,8 @@
 
-PASS HTMLCollection has length method. 
-PASS HTMLCollection does not have iterable's values method. 
-PASS HTMLCollection does not have iterable's entries method. 
-PASS HTMLCollection does not have iterable's forEach method. 
-PASS HTMLCollection has Symbol.iterator. 
-PASS HTMLCollection is iterable via for-of loop. 
+PASS HTMLCollection has length method.
+PASS HTMLCollection does not have iterable's values method.
+PASS HTMLCollection does not have iterable's entries method.
+PASS HTMLCollection does not have iterable's forEach method.
+PASS HTMLCollection has Symbol.iterator.
+PASS HTMLCollection is iterable via for-of loop.
 

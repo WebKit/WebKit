@@ -1,25 +1,25 @@
 
-PASS If node is a host-including inclusive ancestor of parent, then throw a HierarchyRequestError DOMException. 
-PASS If node is not a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction, or Comment node, then throw a HierarchyRequestError DOMException. 
-PASS If node is a Text node and parent is a document, then throw a HierarchyRequestError DOMException. 
-PASS If node is a doctype and parent is not a document, then throw a HierarchyRequestError DOMException. 
-PASS If node is a DocumentFragment with multiple elements and parent is a document, then throw a HierarchyRequestError DOMException. 
-PASS If node is a DocumentFragment with an element and parent is a document with another element, then throw a HierarchyRequestError DOMException. 
-PASS If node is an Element and parent is a document with another element, then throw a HierarchyRequestError DOMException. 
-PASS If node is a doctype and parent is a document with another doctype, then throw a HierarchyRequestError DOMException. 
-PASS If node is a doctype and parent is a document with an element, then throw a HierarchyRequestError DOMException. 
-PASS Element.append() without any argument, on a parent having no child. 
-PASS Element.append() with null as an argument, on a parent having no child. 
-PASS Element.append() with undefined as an argument, on a parent having no child. 
-PASS Element.append() with only text as an argument, on a parent having no child. 
-PASS Element.append() with only one element as an argument, on a parent having no child. 
-PASS Element.append() with null as an argument, on a parent having a child. 
-PASS Element.append() with one element and text as argument, on a parent having a child. 
-PASS DocumentFragment.append() without any argument, on a parent having no child. 
-PASS DocumentFragment.append() with null as an argument, on a parent having no child. 
-PASS DocumentFragment.append() with undefined as an argument, on a parent having no child. 
-PASS DocumentFragment.append() with only text as an argument, on a parent having no child. 
-PASS DocumentFragment.append() with only one element as an argument, on a parent having no child. 
-PASS DocumentFragment.append() with null as an argument, on a parent having a child. 
-PASS DocumentFragment.append() with one element and text as argument, on a parent having a child. 
+PASS If node is a host-including inclusive ancestor of parent, then throw a HierarchyRequestError DOMException.
+PASS If node is not a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction, or Comment node, then throw a HierarchyRequestError DOMException.
+PASS If node is a Text node and parent is a document, then throw a HierarchyRequestError DOMException.
+PASS If node is a doctype and parent is not a document, then throw a HierarchyRequestError DOMException.
+PASS If node is a DocumentFragment with multiple elements and parent is a document, then throw a HierarchyRequestError DOMException.
+PASS If node is a DocumentFragment with an element and parent is a document with another element, then throw a HierarchyRequestError DOMException.
+PASS If node is an Element and parent is a document with another element, then throw a HierarchyRequestError DOMException.
+PASS If node is a doctype and parent is a document with another doctype, then throw a HierarchyRequestError DOMException.
+PASS If node is a doctype and parent is a document with an element, then throw a HierarchyRequestError DOMException.
+PASS Element.append() without any argument, on a parent having no child.
+PASS Element.append() with null as an argument, on a parent having no child.
+PASS Element.append() with undefined as an argument, on a parent having no child.
+PASS Element.append() with only text as an argument, on a parent having no child.
+PASS Element.append() with only one element as an argument, on a parent having no child.
+PASS Element.append() with null as an argument, on a parent having a child.
+PASS Element.append() with one element and text as argument, on a parent having a child.
+PASS DocumentFragment.append() without any argument, on a parent having no child.
+PASS DocumentFragment.append() with null as an argument, on a parent having no child.
+PASS DocumentFragment.append() with undefined as an argument, on a parent having no child.
+PASS DocumentFragment.append() with only text as an argument, on a parent having no child.
+PASS DocumentFragment.append() with only one element as an argument, on a parent having no child.
+PASS DocumentFragment.append() with null as an argument, on a parent having a child.
+PASS DocumentFragment.append() with one element and text as argument, on a parent having a child.
 

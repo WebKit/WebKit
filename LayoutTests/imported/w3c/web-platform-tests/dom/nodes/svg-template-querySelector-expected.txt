@@ -1,5 +1,5 @@
 
-PASS querySelector works on template contents fragments with HTML elements (sanity check) 
-PASS querySelector works on template contents fragments with SVG elements 
-PASS querySelector works on template contents fragments with nested SVG elements 
+PASS querySelector works on template contents fragments with HTML elements (sanity check)
+PASS querySelector works on template contents fragments with SVG elements
+PASS querySelector works on template contents fragments with nested SVG elements
 

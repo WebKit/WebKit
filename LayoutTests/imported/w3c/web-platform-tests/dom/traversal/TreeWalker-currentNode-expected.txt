@@ -1,7 +1,7 @@
 
-PASS Test that TreeWalker.parent() doesn't set the currentNode to a node not under the root. 
-PASS Test that we handle setting the currentNode to arbitrary nodes not under the root element. 
-PASS Test how we handle the case when the traversed to node is within the root, but the currentElement is not. 
+PASS Test that TreeWalker.parent() doesn't set the currentNode to a node not under the root.
+PASS Test that we handle setting the currentNode to arbitrary nodes not under the root element.
+PASS Test how we handle the case when the traversed to node is within the root, but the currentElement is not.
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 Test TreeWalker currentNode functionality

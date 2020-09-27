@@ -1,10 +1,10 @@
 
-PASS Should throw TypeError if the arguments are wrong. 
-PASS contains(null) should be false 
-PASS document.contains 
-PASS contains with a button 
-PASS contains with a text node 
-PASS contains with a processing instruction 
-PASS contains with a document fragment 
-PASS contaibs with another document 
+PASS Should throw TypeError if the arguments are wrong.
+PASS contains(null) should be false
+PASS document.contains
+PASS contains with a button
+PASS contains with a text node
+PASS contains with a processing instruction
+PASS contains with a document fragment
+PASS contaibs with another document
  Link text

@@ -1,30 +1,30 @@
 
-PASS Passing a detached element from the main document to removeChild should not affect it. 
-PASS Passing a non-detached element from the main document to removeChild should not affect it. 
-PASS Calling removeChild on a element from the main document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached text from the main document to removeChild should not affect it. 
-PASS Passing a non-detached text from the main document to removeChild should not affect it. 
-PASS Calling removeChild on a text from the main document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached comment from the main document to removeChild should not affect it. 
-PASS Passing a non-detached comment from the main document to removeChild should not affect it. 
-PASS Calling removeChild on a comment from the main document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached element from a frame document to removeChild should not affect it. 
-PASS Passing a non-detached element from a frame document to removeChild should not affect it. 
-PASS Calling removeChild on a element from a frame document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached text from a frame document to removeChild should not affect it. 
-PASS Passing a non-detached text from a frame document to removeChild should not affect it. 
-PASS Calling removeChild on a text from a frame document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached comment from a frame document to removeChild should not affect it. 
-PASS Passing a non-detached comment from a frame document to removeChild should not affect it. 
-PASS Calling removeChild on a comment from a frame document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached element from a synthetic document to removeChild should not affect it. 
-PASS Passing a non-detached element from a synthetic document to removeChild should not affect it. 
-PASS Calling removeChild on a element from a synthetic document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached text from a synthetic document to removeChild should not affect it. 
-PASS Passing a non-detached text from a synthetic document to removeChild should not affect it. 
-PASS Calling removeChild on a text from a synthetic document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a detached comment from a synthetic document to removeChild should not affect it. 
-PASS Passing a non-detached comment from a synthetic document to removeChild should not affect it. 
-PASS Calling removeChild on a comment from a synthetic document with no children should throw NOT_FOUND_ERR. 
-PASS Passing a value that is not a Node reference to removeChild should throw TypeError. 
+PASS Passing a detached element from the main document to removeChild should not affect it.
+PASS Passing a non-detached element from the main document to removeChild should not affect it.
+PASS Calling removeChild on a element from the main document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached text from the main document to removeChild should not affect it.
+PASS Passing a non-detached text from the main document to removeChild should not affect it.
+PASS Calling removeChild on a text from the main document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached comment from the main document to removeChild should not affect it.
+PASS Passing a non-detached comment from the main document to removeChild should not affect it.
+PASS Calling removeChild on a comment from the main document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached element from a frame document to removeChild should not affect it.
+PASS Passing a non-detached element from a frame document to removeChild should not affect it.
+PASS Calling removeChild on a element from a frame document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached text from a frame document to removeChild should not affect it.
+PASS Passing a non-detached text from a frame document to removeChild should not affect it.
+PASS Calling removeChild on a text from a frame document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached comment from a frame document to removeChild should not affect it.
+PASS Passing a non-detached comment from a frame document to removeChild should not affect it.
+PASS Calling removeChild on a comment from a frame document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached element from a synthetic document to removeChild should not affect it.
+PASS Passing a non-detached element from a synthetic document to removeChild should not affect it.
+PASS Calling removeChild on a element from a synthetic document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached text from a synthetic document to removeChild should not affect it.
+PASS Passing a non-detached text from a synthetic document to removeChild should not affect it.
+PASS Calling removeChild on a text from a synthetic document with no children should throw NOT_FOUND_ERR.
+PASS Passing a detached comment from a synthetic document to removeChild should not affect it.
+PASS Passing a non-detached comment from a synthetic document to removeChild should not affect it.
+PASS Calling removeChild on a comment from a synthetic document with no children should throw NOT_FOUND_ERR.
+PASS Passing a value that is not a Node reference to removeChild should throw TypeError.
  test b

@@ -1,278 +1,278 @@
 
-PASS current doc: #document node, current doc's range, type 9 
-PASS current doc: #document node, foreign doc's range, type 9 
-PASS current doc: #document node, XML doc's range, type 9 
-PASS current doc: #document node, detached range, type 9 
-PASS current doc[0]: html node, current doc's range, type 10 
-PASS current doc[0]: html node, foreign doc's range, type 10 
-PASS current doc[0]: html node, XML doc's range, type 10 
-PASS current doc[0]: html node, detached range, type 10 
-PASS current doc[1]: html node, current doc's range, type 1 
-PASS current doc[1]: html node, foreign doc's range, type 1 
-PASS current doc[1]: html node, XML doc's range, type 1 
-PASS current doc[1]: html node, detached range, type 1 
-PASS current doc[1][0]: head node, current doc's range, type 1 
-PASS current doc[1][0]: head node, foreign doc's range, type 1 
-PASS current doc[1][0]: head node, XML doc's range, type 1 
-PASS current doc[1][0]: head node, detached range, type 1 
-PASS current doc[1][0][0]: title node, current doc's range, type 1 
-PASS current doc[1][0][0]: title node, foreign doc's range, type 1 
-PASS current doc[1][0][0]: title node, XML doc's range, type 1 
-PASS current doc[1][0][0]: title node, detached range, type 1 
-PASS current doc[1][0][0][0]: #text node, current doc's range, type 3 
-PASS current doc[1][0][0][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][0][0][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][0][0][0]: #text node, detached range, type 3 
-PASS current doc[1][0][1]: #text node, current doc's range, type 3 
-PASS current doc[1][0][1]: #text node, foreign doc's range, type 3 
-PASS current doc[1][0][1]: #text node, XML doc's range, type 3 
-PASS current doc[1][0][1]: #text node, detached range, type 3 
-PASS current doc[1][0][2]: link node, current doc's range, type 1 
-PASS current doc[1][0][2]: link node, foreign doc's range, type 1 
-PASS current doc[1][0][2]: link node, XML doc's range, type 1 
-PASS current doc[1][0][2]: link node, detached range, type 1 
-PASS current doc[1][0][3]: #text node, current doc's range, type 3 
-PASS current doc[1][0][3]: #text node, foreign doc's range, type 3 
-PASS current doc[1][0][3]: #text node, XML doc's range, type 3 
-PASS current doc[1][0][3]: #text node, detached range, type 3 
-PASS current doc[1][0][4]: meta node, current doc's range, type 1 
-PASS current doc[1][0][4]: meta node, foreign doc's range, type 1 
-PASS current doc[1][0][4]: meta node, XML doc's range, type 1 
-PASS current doc[1][0][4]: meta node, detached range, type 1 
-PASS current doc[1][0][5]: #text node, current doc's range, type 3 
-PASS current doc[1][0][5]: #text node, foreign doc's range, type 3 
-PASS current doc[1][0][5]: #text node, XML doc's range, type 3 
-PASS current doc[1][0][5]: #text node, detached range, type 3 
-PASS current doc[1][1]: body node, current doc's range, type 1 
-PASS current doc[1][1]: body node, foreign doc's range, type 1 
-PASS current doc[1][1]: body node, XML doc's range, type 1 
-PASS current doc[1][1]: body node, detached range, type 1 
-PASS current doc[1][1][0]: div node, current doc's range, type 1 
-PASS current doc[1][1][0]: div node, foreign doc's range, type 1 
-PASS current doc[1][1][0]: div node, XML doc's range, type 1 
-PASS current doc[1][1][0]: div node, detached range, type 1 
-PASS current doc[1][1][0][0]: p node, current doc's range, type 1 
-PASS current doc[1][1][0][0]: p node, foreign doc's range, type 1 
-PASS current doc[1][1][0][0]: p node, XML doc's range, type 1 
-PASS current doc[1][1][0][0]: p node, detached range, type 1 
-PASS current doc[1][1][0][0][0]: #text node, current doc's range, type 3 
-PASS current doc[1][1][0][0][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][0][0][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][0][0][0]: #text node, detached range, type 3 
-PASS current doc[1][1][0][1]: p node, current doc's range, type 1 
-PASS current doc[1][1][0][1]: p node, foreign doc's range, type 1 
-PASS current doc[1][1][0][1]: p node, XML doc's range, type 1 
-PASS current doc[1][1][0][1]: p node, detached range, type 1 
-PASS current doc[1][1][0][1][0]: #text node, current doc's range, type 3 
-PASS current doc[1][1][0][1][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][0][1][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][0][1][0]: #text node, detached range, type 3 
-PASS current doc[1][1][0][2]: p node, current doc's range, type 1 
-PASS current doc[1][1][0][2]: p node, foreign doc's range, type 1 
-PASS current doc[1][1][0][2]: p node, XML doc's range, type 1 
-PASS current doc[1][1][0][2]: p node, detached range, type 1 
-PASS current doc[1][1][0][2][0]: #text node, current doc's range, type 3 
-PASS current doc[1][1][0][2][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][0][2][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][0][2][0]: #text node, detached range, type 3 
-PASS current doc[1][1][0][3]: p node, current doc's range, type 1 
-PASS current doc[1][1][0][3]: p node, foreign doc's range, type 1 
-PASS current doc[1][1][0][3]: p node, XML doc's range, type 1 
-PASS current doc[1][1][0][3]: p node, detached range, type 1 
-PASS current doc[1][1][0][3][0]: #text node, current doc's range, type 3 
-PASS current doc[1][1][0][3][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][0][3][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][0][3][0]: #text node, detached range, type 3 
-PASS current doc[1][1][0][4]: p node, current doc's range, type 1 
-PASS current doc[1][1][0][4]: p node, foreign doc's range, type 1 
-PASS current doc[1][1][0][4]: p node, XML doc's range, type 1 
-PASS current doc[1][1][0][4]: p node, detached range, type 1 
-PASS current doc[1][1][0][4][0]: #text node, current doc's range, type 3 
-PASS current doc[1][1][0][4][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][0][4][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][0][4][0]: #text node, detached range, type 3 
-PASS current doc[1][1][0][5]: #comment node, current doc's range, type 8 
-PASS current doc[1][1][0][5]: #comment node, foreign doc's range, type 8 
-PASS current doc[1][1][0][5]: #comment node, XML doc's range, type 8 
-PASS current doc[1][1][0][5]: #comment node, detached range, type 8 
-PASS current doc[1][1][2]: #text node, current doc's range, type 3 
-PASS current doc[1][1][2]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][2]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][2]: #text node, detached range, type 3 
-PASS current doc[1][1][3]: script node, current doc's range, type 1 
-PASS current doc[1][1][3]: script node, foreign doc's range, type 1 
-PASS current doc[1][1][3]: script node, XML doc's range, type 1 
-PASS current doc[1][1][3]: script node, detached range, type 1 
-PASS current doc[1][1][4]: #text node, current doc's range, type 3 
-PASS current doc[1][1][4]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][4]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][4]: #text node, detached range, type 3 
-PASS current doc[1][1][5]: script node, current doc's range, type 1 
-PASS current doc[1][1][5]: script node, foreign doc's range, type 1 
-PASS current doc[1][1][5]: script node, XML doc's range, type 1 
-PASS current doc[1][1][5]: script node, detached range, type 1 
-PASS current doc[1][1][6]: #text node, current doc's range, type 3 
-PASS current doc[1][1][6]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][6]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][6]: #text node, detached range, type 3 
-PASS current doc[1][1][7]: script node, current doc's range, type 1 
-PASS current doc[1][1][7]: script node, foreign doc's range, type 1 
-PASS current doc[1][1][7]: script node, XML doc's range, type 1 
-PASS current doc[1][1][7]: script node, detached range, type 1 
-PASS current doc[1][1][8]: #text node, current doc's range, type 3 
-PASS current doc[1][1][8]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][8]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][8]: #text node, detached range, type 3 
-PASS current doc[1][1][9]: script node, current doc's range, type 1 
-PASS current doc[1][1][9]: script node, foreign doc's range, type 1 
-PASS current doc[1][1][9]: script node, XML doc's range, type 1 
-PASS current doc[1][1][9]: script node, detached range, type 1 
-PASS current doc[1][1][9][0]: #text node, current doc's range, type 3 
-PASS current doc[1][1][9][0]: #text node, foreign doc's range, type 3 
-PASS current doc[1][1][9][0]: #text node, XML doc's range, type 3 
-PASS current doc[1][1][9][0]: #text node, detached range, type 3 
-PASS foreign doc: #document node, current doc's range, type 9 
-PASS foreign doc: #document node, foreign doc's range, type 9 
-PASS foreign doc: #document node, XML doc's range, type 9 
-PASS foreign doc: #document node, detached range, type 9 
-PASS foreign doc[0]: html node, current doc's range, type 10 
-PASS foreign doc[0]: html node, foreign doc's range, type 10 
-PASS foreign doc[0]: html node, XML doc's range, type 10 
-PASS foreign doc[0]: html node, detached range, type 10 
-PASS foreign doc[1]: html node, current doc's range, type 1 
-PASS foreign doc[1]: html node, foreign doc's range, type 1 
-PASS foreign doc[1]: html node, XML doc's range, type 1 
-PASS foreign doc[1]: html node, detached range, type 1 
-PASS foreign doc[1][0]: head node, current doc's range, type 1 
-PASS foreign doc[1][0]: head node, foreign doc's range, type 1 
-PASS foreign doc[1][0]: head node, XML doc's range, type 1 
-PASS foreign doc[1][0]: head node, detached range, type 1 
-PASS foreign doc[1][0][0]: title node, current doc's range, type 1 
-PASS foreign doc[1][0][0]: title node, foreign doc's range, type 1 
-PASS foreign doc[1][0][0]: title node, XML doc's range, type 1 
-PASS foreign doc[1][0][0]: title node, detached range, type 1 
-PASS foreign doc[1][0][0][0]: #text node, current doc's range, type 3 
-PASS foreign doc[1][0][0][0]: #text node, foreign doc's range, type 3 
-PASS foreign doc[1][0][0][0]: #text node, XML doc's range, type 3 
-PASS foreign doc[1][0][0][0]: #text node, detached range, type 3 
-PASS foreign doc[1][1]: body node, current doc's range, type 1 
-PASS foreign doc[1][1]: body node, foreign doc's range, type 1 
-PASS foreign doc[1][1]: body node, XML doc's range, type 1 
-PASS foreign doc[1][1]: body node, detached range, type 1 
-PASS foreign doc[1][1][0]: p node, current doc's range, type 1 
-PASS foreign doc[1][1][0]: p node, foreign doc's range, type 1 
-PASS foreign doc[1][1][0]: p node, XML doc's range, type 1 
-PASS foreign doc[1][1][0]: p node, detached range, type 1 
-PASS foreign doc[1][1][0][0]: #text node, current doc's range, type 3 
-PASS foreign doc[1][1][0][0]: #text node, foreign doc's range, type 3 
-PASS foreign doc[1][1][0][0]: #text node, XML doc's range, type 3 
-PASS foreign doc[1][1][0][0]: #text node, detached range, type 3 
-PASS foreign doc[1][1][1]: p node, current doc's range, type 1 
-PASS foreign doc[1][1][1]: p node, foreign doc's range, type 1 
-PASS foreign doc[1][1][1]: p node, XML doc's range, type 1 
-PASS foreign doc[1][1][1]: p node, detached range, type 1 
-PASS foreign doc[1][1][1][0]: #text node, current doc's range, type 3 
-PASS foreign doc[1][1][1][0]: #text node, foreign doc's range, type 3 
-PASS foreign doc[1][1][1][0]: #text node, XML doc's range, type 3 
-PASS foreign doc[1][1][1][0]: #text node, detached range, type 3 
-PASS foreign doc[1][1][2]: #text node, current doc's range, type 3 
-PASS foreign doc[1][1][2]: #text node, foreign doc's range, type 3 
-PASS foreign doc[1][1][2]: #text node, XML doc's range, type 3 
-PASS foreign doc[1][1][2]: #text node, detached range, type 3 
-PASS foreign doc[2]: #comment node, current doc's range, type 8 
-PASS foreign doc[2]: #comment node, foreign doc's range, type 8 
-PASS foreign doc[2]: #comment node, XML doc's range, type 8 
-PASS foreign doc[2]: #comment node, detached range, type 8 
-PASS detached div in current doc: div node, current doc's range, type 1 
-PASS detached div in current doc: div node, foreign doc's range, type 1 
-PASS detached div in current doc: div node, XML doc's range, type 1 
-PASS detached div in current doc: div node, detached range, type 1 
-PASS detached div in current doc[0]: p node, current doc's range, type 1 
-PASS detached div in current doc[0]: p node, foreign doc's range, type 1 
-PASS detached div in current doc[0]: p node, XML doc's range, type 1 
-PASS detached div in current doc[0]: p node, detached range, type 1 
-PASS detached div in current doc[0][0]: #text node, current doc's range, type 3 
-PASS detached div in current doc[0][0]: #text node, foreign doc's range, type 3 
-PASS detached div in current doc[0][0]: #text node, XML doc's range, type 3 
-PASS detached div in current doc[0][0]: #text node, detached range, type 3 
-PASS detached div in current doc[1]: p node, current doc's range, type 1 
-PASS detached div in current doc[1]: p node, foreign doc's range, type 1 
-PASS detached div in current doc[1]: p node, XML doc's range, type 1 
-PASS detached div in current doc[1]: p node, detached range, type 1 
-PASS detached div in current doc[1][0]: #text node, current doc's range, type 3 
-PASS detached div in current doc[1][0]: #text node, foreign doc's range, type 3 
-PASS detached div in current doc[1][0]: #text node, XML doc's range, type 3 
-PASS detached div in current doc[1][0]: #text node, detached range, type 3 
-PASS xmlDoc: #document node, current doc's range, type 9 
-PASS xmlDoc: #document node, foreign doc's range, type 9 
-PASS xmlDoc: #document node, XML doc's range, type 9 
-PASS xmlDoc: #document node, detached range, type 9 
-PASS xmlDoc[0]: qorflesnorf node, current doc's range, type 10 
-PASS xmlDoc[0]: qorflesnorf node, foreign doc's range, type 10 
-PASS xmlDoc[0]: qorflesnorf node, XML doc's range, type 10 
-PASS xmlDoc[0]: qorflesnorf node, detached range, type 10 
-PASS xmlDoc[1]: igiveuponcreativenames node, current doc's range, type 1 
-PASS xmlDoc[1]: igiveuponcreativenames node, foreign doc's range, type 1 
-PASS xmlDoc[1]: igiveuponcreativenames node, XML doc's range, type 1 
-PASS xmlDoc[1]: igiveuponcreativenames node, detached range, type 1 
-PASS xmlDoc[1][0]: #text node, current doc's range, type 3 
-PASS xmlDoc[1][0]: #text node, foreign doc's range, type 3 
-PASS xmlDoc[1][0]: #text node, XML doc's range, type 3 
-PASS xmlDoc[1][0]: #text node, detached range, type 3 
-PASS xmlDoc[2]: somepi node, current doc's range, type 7 
-PASS xmlDoc[2]: somepi node, foreign doc's range, type 7 
-PASS xmlDoc[2]: somepi node, XML doc's range, type 7 
-PASS xmlDoc[2]: somepi node, detached range, type 7 
-PASS xmlDoc[3]: #comment node, current doc's range, type 8 
-PASS xmlDoc[3]: #comment node, foreign doc's range, type 8 
-PASS xmlDoc[3]: #comment node, XML doc's range, type 8 
-PASS xmlDoc[3]: #comment node, detached range, type 8 
-PASS xmlElement: igiveuponcreativenames node, current doc's range, type 1 
-PASS xmlElement: igiveuponcreativenames node, foreign doc's range, type 1 
-PASS xmlElement: igiveuponcreativenames node, XML doc's range, type 1 
-PASS xmlElement: igiveuponcreativenames node, detached range, type 1 
-PASS xmlElement[0]: #text node, current doc's range, type 3 
-PASS xmlElement[0]: #text node, foreign doc's range, type 3 
-PASS xmlElement[0]: #text node, XML doc's range, type 3 
-PASS xmlElement[0]: #text node, detached range, type 3 
-PASS detachedTextNode: #text node, current doc's range, type 3 
-PASS detachedTextNode: #text node, foreign doc's range, type 3 
-PASS detachedTextNode: #text node, XML doc's range, type 3 
-PASS detachedTextNode: #text node, detached range, type 3 
-PASS foreignTextNode: #text node, current doc's range, type 3 
-PASS foreignTextNode: #text node, foreign doc's range, type 3 
-PASS foreignTextNode: #text node, XML doc's range, type 3 
-PASS foreignTextNode: #text node, detached range, type 3 
-PASS xmlTextNode: #text node, current doc's range, type 3 
-PASS xmlTextNode: #text node, foreign doc's range, type 3 
-PASS xmlTextNode: #text node, XML doc's range, type 3 
-PASS xmlTextNode: #text node, detached range, type 3 
-PASS processingInstruction: somepi node, current doc's range, type 7 
-PASS processingInstruction: somepi node, foreign doc's range, type 7 
-PASS processingInstruction: somepi node, XML doc's range, type 7 
-PASS processingInstruction: somepi node, detached range, type 7 
-PASS comment: #comment node, current doc's range, type 8 
-PASS comment: #comment node, foreign doc's range, type 8 
-PASS comment: #comment node, XML doc's range, type 8 
-PASS comment: #comment node, detached range, type 8 
-PASS foreignComment: #comment node, current doc's range, type 8 
-PASS foreignComment: #comment node, foreign doc's range, type 8 
-PASS foreignComment: #comment node, XML doc's range, type 8 
-PASS foreignComment: #comment node, detached range, type 8 
-PASS xmlComment: #comment node, current doc's range, type 8 
-PASS xmlComment: #comment node, foreign doc's range, type 8 
-PASS xmlComment: #comment node, XML doc's range, type 8 
-PASS xmlComment: #comment node, detached range, type 8 
-PASS docfrag: #document-fragment node, current doc's range, type 11 
-PASS docfrag: #document-fragment node, foreign doc's range, type 11 
-PASS docfrag: #document-fragment node, XML doc's range, type 11 
-PASS docfrag: #document-fragment node, detached range, type 11 
-PASS foreignDocfrag: #document-fragment node, current doc's range, type 11 
-PASS foreignDocfrag: #document-fragment node, foreign doc's range, type 11 
-PASS foreignDocfrag: #document-fragment node, XML doc's range, type 11 
-PASS foreignDocfrag: #document-fragment node, detached range, type 11 
-PASS xmlDocfrag: #document-fragment node, current doc's range, type 11 
-PASS xmlDocfrag: #document-fragment node, foreign doc's range, type 11 
-PASS xmlDocfrag: #document-fragment node, XML doc's range, type 11 
-PASS xmlDocfrag: #document-fragment node, detached range, type 11 
+PASS current doc: #document node, current doc's range, type 9
+PASS current doc: #document node, foreign doc's range, type 9
+PASS current doc: #document node, XML doc's range, type 9
+PASS current doc: #document node, detached range, type 9
+PASS current doc[0]: html node, current doc's range, type 10
+PASS current doc[0]: html node, foreign doc's range, type 10
+PASS current doc[0]: html node, XML doc's range, type 10
+PASS current doc[0]: html node, detached range, type 10
+PASS current doc[1]: html node, current doc's range, type 1
+PASS current doc[1]: html node, foreign doc's range, type 1
+PASS current doc[1]: html node, XML doc's range, type 1
+PASS current doc[1]: html node, detached range, type 1
+PASS current doc[1][0]: head node, current doc's range, type 1
+PASS current doc[1][0]: head node, foreign doc's range, type 1
+PASS current doc[1][0]: head node, XML doc's range, type 1
+PASS current doc[1][0]: head node, detached range, type 1
+PASS current doc[1][0][0]: title node, current doc's range, type 1
+PASS current doc[1][0][0]: title node, foreign doc's range, type 1
+PASS current doc[1][0][0]: title node, XML doc's range, type 1
+PASS current doc[1][0][0]: title node, detached range, type 1
+PASS current doc[1][0][0][0]: #text node, current doc's range, type 3
+PASS current doc[1][0][0][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][0][0][0]: #text node, XML doc's range, type 3
+PASS current doc[1][0][0][0]: #text node, detached range, type 3
+PASS current doc[1][0][1]: #text node, current doc's range, type 3
+PASS current doc[1][0][1]: #text node, foreign doc's range, type 3
+PASS current doc[1][0][1]: #text node, XML doc's range, type 3
+PASS current doc[1][0][1]: #text node, detached range, type 3
+PASS current doc[1][0][2]: link node, current doc's range, type 1
+PASS current doc[1][0][2]: link node, foreign doc's range, type 1
+PASS current doc[1][0][2]: link node, XML doc's range, type 1
+PASS current doc[1][0][2]: link node, detached range, type 1
+PASS current doc[1][0][3]: #text node, current doc's range, type 3
+PASS current doc[1][0][3]: #text node, foreign doc's range, type 3
+PASS current doc[1][0][3]: #text node, XML doc's range, type 3
+PASS current doc[1][0][3]: #text node, detached range, type 3
+PASS current doc[1][0][4]: meta node, current doc's range, type 1
+PASS current doc[1][0][4]: meta node, foreign doc's range, type 1
+PASS current doc[1][0][4]: meta node, XML doc's range, type 1
+PASS current doc[1][0][4]: meta node, detached range, type 1
+PASS current doc[1][0][5]: #text node, current doc's range, type 3
+PASS current doc[1][0][5]: #text node, foreign doc's range, type 3
+PASS current doc[1][0][5]: #text node, XML doc's range, type 3
+PASS current doc[1][0][5]: #text node, detached range, type 3
+PASS current doc[1][1]: body node, current doc's range, type 1
+PASS current doc[1][1]: body node, foreign doc's range, type 1
+PASS current doc[1][1]: body node, XML doc's range, type 1
+PASS current doc[1][1]: body node, detached range, type 1
+PASS current doc[1][1][0]: div node, current doc's range, type 1
+PASS current doc[1][1][0]: div node, foreign doc's range, type 1
+PASS current doc[1][1][0]: div node, XML doc's range, type 1
+PASS current doc[1][1][0]: div node, detached range, type 1
+PASS current doc[1][1][0][0]: p node, current doc's range, type 1
+PASS current doc[1][1][0][0]: p node, foreign doc's range, type 1
+PASS current doc[1][1][0][0]: p node, XML doc's range, type 1
+PASS current doc[1][1][0][0]: p node, detached range, type 1
+PASS current doc[1][1][0][0][0]: #text node, current doc's range, type 3
+PASS current doc[1][1][0][0][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][0][0][0]: #text node, XML doc's range, type 3
+PASS current doc[1][1][0][0][0]: #text node, detached range, type 3
+PASS current doc[1][1][0][1]: p node, current doc's range, type 1
+PASS current doc[1][1][0][1]: p node, foreign doc's range, type 1
+PASS current doc[1][1][0][1]: p node, XML doc's range, type 1
+PASS current doc[1][1][0][1]: p node, detached range, type 1
+PASS current doc[1][1][0][1][0]: #text node, current doc's range, type 3
+PASS current doc[1][1][0][1][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][0][1][0]: #text node, XML doc's range, type 3
+PASS current doc[1][1][0][1][0]: #text node, detached range, type 3
+PASS current doc[1][1][0][2]: p node, current doc's range, type 1
+PASS current doc[1][1][0][2]: p node, foreign doc's range, type 1
+PASS current doc[1][1][0][2]: p node, XML doc's range, type 1
+PASS current doc[1][1][0][2]: p node, detached range, type 1
+PASS current doc[1][1][0][2][0]: #text node, current doc's range, type 3
+PASS current doc[1][1][0][2][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][0][2][0]: #text node, XML doc's range, type 3
+PASS current doc[1][1][0][2][0]: #text node, detached range, type 3
+PASS current doc[1][1][0][3]: p node, current doc's range, type 1
+PASS current doc[1][1][0][3]: p node, foreign doc's range, type 1
+PASS current doc[1][1][0][3]: p node, XML doc's range, type 1
+PASS current doc[1][1][0][3]: p node, detached range, type 1
+PASS current doc[1][1][0][3][0]: #text node, current doc's range, type 3
+PASS current doc[1][1][0][3][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][0][3][0]: #text node, XML doc's range, type 3
+PASS current doc[1][1][0][3][0]: #text node, detached range, type 3
+PASS current doc[1][1][0][4]: p node, current doc's range, type 1
+PASS current doc[1][1][0][4]: p node, foreign doc's range, type 1
+PASS current doc[1][1][0][4]: p node, XML doc's range, type 1
+PASS current doc[1][1][0][4]: p node, detached range, type 1
+PASS current doc[1][1][0][4][0]: #text node, current doc's range, type 3
+PASS current doc[1][1][0][4][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][0][4][0]: #text node, XML doc's range, type 3
+PASS current doc[1][1][0][4][0]: #text node, detached range, type 3
+PASS current doc[1][1][0][5]: #comment node, current doc's range, type 8
+PASS current doc[1][1][0][5]: #comment node, foreign doc's range, type 8
+PASS current doc[1][1][0][5]: #comment node, XML doc's range, type 8
+PASS current doc[1][1][0][5]: #comment node, detached range, type 8
+PASS current doc[1][1][2]: #text node, current doc's range, type 3
+PASS current doc[1][1][2]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][2]: #text node, XML doc's range, type 3
+PASS current doc[1][1][2]: #text node, detached range, type 3
+PASS current doc[1][1][3]: script node, current doc's range, type 1
+PASS current doc[1][1][3]: script node, foreign doc's range, type 1
+PASS current doc[1][1][3]: script node, XML doc's range, type 1
+PASS current doc[1][1][3]: script node, detached range, type 1
+PASS current doc[1][1][4]: #text node, current doc's range, type 3
+PASS current doc[1][1][4]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][4]: #text node, XML doc's range, type 3
+PASS current doc[1][1][4]: #text node, detached range, type 3
+PASS current doc[1][1][5]: script node, current doc's range, type 1
+PASS current doc[1][1][5]: script node, foreign doc's range, type 1
+PASS current doc[1][1][5]: script node, XML doc's range, type 1
+PASS current doc[1][1][5]: script node, detached range, type 1
+PASS current doc[1][1][6]: #text node, current doc's range, type 3
+PASS current doc[1][1][6]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][6]: #text node, XML doc's range, type 3
+PASS current doc[1][1][6]: #text node, detached range, type 3
+PASS current doc[1][1][7]: script node, current doc's range, type 1
+PASS current doc[1][1][7]: script node, foreign doc's range, type 1
+PASS current doc[1][1][7]: script node, XML doc's range, type 1
+PASS current doc[1][1][7]: script node, detached range, type 1
+PASS current doc[1][1][8]: #text node, current doc's range, type 3
+PASS current doc[1][1][8]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][8]: #text node, XML doc's range, type 3
+PASS current doc[1][1][8]: #text node, detached range, type 3
+PASS current doc[1][1][9]: script node, current doc's range, type 1
+PASS current doc[1][1][9]: script node, foreign doc's range, type 1
+PASS current doc[1][1][9]: script node, XML doc's range, type 1
+PASS current doc[1][1][9]: script node, detached range, type 1
+PASS current doc[1][1][9][0]: #text node, current doc's range, type 3
+PASS current doc[1][1][9][0]: #text node, foreign doc's range, type 3
+PASS current doc[1][1][9][0]: #text node, XML doc's range, type 3
+PASS current doc[1][1][9][0]: #text node, detached range, type 3
+PASS foreign doc: #document node, current doc's range, type 9
+PASS foreign doc: #document node, foreign doc's range, type 9
+PASS foreign doc: #document node, XML doc's range, type 9
+PASS foreign doc: #document node, detached range, type 9
+PASS foreign doc[0]: html node, current doc's range, type 10
+PASS foreign doc[0]: html node, foreign doc's range, type 10
+PASS foreign doc[0]: html node, XML doc's range, type 10
+PASS foreign doc[0]: html node, detached range, type 10
+PASS foreign doc[1]: html node, current doc's range, type 1
+PASS foreign doc[1]: html node, foreign doc's range, type 1
+PASS foreign doc[1]: html node, XML doc's range, type 1
+PASS foreign doc[1]: html node, detached range, type 1
+PASS foreign doc[1][0]: head node, current doc's range, type 1
+PASS foreign doc[1][0]: head node, foreign doc's range, type 1
+PASS foreign doc[1][0]: head node, XML doc's range, type 1
+PASS foreign doc[1][0]: head node, detached range, type 1
+PASS foreign doc[1][0][0]: title node, current doc's range, type 1
+PASS foreign doc[1][0][0]: title node, foreign doc's range, type 1
+PASS foreign doc[1][0][0]: title node, XML doc's range, type 1
+PASS foreign doc[1][0][0]: title node, detached range, type 1
+PASS foreign doc[1][0][0][0]: #text node, current doc's range, type 3
+PASS foreign doc[1][0][0][0]: #text node, foreign doc's range, type 3
+PASS foreign doc[1][0][0][0]: #text node, XML doc's range, type 3
+PASS foreign doc[1][0][0][0]: #text node, detached range, type 3
+PASS foreign doc[1][1]: body node, current doc's range, type 1
+PASS foreign doc[1][1]: body node, foreign doc's range, type 1
+PASS foreign doc[1][1]: body node, XML doc's range, type 1
+PASS foreign doc[1][1]: body node, detached range, type 1
+PASS foreign doc[1][1][0]: p node, current doc's range, type 1
+PASS foreign doc[1][1][0]: p node, foreign doc's range, type 1
+PASS foreign doc[1][1][0]: p node, XML doc's range, type 1
+PASS foreign doc[1][1][0]: p node, detached range, type 1
+PASS foreign doc[1][1][0][0]: #text node, current doc's range, type 3
+PASS foreign doc[1][1][0][0]: #text node, foreign doc's range, type 3
+PASS foreign doc[1][1][0][0]: #text node, XML doc's range, type 3
+PASS foreign doc[1][1][0][0]: #text node, detached range, type 3
+PASS foreign doc[1][1][1]: p node, current doc's range, type 1
+PASS foreign doc[1][1][1]: p node, foreign doc's range, type 1
+PASS foreign doc[1][1][1]: p node, XML doc's range, type 1
+PASS foreign doc[1][1][1]: p node, detached range, type 1
+PASS foreign doc[1][1][1][0]: #text node, current doc's range, type 3
+PASS foreign doc[1][1][1][0]: #text node, foreign doc's range, type 3
+PASS foreign doc[1][1][1][0]: #text node, XML doc's range, type 3
+PASS foreign doc[1][1][1][0]: #text node, detached range, type 3
+PASS foreign doc[1][1][2]: #text node, current doc's range, type 3
+PASS foreign doc[1][1][2]: #text node, foreign doc's range, type 3
+PASS foreign doc[1][1][2]: #text node, XML doc's range, type 3
+PASS foreign doc[1][1][2]: #text node, detached range, type 3
+PASS foreign doc[2]: #comment node, current doc's range, type 8
+PASS foreign doc[2]: #comment node, foreign doc's range, type 8
+PASS foreign doc[2]: #comment node, XML doc's range, type 8
+PASS foreign doc[2]: #comment node, detached range, type 8
+PASS detached div in current doc: div node, current doc's range, type 1
+PASS detached div in current doc: div node, foreign doc's range, type 1
+PASS detached div in current doc: div node, XML doc's range, type 1
+PASS detached div in current doc: div node, detached range, type 1
+PASS detached div in current doc[0]: p node, current doc's range, type 1
+PASS detached div in current doc[0]: p node, foreign doc's range, type 1
+PASS detached div in current doc[0]: p node, XML doc's range, type 1
+PASS detached div in current doc[0]: p node, detached range, type 1
+PASS detached div in current doc[0][0]: #text node, current doc's range, type 3
+PASS detached div in current doc[0][0]: #text node, foreign doc's range, type 3
+PASS detached div in current doc[0][0]: #text node, XML doc's range, type 3
+PASS detached div in current doc[0][0]: #text node, detached range, type 3
+PASS detached div in current doc[1]: p node, current doc's range, type 1
+PASS detached div in current doc[1]: p node, foreign doc's range, type 1
+PASS detached div in current doc[1]: p node, XML doc's range, type 1
+PASS detached div in current doc[1]: p node, detached range, type 1
+PASS detached div in current doc[1][0]: #text node, current doc's range, type 3
+PASS detached div in current doc[1][0]: #text node, foreign doc's range, type 3
+PASS detached div in current doc[1][0]: #text node, XML doc's range, type 3
+PASS detached div in current doc[1][0]: #text node, detached range, type 3
+PASS xmlDoc: #document node, current doc's range, type 9
+PASS xmlDoc: #document node, foreign doc's range, type 9
+PASS xmlDoc: #document node, XML doc's range, type 9
+PASS xmlDoc: #document node, detached range, type 9
+PASS xmlDoc[0]: qorflesnorf node, current doc's range, type 10
+PASS xmlDoc[0]: qorflesnorf node, foreign doc's range, type 10
+PASS xmlDoc[0]: qorflesnorf node, XML doc's range, type 10
+PASS xmlDoc[0]: qorflesnorf node, detached range, type 10
+PASS xmlDoc[1]: igiveuponcreativenames node, current doc's range, type 1
+PASS xmlDoc[1]: igiveuponcreativenames node, foreign doc's range, type 1
+PASS xmlDoc[1]: igiveuponcreativenames node, XML doc's range, type 1
+PASS xmlDoc[1]: igiveuponcreativenames node, detached range, type 1
+PASS xmlDoc[1][0]: #text node, current doc's range, type 3
+PASS xmlDoc[1][0]: #text node, foreign doc's range, type 3
+PASS xmlDoc[1][0]: #text node, XML doc's range, type 3
+PASS xmlDoc[1][0]: #text node, detached range, type 3
+PASS xmlDoc[2]: somepi node, current doc's range, type 7
+PASS xmlDoc[2]: somepi node, foreign doc's range, type 7
+PASS xmlDoc[2]: somepi node, XML doc's range, type 7
+PASS xmlDoc[2]: somepi node, detached range, type 7
+PASS xmlDoc[3]: #comment node, current doc's range, type 8
+PASS xmlDoc[3]: #comment node, foreign doc's range, type 8
+PASS xmlDoc[3]: #comment node, XML doc's range, type 8
+PASS xmlDoc[3]: #comment node, detached range, type 8
+PASS xmlElement: igiveuponcreativenames node, current doc's range, type 1
+PASS xmlElement: igiveuponcreativenames node, foreign doc's range, type 1
+PASS xmlElement: igiveuponcreativenames node, XML doc's range, type 1
+PASS xmlElement: igiveuponcreativenames node, detached range, type 1
+PASS xmlElement[0]: #text node, current doc's range, type 3
+PASS xmlElement[0]: #text node, foreign doc's range, type 3
+PASS xmlElement[0]: #text node, XML doc's range, type 3
+PASS xmlElement[0]: #text node, detached range, type 3
+PASS detachedTextNode: #text node, current doc's range, type 3
+PASS detachedTextNode: #text node, foreign doc's range, type 3
+PASS detachedTextNode: #text node, XML doc's range, type 3
+PASS detachedTextNode: #text node, detached range, type 3
+PASS foreignTextNode: #text node, current doc's range, type 3
+PASS foreignTextNode: #text node, foreign doc's range, type 3
+PASS foreignTextNode: #text node, XML doc's range, type 3
+PASS foreignTextNode: #text node, detached range, type 3
+PASS xmlTextNode: #text node, current doc's range, type 3
+PASS xmlTextNode: #text node, foreign doc's range, type 3
+PASS xmlTextNode: #text node, XML doc's range, type 3
+PASS xmlTextNode: #text node, detached range, type 3
+PASS processingInstruction: somepi node, current doc's range, type 7
+PASS processingInstruction: somepi node, foreign doc's range, type 7
+PASS processingInstruction: somepi node, XML doc's range, type 7
+PASS processingInstruction: somepi node, detached range, type 7
+PASS comment: #comment node, current doc's range, type 8
+PASS comment: #comment node, foreign doc's range, type 8
+PASS comment: #comment node, XML doc's range, type 8
+PASS comment: #comment node, detached range, type 8
+PASS foreignComment: #comment node, current doc's range, type 8
+PASS foreignComment: #comment node, foreign doc's range, type 8
+PASS foreignComment: #comment node, XML doc's range, type 8
+PASS foreignComment: #comment node, detached range, type 8
+PASS xmlComment: #comment node, current doc's range, type 8
+PASS xmlComment: #comment node, foreign doc's range, type 8
+PASS xmlComment: #comment node, XML doc's range, type 8
+PASS xmlComment: #comment node, detached range, type 8
+PASS docfrag: #document-fragment node, current doc's range, type 11
+PASS docfrag: #document-fragment node, foreign doc's range, type 11
+PASS docfrag: #document-fragment node, XML doc's range, type 11
+PASS docfrag: #document-fragment node, detached range, type 11
+PASS foreignDocfrag: #document-fragment node, current doc's range, type 11
+PASS foreignDocfrag: #document-fragment node, foreign doc's range, type 11
+PASS foreignDocfrag: #document-fragment node, XML doc's range, type 11
+PASS foreignDocfrag: #document-fragment node, detached range, type 11
+PASS xmlDocfrag: #document-fragment node, current doc's range, type 11
+PASS xmlDocfrag: #document-fragment node, foreign doc's range, type 11
+PASS xmlDocfrag: #document-fragment node, XML doc's range, type 11
+PASS xmlDocfrag: #document-fragment node, detached range, type 11
 

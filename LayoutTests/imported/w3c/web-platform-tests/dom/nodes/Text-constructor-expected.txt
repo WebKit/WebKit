@@ -1,18 +1,18 @@
 
-PASS new Text(): prototype chain 
-PASS new Text(): instanceof 
-PASS new Text(): no arguments 
-PASS new Text(): undefined 
-PASS new Text(): null 
-PASS new Text(): 42 
-PASS new Text(): "" 
-PASS new Text(): "-" 
-PASS new Text(): "--" 
-PASS new Text(): "-->" 
-PASS new Text(): "<!--" 
-PASS new Text(): "\0" 
-PASS new Text(): "\0test" 
-PASS new Text(): "&amp;" 
-PASS new Text(): two arguments 
-PASS new Text() should get the correct ownerDocument across globals 
+PASS new Text(): prototype chain
+PASS new Text(): instanceof
+PASS new Text(): no arguments
+PASS new Text(): undefined
+PASS new Text(): null
+PASS new Text(): 42
+PASS new Text(): ""
+PASS new Text(): "-"
+PASS new Text(): "--"
+PASS new Text(): "-->"
+PASS new Text(): "<!--"
+PASS new Text(): "\0"
+PASS new Text(): "\0test"
+PASS new Text(): "&amp;"
+PASS new Text(): two arguments
+PASS new Text() should get the correct ownerDocument across globals
 

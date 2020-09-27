@@ -1,6 +1,6 @@
 
-PASS cannot find the class name 
-PASS finds the class name 
-PASS finds the same element with multiple class names 
-PASS does not get confused by numeric IDs 
+PASS cannot find the class name
+PASS finds the class name
+PASS finds the same element with multiple class names
+PASS does not get confused by numeric IDs
 

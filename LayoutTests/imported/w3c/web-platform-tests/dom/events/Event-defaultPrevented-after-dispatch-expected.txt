@@ -1,4 +1,4 @@
 
-PASS Default prevention via preventDefault 
-PASS Default prevention via returnValue 
+PASS Default prevention via preventDefault
+PASS Default prevention via returnValue
 

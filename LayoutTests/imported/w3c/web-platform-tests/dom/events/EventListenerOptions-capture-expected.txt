@@ -1,6 +1,6 @@
 
-PASS Capture boolean should be honored correctly 
-PASS Capture option should be honored correctly 
-PASS Supports capture option 
-PASS Equivalence of option values 
+PASS Capture boolean should be honored correctly
+PASS Capture option should be honored correctly
+PASS Supports capture option
+PASS Equivalence of option values
 

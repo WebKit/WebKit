@@ -1,8 +1,8 @@
 
-PASS classList 
-PASS classList.keys 
-PASS classList.values 
-PASS classList.entries 
-PASS classList.forEach 
-PASS classList inheritance from Array.prototype 
+PASS classList
+PASS classList.keys
+PASS classList.values
+PASS classList.entries
+PASS classList.forEach
+PASS classList inheritance from Array.prototype
 

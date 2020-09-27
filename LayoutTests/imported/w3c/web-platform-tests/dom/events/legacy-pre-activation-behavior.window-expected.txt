@@ -1,3 +1,3 @@
 
-PASS Use NONE phase during legacy-pre-activation behavior 
+PASS Use NONE phase during legacy-pre-activation behavior
 

@@ -1,7 +1,7 @@
 
-PASS Document 
-PASS Doctype 
-PASS Root element 
-PASS Element 
-PASS Removed iframe 
+PASS Document
+PASS Doctype
+PASS Root element
+PASS Element
+PASS Removed iframe
 

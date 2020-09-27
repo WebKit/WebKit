@@ -1,8 +1,8 @@
 
-PASS DOMTokenList has length method. 
-PASS DOMTokenList has values method. 
-PASS DOMTokenList has entries method. 
-PASS DOMTokenList has forEach method. 
-PASS DOMTokenList has Symbol.iterator. 
-PASS DOMTokenList is iterable via for-of loop. 
+PASS DOMTokenList has length method.
+PASS DOMTokenList has values method.
+PASS DOMTokenList has entries method.
+PASS DOMTokenList has forEach method.
+PASS DOMTokenList has Symbol.iterator.
+PASS DOMTokenList is iterable via for-of loop.
 

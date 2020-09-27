@@ -1,8 +1,8 @@
 
-PASS event exists on window, which is initially set to undefined 
-PASS window.event is only defined during dispatch 
-PASS window.event is undefined if the target is in a shadow tree (event dispatched outside shadow tree) 
-PASS window.event is undefined if the target is in a shadow tree (event dispatched inside shadow tree) 
-PASS window.event is set to the current event during dispatch 
-PASS window.event is set to the current event, which is the event passed to dispatch 
+PASS event exists on window, which is initially set to undefined
+PASS window.event is only defined during dispatch
+PASS window.event is undefined if the target is in a shadow tree (event dispatched outside shadow tree)
+PASS window.event is undefined if the target is in a shadow tree (event dispatched inside shadow tree)
+PASS window.event is set to the current event during dispatch
+PASS window.event is set to the current event, which is the event passed to dispatch
 

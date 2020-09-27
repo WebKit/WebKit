@@ -1,8 +1,8 @@
 
-PASS Testing nextNode 
-PASS Testing firstChild 
-PASS Testing nextSibling 
-PASS Testing parentNode 
-PASS Testing previousSibling 
-PASS Testing previousNode 
+PASS Testing nextNode
+PASS Testing firstChild
+PASS Testing nextSibling
+PASS Testing parentNode
+PASS Testing previousSibling
+PASS Testing previousNode
 Test TreeWalker with rejection

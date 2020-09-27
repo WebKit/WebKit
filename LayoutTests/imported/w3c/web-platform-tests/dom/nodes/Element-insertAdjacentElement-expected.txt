@@ -1,8 +1,8 @@
 
-PASS Inserting to an invalid location should cause a Syntax Error exception 
-PASS Inserted element should be target element's previous sibling for 'beforebegin' case 
-PASS Inserted element should be target element's first child for 'afterbegin' case 
-PASS Inserted element should be target element's last child for 'beforeend' case 
-PASS Inserted element should be target element's next sibling for 'afterend' case 
-PASS Adding more than one child to document should cause a HierarchyRequestError exception 
+PASS Inserting to an invalid location should cause a Syntax Error exception
+PASS Inserted element should be target element's previous sibling for 'beforebegin' case
+PASS Inserted element should be target element's first child for 'afterbegin' case
+PASS Inserted element should be target element's last child for 'beforeend' case
+PASS Inserted element should be target element's next sibling for 'afterend' case
+PASS Adding more than one child to document should cause a HierarchyRequestError exception
 

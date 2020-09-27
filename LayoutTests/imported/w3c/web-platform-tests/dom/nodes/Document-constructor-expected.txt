@@ -1,7 +1,7 @@
 
-PASS new Document(): interfaces 
-PASS new Document(): children 
-PASS new Document(): metadata 
-PASS new Document(): characterSet aliases 
-PASS new Document(): URL parsing 
+PASS new Document(): interfaces
+PASS new Document(): children
+PASS new Document(): metadata
+PASS new Document(): characterSet aliases
+PASS new Document(): URL parsing
 

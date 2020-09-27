@@ -1,70 +1,70 @@
 
-PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (toggleAttribute) 
-PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (toggleAttribute) 
-PASS toggleAttribute should lowercase its name argument (upper case attribute) 
-PASS toggleAttribute should lowercase its name argument (mixed case attribute) 
-PASS toggleAttribute should not throw even when qualifiedName starts with 'xmlns' 
-PASS Basic functionality should be intact. (toggleAttribute) 
-PASS toggleAttribute should not change the order of previously set attributes. 
-PASS toggleAttribute should set the first attribute with the given name 
-PASS toggleAttribute should set the attribute with the given qualified name 
-PASS Toggling element with inline style should make inline style disappear 
-PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttribute) 
-PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttribute) 
-PASS setAttribute should lowercase its name argument (upper case attribute) 
-PASS setAttribute should lowercase its name argument (mixed case attribute) 
-PASS setAttribute should not throw even when qualifiedName starts with 'xmlns' 
-PASS Basic functionality should be intact. 
-PASS setAttribute should not change the order of previously set attributes. 
-PASS setAttribute should set the first attribute with the given name 
-PASS setAttribute should set the attribute with the given qualified name 
-PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttributeNS) 
-PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttributeNS) 
-PASS When qualifiedName does not match the QName production, an INVALID_CHARACTER_ERR exception is to be thrown. 
-PASS null and the empty string should result in a null namespace. 
-PASS A namespace is required to use a prefix. 
-PASS The xml prefix should not be allowed for arbitrary namespaces 
-PASS XML-namespaced attributes don't need an xml prefix 
-PASS The xmlns prefix should not be allowed for arbitrary namespaces 
-PASS The xmlns qualified name should not be allowed for arbitrary namespaces 
-PASS xmlns should be allowed as local name 
-PASS The XMLNS namespace should require xmlns as prefix or qualified name 
-PASS xmlns should be allowed as prefix in the XMLNS namespace 
-PASS xmlns should be allowed as qualified name in the XMLNS namespace 
-PASS Setting the same attribute with another prefix should not change the prefix 
-PASS setAttribute should not throw even if a load is not allowed 
-PASS Attributes should work in document fragments. 
-PASS Attribute values should not be parsed. 
-PASS Specified attributes should be accessible. 
-PASS Entities in attributes should have been expanded while parsing. 
-PASS Unset attributes return null 
-PASS First set attribute is returned by getAttribute 
-PASS Style attributes are not normalized 
-PASS Only lowercase attributes are returned on HTML elements (upper case attribute) 
-PASS Only lowercase attributes are returned on HTML elements (mixed case attribute) 
-PASS First set attribute is returned with mapped attribute set first 
-PASS First set attribute is returned with mapped attribute set later 
-PASS Non-HTML element with upper-case attribute 
-PASS Attribute with prefix in local name 
-PASS Attribute loses its owner when removed 
-PASS Basic functionality of getAttributeNode/getAttributeNodeNS 
-PASS Basic functionality of setAttributeNode 
-PASS setAttributeNode should distinguish attributes with same local name and different namespaces 
-PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement 
-PASS Basic functionality of setAttributeNodeNS 
-PASS If attr’s element is neither null nor element, throw an InUseAttributeError. 
-PASS Replacing an attr by itself 
-PASS Basic functionality of removeAttributeNode 
-PASS setAttributeNode on bound attribute should throw InUseAttributeError 
-PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute 
-PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute (outer shell) 
-PASS setAttributeNode called with an Attr that has the same name as an existing one should not change attribute order 
-PASS getAttributeNames tests 
-PASS Own property correctness with basic attributes 
-PASS Own property correctness with non-namespaced attribute before same-name namespaced one 
-PASS Own property correctness with namespaced attribute before same-name non-namespaced one 
-PASS Own property correctness with two namespaced attributes with the same name-with-prefix 
-PASS Own property names should only include all-lowercase qualified names for an HTML element in an HTML document 
-PASS Own property names should include all qualified names for a non-HTML element in an HTML document 
-PASS Own property names should include all qualified names for an HTML element in a non-HTML document 
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (toggleAttribute)
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (toggleAttribute)
+PASS toggleAttribute should lowercase its name argument (upper case attribute)
+PASS toggleAttribute should lowercase its name argument (mixed case attribute)
+PASS toggleAttribute should not throw even when qualifiedName starts with 'xmlns'
+PASS Basic functionality should be intact. (toggleAttribute)
+PASS toggleAttribute should not change the order of previously set attributes.
+PASS toggleAttribute should set the first attribute with the given name
+PASS toggleAttribute should set the attribute with the given qualified name
+PASS Toggling element with inline style should make inline style disappear
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttribute)
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttribute)
+PASS setAttribute should lowercase its name argument (upper case attribute)
+PASS setAttribute should lowercase its name argument (mixed case attribute)
+PASS setAttribute should not throw even when qualifiedName starts with 'xmlns'
+PASS Basic functionality should be intact.
+PASS setAttribute should not change the order of previously set attributes.
+PASS setAttribute should set the first attribute with the given name
+PASS setAttribute should set the attribute with the given qualified name
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttributeNS)
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttributeNS)
+PASS When qualifiedName does not match the QName production, an INVALID_CHARACTER_ERR exception is to be thrown.
+PASS null and the empty string should result in a null namespace.
+PASS A namespace is required to use a prefix.
+PASS The xml prefix should not be allowed for arbitrary namespaces
+PASS XML-namespaced attributes don't need an xml prefix
+PASS The xmlns prefix should not be allowed for arbitrary namespaces
+PASS The xmlns qualified name should not be allowed for arbitrary namespaces
+PASS xmlns should be allowed as local name
+PASS The XMLNS namespace should require xmlns as prefix or qualified name
+PASS xmlns should be allowed as prefix in the XMLNS namespace
+PASS xmlns should be allowed as qualified name in the XMLNS namespace
+PASS Setting the same attribute with another prefix should not change the prefix
+PASS setAttribute should not throw even if a load is not allowed
+PASS Attributes should work in document fragments.
+PASS Attribute values should not be parsed.
+PASS Specified attributes should be accessible.
+PASS Entities in attributes should have been expanded while parsing.
+PASS Unset attributes return null
+PASS First set attribute is returned by getAttribute
+PASS Style attributes are not normalized
+PASS Only lowercase attributes are returned on HTML elements (upper case attribute)
+PASS Only lowercase attributes are returned on HTML elements (mixed case attribute)
+PASS First set attribute is returned with mapped attribute set first
+PASS First set attribute is returned with mapped attribute set later
+PASS Non-HTML element with upper-case attribute
+PASS Attribute with prefix in local name
+PASS Attribute loses its owner when removed
+PASS Basic functionality of getAttributeNode/getAttributeNodeNS
+PASS Basic functionality of setAttributeNode
+PASS setAttributeNode should distinguish attributes with same local name and different namespaces
+PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement
+PASS Basic functionality of setAttributeNodeNS
+PASS If attr’s element is neither null nor element, throw an InUseAttributeError.
+PASS Replacing an attr by itself
+PASS Basic functionality of removeAttributeNode
+PASS setAttributeNode on bound attribute should throw InUseAttributeError
+PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute
+PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute (outer shell)
+PASS setAttributeNode called with an Attr that has the same name as an existing one should not change attribute order
+PASS getAttributeNames tests
+PASS Own property correctness with basic attributes
+PASS Own property correctness with non-namespaced attribute before same-name namespaced one
+PASS Own property correctness with namespaced attribute before same-name non-namespaced one
+PASS Own property correctness with two namespaced attributes with the same name-with-prefix
+PASS Own property names should only include all-lowercase qualified names for an HTML element in an HTML document
+PASS Own property names should include all qualified names for a non-HTML element in an HTML document
+PASS Own property names should include all qualified names for an HTML element in a non-HTML document
 

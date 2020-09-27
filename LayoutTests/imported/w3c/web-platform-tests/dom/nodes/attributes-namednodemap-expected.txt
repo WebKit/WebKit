@@ -1,10 +1,10 @@
 
-PASS an attribute set by setAttribute should be accessible as a field on the `attributes` field of an Element 
-PASS setNamedItem and removeNamedItem on `attributes` should add and remove fields from `attributes` 
-PASS setNamedItem and removeNamedItem on `attributes` should not interfere with existing method names 
-PASS an attribute with a null namespace should be accessible as a field on the `attributes` field of an Element 
-PASS an attribute with a set namespace should be accessible as a field on the `attributes` field of an Element 
-PASS setting an attribute should not overwrite the methods of an `NamedNodeMap` object 
-PASS setting an attribute should not overwrite the methods defined by prototype ancestors of an `NamedNodeMap` object 
-PASS setting an attribute should not overwrite the the length property of an `NamedNodeMap` object 
+PASS an attribute set by setAttribute should be accessible as a field on the `attributes` field of an Element
+PASS setNamedItem and removeNamedItem on `attributes` should add and remove fields from `attributes`
+PASS setNamedItem and removeNamedItem on `attributes` should not interfere with existing method names
+PASS an attribute with a null namespace should be accessible as a field on the `attributes` field of an Element
+PASS an attribute with a set namespace should be accessible as a field on the `attributes` field of an Element
+PASS setting an attribute should not overwrite the methods of an `NamedNodeMap` object
+PASS setting an attribute should not overwrite the methods defined by prototype ancestors of an `NamedNodeMap` object
+PASS setting an attribute should not overwrite the the length property of an `NamedNodeMap` object
 

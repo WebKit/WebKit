@@ -1,4 +1,4 @@
 
-PASS Testing nextSibling 
-PASS Testing previousSibling 
+PASS Testing nextSibling
+PASS Testing previousSibling
 Test TreeWalker with skipping

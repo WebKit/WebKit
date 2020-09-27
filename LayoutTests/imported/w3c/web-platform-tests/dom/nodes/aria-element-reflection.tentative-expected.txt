@@ -4,7 +4,7 @@ Item 1
 Item 2
 Hello world!
 
-  Invalid Time Password:  
+  Invalid Time Password:
 First description.
 Second description.
 Item 1

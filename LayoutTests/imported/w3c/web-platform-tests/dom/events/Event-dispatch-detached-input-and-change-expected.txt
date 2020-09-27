@@ -1,15 +1,15 @@
 
 
-PASS detached checkbox should not emit input or change events on click(). 
-PASS detached radio should not emit input or change events on click(). 
-PASS detached checkbox should not emit input or change events on dispatchEvent(new MouseEvent('click')). 
-PASS detached radio should not emit input or change events on dispatchEvent(new MouseEvent('click')). 
-PASS attached checkbox should emit input and change events on click(). 
-PASS attached radio should emit input and change events on click(). 
-PASS attached checkbox should emit input and change events on dispatchEvent(new MouseEvent('click')). 
-PASS attached radio should emit input and change events on dispatchEvent(new MouseEvent('click')). 
-PASS attached to shadow dom checkbox should emit input and change events on click(). 
-PASS attached to shadow dom radio should emit input and change events on click(). 
-PASS attached to shadow dom checkbox should emit input and change events on dispatchEvent(new MouseEvent('click')). 
-PASS attached to shadow dom radio should emit input and change events on dispatchEvent(new MouseEvent('click')). 
+PASS detached checkbox should not emit input or change events on click().
+PASS detached radio should not emit input or change events on click().
+PASS detached checkbox should not emit input or change events on dispatchEvent(new MouseEvent('click')).
+PASS detached radio should not emit input or change events on dispatchEvent(new MouseEvent('click')).
+PASS attached checkbox should emit input and change events on click().
+PASS attached radio should emit input and change events on click().
+PASS attached checkbox should emit input and change events on dispatchEvent(new MouseEvent('click')).
+PASS attached radio should emit input and change events on dispatchEvent(new MouseEvent('click')).
+PASS attached to shadow dom checkbox should emit input and change events on click().
+PASS attached to shadow dom radio should emit input and change events on click().
+PASS attached to shadow dom checkbox should emit input and change events on dispatchEvent(new MouseEvent('click')).
+PASS attached to shadow dom radio should emit input and change events on dispatchEvent(new MouseEvent('click')).
 

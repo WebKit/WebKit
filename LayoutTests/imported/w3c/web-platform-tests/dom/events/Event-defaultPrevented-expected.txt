@@ -1,10 +1,10 @@
 
-PASS When an event is created, defaultPrevented should be initialized to false. 
-PASS initEvent should work correctly (not cancelable). 
-PASS preventDefault() should not change defaultPrevented if cancelable is false. 
-PASS returnValue should not change defaultPrevented if cancelable is false. 
-PASS initEvent should work correctly (cancelable). 
-PASS preventDefault() should change defaultPrevented if cancelable is true. 
-PASS returnValue should change defaultPrevented if cancelable is true. 
-PASS initEvent should unset defaultPrevented. 
+PASS When an event is created, defaultPrevented should be initialized to false.
+PASS initEvent should work correctly (not cancelable).
+PASS preventDefault() should not change defaultPrevented if cancelable is false.
+PASS returnValue should not change defaultPrevented if cancelable is false.
+PASS initEvent should work correctly (cancelable).
+PASS preventDefault() should change defaultPrevented if cancelable is true.
+PASS returnValue should change defaultPrevented if cancelable is true.
+PASS initEvent should unset defaultPrevented.
 

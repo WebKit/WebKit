@@ -1,4 +1,4 @@
 
-PASS document.getElementsByClassName(): case-insensitive (quirks mode) 
-PASS Unicode-case should be sensitive even in quirks mode. 
+PASS document.getElementsByClassName(): case-insensitive (quirks mode)
+PASS Unicode-case should be sensitive even in quirks mode.
 

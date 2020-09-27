@@ -2,9 +2,9 @@ Test div
 Another div
 Last div
 
-PASS Range stringifier 
-PASS Node contents of a single div 
-PASS Text node with offsets 
-PASS Two nodes, each with a text node 
-PASS Three nodes with start offset and end offset on text nodes 
+PASS Range stringifier
+PASS Node contents of a single div
+PASS Text node with offsets
+PASS Two nodes, each with a text node
+PASS Three nodes with start offset and end offset on text nodes
 

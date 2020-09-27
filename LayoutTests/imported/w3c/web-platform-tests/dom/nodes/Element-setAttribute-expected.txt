@@ -1,4 +1,4 @@
 
-PASS setAttribute should change the first attribute, irrespective of namespace 
-PASS setAttribute should lowercase before setting 
+PASS setAttribute should change the first attribute, irrespective of namespace
+PASS setAttribute should lowercase before setting
 

@@ -1,3 +1,3 @@
 
-PASS  Dispatch additional events inside an event listener  
+PASS  Dispatch additional events inside an event listener
 

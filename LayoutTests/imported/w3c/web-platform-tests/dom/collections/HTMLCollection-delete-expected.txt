@@ -1,10 +1,10 @@
 
-PASS Loose id 
+PASS Loose id
 FAIL Strict id assert_throws_js: function "function () {
     "use strict";
     delete c[0];
   }" did not throw
-PASS Loose name 
+PASS Loose name
 FAIL Strict name assert_throws_js: function "function () {
     "use strict";
     delete c.foo;

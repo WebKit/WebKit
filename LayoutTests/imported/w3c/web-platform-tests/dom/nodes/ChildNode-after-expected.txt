@@ -1,47 +1,47 @@
 
-PASS Comment.after() without any argument. 
-PASS Comment.after() with null as an argument. 
-PASS Comment.after() with undefined as an argument. 
-PASS Comment.after() with the empty string as an argument. 
-PASS Comment.after() with only text as an argument. 
-PASS Comment.after() with only one element as an argument. 
-PASS Comment.after() with one element and text as arguments. 
-PASS Comment.after() with context object itself as the argument. 
-PASS Comment.after() with context object itself and node as the arguments, switching positions. 
-PASS Comment.after() with all siblings of child as arguments. 
-PASS Comment.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child. 
-PASS Comment.after() with some siblings of child as arguments; no changes in tree. 
-PASS Comment.after() when pre-insert behaves like append. 
-PASS Comment.after() with one sibling of child and text as arguments. 
-PASS Comment.after() on a child without any parent. 
-PASS Element.after() without any argument. 
-PASS Element.after() with null as an argument. 
-PASS Element.after() with undefined as an argument. 
-PASS Element.after() with the empty string as an argument. 
-PASS Element.after() with only text as an argument. 
-PASS Element.after() with only one element as an argument. 
-PASS Element.after() with one element and text as arguments. 
-PASS Element.after() with context object itself as the argument. 
-PASS Element.after() with context object itself and node as the arguments, switching positions. 
-PASS Element.after() with all siblings of child as arguments. 
-PASS Element.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child. 
-PASS Element.after() with some siblings of child as arguments; no changes in tree. 
-PASS Element.after() when pre-insert behaves like append. 
-PASS Element.after() with one sibling of child and text as arguments. 
-PASS Element.after() on a child without any parent. 
-PASS Text.after() without any argument. 
-PASS Text.after() with null as an argument. 
-PASS Text.after() with undefined as an argument. 
-PASS Text.after() with the empty string as an argument. 
-PASS Text.after() with only text as an argument. 
-PASS Text.after() with only one element as an argument. 
-PASS Text.after() with one element and text as arguments. 
-PASS Text.after() with context object itself as the argument. 
-PASS Text.after() with context object itself and node as the arguments, switching positions. 
-PASS Text.after() with all siblings of child as arguments. 
-PASS Text.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child. 
-PASS Text.after() with some siblings of child as arguments; no changes in tree. 
-PASS Text.after() when pre-insert behaves like append. 
-PASS Text.after() with one sibling of child and text as arguments. 
-PASS Text.after() on a child without any parent. 
+PASS Comment.after() without any argument.
+PASS Comment.after() with null as an argument.
+PASS Comment.after() with undefined as an argument.
+PASS Comment.after() with the empty string as an argument.
+PASS Comment.after() with only text as an argument.
+PASS Comment.after() with only one element as an argument.
+PASS Comment.after() with one element and text as arguments.
+PASS Comment.after() with context object itself as the argument.
+PASS Comment.after() with context object itself and node as the arguments, switching positions.
+PASS Comment.after() with all siblings of child as arguments.
+PASS Comment.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child.
+PASS Comment.after() with some siblings of child as arguments; no changes in tree.
+PASS Comment.after() when pre-insert behaves like append.
+PASS Comment.after() with one sibling of child and text as arguments.
+PASS Comment.after() on a child without any parent.
+PASS Element.after() without any argument.
+PASS Element.after() with null as an argument.
+PASS Element.after() with undefined as an argument.
+PASS Element.after() with the empty string as an argument.
+PASS Element.after() with only text as an argument.
+PASS Element.after() with only one element as an argument.
+PASS Element.after() with one element and text as arguments.
+PASS Element.after() with context object itself as the argument.
+PASS Element.after() with context object itself and node as the arguments, switching positions.
+PASS Element.after() with all siblings of child as arguments.
+PASS Element.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child.
+PASS Element.after() with some siblings of child as arguments; no changes in tree.
+PASS Element.after() when pre-insert behaves like append.
+PASS Element.after() with one sibling of child and text as arguments.
+PASS Element.after() on a child without any parent.
+PASS Text.after() without any argument.
+PASS Text.after() with null as an argument.
+PASS Text.after() with undefined as an argument.
+PASS Text.after() with the empty string as an argument.
+PASS Text.after() with only text as an argument.
+PASS Text.after() with only one element as an argument.
+PASS Text.after() with one element and text as arguments.
+PASS Text.after() with context object itself as the argument.
+PASS Text.after() with context object itself and node as the arguments, switching positions.
+PASS Text.after() with all siblings of child as arguments.
+PASS Text.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child.
+PASS Text.after() with some siblings of child as arguments; no changes in tree.
+PASS Text.after() when pre-insert behaves like append.
+PASS Text.after() with one sibling of child and text as arguments.
+PASS Text.after() on a child without any parent.
 

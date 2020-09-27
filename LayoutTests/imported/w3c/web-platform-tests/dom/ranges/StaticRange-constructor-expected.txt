@@ -1,19 +1,19 @@
 
-PASS Construct static range with Element container 
-PASS Construct static range with Text container 
-PASS Construct static range with Element startContainer and Text endContainer 
-PASS Construct static range with Text startContainer and Element endContainer 
-PASS Construct static range with ProcessingInstruction container 
-PASS Construct static range with Comment container 
-PASS Construct static range with CDATASection container 
-PASS Construct static range with Document container 
-PASS Construct static range with DocumentFragment container 
-PASS Construct collapsed static range 
-PASS Construct inverted static range 
-PASS Construct static range with offset greater than length 
-PASS Construct static range with standalone Node container 
-PASS Construct static range with endpoints in disconnected trees 
-PASS Construct static range with endpoints in disconnected documents 
-PASS Throw on DocumentType or Attr container 
-PASS Throw on missing or invalid arguments 
+PASS Construct static range with Element container
+PASS Construct static range with Text container
+PASS Construct static range with Element startContainer and Text endContainer
+PASS Construct static range with Text startContainer and Element endContainer
+PASS Construct static range with ProcessingInstruction container
+PASS Construct static range with Comment container
+PASS Construct static range with CDATASection container
+PASS Construct static range with Document container
+PASS Construct static range with DocumentFragment container
+PASS Construct collapsed static range
+PASS Construct inverted static range
+PASS Construct static range with offset greater than length
+PASS Construct static range with standalone Node container
+PASS Construct static range with endpoints in disconnected trees
+PASS Construct static range with endpoints in disconnected documents
+PASS Throw on DocumentType or Attr container
+PASS Throw on missing or invalid arguments
 abcdefghi

@@ -1,10 +1,10 @@
 
-PASS Text.substringData() splitting surrogate pairs 
-PASS Text.replaceData() splitting and creating surrogate pairs 
-PASS Text.deleteData() splitting and creating surrogate pairs 
-PASS Text.insertData() splitting and creating surrogate pairs 
-PASS Comment.substringData() splitting surrogate pairs 
-PASS Comment.replaceData() splitting and creating surrogate pairs 
-PASS Comment.deleteData() splitting and creating surrogate pairs 
-PASS Comment.insertData() splitting and creating surrogate pairs 
+PASS Text.substringData() splitting surrogate pairs
+PASS Text.replaceData() splitting and creating surrogate pairs
+PASS Text.deleteData() splitting and creating surrogate pairs
+PASS Text.insertData() splitting and creating surrogate pairs
+PASS Comment.substringData() splitting surrogate pairs
+PASS Comment.replaceData() splitting and creating surrogate pairs
+PASS Comment.deleteData() splitting and creating surrogate pairs
+PASS Comment.insertData() splitting and creating surrogate pairs
 

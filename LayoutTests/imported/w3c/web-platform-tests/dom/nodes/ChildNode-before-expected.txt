@@ -1,47 +1,47 @@
 
-PASS Comment.before() without any argument. 
-PASS Comment.before() with null as an argument. 
-PASS Comment.before() with undefined as an argument. 
-PASS Comment.before() with the empty string as an argument. 
-PASS Comment.before() with only text as an argument. 
-PASS Comment.before() with only one element as an argument. 
-PASS Comment.before() with one element and text as arguments. 
-PASS Comment.before() with context object itself as the argument. 
-PASS Comment.before() with context object itself and node as the arguments, switching positions. 
-PASS Comment.before() with all siblings of child as arguments. 
-PASS Comment.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child. 
-PASS Comment.before() with some siblings of child as arguments; no changes in tree. 
-PASS Comment.before() when pre-insert behaves like prepend. 
-PASS Comment.before() with one sibling of child and text as arguments. 
-PASS Comment.before() on a child without any parent. 
-PASS Element.before() without any argument. 
-PASS Element.before() with null as an argument. 
-PASS Element.before() with undefined as an argument. 
-PASS Element.before() with the empty string as an argument. 
-PASS Element.before() with only text as an argument. 
-PASS Element.before() with only one element as an argument. 
-PASS Element.before() with one element and text as arguments. 
-PASS Element.before() with context object itself as the argument. 
-PASS Element.before() with context object itself and node as the arguments, switching positions. 
-PASS Element.before() with all siblings of child as arguments. 
-PASS Element.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child. 
-PASS Element.before() with some siblings of child as arguments; no changes in tree. 
-PASS Element.before() when pre-insert behaves like prepend. 
-PASS Element.before() with one sibling of child and text as arguments. 
-PASS Element.before() on a child without any parent. 
-PASS Text.before() without any argument. 
-PASS Text.before() with null as an argument. 
-PASS Text.before() with undefined as an argument. 
-PASS Text.before() with the empty string as an argument. 
-PASS Text.before() with only text as an argument. 
-PASS Text.before() with only one element as an argument. 
-PASS Text.before() with one element and text as arguments. 
-PASS Text.before() with context object itself as the argument. 
-PASS Text.before() with context object itself and node as the arguments, switching positions. 
-PASS Text.before() with all siblings of child as arguments. 
-PASS Text.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child. 
-PASS Text.before() with some siblings of child as arguments; no changes in tree. 
-PASS Text.before() when pre-insert behaves like prepend. 
-PASS Text.before() with one sibling of child and text as arguments. 
-PASS Text.before() on a child without any parent. 
+PASS Comment.before() without any argument.
+PASS Comment.before() with null as an argument.
+PASS Comment.before() with undefined as an argument.
+PASS Comment.before() with the empty string as an argument.
+PASS Comment.before() with only text as an argument.
+PASS Comment.before() with only one element as an argument.
+PASS Comment.before() with one element and text as arguments.
+PASS Comment.before() with context object itself as the argument.
+PASS Comment.before() with context object itself and node as the arguments, switching positions.
+PASS Comment.before() with all siblings of child as arguments.
+PASS Comment.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child.
+PASS Comment.before() with some siblings of child as arguments; no changes in tree.
+PASS Comment.before() when pre-insert behaves like prepend.
+PASS Comment.before() with one sibling of child and text as arguments.
+PASS Comment.before() on a child without any parent.
+PASS Element.before() without any argument.
+PASS Element.before() with null as an argument.
+PASS Element.before() with undefined as an argument.
+PASS Element.before() with the empty string as an argument.
+PASS Element.before() with only text as an argument.
+PASS Element.before() with only one element as an argument.
+PASS Element.before() with one element and text as arguments.
+PASS Element.before() with context object itself as the argument.
+PASS Element.before() with context object itself and node as the arguments, switching positions.
+PASS Element.before() with all siblings of child as arguments.
+PASS Element.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child.
+PASS Element.before() with some siblings of child as arguments; no changes in tree.
+PASS Element.before() when pre-insert behaves like prepend.
+PASS Element.before() with one sibling of child and text as arguments.
+PASS Element.before() on a child without any parent.
+PASS Text.before() without any argument.
+PASS Text.before() with null as an argument.
+PASS Text.before() with undefined as an argument.
+PASS Text.before() with the empty string as an argument.
+PASS Text.before() with only text as an argument.
+PASS Text.before() with only one element as an argument.
+PASS Text.before() with one element and text as arguments.
+PASS Text.before() with context object itself as the argument.
+PASS Text.before() with context object itself and node as the arguments, switching positions.
+PASS Text.before() with all siblings of child as arguments.
+PASS Text.before() with some siblings of child as arguments; no changes in tree; viable sibling is first child.
+PASS Text.before() with some siblings of child as arguments; no changes in tree.
+PASS Text.before() when pre-insert behaves like prepend.
+PASS Text.before() with one sibling of child and text as arguments.
+PASS Text.before() on a child without any parent.
 

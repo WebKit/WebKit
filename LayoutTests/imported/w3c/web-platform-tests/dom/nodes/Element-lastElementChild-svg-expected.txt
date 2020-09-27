@@ -1,5 +1,5 @@
 Test of lastElementChild
 The result of this test is not known.
 
-PASS lastElementChild 
+PASS lastElementChild
 

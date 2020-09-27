@@ -1,35 +1,35 @@
 
-PASS Comment.replaceWith() without any argument. 
-PASS Comment.replaceWith() with null as an argument. 
-PASS Comment.replaceWith() with undefined as an argument. 
-PASS Comment.replaceWith() with empty string as an argument. 
-PASS Comment.replaceWith() with only text as an argument. 
-PASS Comment.replaceWith() with only one element as an argument. 
-PASS Comment.replaceWith() with sibling of child as arguments. 
-PASS Comment.replaceWith() with one sibling of child and text as arguments. 
-PASS Comment.replaceWith() with one sibling of child and child itself as arguments. 
-PASS Comment.replaceWith() with one element and text as arguments. 
-PASS Comment.replaceWith() on a parentless child with two elements as arguments. 
-PASS Element.replaceWith() without any argument. 
-PASS Element.replaceWith() with null as an argument. 
-PASS Element.replaceWith() with undefined as an argument. 
-PASS Element.replaceWith() with empty string as an argument. 
-PASS Element.replaceWith() with only text as an argument. 
-PASS Element.replaceWith() with only one element as an argument. 
-PASS Element.replaceWith() with sibling of child as arguments. 
-PASS Element.replaceWith() with one sibling of child and text as arguments. 
-PASS Element.replaceWith() with one sibling of child and child itself as arguments. 
-PASS Element.replaceWith() with one element and text as arguments. 
-PASS Element.replaceWith() on a parentless child with two elements as arguments. 
-PASS Text.replaceWith() without any argument. 
-PASS Text.replaceWith() with null as an argument. 
-PASS Text.replaceWith() with undefined as an argument. 
-PASS Text.replaceWith() with empty string as an argument. 
-PASS Text.replaceWith() with only text as an argument. 
-PASS Text.replaceWith() with only one element as an argument. 
-PASS Text.replaceWith() with sibling of child as arguments. 
-PASS Text.replaceWith() with one sibling of child and text as arguments. 
-PASS Text.replaceWith() with one sibling of child and child itself as arguments. 
-PASS Text.replaceWith() with one element and text as arguments. 
-PASS Text.replaceWith() on a parentless child with two elements as arguments. 
+PASS Comment.replaceWith() without any argument.
+PASS Comment.replaceWith() with null as an argument.
+PASS Comment.replaceWith() with undefined as an argument.
+PASS Comment.replaceWith() with empty string as an argument.
+PASS Comment.replaceWith() with only text as an argument.
+PASS Comment.replaceWith() with only one element as an argument.
+PASS Comment.replaceWith() with sibling of child as arguments.
+PASS Comment.replaceWith() with one sibling of child and text as arguments.
+PASS Comment.replaceWith() with one sibling of child and child itself as arguments.
+PASS Comment.replaceWith() with one element and text as arguments.
+PASS Comment.replaceWith() on a parentless child with two elements as arguments.
+PASS Element.replaceWith() without any argument.
+PASS Element.replaceWith() with null as an argument.
+PASS Element.replaceWith() with undefined as an argument.
+PASS Element.replaceWith() with empty string as an argument.
+PASS Element.replaceWith() with only text as an argument.
+PASS Element.replaceWith() with only one element as an argument.
+PASS Element.replaceWith() with sibling of child as arguments.
+PASS Element.replaceWith() with one sibling of child and text as arguments.
+PASS Element.replaceWith() with one sibling of child and child itself as arguments.
+PASS Element.replaceWith() with one element and text as arguments.
+PASS Element.replaceWith() on a parentless child with two elements as arguments.
+PASS Text.replaceWith() without any argument.
+PASS Text.replaceWith() with null as an argument.
+PASS Text.replaceWith() with undefined as an argument.
+PASS Text.replaceWith() with empty string as an argument.
+PASS Text.replaceWith() with only text as an argument.
+PASS Text.replaceWith() with only one element as an argument.
+PASS Text.replaceWith() with sibling of child as arguments.
+PASS Text.replaceWith() with one sibling of child and text as arguments.
+PASS Text.replaceWith() with one sibling of child and child itself as arguments.
+PASS Text.replaceWith() with one element and text as arguments.
+PASS Text.replaceWith() on a parentless child with two elements as arguments.
 

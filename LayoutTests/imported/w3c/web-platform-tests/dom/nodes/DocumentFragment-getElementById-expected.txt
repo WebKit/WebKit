@@ -1,7 +1,7 @@
 
-PASS The method must exist 
-PASS It must return null when there are no matches 
-PASS It must return the first element when there are matches 
-PASS Empty string ID values 
-PASS It must return the first element when there are matches, using a template 
+PASS The method must exist
+PASS It must return null when there are no matches
+PASS It must return the first element when there are matches
+PASS Empty string ID values
+PASS It must return the first element when there are matches, using a template
 

@@ -1,5 +1,5 @@
 
-PASS verify spacing is handled correctly 
+PASS verify spacing is handled correctly
 test link #foo
 text caption
 TEXT head

@@ -1,7 +1,7 @@
 
-PASS In window.document with click event 
-PASS In window.document with load event 
-PASS In window.document.cloneNode(true) 
-PASS In new Document() 
-PASS In DOMImplementation.createHTMLDocument() 
+PASS In window.document with click event
+PASS In window.document with load event
+PASS In window.document.cloneNode(true)
+PASS In new Document()
+PASS In DOMImplementation.createHTMLDocument()
 

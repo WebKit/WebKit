@@ -1,14 +1,14 @@
 
-PASS Document.createProcessingInstruction in HTML documents 
-PASS Should throw an INVALID_CHARACTER_ERR for target "A" and data "?>". 
-PASS Should throw an INVALID_CHARACTER_ERR for target "·A" and data "x". 
-PASS Should throw an INVALID_CHARACTER_ERR for target "×A" and data "x". 
-PASS Should throw an INVALID_CHARACTER_ERR for target "A×" and data "x". 
-PASS Should throw an INVALID_CHARACTER_ERR for target "\\A" and data "x". 
-PASS Should throw an INVALID_CHARACTER_ERR for target "\f" and data "x". 
-PASS Should throw an INVALID_CHARACTER_ERR for target 0 and data "x". 
-PASS Should throw an INVALID_CHARACTER_ERR for target "0" and data "x". 
-PASS Should get a ProcessingInstruction for target "xml:fail" and data "x". 
-PASS Should get a ProcessingInstruction for target "A·A" and data "x". 
-PASS Should get a ProcessingInstruction for target "a0" and data "x". 
+PASS Document.createProcessingInstruction in HTML documents
+PASS Should throw an INVALID_CHARACTER_ERR for target "A" and data "?>".
+PASS Should throw an INVALID_CHARACTER_ERR for target "·A" and data "x".
+PASS Should throw an INVALID_CHARACTER_ERR for target "×A" and data "x".
+PASS Should throw an INVALID_CHARACTER_ERR for target "A×" and data "x".
+PASS Should throw an INVALID_CHARACTER_ERR for target "\\A" and data "x".
+PASS Should throw an INVALID_CHARACTER_ERR for target "\f" and data "x".
+PASS Should throw an INVALID_CHARACTER_ERR for target 0 and data "x".
+PASS Should throw an INVALID_CHARACTER_ERR for target "0" and data "x".
+PASS Should get a ProcessingInstruction for target "xml:fail" and data "x".
+PASS Should get a ProcessingInstruction for target "A·A" and data "x".
+PASS Should get a ProcessingInstruction for target "a0" and data "x".
 

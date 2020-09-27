@@ -1,8 +1,8 @@
 
-PASS createComment("\v") 
-PASS createComment("a -- b") 
-PASS createComment("a-") 
-PASS createComment("-b") 
-PASS createComment(null) 
-PASS createComment(undefined) 
+PASS createComment("\v")
+PASS createComment("a -- b")
+PASS createComment("a-")
+PASS createComment("-b")
+PASS createComment(null)
+PASS createComment(undefined)
 
