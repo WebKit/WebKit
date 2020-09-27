@@ -1,5 +1,43 @@
 2020-09-27  Darin Adler  <darin@apple.com>
 
+        Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis
+        https://bugs.webkit.org/show_bug.cgi?id=217039
+
+        Reviewed by Zalan Bujtas.
+
+        To run at a resaonable speed, we may want to find a way to change these encoding tests to not
+        decode each character separately since that's not critical to what they are testing; this likely
+        would result in tests fast enough to run as regression tests (right now they are skipped) and
+        much smaller output files too. But for now, these are colossal files.
+
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-csshiftjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms932-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms_kanji-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-shift-jis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-windows-31j-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-x-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-csshiftjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-hangul-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms932-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms_kanji-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-shift-jis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-windows-31j-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-x-sjis-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-hangul-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-expected.txt:
+        Remove trailing spaces.
+
+2020-09-27  Darin Adler  <darin@apple.com>
+
         Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp
         https://bugs.webkit.org/show_bug.cgi?id=217038
 
