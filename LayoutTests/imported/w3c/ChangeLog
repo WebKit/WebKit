@@ -1,3 +1,40 @@
+2020-09-27  Darin Adler  <darin@apple.com>
+
+        Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5
+        https://bugs.webkit.org/show_bug.cgi?id=217035
+
+        Reviewed by Zalan Bujtas.
+
+        To run at a resaonable speed, we may want to find a way to change these encoding tests to not
+        decode each character separately since that's not critical to what they are testing; this likely
+        would result in tests fast enough to run as regression tests (right now they are skipped) and
+        much smaller output files too. But for now, these are colossal files.
+
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-big5-hkscs-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-cn-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-csbig5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-extra-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-x-x-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-enc-ascii-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-cn-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-csbig5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-hangul-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-pua-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-x-x-big5-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-hangul-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-expected.txt:
+        Strip trailing spaces from all these files. No other changes at this time.
+
 2020-09-26  Darin Adler  <darin@apple.com>
 
         Remove trailing spaces from expected.txt files in web-platform-tests/dom

@@ -1,10 +1,10 @@
 
-PASS lead not 0x00 and no more bytes: AB 
-PASS lead not 0x00 and no more bytes: AB B5 AB 
-PASS lead not 0x00 and no more bytes: AB AB AB 
-PASS lead byte outside 0x81-0xFE: FF 
-PASS lead byte outside 0x81-0xFE: AB AB FF 
-PASS trail byte outside 0x41-0xFE: AB 31 
-PASS trail byte outside 0x41-0xFE: AB FF 
-PASS pointer is null: C8 F2 
+PASS lead not 0x00 and no more bytes: AB
+PASS lead not 0x00 and no more bytes: AB B5 AB
+PASS lead not 0x00 and no more bytes: AB AB AB
+PASS lead byte outside 0x81-0xFE: FF
+PASS lead byte outside 0x81-0xFE: AB AB FF
+PASS trail byte outside 0x41-0xFE: AB 31
+PASS trail byte outside 0x41-0xFE: AB FF
+PASS pointer is null: C8 F2
 

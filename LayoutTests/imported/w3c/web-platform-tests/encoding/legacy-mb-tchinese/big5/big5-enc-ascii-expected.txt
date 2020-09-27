@@ -1,125 +1,125 @@
 
-PASS big5 encoder: test for ASCII codepoint 0x0 \0 
-PASS big5 encoder: test for ASCII codepoint 0x1  
-PASS big5 encoder: test for ASCII codepoint 0x2  
-PASS big5 encoder: test for ASCII codepoint 0x3  
-PASS big5 encoder: test for ASCII codepoint 0x4  
-PASS big5 encoder: test for ASCII codepoint 0x5  
-PASS big5 encoder: test for ASCII codepoint 0x6  
-PASS big5 encoder: test for ASCII codepoint 0x7  
-PASS big5 encoder: test for ASCII codepoint 0x8  
-PASS big5 encoder: test for ASCII codepoint 0xb  
-PASS big5 encoder: test for ASCII codepoint 0xc  
-PASS big5 encoder: test for ASCII codepoint 0xe  
-PASS big5 encoder: test for ASCII codepoint 0xf  
-PASS big5 encoder: test for ASCII codepoint 0x10  
-PASS big5 encoder: test for ASCII codepoint 0x11  
-PASS big5 encoder: test for ASCII codepoint 0x12  
-PASS big5 encoder: test for ASCII codepoint 0x13  
-PASS big5 encoder: test for ASCII codepoint 0x14  
-PASS big5 encoder: test for ASCII codepoint 0x15  
-PASS big5 encoder: test for ASCII codepoint 0x16  
-PASS big5 encoder: test for ASCII codepoint 0x17  
-PASS big5 encoder: test for ASCII codepoint 0x18  
-PASS big5 encoder: test for ASCII codepoint 0x19  
-PASS big5 encoder: test for ASCII codepoint 0x1a  
-PASS big5 encoder: test for ASCII codepoint 0x1b  
-PASS big5 encoder: test for ASCII codepoint 0x1c  
-PASS big5 encoder: test for ASCII codepoint 0x1d  
-PASS big5 encoder: test for ASCII codepoint 0x1e  
-PASS big5 encoder: test for ASCII codepoint 0x1f  
-PASS big5 encoder: test for ASCII codepoint 0x20   
-PASS big5 encoder: test for ASCII codepoint 0x21 ! 
-PASS big5 encoder: test for ASCII codepoint 0x22 " 
-PASS big5 encoder: test for ASCII codepoint 0x24 $ 
-PASS big5 encoder: test for ASCII codepoint 0x25 % 
-PASS big5 encoder: test for ASCII codepoint 0x26 & 
-PASS big5 encoder: test for ASCII codepoint 0x27 ' 
-PASS big5 encoder: test for ASCII codepoint 0x28 ( 
-PASS big5 encoder: test for ASCII codepoint 0x29 ) 
-PASS big5 encoder: test for ASCII codepoint 0x2a * 
-PASS big5 encoder: test for ASCII codepoint 0x2b + 
-PASS big5 encoder: test for ASCII codepoint 0x2c , 
-PASS big5 encoder: test for ASCII codepoint 0x2d - 
-PASS big5 encoder: test for ASCII codepoint 0x2e . 
-PASS big5 encoder: test for ASCII codepoint 0x2f / 
-PASS big5 encoder: test for ASCII codepoint 0x30 0 
-PASS big5 encoder: test for ASCII codepoint 0x31 1 
-PASS big5 encoder: test for ASCII codepoint 0x32 2 
-PASS big5 encoder: test for ASCII codepoint 0x33 3 
-PASS big5 encoder: test for ASCII codepoint 0x34 4 
-PASS big5 encoder: test for ASCII codepoint 0x35 5 
-PASS big5 encoder: test for ASCII codepoint 0x36 6 
-PASS big5 encoder: test for ASCII codepoint 0x37 7 
-PASS big5 encoder: test for ASCII codepoint 0x38 8 
-PASS big5 encoder: test for ASCII codepoint 0x39 9 
-PASS big5 encoder: test for ASCII codepoint 0x3a : 
-PASS big5 encoder: test for ASCII codepoint 0x3b ; 
-PASS big5 encoder: test for ASCII codepoint 0x3c < 
-PASS big5 encoder: test for ASCII codepoint 0x3d = 
-PASS big5 encoder: test for ASCII codepoint 0x3e > 
-PASS big5 encoder: test for ASCII codepoint 0x3f ? 
-PASS big5 encoder: test for ASCII codepoint 0x40 @ 
-PASS big5 encoder: test for ASCII codepoint 0x41 A 
-PASS big5 encoder: test for ASCII codepoint 0x42 B 
-PASS big5 encoder: test for ASCII codepoint 0x43 C 
-PASS big5 encoder: test for ASCII codepoint 0x44 D 
-PASS big5 encoder: test for ASCII codepoint 0x45 E 
-PASS big5 encoder: test for ASCII codepoint 0x46 F 
-PASS big5 encoder: test for ASCII codepoint 0x47 G 
-PASS big5 encoder: test for ASCII codepoint 0x48 H 
-PASS big5 encoder: test for ASCII codepoint 0x49 I 
-PASS big5 encoder: test for ASCII codepoint 0x4a J 
-PASS big5 encoder: test for ASCII codepoint 0x4b K 
-PASS big5 encoder: test for ASCII codepoint 0x4c L 
-PASS big5 encoder: test for ASCII codepoint 0x4d M 
-PASS big5 encoder: test for ASCII codepoint 0x4e N 
-PASS big5 encoder: test for ASCII codepoint 0x4f O 
-PASS big5 encoder: test for ASCII codepoint 0x50 P 
-PASS big5 encoder: test for ASCII codepoint 0x51 Q 
-PASS big5 encoder: test for ASCII codepoint 0x52 R 
-PASS big5 encoder: test for ASCII codepoint 0x53 S 
-PASS big5 encoder: test for ASCII codepoint 0x54 T 
-PASS big5 encoder: test for ASCII codepoint 0x55 U 
-PASS big5 encoder: test for ASCII codepoint 0x56 V 
-PASS big5 encoder: test for ASCII codepoint 0x57 W 
-PASS big5 encoder: test for ASCII codepoint 0x58 X 
-PASS big5 encoder: test for ASCII codepoint 0x59 Y 
-PASS big5 encoder: test for ASCII codepoint 0x5a Z 
-PASS big5 encoder: test for ASCII codepoint 0x5b [ 
-PASS big5 encoder: test for ASCII codepoint 0x5c \ 
-PASS big5 encoder: test for ASCII codepoint 0x5d ] 
-PASS big5 encoder: test for ASCII codepoint 0x5e ^ 
-PASS big5 encoder: test for ASCII codepoint 0x5f _ 
-PASS big5 encoder: test for ASCII codepoint 0x60 ` 
-PASS big5 encoder: test for ASCII codepoint 0x61 a 
-PASS big5 encoder: test for ASCII codepoint 0x62 b 
-PASS big5 encoder: test for ASCII codepoint 0x63 c 
-PASS big5 encoder: test for ASCII codepoint 0x64 d 
-PASS big5 encoder: test for ASCII codepoint 0x65 e 
-PASS big5 encoder: test for ASCII codepoint 0x66 f 
-PASS big5 encoder: test for ASCII codepoint 0x67 g 
-PASS big5 encoder: test for ASCII codepoint 0x68 h 
-PASS big5 encoder: test for ASCII codepoint 0x69 i 
-PASS big5 encoder: test for ASCII codepoint 0x6a j 
-PASS big5 encoder: test for ASCII codepoint 0x6b k 
-PASS big5 encoder: test for ASCII codepoint 0x6c l 
-PASS big5 encoder: test for ASCII codepoint 0x6d m 
-PASS big5 encoder: test for ASCII codepoint 0x6e n 
-PASS big5 encoder: test for ASCII codepoint 0x6f o 
-PASS big5 encoder: test for ASCII codepoint 0x70 p 
-PASS big5 encoder: test for ASCII codepoint 0x71 q 
-PASS big5 encoder: test for ASCII codepoint 0x72 r 
-PASS big5 encoder: test for ASCII codepoint 0x73 s 
-PASS big5 encoder: test for ASCII codepoint 0x74 t 
-PASS big5 encoder: test for ASCII codepoint 0x75 u 
-PASS big5 encoder: test for ASCII codepoint 0x76 v 
-PASS big5 encoder: test for ASCII codepoint 0x77 w 
-PASS big5 encoder: test for ASCII codepoint 0x78 x 
-PASS big5 encoder: test for ASCII codepoint 0x79 y 
-PASS big5 encoder: test for ASCII codepoint 0x7a z 
-PASS big5 encoder: test for ASCII codepoint 0x7b { 
-PASS big5 encoder: test for ASCII codepoint 0x7c | 
-PASS big5 encoder: test for ASCII codepoint 0x7d } 
-PASS big5 encoder: test for ASCII codepoint 0x7e ~ 
+PASS big5 encoder: test for ASCII codepoint 0x0 \0
+PASS big5 encoder: test for ASCII codepoint 0x1 
+PASS big5 encoder: test for ASCII codepoint 0x2 
+PASS big5 encoder: test for ASCII codepoint 0x3 
+PASS big5 encoder: test for ASCII codepoint 0x4 
+PASS big5 encoder: test for ASCII codepoint 0x5 
+PASS big5 encoder: test for ASCII codepoint 0x6 
+PASS big5 encoder: test for ASCII codepoint 0x7 
+PASS big5 encoder: test for ASCII codepoint 0x8 
+PASS big5 encoder: test for ASCII codepoint 0xb 
+PASS big5 encoder: test for ASCII codepoint 0xc 
+PASS big5 encoder: test for ASCII codepoint 0xe 
+PASS big5 encoder: test for ASCII codepoint 0xf 
+PASS big5 encoder: test for ASCII codepoint 0x10 
+PASS big5 encoder: test for ASCII codepoint 0x11 
+PASS big5 encoder: test for ASCII codepoint 0x12 
+PASS big5 encoder: test for ASCII codepoint 0x13 
+PASS big5 encoder: test for ASCII codepoint 0x14 
+PASS big5 encoder: test for ASCII codepoint 0x15 
+PASS big5 encoder: test for ASCII codepoint 0x16 
+PASS big5 encoder: test for ASCII codepoint 0x17 
+PASS big5 encoder: test for ASCII codepoint 0x18 
+PASS big5 encoder: test for ASCII codepoint 0x19 
+PASS big5 encoder: test for ASCII codepoint 0x1a 
+PASS big5 encoder: test for ASCII codepoint 0x1b 
+PASS big5 encoder: test for ASCII codepoint 0x1c 
+PASS big5 encoder: test for ASCII codepoint 0x1d 
+PASS big5 encoder: test for ASCII codepoint 0x1e 
+PASS big5 encoder: test for ASCII codepoint 0x1f 
+PASS big5 encoder: test for ASCII codepoint 0x20
+PASS big5 encoder: test for ASCII codepoint 0x21 !
+PASS big5 encoder: test for ASCII codepoint 0x22 "
+PASS big5 encoder: test for ASCII codepoint 0x24 $
+PASS big5 encoder: test for ASCII codepoint 0x25 %
+PASS big5 encoder: test for ASCII codepoint 0x26 &
+PASS big5 encoder: test for ASCII codepoint 0x27 '
+PASS big5 encoder: test for ASCII codepoint 0x28 (
+PASS big5 encoder: test for ASCII codepoint 0x29 )
+PASS big5 encoder: test for ASCII codepoint 0x2a *
+PASS big5 encoder: test for ASCII codepoint 0x2b +
+PASS big5 encoder: test for ASCII codepoint 0x2c ,
+PASS big5 encoder: test for ASCII codepoint 0x2d -
+PASS big5 encoder: test for ASCII codepoint 0x2e .
+PASS big5 encoder: test for ASCII codepoint 0x2f /
+PASS big5 encoder: test for ASCII codepoint 0x30 0
+PASS big5 encoder: test for ASCII codepoint 0x31 1
+PASS big5 encoder: test for ASCII codepoint 0x32 2
+PASS big5 encoder: test for ASCII codepoint 0x33 3
+PASS big5 encoder: test for ASCII codepoint 0x34 4
+PASS big5 encoder: test for ASCII codepoint 0x35 5
+PASS big5 encoder: test for ASCII codepoint 0x36 6
+PASS big5 encoder: test for ASCII codepoint 0x37 7
+PASS big5 encoder: test for ASCII codepoint 0x38 8
+PASS big5 encoder: test for ASCII codepoint 0x39 9
+PASS big5 encoder: test for ASCII codepoint 0x3a :
+PASS big5 encoder: test for ASCII codepoint 0x3b ;
+PASS big5 encoder: test for ASCII codepoint 0x3c <
+PASS big5 encoder: test for ASCII codepoint 0x3d =
+PASS big5 encoder: test for ASCII codepoint 0x3e >
+PASS big5 encoder: test for ASCII codepoint 0x3f ?
+PASS big5 encoder: test for ASCII codepoint 0x40 @
+PASS big5 encoder: test for ASCII codepoint 0x41 A
+PASS big5 encoder: test for ASCII codepoint 0x42 B
+PASS big5 encoder: test for ASCII codepoint 0x43 C
+PASS big5 encoder: test for ASCII codepoint 0x44 D
+PASS big5 encoder: test for ASCII codepoint 0x45 E
+PASS big5 encoder: test for ASCII codepoint 0x46 F
+PASS big5 encoder: test for ASCII codepoint 0x47 G
+PASS big5 encoder: test for ASCII codepoint 0x48 H
+PASS big5 encoder: test for ASCII codepoint 0x49 I
+PASS big5 encoder: test for ASCII codepoint 0x4a J
+PASS big5 encoder: test for ASCII codepoint 0x4b K
+PASS big5 encoder: test for ASCII codepoint 0x4c L
+PASS big5 encoder: test for ASCII codepoint 0x4d M
+PASS big5 encoder: test for ASCII codepoint 0x4e N
+PASS big5 encoder: test for ASCII codepoint 0x4f O
+PASS big5 encoder: test for ASCII codepoint 0x50 P
+PASS big5 encoder: test for ASCII codepoint 0x51 Q
+PASS big5 encoder: test for ASCII codepoint 0x52 R
+PASS big5 encoder: test for ASCII codepoint 0x53 S
+PASS big5 encoder: test for ASCII codepoint 0x54 T
+PASS big5 encoder: test for ASCII codepoint 0x55 U
+PASS big5 encoder: test for ASCII codepoint 0x56 V
+PASS big5 encoder: test for ASCII codepoint 0x57 W
+PASS big5 encoder: test for ASCII codepoint 0x58 X
+PASS big5 encoder: test for ASCII codepoint 0x59 Y
+PASS big5 encoder: test for ASCII codepoint 0x5a Z
+PASS big5 encoder: test for ASCII codepoint 0x5b [
+PASS big5 encoder: test for ASCII codepoint 0x5c \
+PASS big5 encoder: test for ASCII codepoint 0x5d ]
+PASS big5 encoder: test for ASCII codepoint 0x5e ^
+PASS big5 encoder: test for ASCII codepoint 0x5f _
+PASS big5 encoder: test for ASCII codepoint 0x60 `
+PASS big5 encoder: test for ASCII codepoint 0x61 a
+PASS big5 encoder: test for ASCII codepoint 0x62 b
+PASS big5 encoder: test for ASCII codepoint 0x63 c
+PASS big5 encoder: test for ASCII codepoint 0x64 d
+PASS big5 encoder: test for ASCII codepoint 0x65 e
+PASS big5 encoder: test for ASCII codepoint 0x66 f
+PASS big5 encoder: test for ASCII codepoint 0x67 g
+PASS big5 encoder: test for ASCII codepoint 0x68 h
+PASS big5 encoder: test for ASCII codepoint 0x69 i
+PASS big5 encoder: test for ASCII codepoint 0x6a j
+PASS big5 encoder: test for ASCII codepoint 0x6b k
+PASS big5 encoder: test for ASCII codepoint 0x6c l
+PASS big5 encoder: test for ASCII codepoint 0x6d m
+PASS big5 encoder: test for ASCII codepoint 0x6e n
+PASS big5 encoder: test for ASCII codepoint 0x6f o
+PASS big5 encoder: test for ASCII codepoint 0x70 p
+PASS big5 encoder: test for ASCII codepoint 0x71 q
+PASS big5 encoder: test for ASCII codepoint 0x72 r
+PASS big5 encoder: test for ASCII codepoint 0x73 s
+PASS big5 encoder: test for ASCII codepoint 0x74 t
+PASS big5 encoder: test for ASCII codepoint 0x75 u
+PASS big5 encoder: test for ASCII codepoint 0x76 v
+PASS big5 encoder: test for ASCII codepoint 0x77 w
+PASS big5 encoder: test for ASCII codepoint 0x78 x
+PASS big5 encoder: test for ASCII codepoint 0x79 y
+PASS big5 encoder: test for ASCII codepoint 0x7a z
+PASS big5 encoder: test for ASCII codepoint 0x7b {
+PASS big5 encoder: test for ASCII codepoint 0x7c |
+PASS big5 encoder: test for ASCII codepoint 0x7d }
+PASS big5 encoder: test for ASCII codepoint 0x7e ~
 
