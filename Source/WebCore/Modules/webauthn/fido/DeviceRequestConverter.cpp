@@ -111,10 +111,8 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
         bool requireUserVerification = false;
         switch (options.authenticatorSelection->userVerification) {
         case UserVerificationRequirement::Required:
-            requireUserVerification = true;
-            break;
         case UserVerificationRequirement::Preferred:
-            requireUserVerification = uvCapability == UVAvailability::kNotSupported ? false : true;
+            requireUserVerification = uvCapability == UVAvailability::kSupportedAndConfigured;
             break;
         case UserVerificationRequirement::Discouraged:
             requireUserVerification = false;
@@ -157,10 +155,8 @@ Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, con
     bool requireUserVerification = false;
     switch (options.userVerification) {
     case UserVerificationRequirement::Required:
-        requireUserVerification = true;
-        break;
     case UserVerificationRequirement::Preferred:
-        requireUserVerification = uvCapability == UVAvailability::kNotSupported ? false : true;
+        requireUserVerification = uvCapability == UVAvailability::kSupportedAndConfigured;
         break;
     case UserVerificationRequirement::Discouraged:
         requireUserVerification = false;
