@@ -334,13 +334,13 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const LayoutState& layo
 {
     TextStream stream;
     auto& layoutRoot = layoutState.root();
+    auto mismatchingGeometry = verifyAndOutputSubtree(stream, layoutState, rootRenderer, layoutRoot);
+    if (!mismatchingGeometry)
+        return;
 #if ENABLE(TREE_DEBUGGING)
     showRenderTree(&rootRenderer);
     showLayoutTree(layoutRoot, &layoutState);
 #endif
-    auto mismatchingGeometry = verifyAndOutputSubtree(stream, layoutState, rootRenderer, layoutRoot);
-    if (!mismatchingGeometry)
-        return;
     WTFLogAlways("%s", stream.release().utf8().data());
     ASSERT_NOT_REACHED();
 }
