@@ -1,4 +1,4 @@
-    
+
 PASS - "webkitClipPath" property for "inset-box" element at 1s saw something close to: inset(10%)
 PASS - "webkitClipPath" property for "circle-box" element at 1s saw something close to: circle(35% at 35% 35%)
 PASS - "webkitClipPath" property for "ellipse-box" element at 1s saw something close to: ellipse(35% 30% at 35% 35%)

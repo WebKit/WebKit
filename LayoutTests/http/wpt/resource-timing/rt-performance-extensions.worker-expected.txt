@@ -1,12 +1,12 @@
 
-PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope 
-PASS performance.clearResourceTimings clears the buffer 
-PASS performance.clearResourceTimings called multiple times is okay 
-PASS resourcetimingbufferfull event should not trigger for a small number of resources (browser default buffer size) 
-PASS PerformanceObserver sees all resource entries even after buffer is full 
-PASS resourcetimingbufferfull event should not trigger if less than the BufferSizeLimit number of resources are added to the buffer 
-PASS resourcetimingbufferfull event should not trigger if exactly the BufferSizeLimit number of resources are added to the buffer 
-PASS resourcetimingbufferfull event should only trigger once if more than the BufferSizeLimit number of resources are added to the buffer 
-PASS resourcetimingbufferfull event properties 
-PASS performance.setResourceTimingBufferSize set to value less than current BufferSize should not clear existing entries 
+PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope
+PASS performance.clearResourceTimings clears the buffer
+PASS performance.clearResourceTimings called multiple times is okay
+PASS resourcetimingbufferfull event should not trigger for a small number of resources (browser default buffer size)
+PASS PerformanceObserver sees all resource entries even after buffer is full
+PASS resourcetimingbufferfull event should not trigger if less than the BufferSizeLimit number of resources are added to the buffer
+PASS resourcetimingbufferfull event should not trigger if exactly the BufferSizeLimit number of resources are added to the buffer
+PASS resourcetimingbufferfull event should only trigger once if more than the BufferSizeLimit number of resources are added to the buffer
+PASS resourcetimingbufferfull event properties
+PASS performance.setResourceTimingBufferSize set to value less than current BufferSize should not clear existing entries
 

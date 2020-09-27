@@ -1,4 +1,4 @@
-  
+
 This tests that aria-label can be set on options.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

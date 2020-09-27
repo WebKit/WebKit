@@ -5,7 +5,7 @@ Inner scrolling content
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 1041)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
     (horizontal scrollbar mode 0)
@@ -19,7 +19,7 @@ Inner scrolling content
     (Overflow scrolling node
       (scrollable area size 425 325)
       (contents size 425 1040)
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
         (horizontal scrollbar mode 0)

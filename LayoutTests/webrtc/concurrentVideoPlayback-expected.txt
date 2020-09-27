@@ -1,7 +1,7 @@
-  
 
-PASS Basic audio/video exchange 
-PASS Play MediaStream backed streams concurrently 
-PASS Play regular video content should pause MediaStream backed video elements 
-PASS Play MediaStream backed video elements should pause regular video content 
+
+PASS Basic audio/video exchange
+PASS Play MediaStream backed streams concurrently
+PASS Play regular video content should pause MediaStream backed video elements
+PASS Play MediaStream backed video elements should pause regular video content
 

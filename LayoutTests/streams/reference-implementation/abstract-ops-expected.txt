@@ -1,8 +1,8 @@
 
-PASS IsReadableStreamDisturbed returns true for an empty non-closed stream on which read() has been called 
-PASS IsReadableStreamDisturbed returns true for an empty non-closed stream on which cancel() has been called 
-PASS IsReadableStreamDisturbed returns true for a closed stream on which read() has been called 
-PASS IsReadableStreamDisturbed returns true for a closed stream on which cancel() has been called 
-PASS IsReadableStreamDisturbed returns true for an errored stream on which read() has been called 
-PASS IsReadableStreamDisturbed returns true for an errored stream on which cancel() has been called 
+PASS IsReadableStreamDisturbed returns true for an empty non-closed stream on which read() has been called
+PASS IsReadableStreamDisturbed returns true for an empty non-closed stream on which cancel() has been called
+PASS IsReadableStreamDisturbed returns true for a closed stream on which read() has been called
+PASS IsReadableStreamDisturbed returns true for a closed stream on which cancel() has been called
+PASS IsReadableStreamDisturbed returns true for an errored stream on which read() has been called
+PASS IsReadableStreamDisturbed returns true for an errored stream on which cancel() has been called
 

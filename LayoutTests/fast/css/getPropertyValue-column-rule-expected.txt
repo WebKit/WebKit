@@ -1,4 +1,4 @@
-          
+
 Bug 110698: getPropertyValue for -webkit-column-rule returns null, should compute the shorthand value
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

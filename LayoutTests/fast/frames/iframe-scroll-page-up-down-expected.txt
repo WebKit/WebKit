@@ -1,4 +1,4 @@
-top 
+top
 
 bottom
 PASSED test 1

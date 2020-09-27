@@ -29,11 +29,11 @@ Starting worker: resources/user-timing-api.js
 [Worker] PerformanceMark
 PASS [Worker] PerformanceMark is defined.
 PASS [Worker] new PerformanceMark() threw exception TypeError: Not enough arguments.
-[Worker] 
+[Worker]
 [Worker] PerformanceMeasure
 PASS [Worker] PerformanceMeasure is defined.
 PASS [Worker] new PerformanceMeasure() threw exception TypeError: Illegal constructor.
-[Worker] 
+[Worker]
 [Worker] Performance extensions
 PASS [Worker] Performance.prototype.mark is defined.
 PASS [Worker] Performance.prototype.measure is defined.

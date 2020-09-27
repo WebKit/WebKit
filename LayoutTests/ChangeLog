@@ -1,3 +1,16 @@
+2020-09-26  Darin Adler  <darin@apple.com>
+
+        Remove trailing spaces from expected.txt files (excluding WPT for now since that contains too many)
+        https://bugs.webkit.org/show_bug.cgi?id=217016
+
+        Reviewed by Zalan Bujtas.
+
+        Done with this command:
+
+            find LayoutTests -name '*-expected.txt' | grep -v imported | xargs awk '/^CONSOLE MESSAGE:/ { next }; /^<\?xml/ { nextfile }; { print FILENAME; nextfile }' | xargs perl -i -pe 's/ +$//g'
+
+        This affects many files, and it's not helpful to clog the change log with a list of them.
+
 2020-09-26  Chris Dumez  <cdumez@apple.com>
 
         Constructing an AudioNode for a closed context should not throw an exception

@@ -1,4 +1,4 @@
-Here is some text 
+Here is some text
 Here is some text
 PASS - "font-size" property for "box" element at 1s saw something close to: 15
 PASS: width is close to control

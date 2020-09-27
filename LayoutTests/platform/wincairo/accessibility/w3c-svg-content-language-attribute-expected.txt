@@ -5,59 +5,59 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 test1:
 	Expected name: generic title; description: generic desc
-	AXTitle: 
+	AXTitle:
 	AXDescription: generic title
 test2:
 	Expected name: title for en; description: desc for en
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en
 test3:
 	Expected name: title for en; description: desc for en
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en
 test4:
 	Expected name: title for EN; description: desc for EN
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for EN
 test5:
 	Expected name: generic title; description: generic desc
-	AXTitle: 
+	AXTitle:
 	AXDescription: generic title
 test6:
 	Expected name: generic title; description: generic desc
-	AXTitle: 
+	AXTitle:
 	AXDescription: generic title
 test7:
 	Expected name: title for en-gb; description: desc for en-gb
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en-gb
 test8:
 	Expected name: title for en_GB; description: desc for en_GB
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en_GB
 test9:
 	Expected name: title for en; description: desc for en
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en
 test10:
 	Expected name: title for en-us; description: desc for en-us
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en-us
 test11:
 	Expected name: title for en-us; description: desc for en-us
-	AXTitle: 
+	AXTitle:
 	AXDescription: title for en-us
 test12:
 	Expected name: generic title; description: generic desc
-	AXTitle: 
+	AXTitle:
 	AXDescription: generic title
 test13:
 	Expected name: 1st title for en_GB; description: 1st desc for en_GB
-	AXTitle: 
+	AXTitle:
 	AXDescription: 1st title for en_GB
 test14:
 	Expected name: 1st generic title; description: 1st generic desc
-	AXTitle: 
+	AXTitle:
 	AXDescription: 1st generic title
 PASS successfullyParsed is true
 

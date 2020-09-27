@@ -1,4 +1,4 @@
 
-PASS Testing cross-origin and MIME behavior for CSS. 
-PASS xorigincss5.html should be loaded via @import. 
+PASS Testing cross-origin and MIME behavior for CSS.
+PASS xorigincss5.html should be loaded via @import.
 

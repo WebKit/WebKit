@@ -1,4 +1,4 @@
-  
+
 This tests whether searching works to find frames and to find elements within frames.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

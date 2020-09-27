@@ -1,4 +1,4 @@
-The srcdoc iframe below should use this document's URL as its referrer. 
+The srcdoc iframe below should use this document's URL as its referrer.
 
 --------
 Frame: '<!--frame1-->'

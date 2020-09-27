@@ -17,4 +17,4 @@ PASS currentSrcFileName(elementId) is "image-set-4x.png"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-       
+

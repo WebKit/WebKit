@@ -1,4 +1,4 @@
 
-PASS Ensuring that offer is a RTCSessionDescriptionInit 
-PASS Ensuring that answer is a RTCSessionDescriptionInit 
+PASS Ensuring that offer is a RTCSessionDescriptionInit
+PASS Ensuring that answer is a RTCSessionDescriptionInit
 

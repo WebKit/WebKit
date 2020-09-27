@@ -28,7 +28,7 @@ test contents:
 | " also works in Firefox."
 
 PASS: Extracting empty contents yields:
-| 
+|
 
 PASS: Extracting entire contents yields:
 | "hello world"

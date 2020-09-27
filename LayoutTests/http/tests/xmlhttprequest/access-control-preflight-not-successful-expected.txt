@@ -24,10 +24,10 @@ Expecting success: false
 PASS: 0
 Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php (sync)
 Expecting success: true
-PASS: 
+PASS:
 Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php(async)
 Expecting success: true
-PASS: 
+PASS:
 Testing http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php (sync)
 Expecting success: false
 PASS: NetworkError:  A network error occurred.

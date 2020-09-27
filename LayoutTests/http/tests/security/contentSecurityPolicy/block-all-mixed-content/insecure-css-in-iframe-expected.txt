@@ -22,7 +22,7 @@ blockedURI: http://127.0.0.1:8000
 violatedDirective: block-all-mixed-content
 effectiveDirective: block-all-mixed-content
 originalPolicy: block-all-mixed-content
-sourceFile: 
+sourceFile:
 lineNumber: 0
 columnNumber: 0
 statusCode: 0

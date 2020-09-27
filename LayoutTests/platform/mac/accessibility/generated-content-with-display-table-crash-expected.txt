@@ -2,16 +2,16 @@ foo
 bar
 baz
 End of test
-AXRole: AXWebArea AXValue: 
-    AXRole: AXGroup AXValue: 
+AXRole: AXWebArea AXValue:
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: foo
         AXRole: AXStaticText AXValue: !
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: bar
     AXRole: AXStaticText AXValue: !
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: baz
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
 This verifies that getting content of an element with generated content in CSS table doesn't cause a crash.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

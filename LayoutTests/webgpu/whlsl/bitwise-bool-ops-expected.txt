@@ -1,6 +1,6 @@
 
-PASS boolBitAnd 
-PASS boolBitOr 
-PASS boolBitXor 
-PASS boolBitNot 
+PASS boolBitAnd
+PASS boolBitOr
+PASS boolBitXor
+PASS boolBitNot
 

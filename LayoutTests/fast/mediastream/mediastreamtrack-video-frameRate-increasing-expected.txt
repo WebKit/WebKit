@@ -1,4 +1,4 @@
 
 
-PASS getUserMedia with increasing frame rates 
+PASS getUserMedia with increasing frame rates
 

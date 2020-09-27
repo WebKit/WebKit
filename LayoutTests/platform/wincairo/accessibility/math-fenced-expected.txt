@@ -3,16 +3,16 @@ This verifies the expected roles and values are exposed for mfenced.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: equation AXValue: 
-    AXRole: equation AXValue: 
+AXRole: equation AXValue:
+    AXRole: equation AXValue:
         AXRole: equation AXValue: {
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: 2
         AXRole: equation AXValue: ,
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: a
         AXRole: equation AXValue: ;
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: e
         AXRole: equation AXValue: }
 PASS successfullyParsed is true

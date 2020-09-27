@@ -91,7 +91,7 @@ PASS true === true
 PASS !!Function("'use strict'; ({get x() {}, set x(q) {}, y:1})") is true
 PASS !!Function("({get x() {}, set x(q) {}, y:1})") is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

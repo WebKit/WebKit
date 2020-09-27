@@ -3,7 +3,7 @@ This test passes if it does not crash
 0
 1
 2
- 
+
 0
 1
 2

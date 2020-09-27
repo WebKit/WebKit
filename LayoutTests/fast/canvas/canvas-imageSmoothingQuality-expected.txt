@@ -37,4 +37,4 @@ PASS scaleImageData(highCanvas, highCanvas.imageSmoothingQuality); is highData
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

@@ -1,11 +1,11 @@
 
 
-PASS Basic video exchange with addTrack - waiting for second track before playing 
-PASS Basic video exchange with addTrack - not waiting for second track to play 
-PASS  track 0, wait = true 
-PASS  track 1, wait = true 
-PASS Testing image result, wait = true 
-PASS  track 0, wait = false 
-PASS  track 1, wait = false 
-PASS Testing image result, wait = false 
+PASS Basic video exchange with addTrack - waiting for second track before playing
+PASS Basic video exchange with addTrack - not waiting for second track to play
+PASS  track 0, wait = true
+PASS  track 1, wait = true
+PASS Testing image result, wait = true
+PASS  track 0, wait = false
+PASS  track 1, wait = false
+PASS Testing image result, wait = false
 

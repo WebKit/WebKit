@@ -15,5 +15,5 @@ Test 5 PASS: Loaded image http://127.0.0.1:8080/security/resources/abe-allow-sta
 Test 6 PASS: Loaded image http://127.0.0.1:8080/security/resources/abe-allow-star.php?allowCache from localhost:8000 (crossOrigin=anonymous)
 Test 7 PASS: Loaded image http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000 from localhost:8080
 Test 8 PASS: Did not load image http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000 from localhost:8080 (crossOrigin=anonymous)
-     
-     
+
+

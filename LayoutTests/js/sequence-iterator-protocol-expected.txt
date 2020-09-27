@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Using an array: 1,2,3,1,2,3
 CONSOLE MESSAGE: Using an iterator: 10,11,12,10,11,12
 CONSOLE MESSAGE: Using an array but with customized iteration (should be same as iterator): 10,11,12,10,11,12

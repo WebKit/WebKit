@@ -19,4 +19,4 @@ PASS document.anotherName is objectElement
 imageElement = document.createElement("img"); document.body.appendChild(imageElement); imageElement.setAttribute("name", "anotherName");
 PASS objectElement.parentNode.removeChild(objectElement); document.otherName is undefined.
 PASS document.anotherName is imageElement
- 
+

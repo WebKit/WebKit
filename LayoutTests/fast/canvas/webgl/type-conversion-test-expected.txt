@@ -351,7 +351,7 @@ PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
 PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
 PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
 
-testing type of Empty Array : value = 
+testing type of Empty Array : value =
 PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
 PASS context.blendColor(argument, argument, argument, argument) is undefined.
 PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.

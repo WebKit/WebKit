@@ -1,8 +1,8 @@
 
-PASS TextTrackCue should throw "TypeError" if the cue node is not a documentFragment 
-PASS TextTrackCue should throw "InvalidNodeTypeError" if passed an invalid documentFragment 
-PASS TextTrackCue should throw "InvalidNodeTypeError" if documentFragment has an invalid node 
-PASS TextTrackCue should throw "InvalidStateError" if documentFragment doesn't have 'cuebackground' and 'cue' nodes 
-PASS TextTrackCue should allow all valid node types 
-PASS Test TextTrackCue.getCueAsHTML() 
+PASS TextTrackCue should throw "TypeError" if the cue node is not a documentFragment
+PASS TextTrackCue should throw "InvalidNodeTypeError" if passed an invalid documentFragment
+PASS TextTrackCue should throw "InvalidNodeTypeError" if documentFragment has an invalid node
+PASS TextTrackCue should throw "InvalidStateError" if documentFragment doesn't have 'cuebackground' and 'cue' nodes
+PASS TextTrackCue should allow all valid node types
+PASS Test TextTrackCue.getCueAsHTML()
 

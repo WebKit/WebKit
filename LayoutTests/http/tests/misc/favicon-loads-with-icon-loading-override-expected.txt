@@ -3,5 +3,5 @@ http://127.0.0.1:8000/misc/favicon-loads-with-icon-loading-override.html - willS
 http://127.0.0.1:8000/misc/favicon-loads-with-icon-loading-override.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/favicon-loads-with-icon-loading-override.html, http status code 200>
 http://127.0.0.1:8000/misc/resources/favicon.ico - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/favicon.ico, main document URL http://127.0.0.1:8000/misc/favicon-loads-with-icon-loading-override.html, http method GET> redirectResponse (null)
 https://bugs.webkit.org/show_bug.cgi?id=58292 - Provide new setting to allow site icon loading despite disabling automatic image loading in general.
-Resource load callbacks will reveal if the favicon still gets loaded if automatic image loading is disabled, but site icon image loading override is enabled. 
+Resource load callbacks will reveal if the favicon still gets loaded if automatic image loading is disabled, but site icon image loading override is enabled.
 

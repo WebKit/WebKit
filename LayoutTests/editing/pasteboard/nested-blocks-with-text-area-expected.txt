@@ -27,7 +27,7 @@ These demonstrate 11475: the '\n's at the end of the fragment should be unrender
 |         <div>
 |           contenteditable="plaintext-only"
 |           " "
-|     " 
+|     "
 x<#selection-caret>
 "
 | "

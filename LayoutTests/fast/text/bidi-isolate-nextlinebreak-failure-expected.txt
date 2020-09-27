@@ -1,2 +1,2 @@
-This tests having an inline element with -webkit-isolate immediately following BR. WebKit should not hit an assertion. 
+This tests having an inline element with -webkit-isolate immediately following BR. WebKit should not hit an assertion.
 

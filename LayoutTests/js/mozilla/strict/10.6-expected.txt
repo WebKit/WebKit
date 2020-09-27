@@ -118,7 +118,7 @@ Object.defineProperties(arguments, {1: { writable: false },
 return (delete arguments[3]);
 })(0, 1, 2, 3); is false
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -2,7 +2,7 @@ CONSOLE MESSAGE: testDNSLookup: Test started.
 CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. (kCFErrorDomainCFNetwork error 2.)
 CONSOLE MESSAGE: testDNSLookup: onclose is called.
 CONSOLE MESSAGE: testSSLCertificate: Test started.
-CONSOLE MESSAGE: WebSocket network error: OSStatus Error -9807: Invalid certificate chain 
+CONSOLE MESSAGE: WebSocket network error: OSStatus Error -9807: Invalid certificate chain
 CONSOLE MESSAGE: testSSLCertificate: onclose is called.
 WebSocket's network errors should be logged to console.
 

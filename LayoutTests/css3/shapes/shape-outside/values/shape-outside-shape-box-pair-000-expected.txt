@@ -1,18 +1,18 @@
 
-PASS polygon(nonzero, 1px 1px) content-box - inline 
-PASS polygon(nonzero, 1px 1px) padding-box - inline 
-PASS polygon(nonzero, 1px 1px) border-box - inline 
-PASS polygon(nonzero, 1px 1px) margin-box - inline 
-PASS  content-box polygon(nonzero, 1px 1px) - inline 
-PASS padding-box polygon(nonzero, 1px 1px) - inline 
-PASS border-box polygon(nonzero, 1px 1px) - inline 
-PASS margin-box polygon(nonzero, 1px 1px) - inline 
-PASS polygon(nonzero, 1px 1px) content-box - computed 
-PASS polygon(nonzero, 1px 1px) padding-box - computed 
-PASS polygon(nonzero, 1px 1px) border-box - computed 
-PASS polygon(nonzero, 1px 1px) margin-box - computed 
-PASS  content-box polygon(nonzero, 1px 1px) - computed 
-PASS padding-box polygon(nonzero, 1px 1px) - computed 
-PASS border-box polygon(nonzero, 1px 1px) - computed 
-PASS margin-box polygon(nonzero, 1px 1px) - computed 
+PASS polygon(nonzero, 1px 1px) content-box - inline
+PASS polygon(nonzero, 1px 1px) padding-box - inline
+PASS polygon(nonzero, 1px 1px) border-box - inline
+PASS polygon(nonzero, 1px 1px) margin-box - inline
+PASS  content-box polygon(nonzero, 1px 1px) - inline
+PASS padding-box polygon(nonzero, 1px 1px) - inline
+PASS border-box polygon(nonzero, 1px 1px) - inline
+PASS margin-box polygon(nonzero, 1px 1px) - inline
+PASS polygon(nonzero, 1px 1px) content-box - computed
+PASS polygon(nonzero, 1px 1px) padding-box - computed
+PASS polygon(nonzero, 1px 1px) border-box - computed
+PASS polygon(nonzero, 1px 1px) margin-box - computed
+PASS  content-box polygon(nonzero, 1px 1px) - computed
+PASS padding-box polygon(nonzero, 1px 1px) - computed
+PASS border-box polygon(nonzero, 1px 1px) - computed
+PASS margin-box polygon(nonzero, 1px 1px) - computed
 

@@ -33,7 +33,7 @@ PAUSE AT entry:10:5
  ->   9        |alert(2); // Set an autoContinue breakpoint on this line.
      10        alert(3);
      11    }
-     12    
+     12
 
 PAUSE AT entry:11:5
       7        debugger;
@@ -41,7 +41,7 @@ PAUSE AT entry:11:5
       9        alert(2); // Set an autoContinue breakpoint on this line.
  ->  10        |alert(3);
      11    }
-     12    
+     12
      13    // ---------
 
 PAUSE AT entry:12:2
@@ -49,9 +49,9 @@ PAUSE AT entry:12:2
       9        alert(2); // Set an autoContinue breakpoint on this line.
      10        alert(3);
  ->  11    }|
-     12    
+     12
      13    // ---------
-     14    
+     14
 
 RESUMED
 

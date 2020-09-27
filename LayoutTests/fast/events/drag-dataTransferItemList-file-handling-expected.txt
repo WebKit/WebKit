@@ -1,4 +1,4 @@
-To manually test, select a text file for the file input element, and then drag 'Drag Me' to 'Drop Here' and drop. Several lines that say 'PASS' should appear below. 
+To manually test, select a text file for the file input element, and then drag 'Drag Me' to 'Drop Here' and drop. Several lines that say 'PASS' should appear below.
 
 Drag Me
 Drop Here

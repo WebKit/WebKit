@@ -1,6 +1,6 @@
 
-PASS HTMLElement should have ontransitionend event handler. 
-PASS Window should have ontransitionend event handler. 
-PASS SVGElement should have ontransitionend event handler. 
-PASS Document should have ontransitionend event handler. 
+PASS HTMLElement should have ontransitionend event handler.
+PASS Window should have ontransitionend event handler.
+PASS SVGElement should have ontransitionend event handler.
+PASS Document should have ontransitionend event handler.
 

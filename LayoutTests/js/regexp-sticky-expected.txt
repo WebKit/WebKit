@@ -7,7 +7,7 @@ PASS Repeating Pattern
 PASS Test lastIndex resets
 PASS Ignore Case
 PASS Alternates, differing lengths long to short
-PASS Alternates, differing lengths long to short with mutliple matches 
+PASS Alternates, differing lengths long to short with mutliple matches
 PASS Alternates, differing lengths, short to long
 PASS BOL Anchored, starting at 0
 PASS BOL Anchored, starting at 1

@@ -1,4 +1,4 @@
-    
+
 This tests that menu lists that are disabled will not be triggered by AXPress actions.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

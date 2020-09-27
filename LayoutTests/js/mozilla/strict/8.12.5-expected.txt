@@ -46,7 +46,7 @@ PASS true === true
 PASS 'use strict'; --arr()[1] threw exception of type TypeError.
 PASS --arr()[1] is 0
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

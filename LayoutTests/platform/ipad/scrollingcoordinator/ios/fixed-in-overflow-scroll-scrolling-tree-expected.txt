@@ -4,7 +4,7 @@
     (scrollable area size width=768 height=1004)
     (total content size width=768 height=1004)
     (last committed scroll position (0,0))
-    (scrollable area parameters 
+    (scrollable area parameters
       (horizontal scroll elasticity 1)
       (vertical scroll elasticity 1)
       (horizontal scrollbar mode 0)
@@ -17,14 +17,14 @@
       (scrollable area size width=300 height=300)
       (total content size width=300 height=800)
       (last committed scroll position (0,0))
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
         (has enabled vertical scrollbar 1)))
     (fixed node
-      (fixed constraints 
+      (fixed constraints
         (viewport-rect-at-last-layout (0,0) width=768 height=1004)
         (layer-position-at-last-layout (19,211)))
       (layer top left (19,211)))))

@@ -4,7 +4,7 @@ frame "<!--frame1-->" - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/notify-done-with-window-count.html 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/notify-done-with-window-count.html
 frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame

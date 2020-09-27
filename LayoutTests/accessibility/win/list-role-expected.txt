@@ -1,4 +1,4 @@
-This test verifies that, on Windows, lists return the "list" role. 
+This test verifies that, on Windows, lists return the "list" role.
 
 Bug 32736 - REGRESSION(r52233): MSAA: Accessibility role of lists is wrong
 

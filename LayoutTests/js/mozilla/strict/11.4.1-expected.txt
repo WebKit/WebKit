@@ -13,7 +13,7 @@ PASS true === true
 PASS Function("'use strict'; function f() { \"use strict\"; delete x; }") threw exception of type SyntaxError.
 PASS Function("function f() { \"use strict\"; delete x; }") threw exception of type SyntaxError.
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

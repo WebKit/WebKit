@@ -24,7 +24,7 @@ PASS data[0] is 255
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is around 64
- 
+
 Verifying blurry shadow...
 PASS data[0] is 0
 PASS data[1] is 0
@@ -46,7 +46,7 @@ PASS data[0] is 255
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is around 31
- 
+
 Verifying rotated alpha shadow...
 PASS data[0] is 0
 PASS data[1] is 0
@@ -68,7 +68,7 @@ PASS data[0] is 255
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is around 64
- 
+
 Verifying rotated blurry shadow...
 PASS data[0] is 0
 PASS data[1] is 0
@@ -90,7 +90,7 @@ PASS data[0] is 255
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is around 31
- 
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

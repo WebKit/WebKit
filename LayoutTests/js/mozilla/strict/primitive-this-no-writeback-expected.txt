@@ -11,7 +11,7 @@ PASS function () {
     return [this.m, this];
 }
 PASS s === s
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

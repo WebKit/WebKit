@@ -1,21 +1,21 @@
 
-PASS CredentialsContainer interface: existence and properties of interface object 
-PASS CredentialsContainer interface object length 
-PASS CredentialsContainer interface object name 
-PASS CredentialsContainer interface: existence and properties of interface prototype object 
-PASS CredentialsContainer interface: existence and properties of interface prototype object's "constructor" property 
-PASS CredentialsContainer interface: existence and properties of interface prototype object's @@unscopables property 
-PASS CredentialsContainer interface: operation get(optional CredentialRequestOptions) 
-PASS CredentialsContainer interface: operation store(Credential) 
-PASS CredentialsContainer interface: operation create(optional CredentialCreationOptions) 
-PASS CredentialsContainer interface: operation preventSilentAccess() 
-PASS CredentialsContainer must be primary interface of navigator.credentials 
-PASS Stringification of navigator.credentials 
-PASS CredentialsContainer interface: navigator.credentials must inherit property "get(optional CredentialRequestOptions)" with the proper type 
-PASS CredentialsContainer interface: calling get(optional CredentialRequestOptions) on navigator.credentials with too few arguments must throw TypeError 
-PASS CredentialsContainer interface: navigator.credentials must inherit property "store(Credential)" with the proper type 
-PASS CredentialsContainer interface: calling store(Credential) on navigator.credentials with too few arguments must throw TypeError 
-PASS CredentialsContainer interface: navigator.credentials must inherit property "create(optional CredentialCreationOptions)" with the proper type 
-PASS CredentialsContainer interface: calling create(optional CredentialCreationOptions) on navigator.credentials with too few arguments must throw TypeError 
-PASS CredentialsContainer interface: navigator.credentials must inherit property "preventSilentAccess()" with the proper type 
+PASS CredentialsContainer interface: existence and properties of interface object
+PASS CredentialsContainer interface object length
+PASS CredentialsContainer interface object name
+PASS CredentialsContainer interface: existence and properties of interface prototype object
+PASS CredentialsContainer interface: existence and properties of interface prototype object's "constructor" property
+PASS CredentialsContainer interface: existence and properties of interface prototype object's @@unscopables property
+PASS CredentialsContainer interface: operation get(optional CredentialRequestOptions)
+PASS CredentialsContainer interface: operation store(Credential)
+PASS CredentialsContainer interface: operation create(optional CredentialCreationOptions)
+PASS CredentialsContainer interface: operation preventSilentAccess()
+PASS CredentialsContainer must be primary interface of navigator.credentials
+PASS Stringification of navigator.credentials
+PASS CredentialsContainer interface: navigator.credentials must inherit property "get(optional CredentialRequestOptions)" with the proper type
+PASS CredentialsContainer interface: calling get(optional CredentialRequestOptions) on navigator.credentials with too few arguments must throw TypeError
+PASS CredentialsContainer interface: navigator.credentials must inherit property "store(Credential)" with the proper type
+PASS CredentialsContainer interface: calling store(Credential) on navigator.credentials with too few arguments must throw TypeError
+PASS CredentialsContainer interface: navigator.credentials must inherit property "create(optional CredentialCreationOptions)" with the proper type
+PASS CredentialsContainer interface: calling create(optional CredentialCreationOptions) on navigator.credentials with too few arguments must throw TypeError
+PASS CredentialsContainer interface: navigator.credentials must inherit property "preventSilentAccess()" with the proper type
 

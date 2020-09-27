@@ -1,6 +1,6 @@
 
-PASS Set-up test 
-PASS Test that frame counter increases 
-PASS Test replaceTrack with null track 
-PASS Test that frame counter no longer increases 
+PASS Set-up test
+PASS Test that frame counter increases
+PASS Test replaceTrack with null track
+PASS Test that frame counter no longer increases
 

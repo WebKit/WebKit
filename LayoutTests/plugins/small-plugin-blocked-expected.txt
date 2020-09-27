@@ -14,4 +14,4 @@ This tests that small plugins are blocked
 
 6x1 is RUNNING
 
-      
+

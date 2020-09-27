@@ -1,6 +1,6 @@
-Tests: 
+Tests:
 ctrl-a, ctrl-k, and ctrl-y
-Expected Results: 
+Expected Results:
 
 one two three four five
 one five two three four

@@ -3,7 +3,7 @@ This test checks if checkValidity() invoked on a form control correctly asks its
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-  
+
 PASS Invalid control
 PASS Invalid control
 PASS Invalid control

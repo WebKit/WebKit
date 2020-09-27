@@ -7,13 +7,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 widget.title is AXTitle: One
-widget.description is AXDescription: 
+widget.description is AXDescription:
 widget.childrenCount is 0
 widget.title is AXTitle: Two
-widget.description is AXDescription: 
+widget.description is AXDescription:
 widget.childrenCount is 0
 widget.title is AXTitle: foo
-widget.description is AXDescription: 
+widget.description is AXDescription:
 widget.childrenCount is 0
 PASS successfullyParsed is true
 

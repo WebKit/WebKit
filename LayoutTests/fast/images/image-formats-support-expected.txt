@@ -10,4 +10,4 @@ PASS isSupported('resources/100x100-red-tga-renamed.png') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
-      
+

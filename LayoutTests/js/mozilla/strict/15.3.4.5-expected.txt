@@ -1,6 +1,6 @@
 PASS true === true
 PASS 42 === 42
-PASS  === 
+PASS  ===
 PASS null === null
 PASS undefined === undefined
 PASS [object Object] === [object Object]
@@ -10,7 +10,7 @@ PASS true === true
 PASS [object Window] === [object Window]
 PASS [object Window] === [object Window]
 PASS [object Object] === [object Object]
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

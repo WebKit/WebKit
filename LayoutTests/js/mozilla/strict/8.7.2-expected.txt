@@ -14,7 +14,7 @@ PASS with(obj()) { (function () { 'use strict'; x--; })(); } threw exception of 
 PASS true === true
 PASS with(obj()) { (function () { 'use strict'; --x; })(); } threw exception of type TypeError.
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

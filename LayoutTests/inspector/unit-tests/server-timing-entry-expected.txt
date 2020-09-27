@@ -488,7 +488,7 @@ PASS: name is "metric"
 PASS: duration is 0
 PASS: description is undefined
 
-WARN: Unknown Server-Timing parameter: foo 
+WARN: Unknown Server-Timing parameter: foo
 Testing response header: -->metric;foo dur=12<--
 PASS: Parsed ServerTimingEntry count has expected results count of 1.
 PASS: name is "metric"

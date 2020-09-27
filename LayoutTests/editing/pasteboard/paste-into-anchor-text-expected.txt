@@ -4,6 +4,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > A > TD > TR > TBODY > TABLE > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 5 of #text > B > A > TD > TR > TBODY > TABLE > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > B > A > TD > TR > TBODY > TABLE > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 16 of #text > B > A > TD > TR > TBODY > TABLE > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-  
+
 Canton Repository (subscription)                                                      	all 7hello world9 news articles                                                      	
 

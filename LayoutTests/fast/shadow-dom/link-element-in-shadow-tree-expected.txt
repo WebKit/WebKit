@@ -1,10 +1,10 @@
 
-PASS Link elements should load stylesheets inside a connected shadow tree with closed mode 
-PASS Link elements should load stylesheets inside a connected shadow tree with open mode 
-PASS Link elements must not load stylesheets inside a disconnceted shadow tree with closed mode 
-PASS Link elements must not load stylesheets inside a disconnceted shadow tree with open mode 
-PASS Style rules loaded inside a shadow tree with closed mode must apply to a div in the shadow tree 
-PASS Style rules loaded inside a shadow tree with open mode must apply to a div in the shadow tree 
-PASS :host style rules loaded inside a shadow tree with closed mode must apply to the host element 
-PASS :host style rules loaded inside a shadow tree with open mode must apply to the host element 
+PASS Link elements should load stylesheets inside a connected shadow tree with closed mode
+PASS Link elements should load stylesheets inside a connected shadow tree with open mode
+PASS Link elements must not load stylesheets inside a disconnceted shadow tree with closed mode
+PASS Link elements must not load stylesheets inside a disconnceted shadow tree with open mode
+PASS Style rules loaded inside a shadow tree with closed mode must apply to a div in the shadow tree
+PASS Style rules loaded inside a shadow tree with open mode must apply to a div in the shadow tree
+PASS :host style rules loaded inside a shadow tree with closed mode must apply to the host element
+PASS :host style rules loaded inside a shadow tree with open mode must apply to the host element
 

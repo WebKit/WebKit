@@ -5,70 +5,70 @@ Description
 This test verifies that the implementations of the WebAuthN API match with its WebIDL definition.
 
 
-PASS Setup for WebAuthN API IDL tests. 
-PASS Partial dictionary CredentialCreationOptions: original dictionary defined 
-PASS Partial dictionary CredentialCreationOptions: member names are unique 
-PASS Partial dictionary CredentialRequestOptions: original dictionary defined 
-PASS Partial dictionary CredentialRequestOptions: member names are unique 
-PASS Partial interface PublicKeyCredential: original interface defined 
-PASS Partial interface PublicKeyCredential: member names are unique 
-PASS Credential interface: existence and properties of interface object 
-PASS Credential interface object length 
-PASS Credential interface object name 
-PASS Credential interface: existence and properties of interface prototype object 
-PASS Credential interface: existence and properties of interface prototype object's "constructor" property 
-PASS Credential interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Credential interface: attribute id 
-PASS Credential interface: attribute type 
-PASS PublicKeyCredential interface: existence and properties of interface object 
-PASS PublicKeyCredential interface object length 
-PASS PublicKeyCredential interface object name 
-PASS PublicKeyCredential interface: existence and properties of interface prototype object 
-PASS PublicKeyCredential interface: existence and properties of interface prototype object's "constructor" property 
-PASS PublicKeyCredential interface: existence and properties of interface prototype object's @@unscopables property 
-PASS PublicKeyCredential interface: attribute rawId 
-PASS PublicKeyCredential interface: attribute response 
-PASS PublicKeyCredential interface: operation getClientExtensionResults() 
-PASS PublicKeyCredential interface: operation isUserVerifyingPlatformAuthenticatorAvailable() 
-PASS PublicKeyCredential must be primary interface of createdCredential 
-PASS Stringification of createdCredential 
-PASS PublicKeyCredential interface: createdCredential must inherit property "rawId" with the proper type 
-PASS PublicKeyCredential interface: createdCredential must inherit property "response" with the proper type 
-PASS PublicKeyCredential interface: createdCredential must inherit property "getClientExtensionResults()" with the proper type 
-PASS PublicKeyCredential interface: createdCredential must inherit property "isUserVerifyingPlatformAuthenticatorAvailable()" with the proper type 
-PASS Credential interface: createdCredential must inherit property "id" with the proper type 
-PASS Credential interface: createdCredential must inherit property "type" with the proper type 
-PASS AuthenticatorResponse interface: existence and properties of interface object 
-PASS AuthenticatorResponse interface object length 
-PASS AuthenticatorResponse interface object name 
-PASS AuthenticatorResponse interface: existence and properties of interface prototype object 
-PASS AuthenticatorResponse interface: existence and properties of interface prototype object's "constructor" property 
-PASS AuthenticatorResponse interface: existence and properties of interface prototype object's @@unscopables property 
-PASS AuthenticatorResponse interface: attribute clientDataJSON 
-PASS AuthenticatorAttestationResponse interface: existence and properties of interface object 
-PASS AuthenticatorAttestationResponse interface object length 
-PASS AuthenticatorAttestationResponse interface object name 
-PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object 
-PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object's "constructor" property 
-PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object's @@unscopables property 
-PASS AuthenticatorAttestationResponse interface: attribute attestationObject 
-PASS AuthenticatorAttestationResponse must be primary interface of createdCredential.response 
-PASS Stringification of createdCredential.response 
-PASS AuthenticatorAttestationResponse interface: createdCredential.response must inherit property "attestationObject" with the proper type 
-PASS AuthenticatorResponse interface: createdCredential.response must inherit property "clientDataJSON" with the proper type 
-PASS AuthenticatorAssertionResponse interface: existence and properties of interface object 
-PASS AuthenticatorAssertionResponse interface object length 
-PASS AuthenticatorAssertionResponse interface object name 
-PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object 
-PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object's "constructor" property 
-PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object's @@unscopables property 
-PASS AuthenticatorAssertionResponse interface: attribute authenticatorData 
-PASS AuthenticatorAssertionResponse interface: attribute signature 
-PASS AuthenticatorAssertionResponse interface: attribute userHandle 
-PASS AuthenticatorAssertionResponse must be primary interface of requestedCredential.response 
-PASS Stringification of requestedCredential.response 
-PASS AuthenticatorAssertionResponse interface: requestedCredential.response must inherit property "authenticatorData" with the proper type 
-PASS AuthenticatorAssertionResponse interface: requestedCredential.response must inherit property "signature" with the proper type 
+PASS Setup for WebAuthN API IDL tests.
+PASS Partial dictionary CredentialCreationOptions: original dictionary defined
+PASS Partial dictionary CredentialCreationOptions: member names are unique
+PASS Partial dictionary CredentialRequestOptions: original dictionary defined
+PASS Partial dictionary CredentialRequestOptions: member names are unique
+PASS Partial interface PublicKeyCredential: original interface defined
+PASS Partial interface PublicKeyCredential: member names are unique
+PASS Credential interface: existence and properties of interface object
+PASS Credential interface object length
+PASS Credential interface object name
+PASS Credential interface: existence and properties of interface prototype object
+PASS Credential interface: existence and properties of interface prototype object's "constructor" property
+PASS Credential interface: existence and properties of interface prototype object's @@unscopables property
+PASS Credential interface: attribute id
+PASS Credential interface: attribute type
+PASS PublicKeyCredential interface: existence and properties of interface object
+PASS PublicKeyCredential interface object length
+PASS PublicKeyCredential interface object name
+PASS PublicKeyCredential interface: existence and properties of interface prototype object
+PASS PublicKeyCredential interface: existence and properties of interface prototype object's "constructor" property
+PASS PublicKeyCredential interface: existence and properties of interface prototype object's @@unscopables property
+PASS PublicKeyCredential interface: attribute rawId
+PASS PublicKeyCredential interface: attribute response
+PASS PublicKeyCredential interface: operation getClientExtensionResults()
+PASS PublicKeyCredential interface: operation isUserVerifyingPlatformAuthenticatorAvailable()
+PASS PublicKeyCredential must be primary interface of createdCredential
+PASS Stringification of createdCredential
+PASS PublicKeyCredential interface: createdCredential must inherit property "rawId" with the proper type
+PASS PublicKeyCredential interface: createdCredential must inherit property "response" with the proper type
+PASS PublicKeyCredential interface: createdCredential must inherit property "getClientExtensionResults()" with the proper type
+PASS PublicKeyCredential interface: createdCredential must inherit property "isUserVerifyingPlatformAuthenticatorAvailable()" with the proper type
+PASS Credential interface: createdCredential must inherit property "id" with the proper type
+PASS Credential interface: createdCredential must inherit property "type" with the proper type
+PASS AuthenticatorResponse interface: existence and properties of interface object
+PASS AuthenticatorResponse interface object length
+PASS AuthenticatorResponse interface object name
+PASS AuthenticatorResponse interface: existence and properties of interface prototype object
+PASS AuthenticatorResponse interface: existence and properties of interface prototype object's "constructor" property
+PASS AuthenticatorResponse interface: existence and properties of interface prototype object's @@unscopables property
+PASS AuthenticatorResponse interface: attribute clientDataJSON
+PASS AuthenticatorAttestationResponse interface: existence and properties of interface object
+PASS AuthenticatorAttestationResponse interface object length
+PASS AuthenticatorAttestationResponse interface object name
+PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object
+PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object's "constructor" property
+PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object's @@unscopables property
+PASS AuthenticatorAttestationResponse interface: attribute attestationObject
+PASS AuthenticatorAttestationResponse must be primary interface of createdCredential.response
+PASS Stringification of createdCredential.response
+PASS AuthenticatorAttestationResponse interface: createdCredential.response must inherit property "attestationObject" with the proper type
+PASS AuthenticatorResponse interface: createdCredential.response must inherit property "clientDataJSON" with the proper type
+PASS AuthenticatorAssertionResponse interface: existence and properties of interface object
+PASS AuthenticatorAssertionResponse interface object length
+PASS AuthenticatorAssertionResponse interface object name
+PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object
+PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object's "constructor" property
+PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object's @@unscopables property
+PASS AuthenticatorAssertionResponse interface: attribute authenticatorData
+PASS AuthenticatorAssertionResponse interface: attribute signature
+PASS AuthenticatorAssertionResponse interface: attribute userHandle
+PASS AuthenticatorAssertionResponse must be primary interface of requestedCredential.response
+PASS Stringification of requestedCredential.response
+PASS AuthenticatorAssertionResponse interface: requestedCredential.response must inherit property "authenticatorData" with the proper type
+PASS AuthenticatorAssertionResponse interface: requestedCredential.response must inherit property "signature" with the proper type
 FAIL AuthenticatorAssertionResponse interface: requestedCredential.response must inherit property "userHandle" with the proper type assert_true: wrong type: not a ArrayBuffer expected true got false
-PASS AuthenticatorResponse interface: requestedCredential.response must inherit property "clientDataJSON" with the proper type 
+PASS AuthenticatorResponse interface: requestedCredential.response must inherit property "clientDataJSON" with the proper type
 

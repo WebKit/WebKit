@@ -1,7 +1,7 @@
 Test passes if it does not induce a crash.
 
-PASS , creating the cue 
+PASS , creating the cue
 FAIL , > assert_false: hasChildNodes() expected false got true
-PASS ,  
-PASS , x\0 
+PASS ,
+PASS , x\0
 

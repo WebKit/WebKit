@@ -8,4 +8,4 @@ PASS document.activeElement is select
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Focus the offscreen select 
+Focus the offscreen select

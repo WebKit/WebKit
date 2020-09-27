@@ -1,4 +1,4 @@
 
-PASS Ensure fetch is not speculatively loaded 
-PASS Ensure XHR is not speculatively loaded 
+PASS Ensure fetch is not speculatively loaded
+PASS Ensure XHR is not speculatively loaded
 

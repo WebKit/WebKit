@@ -1,4 +1,4 @@
 
-PASS getterType 
-PASS setterType 
+PASS getterType
+PASS setterType
 

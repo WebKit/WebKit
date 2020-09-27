@@ -18,7 +18,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 
-Tests: 
+Tests:
 
 Bug fix for <rdar://problem/4180820> Erroneous spacing between lines introduced on paste
 

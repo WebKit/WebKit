@@ -9,9 +9,9 @@ EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY 
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of DIV > BODY > HTML > #document to 6 of DIV > BODY > HTML > #document toDOMRange:range from 23 of #text > DIV > DIV > BODY > HTML > #document to 23 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart delete when removing the last paragraph.
-Expected Results: 
+Expected Results:
 Extra newlines should be removed to maintin spacing between paragraphs. It should like this:
 Test paragraph.
 

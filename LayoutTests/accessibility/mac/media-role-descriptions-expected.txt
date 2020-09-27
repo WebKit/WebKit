@@ -1,4 +1,4 @@
- 
+
 This tests that video and audio tags are identified distinctly with their own subrole and role description
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,11 +7,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 AXRole: AXGroup
 AXSubrole: AXVideo
 AXRoleDescription: video playback
-AXTitle: 
+AXTitle:
 AXRole: AXGroup
 AXSubrole: AXAudio
 AXRoleDescription: audio playback
-AXTitle: 
+AXTitle:
 PASS successfullyParsed is true
 
 TEST COMPLETE

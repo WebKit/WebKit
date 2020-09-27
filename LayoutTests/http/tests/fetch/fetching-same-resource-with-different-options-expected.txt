@@ -7,6 +7,6 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/resources/download-
 CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/resources/download-json-with-delay.php?iteration=2&delay=100&cors=true&allowCache=true&test=4 due to access control checks.
 
-PASS Ensure cors checks work when loading in parallel the same resource with different modes 
-PASS Ensure cors checks work when loading successively the same resource with different modes 
+PASS Ensure cors checks work when loading in parallel the same resource with different modes
+PASS Ensure cors checks work when loading successively the same resource with different modes
 

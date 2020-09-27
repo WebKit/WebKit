@@ -1,15 +1,15 @@
 
-PASS Check orginal request's body after cloning 
-PASS Check cloned request's body 
-PASS Check request clone use structureClone for teed ReadableStreams (Int8Arraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Int16Arraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Int32Arraychunk) 
+PASS Check orginal request's body after cloning
+PASS Check cloned request's body
+PASS Check request clone use structureClone for teed ReadableStreams (Int8Arraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Int16Arraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Int32Arraychunk)
 FAIL Check request clone use structureClone for teed ReadableStreams (ArrayBufferchunk) assert_array_equals: Cloned buffer chunks have the same content value is object "[object ArrayBuffer]", expected array
-PASS Check request clone use structureClone for teed ReadableStreams (Uint8Arraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Uint8ClampedArraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Uint16Arraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Uint32Arraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Float32Arraychunk) 
-PASS Check request clone use structureClone for teed ReadableStreams (Float64Arraychunk) 
+PASS Check request clone use structureClone for teed ReadableStreams (Uint8Arraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Uint8ClampedArraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Uint16Arraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Uint32Arraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Float32Arraychunk)
+PASS Check request clone use structureClone for teed ReadableStreams (Float64Arraychunk)
 FAIL Check request clone use structureClone for teed ReadableStreams (DataViewchunk) assert_array_equals: Cloned buffer chunks have the same content value is object "[object DataView]", expected array
 

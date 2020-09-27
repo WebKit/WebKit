@@ -3,4 +3,4 @@ Trying to load and render in canvas sequentially the same image from different o
 
 PASS: Successfully retrieved image data.
 PASS: The image is not same-origin with this document.
-  
+

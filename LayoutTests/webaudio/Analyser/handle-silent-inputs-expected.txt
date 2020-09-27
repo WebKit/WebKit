@@ -1,48 +1,48 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "connected" 
-PASS Executing "auto-pull" 
-PASS Executing "timing" 
-PASS Audit report 
-PASS > [connected] Test handling of silent inputs 
-PASS   0: Analyser time data at time 0.5 contains only the constant 0. 
-PASS < [connected] All assertions passed. (total 1 assertions) 
-PASS > [auto-pull] Test handling of silent inputs 
-PASS   1: Analyser time data at time 0.5 contains only the constant 0. 
-PASS < [auto-pull] All assertions passed. (total 1 assertions) 
-PASS > [timing] Test shifting in of zeroes after source has stopped 
-PASS   At time 0.125 Analyser frames [0, 2048) contains only the constant 1. 
-PASS   At time 0.1328125 Analyser frames [0, 1920) contains only the constant 1. 
-PASS   At time 0.1328125 Analyser frames [1920, 2048) contains only the constant 0. 
-PASS   At time 0.140625 Analyser frames [0, 1792) contains only the constant 1. 
-PASS   At time 0.140625 Analyser frames [1792, 2048) contains only the constant 0. 
-PASS   At time 0.1484375 Analyser frames [0, 1664) contains only the constant 1. 
-PASS   At time 0.1484375 Analyser frames [1664, 2048) contains only the constant 0. 
-PASS   At time 0.15625 Analyser frames [0, 1536) contains only the constant 1. 
-PASS   At time 0.15625 Analyser frames [1536, 2048) contains only the constant 0. 
-PASS   At time 0.1640625 Analyser frames [0, 1408) contains only the constant 1. 
-PASS   At time 0.1640625 Analyser frames [1408, 2048) contains only the constant 0. 
-PASS   At time 0.171875 Analyser frames [0, 1280) contains only the constant 1. 
-PASS   At time 0.171875 Analyser frames [1280, 2048) contains only the constant 0. 
-PASS   At time 0.1796875 Analyser frames [0, 1152) contains only the constant 1. 
-PASS   At time 0.1796875 Analyser frames [1152, 2048) contains only the constant 0. 
-PASS   At time 0.1875 Analyser frames [0, 1024) contains only the constant 1. 
-PASS   At time 0.1875 Analyser frames [1024, 2048) contains only the constant 0. 
-PASS   At time 0.1953125 Analyser frames [0, 896) contains only the constant 1. 
-PASS   At time 0.1953125 Analyser frames [896, 2048) contains only the constant 0. 
-PASS   At time 0.203125 Analyser frames [0, 768) contains only the constant 1. 
-PASS   At time 0.203125 Analyser frames [768, 2048) contains only the constant 0. 
-PASS   At time 0.2109375 Analyser frames [0, 640) contains only the constant 1. 
-PASS   At time 0.2109375 Analyser frames [640, 2048) contains only the constant 0. 
-PASS   At time 0.21875 Analyser frames [0, 512) contains only the constant 1. 
-PASS   At time 0.21875 Analyser frames [512, 2048) contains only the constant 0. 
-PASS   At time 0.2265625 Analyser frames [0, 384) contains only the constant 1. 
-PASS   At time 0.2265625 Analyser frames [384, 2048) contains only the constant 0. 
-PASS   At time 0.234375 Analyser frames [0, 256) contains only the constant 1. 
-PASS   At time 0.234375 Analyser frames [256, 2048) contains only the constant 0. 
-PASS   At time 0.2421875 Analyser frames [0, 128) contains only the constant 1. 
-PASS   At time 0.2421875 Analyser frames [128, 2048) contains only the constant 0. 
-PASS   At time 0.25 Analyser frames [0, 2048) contains only the constant 0. 
-PASS < [timing] All assertions passed. (total 32 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "connected"
+PASS Executing "auto-pull"
+PASS Executing "timing"
+PASS Audit report
+PASS > [connected] Test handling of silent inputs
+PASS   0: Analyser time data at time 0.5 contains only the constant 0.
+PASS < [connected] All assertions passed. (total 1 assertions)
+PASS > [auto-pull] Test handling of silent inputs
+PASS   1: Analyser time data at time 0.5 contains only the constant 0.
+PASS < [auto-pull] All assertions passed. (total 1 assertions)
+PASS > [timing] Test shifting in of zeroes after source has stopped
+PASS   At time 0.125 Analyser frames [0, 2048) contains only the constant 1.
+PASS   At time 0.1328125 Analyser frames [0, 1920) contains only the constant 1.
+PASS   At time 0.1328125 Analyser frames [1920, 2048) contains only the constant 0.
+PASS   At time 0.140625 Analyser frames [0, 1792) contains only the constant 1.
+PASS   At time 0.140625 Analyser frames [1792, 2048) contains only the constant 0.
+PASS   At time 0.1484375 Analyser frames [0, 1664) contains only the constant 1.
+PASS   At time 0.1484375 Analyser frames [1664, 2048) contains only the constant 0.
+PASS   At time 0.15625 Analyser frames [0, 1536) contains only the constant 1.
+PASS   At time 0.15625 Analyser frames [1536, 2048) contains only the constant 0.
+PASS   At time 0.1640625 Analyser frames [0, 1408) contains only the constant 1.
+PASS   At time 0.1640625 Analyser frames [1408, 2048) contains only the constant 0.
+PASS   At time 0.171875 Analyser frames [0, 1280) contains only the constant 1.
+PASS   At time 0.171875 Analyser frames [1280, 2048) contains only the constant 0.
+PASS   At time 0.1796875 Analyser frames [0, 1152) contains only the constant 1.
+PASS   At time 0.1796875 Analyser frames [1152, 2048) contains only the constant 0.
+PASS   At time 0.1875 Analyser frames [0, 1024) contains only the constant 1.
+PASS   At time 0.1875 Analyser frames [1024, 2048) contains only the constant 0.
+PASS   At time 0.1953125 Analyser frames [0, 896) contains only the constant 1.
+PASS   At time 0.1953125 Analyser frames [896, 2048) contains only the constant 0.
+PASS   At time 0.203125 Analyser frames [0, 768) contains only the constant 1.
+PASS   At time 0.203125 Analyser frames [768, 2048) contains only the constant 0.
+PASS   At time 0.2109375 Analyser frames [0, 640) contains only the constant 1.
+PASS   At time 0.2109375 Analyser frames [640, 2048) contains only the constant 0.
+PASS   At time 0.21875 Analyser frames [0, 512) contains only the constant 1.
+PASS   At time 0.21875 Analyser frames [512, 2048) contains only the constant 0.
+PASS   At time 0.2265625 Analyser frames [0, 384) contains only the constant 1.
+PASS   At time 0.2265625 Analyser frames [384, 2048) contains only the constant 0.
+PASS   At time 0.234375 Analyser frames [0, 256) contains only the constant 1.
+PASS   At time 0.234375 Analyser frames [256, 2048) contains only the constant 0.
+PASS   At time 0.2421875 Analyser frames [0, 128) contains only the constant 1.
+PASS   At time 0.2421875 Analyser frames [128, 2048) contains only the constant 0.
+PASS   At time 0.25 Analyser frames [0, 2048) contains only the constant 0.
+PASS < [timing] All assertions passed. (total 32 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

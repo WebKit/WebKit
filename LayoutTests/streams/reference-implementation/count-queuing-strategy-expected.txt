@@ -1,5 +1,5 @@
 
-PASS Can construct a writable stream with a valid CountQueuingStrategy 
+PASS Can construct a writable stream with a valid CountQueuingStrategy
 FAIL Correctly governs the value of a WritableStream's state property (HWM = 0) assert_equals: After 0 writes, 0 of which finished, state should be 'writable' expected (string) "writable" but got (undefined) undefined
 FAIL Correctly governs the value of a WritableStream's state property (HWM = 4) assert_equals: After 0 writes, 0 of which finished, state should be 'writable' expected (string) "writable" but got (undefined) undefined
 

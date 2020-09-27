@@ -1,11 +1,11 @@
 OPEN FILE PANEL
- 
 
-PASS Setup worker 
-PASS Setup frame 
-PASS Setup file to upload 
-PASS Setup file form data 
-PASS Upload not handled by service worker 
-PASS Upload intercepted by service worker 
-PASS Delete temporary file 
+
+PASS Setup worker
+PASS Setup frame
+PASS Setup file to upload
+PASS Setup file form data
+PASS Upload not handled by service worker
+PASS Upload intercepted by service worker
+PASS Delete temporary file
 

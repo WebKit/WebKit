@@ -2,8 +2,8 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
 
 #document
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     childNodeIds.length: 93
 
 
@@ -11,8 +11,8 @@ Total elements to be tested: 122.
 
 <div onclick="void(0);">click</div>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     mouseEventNodeId: exists
     parentNodeId: exists
 
@@ -27,8 +27,8 @@ Total elements to be tested: 122.
             <li role="treeitem">Tree Item Level 2</li>
         </ul>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     parentNodeId: exists
 
 <li role="treeitem">
@@ -53,7 +53,7 @@ Total elements to be tested: 122.
     </li>
 </ul>
     exists: true
-    label: 
+    label:
     role: tree
     childNodeIds.length: 1
     parentNodeId: exists
@@ -76,7 +76,7 @@ Total elements to be tested: 122.
             <li aria-level="2">List Item Level 2</li>
         </ol>
     exists: true
-    label: 
+    label:
     role: list
     childNodeIds.length: 1
     parentNodeId: exists
@@ -104,7 +104,7 @@ Total elements to be tested: 122.
     <li aria-level="1">List Item Level 1</li>
 </ul>
     exists: true
-    label: 
+    label:
     role: list
     childNodeIds.length: 2
     parentNodeId: exists
@@ -188,7 +188,7 @@ Total elements to be tested: 122.
     <li role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
     exists: true
-    label: 
+    label:
     role: tree
     activeDescendantNodeId: exists
     childNodeIds.length: 3
@@ -215,7 +215,7 @@ Total elements to be tested: 122.
     <div role="option" aria-selected="true">selected</div>
 </div>
     exists: true
-    label: 
+    label:
     role: listbox
     childNodeIds.length: 3
     parentNodeId: exists
@@ -240,7 +240,7 @@ Total elements to be tested: 122.
     <div role="tab" aria-selected="false">not selected</div>
 </div>
     exists: true
-    label: 
+    label:
     role: tablist
     childNodeIds.length: 2
     flowedNodeIds.length: 2
@@ -265,7 +265,7 @@ Total elements to be tested: 122.
     <div role="option" aria-selected="false">not selected</div>
 </div>
     exists: true
-    label: 
+    label:
     role: listbox
     childNodeIds.length: 2
     parentNodeId: exists
@@ -274,7 +274,7 @@ Total elements to be tested: 122.
 
 <input role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
     exists: true
-    label: 
+    label:
     role: combobox
     controlledNodeIds.length: 1
     expanded: false
@@ -287,7 +287,7 @@ Total elements to be tested: 122.
     <option>FOO</option>
 </select>
     exists: true
-    label: 
+    label:
     role: button
     focused: false
     required: false
@@ -295,18 +295,18 @@ Total elements to be tested: 122.
 
 <option>not selected</option>
     exists: false
-    label: 
-    role: 
+    label:
+    role:
 
 <option selected="">FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
     exists: false
-    label: 
-    role: 
+    label:
+    role:
 
 <img src="data:image/gif..." alt="x" style="display:none;">
     exists: false
-    label: 
-    role: 
+    label:
+    role:
 
 <img src="data:image/gif..." alt="x" aria-hidden="true">
     exists: true
@@ -323,30 +323,30 @@ Total elements to be tested: 122.
 
 <img src="data:image/gif..." alt="">
     exists: true
-    label: 
+    label:
     role: presentation
     ignored: true
 
 <img src="data:image/gif...">
     exists: true
-    label: 
+    label:
     role: img
 
 <img src="./404.gif">
     exists: true
-    label: 
+    label:
     role: presentation
     ignored: true
 
 <input style="display:none;">
     exists: false
-    label: 
-    role: 
+    label:
+    role:
 
 <input aria-hidden="true">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     ignored: true
     ignoredByDefault: true
@@ -387,7 +387,7 @@ Total elements to be tested: 122.
 
 <input type="radio" checked="">
     exists: true
-    label: 
+    label:
     role: radio
     checked: true
     focused: false
@@ -395,7 +395,7 @@ Total elements to be tested: 122.
 
 <input type="radio">
     exists: true
-    label: 
+    label:
     role: radio
     checked: false
     focused: false
@@ -403,13 +403,13 @@ Total elements to be tested: 122.
 
 <div role="doc-toc">doc-toc</div>
     exists: true
-    label: 
+    label:
     role: navigation
     parentNodeId: exists
 
 <div role="doc-tip">doc-tip</div>
     exists: true
-    label: 
+    label:
     role: note
     parentNodeId: exists
 
@@ -422,49 +422,49 @@ Total elements to be tested: 122.
 
 <div role="doc-qna">doc-qna</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-pullquote">doc-pullquote</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-prologue">doc-prologue</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-preface">doc-preface</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-part">doc-part</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-pagelist">doc-pagelist</div>
     exists: true
-    label: 
+    label:
     role: navigation
     parentNodeId: exists
 
 <div role="doc-pagebreak">doc-pagebreak</div>
     exists: true
-    label: 
+    label:
     role: separator
     parentNodeId: exists
 
 <div role="doc-notice">doc-notice</div>
     exists: true
-    label: 
+    label:
     role: note
     parentNodeId: exists
 
@@ -476,13 +476,13 @@ Total elements to be tested: 122.
 
 <div role="doc-introduction">doc-introduction</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-index">doc-index</div>
     exists: true
-    label: 
+    label:
     role: navigation
     parentNodeId: exists
 
@@ -494,49 +494,49 @@ Total elements to be tested: 122.
 
 <div role="doc-glossary">doc-glossary</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-foreword">doc-foreword</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-footnote">doc-footnote</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-example">doc-example</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-errata">doc-errata</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-epilogue">doc-epilogue</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-epigraph">doc-epigraph</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-endnotes">doc-endnotes</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
@@ -548,43 +548,43 @@ Total elements to be tested: 122.
 
 <div role="doc-dedication">doc-dedication</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-credits">doc-credits</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-credit">doc-credit</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-cover">doc-cover</div>
     exists: true
-    label: 
+    label:
     role: img
     parentNodeId: exists
 
 <div role="doc-conclusion">doc-conclusion</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-colophon">doc-colophon</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
 <div role="doc-chapter">doc-chapter</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
@@ -596,7 +596,7 @@ Total elements to be tested: 122.
 
 <div role="doc-bibliography">doc-bibliography</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
@@ -614,25 +614,25 @@ Total elements to be tested: 122.
 
 <div role="doc-appendix">doc-appendix</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-afterword">doc-afterword</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-acknowledgments">doc-acknowledgments</div>
     exists: true
-    label: 
+    label:
     role: region
     parentNodeId: exists
 
 <div role="doc-abstract">doc-abstract</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
@@ -670,7 +670,7 @@ Total elements to be tested: 122.
 
 <input type="checkbox" checked="">
     exists: true
-    label: 
+    label:
     role: checkbox
     checked: true
     focused: false
@@ -678,7 +678,7 @@ Total elements to be tested: 122.
 
 <input type="checkbox">
     exists: true
-    label: 
+    label:
     role: checkbox
     checked: false
     focused: false
@@ -686,8 +686,8 @@ Total elements to be tested: 122.
 
 <div role="textbox" tabindex="0" aria-disabled="true">disabled</div>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     disabled: true
     focused: false
     parentNodeId: exists
@@ -695,15 +695,15 @@ Total elements to be tested: 122.
 
 <input disabled="" value="disabled">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     disabled: true
     required: false
 
 <div role="textbox" tabindex="0" aria-readonly="true">readonly</div>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     parentNodeId: exists
     readonly: true
@@ -711,46 +711,46 @@ Total elements to be tested: 122.
 
 <input readonly="" value="readonly">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     readonly: true
     required: false
 
 <input aria-invalid="foo" value="fake value will eval to true">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     invalid: true
     required: false
 
 <input aria-invalid="spelling" value="invalid spelling">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     invalid: spelling
     required: false
 
 <input aria-required="true" value="required">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     required: true
 
 <input required="">
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     required: true
 
 <input>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     focused: false
     required: false
 
@@ -765,13 +765,13 @@ Total elements to be tested: 122.
 
 <input type="button">
     exists: true
-    label: 
+    label:
     role: button
     focused: false
 
 <button></button>
     exists: true
-    label: 
+    label:
     role: button
     focused: false
 
@@ -803,14 +803,14 @@ Total elements to be tested: 122.
 
 <div role="button" tabindex="0"></div>
     exists: true
-    label: 
+    label:
     role: button
     focused: false
     parentNodeId: exists
 
 <div role="group" aria-live="assertive" aria-atomic="true">assertive (and atomic)</div>
     exists: true
-    label: 
+    label:
     role: group
     liveRegionAtomic: true
     liveRegionRelevant: additions,text
@@ -819,7 +819,7 @@ Total elements to be tested: 122.
 
 <div role="group" aria-live="polite">polite</div>
     exists: true
-    label: 
+    label:
     role: group
     liveRegionAtomic: false
     liveRegionRelevant: additions,text
@@ -828,7 +828,7 @@ Total elements to be tested: 122.
 
 <div role="group" aria-live="off">off</div>
     exists: true
-    label: 
+    label:
     role: group
     parentNodeId: exists
 
@@ -837,7 +837,7 @@ Total elements to be tested: 122.
     <!-- For example, waiting for a script to load its contents. -->
 </div>
     exists: true
-    label: 
+    label:
     role: listbox
     busy: true
     parentNodeId: exists
@@ -845,8 +845,8 @@ Total elements to be tested: 122.
 
 <span aria-hidden="true"></span>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -854,16 +854,16 @@ Total elements to be tested: 122.
 
 <span></span>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     ignored: true
     ignoredByDefault: true
     parentNodeId: exists
 
 <div aria-hidden="true"></div>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -871,14 +871,14 @@ Total elements to be tested: 122.
 
 <div></div>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     ignored: true
     parentNodeId: exists
 
 <div role="presentation"><div></div></div>
     exists: true
-    label: 
+    label:
     role: presentation
     ignored: true
     parentNodeId: exists
@@ -893,27 +893,27 @@ Total elements to be tested: 122.
     <div></div>
 </div>
     exists: true
-    label: 
+    label:
     role: group
     childNodeIds.length: 2
     parentNodeId: exists
 
 <div><div></div></div>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     ignored: true
     parentNodeId: exists
 
 <script style="display:block;"></script>
     exists: true
-    label: 
-    role: 
+    label:
+    role:
     ignored: true
     parentNodeId: exists
 
 <script></script>
     exists: false
-    label: 
-    role: 
+    label:
+    role:
 

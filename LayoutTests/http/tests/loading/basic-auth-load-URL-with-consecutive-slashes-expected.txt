@@ -5,7 +5,7 @@ main frame - didFinishDocumentLoadForFrame
 http://127.0.0.1:8000/loading/resources/basic-auth-testing.php?username=webkit&password=rocks - didReceiveAuthenticationChallenge - Responding with webkit:rocks
 frame "<!--frame1-->" - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
-frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/a//b/non-existent-file.html 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/a//b/non-existent-file.html
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame

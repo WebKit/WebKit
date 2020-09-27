@@ -1,3 +1,3 @@
 
-PASS Testing that an element overlapping an element with touch-action: pan-y allows for scrolling while the touch-action: pan-y element correctly prevents scrolling in the x-axis. 
+PASS Testing that an element overlapping an element with touch-action: pan-y allows for scrolling while the touch-action: pan-y element correctly prevents scrolling in the x-axis.
 

@@ -1,5 +1,5 @@
 
-PASS shape-image-threshold can be assigned 'inherit' value 
+PASS shape-image-threshold can be assigned 'inherit' value
 FAIL shape-image-threshold is not inherited and defaults to 0 assert_equals: expected (object) null but got (string) ""
-PASS shape-margin is not inherited 
+PASS shape-margin is not inherited
 

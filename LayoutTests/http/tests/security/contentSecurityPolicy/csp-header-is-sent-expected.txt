@@ -1,4 +1,4 @@
 
-PASS CSP header is not sent on resource requests for which there is no policy. 
-PASS CSP header is not sent on resource requests for which there is a policy. 
+PASS CSP header is not sent on resource requests for which there is no policy.
+PASS CSP header is not sent on resource requests for which there is a policy.
 

@@ -10,7 +10,7 @@ PASS true === true
 PASS Function("'use strict'; --(eval)") threw exception of type SyntaxError.
 PASS !!Function("--(eval)") is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

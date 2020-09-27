@@ -118,4 +118,4 @@ Overwrite RTL text:
 |   "אא<#selection-caret>ℷℸ"
 
 console:
-| 
+|

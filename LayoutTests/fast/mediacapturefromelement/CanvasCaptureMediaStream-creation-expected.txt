@@ -1,5 +1,5 @@
 
-PASS check <canvas> captureStream(undefined) 
-PASS check <canvas> captureStream(0) 
-PASS check <canvas> captureStream(30) 
+PASS check <canvas> captureStream(undefined)
+PASS check <canvas> captureStream(0)
+PASS check <canvas> captureStream(30)
 

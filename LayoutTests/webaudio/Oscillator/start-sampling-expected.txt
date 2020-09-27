@@ -1,25 +1,25 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "basic test small" 
-PASS Executing "basic test big" 
-PASS Executing "diff big offset" 
-PASS Executing "diff small offset" 
-PASS Audit report 
-PASS > [basic test small] Start oscillator slightly past a sample frame 
-PASS   Oscillator.start(1.25 frames) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0001088,"relativeThreshold":0}. 
-PASS   Oscillator.start(1.25 frames): SNR (dB) is greater than or equal to 84.054. 
-PASS < [basic test small] All assertions passed. (total 2 assertions) 
-PASS > [basic test big] Start oscillator slightly before a sample frame 
-PASS   Oscillator.start(1.75 frames) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00010844,"relativeThreshold":0}. 
-PASS   Oscillator.start(1.75 frames): SNR (dB) is greater than or equal to 84.056. 
-PASS < [basic test big] All assertions passed. (total 2 assertions) 
-PASS > [diff big offset] Test sampling with start offset greater than 1/2 sampling frame 
-PASS   Sample rate 24000: Delayed cosine oscillator equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}. 
-PASS   Sample rate 24000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 128.12. 
-PASS < [diff big offset] All assertions passed. (total 2 assertions) 
-PASS > [diff small offset] Test sampling with start offset less than 1/2 sampling frame 
-PASS   Sample rate 48000: Delayed cosine oscillator equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}. 
-PASS   Sample rate 48000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 122.92. 
-PASS < [diff small offset] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "basic test small"
+PASS Executing "basic test big"
+PASS Executing "diff big offset"
+PASS Executing "diff small offset"
+PASS Audit report
+PASS > [basic test small] Start oscillator slightly past a sample frame
+PASS   Oscillator.start(1.25 frames) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0001088,"relativeThreshold":0}.
+PASS   Oscillator.start(1.25 frames): SNR (dB) is greater than or equal to 84.054.
+PASS < [basic test small] All assertions passed. (total 2 assertions)
+PASS > [basic test big] Start oscillator slightly before a sample frame
+PASS   Oscillator.start(1.75 frames) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00010844,"relativeThreshold":0}.
+PASS   Oscillator.start(1.75 frames): SNR (dB) is greater than or equal to 84.056.
+PASS < [basic test big] All assertions passed. (total 2 assertions)
+PASS > [diff big offset] Test sampling with start offset greater than 1/2 sampling frame
+PASS   Sample rate 24000: Delayed cosine oscillator equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}.
+PASS   Sample rate 24000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 128.12.
+PASS < [diff big offset] All assertions passed. (total 2 assertions)
+PASS > [diff small offset] Test sampling with start offset less than 1/2 sampling frame
+PASS   Sample rate 48000: Delayed cosine oscillator equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000019521,"relativeThreshold":0}.
+PASS   Sample rate 48000: Delayed cosine oscillator: SNR (dB) is greater than or equal to 122.92.
+PASS < [diff small offset] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

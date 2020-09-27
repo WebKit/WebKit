@@ -1,5 +1,5 @@
- 
- 
+
+
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the '-webkit-transform' on SVG element

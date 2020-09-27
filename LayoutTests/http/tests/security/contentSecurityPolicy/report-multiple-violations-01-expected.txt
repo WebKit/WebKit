@@ -5,4 +5,4 @@ CONSOLE MESSAGE: [Report Only] Refused to load the image 'http://127.0.0.1:8000/
 PingLoader dispatched to 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/does-not-exist'.
 This tests that multiple violations on a page trigger multiple reports. The test passes if two PingLoader callbacks are visible in the output.
 
-  
+

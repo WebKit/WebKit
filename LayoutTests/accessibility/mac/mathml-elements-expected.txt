@@ -33,7 +33,7 @@ over
 under
 over
 
-3	2	1 
+3	2	1
 This tests ensures that Mac specific attributes and roles for MathML elements work as expected.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

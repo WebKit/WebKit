@@ -1,6 +1,6 @@
 
-PASS Test that adding stylesheet with matching selector invalidates in document scope 
-PASS Test that adding stylesheet without matching selector does not invalidate in document scope 
-PASS Test that adding stylesheet with matching selector invalidates in shadow scope 
-PASS Test that adding stylesheet without matching selector does not invalidate in shadow scope 
+PASS Test that adding stylesheet with matching selector invalidates in document scope
+PASS Test that adding stylesheet without matching selector does not invalidate in document scope
+PASS Test that adding stylesheet with matching selector invalidates in shadow scope
+PASS Test that adding stylesheet without matching selector does not invalidate in shadow scope
 

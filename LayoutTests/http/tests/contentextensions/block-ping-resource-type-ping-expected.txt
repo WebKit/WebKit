@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/block-ping-resource-type-ping.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/save-ping.php?test=contentextensions-block-ping-resource-type-ping
 ALERT: PASS: successfully loaded ping url with fetch
-This test follows a link with a ping attribute where the ping URL matches a 'block' rule.  
+This test follows a link with a ping attribute where the ping URL matches a 'block' rule.
 
 --------
 Frame: 'link_frame'

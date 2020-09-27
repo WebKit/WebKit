@@ -3,5 +3,5 @@ This tests that a plugin should be snapshotted if it is partially covered by an 
 It additionally tests that we take transforms into account.
 
 PASS
- 
- 
+
+

@@ -1,3 +1,3 @@
 
-PASS Ensure image is not speculatively loaded after a reload 
+PASS Ensure image is not speculatively loaded after a reload
 

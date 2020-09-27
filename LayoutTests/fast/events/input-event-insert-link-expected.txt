@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 event.type = beforeinput
 event.inputType = insertText
-event.data = www.apple.com 
+event.data = www.apple.com
 event.type = beforeinput
 event.inputType = insertLink
 event.data = http://www.apple.com
 event.type = input
 event.inputType = insertText
-event.data = www.apple.com 
+event.data = www.apple.com
 event.type = input
 event.inputType = insertLink
 event.data = http://www.apple.com

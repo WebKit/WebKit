@@ -1,7 +1,7 @@
 
-PASS HTMLElement should have offset* DIL attributes 
-PASS offset* properties on HTMLElement prototype 
-PASS offset* properties not on Element prototype 
-PASS offset* properties not on SVGElement prototype 
-PASS SVGElement should not have offset* IDL attributes 
+PASS HTMLElement should have offset* DIL attributes
+PASS offset* properties on HTMLElement prototype
+PASS offset* properties not on Element prototype
+PASS offset* properties not on SVGElement prototype
+PASS SVGElement should not have offset* IDL attributes
 

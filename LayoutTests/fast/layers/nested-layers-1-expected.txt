@@ -1,3 +1,3 @@
-Test where every node has a layer and the containing block structure matches the layer structure exactly. 
+Test where every node has a layer and the containing block structure matches the layer structure exactly.
 The test passes if it completes without failing any assertions in Debug mode.
 

@@ -1,4 +1,4 @@
- 
+
 This page tests invoking as functions JavaScript objects that are provided by plugins.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

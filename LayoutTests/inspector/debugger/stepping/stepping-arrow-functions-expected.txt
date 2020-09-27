@@ -43,7 +43,7 @@ PAUSE AT entryArrowFunctionNoParenthesis:15:5
  ->  14        |addOne(1);
      15        square(2);
      16    }
-     17    
+     17
 
 ACTION: step-in
 PAUSE AT addOne:9:23
@@ -62,7 +62,7 @@ PAUSE AT entryArrowFunctionNoParenthesis:16:5
      14        addOne(1);
  ->  15        |square(2);
      16    }
-     17    
+     17
      18    function entryArrowFunctionParenthesis() {
 
 ACTION: step-in
@@ -91,7 +91,7 @@ PAUSE AT entryArrowFunctionNoParenthesis:17:2
      14        addOne(1);
      15        square(2);
  ->  16    }|
-     17    
+     17
      18    function entryArrowFunctionParenthesis() {
      19        let nothing = () => {};
 
@@ -125,7 +125,7 @@ PAUSE AT entryArrowFunctionParenthesis:27:5
 ACTION: step-in
 PAUSE AT nothing:20:27
      16    }
-     17    
+     17
      18    function entryArrowFunctionParenthesis() {
  ->  19        let nothing = () => {}|;
      20        let identity = (x) => x;
@@ -144,7 +144,7 @@ PAUSE AT entryArrowFunctionParenthesis:28:5
 
 ACTION: step-in
 PAUSE AT identity:21:27
-     17    
+     17
      18    function entryArrowFunctionParenthesis() {
      19        let nothing = () => {};
  ->  20        let identity = (x) => |x;
@@ -160,7 +160,7 @@ PAUSE AT entryArrowFunctionParenthesis:29:5
  ->  28        |add(1);
      29        square(2);
      30    }
-     31    
+     31
 
 ACTION: step-in
 PAUSE AT add:22:25
@@ -179,7 +179,7 @@ PAUSE AT entryArrowFunctionParenthesis:30:5
      28        add(1);
  ->  29        |square(2);
      30    }
-     31    
+     31
      32    // ---------
 
 ACTION: step-in
@@ -198,9 +198,9 @@ PAUSE AT entryArrowFunctionParenthesis:31:2
      28        add(1);
      29        square(2);
  ->  30    }|
-     31    
+     31
      32    // ---------
-     33    
+     33
 
 ACTION: resume
 RESUMED

@@ -1,4 +1,4 @@
-This test ensures the copied the newline is NOT inside the blockquote -- a '<div><div><br></div></div>' should be appended as the next sibling of the blockquote. 
+This test ensures the copied the newline is NOT inside the blockquote -- a '<div><div><br></div></div>' should be appended as the next sibling of the blockquote.
 
 | <div>
 |   id="copyDiv"

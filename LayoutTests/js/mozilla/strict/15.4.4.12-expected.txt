@@ -10,7 +10,7 @@ PASS true === true
 PASS 'use strict'; var o = ogap(); [Array.prototype.splice.call(o, 0, 1), o] threw exception of type TypeError.
 PASS var o = ogap(); [Array.prototype.splice.call(o, 0, 1), o] threw exception of type TypeError.
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

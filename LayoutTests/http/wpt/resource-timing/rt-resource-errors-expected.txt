@@ -4,6 +4,6 @@ CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/WebKit/resource-tim
 Resource Timing: Error cases
 
 
-PASS Content-Security-Policy rejections do not create entries 
-PASS CORS preflight failures do not create entries 
+PASS Content-Security-Policy rejections do not create entries
+PASS CORS preflight failures do not create entries
 

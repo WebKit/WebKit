@@ -1,16 +1,16 @@
 Valid methods per step-5 of http://xhr.spec.whatwg.org/#the-open()-method.
 
 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 1 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 2 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 3 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 4 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 5 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 6 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 7 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 8 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 9 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 10 
-PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 11 
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 1
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 2
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 3
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 4
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 5
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 6
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 7
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 8
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 9
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 10
+PASS XMLHttpRequest: open() - allowed case in/sensitive methods test 11
 

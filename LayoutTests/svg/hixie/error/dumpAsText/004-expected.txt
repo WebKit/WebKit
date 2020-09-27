@@ -10,6 +10,6 @@ This XML file does not appear to have any style information associated with it. 
       # Recommendation [XML-NS], an SVG namespace declaration must be
       # provided so that all SVG elements are identified as belonging
       # to the SVG namespace.
-  
+
 -->
 </svg>

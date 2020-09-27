@@ -12,14 +12,14 @@ EVENT(play)
 EVENT(loadedmetadata)
 buffered automatically OK
 
-Will load with 'preload=metadata', should buffer automatically 
+Will load with 'preload=metadata', should buffer automatically
 RUN(video.setAttribute('preload', 'metadata'))
 RUN(video.removeAttribute('autoplay'))
 EVENT(loadstart)
 EVENT(loadedmetadata)
 buffered automatically OK
 
-Will load with 'preload=auto', should buffer automatically 
+Will load with 'preload=auto', should buffer automatically
 RUN(video.setAttribute('preload', 'auto'))
 RUN(video.removeAttribute('autoplay'))
 EVENT(loadstart)

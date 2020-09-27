@@ -1,7 +1,7 @@
 This test loads a resource that sets a cookie, then verifies that the cookie is not sent out when it should be blocked.
 After the image, document.cookie is 'foo=awesomevalue'
 After the iframe, document.cookie is 'foo=awesomevalue'
- 
+
 
 --------
 Frame: 'iframe'

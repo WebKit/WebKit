@@ -1,10 +1,10 @@
 
-PASS Body text color is black, since the page isn't in dark mode 
-PASS View base background color is white, since the page isn't in dark mode 
-PASS Set dark appearance 
-PASS Body text color is black, since the page hasn't set a supported color scheme 
-PASS View base background color is white, since the page hasn't set a supported color scheme 
-PASS Set prefers-color-schemes: light dark on the body 
-PASS Body text color is white 
-PASS View base background color is a dark grey 
+PASS Body text color is black, since the page isn't in dark mode
+PASS View base background color is white, since the page isn't in dark mode
+PASS Set dark appearance
+PASS Body text color is black, since the page hasn't set a supported color scheme
+PASS View base background color is white, since the page hasn't set a supported color scheme
+PASS Set prefers-color-schemes: light dark on the body
+PASS Body text color is white
+PASS View base background color is a dark grey
 

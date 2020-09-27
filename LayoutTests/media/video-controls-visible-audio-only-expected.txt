@@ -4,7 +4,7 @@ This test only runs in DRT!
 
 mouse parks here, am I blue?
 
- 
+
 
 TEST(video.paused) OK
 TEST(!video.paused) OK

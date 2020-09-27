@@ -1,42 +1,42 @@
-ALERT: 
+ALERT:
 
 ALERT: Allowing all cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies
 ALERT: XHR response - Deleted all cookies
-ALERT: Test stage 1 document.cookie is: 
+ALERT: Test stage 1 document.cookie is:
 ALERT: Restricting to first party only cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie
 ALERT: XHR response - Set the foo cookie
-ALERT: Test stage 2 document.cookie is: 
-ALERT: 
+ALERT: Test stage 2 document.cookie is:
+ALERT:
 
 ALERT: Allowing all cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies
 ALERT: XHR response - Deleted all cookies
-ALERT: Test stage 3 document.cookie is: 
+ALERT: Test stage 3 document.cookie is:
 ALERT: Restricting to first party only cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooAndBarCookie
 ALERT: XHR response - Set the foo and bar cookies
-ALERT: Test stage 4 document.cookie is: 
-ALERT: 
+ALERT: Test stage 4 document.cookie is:
+ALERT:
 
 ALERT: Allowing all cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies
 ALERT: XHR response - Deleted all cookies
-ALERT: Test stage 5 document.cookie is: 
+ALERT: Test stage 5 document.cookie is:
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie
 ALERT: XHR response - Set the foo cookie
 ALERT: Test stage 6 document.cookie is: foo=awesomevalue
 ALERT: Restricting to first party only cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies
 ALERT: XHR response - Deleted all cookies
-ALERT: Test stage 7 document.cookie is: 
-ALERT: 
+ALERT: Test stage 7 document.cookie is:
+ALERT:
 
 ALERT: Allowing all cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies
 ALERT: XHR response - Deleted all cookies
-ALERT: Test stage 8 document.cookie is: 
+ALERT: Test stage 8 document.cookie is:
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie
 ALERT: XHR response - Set the foo cookie
 ALERT: Test stage 9 document.cookie is: foo=awesomevalue

@@ -1,5 +1,5 @@
 
-PASS Setup worker 
-PASS Test service worker navigator.userAgent 
-PASS Test service worker User-Agent header 
+PASS Setup worker
+PASS Test service worker navigator.userAgent
+PASS Test service worker User-Agent header
 

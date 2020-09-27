@@ -8,5 +8,5 @@ This is done by loading ten non-sandboxed IFrames, and a single sandboxed one. I
 
 This test will print "PASS" on success.
 
-                                
+
 PASS

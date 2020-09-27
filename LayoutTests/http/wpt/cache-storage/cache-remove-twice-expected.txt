@@ -1,6 +1,6 @@
 
 
-PASS Cleaning existing caches 
-PASS Removing the same cache from two different documents 
-PASS Cleaning added caches 
+PASS Cleaning existing caches
+PASS Removing the same cache from two different documents
+PASS Cleaning added caches
 

@@ -1,6 +1,6 @@
- 
 
-PASS Picture image has the light source selected 
-PASS Dark color scheme enabled 
-PASS Picture image has the dark source selected 
+
+PASS Picture image has the light source selected
+PASS Dark color scheme enabled
+PASS Picture image has the dark source selected
 

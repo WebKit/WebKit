@@ -2,26 +2,26 @@ CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 
-PASS Empty string integrity 
-PASS SHA-256 integrity 
-PASS SHA-384 integrity 
-PASS SHA-512 integrity 
-PASS Invalid integrity 
-PASS Unknown integrity 
-PASS Multiple integrities: valid stronger than invalid 
-PASS Multiple integrities: invalid stronger than valid 
-PASS Multiple integrities: invalid as strong as valid 
-PASS Multiple integrities: both are valid 
-PASS Multiple integrities: both are invalid 
-PASS Anonymous CORS empty integrity 
-PASS Anonymous CORS SHA-512 integrity 
-PASS Anonymous CORS invalid integrity 
-PASS Credential CORS empty integrity 
-PASS Credential CORS SHA-512 integrity 
-PASS Credential CORS invalid integrity 
-PASS Ineligible CORS empty integrity 
-PASS Ineligible CORS SHA-512 integrity 
-PASS Ineligible CORS invalid integrity 
-PASS SHA-256 integrity with 'no-cors' mode 
-PASS Resource with zero length body 
+PASS Empty string integrity
+PASS SHA-256 integrity
+PASS SHA-384 integrity
+PASS SHA-512 integrity
+PASS Invalid integrity
+PASS Unknown integrity
+PASS Multiple integrities: valid stronger than invalid
+PASS Multiple integrities: invalid stronger than valid
+PASS Multiple integrities: invalid as strong as valid
+PASS Multiple integrities: both are valid
+PASS Multiple integrities: both are invalid
+PASS Anonymous CORS empty integrity
+PASS Anonymous CORS SHA-512 integrity
+PASS Anonymous CORS invalid integrity
+PASS Credential CORS empty integrity
+PASS Credential CORS SHA-512 integrity
+PASS Credential CORS invalid integrity
+PASS Ineligible CORS empty integrity
+PASS Ineligible CORS SHA-512 integrity
+PASS Ineligible CORS invalid integrity
+PASS SHA-256 integrity with 'no-cors' mode
+PASS Resource with zero length body
 

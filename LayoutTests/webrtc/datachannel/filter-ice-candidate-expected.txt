@@ -1,4 +1,4 @@
 
-PASS Gathering ICE candidates from a data channel peer connection with ICE candidate filtering on 
-PASS Gathering ICE candidates from a data channel peer connection with ICE candidate filtering off 
+PASS Gathering ICE candidates from a data channel peer connection with ICE candidate filtering on
+PASS Gathering ICE candidates from a data channel peer connection with ICE candidate filtering off
 

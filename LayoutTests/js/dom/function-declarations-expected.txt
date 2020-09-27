@@ -1,6 +1,6 @@
 This page tests function declarations inside various block structures and control statements.
 
-Before executing blocks containing function declarations: 
+Before executing blocks containing function declarations:
 -----
 PASS: 'f1' in window should be true and is.
 PASS: 'f2' in window should be true and is.
@@ -12,7 +12,7 @@ PASS: 'f7' in window should be true and is.
 PASS: 'f8' in window should be true and is.
 PASS: 'f9' in window should be true and is.
 
-After executing blocks containing function declarations: 
+After executing blocks containing function declarations:
 -----
 PASS: 'f1' in window should be true and is.
 PASS: 'f2' in window should be true and is.

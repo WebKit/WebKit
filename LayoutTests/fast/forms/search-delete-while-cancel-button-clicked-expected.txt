@@ -1,5 +1,5 @@
-This tests that events don't continue to target a search cancel button if it is deleted while mouse is down. 
- 
+This tests that events don't continue to target a search cancel button if it is deleted while mouse is down.
+
 clicking in cancel
 
 deleting search input

@@ -1,4 +1,4 @@
 
-PASS @@iterator should only be accessed once, tested via replacement of @@iterator on instance. 
-PASS @@iterator should only be accessed once, tested via replacement of @@iterator on prototype. 
+PASS @@iterator should only be accessed once, tested via replacement of @@iterator on instance.
+PASS @@iterator should only be accessed once, tested via replacement of @@iterator on prototype.
 

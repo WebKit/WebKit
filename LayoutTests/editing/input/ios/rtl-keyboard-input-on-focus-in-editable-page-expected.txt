@@ -1,12 +1,12 @@
 
 
-Using Hebrew keyboard: 
+Using Hebrew keyboard:
     <div><br></div>
     <div style="direction: rtl;"><br></div>
 
 
 
-Using English keyboard: 
+Using English keyboard:
     <div><br></div>
     <div style="direction: ltr;"><br></div>
 

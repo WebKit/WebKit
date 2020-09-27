@@ -11,7 +11,7 @@ after undo:
 | "he<#selection-caret>llo"
 
 after node removal:
-| 
+|
 
 after redo:
 | <div>

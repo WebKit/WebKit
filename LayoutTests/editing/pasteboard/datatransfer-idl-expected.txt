@@ -1,36 +1,36 @@
 CONSOLE MESSAGE: callback not yet supported
 
-PASS DataTransfer interface: existence and properties of interface object 
-PASS DataTransfer interface object length 
-PASS DataTransfer interface object name 
-PASS DataTransfer interface: existence and properties of interface prototype object 
-PASS DataTransfer interface: existence and properties of interface prototype object's "constructor" property 
-PASS DataTransfer interface: attribute dropEffect 
-PASS DataTransfer interface: attribute effectAllowed 
-PASS DataTransfer interface: attribute items 
-PASS DataTransfer interface: operation setDragImage(Element,long,long) 
-PASS DataTransfer interface: attribute types 
-PASS DataTransfer interface: operation getData(DOMString) 
-PASS DataTransfer interface: operation setData(DOMString,DOMString) 
-PASS DataTransfer interface: operation clearData(DOMString) 
-PASS DataTransfer interface: attribute files 
-PASS DataTransferItemList interface: existence and properties of interface object 
-PASS DataTransferItemList interface object length 
-PASS DataTransferItemList interface object name 
-PASS DataTransferItemList interface: existence and properties of interface prototype object 
-PASS DataTransferItemList interface: existence and properties of interface prototype object's "constructor" property 
-PASS DataTransferItemList interface: attribute length 
-PASS DataTransferItemList interface: operation add(DOMString,DOMString) 
-PASS DataTransferItemList interface: operation add(File) 
-PASS DataTransferItemList interface: operation remove(unsigned long) 
-PASS DataTransferItemList interface: operation clear() 
-PASS DataTransferItem interface: existence and properties of interface object 
-PASS DataTransferItem interface object length 
-PASS DataTransferItem interface object name 
-PASS DataTransferItem interface: existence and properties of interface prototype object 
-PASS DataTransferItem interface: existence and properties of interface prototype object's "constructor" property 
-PASS DataTransferItem interface: attribute kind 
-PASS DataTransferItem interface: attribute type 
-PASS DataTransferItem interface: operation getAsString(FunctionStringCallback) 
-PASS DataTransferItem interface: operation getAsFile() 
+PASS DataTransfer interface: existence and properties of interface object
+PASS DataTransfer interface object length
+PASS DataTransfer interface object name
+PASS DataTransfer interface: existence and properties of interface prototype object
+PASS DataTransfer interface: existence and properties of interface prototype object's "constructor" property
+PASS DataTransfer interface: attribute dropEffect
+PASS DataTransfer interface: attribute effectAllowed
+PASS DataTransfer interface: attribute items
+PASS DataTransfer interface: operation setDragImage(Element,long,long)
+PASS DataTransfer interface: attribute types
+PASS DataTransfer interface: operation getData(DOMString)
+PASS DataTransfer interface: operation setData(DOMString,DOMString)
+PASS DataTransfer interface: operation clearData(DOMString)
+PASS DataTransfer interface: attribute files
+PASS DataTransferItemList interface: existence and properties of interface object
+PASS DataTransferItemList interface object length
+PASS DataTransferItemList interface object name
+PASS DataTransferItemList interface: existence and properties of interface prototype object
+PASS DataTransferItemList interface: existence and properties of interface prototype object's "constructor" property
+PASS DataTransferItemList interface: attribute length
+PASS DataTransferItemList interface: operation add(DOMString,DOMString)
+PASS DataTransferItemList interface: operation add(File)
+PASS DataTransferItemList interface: operation remove(unsigned long)
+PASS DataTransferItemList interface: operation clear()
+PASS DataTransferItem interface: existence and properties of interface object
+PASS DataTransferItem interface object length
+PASS DataTransferItem interface object name
+PASS DataTransferItem interface: existence and properties of interface prototype object
+PASS DataTransferItem interface: existence and properties of interface prototype object's "constructor" property
+PASS DataTransferItem interface: attribute kind
+PASS DataTransferItem interface: attribute type
+PASS DataTransferItem interface: operation getAsString(FunctionStringCallback)
+PASS DataTransferItem interface: operation getAsFile()
 

@@ -40,4 +40,4 @@ PASS onpointerlockchange received after: Lock with asynchronous success.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

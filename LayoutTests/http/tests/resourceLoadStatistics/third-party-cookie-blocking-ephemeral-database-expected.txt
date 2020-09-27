@@ -7,7 +7,7 @@ PASS Resource load statistics is running in ephemeral mode.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+
 
 --------
 Frame: '<!--frame1-->'

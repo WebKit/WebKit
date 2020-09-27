@@ -1,4 +1,4 @@
-Link  Button                
+Link  Button
 Focusable
 This test makes sure that focusable elements in canvas fallback content are focusable.
 

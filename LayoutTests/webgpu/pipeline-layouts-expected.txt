@@ -1,4 +1,4 @@
 
-PASS Create a basic GPUBindGroupLayoutDescriptor. 
-PASS Create a basic GPUPipelineLayout wtih a GPUDevice. 
+PASS Create a basic GPUBindGroupLayoutDescriptor.
+PASS Create a basic GPUPipelineLayout wtih a GPUDevice.
 

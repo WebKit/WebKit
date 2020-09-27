@@ -1,6 +1,6 @@
 Tests that we do not crash when removing the opener after using window.open() to load a resource that redirects.
 
- 
+
 
 --------
 Frame: 'B'

@@ -1,5 +1,5 @@
 
 FAIL Check that browsing context has new, ready HTML document assert_equals: The document's encoding should be 'UTF-8'. expected "UTF-8" but got "windows-1252"
-PASS Check that new document nodes extant, empty 
-PASS Check the document properties corresponding to the creator browsing context 
+PASS Check that new document nodes extant, empty
+PASS Check the document properties corresponding to the creator browsing context
 

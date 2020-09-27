@@ -1,5 +1,5 @@
 
 
-PASS on negotiation needed in case of adding a stream 
-PASS on negotiation needed not called if pc is closed 
+PASS on negotiation needed in case of adding a stream
+PASS on negotiation needed not called if pc is closed
 

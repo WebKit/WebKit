@@ -9,7 +9,7 @@ indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 Initial upgrade needed: Old version - 0 New version - 1
 Issuing a simple request to the object store
-Observing GC on the transaction and request. 
+Observing GC on the transaction and request.
 PASS txObserver.wasCollected is true
 PASS reqObserver.wasCollected is true
 PASS versionChangeObserver.wasCollected is true

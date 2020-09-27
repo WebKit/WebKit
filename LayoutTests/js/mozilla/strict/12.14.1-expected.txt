@@ -16,7 +16,7 @@ PASS true === true
 PASS Function("'use strict'; try{}catch({x:arguments}){}") threw exception of type SyntaxError.
 PASS !!Function("try{}catch({x:arguments}){}") is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

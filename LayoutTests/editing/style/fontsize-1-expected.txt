@@ -1,10 +1,10 @@
 This test execCommand('FontSize', ...).  You should see 'small' 'medium' and 'large' below in every increasing font sizes.
 
 initial:
-| 
+|
 
 fontsize 2:
-| 
+|
 
 type small:
 | <font>
@@ -44,4 +44,4 @@ type large:
 |   "large<#selection-caret>"
 
 console:
-| 
+|

@@ -1,7 +1,7 @@
 
 
-PASS Ensuring autoplay does not work on regular video elements 
-PASS Ensuring autoplay does not work on regular video elements when getUserMedia is on 
-PASS Local media stream autoplay 
-PASS Remote media stream autoplay 
+PASS Ensuring autoplay does not work on regular video elements
+PASS Ensuring autoplay does not work on regular video elements when getUserMedia is on
+PASS Local media stream autoplay
+PASS Remote media stream autoplay
 

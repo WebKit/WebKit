@@ -1,2 +1,2 @@
 ALERT: BackCompat
-Normally srcdoc documents default to standards mode, but they can end up in quirks mode with a sufficiently nutty DocType. 
+Normally srcdoc documents default to standards mode, but they can end up in quirks mode with a sufficiently nutty DocType.

@@ -1,5 +1,5 @@
 This tests that XML Viewer is not used when XML is opened in frame.
- 
+
 
 --------
 Frame: 'iframeFrame'

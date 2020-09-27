@@ -3,8 +3,8 @@ Resource Timing: Other initiatorType
 
 Harness Error (TIMEOUT), message = null
 
-PASS Type: other - Worker 
-PASS Timing: other - Worker 
+PASS Type: other - Worker
+PASS Timing: other - Worker
 TIMEOUT Type: other - EventSource Test timed out
-NOTRUN Timing: other - EventSource 
+NOTRUN Timing: other - EventSource
 

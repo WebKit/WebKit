@@ -1,18 +1,18 @@
 
-PASS By default, byobRequest should be undefined 
-PASS byobRequest.view length should be equal to autoAllocateChunkSize 
-PASS Calling respond() with a this object different from ReadableStreamBYOBRequest should throw a TypeError 
-PASS Calling respond() with a negative bytesWritten value should throw a RangeError 
-PASS Calling respond() with a bytesWritten value which is not a number should throw a RangeError 
-PASS Calling respond() with a positive infinity bytesWritten value should throw a RangeError 
-PASS Calling respond() with a bytesWritten value different from 0 when stream is closed should throw a TypeError 
-PASS Calling respond() with a bytesWritten value of 0 when stream is closed should succeed 
-PASS Calling respond() with a bytesWritten value greater than autoAllocateChunkSize should fail 
-PASS Calling respond() with a bytesWritten value lower than autoAllocateChunkSize should succeed 
-PASS Calling respondWithNewView() with a this object different from ReadableStreamBYOBRequest should throw a TypeError 
-PASS Calling respondWithNewView() with an argument that is not an object should throw a TypeError 
-PASS Calling respondWithNewView() with an argument that is not an ArrayBufferView should throw a TypeError 
-PASS When using autoAllocateChunkSize, calling respondWithNewView() should succeed if view.byteLength is equal to autoAllocateChunkSize 
-PASS When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteOffset is different from 0 
-PASS When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteLength is different from autoAllocateChunkSize 
+PASS By default, byobRequest should be undefined
+PASS byobRequest.view length should be equal to autoAllocateChunkSize
+PASS Calling respond() with a this object different from ReadableStreamBYOBRequest should throw a TypeError
+PASS Calling respond() with a negative bytesWritten value should throw a RangeError
+PASS Calling respond() with a bytesWritten value which is not a number should throw a RangeError
+PASS Calling respond() with a positive infinity bytesWritten value should throw a RangeError
+PASS Calling respond() with a bytesWritten value different from 0 when stream is closed should throw a TypeError
+PASS Calling respond() with a bytesWritten value of 0 when stream is closed should succeed
+PASS Calling respond() with a bytesWritten value greater than autoAllocateChunkSize should fail
+PASS Calling respond() with a bytesWritten value lower than autoAllocateChunkSize should succeed
+PASS Calling respondWithNewView() with a this object different from ReadableStreamBYOBRequest should throw a TypeError
+PASS Calling respondWithNewView() with an argument that is not an object should throw a TypeError
+PASS Calling respondWithNewView() with an argument that is not an ArrayBufferView should throw a TypeError
+PASS When using autoAllocateChunkSize, calling respondWithNewView() should succeed if view.byteLength is equal to autoAllocateChunkSize
+PASS When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteOffset is different from 0
+PASS When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteLength is different from autoAllocateChunkSize
 

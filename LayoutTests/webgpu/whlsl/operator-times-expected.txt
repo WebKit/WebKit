@@ -1,8 +1,8 @@
 
-PASS vectorTimes 
-PASS vectorTimesWithScalar 
-PASS vectorTimesWithScalar2 
-PASS matrixTimes 
-PASS matrixTimesScalar 
-PASS matrixTimesScalar2 
+PASS vectorTimes
+PASS vectorTimesWithScalar
+PASS vectorTimesWithScalar2
+PASS matrixTimes
+PASS matrixTimesScalar
+PASS matrixTimesScalar2
 

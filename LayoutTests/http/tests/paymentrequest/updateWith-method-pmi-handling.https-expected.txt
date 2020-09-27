@@ -8,14 +8,14 @@ Must throw if not https.
 Must throw if the standardized PMI contains characters outside the ascii range.
 Must throw if standardized PMI has uppercase characters.
 
-PASS smoke test 
-PASS Must throw if the URL has a password. 
-PASS Must throw if the URL has a username. 
-PASS Must throw if the URL has a username and a password. 
-PASS Must throw if it's http, and has a username and password. 
-PASS Must throw if the URL is invalid (port range). 
-PASS Must throw if the PMI contains characters that are out of range. 
-PASS Must throw if not https. 
-PASS Must throw if the standardized PMI contains characters outside the ascii range. 
-PASS Must throw if standardized PMI has uppercase characters. 
+PASS smoke test
+PASS Must throw if the URL has a password.
+PASS Must throw if the URL has a username.
+PASS Must throw if the URL has a username and a password.
+PASS Must throw if it's http, and has a username and password.
+PASS Must throw if the URL is invalid (port range).
+PASS Must throw if the PMI contains characters that are out of range.
+PASS Must throw if not https.
+PASS Must throw if the standardized PMI contains characters outside the ascii range.
+PASS Must throw if standardized PMI has uppercase characters.
 

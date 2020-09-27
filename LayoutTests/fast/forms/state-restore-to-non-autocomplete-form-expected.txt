@@ -9,5 +9,5 @@ PASS document.getElementById("input2").value is "value2"
 PASS document.getElementById("textarea2").value is "good"
 PASS document.getElementById("select2").value is "BSD"
 
-  
-  
+
+

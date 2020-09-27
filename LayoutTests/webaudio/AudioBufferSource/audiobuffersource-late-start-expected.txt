@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test-late-start" 
-PASS Audit report 
-PASS > [test-late-start]  
-PASS   The output contains all the expected values in the correct order: [0,1]. 
-PASS   The index of value change is equal to 5632. 
-PASS   The index of the first non-zero sample is not equal to 0. 
-PASS < [test-late-start] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test-late-start"
+PASS Audit report
+PASS > [test-late-start]
+PASS   The output contains all the expected values in the correct order: [0,1].
+PASS   The index of value change is equal to 5632.
+PASS   The index of the first non-zero sample is not equal to 0.
+PASS < [test-late-start] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

@@ -1,4 +1,4 @@
 This tests that a dominant plugin should play automatically if an image is mostly on top of the plugin.
 
 PASS
- 
+

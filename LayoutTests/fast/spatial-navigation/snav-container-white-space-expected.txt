@@ -1,9 +1,9 @@
 This is an element
- 
+
 
 This is an element
 This is an element
-  
+
 This is an element
 PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "2"

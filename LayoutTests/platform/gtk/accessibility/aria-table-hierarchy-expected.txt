@@ -24,35 +24,35 @@ This tests the accessible hierarchy for an ARIA table.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXWebArea 
-  AXRole: AXTable 
-    AXRole: AXRow 
+AXRole: AXWebArea
+  AXRole: AXTable
+    AXRole: AXRow
       AXRole: AXCell AXValue: foo
       AXRole: AXCell AXValue: bar
-  AXRole: AXTable 
-    AXRole: AXRow 
+  AXRole: AXTable
+    AXRole: AXRow
       AXRole: AXColumnHeader AXValue: Odd
       AXRole: AXColumnHeader AXValue: Even
-    AXRole: AXRow 
+    AXRole: AXRow
       AXRole: AXCell AXValue: 1
       AXRole: AXCell AXValue: 2
-    AXRole: AXRow 
+    AXRole: AXRow
       AXRole: AXCell AXValue: 3
       AXRole: AXCell AXValue: 4
-  AXRole: AXTable 
-    AXRole: AXRow 
+  AXRole: AXTable
+    AXRole: AXRow
       AXRole: AXCell AXValue: hello
       AXRole: AXCell AXValue: world
-  AXRole: AXTable 
-    AXRole: AXRow 
+  AXRole: AXTable
+    AXRole: AXRow
       AXRole: AXColumnHeader AXValue: Odd
       AXRole: AXColumnHeader AXValue: Even
-    AXRole: AXRow 
+    AXRole: AXRow
       AXRole: AXCell AXValue: 1<\n><\n>
         AXRole: AXParagraph AXValue: 1
       AXRole: AXCell AXValue: 2<\n><\n>
         AXRole: AXParagraph AXValue: 2
-    AXRole: AXRow 
+    AXRole: AXRow
       AXRole: AXCell AXValue: 3<\n><\n>
         AXRole: AXParagraph AXValue: 3
       AXRole: AXCell AXValue: 4<\n><\n>

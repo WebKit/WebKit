@@ -18,4 +18,4 @@ PASS Math.round(internals.imageFrameDurationAtIndex(image2, 119) * 1000) is 40
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

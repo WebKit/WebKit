@@ -1,16 +1,16 @@
 
-PASS Getting a ReadableStreamBYOBReader should succeed 
-PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError 
-PASS Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError 
-PASS Calling ReadableStreamBYOBReader.cancel() with a this object different from ReadableStreamBYOBReader should be rejected 
-PASS Calling ReadableStreamBYOBReader.cancel() on a ReadableStream that has been errored should result in a promise rejected with the same error 
+PASS Getting a ReadableStreamBYOBReader should succeed
+PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError
+PASS Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError
+PASS Calling ReadableStreamBYOBReader.cancel() with a this object different from ReadableStreamBYOBReader should be rejected
+PASS Calling ReadableStreamBYOBReader.cancel() on a ReadableStream that has been errored should result in a promise rejected with the same error
 FAIL Calling ReadableStreamBYOBReader.cancel() on a ReadableStream that has been closed should result in a promise resolved with undefined assert_object_equals: value is undefined, expected object
 FAIL If controller is closed after ReadableStreamBYOBReader creation, ReadableStreamBYOBReader.closed should be a promise resolved with undefined assert_object_equals: value is undefined, expected object
 FAIL If controller has already been closed when ReadableStreamBYOBReader is created, ReadableStreamBYOBReader.closed should be a promise resolved with undefined assert_object_equals: value is undefined, expected object
-PASS If controller is errored after ReadableStreamBYOBReader creation, ReadableStreamBYOBReader.closed should be a promise rejected with the same error 
-PASS If controller has already been errored when ReadableStreamBYOBReader is created, ReadableStreamBYOBReader.closed should be a promise rejected with the same error 
-PASS Calling ReadableStreamBYOBReader.releaseLock() with a this object different from ReadableStreamBYOBReader should be rejected 
-PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
-PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
-PASS Calling ReadableStreamBYOBReader.read() with a this object different from ReadableStreamBYOBReader should be rejected 
+PASS If controller is errored after ReadableStreamBYOBReader creation, ReadableStreamBYOBReader.closed should be a promise rejected with the same error
+PASS If controller has already been errored when ReadableStreamBYOBReader is created, ReadableStreamBYOBReader.closed should be a promise rejected with the same error
+PASS Calling ReadableStreamBYOBReader.releaseLock() with a this object different from ReadableStreamBYOBReader should be rejected
+PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError
+PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError
+PASS Calling ReadableStreamBYOBReader.read() with a this object different from ReadableStreamBYOBReader should be rejected
 

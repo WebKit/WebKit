@@ -3,4 +3,4 @@ CONFIRM: MESSAGE?
 PROMPT: MESSAGE:, default text: DEFAULT
 This test passes if opening modal dialogs is allowed and no error message is logged in the console.
 
-    
+

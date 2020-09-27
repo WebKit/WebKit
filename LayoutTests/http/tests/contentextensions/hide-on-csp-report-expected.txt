@@ -2,7 +2,7 @@ CONSOLE MESSAGE: Refused to load http://localhost/foo.png because it does not ap
 This test creates a CSP violation report, but the report URL matches a 'css-display-none' rule.
 This text should remain visible.
 
- 
+
 
 --------
 Frame: 'result_frame'

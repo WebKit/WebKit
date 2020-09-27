@@ -6,8 +6,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 66.000000 }
 AXSize: { 62.000000, 47.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -29,8 +29,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 488.000000 }
 AXSize: { 68.000000, 29.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -51,8 +51,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 11.000000, 336.000000 }
 AXSize: { 28.000000, 21.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
@@ -74,8 +74,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 58.000000, 23.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -96,8 +96,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 58.000000, 23.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -118,8 +118,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 58.000000, 43.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -141,8 +141,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 58.000000, 23.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -163,8 +163,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 26.000000, 19.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
@@ -186,8 +186,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 11.000000, 350.000000 }
 AXSize: { 26.000000, 19.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
@@ -209,8 +209,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 53.000000, 19.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -231,8 +231,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.000000, 346.000000 }
 AXSize: { 769.000000, 27.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Contributions
 AXFocusable: 0
 AXFocused: 0
@@ -254,8 +254,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 346.000000 }
 AXSize: { 130.000000, 19.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Politics
 AXFocusable: 0
 AXFocused: 0
@@ -283,8 +283,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 64.000000, 27.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: asdf	asdf<\n>
 AXFocusable: 1
 AXFocused: 0
@@ -306,8 +306,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 62.000000, 49.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -329,8 +329,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 10.000000, 335.000000 }
 AXSize: { 28.000000, 21.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
@@ -353,8 +353,8 @@ AXParent: AXWebArea
 AXChildren: 3
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 64.000000, 70.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -377,8 +377,8 @@ AXParent: AXWebArea
 AXChildren: 3
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 64.000000, 71.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -401,8 +401,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 62.000000, 47.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -424,8 +424,8 @@ AXParent: AXWebArea
 AXChildren: 24
 AXPosition: { 8.000000, 333.000000 }
 AXSize: { 32.000000, 531.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -469,8 +469,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 546.000000 }
 AXSize: { 84.000000, 47.000000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

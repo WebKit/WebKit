@@ -2,5 +2,5 @@ The test passes if the longest green horizontal bar is beneath the triangle and 
 
 XXXXXXXXXX XXXXXXXX XXXXXX XXXX XXX XXXXXXXXXXXX
 
-PASS CSS Test: shape-margin offset from a polygonal shape-outside 
+PASS CSS Test: shape-margin offset from a polygonal shape-outside
 

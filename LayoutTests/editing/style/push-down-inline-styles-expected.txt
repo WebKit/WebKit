@@ -3,7 +3,7 @@ Test to make sure we push down inline styles properly.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS bold converted <span style="font-weight: 900;"> <div>text</div> </span> to  <div>text</div> 
+PASS bold converted <span style="font-weight: 900;"> <div>text</div> </span> to  <div>text</div>
 PASS bold converted <span style="font-weight: 900;"><div>text</div></span> to <div>text</div>
 PASS bold converted <span style="font-weight: 900;"><div id="test">hello</div><div>world</div></span> to <div id="test">hello</div><div style="font-weight: 900;">world</div>
 PASS bold converted <div style="font-weight: bold;">hello<div id="test">world</div></div> to <div><b>hello</b><div id="test">world</div></div>

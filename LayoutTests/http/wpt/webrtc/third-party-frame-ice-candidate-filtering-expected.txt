@@ -1,8 +1,8 @@
-  
 
-PASS Setup test 
-PASS getUserMedia on third party iframe and check same frame filtering 
-PASS Check same origin filtering as top frame 
-PASS Check same origin filtering as capturing frame 
-PASS Check filtering of frame with different origin as top and capturing frame origins 
+
+PASS Setup test
+PASS getUserMedia on third party iframe and check same frame filtering
+PASS Check same origin filtering as top frame
+PASS Check same origin filtering as capturing frame
+PASS Check filtering of frame with different origin as top and capturing frame origins
 

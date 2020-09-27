@@ -9,4 +9,4 @@ PASS doneReadingText became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Copy 
+Copy

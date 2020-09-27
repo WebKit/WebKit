@@ -4,11 +4,11 @@ AXRole: AXStaticText
 AXSubrole: (null)
 AXRoleDescription: text
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXStaticText>
 AXSize: NSSize: {64, 18}
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Here I am
 AXFocused: 0
 AXEnabled: 1
@@ -21,8 +21,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXStaticText>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXStaticText>
 AXEditableAncestor: (null)
@@ -32,7 +32,7 @@ AXElementBusy: 0
 ------------
 
 
-Internal anchor 
+Internal anchor
 
 
 Here I am

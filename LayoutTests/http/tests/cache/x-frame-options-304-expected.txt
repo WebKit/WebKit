@@ -1,1 +1,1 @@
-Test that a 304 response for a resource with an X-Frame-Options header doesn't cause us to crash. 
+Test that a 304 response for a resource with an X-Frame-Options header doesn't cause us to crash.

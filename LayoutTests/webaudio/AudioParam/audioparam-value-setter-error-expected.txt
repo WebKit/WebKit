@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test value setter with setValueCurveAtTime" 
-PASS Audit report 
-PASS > [Test value setter with setValueCurveAtTime]  
-PASS   setValueCurveAtTime([...], 0.0234375, 0.03125) did not throw an exception. 
-PASS   Using value setter at time 0.015625 before curve starts did not throw an exception. 
-PASS   Using value setter at time 0.0390625 in the middle of the curve threw NotSupportedError: "Events are overlapping". 
-PASS < [Test value setter with setValueCurveAtTime] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test value setter with setValueCurveAtTime"
+PASS Audit report
+PASS > [Test value setter with setValueCurveAtTime]
+PASS   setValueCurveAtTime([...], 0.0234375, 0.03125) did not throw an exception.
+PASS   Using value setter at time 0.015625 before curve starts did not throw an exception.
+PASS   Using value setter at time 0.0390625 in the middle of the curve threw NotSupportedError: "Events are overlapping".
+PASS < [Test value setter with setValueCurveAtTime] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

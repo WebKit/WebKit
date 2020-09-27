@@ -8,4 +8,4 @@ CONSOLE MESSAGE: Blocked script execution in 'data:text/html,<script>alert('FAIL
 ALERT: PASS: Tab is a delimiter.
 ALERT: PASS: Space is a delimiter character.
 This tests whether we correct parse various space characters in the sandbox attribute.
- 
+

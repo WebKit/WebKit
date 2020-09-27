@@ -10,7 +10,7 @@ PASS true === true
 PASS 'use strict'; var o = setup(); delete o.noble threw exception of type TypeError.
 PASS var o = setup(); delete o.noble is false
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

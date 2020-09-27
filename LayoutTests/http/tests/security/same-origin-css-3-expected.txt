@@ -1,4 +1,4 @@
 
-PASS Testing same-origin and MIME behavior for CSS. 
-PASS xorigincss1.css should be loaded via &lt;link&gt; 
+PASS Testing same-origin and MIME behavior for CSS.
+PASS xorigincss1.css should be loaded via &lt;link&gt;
 

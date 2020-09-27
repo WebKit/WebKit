@@ -1,5 +1,5 @@
 
 
-PASS Testing cache API in service worker 
-PASS Testing cache API with opaque response + blob 
+PASS Testing cache API in service worker
+PASS Testing cache API with opaque response + blob
 

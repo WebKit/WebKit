@@ -14,8 +14,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 This tests deleting a selection created with a word granularity. To run it manually, double click on 'bar' and hit forward delete. You should see 'foo baz'.
 
-Expected Results: 
-The second word and the space before the second word should be deleted. It should like this this: 
+Expected Results:
+The second word and the space before the second word should be deleted. It should like this this:
 foo baz
 foo baz
 

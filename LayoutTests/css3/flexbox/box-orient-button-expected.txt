@@ -32,9 +32,9 @@ vertical => horizontal:
 hello
 world
 
-PASS default height 
-PASS horizontal height 
-PASS vertical height 
-PASS toHorizontal height 
-PASS toVertical height 
+PASS default height
+PASS horizontal height
+PASS vertical height
+PASS toHorizontal height
+PASS toVertical height
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: text/plain: This test verifies that we can get text/html from the clipboard during an onpaste event. 
+CONSOLE MESSAGE: text/plain: This test verifies that we can get text/html from the clipboard during an onpaste event.
 CONSOLE MESSAGE: text/html: <meta charset="UTF-8"><span style="...">This test verifies that we can get text/html from the clipboard during an onpaste event.<span class="Apple-converted-space"> </span></span>
 This test verifies that we can get text/html from the clipboard during an onpaste event. This test requires DRT.
 Paste content in this div. This test verifies that we can get text/html from the clipboard during an onpaste event. 

@@ -285,7 +285,7 @@ request = indexedDB.open(dbname, 3)
 request.onupgradeneeded = onUpgradeNeeded3
 
 IDBObjectStore.createIndex()
-If an index with the same name already exists, the implementation must throw a DOMException of type ConstraintError. 
+If an index with the same name already exists, the implementation must throw a DOMException of type ConstraintError.
 Expecting exception from store.createIndex('index', 'keyPath')
 PASS Exception was thrown.
 PASS code is 0
@@ -534,7 +534,7 @@ Exception message: Failed to execute 'update' on 'IDBCursor': The record may not
 3.2.8 Transaction
 
 IDBTransaction.abort()
-If this transaction is finished, throw a DOMException of type InvalidStateError. 
+If this transaction is finished, throw a DOMException of type InvalidStateError.
 Expecting exception from finishedTransaction.abort()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR

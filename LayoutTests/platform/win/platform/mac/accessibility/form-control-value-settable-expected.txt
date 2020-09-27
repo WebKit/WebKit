@@ -1,5 +1,5 @@
-                
-                
+
+
 This tests whether AXValue is writable for various form controls.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

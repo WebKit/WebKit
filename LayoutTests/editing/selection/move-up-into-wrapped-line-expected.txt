@@ -1,4 +1,4 @@
-This test moves up caret into a wrapped line. 
+This test moves up caret into a wrapped line.
 i.e. the caret is moved from the empty line below "hello world" to before "world".
 | "
 "

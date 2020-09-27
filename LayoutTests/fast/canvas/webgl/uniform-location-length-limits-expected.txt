@@ -2,15 +2,15 @@ Verify limits on the lengths of uniform locations.
 Test uniform location underneath the length limit
 PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
 PASS uniformLoc is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 Test uniform location exactly at the length limit
 PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
 PASS uniformLoc is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 Test uniform location over the length limit
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: INVALID_VALUE :
 PASS uniformLoc is null
 PASS successfullyParsed is true
 

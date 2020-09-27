@@ -10,7 +10,7 @@ PASS true === true
 PASS 'use strict'; delete "foo".length threw exception of type TypeError.
 PASS delete "foo".length is false
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

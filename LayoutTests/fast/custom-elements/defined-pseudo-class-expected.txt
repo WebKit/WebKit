@@ -1,13 +1,13 @@
 
-PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet 
-PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet even if the element has been defined 
-PASS The defined flag of a custom element must be set when a custom element is successfully upgraded 
-PASS The defined flag of a custom element must be set inside the HTMLElement constructor 
-PASS The defined flag of an upgraded custom element must be set 
-PASS The defined flag of a custom element created by HTML parser must be unset if there is no matching definition 
-PASS The defined flag of a custom element created by HTML parser must be set if there is a matching definition 
-PASS The element inserted by HTML parser must not have the defined flag set if the constructor returns a Text node 
-PASS The defined flag of a custom element must be set after checking the returned result is an instance of HTMLElement when upgrading a custom element 
-PASS The defined flag of a custom element must be set inside a constructor when constructing a custom element synchronously even if the constructor threw an exception later 
-PASS The defined flag of a custom element must not be set when an upgrade of a custom element fails 
+PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet
+PASS The defined flag of a custom element must not be set if a custom element has not been upgraded yet even if the element has been defined
+PASS The defined flag of a custom element must be set when a custom element is successfully upgraded
+PASS The defined flag of a custom element must be set inside the HTMLElement constructor
+PASS The defined flag of an upgraded custom element must be set
+PASS The defined flag of a custom element created by HTML parser must be unset if there is no matching definition
+PASS The defined flag of a custom element created by HTML parser must be set if there is a matching definition
+PASS The element inserted by HTML parser must not have the defined flag set if the constructor returns a Text node
+PASS The defined flag of a custom element must be set after checking the returned result is an instance of HTMLElement when upgrading a custom element
+PASS The defined flag of a custom element must be set inside a constructor when constructing a custom element synchronously even if the constructor threw an exception later
+PASS The defined flag of a custom element must not be set when an upgrade of a custom element fails
 

@@ -2,4 +2,4 @@ This test should not hang.
 
 Path length is 19.154
 
-. 
+.

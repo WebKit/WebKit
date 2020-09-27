@@ -1,5 +1,5 @@
 This tests moving a focus across slotted input elements. To test manually, press Tab key to move the focus from the first input element to the next.
 
- 
- 
+
+
 PASS

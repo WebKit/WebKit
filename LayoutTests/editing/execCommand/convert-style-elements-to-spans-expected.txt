@@ -11,7 +11,7 @@ PASS one bold command converted <b style='invalid'>test</b> to test
 PASS bold followed by undo, correctly return to <b style="text-decoration: underline">test</b>
 PASS italic followed by undo, correctly return to <i style="font-weight: bold">test</i>
 PASS bold followed by undo converted <b style="text-decoration: underline">test</b> to <b style="text-decoration: underline" foo="bar">test</b>
-PASS bold followed by undo converted <b style="text-decoration: underline">test</b> to 
+PASS bold followed by undo converted <b style="text-decoration: underline">test</b> to
 PASS bold followed by undo converted <b style="text-decoration: underline">test</b> to <span>foobar</span>
 PASS bold followed by undo converted <b style="text-decoration: underline">test</b> to <b style="text-decoration: underline">foobar</b>
 PASS successfullyParsed is true

@@ -1173,13 +1173,13 @@ PASS Invalid: "1 % ++". Produced the following syntax error: "SyntaxError: Unexp
 PASS Invalid: "function f() { 1 % ++ }". Produced the following syntax error: "SyntaxError: Unexpected token '}'"
 PASS Invalid: "1 % --". Produced the following syntax error: "SyntaxError: Unexpected end of script"
 PASS Invalid: "function f() { 1 % -- }". Produced the following syntax error: "SyntaxError: Unexpected token '}'"
-PASS Invalid: "1 % 
+PASS Invalid: "1 %
 ++". Produced the following syntax error: "SyntaxError: Unexpected end of script"
-PASS Invalid: "function f() { 1 % 
+PASS Invalid: "function f() { 1 %
 ++ }". Produced the following syntax error: "SyntaxError: Unexpected token '}'"
-PASS Invalid: "1 % 
+PASS Invalid: "1 %
 --". Produced the following syntax error: "SyntaxError: Unexpected end of script"
-PASS Invalid: "function f() { 1 % 
+PASS Invalid: "function f() { 1 %
 -- }". Produced the following syntax error: "SyntaxError: Unexpected token '}'"
 PASS Invalid: "let {w} = (foo-=()), {} = ("a" ^= "b");". Produced the following syntax error: "SyntaxError: Unexpected token ')'"
 PASS Invalid: "function f() { let {w} = (foo-=()), {} = ("a" ^= "b"); }". Produced the following syntax error: "SyntaxError: Unexpected token ')'"

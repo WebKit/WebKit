@@ -3,11 +3,11 @@
 --------
 Frame: 'main'
 --------
-This is just a minimal page that we navigate in response to an HTTP POST. 
+This is just a minimal page that we navigate in response to an HTTP POST.
 
-If the next line is empty after the colon, it probably means that we made a mistake and requested this page with a GET with no query instead of a POST. 
+If the next line is empty after the colon, it probably means that we made a mistake and requested this page with a GET with no query instead of a POST.
 
-The first text field contained: New form text from user 
+The first text field contained: New form text from user
 This page was requested with an HTTP GET
 
 --------

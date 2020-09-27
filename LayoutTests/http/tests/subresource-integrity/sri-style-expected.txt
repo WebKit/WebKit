@@ -7,27 +7,27 @@ CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8000/subresource-integr
 CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8000/subresource-integrity/resources/crossorigin-anon-style.css?&4. Failed integrity metadata check. Content length: 37, Expected content length: 37, Expected metadata: sha256-deadbeefCzHgdJ7wOccM8L89n4bhcJMz3F+SPLT7YZk=
 CONSOLE MESSAGE: Cannot load stylesheet http://127.0.0.1:8000/subresource-integrity/resources/alternate.css?2. Failed integrity metadata check. Content length: 34, Expected content length: 34, Expected metadata: sha256-fail83bWhnLig+d2VPKrRrTRyhqoDRo1ruGqZLZ0= sha512-failB7ktnzcb6h+kB9CUIuc8qvKIyLpygRJdQSEEycRy74dUsB+Yu9rSjpOPjRUblle8WWX9Gn7v39LK2Oceig==
 
-PASS Style: Same-origin with correct sha256 hash 
-PASS Style: Same-origin with correct sha384 hash 
-PASS Style: Same-origin with correct sha512 hash 
-PASS Style: Same-origin with empty integrity 
-PASS Style: Same-origin with incorrect hash. 
-PASS Style: Same-origin with multiple sha256 hashes, including correct. 
-PASS Style: Same-origin with multiple sha256 hashes, including unknown algorithm. 
-PASS Style: Same-origin with sha256 mismatch, sha512 match 
-PASS Style: Same-origin with sha256 match, sha512 mismatch 
-PASS Style: <crossorigin='anonymous'> with correct hash, ACAO: * 
-PASS Style: <crossorigin='anonymous'> with incorrect hash, ACAO: * 
-PASS Style: <crossorigin='use-credentials'> with correct hash, CORS-eligible 
-PASS Style: <crossorigin='use-credentials'> with incorrect hash CORS-eligible 
-PASS Style: <crossorigin='anonymous'> with CORS-ineligible resource 
-PASS Style: Cross-origin, not CORS request, with correct hash 
-PASS Style: Cross-origin, not CORS request, with hash mismatch 
-PASS Style: Cross-origin, empty integrity 
-PASS Style: Same-origin with correct hash, options. 
-PASS Style: Same-origin with unknown algorithm only. 
-PASS Style: Same-origin with correct sha256 hash, rel='stylesheet license' 
-PASS Style: Same-origin with correct sha256 hash, rel='license stylesheet' 
-PASS Style: Same-origin with correct sha256 and sha512 hash, rel='alternate stylesheet' enabled 
-PASS Style: Same-origin with incorrect sha256 and sha512 hash, rel='alternate stylesheet' enabled 
+PASS Style: Same-origin with correct sha256 hash
+PASS Style: Same-origin with correct sha384 hash
+PASS Style: Same-origin with correct sha512 hash
+PASS Style: Same-origin with empty integrity
+PASS Style: Same-origin with incorrect hash.
+PASS Style: Same-origin with multiple sha256 hashes, including correct.
+PASS Style: Same-origin with multiple sha256 hashes, including unknown algorithm.
+PASS Style: Same-origin with sha256 mismatch, sha512 match
+PASS Style: Same-origin with sha256 match, sha512 mismatch
+PASS Style: <crossorigin='anonymous'> with correct hash, ACAO: *
+PASS Style: <crossorigin='anonymous'> with incorrect hash, ACAO: *
+PASS Style: <crossorigin='use-credentials'> with correct hash, CORS-eligible
+PASS Style: <crossorigin='use-credentials'> with incorrect hash CORS-eligible
+PASS Style: <crossorigin='anonymous'> with CORS-ineligible resource
+PASS Style: Cross-origin, not CORS request, with correct hash
+PASS Style: Cross-origin, not CORS request, with hash mismatch
+PASS Style: Cross-origin, empty integrity
+PASS Style: Same-origin with correct hash, options.
+PASS Style: Same-origin with unknown algorithm only.
+PASS Style: Same-origin with correct sha256 hash, rel='stylesheet license'
+PASS Style: Same-origin with correct sha256 hash, rel='license stylesheet'
+PASS Style: Same-origin with correct sha256 and sha512 hash, rel='alternate stylesheet' enabled
+PASS Style: Same-origin with incorrect sha256 and sha512 hash, rel='alternate stylesheet' enabled
 

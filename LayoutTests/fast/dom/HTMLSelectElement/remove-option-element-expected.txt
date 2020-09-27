@@ -1,6 +1,6 @@
 Tests that there is no remove() overload taking an option element in parameter.
 
 
-PASS HTMLSelectElement.remove() 
-PASS HTMLOptionsCollection.remove() 
+PASS HTMLSelectElement.remove()
+PASS HTMLOptionsCollection.remove()
 

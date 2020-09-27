@@ -3,29 +3,29 @@ This verifies the expected roles and values are exposed for mo.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXGroup AXSubrole: AXDocumentMath AXValue: 
-    AXRole: AXGroup AXSubrole: AXMathOperator AXValue: 
+AXRole: AXGroup AXSubrole: AXDocumentMath AXValue:
+    AXRole: AXGroup AXSubrole: AXMathOperator AXValue:
         AXRole: AXStaticText AXSubrole:  AXValue: *
-    AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue: 
+    AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue:
         AXRole: AXStaticText AXSubrole:  AXValue: *
-    AXRole: AXGroup AXSubrole: AXMathSeparatorOperator AXValue: 
+    AXRole: AXGroup AXSubrole: AXMathSeparatorOperator AXValue:
         AXRole: AXStaticText AXSubrole:  AXValue: *
-    AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue: 
+    AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue:
         AXRole: AXStaticText AXSubrole:  AXValue: *
-    AXRole: AXGroup AXSubrole: AXMathRow AXValue: 
-        AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue: 
+    AXRole: AXGroup AXSubrole: AXMathRow AXValue:
+        AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: (
-        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: x
-        AXRole: AXGroup AXSubrole: AXMathSeparatorOperator AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathSeparatorOperator AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: ,
-        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: y
-        AXRole: AXGroup AXSubrole: AXMathSeparatorOperator AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathSeparatorOperator AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: ;
-        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: z
-        AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathFenceOperator AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: ]
 PASS successfullyParsed is true
 

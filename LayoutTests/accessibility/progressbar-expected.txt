@@ -1,4 +1,4 @@
-X X   
+X X
 This test makes sure that progress element can be accessed by Accessibility FW.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

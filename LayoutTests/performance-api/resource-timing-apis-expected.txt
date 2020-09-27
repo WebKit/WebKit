@@ -55,7 +55,7 @@ FAIL [Worker] "encodedBodySize" in PerformanceResourceTiming.prototype should be
 FAIL [Worker] "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
 PASS [Worker] PerformanceResourceTiming.prototype.toJSON is defined.
 PASS [Worker] new PerformanceResourceTiming() threw exception TypeError: Illegal constructor.
-[Worker] 
+[Worker]
 [Worker] Performance extensions
 PASS [Worker] Performance.prototype.clearResourceTimings is defined.
 PASS [Worker] Performance.prototype.setResourceTimingBufferSize is defined.

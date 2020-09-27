@@ -1,11 +1,11 @@
 
-PASS Constructor0 
-PASS ConstructorTime 
-PASS ConstructorRootBounds 
-PASS ConstructorNullRootBounds 
-PASS ConstructorBoundingClientRect 
-PASS ConstructorIntersectionRect 
-PASS ConstructorIsIntersecting 
-PASS ConstructorIntersectionRatio 
-PASS ConstructorTarget 
+PASS Constructor0
+PASS ConstructorTime
+PASS ConstructorRootBounds
+PASS ConstructorNullRootBounds
+PASS ConstructorBoundingClientRect
+PASS ConstructorIntersectionRect
+PASS ConstructorIsIntersecting
+PASS ConstructorIntersectionRatio
+PASS ConstructorTarget
 

@@ -1,4 +1,4 @@
 
-PASS Peer Connection objects should not be created in detached documents 
-PASS Peer Connection objects should not be created in detached documents 2 
+PASS Peer Connection objects should not be created in detached documents
+PASS Peer Connection objects should not be created in detached documents 2
 

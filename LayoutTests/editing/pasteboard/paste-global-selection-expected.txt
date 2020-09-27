@@ -1,4 +1,4 @@
-  
+
 This test checks that we can set and paste X11-style selections.
 
 PASS confirmedMarkup is 'TestTest'

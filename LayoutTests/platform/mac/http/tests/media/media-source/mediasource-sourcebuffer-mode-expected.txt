@@ -1,9 +1,9 @@
- 
-PASS Test initial value of SourceBuffer.mode is "segments" 
-PASS Test setting SourceBuffer.mode 
-PASS Test setting a removed SourceBuffer's mode 
-PASS Test setting SourceBuffer.mode while still updating 
-PASS Test setting SourceBuffer.mode triggers parent MediaSource 'ended' to 'open' transition. 
+
+PASS Test initial value of SourceBuffer.mode is "segments"
+PASS Test setting SourceBuffer.mode
+PASS Test setting a removed SourceBuffer's mode
+PASS Test setting SourceBuffer.mode while still updating
+PASS Test setting SourceBuffer.mode triggers parent MediaSource 'ended' to 'open' transition.
 FAIL Test setting SourceBuffer.mode and SourceBuffer.timestampOffset while parsing media segment. assert_throws: Setting valid sourceBuffer.mode while still parsing media segment threw InvalidStateError. function "function () { sourceBuffer.mode = 'segments'; }" did not throw(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
 assert_throws@http://127.0.0.1:8000/w3c/resources/testharness.js:947:19
 http://127.0.0.1:8000/media/media-source/mediasource-sourcebuffer-mode.html:114:32

@@ -1,21 +1,21 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "linear-ramp" 
-PASS Executing "exponential-ramp" 
-PASS Executing "delayed-linear-ramp" 
-PASS Executing "delayed-exponential-ramp" 
-PASS Audit report 
-PASS > [linear-ramp]  
-PASS   Linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":6.0003e-8,"relativeThreshold":0}. 
-PASS < [linear-ramp] All assertions passed. (total 1 assertions) 
-PASS > [exponential-ramp]  
-PASS   Exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000023842,"relativeThreshold":0}. 
-PASS < [exponential-ramp] All assertions passed. (total 1 assertions) 
-PASS > [delayed-linear-ramp]  
-PASS   Delayed linear ramp equals [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...] with an element-wise tolerance of {"absoluteThreshold":9.87968e-8,"relativeThreshold":0}. 
-PASS < [delayed-linear-ramp] All assertions passed. (total 1 assertions) 
-PASS > [delayed-exponential-ramp]  
-PASS   Delayed exponential ramp equals [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...] with an element-wise tolerance of {"absoluteThreshold":0.000013948,"relativeThreshold":0}. 
-PASS < [delayed-exponential-ramp] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "linear-ramp"
+PASS Executing "exponential-ramp"
+PASS Executing "delayed-linear-ramp"
+PASS Executing "delayed-exponential-ramp"
+PASS Audit report
+PASS > [linear-ramp]
+PASS   Linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":6.0003e-8,"relativeThreshold":0}.
+PASS < [linear-ramp] All assertions passed. (total 1 assertions)
+PASS > [exponential-ramp]
+PASS   Exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000023842,"relativeThreshold":0}.
+PASS < [exponential-ramp] All assertions passed. (total 1 assertions)
+PASS > [delayed-linear-ramp]
+PASS   Delayed linear ramp equals [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...] with an element-wise tolerance of {"absoluteThreshold":9.87968e-8,"relativeThreshold":0}.
+PASS < [delayed-linear-ramp] All assertions passed. (total 1 assertions)
+PASS > [delayed-exponential-ramp]
+PASS   Delayed exponential ramp equals [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...] with an element-wise tolerance of {"absoluteThreshold":0.000013948,"relativeThreshold":0}.
+PASS < [delayed-exponential-ramp] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

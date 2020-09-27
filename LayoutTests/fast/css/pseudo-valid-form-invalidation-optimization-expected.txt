@@ -46,6 +46,6 @@ PASS getComputedStyle(document.getElementById("form2-without-renderer")).color i
 PASS successfullyParsed is true
 
 TEST COMPLETE
-     
-      
-     
+
+
+

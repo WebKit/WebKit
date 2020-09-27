@@ -1,17 +1,17 @@
 The images should be rotated respecting their EXIF orientation. This test can only be run with testRunner (or by manually setting WebKitShouldRespectImageOrientation to true).
 
 
-Normal 
-Flipped horizontally 
-Rotated 180° 
-Flipped vertically 
+Normal
+Flipped horizontally
+Rotated 180°
+Flipped vertically
 
-Rotated 90° CCW and flipped vertically 
-Rotated 90° CCW 
-Rotated 90° CW and flipped vertically  
-Rotated 90° CW 
+Rotated 90° CCW and flipped vertically
+Rotated 90° CCW
+Rotated 90° CW and flipped vertically
+Rotated 90° CW
 
-Undefined (invalid value) 
+Undefined (invalid value)
 img1 size = 100px by 50px
 img2 size = 100px by 50px
 img3 size = 100px by 50px

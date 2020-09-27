@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/security/resources/xorigincss3.html' because non CSS MIME types are not allowed in strict mode.
 
-PASS Testing cross-origin and MIME behavior for CSS. 
-PASS xorigincss3.html should not be loaded, even though it is same-origin 
+PASS Testing cross-origin and MIME behavior for CSS.
+PASS xorigincss3.html should not be loaded, even though it is same-origin
 

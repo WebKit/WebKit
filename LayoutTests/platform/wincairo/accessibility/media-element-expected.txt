@@ -5,7 +5,7 @@ Dump <video> element controller accessibility object tree at 'canplaythrough' ev
 
 State at 'canplaythrough' event:
 
-    description: AXDescription: 
+    description: AXDescription:
     role: AXRole: AXWebArea
 
 
@@ -13,15 +13,15 @@ State at 'canplaythrough' event:
         role: AXRole: tool bar
 
 
-            description: AXDescription: 
+            description: AXDescription:
             role: AXRole: AXGroup
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXGroup
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXGroup
 
 
@@ -33,11 +33,11 @@ State at 'canplaythrough' event:
             role: AXRole: AXButton
 
 
-            description: AXDescription: 
+            description: AXDescription:
             role: AXRole: AXGroup
 
 
-            description: AXDescription: 
+            description: AXDescription:
             role: AXRole: AXGroup
 
 
@@ -45,7 +45,7 @@ State at 'canplaythrough' event:
             role: AXRole: slider
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXWebArea
 
 

@@ -1,6 +1,6 @@
 
 
-PASS Setup worker 
-PASS Setup fetch event after script is run 
-PASS Fetch event should be skipped 
+PASS Setup worker
+PASS Setup fetch event after script is run
+PASS Fetch event should be skipped
 

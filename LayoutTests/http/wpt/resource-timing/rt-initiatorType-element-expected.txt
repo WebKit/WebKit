@@ -1,26 +1,26 @@
 Resource Timing: Element localName initiatorType
 
 
-PASS Type: img - <img src> 
-PASS Timing: img - <img src> 
-PASS Type: img - <img srcset> 
-PASS Timing: img - <img srcset> 
-PASS Type: img - <picture> 
-PASS Timing: img - <picture> 
-PASS Type: image - <svg:image xlink:href> 
-PASS Timing: image - <svg:image xlink:href> 
-PASS Type: input - <input type=image> 
-PASS Timing: input - <input type=image> 
-PASS Type: script - <script type=script> 
-PASS Timing: script - <script type=script> 
-PASS Type: link - <link rel=stylesheet> 
-PASS Timing: link - <link rel=stylesheet> 
-PASS Type: iframe - <iframe src> 
-PASS Timing: iframe - <iframe src> 
-PASS Type: object - <object data> 
-PASS Timing: object - <object data> 
-PASS Type: embed - <embed data> 
-PASS Timing: embed - <embed data> 
-PASS Type: video - <video poster> 
-PASS Timing: video - <video poster> 
+PASS Type: img - <img src>
+PASS Timing: img - <img src>
+PASS Type: img - <img srcset>
+PASS Timing: img - <img srcset>
+PASS Type: img - <picture>
+PASS Timing: img - <picture>
+PASS Type: image - <svg:image xlink:href>
+PASS Timing: image - <svg:image xlink:href>
+PASS Type: input - <input type=image>
+PASS Timing: input - <input type=image>
+PASS Type: script - <script type=script>
+PASS Timing: script - <script type=script>
+PASS Type: link - <link rel=stylesheet>
+PASS Timing: link - <link rel=stylesheet>
+PASS Type: iframe - <iframe src>
+PASS Timing: iframe - <iframe src>
+PASS Type: object - <object data>
+PASS Timing: object - <object data>
+PASS Type: embed - <embed data>
+PASS Timing: embed - <embed data>
+PASS Type: video - <video poster>
+PASS Timing: video - <video poster>
 

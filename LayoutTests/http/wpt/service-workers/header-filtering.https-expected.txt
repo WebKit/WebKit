@@ -1,12 +1,12 @@
 
-PASS Prepare tests: setup worker and register the client 
-PASS Prepare tests: Add a frame controlled by service worker 
-PASS Test same-origin fetch 
-PASS Test cors cross-origin fetch 
-PASS Test no-cors cross-origin fetch 
-PASS Test same-origin script load 
-PASS Test no-cors script load 
-PASS Test cors script load 
-PASS Test HTML load 
-PASS After tests clean-up 
+PASS Prepare tests: setup worker and register the client
+PASS Prepare tests: Add a frame controlled by service worker
+PASS Test same-origin fetch
+PASS Test cors cross-origin fetch
+PASS Test no-cors cross-origin fetch
+PASS Test same-origin script load
+PASS Test no-cors script load
+PASS Test cors script load
+PASS Test HTML load
+PASS After tests clean-up
 

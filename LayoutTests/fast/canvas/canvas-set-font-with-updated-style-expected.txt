@@ -1,2 +1,2 @@
 Tests that setting font of Canvas 2d context always uses up-to-date style: PASS
- 
+

@@ -3,4 +3,4 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 This test makes sure that 0-sized fonts have 0-sized advances. The green rectangle below's height should be less than 30 pixels.
- 
+

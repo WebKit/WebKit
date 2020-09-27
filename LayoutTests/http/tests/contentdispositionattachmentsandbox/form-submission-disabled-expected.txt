@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Blocked form submission to 'http://127.0.0.1:8000/contentdispositionattachmentsandbox/resources/form-submission-frame.php' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
 This test verifies that form submission is disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.
 
- 
+

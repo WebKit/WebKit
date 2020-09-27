@@ -1,3 +1,3 @@
 
-PASS Testing that calling preventDefault() when handling a "pointerdown" event only blocks events while the mouse pointer is pressed. 
+PASS Testing that calling preventDefault() when handling a "pointerdown" event only blocks events while the mouse pointer is pressed.
 

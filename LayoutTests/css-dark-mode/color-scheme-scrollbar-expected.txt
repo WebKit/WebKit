@@ -1,17 +1,17 @@
 
-PASS Set dark appearance 
-PASS Set view to transparent 
-PASS Body Element color scheme is light and dark 
-PASS Document Element color scheme is auto 
-PASS Document scrollbar overlay style is light 
-PASS Document scrollbar is using dark appearance 
-PASS Element scrollbar overlay style is default 
-PASS Element scrollbar is using dark appearance 
-PASS Set color scheme to light on the document element 
-PASS Body Element color scheme is light and dark 2 
-PASS Document Element color scheme is light 
-PASS Document scrollbar overlay style is default 
-PASS Document scrollbar is using light appearance 
-PASS Element scrollbar overlay style is default 2 
-PASS Element scrollbar is using dark appearance 2 
+PASS Set dark appearance
+PASS Set view to transparent
+PASS Body Element color scheme is light and dark
+PASS Document Element color scheme is auto
+PASS Document scrollbar overlay style is light
+PASS Document scrollbar is using dark appearance
+PASS Element scrollbar overlay style is default
+PASS Element scrollbar is using dark appearance
+PASS Set color scheme to light on the document element
+PASS Body Element color scheme is light and dark 2
+PASS Document Element color scheme is light
+PASS Document scrollbar overlay style is default
+PASS Document scrollbar is using light appearance
+PASS Element scrollbar overlay style is default 2
+PASS Element scrollbar is using dark appearance 2
 

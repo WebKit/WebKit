@@ -1,92 +1,92 @@
 
-FAIL .flexbox 1 assert_equals: 
+FAIL .flexbox 1 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr column-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 2 assert_equals: 
+FAIL .flexbox 2 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl rtl column-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 3 assert_equals: 
+FAIL .flexbox 3 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr row-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 4 assert_equals: 
+FAIL .flexbox 4 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl rtl row-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 5 assert_equals: 
+FAIL .flexbox 5 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr column" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 6 assert_equals: 
+FAIL .flexbox 6 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl rtl column" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 7 assert_equals: 
+FAIL .flexbox 7 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr row" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 8 assert_equals: 
+FAIL .flexbox 8 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl rtl row" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 9 assert_equals: 
+FAIL .flexbox 9 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr ltr column-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 10 assert_equals: 
+FAIL .flexbox 10 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr rtl column-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 11 assert_equals: 
+FAIL .flexbox 11 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr ltr row-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 12 assert_equals: 
+FAIL .flexbox 12 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr rtl row-reverse" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 13 assert_equals: 
+FAIL .flexbox 13 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr ltr column" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 14 assert_equals: 
+FAIL .flexbox 14 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr rtl column" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 15 assert_equals: 
+FAIL .flexbox 15 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr ltr row" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-FAIL .flexbox 16 assert_equals: 
+FAIL .flexbox 16 assert_equals:
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-lr rtl row" data-offset-x="40" data-offset-y="10">
 <div style="flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
 width expected 90 but got 60
-PASS .flexbox 17 
-PASS .flexbox 18 
-PASS .flexbox 19 
-PASS .flexbox 20 
-PASS .flexbox 21 
-PASS .flexbox 22 
-PASS .flexbox 23 
-PASS .flexbox 24 
+PASS .flexbox 17
+PASS .flexbox 18
+PASS .flexbox 19
+PASS .flexbox 20
+PASS .flexbox 21
+PASS .flexbox 22
+PASS .flexbox 23
+PASS .flexbox 24
 horizontal-tb rtl row
 horizontal-tb ltr row
 horizontal-tb rtl column

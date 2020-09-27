@@ -1,10 +1,10 @@
 ResizeObserver tests
 
 t1
-t2 
+t2
 
-PASS ResizeObserver implemented 
-PASS guard 
-PASS test0: depth of target from child frame 
-PASS test1: observed element move to new document 
+PASS ResizeObserver implemented
+PASS guard
+PASS test0: depth of target from child frame
+PASS test1: observed element move to new document
 

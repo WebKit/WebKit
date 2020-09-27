@@ -1,10 +1,10 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test resampling of an AudioBuffer" 
-PASS Audit report 
-PASS > [Test resampling of an AudioBuffer]  
-PASS   Peak error between actual and reference data is less than 0.11. 
-PASS   SNR is greater than 22.35. 
-PASS < [Test resampling of an AudioBuffer] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test resampling of an AudioBuffer"
+PASS Audit report
+PASS > [Test resampling of an AudioBuffer]
+PASS   Peak error between actual and reference data is less than 0.11.
+PASS   SNR is greater than 22.35.
+PASS < [Test resampling of an AudioBuffer] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

@@ -3,5 +3,5 @@ CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin
 CONSOLE MESSAGE: Not allowed to call enumerateDevices.
 
 
-PASS allow attribute can be updated dynamically 
+PASS allow attribute can be updated dynamically
 

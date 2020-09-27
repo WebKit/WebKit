@@ -7,7 +7,7 @@ Canvas.getContext
 PASS context exists
 
 Checking gl enums.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: INVALID_ENUM : gl.bindTexture(desktopGL['TEXTURE_3D'], tex) should return INVALID_ENUM.
 PASS getError was expected value: INVALID_ENUM : gl.blendEquation(desktopGL['MIN']) should return INVALID_ENUM.
 PASS getError was expected value: INVALID_ENUM : gl.blendEquation(desktopGL['MAX']) should return INVALID_ENUM.
@@ -24,7 +24,7 @@ PASS getError was expected value: INVALID_ENUM : gl.isEnabled(desktopGL['CLIP_PL
 PASS getError was expected value: INVALID_ENUM : gl.isEnabled(desktopGL['POINT_SPRITE']) should return INVALID_ENUM.
 PASS getError was expected value: INVALID_ENUM : gl.pixelStorei(desktopGL['PACK_SWAP_BYTES'], 1) should return INVALID_ENUM.
 PASS getError was one of: INVALID_ENUM or INVALID_OPERATION : gl.readPixels(0, 0, 1, 1, gl.ALPHA, gl.SHORT, buf) should return INVALID_ENUM or INVALID_OPERATION.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: INVALID_ENUM : gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP']) should return INVALID_ENUM.
 PASS getError was expected value: INVALID_ENUM : gl.texParameteri(desktopGL['TEXTURE_3D'], gl.TEXTURE_MAG_FILTER, gl.NEAREST) should return INVALID_ENUM.
 PASS getError was expected value: INVALID_ENUM : gl.texParameteri(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'], 1) should return INVALID_ENUM.

@@ -1,4 +1,4 @@
-Test that window properties set for initial document are reset if domain security check fails 
+Test that window properties set for initial document are reset if domain security check fails
 
 --------
 Frame: '<!--frame1-->'

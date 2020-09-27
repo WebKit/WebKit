@@ -1,17 +1,17 @@
 ALERT: * The line below should have no text
-ALERT: 
+ALERT:
 ALERT: * The line below should have the text 'undefined'
 ALERT: undefined
 ALERT: * The line below should have the text 'null'
 ALERT: null
 ALERT: * The lines below should have no text
-CONFIRM: 
-CONFIRM: 
+CONFIRM:
+CONFIRM:
 ALERT: * The line below should have the text 'null'
 CONFIRM: null
 ALERT: * The lines below should have no text and no default text
-PROMPT: , default text: 
-PROMPT: , default text: 
+PROMPT: , default text:
+PROMPT: , default text:
 ALERT: * The line below should have the text 'null' and the default text null
 PROMPT: null, default text: null
 

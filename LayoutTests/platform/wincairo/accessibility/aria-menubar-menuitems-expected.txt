@@ -3,16 +3,16 @@ Menu item 1.1
 Menu 2
 Menu item 2.1
 Menu item 2.2
-AXRole: AXMenuBar AXTitle: 
+AXRole: AXMenuBar AXTitle:
     AXRole: AXTab AXTitle: Menu 1
-        AXRole: AXWebArea AXTitle: 
+        AXRole: AXWebArea AXTitle:
             AXRole: AXStaticText AXTitle: Menu 1
-        AXRole: popup menu AXTitle: 
+        AXRole: popup menu AXTitle:
             AXRole: AXTab AXTitle: Menu item 1.1
     AXRole: AXTab AXTitle: Menu 2
-        AXRole: AXWebArea AXTitle: 
+        AXRole: AXWebArea AXTitle:
             AXRole: AXStaticText AXTitle: Menu 2
-        AXRole: popup menu AXTitle: 
+        AXRole: popup menu AXTitle:
             AXRole: AXTab AXTitle: Menu item 2.1
             AXRole: AXTab AXTitle: Menu item 2.2
 This tests that ARIA menu items are properly exposed as children for menu bars

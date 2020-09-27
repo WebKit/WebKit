@@ -1,10 +1,10 @@
 
-PASS .flexbox 1 
-PASS .flexbox 2 
-PASS .flexbox 3 
-PASS .flexbox 4 
-PASS .flexbox 5 
-PASS .flexbox 6 
+PASS .flexbox 1
+PASS .flexbox 2
+PASS .flexbox 3
+PASS .flexbox 4
+PASS .flexbox 5
+PASS .flexbox 6
 This test verifies that changing order, align-content, align-items, align-self, or justify-content will relayout.
 
 

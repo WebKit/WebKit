@@ -1,33 +1,33 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "linear ramp replace" 
-PASS Executing "delayed linear ramp" 
-PASS Executing "expo ramp replace" 
-PASS Executing "delayed expo ramp" 
-PASS Audit report 
-PASS > [linear ramp replace]  
-PASS   Linear ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Linear ramp: SetTarget part was correctly replaced by the ramp 
-PASS   Linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000126765,"relativeThreshold":0}. 
-PASS   Linear ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [linear ramp replace] All assertions passed. (total 4 assertions) 
-PASS > [delayed linear ramp]  
-PASS   Delayed linear ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Delayed linear ramp: SetTarget part equals [expected array] with an element-wise tolerance of {"absoluteThreshold":3.43632e-7,"relativeThreshold":0}. 
-PASS   Delayed linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000107972,"relativeThreshold":0}. 
-PASS   Delayed linear ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [delayed linear ramp] All assertions passed. (total 4 assertions) 
-PASS > [expo ramp replace]  
-PASS   Exponential ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Exponential ramp: SetTarget part was correctly replaced by the ramp 
-PASS   Exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000114441,"relativeThreshold":0}. 
-PASS   Exponential ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [expo ramp replace] All assertions passed. (total 4 assertions) 
-PASS > [delayed expo ramp]  
-PASS   Delayed exponential ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Delayed exponential ramp: SetTarget part equals [expected array] with an element-wise tolerance of {"absoluteThreshold":3.43632e-7,"relativeThreshold":0}. 
-PASS   Delayed exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000429154,"relativeThreshold":0}. 
-PASS   Delayed exponential ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [delayed expo ramp] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "linear ramp replace"
+PASS Executing "delayed linear ramp"
+PASS Executing "expo ramp replace"
+PASS Executing "delayed expo ramp"
+PASS Audit report
+PASS > [linear ramp replace]
+PASS   Linear ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Linear ramp: SetTarget part was correctly replaced by the ramp
+PASS   Linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000126765,"relativeThreshold":0}.
+PASS   Linear ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [linear ramp replace] All assertions passed. (total 4 assertions)
+PASS > [delayed linear ramp]
+PASS   Delayed linear ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Delayed linear ramp: SetTarget part equals [expected array] with an element-wise tolerance of {"absoluteThreshold":3.43632e-7,"relativeThreshold":0}.
+PASS   Delayed linear ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000107972,"relativeThreshold":0}.
+PASS   Delayed linear ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [delayed linear ramp] All assertions passed. (total 4 assertions)
+PASS > [expo ramp replace]
+PASS   Exponential ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Exponential ramp: SetTarget part was correctly replaced by the ramp
+PASS   Exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000114441,"relativeThreshold":0}.
+PASS   Exponential ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [expo ramp replace] All assertions passed. (total 4 assertions)
+PASS > [delayed expo ramp]
+PASS   Delayed exponential ramp: Initial part equals [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Delayed exponential ramp: SetTarget part equals [expected array] with an element-wise tolerance of {"absoluteThreshold":3.43632e-7,"relativeThreshold":0}.
+PASS   Delayed exponential ramp equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00000429154,"relativeThreshold":0}.
+PASS   Delayed exponential ramp: Tail part equals [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [delayed expo ramp] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

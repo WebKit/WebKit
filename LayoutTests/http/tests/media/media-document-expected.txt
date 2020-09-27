@@ -1,5 +1,5 @@
 
-Tests that a media document can open a media URL with an ambiguous extension. 
+Tests that a media document can open a media URL with an ambiguous extension.
 
 EXPECTED (frame.contentDocument.getElementsByTagName('video')[0].error == 'null') OK
 END OF TEST

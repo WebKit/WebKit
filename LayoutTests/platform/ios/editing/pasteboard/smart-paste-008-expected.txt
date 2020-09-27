@@ -14,8 +14,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 There was a bug in paste's smart replace whitespace handling. In some cases, it used information gathered at the start of the selection being pasted into to decide whether or not a space needed to be added to the end of the incoming content.
 
-Expected Results: 
-A smart paste is performed into a selection starting in one block and ending in another. Spaces should surround the pasted word and look like: 
+Expected Results:
+A smart paste is performed into a selection starting in one block and ending in another. Spaces should surround the pasted word and look like:
 f foo bar
 f foo bar
 

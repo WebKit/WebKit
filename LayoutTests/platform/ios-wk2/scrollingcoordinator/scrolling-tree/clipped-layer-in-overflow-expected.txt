@@ -2,7 +2,7 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
     (horizontal scrollbar mode 0)
@@ -18,7 +18,7 @@
       (contents size 316 540)
       (requested scroll position 0 50)
       (requested scroll position represents programmatic scroll 1)
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)

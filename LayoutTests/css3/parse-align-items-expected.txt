@@ -1,12 +1,12 @@
 Test that setting and getting align-items works as expected
 
 
-PASS Test getting align-items set through CSS. 
-PASS Test initial value of align-items through JS 
-PASS Test getting and setting align-items through JS 
-PASS Test bad combinations of align-items 
-PASS Test the value 'initial' 
-PASS Test the value 'initial' for grid containers 
-PASS Test the value 'initial' for flex containers 
-PASS Test the value 'inherit' 
+PASS Test getting align-items set through CSS.
+PASS Test initial value of align-items through JS
+PASS Test getting and setting align-items through JS
+PASS Test bad combinations of align-items
+PASS Test the value 'initial'
+PASS Test the value 'initial' for grid containers
+PASS Test the value 'initial' for flex containers
+PASS Test the value 'inherit'
 

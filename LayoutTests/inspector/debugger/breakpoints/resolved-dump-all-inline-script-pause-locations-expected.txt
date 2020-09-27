@@ -76,7 +76,7 @@ PAUSES AT: 5:4
  =>   5        |console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:5
 PAUSES AT: 5:26
@@ -86,7 +86,7 @@ PAUSES AT: 5:26
 -=>   5        c#onsole.log("here 2");|document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:27
 PAUSES AT: 5:96
@@ -96,7 +96,7 @@ PAUSES AT: 5:96
 -=>   5        console.log("here 2");d#ocument.getElementById("two").addEventListener("click", (event) => { |console.log("two"); console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:97
 PAUSES AT: 5:116
@@ -106,7 +106,7 @@ PAUSES AT: 5:116
 -=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { c#onsole.log("two"); |console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:117
 PAUSES AT: 5:136
@@ -116,7 +116,7 @@ PAUSES AT: 5:136
 -=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); c#onsole.log(event); |});
       6        </script>
       7    </body>
-      8    
+      8
 
 
 INSERTING AT: 3:0
@@ -188,7 +188,7 @@ PAUSES AT: 5:4
  =>   5        |console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:5
 PAUSES AT: 5:26
@@ -198,7 +198,7 @@ PAUSES AT: 5:26
 -=>   5        c#onsole.log("here 2");|document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:27
 PAUSES AT: 5:96
@@ -208,7 +208,7 @@ PAUSES AT: 5:96
 -=>   5        console.log("here 2");d#ocument.getElementById("two").addEventListener("click", (event) => { |console.log("two"); console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:97
 PAUSES AT: 5:116
@@ -218,7 +218,7 @@ PAUSES AT: 5:116
 -=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { c#onsole.log("two"); |console.log(event); });
       6        </script>
       7    </body>
-      8    
+      8
 
 INSERTING AT: 5:117
 PAUSES AT: 5:136
@@ -228,6 +228,6 @@ PAUSES AT: 5:136
 -=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); c#onsole.log(event); |});
       6        </script>
       7    </body>
-      8    
+      8
 
 

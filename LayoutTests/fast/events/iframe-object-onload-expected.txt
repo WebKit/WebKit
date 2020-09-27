@@ -23,4 +23,4 @@ Fired load event on body inside object
 Fired event on object
 Outer event same as inner: false
 ------
-        
+

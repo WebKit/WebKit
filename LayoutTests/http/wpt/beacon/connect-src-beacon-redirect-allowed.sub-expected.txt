@@ -1,3 +1,3 @@
 
-PASS Redirect is allowed by CSP 
+PASS Redirect is allowed by CSP
 

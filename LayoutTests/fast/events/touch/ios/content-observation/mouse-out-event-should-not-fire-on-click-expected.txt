@@ -1,2 +1,2 @@
 PASS if 'mouseout' text is NOT shown below.
- clicked 
+ clicked

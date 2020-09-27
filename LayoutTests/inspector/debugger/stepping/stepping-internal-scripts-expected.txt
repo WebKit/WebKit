@@ -39,7 +39,7 @@ PAUSE AT entryConsoleLog:10:5
  ->   9        |console.log(console);
      10        console.log("string");
      11    }
-     12    
+     12
 
 ACTION: step-over
 PAUSE AT entryConsoleLog:11:5
@@ -48,7 +48,7 @@ PAUSE AT entryConsoleLog:11:5
       9        console.log(console);
  ->  10        |console.log("string");
      11    }
-     12    
+     12
      13    // ---------
 
 ACTION: step-over
@@ -57,9 +57,9 @@ PAUSE AT entryConsoleLog:12:2
       9        console.log(console);
      10        console.log("string");
  ->  11    }|
-     12    
+     12
      13    // ---------
-     14    
+     14
 
 ACTION: resume
 RESUMED
@@ -96,7 +96,7 @@ PAUSE AT entryConsoleLog:10:5
  ->   9        |console.log(console);
      10        console.log("string");
      11    }
-     12    
+     12
 
 ACTION: step-in
 PAUSE AT entryConsoleLog:11:5
@@ -105,7 +105,7 @@ PAUSE AT entryConsoleLog:11:5
       9        console.log(console);
  ->  10        |console.log("string");
      11    }
-     12    
+     12
      13    // ---------
 
 ACTION: step-in
@@ -114,9 +114,9 @@ PAUSE AT entryConsoleLog:12:2
       9        console.log(console);
      10        console.log("string");
  ->  11    }|
-     12    
+     12
      13    // ---------
-     14    
+     14
 
 ACTION: resume
 RESUMED

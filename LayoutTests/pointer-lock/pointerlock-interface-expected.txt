@@ -1,7 +1,7 @@
 
-PASS Document.prototype.exitPointerLock exists 
-PASS Document.prototype.pointerLockElement exists 
-PASS Document.prototype.onpointerlockchange exists 
-PASS Document.prototype.onpointerlockerror exists 
-PASS Element.prototype.requestPointerLock exists 
+PASS Document.prototype.exitPointerLock exists
+PASS Document.prototype.pointerLockElement exists
+PASS Document.prototype.onpointerlockchange exists
+PASS Document.prototype.onpointerlockerror exists
+PASS Element.prototype.requestPointerLock exists
 

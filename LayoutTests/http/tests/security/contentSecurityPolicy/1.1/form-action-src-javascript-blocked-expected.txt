@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Refused to load javascript:alert("RAN CODE INCORRECTLY!") because it does not appear in the form-action directive of the Content Security Policy.
-  
+
 Tests that blocking form actions works correctly. If this test passes, you will see a console error, and will not see a JavaScript alert.
 
 ============== Back Forward List ==============

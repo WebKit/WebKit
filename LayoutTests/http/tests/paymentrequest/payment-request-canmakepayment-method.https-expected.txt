@@ -1,5 +1,5 @@
 
-PASS If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException. 
-PASS If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException. 
-PASS Return a promise that resolves to true when Apple Pay is available, even if there isn't an active card. 
+PASS If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException.
+PASS If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException.
+PASS Return a promise that resolves to true when Apple Pay is available, even if there isn't an active card.
 

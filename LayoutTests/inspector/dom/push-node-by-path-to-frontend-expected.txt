@@ -1,6 +1,6 @@
 Test for DOM.pushNodeByPathToFrontend.
 
-  
+
 
 == Running test suite: DOM.pushNodeByPathToFrontend
 -- Running test case: InlineFrameDocumentNode

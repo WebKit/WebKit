@@ -1,18 +1,18 @@
 
-PASS slotchange event must bubble in a disconnected closed-mode shadow tree 
-PASS slotchange event must bubble in a connected closed-mode shadow tree 
-PASS slotchange event must bubble in a disconnected open-mode shadow tree 
-PASS slotchange event must bubble in a connected open-mode shadow tree 
-PASS A single slotchange event must bubble from a disconnected closed-mode shadow tree toa slot in its parent closed-mode shadow tree 
-PASS A single slotchange event must bubble from a connected closed-mode shadow tree toa slot in its parent closed-mode shadow tree 
-PASS A single slotchange event must bubble from a disconnected open-mode shadow tree toa slot in its parent closed-mode shadow tree 
-PASS A single slotchange event must bubble from a connected open-mode shadow tree toa slot in its parent closed-mode shadow tree 
-PASS A single slotchange event must bubble from a disconnected closed-mode shadow tree toa slot in its parent open-mode shadow tree 
-PASS A single slotchange event must bubble from a connected closed-mode shadow tree toa slot in its parent open-mode shadow tree 
-PASS A single slotchange event must bubble from a disconnected open-mode shadow tree toa slot in its parent open-mode shadow tree 
-PASS A single slotchange event must bubble from a connected open-mode shadow tree toa slot in its parent open-mode shadow tree 
-PASS slotchange event must be fired in a disconnected closed-mode shadow tree even when the slot element itself lacks a event listener. 
-PASS slotchange event must be fired in a connected closed-mode shadow tree even when the slot element itself lacks a event listener. 
-PASS slotchange event must be fired in a disconnected open-mode shadow tree even when the slot element itself lacks a event listener. 
-PASS slotchange event must be fired in a connected open-mode shadow tree even when the slot element itself lacks a event listener. 
+PASS slotchange event must bubble in a disconnected closed-mode shadow tree
+PASS slotchange event must bubble in a connected closed-mode shadow tree
+PASS slotchange event must bubble in a disconnected open-mode shadow tree
+PASS slotchange event must bubble in a connected open-mode shadow tree
+PASS A single slotchange event must bubble from a disconnected closed-mode shadow tree toa slot in its parent closed-mode shadow tree
+PASS A single slotchange event must bubble from a connected closed-mode shadow tree toa slot in its parent closed-mode shadow tree
+PASS A single slotchange event must bubble from a disconnected open-mode shadow tree toa slot in its parent closed-mode shadow tree
+PASS A single slotchange event must bubble from a connected open-mode shadow tree toa slot in its parent closed-mode shadow tree
+PASS A single slotchange event must bubble from a disconnected closed-mode shadow tree toa slot in its parent open-mode shadow tree
+PASS A single slotchange event must bubble from a connected closed-mode shadow tree toa slot in its parent open-mode shadow tree
+PASS A single slotchange event must bubble from a disconnected open-mode shadow tree toa slot in its parent open-mode shadow tree
+PASS A single slotchange event must bubble from a connected open-mode shadow tree toa slot in its parent open-mode shadow tree
+PASS slotchange event must be fired in a disconnected closed-mode shadow tree even when the slot element itself lacks a event listener.
+PASS slotchange event must be fired in a connected closed-mode shadow tree even when the slot element itself lacks a event listener.
+PASS slotchange event must be fired in a disconnected open-mode shadow tree even when the slot element itself lacks a event listener.
+PASS slotchange event must be fired in a connected open-mode shadow tree even when the slot element itself lacks a event listener.
 

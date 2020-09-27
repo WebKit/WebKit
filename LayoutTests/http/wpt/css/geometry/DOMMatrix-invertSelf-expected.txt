@@ -1,6 +1,6 @@
 
-PASS new DOMMatrix([0,0,0,0,0,0]).invertSelf() 
-PASS new DOMMatrix([1,1,1,1,1,1]).invertSelf() 
-PASS new DOMMatrix([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]).invertSelf() 
-PASS new DOMMatrix([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]).invertSelf() 
+PASS new DOMMatrix([0,0,0,0,0,0]).invertSelf()
+PASS new DOMMatrix([1,1,1,1,1,1]).invertSelf()
+PASS new DOMMatrix([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]).invertSelf()
+PASS new DOMMatrix([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]).invertSelf()
 

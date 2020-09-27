@@ -8,5 +8,5 @@ EDITING DELEGATE: shouldInsertText:Test Passed replacingDOMRange:range from 0 of
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-This tests that you can paste into a plain-text editable area even if the body has user-select:none set on it. 
+This tests that you can paste into a plain-text editable area even if the body has user-select:none set on it.
 Test Passed

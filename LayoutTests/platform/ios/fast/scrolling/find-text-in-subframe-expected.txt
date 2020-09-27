@@ -6,7 +6,7 @@ match 3
 
 
 
-PASS Initial position of iframe node 
-PASS Position of iframe node after the three first results 
-PASS Position of iframe node after the fourth result 
+PASS Initial position of iframe node
+PASS Position of iframe node after the three first results
+PASS Position of iframe node after the fourth result
 

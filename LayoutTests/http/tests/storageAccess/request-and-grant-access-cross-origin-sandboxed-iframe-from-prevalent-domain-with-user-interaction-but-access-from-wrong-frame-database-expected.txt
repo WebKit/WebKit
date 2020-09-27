@@ -7,7 +7,7 @@ PASS Storage access was granted. document.cookie == firstPartyCookie=value, cook
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+
 
 --------
 Frame: '<!--frame1-->'

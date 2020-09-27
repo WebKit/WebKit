@@ -1,14 +1,14 @@
 Test that when dirname attribute is specified then it is added in submission body.
 
-Comment: 
+Comment:
 
-WithRTLDir: 
+WithRTLDir:
 
-WithLTRDir: 
+WithLTRDir:
 
-WithInvalidDir: 
+WithInvalidDir:
 
-WithRTLValue: 
+WithRTLValue:
 
 Post Comment
 

@@ -9,5 +9,5 @@ Result:
 |     style="white-space:pre"
 |     "		"
 |   "world"
-| " 
+| "
 "

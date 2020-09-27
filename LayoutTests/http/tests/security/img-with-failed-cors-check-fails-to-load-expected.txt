@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Cannot load image http://localhost:8080/security/resources/red200x100.png due to access control checks.
 ALERT: PASS: The error event was called.
-This test passes if the image below does not load. 
+This test passes if the image below does not load.

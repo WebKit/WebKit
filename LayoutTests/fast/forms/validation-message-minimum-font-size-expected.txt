@@ -1,4 +1,4 @@
-Required text input: 
+Required text input:
 Tests that the font used for validation bubble is aware of the minimumFontSize setting.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

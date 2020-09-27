@@ -21,7 +21,7 @@ test7 has trait haspopup = false with aria-haspopup attribute = false
 AX popupValue = 'false'
 test8 has trait haspopup = false with aria-haspopup attribute = foo
 AX popupValue = 'false'
-test9 has trait haspopup = false with aria-haspopup attribute = 
+test9 has trait haspopup = false with aria-haspopup attribute =
 AX popupValue = 'false'
 PASS successfullyParsed is true
 

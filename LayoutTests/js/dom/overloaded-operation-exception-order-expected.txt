@@ -1,4 +1,4 @@
 
-PASS An overloaded function that is passed too few arguments for any overload should throw a 'Not enough arguments' exception 
-PASS An overloaded function that is passed too few arguments for any overload, and also an invalid this object, should throw an 'Invalid this object' exception 
+PASS An overloaded function that is passed too few arguments for any overload should throw a 'Not enough arguments' exception
+PASS An overloaded function that is passed too few arguments for any overload, and also an invalid this object, should throw an 'Invalid this object' exception
 

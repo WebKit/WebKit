@@ -1,14 +1,14 @@
 
-PASS failTrickyDoubleZero 
-PASS simpleDeclaration 
-PASS enumWithUintBase 
-PASS enumWithoutZero 
-PASS enumNegativeUint 
-PASS pastIntMax 
-PASS enumWithSomeManualValues 
-PASS enumSwitchBreakExhaustive 
-PASS enumSwitchBreakNotQuiteExhaustiveWithDefault 
-PASS enumWithManualValues 
-PASS enumSwitchBreakNotQuiteExhaustive 
-PASS copyConstructors 
+PASS failTrickyDoubleZero
+PASS simpleDeclaration
+PASS enumWithUintBase
+PASS enumWithoutZero
+PASS enumNegativeUint
+PASS pastIntMax
+PASS enumWithSomeManualValues
+PASS enumSwitchBreakExhaustive
+PASS enumSwitchBreakNotQuiteExhaustiveWithDefault
+PASS enumWithManualValues
+PASS enumSwitchBreakNotQuiteExhaustive
+PASS copyConstructors
 

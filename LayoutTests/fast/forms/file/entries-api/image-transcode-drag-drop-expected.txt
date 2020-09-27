@@ -12,4 +12,4 @@ PASS img.height is 400
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

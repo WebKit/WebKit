@@ -1,5 +1,5 @@
 Caught expected exception: SyntaxError: The string did not match the expected pattern.
 Caught expected exception: TypeError: Argument 2 ('element') to Element.insertAdjacentElement must be an instance of Element
-1 (black) 2 (green) 3 (green) 4 (black) 
+1 (black) 2 (green) 3 (green) 4 (black)
 
 PASS

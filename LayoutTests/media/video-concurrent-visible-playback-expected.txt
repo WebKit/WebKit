@@ -1,4 +1,4 @@
-  
+
 Test autoplay when both invisible playback and concurrent playback are not allowed.
 
 RUN(video.src = findMediaFile("video", "content/test"))

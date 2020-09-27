@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
- 
 
-PASS Makes sure that preloaded resources are not downloaded again when used 
+
+PASS Makes sure that preloaded resources are not downloaded again when used
 

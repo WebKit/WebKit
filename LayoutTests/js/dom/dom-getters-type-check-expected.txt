@@ -1,7 +1,7 @@
 
-PASS DOM getter should be a function 
-PASS DOM getter throws an error with unrelated values 
-PASS DOM getter works with element object 
-PASS DOM getter access throws an error with unrelated object 
-PASS DOM getter access through Element.prototype throws an error with unrelated object 
+PASS DOM getter should be a function
+PASS DOM getter throws an error with unrelated values
+PASS DOM getter works with element object
+PASS DOM getter access throws an error with unrelated object
+PASS DOM getter access through Element.prototype throws an error with unrelated object
 

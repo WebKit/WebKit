@@ -1,6 +1,6 @@
 When the contents of an iframe have focus, the activeElement in the parent document should be the iframe element.
 
-  
+
 
 Focusing top/input-0
 PASS: top document.activeElement is top/input-0

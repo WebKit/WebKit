@@ -1,4 +1,4 @@
-  
 
-PASS Testing video exchange with rotation applied before transmission 
+
+PASS Testing video exchange with rotation applied before transmission
 

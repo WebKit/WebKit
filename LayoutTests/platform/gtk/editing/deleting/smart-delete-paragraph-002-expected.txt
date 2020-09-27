@@ -10,11 +10,11 @@ EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > SPAN > PRE > BODY
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of PRE > BODY > HTML > #document to 2 of PRE > BODY > HTML > #document toDOMRange:range from 2 of PRE > BODY > HTML > #document to 2 of PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart deleting paragraph between two paragraphs in a pre element.
-Expected Results: 
-The extra line should be removed when the paragraph is removed. It should like this: 
-Test paragraph. 
+Expected Results:
+The extra line should be removed when the paragraph is removed. It should like this:
+Test paragraph.
 
 Last test paragraph.
 Test paragraph.

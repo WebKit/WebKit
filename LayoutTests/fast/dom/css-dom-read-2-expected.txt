@@ -17,28 +17,28 @@ I {display: block;}
 
 @import url("fancyfonts.css") screen;
 @media print {
-  body { font-size: 10pt; } 
-}
-@media screen {
-  body { font-size: 13px; } 
-}
-@media screen, print {
-  body { line-height: 1.2; } 
-}
-.one { display: block; } 
-.two { display: inline; } 
-.three { display: list-item; list-style-type: square; margin-left: 3em; } 
-.four { display: none; color: red; } 
-I { display: block; } 
-
-@import url("fancyfonts.css") screen;
-@media print { 
   body { font-size: 10pt; }
 }
-@media screen { 
+@media screen {
   body { font-size: 13px; }
 }
-@media screen, print { 
+@media screen, print {
+  body { line-height: 1.2; }
+}
+.one { display: block; }
+.two { display: inline; }
+.three { display: list-item; list-style-type: square; margin-left: 3em; }
+.four { display: none; color: red; }
+I { display: block; }
+
+@import url("fancyfonts.css") screen;
+@media print {
+  body { font-size: 10pt; }
+}
+@media screen {
+  body { font-size: 13px; }
+}
+@media screen, print {
   body { line-height: 1.2; }
 }
 .one { display: block; }

@@ -19,7 +19,7 @@ PASS currentSrcFileName("picture_no_source") is "blue_rect.jpg?6"
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
- 
- 
-     
+
+
+
+

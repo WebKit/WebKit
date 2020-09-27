@@ -8,7 +8,7 @@ STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTryCatchNoError:20:5
      16    }
-     17    
+     17
      18    function entryTryCatchNoError() {
  ->  19        |debugger;
      20        try {
@@ -31,7 +31,7 @@ PAUSE AT entryTryCatchNoError:26:2
      23            shouldNotBeReached();
      24        }
  ->  25    }|
-     26    
+     26
      27    function entryTryCatchFinallyNoError() {
      28        debugger;
 
@@ -45,7 +45,7 @@ STEPS: over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTryCatchFinallyNoError:29:5
      25    }
-     26    
+     26
      27    function entryTryCatchFinallyNoError() {
  ->  28        |debugger;
      29        try {
@@ -68,17 +68,17 @@ PAUSE AT entryTryCatchFinallyNoError:35:9
      32            shouldNotBeReached();
      33        } finally {
  ->  34            |b();
-     35        }   
+     35        }
      36    }
-     37    
+     37
 
 ACTION: step-over
 PAUSE AT entryTryCatchFinallyNoError:37:2
      33        } finally {
      34            b();
-     35        }   
+     35        }
  ->  36    }|
-     37    
+     37
      38    function entryTryExplicitThrow() {
      39        debugger;
 
@@ -92,7 +92,7 @@ STEPS: over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTryExplicitThrow:40:5
      36    }
-     37    
+     37
      38    function entryTryExplicitThrow() {
  ->  39        |debugger;
      40        try {
@@ -117,7 +117,7 @@ PAUSE AT entryTryExplicitThrow:44:9
  ->  43            |a();
      44        } finally {
      45            b();
-     46        }   
+     46        }
 
 ACTION: step-over
 PAUSE AT entryTryExplicitThrow:46:9
@@ -125,17 +125,17 @@ PAUSE AT entryTryExplicitThrow:46:9
      43            a();
      44        } finally {
  ->  45            |b();
-     46        }   
+     46        }
      47    }
-     48    
+     48
 
 ACTION: step-over
 PAUSE AT entryTryExplicitThrow:48:2
      44        } finally {
      45            b();
-     46        }   
+     46        }
  ->  47    }|
-     48    
+     48
      49    function entryTryRuntimeException() {
      50        debugger;
 
@@ -149,7 +149,7 @@ STEPS: over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTryExplicitThrow:40:5
      36    }
-     37    
+     37
      38    function entryTryExplicitThrow() {
  ->  39        |debugger;
      40        try {
@@ -184,7 +184,7 @@ PAUSE AT entryTryExplicitThrow:44:9
  ->  43            |a();
      44        } finally {
      45            b();
-     46        }   
+     46        }
 
 ACTION: step-over
 PAUSE AT entryTryExplicitThrow:46:9
@@ -192,17 +192,17 @@ PAUSE AT entryTryExplicitThrow:46:9
      43            a();
      44        } finally {
  ->  45            |b();
-     46        }   
+     46        }
      47    }
-     48    
+     48
 
 ACTION: step-over
 PAUSE AT entryTryExplicitThrow:48:2
      44        } finally {
      45            b();
-     46        }   
+     46        }
  ->  47    }|
-     48    
+     48
      49    function entryTryRuntimeException() {
      50        debugger;
 
@@ -216,7 +216,7 @@ STEPS: over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTryRuntimeException:51:5
      47    }
-     48    
+     48
      49    function entryTryRuntimeException() {
  ->  50        |debugger;
      51        try {
@@ -241,7 +241,7 @@ PAUSE AT entryTryRuntimeException:55:9
  ->  54            |a();
      55        } finally {
      56            b();
-     57        }   
+     57        }
 
 ACTION: step-over
 PAUSE AT entryTryRuntimeException:57:9
@@ -249,17 +249,17 @@ PAUSE AT entryTryRuntimeException:57:9
      54            a();
      55        } finally {
  ->  56            |b();
-     57        }   
+     57        }
      58    }
-     59    
+     59
 
 ACTION: step-over
 PAUSE AT entryTryRuntimeException:59:2
      55        } finally {
      56            b();
-     57        }   
+     57        }
  ->  58    }|
-     59    
+     59
      60    function entryTryFinallyNoError() {
      61        try {
 
@@ -273,7 +273,7 @@ STEPS: over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTryRuntimeException:51:5
      47    }
-     48    
+     48
      49    function entryTryRuntimeException() {
  ->  50        |debugger;
      51        try {
@@ -308,7 +308,7 @@ PAUSE AT entryTryRuntimeException:55:9
  ->  54            |a();
      55        } finally {
      56            b();
-     57        }   
+     57        }
 
 ACTION: step-over
 PAUSE AT entryTryRuntimeException:57:9
@@ -316,17 +316,17 @@ PAUSE AT entryTryRuntimeException:57:9
      54            a();
      55        } finally {
  ->  56            |b();
-     57        }   
+     57        }
      58    }
-     59    
+     59
 
 ACTION: step-over
 PAUSE AT entryTryRuntimeException:59:2
      55        } finally {
      56            b();
-     57        }   
+     57        }
  ->  58    }|
-     59    
+     59
      60    function entryTryFinallyNoError() {
      61        try {
 

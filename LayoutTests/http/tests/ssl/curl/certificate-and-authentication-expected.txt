@@ -1,4 +1,4 @@
 localhost:8443 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with user:
 
-PASS Certificate validation and basic authentication 
+PASS Certificate validation and basic authentication
 

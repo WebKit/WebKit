@@ -1,6 +1,6 @@
 
-PASS The Notification constructor requires at least one argument. 
-PASS The Notification object initializes its properties to their default values from the NotificationOptions dictionary if it is not provided. 
-PASS The Notification object initializes its properties to the values from NotificationOptions dictionary if it is provided. 
-PASS The NotificationOptions dictionary only accepts valid NotificationDirection values. 
+PASS The Notification constructor requires at least one argument.
+PASS The Notification object initializes its properties to their default values from the NotificationOptions dictionary if it is not provided.
+PASS The Notification object initializes its properties to the values from NotificationOptions dictionary if it is provided.
+PASS The NotificationOptions dictionary only accepts valid NotificationDirection values.
 

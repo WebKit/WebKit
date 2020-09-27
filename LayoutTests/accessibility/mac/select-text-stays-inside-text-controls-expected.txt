@@ -1,4 +1,4 @@
- 
+
  outside text
 This tests that the select text mechanism will not return results outside of a text input control.
 

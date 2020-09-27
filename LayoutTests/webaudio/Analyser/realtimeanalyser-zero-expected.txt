@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "zero input" 
-PASS Audit report 
-PASS > [zero input]  
-PASS   getFloatFrequencyData() with zero-valued input contains only the constant -Infinity. 
-PASS < [zero input] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "zero input"
+PASS Audit report
+PASS > [zero input]
+PASS   getFloatFrequencyData() with zero-valued input contains only the constant -Infinity.
+PASS < [zero input] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

@@ -1,6 +1,6 @@
 Test formmethod attribute
 
-    
+
 Missing value
 PASS ip1.formMethod is ""
 PASS ip1.getAttribute('formmethod') is null

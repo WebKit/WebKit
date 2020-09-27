@@ -1,20 +1,20 @@
 
-PASS circle(+10px) - inline 
-PASS circle(+10.00px) - inline 
-PASS circle(+20.340px) - inline 
-PASS circle(+30.5px) - inline 
-PASS circle(+10%) - inline 
-PASS circle(+10.00%) - inline 
-PASS circle(+20.350%) - inline 
-PASS circle(+30.5%) - inline 
-PASS circle(+10px) - computed 
-PASS circle(+10.00px) - computed 
-PASS circle(+20.340px) - computed 
-PASS circle(+30.5px) - computed 
-PASS circle(+10%) - computed 
-PASS circle(+10.00%) - computed 
-PASS circle(+20.350%) - computed 
-PASS circle(+30.5%) - computed 
+PASS circle(+10px) - inline
+PASS circle(+10.00px) - inline
+PASS circle(+20.340px) - inline
+PASS circle(+30.5px) - inline
+PASS circle(+10%) - inline
+PASS circle(+10.00%) - inline
+PASS circle(+20.350%) - inline
+PASS circle(+30.5%) - inline
+PASS circle(+10px) - computed
+PASS circle(+10.00px) - computed
+PASS circle(+20.340px) - computed
+PASS circle(+30.5px) - computed
+PASS circle(+10%) - computed
+PASS circle(+10.00%) - computed
+PASS circle(+20.350%) - computed
+PASS circle(+30.5%) - computed
 FAIL circle(-20px) - invalid assert_equals: expected (object) null but got (string) ""
 FAIL circle(-20.340px) - invalid assert_equals: expected (object) null but got (string) ""
 

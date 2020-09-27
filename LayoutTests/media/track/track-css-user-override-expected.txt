@@ -1,6 +1,6 @@
 
 
-internals.captionsStyleSheetOverride = 
+internals.captionsStyleSheetOverride =
 Test that style to all cues is applied correctly.
 EVENT(canplaythrough)
 EVENT(seeked)

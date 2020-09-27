@@ -1,4 +1,4 @@
- 
+
 Test for bug 19347: Input methods do not work after switching to a password field and back.
 
 Also verifies that password fields cannot be accessed via text input APIs.

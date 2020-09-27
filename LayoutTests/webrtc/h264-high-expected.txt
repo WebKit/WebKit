@@ -1,22 +1,22 @@
 
 
-PASS High video exchange 
-PASS Video resolution test: 320 240 
-PASS Video resolution test: 640 480 
-PASS Video resolution test: 1024 768 
-PASS Video resolution test: 1280 960 
-PASS Video resolution test: 1600 1200 
-PASS Video resolution test: 320 180 
-PASS Video resolution test: 640 360 
-PASS Video resolution test: 1280 720 
-PASS Video resolution test: 1920 1080 
-PASS Video resolution test with maxBitrate: 320 240 
-PASS Video resolution test with maxBitrate: 640 480 
-PASS Video resolution test with maxBitrate: 1024 768 
-PASS Video resolution test with maxBitrate: 1280 960 
-PASS Video resolution test with maxBitrate: 1600 1200 
-PASS Video resolution test with maxBitrate: 320 180 
-PASS Video resolution test with maxBitrate: 640 360 
-PASS Video resolution test with maxBitrate: 1280 720 
-PASS Video resolution test with maxBitrate: 1920 1080 
+PASS High video exchange
+PASS Video resolution test: 320 240
+PASS Video resolution test: 640 480
+PASS Video resolution test: 1024 768
+PASS Video resolution test: 1280 960
+PASS Video resolution test: 1600 1200
+PASS Video resolution test: 320 180
+PASS Video resolution test: 640 360
+PASS Video resolution test: 1280 720
+PASS Video resolution test: 1920 1080
+PASS Video resolution test with maxBitrate: 320 240
+PASS Video resolution test with maxBitrate: 640 480
+PASS Video resolution test with maxBitrate: 1024 768
+PASS Video resolution test with maxBitrate: 1280 960
+PASS Video resolution test with maxBitrate: 1600 1200
+PASS Video resolution test with maxBitrate: 320 180
+PASS Video resolution test with maxBitrate: 640 360
+PASS Video resolution test with maxBitrate: 1280 720
+PASS Video resolution test with maxBitrate: 1920 1080
 

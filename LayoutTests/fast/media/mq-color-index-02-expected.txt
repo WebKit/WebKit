@@ -1,6 +1,6 @@
 
-PASS CSSOM Sanity check 
-PASS (color-index: 0.0) is invalid 
-PASS (color-index: -1) is invalid 
-PASS (color-index: 2.1) is invalid 
+PASS CSSOM Sanity check
+PASS (color-index: 0.0) is invalid
+PASS (color-index: -1) is invalid
+PASS (color-index: 2.1) is invalid
 

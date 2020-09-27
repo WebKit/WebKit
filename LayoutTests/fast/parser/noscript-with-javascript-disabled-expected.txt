@@ -1,4 +1,4 @@
-The text inside the 'noscript' tag inside the iframe should render:  
+The text inside the 'noscript' tag inside the iframe should render:
 
 --------
 Frame: '<!--frame1-->'

@@ -9,38 +9,38 @@ PASS a["wibble"] is 3
 PASS a["hick"] is 4
 PASS a["hock"] is 5
 PASS a["snood"] is 6
-PASS a["charset"] is 
-PASS a["coords"] is 
-PASS a["download"] is 
-PASS a["hreflang"] is 
-PASS a["name"] is 
-PASS a["ping"] is 
-PASS a["rel"] is 
-PASS a["rev"] is 
-PASS a["shape"] is 
-PASS a["target"] is 
-PASS a["type"] is 
+PASS a["charset"] is
+PASS a["coords"] is
+PASS a["download"] is
+PASS a["hreflang"] is
+PASS a["name"] is
+PASS a["ping"] is
+PASS a["rel"] is
+PASS a["rev"] is
+PASS a["shape"] is
+PASS a["target"] is
+PASS a["type"] is
 PASS a["text"] is nerget
-PASS a["relList"] is 
-PASS a["referrerPolicy"] is 
+PASS a["relList"] is
+PASS a["referrerPolicy"] is
 PASS a["origin"] is file://
 PASS a["protocol"] is file:
-PASS a["username"] is 
-PASS a["password"] is 
-PASS a["host"] is 
-PASS a["hostname"] is 
-PASS a["port"] is 
-PASS a["search"] is 
-PASS a["hash"] is 
-PASS a["title"] is 
-PASS a["lang"] is 
+PASS a["username"] is
+PASS a["password"] is
+PASS a["host"] is
+PASS a["hostname"] is
+PASS a["port"] is
+PASS a["search"] is
+PASS a["hash"] is
+PASS a["title"] is
+PASS a["lang"] is
 PASS a["translate"] is true
-PASS a["dir"] is 
+PASS a["dir"] is
 PASS a["dataset"] is [object DOMStringMap]
 PASS a["hidden"] is false
 PASS a["tabIndex"] is 0
-PASS a["accessKey"] is 
-PASS a["accessKeyLabel"] is 
+PASS a["accessKey"] is
+PASS a["accessKeyLabel"] is
 PASS a["draggable"] is true
 PASS a["spellcheck"] is true
 PASS a["innerText"] is nerget
@@ -52,9 +52,9 @@ PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["outerText"] is nerget
-PASS a["webkitdropzone"] is 
-PASS a["inputMode"] is 
-PASS a["enterKeyHint"] is 
+PASS a["webkitdropzone"] is
+PASS a["inputMode"] is
+PASS a["enterKeyHint"] is
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["attributeStyleMap"] is [object StylePropertyMap]
 PASS a["onabort"] is null
@@ -128,9 +128,9 @@ PASS a["prefix"] is null
 PASS a["localName"] is a
 PASS a["tagName"] is A
 PASS a["id"] is foo
-PASS a["className"] is 
-PASS a["classList"] is 
-PASS a["slot"] is 
+PASS a["className"] is
+PASS a["classList"] is
+PASS a["slot"] is
 PASS a["attributes"] is [object NamedNodeMap]
 PASS a["shadowRoot"] is null
 PASS a["scrollTop"] is 0

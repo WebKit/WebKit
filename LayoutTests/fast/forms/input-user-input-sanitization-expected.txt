@@ -12,4 +12,4 @@ PASS focusAndType("url", "   https://foobar.example.com   ").value is "   https:
 PASS successfullyParsed is true
 
 TEST COMPLETE
-         
+

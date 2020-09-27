@@ -11,10 +11,10 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > DIV > BODY > HTML > #document to 11 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 9 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting in the middle of a word.
-Expected Results: 
-Spaces should be added before and after the pasted word. It should look like this: 
+Expected Results:
+Spaces should be added before and after the pasted word. It should look like this:
 te test st
 te test st
 execCopyCommand: <div id="test" class="editing"> test </div>

@@ -1,5 +1,5 @@
 Resource Timing: Ignored resources
 
 
-PASS data: URI resources do not create entries 
+PASS data: URI resources do not create entries
 

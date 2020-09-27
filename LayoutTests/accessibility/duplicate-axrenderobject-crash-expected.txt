@@ -1,7 +1,7 @@
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+
 Ensures that it's not possible to have two AXRenderObjects that point to the same renderer, if the initialization of an AXRenderObject results in another object with the same renderer being created before AXObjectCache has added that mapping to its hash.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

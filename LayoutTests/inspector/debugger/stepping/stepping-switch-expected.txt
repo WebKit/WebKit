@@ -8,27 +8,27 @@ STEPS: over, in, in, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entrySwitchHitCase:29:5
      25    }
-     26    
+     26
      27    function entrySwitchHitCase() {
  ->  28        |debugger;
      29        switcher(1);
      30    }
-     31    
+     31
 
 ACTION: step-over
 PAUSE AT entrySwitchHitCase:30:5
-     26    
+     26
      27    function entrySwitchHitCase() {
      28        debugger;
  ->  29        |switcher(1);
      30    }
-     31    
+     31
      32    function entrySwitchFallthrough() {
 
 ACTION: step-in
 PAUSE AT switcher:12:13
       8    }
-      9    
+      9
      10    function switcher(value) {
  ->  11        switch (|value) {
      12        case 1:
@@ -61,7 +61,7 @@ PAUSE AT switcher:26:2
      23            break;
      24        }
  ->  25    }|
-     26    
+     26
      27    function entrySwitchHitCase() {
      28        debugger;
 
@@ -71,7 +71,7 @@ PAUSE AT entrySwitchHitCase:31:2
      28        debugger;
      29        switcher(1);
  ->  30    }|
-     31    
+     31
      32    function entrySwitchFallthrough() {
      33        debugger;
 
@@ -85,27 +85,27 @@ STEPS: over, in, in, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entrySwitchFallthrough:34:5
      30    }
-     31    
+     31
      32    function entrySwitchFallthrough() {
  ->  33        |debugger;
      34        switcher(2);
      35    }
-     36    
+     36
 
 ACTION: step-over
 PAUSE AT entrySwitchFallthrough:35:5
-     31    
+     31
      32    function entrySwitchFallthrough() {
      33        debugger;
  ->  34        |switcher(2);
      35    }
-     36    
+     36
      37    function entrySwitchDefault() {
 
 ACTION: step-in
 PAUSE AT switcher:12:13
       8    }
-      9    
+      9
      10    function switcher(value) {
  ->  11        switch (|value) {
      12        case 1:
@@ -148,7 +148,7 @@ PAUSE AT switcher:26:2
      23            break;
      24        }
  ->  25    }|
-     26    
+     26
      27    function entrySwitchHitCase() {
      28        debugger;
 
@@ -158,7 +158,7 @@ PAUSE AT entrySwitchFallthrough:36:2
      33        debugger;
      34        switcher(2);
  ->  35    }|
-     36    
+     36
      37    function entrySwitchDefault() {
      38        debugger;
 
@@ -172,27 +172,27 @@ STEPS: over, in, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entrySwitchDefault:39:5
      35    }
-     36    
+     36
      37    function entrySwitchDefault() {
  ->  38        |debugger;
      39        switcher(4);
      40    }
-     41    
+     41
 
 ACTION: step-over
 PAUSE AT entrySwitchDefault:40:5
-     36    
+     36
      37    function entrySwitchDefault() {
      38        debugger;
  ->  39        |switcher(4);
      40    }
-     41    
+     41
      42    function entrySwitchNoCase() {
 
 ACTION: step-in
 PAUSE AT switcher:12:13
       8    }
-      9    
+      9
      10    function switcher(value) {
  ->  11        switch (|value) {
      12        case 1:
@@ -217,7 +217,7 @@ PAUSE AT switcher:24:9
  ->  23            |break;
      24        }
      25    }
-     26    
+     26
 
 ACTION: step-over
 PAUSE AT switcher:26:2
@@ -225,7 +225,7 @@ PAUSE AT switcher:26:2
      23            break;
      24        }
  ->  25    }|
-     26    
+     26
      27    function entrySwitchHitCase() {
      28        debugger;
 
@@ -235,7 +235,7 @@ PAUSE AT entrySwitchDefault:41:2
      38        debugger;
      39        switcher(4);
  ->  40    }|
-     41    
+     41
      42    function entrySwitchNoCase() {
      43        debugger;
 
@@ -249,27 +249,27 @@ STEPS: over, in, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entrySwitchHitCase:29:5
      25    }
-     26    
+     26
      27    function entrySwitchHitCase() {
  ->  28        |debugger;
      29        switcher(1);
      30    }
-     31    
+     31
 
 ACTION: step-over
 PAUSE AT entrySwitchHitCase:30:5
-     26    
+     26
      27    function entrySwitchHitCase() {
      28        debugger;
  ->  29        |switcher(1);
      30    }
-     31    
+     31
      32    function entrySwitchFallthrough() {
 
 ACTION: step-in
 PAUSE AT switcher:12:13
       8    }
-      9    
+      9
      10    function switcher(value) {
  ->  11        switch (|value) {
      12        case 1:
@@ -292,7 +292,7 @@ PAUSE AT entrySwitchHitCase:31:2
      28        debugger;
      29        switcher(1);
  ->  30    }|
-     31    
+     31
      32    function entrySwitchFallthrough() {
      33        debugger;
 
@@ -306,7 +306,7 @@ STEPS: over, in, in, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entrySwitchNoCase:44:5
      40    }
-     41    
+     41
      42    function entrySwitchNoCase() {
  ->  43        |debugger;
      44        switch (a()) {
@@ -315,7 +315,7 @@ PAUSE AT entrySwitchNoCase:44:5
 
 ACTION: step-over
 PAUSE AT entrySwitchNoCase:45:13
-     41    
+     41
      42    function entrySwitchNoCase() {
      43        debugger;
  ->  44        switch (|a()) {
@@ -330,7 +330,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function switcher(value) {
 
 ACTION: step-in
@@ -339,7 +339,7 @@ PAUSE AT a:9:2
       6    function a() {
       7        return 1;
  ->   8    }|
-      9    
+      9
      10    function switcher(value) {
      11        switch (value) {
 
@@ -347,11 +347,11 @@ ACTION: step-in
 PAUSE AT entrySwitchNoCase:50:2
      46            a();
      47            break;
-     48        }   
+     48        }
  ->  49    }|
-     50    
+     50
      51    // ---------
-     52    
+     52
 
 ACTION: resume
 RESUMED
@@ -363,7 +363,7 @@ STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entrySwitchNoCase:44:5
      40    }
-     41    
+     41
      42    function entrySwitchNoCase() {
  ->  43        |debugger;
      44        switch (a()) {
@@ -372,7 +372,7 @@ PAUSE AT entrySwitchNoCase:44:5
 
 ACTION: step-over
 PAUSE AT entrySwitchNoCase:45:13
-     41    
+     41
      42    function entrySwitchNoCase() {
      43        debugger;
  ->  44        switch (|a()) {
@@ -384,11 +384,11 @@ ACTION: step-over
 PAUSE AT entrySwitchNoCase:50:2
      46            a();
      47            break;
-     48        }   
+     48        }
  ->  49    }|
-     50    
+     50
      51    // ---------
-     52    
+     52
 
 ACTION: resume
 RESUMED

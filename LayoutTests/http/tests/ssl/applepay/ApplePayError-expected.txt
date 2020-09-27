@@ -5,64 +5,64 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Testing ApplePayError
 
-SETUP: 
+SETUP:
 PASS new ApplePayError() threw exception TypeError: Not enough arguments.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError([]) threw exception TypeError: Argument 1 ('errorCode') to the ApplePayError constructor must be one of: "unknown", "shippingContactInvalid", "billingContactInvalid", "addressUnserviceable".
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('') threw exception TypeError: Argument 1 ('errorCode') to the ApplePayError constructor must be one of: "unknown", "shippingContactInvalid", "billingContactInvalid", "addressUnserviceable".
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('shippingContactInvalid') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('billingContactInvalid') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('addressUnserviceable') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', []) threw exception TypeError: Argument 2 ('contactField') to the ApplePayError constructor must be one of: "phoneNumber", "emailAddress", "name", "phoneticName", "postalAddress", "addressLines", "subLocality", "locality", "postalCode", "subAdministrativeArea", "administrativeArea", "country", "countryCode".
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', '') threw exception TypeError: Argument 2 ('contactField') to the ApplePayError constructor must be one of: "phoneNumber", "emailAddress", "name", "phoneticName", "postalAddress", "addressLines", "subLocality", "locality", "postalCode", "subAdministrativeArea", "administrativeArea", "country", "countryCode".
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'phoneNumber') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'emailAddress') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'name') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'phoneticName') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'postalAddress') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'addressLines') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'locality') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'postalCode') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'administrativeArea') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'country') did not throw exception.
 
-SETUP: 
+SETUP:
 PASS new ApplePayError('unknown', 'countryCode') did not throw exception.
 
 PASS successfullyParsed is true

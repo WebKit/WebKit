@@ -1,250 +1,250 @@
 
-PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a connected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a connected open mode shadow root 
-PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first default slot inserted in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on the first default slot inserted in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first default slot inserted in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on the first default slot inserted in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first named slot inserted in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on the first named slot inserted in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first named slot inserted in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on the first named slot inserted in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a connected closed mode shadow root 
-PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a connected open mode shadow root 
-PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a default slot element after an existing default slot in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a default slot element after an existing default slot in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a default slot element after an existing default slot in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a default slot element after an existing default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a connected closed mode shadow root 
-PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a connected open mode shadow root 
-PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a connected closed mode shadow root 
-PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a connected open mode shadow root 
-PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a disconnected open mode shadow root 
-PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a connected closed mode shadow root 
-PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a connected open mode shadow root 
-PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first named slot removed in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on the first named slot removed in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first named slot removed in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on the first named slot removed in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a connected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a connected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a disconnected open mode shadow root 
-PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a connected closed mode shadow root 
-PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a connected open mode shadow root 
-PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a connected open mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a connected open mode shadow root 
-PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a connected closed mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a connected open mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a connected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a connected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a disconnected open mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a connected closed mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a connected open mode shadow root 
-PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a connected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a connected open mode shadow root 
-PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a disconnected open mode shadow root 
-PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a connected closed mode shadow root 
-PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a disconnected closed mode shadow root 
-PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a connected open mode shadow root 
-PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a disconnected open mode shadow root 
-PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a connected closed mode shadow root 
-PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a disconnected closed mode shadow root 
-PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a connected open mode shadow root 
-PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a disconnected open mode shadow root 
-PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a connected closed mode shadow root 
-PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a disconnected closed mode shadow root 
-PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a connected open mode shadow root 
-PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a disconnected open mode shadow root 
-PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a connected closed mode shadow root 
-PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a disconnected closed mode shadow root 
-PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a connected open mode shadow root 
-PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a disconnected open mode shadow root 
-PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a connected closed mode shadow root 
-PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a disconnected closed mode shadow root 
-PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a connected open mode shadow root 
-PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a disconnected open mode shadow root 
+PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element into a shadow host with no children in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element into a shadow host with no children in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a connected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element when there is an element assigned to the slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element after an existing default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when inserting a default slot element before an existing default slot in the tree order in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a default slot element between two existing default slots in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element after an existing slot of the same name in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order in a disconnected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a connected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a disconnected closed mode shadow root
+PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a connected open mode shadow root
+PASS slotchange event should not fire when inserting a named slot element between two existing slots of the same name in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on the first default slot inserted in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on the first default slot inserted in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first default slot inserted in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on the first default slot inserted in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on the first named slot inserted in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on the first named slot inserted in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first named slot inserted in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on the first named slot inserted in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on the first named slot of the same name inserted in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a connected open mode shadow root
+PASS slotchange event should not fire when removing a default slot element into a shadow host with no children in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a connected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element into a shadow host with no children in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a connected open mode shadow root
+PASS slotchange event should not fire when removing a default slot element when there is an element assigned to another slot in a disconnected open mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is an element assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a connected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to another slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a connected closed mode shadow root
+PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a connected open mode shadow root
+PASS slotchange event should fire when removing a named slot element when there is an element assigned to the slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a default slot element after an existing default slot in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a default slot element after an existing default slot in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a default slot element after an existing default slot in a connected open mode shadow root
+PASS slotchange event should not fire when removing a default slot element after an existing default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a connected closed mode shadow root
+PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a connected open mode shadow root
+PASS slotchange event should fire when removing the first default slot element even if it had duplicates in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a connected open mode shadow root
+PASS slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a connected open mode shadow root
+PASS slotchange event should not fire when removing a named slot element after an existing named slot of the same name in a disconnected open mode shadow root
+PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a connected closed mode shadow root
+PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a connected open mode shadow root
+PASS slotchange event should fire when removing the first named slot element even if it had duplicates in a disconnected open mode shadow root
+PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a connected closed mode shadow root
+PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a disconnected closed mode shadow root
+PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a connected open mode shadow root
+PASS slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name in a disconnected open mode shadow root
+PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a connected open mode shadow root
+PASS slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on the first named slot removed in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on the first named slot removed in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first named slot removed in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on the first named slot removed in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected closed mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected open mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected open mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a connected closed mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a connected open mode shadow root
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a disconnected open mode shadow root
+PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a connected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a disconnected closed mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a connected open mode shadow root
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a disconnected open mode shadow root
+PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a disconnected open mode shadow root
+PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a connected closed mode shadow root
+PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a disconnected closed mode shadow root
+PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a connected open mode shadow root
+PASS slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order in a disconnected open mode shadow root
+PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a connected closed mode shadow root
+PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a disconnected closed mode shadow root
+PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a connected open mode shadow root
+PASS slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a connected closed mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a connected open mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a connected closed mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a connected open mode shadow root
+PASS slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a connected closed mode shadow root
+PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a disconnected closed mode shadow root
+PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a connected open mode shadow root
+PASS slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a connected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a connected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a connected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a connected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot in a disconnected open mode shadow root
+PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a connected closed mode shadow root
+PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a disconnected closed mode shadow root
+PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a connected open mode shadow root
+PASS slotchange event should not fire when renaming a named slot element when there are no assigned nodes in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a connected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a connected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a connected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a connected open mode shadow root
+PASS slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name in a disconnected open mode shadow root
+PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a connected closed mode shadow root
+PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a disconnected closed mode shadow root
+PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a connected open mode shadow root
+PASS slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name in a disconnected open mode shadow root
+PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a connected closed mode shadow root
+PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a disconnected closed mode shadow root
+PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a connected open mode shadow root
+PASS slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element in a disconnected open mode shadow root
+PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a connected closed mode shadow root
+PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a disconnected closed mode shadow root
+PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a connected open mode shadow root
+PASS slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element in a disconnected open mode shadow root
+PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a connected closed mode shadow root
+PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a disconnected closed mode shadow root
+PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a connected open mode shadow root
+PASS slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without in a disconnected open mode shadow root
+PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a connected closed mode shadow root
+PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a disconnected closed mode shadow root
+PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a connected open mode shadow root
+PASS slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree in a disconnected open mode shadow root
 

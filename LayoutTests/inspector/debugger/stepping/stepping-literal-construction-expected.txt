@@ -8,7 +8,7 @@ STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryObjectConstruction:16:5
      12    }
-     13    
+     13
      14    function entryObjectConstruction() {
  ->  15        |debugger;
      16        var o = {
@@ -17,7 +17,7 @@ PAUSE AT entryObjectConstruction:16:5
 
 ACTION: step-over
 PAUSE AT entryObjectConstruction:17:5
-     13    
+     13
      14    function entryObjectConstruction() {
      15        debugger;
  ->  16        |var o = {
@@ -31,7 +31,7 @@ PAUSE AT entryObjectConstruction:24:2
      21            [b()]: true,
      22        };
  ->  23    }|
-     24    
+     24
      25    function entryArrayConstruction() {
      26        debugger;
 
@@ -45,7 +45,7 @@ STEPS: over, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryObjectConstruction:16:5
      12    }
-     13    
+     13
      14    function entryObjectConstruction() {
  ->  15        |debugger;
      16        var o = {
@@ -54,7 +54,7 @@ PAUSE AT entryObjectConstruction:16:5
 
 ACTION: step-over
 PAUSE AT entryObjectConstruction:17:5
-     13    
+     13
      14    function entryObjectConstruction() {
      15        debugger;
  ->  16        |var o = {
@@ -69,7 +69,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function b() {
 
 ACTION: step-out
@@ -80,16 +80,16 @@ PAUSE AT entryObjectConstruction:22:10
  ->  21            [|b()]: true,
      22        };
      23    }
-     24    
+     24
 
 ACTION: step-in
 PAUSE AT b:12:5
       8    }
-      9    
+      9
      10    function b() {
  ->  11        |return 2;
      12    }
-     13    
+     13
      14    function entryObjectConstruction() {
 
 ACTION: step-out
@@ -98,7 +98,7 @@ PAUSE AT entryObjectConstruction:24:2
      21            [b()]: true,
      22        };
  ->  23    }|
-     24    
+     24
      25    function entryArrayConstruction() {
      26        debugger;
 
@@ -112,7 +112,7 @@ STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryArrayConstruction:27:5
      23    }
-     24    
+     24
      25    function entryArrayConstruction() {
  ->  26        |debugger;
      27        var arr = [
@@ -121,7 +121,7 @@ PAUSE AT entryArrayConstruction:27:5
 
 ACTION: step-over
 PAUSE AT entryArrayConstruction:28:5
-     24    
+     24
      25    function entryArrayConstruction() {
      26        debugger;
  ->  27        |var arr = [
@@ -135,9 +135,9 @@ PAUSE AT entryArrayConstruction:34:2
      31            b(),
      32        ];
  ->  33    }|
-     34    
+     34
      35    // ---------
-     36    
+     36
 
 ACTION: resume
 RESUMED
@@ -149,7 +149,7 @@ STEPS: over, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryArrayConstruction:27:5
      23    }
-     24    
+     24
      25    function entryArrayConstruction() {
  ->  26        |debugger;
      27        var arr = [
@@ -158,7 +158,7 @@ PAUSE AT entryArrayConstruction:27:5
 
 ACTION: step-over
 PAUSE AT entryArrayConstruction:28:5
-     24    
+     24
      25    function entryArrayConstruction() {
      26        debugger;
  ->  27        |var arr = [
@@ -173,7 +173,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function b() {
 
 ACTION: step-out
@@ -184,16 +184,16 @@ PAUSE AT entryArrayConstruction:32:9
  ->  31            |b(),
      32        ];
      33    }
-     34    
+     34
 
 ACTION: step-in
 PAUSE AT b:12:5
       8    }
-      9    
+      9
      10    function b() {
  ->  11        |return 2;
      12    }
-     13    
+     13
      14    function entryObjectConstruction() {
 
 ACTION: step-out
@@ -202,9 +202,9 @@ PAUSE AT entryArrayConstruction:34:2
      31            b(),
      32        ];
  ->  33    }|
-     34    
+     34
      35    // ---------
-     36    
+     36
 
 ACTION: resume
 RESUMED

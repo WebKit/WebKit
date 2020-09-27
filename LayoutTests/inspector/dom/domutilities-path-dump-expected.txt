@@ -34,8 +34,8 @@ html
       #classes > div.\.foo\.bar
       #classes > div.\-
       #classes > div.-a
-      #classes > div.-\30 
-      #classes > div.\37 
+      #classes > div.-\30
+      #classes > div.\37
       #classes > div.класс
       #classes > div:nth-child(10)
       #classes > div:nth-child(11)

@@ -1,11 +1,11 @@
 End of test
 Before:
-AXRole: AXWebArea AXValue: 
-    AXRole: AXLink AXValue: 
-    AXRole: AXGroup AXValue: 
+AXRole: AXWebArea AXValue:
+    AXRole: AXLink AXValue:
+    AXRole: AXGroup AXValue:
 After:
-AXRole: AXWebArea AXValue: 
-    AXRole: AXGroup AXValue: 
+AXRole: AXWebArea AXValue:
+    AXRole: AXGroup AXValue:
 This can cause a crash.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

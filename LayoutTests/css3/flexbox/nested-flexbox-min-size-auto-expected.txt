@@ -1,5 +1,5 @@
 Green rectangle should be entirely within the black rectangle
 
 
-PASS #container 1 
+PASS #container 1
 

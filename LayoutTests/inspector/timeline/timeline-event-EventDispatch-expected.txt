@@ -1,6 +1,6 @@
 Tests 'EventDispatch' Timeline event records.
 
-  
+
 
 == Running test suite: TimelineEvent.EventDispatch
 -- Running test case: TimelineEvent.EventDispatch.Handler.Regular

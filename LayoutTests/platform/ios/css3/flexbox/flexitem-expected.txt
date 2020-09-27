@@ -1,21 +1,21 @@
 
-PASS .flexbox 1 
-PASS .flexbox 2 
-PASS .flexbox 3 
-PASS .flexbox 4 
-PASS .flexbox 5 
-PASS .flexbox 6 
-PASS .flexbox 7 
-PASS .flexbox 8 
-PASS .flexbox 9 
-PASS .flexbox 10 
-PASS .flexbox 11 
-PASS .flexbox 12 
-PASS .flexbox 13 
-PASS .flexbox 14 
-PASS .flexbox 15 
-PASS .flexbox 16 
-FAIL .flexbox 17 assert_equals: 
+PASS .flexbox 1
+PASS .flexbox 2
+PASS .flexbox 3
+PASS .flexbox 4
+PASS .flexbox 5
+PASS .flexbox 6
+PASS .flexbox 7
+PASS .flexbox 8
+PASS .flexbox 9
+PASS .flexbox 10
+PASS .flexbox 11
+PASS .flexbox 12
+PASS .flexbox 13
+PASS .flexbox 14
+PASS .flexbox 15
+PASS .flexbox 16
+FAIL .flexbox 17 assert_equals:
 <div class="flexbox">
   <input data-expected-display="block" data-expected-width="75" type="checkbox" value="radio">
   <input data-expected-display="block" data-expected-width="75" type="file" value="file">
@@ -27,7 +27,7 @@ FAIL .flexbox 17 assert_equals:
   <input data-expected-display="block" data-expected-width="75" type="text" value="text">
 </div>
 width expected 75 but got 69
-FAIL .flexbox 18 assert_equals: 
+FAIL .flexbox 18 assert_equals:
 <div class="flexbox" style="height:200px">
   <button data-expected-display="block" data-expected-width="100" data-expected-height="200">button</button>
   <canvas data-expected-display="block" data-expected-width="100" data-expected-height="200">canvas</canvas>

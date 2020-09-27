@@ -5,7 +5,7 @@ Scrolling tree on non-scrollable
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 645)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
     (horizontal scrollbar mode 0)
@@ -20,7 +20,7 @@ Scrolling tree on non-scrollable
         (Frame scrolling node
           (scrollable area size 600 500)
           (contents size 600 500)
-          (scrollable area parameters 
+          (scrollable area parameters
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
@@ -35,7 +35,7 @@ Scrolling tree on non-scrollable
                 (Frame scrolling node
                   (scrollable area size 500 400)
                   (contents size 500 1024)
-                  (scrollable area parameters 
+                  (scrollable area parameters
                     (horizontal scroll elasticity 1)
                     (vertical scroll elasticity 1)
                     (horizontal scrollbar mode 0)
@@ -60,7 +60,7 @@ Scrolling tree on scrollable
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 645)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
     (horizontal scrollbar mode 0)
@@ -75,7 +75,7 @@ Scrolling tree on scrollable
         (Frame scrolling node
           (scrollable area size 600 500)
           (contents size 600 1024)
-          (scrollable area parameters 
+          (scrollable area parameters
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
@@ -90,7 +90,7 @@ Scrolling tree on scrollable
                 (Frame scrolling node
                   (scrollable area size 500 400)
                   (contents size 500 1024)
-                  (scrollable area parameters 
+                  (scrollable area parameters
                     (horizontal scroll elasticity 1)
                     (vertical scroll elasticity 1)
                     (horizontal scrollbar mode 0)

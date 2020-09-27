@@ -3,57 +3,57 @@ Test XMLHttpRequest responseURL.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-req.readyState = 0: responseURL = 
+req.readyState = 0: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/reply.txt
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/reply.txt
 req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/reply.txt
 PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/reply.txt"
-req.readyState = 0: responseURL = 
+req.readyState = 0: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/reply.xml
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/reply.xml
 req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/reply.xml
 PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/reply.xml"
-req.readyState = 0: responseURL = 
+req.readyState = 0: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt
 req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt
 PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt"
-req.readyState = 0: responseURL = 
+req.readyState = 0: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi
 req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi
 PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi"
-req.readyState = 0: responseURL = 
+req.readyState = 0: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/supported-xml-content-types.cgi?type=foo
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/supported-xml-content-types.cgi?type=foo
 req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/supported-xml-content-types.cgi?type=foo
 PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/supported-xml-content-types.cgi?type=foo"
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS successfullyParsed is true
 
 TEST COMPLETE

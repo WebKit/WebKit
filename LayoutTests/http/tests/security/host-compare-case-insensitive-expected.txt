@@ -1,6 +1,6 @@
 This tests that the comparison of the host for security is done case insensitive.
 
-  
+
 
 --------
 Frame: 'frameA'

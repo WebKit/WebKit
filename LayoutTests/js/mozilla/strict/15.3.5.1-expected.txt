@@ -4,7 +4,7 @@ PASS true === true
 PASS 'use strict'; var f = fn(); delete f.length is true
 PASS var f = fn(); delete f.length is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

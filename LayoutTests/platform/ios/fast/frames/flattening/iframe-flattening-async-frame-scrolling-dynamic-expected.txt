@@ -1,8 +1,8 @@
 
 
-PASS Frame flattening fully enabled, async frame scrolling disabled 
-PASS Enabling async frame scrolling 
-PASS Disabling async frame scrolling 
-PASS Disabling frame flattening 
-PASS Enabling frame flattening 
+PASS Frame flattening fully enabled, async frame scrolling disabled
+PASS Enabling async frame scrolling
+PASS Disabling async frame scrolling
+PASS Disabling frame flattening
+PASS Enabling frame flattening
 

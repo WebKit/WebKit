@@ -1,264 +1,264 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "createBuffer" 
-PASS Executing "createMediaElementSource" 
-PASS Executing "createMediaStreamSource" 
-PASS Executing "createScriptProcessor" 
-PASS Executing "createChannelSplitter" 
-PASS Executing "createChannelMerger" 
-PASS Executing "createPeriodicWave" 
-PASS Executing "createAnalyser" 
-PASS Executing "Init test nodes" 
-PASS Executing "connections" 
-PASS Executing "channel-stuff" 
-PASS Executing "audioparam" 
-PASS Executing "biquad" 
-PASS Executing "offline-audio-context" 
-PASS Executing "invalid-offline-audio-context-parameters" 
-PASS Executing "invalid-frame-length" 
-PASS Executing "waveshaper" 
-PASS Executing "audio-buffer-source" 
-PASS Executing "oscillator" 
-PASS Executing "convolver" 
-PASS Executing "panner" 
-PASS Executing "script-processor" 
-PASS Executing "misc" 
-PASS Audit report 
-PASS > [initialize] Initialize contexts for testing 
-PASS   context = new AudioContext() did not throw an exception. 
-PASS   otherContext = new AudioContext() did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 2 assertions) 
-PASS > [createBuffer]  
-PASS   context.createBuffer(99, 1, context.sampleRate) threw NotSupportedError: "Number of channels cannot be more than max supported.". 
-PASS   context.createBuffer(0, 1, context.sampleRate) threw NotSupportedError: "Number of channels cannot be 0.". 
-PASS   context.createBuffer(1, 1, 1) threw NotSupportedError: "Sample rate is not in the supported range.". 
-PASS   context.createBuffer(1, 1, 2999) threw NotSupportedError: "Sample rate is not in the supported range.". 
-PASS   context.createBuffer(1, 1, 384001) threw NotSupportedError: "Sample rate is not in the supported range.". 
-PASS   context.createBuffer(1, 1, 1e6) threw NotSupportedError: "Sample rate is not in the supported range.". 
-PASS   context.createBuffer(1, 1, 3000) did not throw an exception. 
-PASS   context.createBuffer(1, 1, 192000) did not throw an exception. 
-PASS   context.createBuffer(1, 1, 384000) did not throw an exception. 
-PASS   context.createBuffer(1, 0, context.sampleRate) threw NotSupportedError: "Length must be at least 1.". 
-PASS   context.createBuffer(new ArrayBuffer(100), true) threw TypeError: "Not enough arguments". 
-PASS < [createBuffer] All assertions passed. (total 11 assertions) 
-PASS > [createMediaElementSource]  
-PASS   context.createMediaElementSource(null) threw TypeError: "Argument 1 ('mediaElement') to AudioContext.createMediaElementSource must be an instance of HTMLMediaElement". 
-PASS < [createMediaElementSource] All assertions passed. (total 1 assertions) 
-PASS > [createMediaStreamSource]  
-PASS   context.createMediaStreamSource(null) threw TypeError: "Argument 1 ('mediaStream') to AudioContext.createMediaStreamSource must be an instance of MediaStream". 
-PASS < [createMediaStreamSource] All assertions passed. (total 1 assertions) 
-PASS > [createScriptProcessor]  
-PASS   context.createScriptProcessor(1, 1, 1) threw IndexSizeError: "The index is not in the allowed range.". 
-PASS   context.createScriptProcessor(4096, 100, 1) threw NotSupportedError: "The operation is not supported.". 
-PASS   context.createScriptProcessor(4096, 1, 100) threw NotSupportedError: "The operation is not supported.". 
-PASS   context.createScriptProcessor() did not throw an exception. 
-PASS   context.createScriptProcessor(0) did not throw an exception. 
-PASS < [createScriptProcessor] All assertions passed. (total 5 assertions) 
-PASS > [createChannelSplitter]  
-PASS   context.createChannelSplitter(0) threw IndexSizeError: "Number of outputs is not in the allowed range". 
-PASS   context.createChannelSplitter(99) threw IndexSizeError: "Number of outputs is not in the allowed range". 
-PASS   context.createChannelMerger(0) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
-PASS < [createChannelSplitter] All assertions passed. (total 3 assertions) 
-PASS > [createChannelMerger]  
-PASS   context.createChannelMerger(99) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
-PASS < [createChannelMerger] All assertions passed. (total 1 assertions) 
-PASS > [createPeriodicWave]  
-PASS   context.createPeriodicWave(null, null) threw TypeError: "Value is not a sequence". 
-PASS   context.createPeriodicWave(new Float32Array(10), null) threw TypeError: "Value is not a sequence". 
-PASS   context.createPeriodicWave(new Float32Array(4100), new Float32Array(4100)) did not throw an exception. 
-PASS   context.createPeriodicWave(new Float32Array(8192), new Float32Array(8192)) did not throw an exception. 
-PASS   context.createPeriodicWave(new Float32Array(10000), new Float32Array(10000)) did not throw an exception. 
-PASS   context.createPeriodicWave(new Float32Array(10), new Float32Array(7)) threw IndexSizeError: "real and imag have different lengths". 
-PASS < [createPeriodicWave] All assertions passed. (total 6 assertions) 
-PASS > [createAnalyser]  
-PASS   AnalyserNode.fftSize = 42 threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.". 
-PASS   AnalyserNode.fftSize is not equal to 42. 
-PASS   AnalyserNode.fftSize = 16 threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.". 
-PASS   AnalyserNode.fftSize is not equal to 16. 
-PASS   AnalyserNode.fftSize = 32768 did not throw an exception. 
-PASS   AnalyserNode.fftSize = 65536 threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.". 
-PASS   AnalyserNode.fftSize is not equal to 65536. 
-PASS   AnalyserNode.minDecibels = -10 threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
-PASS   AnalyserNode.minDecibels is not equal to -10. 
-PASS   AnalyserNode.maxDecibels = -150 threw IndexSizeError: "maxDecibels must be greater than minDecibels.". 
-PASS   AnalyserNode.maxDecibels is not equal to -150. 
-PASS   AnalyserNode.minDecibels = -30 threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
-PASS   AnalyserNode.minDecibels is not equal to -30. 
-PASS   AnalyserNode.maxDecibels = -100 threw IndexSizeError: "maxDecibels must be greater than minDecibels.". 
-PASS   AnalyserNode.maxDecibels is not equal to -100. 
-PASS   AnalyserNode.smoothingTimeConstant = -0.1 threw IndexSizeError: "Smoothing time constant needs to be between 0 and 1.". 
-PASS   AnalyserNode.smoothingTimeConstant is not equal to -0.1. 
-PASS   AnalyserNode.smoothingTimeConstant = 1.5 threw IndexSizeError: "Smoothing time constant needs to be between 0 and 1.". 
-PASS   AnalyserNode.smoothingTimeConstant is not equal to 1.5. 
-PASS   AnalyserNode.getFloatFrequencyData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getFloatFrequencyData must be an instance of Float32Array". 
-PASS   AnalyserNode.getByteFrequencyData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getByteFrequencyData must be an instance of Uint8Array". 
-PASS   AnalyserNode.getFloatTimeDomainData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getFloatTimeDomainData must be an instance of Float32Array". 
-PASS   AnalyserNode.getByteTimeDomainData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getByteTimeDomainData must be an instance of Uint8Array". 
-PASS   AudioBuffer.getChannelData(2) threw IndexSizeError: "Index must be less than number of channels.". 
-PASS < [createAnalyser] All assertions passed. (total 24 assertions) 
-PASS > [Init test nodes] Create test nodes for the following tests 
-PASS   node = context.createGain() did not throw an exception. 
-PASS   node2 = context.createGain() did not throw an exception. 
-PASS < [Init test nodes] All assertions passed. (total 2 assertions) 
-PASS > [connections] AudioNode connections 
-PASS   node.connect(null, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode". 
-PASS   node.connect(context.destination, 100, 0) threw IndexSizeError: "Output index exceeds number of outputs". 
-PASS   node.connect(context.destination, 0, 100) threw IndexSizeError: "Input index exceeds number of inputs". 
-PASS   node.connect(node2.gain, 100) threw IndexSizeError: "Output index exceeds number of outputs". 
-PASS   node.disconnect(99) threw IndexSizeError: "output index is out of bounds". 
-PASS   node.connect(otherContext.destination) threw SyntaxError: "Source and destination nodes belong to different audio contexts". 
-PASS < [connections] All assertions passed. (total 6 assertions) 
-PASS > [channel-stuff] channelCount, channelCountMode, channelInterpretation 
-PASS   GainNode.channelCount = 99 threw IndexSizeError: "Channel count exceeds maximum limit". 
-PASS   GainNode.channelCount is not equal to 99. 
-PASS   node.channelCountMode = "fancy" did not throw an exception. 
-PASS   node.channelCountMode is equal to max. 
-PASS   node.channelInterpretation = mode did not throw an exception. 
-PASS   node.channelInterpretation is equal to speakers. 
-PASS   context.destination.channelCount = 99 threw IndexSizeError: [error message omitted]. 
-PASS < [channel-stuff] All assertions passed. (total 7 assertions) 
-PASS > [audioparam]  
-PASS   param.setValueCurveAtTime(null, 0, 0) threw TypeError: "Value is not a sequence". 
-PASS   node.gain.exponentialRampToValueAtTime(-1, 0.1) did not throw an exception. 
-PASS   node.gain.exponentialRampToValueAtTime(0, 0.1) threw RangeError: "value cannot be 0". 
-PASS   node.gain.exponentialRampToValueAtTime(1e-100, 0.1) threw RangeError: "value cannot be 0". 
-PASS   node.gain.exponentialRampToValueAtTime(Math.pow(2, -149), 0.1) did not throw an exception. 
-PASS   node.gain.exponentialRampToValueAtTime(Math.pow(2, -150), 0.1) threw RangeError: "value cannot be 0". 
-PASS < [audioparam] All assertions passed. (total 6 assertions) 
-PASS > [biquad]  
-PASS   node.getFrequencyResponse(new Float32Array(1), new Float32Array(1), new Float32Array(1)) did not throw an exception. 
-PASS   node.getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) threw TypeError: "Argument 1 ('frequencyHz') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array". 
-PASS   node.getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) threw TypeError: "Argument 2 ('magResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array". 
-PASS   node.getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) threw TypeError: "Argument 3 ('phaseResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array". 
-PASS < [biquad] All assertions passed. (total 4 assertions) 
-PASS > [offline-audio-context] supports 32 channels 
-PASS   new OfflineAudioContext(32, 100, context.sampleRate) did not throw an exception. 
-PASS < [offline-audio-context] All assertions passed. (total 1 assertions) 
-PASS > [invalid-offline-audio-context-parameters] errors for invalid channel counts 
-PASS   new OfflineAudioContext(0, 100, context.sampleRate) threw SyntaxError: "Number of channels is not in range". 
-PASS   new OfflineAudioContext(99, 100, context.sampleRate) threw SyntaxError: "Number of channels is not in range". 
-PASS   new OfflineAudioContext(1, 100, 1) threw SyntaxError: "sampleRate is not in range". 
-PASS   new OfflineAudioContext(1, 100, 1e6) threw SyntaxError: "sampleRate is not in range". 
-PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be 0". 
-PASS < [invalid-offline-audio-context-parameters] All assertions passed. (total 5 assertions) 
-PASS > [invalid-frame-length]  
-PASS   testContext = new OfflineAudioContext(1, -88200000000000, 44100) did not throw an exception. 
-PASS   testContext.startRendering() rejected correctly with InvalidStateError: Failed to create audio buffer. 
-PASS < [invalid-frame-length] All assertions passed. (total 2 assertions) 
-PASS > [waveshaper]  
-PASS   node.oversample = "9x" did not throw an exception. 
-PASS   node.oversample is equal to none. 
-PASS   node.curve = {} threw TypeError: "The WaveShaperNode.curve attribute must be an instance of Float32Array". 
-PASS   node.curve = new Float32Array(1) threw InvalidStateError: "Length of curve array cannot be less than 2". 
-PASS   node.curve is equal to null. 
-PASS   node.curve = new Float32Array(2) did not throw an exception. 
-PASS   node.curve = null did not throw an exception. 
-PASS < [waveshaper] All assertions passed. (total 7 assertions) 
-PASS > [audio-buffer-source] AudioBufferSource start/stop 
-PASS   source = context.createBufferSource() did not throw an exception. 
-PASS   source.buffer = buffer did not throw an exception. 
-PASS   source.buffer = context.createBuffer(1, 10, context.sampleRate) threw InvalidStateError: "The buffer was already set". 
-PASS   source.start(-1) threw RangeError: "when value should be positive". 
-PASS   source.start(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, -Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, NaN) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, -1) threw RangeError: "offset value should be positive". 
-PASS   source.start(1, -Number.MIN_VALUE) threw RangeError: "offset value should be positive". 
-PASS   source.start(1, 1, Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, 1, -Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, 1, NaN) threw TypeError: "The provided value is non-finite". 
-PASS   source.start(1, 1, -1) threw RangeError: "duration value should be positive". 
-PASS   source.start(1, 1, -Number.MIN_VALUE) threw RangeError: "duration value should be positive". 
-PASS   source.start() did not throw an exception. 
-PASS   source.stop(-Number.MIN_VALUE) threw RangeError: "when value should be positive". 
-PASS   source.stop(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.stop(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source.stop(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   source.stop() did not throw an exception. 
-PASS   source2 = context.createBufferSource() did not throw an exception. 
-PASS   source2.buffer = buffer did not throw an exception. 
-PASS   source2.start(0, 0) did not throw an exception. 
-PASS   source3 = context.createBufferSource() did not throw an exception. 
-PASS   source3.buffer = buffer did not throw an exception. 
-PASS   source3.start(0, -1/Infinity) did not throw an exception. 
-PASS   source4 = context.createBufferSource() did not throw an exception. 
-PASS   source4.start() did not throw an exception. 
-PASS   source5 = context.createBufferSource() did not throw an exception. 
-PASS   source5.buffer = buffer did not throw an exception. 
-PASS   source5.stop() threw InvalidStateError: "cannot call stop without calling start first.". 
-PASS   source6 = context.createBufferSource() did not throw an exception. 
-PASS   source6.buffer = buffer did not throw an exception. 
-PASS   source6.start() did not throw an exception. 
-PASS   source6.start() threw InvalidStateError: "Cannot call start more than once.". 
-PASS   source7 = context.createBufferSource() did not throw an exception. 
-PASS   source7.buffer = buffer did not throw an exception. 
-PASS   source7.start() did not throw an exception. 
-PASS   source7.stop() did not throw an exception. 
-PASS < [audio-buffer-source] All assertions passed. (total 42 assertions) 
-PASS > [oscillator] start/stop 
-PASS   source8 = context.createOscillator() did not throw an exception. 
-PASS   source8.start(-Number.MIN_VALUE) threw RangeError: "when value should be positive". 
-PASS   source8.start(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source8.start(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source8.start(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   source8.start() did not throw an exception. 
-PASS   source8.stop(-Number.MIN_VALUE) threw RangeError: "when value should be positive". 
-PASS   source8.stop(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source8.stop(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   source8.stop(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   source8.stop() did not throw an exception. 
-PASS   osc = context.createOscillator() did not throw an exception. 
-PASS   osc.stop() threw InvalidStateError: "cannot call stop without calling start first.". 
-PASS   osc1 = context.createOscillator() did not throw an exception. 
-PASS   osc1.start() did not throw an exception. 
-PASS   osc1.stop() did not throw an exception. 
-PASS   osc.setPeriodicWave(null) threw TypeError: "Argument 1 ('wave') to OscillatorNode.setPeriodicWave must be an instance of PeriodicWave". 
-PASS < [oscillator] All assertions passed. (total 17 assertions) 
-PASS > [convolver]  
-PASS   oc = new OfflineAudioContext(1, 44100, 44100) did not throw an exception. 
-PASS   conv = oc.createConvolver() did not throw an exception. 
-PASS   conv.buffer = {} threw TypeError: "The ConvolverNode.buffer attribute must be an instance of AudioBuffer". 
-PASS   conv.buffer = oc.createBuffer(1, 100, 22050) threw NotSupportedError: "The operation is not supported.". 
-PASS   conv.buffer is equal to null. 
-PASS < [convolver] All assertions passed. (total 5 assertions) 
-PASS > [panner]  
-PASS   panner.channelCount = 1 did not throw an exception. 
-PASS   panner.channelCount = 2 did not throw an exception. 
-PASS   PannerNode.channelCount = 0 threw NotSupportedError: "Channel count cannot be 0". 
-PASS   PannerNode.channelCount is not equal to 0. 
-PASS   PannerNode.channelCount = 3 threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2". 
-PASS   PannerNode.channelCount is not equal to 3. 
-PASS   PannerNode.channelCountMode = max threw NotSupportedError: "PannerNode's channelCountMode cannot be max". 
-PASS   PannerNode.channelCountMode is not equal to max. 
-PASS   panner.channelCountMode = "explicit" did not throw an exception. 
-PASS   panner.channelCountMode = "clamped-max" did not throw an exception. 
-PASS   panner.channelCountMode = "junk" did not throw an exception. 
-PASS < [panner] All assertions passed. (total 11 assertions) 
-PASS > [script-processor]  
-PASS   script = context.createScriptProcessor(256, 3) did not throw an exception. 
-PASS   script.channelCount is equal to 3. 
-PASS   script.channelCountMode is equal to explicit. 
-PASS   script.channelCount = 3 did not throw an exception. 
-PASS   ScriptProcessorNode.channelCount = 1 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed". 
-PASS   ScriptProcessorNode.channelCount is not equal to 1. 
-PASS   ScriptProcessorNode.channelCount = 7 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed". 
-PASS   ScriptProcessorNode.channelCount is not equal to 7. 
-PASS   script.channelCountMode = "explicit" did not throw an exception. 
-PASS   ScriptProcessorNode.channelCountMode = max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'". 
-PASS   ScriptProcessorNode.channelCountMode is not equal to max. 
-PASS   ScriptProcessorNode.channelCountMode = clamped-max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'". 
-PASS   ScriptProcessorNode.channelCountMode is not equal to clamped-max. 
-PASS   script.channelCountMode = "junk" did not throw an exception. 
-PASS < [script-processor] All assertions passed. (total 14 assertions) 
-PASS > [misc] Miscellaneous tests 
-PASS   osc.noteOn is equal to undefined. 
-PASS   osc.noteOff is equal to undefined. 
-PASS   source.noteOn is equal to undefined. 
-PASS   source.noteOff is equal to undefined. 
-PASS < [misc] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 24 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "createBuffer"
+PASS Executing "createMediaElementSource"
+PASS Executing "createMediaStreamSource"
+PASS Executing "createScriptProcessor"
+PASS Executing "createChannelSplitter"
+PASS Executing "createChannelMerger"
+PASS Executing "createPeriodicWave"
+PASS Executing "createAnalyser"
+PASS Executing "Init test nodes"
+PASS Executing "connections"
+PASS Executing "channel-stuff"
+PASS Executing "audioparam"
+PASS Executing "biquad"
+PASS Executing "offline-audio-context"
+PASS Executing "invalid-offline-audio-context-parameters"
+PASS Executing "invalid-frame-length"
+PASS Executing "waveshaper"
+PASS Executing "audio-buffer-source"
+PASS Executing "oscillator"
+PASS Executing "convolver"
+PASS Executing "panner"
+PASS Executing "script-processor"
+PASS Executing "misc"
+PASS Audit report
+PASS > [initialize] Initialize contexts for testing
+PASS   context = new AudioContext() did not throw an exception.
+PASS   otherContext = new AudioContext() did not throw an exception.
+PASS < [initialize] All assertions passed. (total 2 assertions)
+PASS > [createBuffer]
+PASS   context.createBuffer(99, 1, context.sampleRate) threw NotSupportedError: "Number of channels cannot be more than max supported.".
+PASS   context.createBuffer(0, 1, context.sampleRate) threw NotSupportedError: "Number of channels cannot be 0.".
+PASS   context.createBuffer(1, 1, 1) threw NotSupportedError: "Sample rate is not in the supported range.".
+PASS   context.createBuffer(1, 1, 2999) threw NotSupportedError: "Sample rate is not in the supported range.".
+PASS   context.createBuffer(1, 1, 384001) threw NotSupportedError: "Sample rate is not in the supported range.".
+PASS   context.createBuffer(1, 1, 1e6) threw NotSupportedError: "Sample rate is not in the supported range.".
+PASS   context.createBuffer(1, 1, 3000) did not throw an exception.
+PASS   context.createBuffer(1, 1, 192000) did not throw an exception.
+PASS   context.createBuffer(1, 1, 384000) did not throw an exception.
+PASS   context.createBuffer(1, 0, context.sampleRate) threw NotSupportedError: "Length must be at least 1.".
+PASS   context.createBuffer(new ArrayBuffer(100), true) threw TypeError: "Not enough arguments".
+PASS < [createBuffer] All assertions passed. (total 11 assertions)
+PASS > [createMediaElementSource]
+PASS   context.createMediaElementSource(null) threw TypeError: "Argument 1 ('mediaElement') to AudioContext.createMediaElementSource must be an instance of HTMLMediaElement".
+PASS < [createMediaElementSource] All assertions passed. (total 1 assertions)
+PASS > [createMediaStreamSource]
+PASS   context.createMediaStreamSource(null) threw TypeError: "Argument 1 ('mediaStream') to AudioContext.createMediaStreamSource must be an instance of MediaStream".
+PASS < [createMediaStreamSource] All assertions passed. (total 1 assertions)
+PASS > [createScriptProcessor]
+PASS   context.createScriptProcessor(1, 1, 1) threw IndexSizeError: "The index is not in the allowed range.".
+PASS   context.createScriptProcessor(4096, 100, 1) threw NotSupportedError: "The operation is not supported.".
+PASS   context.createScriptProcessor(4096, 1, 100) threw NotSupportedError: "The operation is not supported.".
+PASS   context.createScriptProcessor() did not throw an exception.
+PASS   context.createScriptProcessor(0) did not throw an exception.
+PASS < [createScriptProcessor] All assertions passed. (total 5 assertions)
+PASS > [createChannelSplitter]
+PASS   context.createChannelSplitter(0) threw IndexSizeError: "Number of outputs is not in the allowed range".
+PASS   context.createChannelSplitter(99) threw IndexSizeError: "Number of outputs is not in the allowed range".
+PASS   context.createChannelMerger(0) threw IndexSizeError: "Number of inputs is not in the allowed range.".
+PASS < [createChannelSplitter] All assertions passed. (total 3 assertions)
+PASS > [createChannelMerger]
+PASS   context.createChannelMerger(99) threw IndexSizeError: "Number of inputs is not in the allowed range.".
+PASS < [createChannelMerger] All assertions passed. (total 1 assertions)
+PASS > [createPeriodicWave]
+PASS   context.createPeriodicWave(null, null) threw TypeError: "Value is not a sequence".
+PASS   context.createPeriodicWave(new Float32Array(10), null) threw TypeError: "Value is not a sequence".
+PASS   context.createPeriodicWave(new Float32Array(4100), new Float32Array(4100)) did not throw an exception.
+PASS   context.createPeriodicWave(new Float32Array(8192), new Float32Array(8192)) did not throw an exception.
+PASS   context.createPeriodicWave(new Float32Array(10000), new Float32Array(10000)) did not throw an exception.
+PASS   context.createPeriodicWave(new Float32Array(10), new Float32Array(7)) threw IndexSizeError: "real and imag have different lengths".
+PASS < [createPeriodicWave] All assertions passed. (total 6 assertions)
+PASS > [createAnalyser]
+PASS   AnalyserNode.fftSize = 42 threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.".
+PASS   AnalyserNode.fftSize is not equal to 42.
+PASS   AnalyserNode.fftSize = 16 threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.".
+PASS   AnalyserNode.fftSize is not equal to 16.
+PASS   AnalyserNode.fftSize = 32768 did not throw an exception.
+PASS   AnalyserNode.fftSize = 65536 threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.".
+PASS   AnalyserNode.fftSize is not equal to 65536.
+PASS   AnalyserNode.minDecibels = -10 threw IndexSizeError: "minDecibels must be less than maxDecibels.".
+PASS   AnalyserNode.minDecibels is not equal to -10.
+PASS   AnalyserNode.maxDecibels = -150 threw IndexSizeError: "maxDecibels must be greater than minDecibels.".
+PASS   AnalyserNode.maxDecibels is not equal to -150.
+PASS   AnalyserNode.minDecibels = -30 threw IndexSizeError: "minDecibels must be less than maxDecibels.".
+PASS   AnalyserNode.minDecibels is not equal to -30.
+PASS   AnalyserNode.maxDecibels = -100 threw IndexSizeError: "maxDecibels must be greater than minDecibels.".
+PASS   AnalyserNode.maxDecibels is not equal to -100.
+PASS   AnalyserNode.smoothingTimeConstant = -0.1 threw IndexSizeError: "Smoothing time constant needs to be between 0 and 1.".
+PASS   AnalyserNode.smoothingTimeConstant is not equal to -0.1.
+PASS   AnalyserNode.smoothingTimeConstant = 1.5 threw IndexSizeError: "Smoothing time constant needs to be between 0 and 1.".
+PASS   AnalyserNode.smoothingTimeConstant is not equal to 1.5.
+PASS   AnalyserNode.getFloatFrequencyData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getFloatFrequencyData must be an instance of Float32Array".
+PASS   AnalyserNode.getByteFrequencyData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getByteFrequencyData must be an instance of Uint8Array".
+PASS   AnalyserNode.getFloatTimeDomainData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getFloatTimeDomainData must be an instance of Float32Array".
+PASS   AnalyserNode.getByteTimeDomainData(null) threw TypeError: "Argument 1 ('array') to AnalyserNode.getByteTimeDomainData must be an instance of Uint8Array".
+PASS   AudioBuffer.getChannelData(2) threw IndexSizeError: "Index must be less than number of channels.".
+PASS < [createAnalyser] All assertions passed. (total 24 assertions)
+PASS > [Init test nodes] Create test nodes for the following tests
+PASS   node = context.createGain() did not throw an exception.
+PASS   node2 = context.createGain() did not throw an exception.
+PASS < [Init test nodes] All assertions passed. (total 2 assertions)
+PASS > [connections] AudioNode connections
+PASS   node.connect(null, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode".
+PASS   node.connect(context.destination, 100, 0) threw IndexSizeError: "Output index exceeds number of outputs".
+PASS   node.connect(context.destination, 0, 100) threw IndexSizeError: "Input index exceeds number of inputs".
+PASS   node.connect(node2.gain, 100) threw IndexSizeError: "Output index exceeds number of outputs".
+PASS   node.disconnect(99) threw IndexSizeError: "output index is out of bounds".
+PASS   node.connect(otherContext.destination) threw SyntaxError: "Source and destination nodes belong to different audio contexts".
+PASS < [connections] All assertions passed. (total 6 assertions)
+PASS > [channel-stuff] channelCount, channelCountMode, channelInterpretation
+PASS   GainNode.channelCount = 99 threw IndexSizeError: "Channel count exceeds maximum limit".
+PASS   GainNode.channelCount is not equal to 99.
+PASS   node.channelCountMode = "fancy" did not throw an exception.
+PASS   node.channelCountMode is equal to max.
+PASS   node.channelInterpretation = mode did not throw an exception.
+PASS   node.channelInterpretation is equal to speakers.
+PASS   context.destination.channelCount = 99 threw IndexSizeError: [error message omitted].
+PASS < [channel-stuff] All assertions passed. (total 7 assertions)
+PASS > [audioparam]
+PASS   param.setValueCurveAtTime(null, 0, 0) threw TypeError: "Value is not a sequence".
+PASS   node.gain.exponentialRampToValueAtTime(-1, 0.1) did not throw an exception.
+PASS   node.gain.exponentialRampToValueAtTime(0, 0.1) threw RangeError: "value cannot be 0".
+PASS   node.gain.exponentialRampToValueAtTime(1e-100, 0.1) threw RangeError: "value cannot be 0".
+PASS   node.gain.exponentialRampToValueAtTime(Math.pow(2, -149), 0.1) did not throw an exception.
+PASS   node.gain.exponentialRampToValueAtTime(Math.pow(2, -150), 0.1) threw RangeError: "value cannot be 0".
+PASS < [audioparam] All assertions passed. (total 6 assertions)
+PASS > [biquad]
+PASS   node.getFrequencyResponse(new Float32Array(1), new Float32Array(1), new Float32Array(1)) did not throw an exception.
+PASS   node.getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) threw TypeError: "Argument 1 ('frequencyHz') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array".
+PASS   node.getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) threw TypeError: "Argument 2 ('magResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array".
+PASS   node.getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) threw TypeError: "Argument 3 ('phaseResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array".
+PASS < [biquad] All assertions passed. (total 4 assertions)
+PASS > [offline-audio-context] supports 32 channels
+PASS   new OfflineAudioContext(32, 100, context.sampleRate) did not throw an exception.
+PASS < [offline-audio-context] All assertions passed. (total 1 assertions)
+PASS > [invalid-offline-audio-context-parameters] errors for invalid channel counts
+PASS   new OfflineAudioContext(0, 100, context.sampleRate) threw SyntaxError: "Number of channels is not in range".
+PASS   new OfflineAudioContext(99, 100, context.sampleRate) threw SyntaxError: "Number of channels is not in range".
+PASS   new OfflineAudioContext(1, 100, 1) threw SyntaxError: "sampleRate is not in range".
+PASS   new OfflineAudioContext(1, 100, 1e6) threw SyntaxError: "sampleRate is not in range".
+PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be 0".
+PASS < [invalid-offline-audio-context-parameters] All assertions passed. (total 5 assertions)
+PASS > [invalid-frame-length]
+PASS   testContext = new OfflineAudioContext(1, -88200000000000, 44100) did not throw an exception.
+PASS   testContext.startRendering() rejected correctly with InvalidStateError: Failed to create audio buffer.
+PASS < [invalid-frame-length] All assertions passed. (total 2 assertions)
+PASS > [waveshaper]
+PASS   node.oversample = "9x" did not throw an exception.
+PASS   node.oversample is equal to none.
+PASS   node.curve = {} threw TypeError: "The WaveShaperNode.curve attribute must be an instance of Float32Array".
+PASS   node.curve = new Float32Array(1) threw InvalidStateError: "Length of curve array cannot be less than 2".
+PASS   node.curve is equal to null.
+PASS   node.curve = new Float32Array(2) did not throw an exception.
+PASS   node.curve = null did not throw an exception.
+PASS < [waveshaper] All assertions passed. (total 7 assertions)
+PASS > [audio-buffer-source] AudioBufferSource start/stop
+PASS   source = context.createBufferSource() did not throw an exception.
+PASS   source.buffer = buffer did not throw an exception.
+PASS   source.buffer = context.createBuffer(1, 10, context.sampleRate) threw InvalidStateError: "The buffer was already set".
+PASS   source.start(-1) threw RangeError: "when value should be positive".
+PASS   source.start(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.start(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.start(NaN) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, -Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, NaN) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, -1) threw RangeError: "offset value should be positive".
+PASS   source.start(1, -Number.MIN_VALUE) threw RangeError: "offset value should be positive".
+PASS   source.start(1, 1, Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, 1, -Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, 1, NaN) threw TypeError: "The provided value is non-finite".
+PASS   source.start(1, 1, -1) threw RangeError: "duration value should be positive".
+PASS   source.start(1, 1, -Number.MIN_VALUE) threw RangeError: "duration value should be positive".
+PASS   source.start() did not throw an exception.
+PASS   source.stop(-Number.MIN_VALUE) threw RangeError: "when value should be positive".
+PASS   source.stop(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.stop(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source.stop(NaN) threw TypeError: "The provided value is non-finite".
+PASS   source.stop() did not throw an exception.
+PASS   source2 = context.createBufferSource() did not throw an exception.
+PASS   source2.buffer = buffer did not throw an exception.
+PASS   source2.start(0, 0) did not throw an exception.
+PASS   source3 = context.createBufferSource() did not throw an exception.
+PASS   source3.buffer = buffer did not throw an exception.
+PASS   source3.start(0, -1/Infinity) did not throw an exception.
+PASS   source4 = context.createBufferSource() did not throw an exception.
+PASS   source4.start() did not throw an exception.
+PASS   source5 = context.createBufferSource() did not throw an exception.
+PASS   source5.buffer = buffer did not throw an exception.
+PASS   source5.stop() threw InvalidStateError: "cannot call stop without calling start first.".
+PASS   source6 = context.createBufferSource() did not throw an exception.
+PASS   source6.buffer = buffer did not throw an exception.
+PASS   source6.start() did not throw an exception.
+PASS   source6.start() threw InvalidStateError: "Cannot call start more than once.".
+PASS   source7 = context.createBufferSource() did not throw an exception.
+PASS   source7.buffer = buffer did not throw an exception.
+PASS   source7.start() did not throw an exception.
+PASS   source7.stop() did not throw an exception.
+PASS < [audio-buffer-source] All assertions passed. (total 42 assertions)
+PASS > [oscillator] start/stop
+PASS   source8 = context.createOscillator() did not throw an exception.
+PASS   source8.start(-Number.MIN_VALUE) threw RangeError: "when value should be positive".
+PASS   source8.start(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source8.start(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source8.start(NaN) threw TypeError: "The provided value is non-finite".
+PASS   source8.start() did not throw an exception.
+PASS   source8.stop(-Number.MIN_VALUE) threw RangeError: "when value should be positive".
+PASS   source8.stop(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source8.stop(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS   source8.stop(NaN) threw TypeError: "The provided value is non-finite".
+PASS   source8.stop() did not throw an exception.
+PASS   osc = context.createOscillator() did not throw an exception.
+PASS   osc.stop() threw InvalidStateError: "cannot call stop without calling start first.".
+PASS   osc1 = context.createOscillator() did not throw an exception.
+PASS   osc1.start() did not throw an exception.
+PASS   osc1.stop() did not throw an exception.
+PASS   osc.setPeriodicWave(null) threw TypeError: "Argument 1 ('wave') to OscillatorNode.setPeriodicWave must be an instance of PeriodicWave".
+PASS < [oscillator] All assertions passed. (total 17 assertions)
+PASS > [convolver]
+PASS   oc = new OfflineAudioContext(1, 44100, 44100) did not throw an exception.
+PASS   conv = oc.createConvolver() did not throw an exception.
+PASS   conv.buffer = {} threw TypeError: "The ConvolverNode.buffer attribute must be an instance of AudioBuffer".
+PASS   conv.buffer = oc.createBuffer(1, 100, 22050) threw NotSupportedError: "The operation is not supported.".
+PASS   conv.buffer is equal to null.
+PASS < [convolver] All assertions passed. (total 5 assertions)
+PASS > [panner]
+PASS   panner.channelCount = 1 did not throw an exception.
+PASS   panner.channelCount = 2 did not throw an exception.
+PASS   PannerNode.channelCount = 0 threw NotSupportedError: "Channel count cannot be 0".
+PASS   PannerNode.channelCount is not equal to 0.
+PASS   PannerNode.channelCount = 3 threw NotSupportedError: "PannerNode's channelCount cannot be greater than 2".
+PASS   PannerNode.channelCount is not equal to 3.
+PASS   PannerNode.channelCountMode = max threw NotSupportedError: "PannerNode's channelCountMode cannot be max".
+PASS   PannerNode.channelCountMode is not equal to max.
+PASS   panner.channelCountMode = "explicit" did not throw an exception.
+PASS   panner.channelCountMode = "clamped-max" did not throw an exception.
+PASS   panner.channelCountMode = "junk" did not throw an exception.
+PASS < [panner] All assertions passed. (total 11 assertions)
+PASS > [script-processor]
+PASS   script = context.createScriptProcessor(256, 3) did not throw an exception.
+PASS   script.channelCount is equal to 3.
+PASS   script.channelCountMode is equal to explicit.
+PASS   script.channelCount = 3 did not throw an exception.
+PASS   ScriptProcessorNode.channelCount = 1 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed".
+PASS   ScriptProcessorNode.channelCount is not equal to 1.
+PASS   ScriptProcessorNode.channelCount = 7 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed".
+PASS   ScriptProcessorNode.channelCount is not equal to 7.
+PASS   script.channelCountMode = "explicit" did not throw an exception.
+PASS   ScriptProcessorNode.channelCountMode = max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'".
+PASS   ScriptProcessorNode.channelCountMode is not equal to max.
+PASS   ScriptProcessorNode.channelCountMode = clamped-max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'".
+PASS   ScriptProcessorNode.channelCountMode is not equal to clamped-max.
+PASS   script.channelCountMode = "junk" did not throw an exception.
+PASS < [script-processor] All assertions passed. (total 14 assertions)
+PASS > [misc] Miscellaneous tests
+PASS   osc.noteOn is equal to undefined.
+PASS   osc.noteOff is equal to undefined.
+PASS   source.noteOn is equal to undefined.
+PASS   source.noteOff is equal to undefined.
+PASS < [misc] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 24 tasks ran successfully.
 

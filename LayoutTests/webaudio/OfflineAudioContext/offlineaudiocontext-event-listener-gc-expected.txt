@@ -1,8 +1,8 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "event-listener-gc" 
-PASS Audit report 
-PASS > [event-listener-gc]  
-PASS < [event-listener-gc] All assertions passed. (total 0 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "event-listener-gc"
+PASS Audit report
+PASS > [event-listener-gc]
+PASS < [event-listener-gc] All assertions passed. (total 0 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

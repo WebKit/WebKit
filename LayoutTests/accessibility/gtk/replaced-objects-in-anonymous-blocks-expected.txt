@@ -10,21 +10,21 @@ button
 
 
 End of test
-AXRole: AXWebArea 
+AXRole: AXWebArea
     AXRole: AXParagraph AXValue: Paragraph
     AXRole: AXGroup AXValue: <obj>
-        AXRole: AXButton 
+        AXRole: AXButton
     AXRole: AXGroup AXValue: <obj>
-        AXRole: AXGroup 
-            AXRole: AXScrollArea 
-                AXRole: AXWebArea 
+        AXRole: AXGroup
+            AXRole: AXScrollArea
+                AXRole: AXWebArea
     AXRole: AXGroup AXValue: <obj>
         AXRole: AXTextField AXValue: text area
     AXRole: AXSection AXValue: Div<\n><obj>
-        AXRole: AXButton 
+        AXRole: AXButton
     AXRole: AXHeading AXValue: Heading<\n><obj><\n><obj>
-        AXRole: AXButton 
-        AXRole: AXImage 
+        AXRole: AXButton
+        AXRole: AXImage
     AXRole: AXSection AXValue: End of test
 This tests that the text associated with replaced objects in an anonymous block is correct.
 

@@ -1,3 +1,3 @@
 
-PASS Listening to a pointerleave event alone dispatches the event. 
+PASS Listening to a pointerleave event alone dispatches the event.
 

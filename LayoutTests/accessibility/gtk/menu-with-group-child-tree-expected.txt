@@ -1,5 +1,5 @@
-AXRole: AXMenu AXTitle: 
-    AXRole: AXGroup AXTitle: 
+AXRole: AXMenu AXTitle:
+    AXRole: AXGroup AXTitle:
         AXRole: AXMenuItem AXTitle: content 1
     AXRole: AXMenuItem AXTitle: content 2
 This verifies the accessibility tree of a menu with a group child.

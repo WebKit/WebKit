@@ -13,7 +13,7 @@ AXDescription: group0
     AXDescription: button1
 
     AXRole: AXStaticText
-    AXDescription: 
+    AXDescription:
 
 PASS object.role is 'AXRole: AXStaticText'
 PASS stringValue is 'AXValue: text3'

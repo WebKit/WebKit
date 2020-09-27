@@ -1,4 +1,4 @@
-    
+
 There should be 5 red triangles on 5 black squares above
 
 This test checks that drawImage and readPixels are not effected by gl.Pixelstorei(gl.PACK_ALIGNMENT) and visa versa

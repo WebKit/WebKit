@@ -2,7 +2,7 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 1016)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
     (horizontal scrollbar mode 0)
@@ -17,7 +17,7 @@
         (Frame scrolling node
           (scrollable area size 500 300)
           (contents size 500 420)
-          (scrollable area parameters 
+          (scrollable area parameters
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
@@ -30,7 +30,7 @@
             (Overflow scrolling node
               (scrollable area size 400 300)
               (contents size 400 1760)
-              (scrollable area parameters 
+              (scrollable area parameters
                 (horizontal scroll elasticity 1)
                 (vertical scroll elasticity 1)
                 (horizontal scrollbar mode 0)

@@ -5,8 +5,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.00000, 8.00000 }
 AXSize: { 784.000, 36.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Image map - test 2 - 2 Links (alt tags)<\n>----------------------<\n>
 AXFocusable: 0
 AXFocused: 0
@@ -25,8 +25,8 @@ AXChildren: 0
 AXPosition: { 18.0000, 55.0000 }
 AXSize: { 123.000, 62.0000 }
 AXTitle: Link1
-AXDescription: 
-AXValue: 
+AXDescription:
+AXValue:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -45,8 +45,8 @@ AXChildren: 0
 AXPosition: { 20.0000, 119.000 }
 AXSize: { 122.000, 14.0000 }
 AXTitle: Link2
-AXDescription: 
-AXValue: 
+AXDescription:
+AXValue:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -61,4 +61,4 @@ AXPlatformAttributes: computed-role:link, tag:area, toolkit:WPEWebKit
 ------------
 
 
- 
+

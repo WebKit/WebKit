@@ -1,15 +1,15 @@
 
-PASS Can construct a payment request (smoke test). 
-PASS PaymentResponse.prototype must have a retry() function (smoke test). 
-PASS A completed payment request cannot be retried. 
-PASS Calling retry() more than once yield a rejected promise, but the retryPromise resolves independently. 
-PASS Calling complete() while a retry() is in progress results in an InvalidStateError. 
-PASS Trying to abort() via PaymentRequest is not possible. 
-PASS It's possible to retry() multiple times and eventually complete(). After complete(), however, retry() rejects with an InvalidStateError. 
-PASS The user aborting retrying a payment causes the retryPromise to reject with AbortError. Aborting a payment is causes it complete. 
-PASS When retrying, the user is shown error fields to fix. 
-PASS When "abort the update" occurs because of an update error, the `retryPromise` is rejected and response.[[complete]] becomes true. 
-PASS Calling retry() multiple times is always a new object. 
-PASS When retrying without errors, the user is shown an `unknown` error. 
-PASS response.details should be updated after the user accepts a retry. 
+PASS Can construct a payment request (smoke test).
+PASS PaymentResponse.prototype must have a retry() function (smoke test).
+PASS A completed payment request cannot be retried.
+PASS Calling retry() more than once yield a rejected promise, but the retryPromise resolves independently.
+PASS Calling complete() while a retry() is in progress results in an InvalidStateError.
+PASS Trying to abort() via PaymentRequest is not possible.
+PASS It's possible to retry() multiple times and eventually complete(). After complete(), however, retry() rejects with an InvalidStateError.
+PASS The user aborting retrying a payment causes the retryPromise to reject with AbortError. Aborting a payment is causes it complete.
+PASS When retrying, the user is shown error fields to fix.
+PASS When "abort the update" occurs because of an update error, the `retryPromise` is rejected and response.[[complete]] becomes true.
+PASS Calling retry() multiple times is always a new object.
+PASS When retrying without errors, the user is shown an `unknown` error.
+PASS response.details should be updated after the user accepts a retry.
 

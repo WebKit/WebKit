@@ -11,28 +11,28 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
-AXChildren: 
-AXHelp: 
-AXParent: 
+AXChildren:
+AXHelp:
+AXParent:
 AXSize: NSSize: {14, 25}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: 
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
-AXLanguage: 
-AXDOMIdentifier: 
-AXDOMClassList: 
-AXFocusableAncestor: 
+AXTopLevelUIElement:
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -41,28 +41,28 @@ AXElementBusy: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
-AXChildren: 
-AXHelp: 
-AXParent: 
+AXChildren:
+AXHelp:
+AXParent:
 AXSize: NSSize: {10, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: 
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
-AXLanguage: 
-AXDOMIdentifier: 
-AXDOMClassList: 
-AXFocusableAncestor: 
+AXTopLevelUIElement:
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -71,28 +71,28 @@ AXElementBusy: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
-AXChildren: 
-AXHelp: 
-AXParent: 
+AXChildren:
+AXHelp:
+AXParent:
 AXSize: NSSize: {9, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: 
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
-AXLanguage: 
-AXDOMIdentifier: 
-AXDOMClassList: 
-AXFocusableAncestor: 
+AXTopLevelUIElement:
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -101,28 +101,28 @@ AXElementBusy: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
-AXChildren: 
-AXHelp: 
-AXParent: 
+AXChildren:
+AXHelp:
+AXParent:
 AXSize: NSSize: {9, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: 
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
-AXLanguage: 
-AXDOMIdentifier: 
-AXDOMClassList: 
-AXFocusableAncestor: 
+AXTopLevelUIElement:
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -131,28 +131,28 @@ AXElementBusy: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
-AXChildren: 
-AXHelp: 
-AXParent: 
+AXChildren:
+AXHelp:
+AXParent:
 AXSize: NSSize: {10, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: 
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: 
-AXEndTextMarker: 
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: 
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: 
-AXLanguage: 
-AXDOMIdentifier: 
-AXDOMClassList: 
-AXFocusableAncestor: 
+AXTopLevelUIElement:
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0

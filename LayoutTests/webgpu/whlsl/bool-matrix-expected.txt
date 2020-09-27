@@ -1,11 +1,11 @@
 
-PASS boolMatrix 
-PASS boolMatrix2 
-PASS boolMatrix3 
-PASS boolMatrix4 
-PASS boolMatrix5 
-PASS boolMatrixAny 
-PASS boolMatrixAny2 
-PASS boolMatrixAll 
-PASS boolMatrixAll2 
+PASS boolMatrix
+PASS boolMatrix2
+PASS boolMatrix3
+PASS boolMatrix4
+PASS boolMatrix5
+PASS boolMatrixAny
+PASS boolMatrixAny2
+PASS boolMatrixAll
+PASS boolMatrixAll2
 

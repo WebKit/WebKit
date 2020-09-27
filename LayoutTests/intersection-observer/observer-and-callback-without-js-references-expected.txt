@@ -1,3 +1,3 @@
 
-PASS IntersectionObserver callback fires even when the observer and callback have no JS references 
+PASS IntersectionObserver callback fires even when the observer and callback have no JS references
 

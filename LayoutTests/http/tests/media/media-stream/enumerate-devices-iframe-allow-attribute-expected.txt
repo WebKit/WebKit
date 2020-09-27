@@ -17,14 +17,14 @@ CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
 CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'microphone;speaker-selection'.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
-         
 
-PASS Wait for frames to be loaded 
-PASS none 
-PASS microphone 
-PASS camera 
-PASS camera+microphone 
-PASS microphone+speakerselection 
-PASS camera+microphone+speakerselection 
-PASS same-origin 
+
+PASS Wait for frames to be loaded
+PASS none
+PASS microphone
+PASS camera
+PASS camera+microphone
+PASS microphone+speakerselection
+PASS camera+microphone+speakerselection
+PASS same-origin
 

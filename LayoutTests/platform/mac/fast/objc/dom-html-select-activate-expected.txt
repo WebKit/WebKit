@@ -1,4 +1,4 @@
-        
+
 This tests the Private Objective-C DOM HTML Bindings API for selecting indexes of a <select> that also activate the "change" event.
 
 Select a single index in a normal <select>.

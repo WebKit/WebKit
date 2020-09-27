@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/open-twice.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.open('open-twice1')
 [Worker] indexedDB.open('open-twice2')
 PASS successfullyParsed is true

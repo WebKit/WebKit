@@ -1,15 +1,15 @@
 
-PASS A CSS Animation should be reflected entirely as a CSSAnimation object on the timeline. 
-PASS Web Animations should reflect the animation-delay property. 
-PASS Web Animations should reflect the animation-direction property. 
-PASS Web Animations should reflect the animation-duration property. 
-PASS Web Animations should reflect the animation-fill-mode property. 
-PASS Web Animations should reflect the animation-iteration-count property. 
-PASS Web Animations should reflect the animation-name property. 
-PASS Web Animations should reflect the animation-play-state property. 
-PASS Web Animations should not reflect the animation-timing-function property on the effect's timing. 
-PASS Calling finish() on the animation no longer lists the animation after it has been running. 
-PASS Seeking the animation to its end time no longer lists the animation after it has been running. 
-PASS Setting the target's animation-name to none no longer lists the animation after it has been running. 
-PASS Setting the target's animation-duration to 0s no longer lists the animation after it has been running. 
+PASS A CSS Animation should be reflected entirely as a CSSAnimation object on the timeline.
+PASS Web Animations should reflect the animation-delay property.
+PASS Web Animations should reflect the animation-direction property.
+PASS Web Animations should reflect the animation-duration property.
+PASS Web Animations should reflect the animation-fill-mode property.
+PASS Web Animations should reflect the animation-iteration-count property.
+PASS Web Animations should reflect the animation-name property.
+PASS Web Animations should reflect the animation-play-state property.
+PASS Web Animations should not reflect the animation-timing-function property on the effect's timing.
+PASS Calling finish() on the animation no longer lists the animation after it has been running.
+PASS Seeking the animation to its end time no longer lists the animation after it has been running.
+PASS Setting the target's animation-name to none no longer lists the animation after it has been running.
+PASS Setting the target's animation-duration to 0s no longer lists the animation after it has been running.
 

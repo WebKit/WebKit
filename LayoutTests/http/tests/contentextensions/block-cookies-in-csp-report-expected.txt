@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Refused to load http://localhost/foo.png because it does not appear in the img-src directive of the Content Security Policy.
-This test creates a CSP violation report, but the report URL matches a 'block-cookie' rule. 
+This test creates a CSP violation report, but the report URL matches a 'block-cookie' rule.
 
 
 

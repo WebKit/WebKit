@@ -1,9 +1,9 @@
 
-PASS drawImage of ImageBitmap from HTMLImageElement 
-PASS drawImage of ImageBitmap from HTMLCanvasElement 
-PASS drawImage of ImageBitmap from HTMLImageElement with cropping 
-PASS drawImage of ImageBitmap from HTMLImageElement with cropping and different origin 
-PASS drawImage of ImageBitmap from HTMLImageElement with cropping and different non-zero origin 
-PASS drawImage throws with InvalidStateError if the ImageBitmap is closed 
-PASS drawImage throws with IndexSizeError if the source rectangle of the ImageBitmap is empty 
+PASS drawImage of ImageBitmap from HTMLImageElement
+PASS drawImage of ImageBitmap from HTMLCanvasElement
+PASS drawImage of ImageBitmap from HTMLImageElement with cropping
+PASS drawImage of ImageBitmap from HTMLImageElement with cropping and different origin
+PASS drawImage of ImageBitmap from HTMLImageElement with cropping and different non-zero origin
+PASS drawImage throws with InvalidStateError if the ImageBitmap is closed
+PASS drawImage throws with IndexSizeError if the source rectangle of the ImageBitmap is empty
 

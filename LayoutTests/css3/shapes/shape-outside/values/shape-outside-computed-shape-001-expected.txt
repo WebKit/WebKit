@@ -1,6 +1,6 @@
 
-PASS inset - computed 
-PASS circle - computed 
-PASS ellipse - computed 
-PASS polygon - computed 
+PASS inset - computed
+PASS circle - computed
+PASS ellipse - computed
+PASS polygon - computed
 

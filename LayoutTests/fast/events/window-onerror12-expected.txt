@@ -1,6 +1,6 @@
 Test that window.onerror is called on window object for events created using document.createEvent("error"). Bug 8519.
 
-Main frame window.onerror: 
+Main frame window.onerror:
 msg: [object Event]
 url: undefined
 line: undefined

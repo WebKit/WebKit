@@ -1,2 +1,2 @@
-There should be a green square and no red below: 
+There should be a green square and no red below:
 PASS

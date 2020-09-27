@@ -1,12 +1,12 @@
 
-PASS createImageBitmap rejects with TypeError if resizeWidth is negative 
-PASS createImageBitmap rejects with TypeError if resizeHeight is negative 
-PASS createImageBitmap from HTMLImageElement with cropped source 
-PASS createImageBitmap from HTMLCanvasElement with cropped source 
-PASS createImageBitmap with a cropping rectangle that is bigger than the source 
-PASS createImageBitmap with resizeWidth and resizeHeight 
-PASS createImageBitmap with only resizeHeight should calculate resizeWidth 
-PASS createImageBitmap with only resizeWidth should calculate resizeHeight 
-PASS createImageBitmap with an SVG uses intrinsic size 
-PASS createImageBitmap with an SVG that has no intrinsic size uses resize parameters 
+PASS createImageBitmap rejects with TypeError if resizeWidth is negative
+PASS createImageBitmap rejects with TypeError if resizeHeight is negative
+PASS createImageBitmap from HTMLImageElement with cropped source
+PASS createImageBitmap from HTMLCanvasElement with cropped source
+PASS createImageBitmap with a cropping rectangle that is bigger than the source
+PASS createImageBitmap with resizeWidth and resizeHeight
+PASS createImageBitmap with only resizeHeight should calculate resizeWidth
+PASS createImageBitmap with only resizeWidth should calculate resizeHeight
+PASS createImageBitmap with an SVG uses intrinsic size
+PASS createImageBitmap with an SVG that has no intrinsic size uses resize parameters
 

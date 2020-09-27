@@ -1,3 +1,3 @@
 
-PASS IntersectionObserverEntry's intersection rect is not larger than the target rect 
+PASS IntersectionObserverEntry's intersection rect is not larger than the target rect
 

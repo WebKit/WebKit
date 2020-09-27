@@ -1,4 +1,4 @@
 
-PASS switchBreak 
-PASS unknownVariableInDotExpression 
+PASS switchBreak
+PASS unknownVariableInDotExpression
 

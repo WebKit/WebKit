@@ -1,6 +1,6 @@
 
-PASS Ensuring autoplay does not work when starting an audio node and getUserMedia is off 
-PASS Ensuring autoplay works when resuming audio context and getUserMedia is off 
-PASS Ensuring autoplay works when starting an audio node and getUserMedia is on 
-PASS Ensuring autoplay works when resuming audio context and getUserMedia is on 
+PASS Ensuring autoplay does not work when starting an audio node and getUserMedia is off
+PASS Ensuring autoplay works when resuming audio context and getUserMedia is off
+PASS Ensuring autoplay works when starting an audio node and getUserMedia is on
+PASS Ensuring autoplay works when resuming audio context and getUserMedia is on
 

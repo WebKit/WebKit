@@ -1,6 +1,6 @@
 
 
-PASS setup 
-PASS track.addCue() adds to track.cues 
-PASS cue order should change when start time is changed 
+PASS setup
+PASS track.addCue() adds to track.cues
+PASS cue order should change when start time is changed
 

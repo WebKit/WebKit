@@ -28,7 +28,7 @@ PAUSES AT: 2:0
 -=>   2    |let c=function(){return 0}
       3    let arr=[];
       4    let obj={};
-      5    
+      5
 
 
 INSERTING AT: 3:0
@@ -38,7 +38,7 @@ PAUSES AT: 3:0
       2    let c=function(){return 0}
 -=>   3    |let arr=[];
       4    let obj={};
-      5    
+      5
       6    // Control flow
 
 
@@ -48,9 +48,9 @@ PAUSES AT: 4:0
       2    let c=function(){return 0}
       3    let arr=[];
 -=>   4    |let obj={};
-      5    
+      5
       6    // Control flow
-      7    
+      7
 
 
 INSERTING AT: 5:0
@@ -60,10 +60,10 @@ PAUSES AT: 8:4
       4    let obj={};
  ->   5    #
       6    // Control flow
-      7    
+      7
  =>   8    if (|0)
       9        a();
-     10    
+     10
      11    if (0) {
 
 
@@ -71,90 +71,90 @@ INSERTING AT: 6:0
 PAUSES AT: 8:4
       3    let arr=[];
       4    let obj={};
-      5    
+      5
  ->   6    #// Control flow
-      7    
+      7
  =>   8    if (|0)
       9        a();
-     10    
+     10
      11    if (0) {
 
 
 INSERTING AT: 7:0
 PAUSES AT: 8:4
       4    let obj={};
-      5    
+      5
       6    // Control flow
  ->   7    #
  =>   8    if (|0)
       9        a();
-     10    
+     10
      11    if (0) {
 
 
 INSERTING AT: 8:0
 PAUSES AT: 8:4
-      5    
+      5
       6    // Control flow
-      7    
+      7
 -=>   8    #if (|0)
       9        a();
-     10    
+     10
      11    if (0) {
 
 
 INSERTING AT: 9:0
 PAUSES AT: 9:4
       6    // Control flow
-      7    
+      7
       8    if (0)
 -=>   9    #    |a();
-     10    
+     10
      11    if (0) {
      12        a();
 
 
 INSERTING AT: 10:0
 PAUSES AT: 11:4
-      7    
+      7
       8    if (0)
       9        a();
  ->  10    #
  =>  11    if (|0) {
      12        a();
      13    }
-     14    
+     14
 
 
 INSERTING AT: 11:0
 PAUSES AT: 11:4
       8    if (0)
       9        a();
-     10    
+     10
 -=>  11    #if (|0) {
      12        a();
      13    }
-     14    
+     14
 
 
 INSERTING AT: 12:0
 PAUSES AT: 12:4
       9        a();
-     10    
+     10
      11    if (0) {
 -=>  12    #    |a();
      13    }
-     14    
+     14
      15    if (0)
 
 
 INSERTING AT: 13:0
 PAUSES AT: 15:4
-     10    
+     10
      11    if (0) {
      12        a();
  ->  13    #}
-     14    
+     14
  =>  15    if (|0)
      16        a();
      17    else if (0)
@@ -177,7 +177,7 @@ INSERTING AT: 15:0
 PAUSES AT: 15:4
      12        a();
      13    }
-     14    
+     14
 -=>  15    #if (|0)
      16        a();
      17    else if (0)
@@ -187,7 +187,7 @@ PAUSES AT: 15:4
 INSERTING AT: 16:0
 PAUSES AT: 16:4
      13    }
-     14    
+     14
      15    if (0)
 -=>  16    #    |a();
      17    else if (0)
@@ -197,7 +197,7 @@ PAUSES AT: 16:4
 
 INSERTING AT: 17:0
 PAUSES AT: 17:9
-     14    
+     14
      15    if (0)
      16        a();
 -=>  17    #else if (|0)
@@ -214,7 +214,7 @@ PAUSES AT: 18:4
 -=>  18    #    |a();
      19    else
      20        a();
-     21    
+     21
 
 
 INSERTING AT: 19:0
@@ -224,9 +224,9 @@ PAUSES AT: 20:4
      18        a();
  ->  19    #else
  =>  20        |a();
-     21    
+     21
      22    a() ? b() : c()
-     23    
+     23
 
 
 INSERTING AT: 20:0
@@ -235,9 +235,9 @@ PAUSES AT: 20:4
      18        a();
      19    else
 -=>  20    #    |a();
-     21    
+     21
      22    a() ? b() : c()
-     23    
+     23
 
 
 INSERTING AT: 21:0
@@ -247,128 +247,128 @@ PAUSES AT: 22:0
      20        a();
  ->  21    #
  =>  22    |a() ? b() : c()
-     23    
+     23
      24    // Loops
-     25    
+     25
 
 
 INSERTING AT: 22:0
 PAUSES AT: 22:0
      19    else
      20        a();
-     21    
+     21
 -=>  22    |a() ? b() : c()
-     23    
+     23
      24    // Loops
-     25    
+     25
 
 
 INSERTING AT: 23:0
 PAUSES AT: 26:7
      20        a();
-     21    
+     21
      22    a() ? b() : c()
  ->  23    #
      24    // Loops
-     25    
+     25
  =>  26    while (|0)
      27        a();
-     28    
+     28
      29    while (0) {
 
 
 INSERTING AT: 24:0
 PAUSES AT: 26:7
-     21    
+     21
      22    a() ? b() : c()
-     23    
+     23
  ->  24    #// Loops
-     25    
+     25
  =>  26    while (|0)
      27        a();
-     28    
+     28
      29    while (0) {
 
 
 INSERTING AT: 25:0
 PAUSES AT: 26:7
      22    a() ? b() : c()
-     23    
+     23
      24    // Loops
  ->  25    #
  =>  26    while (|0)
      27        a();
-     28    
+     28
      29    while (0) {
 
 
 INSERTING AT: 26:0
 PAUSES AT: 26:7
-     23    
+     23
      24    // Loops
-     25    
+     25
 -=>  26    #while (|0)
      27        a();
-     28    
+     28
      29    while (0) {
 
 
 INSERTING AT: 27:0
 PAUSES AT: 27:4
      24    // Loops
-     25    
+     25
      26    while (0)
 -=>  27    #    |a();
-     28    
+     28
      29    while (0) {
      30        a();
 
 
 INSERTING AT: 28:0
 PAUSES AT: 29:7
-     25    
+     25
      26    while (0)
      27        a();
  ->  28    #
  =>  29    while (|0) {
      30        a();
      31    }
-     32    
+     32
 
 
 INSERTING AT: 29:0
 PAUSES AT: 29:7
      26    while (0)
      27        a();
-     28    
+     28
 -=>  29    #while (|0) {
      30        a();
      31    }
-     32    
+     32
 
 
 INSERTING AT: 30:0
 PAUSES AT: 30:4
      27        a();
-     28    
+     28
      29    while (0) {
 -=>  30    #    |a();
      31    }
-     32    
+     32
      33    do {
 
 
 INSERTING AT: 31:0
 PAUSES AT: 34:4
-     28    
+     28
      29    while (0) {
      30        a();
  ->  31    #}
-     32    
+     32
      33    do {
  =>  34        |a();
      35    } while (0);
-     36    
+     36
      37    for (a(); b(); c())
 
 
@@ -381,7 +381,7 @@ PAUSES AT: 34:4
      33    do {
  =>  34        |a();
      35    } while (0);
-     36    
+     36
      37    for (a(); b(); c())
 
 
@@ -389,32 +389,32 @@ INSERTING AT: 33:0
 PAUSES AT: 34:4
      30        a();
      31    }
-     32    
+     32
  ->  33    #do {
  =>  34        |a();
      35    } while (0);
-     36    
+     36
      37    for (a(); b(); c())
 
 
 INSERTING AT: 34:0
 PAUSES AT: 34:4
      31    }
-     32    
+     32
      33    do {
 -=>  34    #    |a();
      35    } while (0);
-     36    
+     36
      37    for (a(); b(); c())
 
 
 INSERTING AT: 35:0
 PAUSES AT: 35:9
-     32    
+     32
      33    do {
      34        a();
 -=>  35    #} while (|0);
-     36    
+     36
      37    for (a(); b(); c())
      38        break;
 
@@ -427,7 +427,7 @@ PAUSES AT: 37:5
  ->  36    #
  =>  37    for (|a(); b(); c())
      38        break;
-     39    
+     39
      40    for (; b(); c())
 
 
@@ -435,33 +435,33 @@ INSERTING AT: 37:0
 PAUSES AT: 37:5
      34        a();
      35    } while (0);
-     36    
+     36
 -=>  37    #for (|a(); b(); c())
      38        break;
-     39    
+     39
      40    for (; b(); c())
 
 
 INSERTING AT: 38:0
 PAUSES AT: 38:4
      35    } while (0);
-     36    
+     36
      37    for (a(); b(); c())
 -=>  38    #    |break;
-     39    
+     39
      40    for (; b(); c())
      41        break;
 
 
 INSERTING AT: 39:0
 PAUSES AT: 40:7
-     36    
+     36
      37    for (a(); b(); c())
      38        break;
  ->  39    #
  =>  40    for (; |b(); c())
      41        break;
-     42    
+     42
      43    for (a(); b();)
 
 
@@ -469,33 +469,33 @@ INSERTING AT: 40:0
 PAUSES AT: 40:7
      37    for (a(); b(); c())
      38        break;
-     39    
+     39
 -=>  40    #for (; |b(); c())
      41        break;
-     42    
+     42
      43    for (a(); b();)
 
 
 INSERTING AT: 41:0
 PAUSES AT: 41:4
      38        break;
-     39    
+     39
      40    for (; b(); c())
 -=>  41    #    |break;
-     42    
+     42
      43    for (a(); b();)
      44        break;
 
 
 INSERTING AT: 42:0
 PAUSES AT: 43:5
-     39    
+     39
      40    for (; b(); c())
      41        break;
  ->  42    #
  =>  43    for (|a(); b();)
      44        break;
-     45    
+     45
      46    for (a();; c())
 
 
@@ -503,33 +503,33 @@ INSERTING AT: 43:0
 PAUSES AT: 43:5
      40    for (; b(); c())
      41        break;
-     42    
+     42
 -=>  43    #for (|a(); b();)
      44        break;
-     45    
+     45
      46    for (a();; c())
 
 
 INSERTING AT: 44:0
 PAUSES AT: 44:4
      41        break;
-     42    
+     42
      43    for (a(); b();)
 -=>  44    #    |break;
-     45    
+     45
      46    for (a();; c())
      47        break;
 
 
 INSERTING AT: 45:0
 PAUSES AT: 46:5
-     42    
+     42
      43    for (a(); b();)
      44        break;
  ->  45    #
  =>  46    for (|a();; c())
      47        break;
-     48    
+     48
      49    for (a();;)
 
 
@@ -537,33 +537,33 @@ INSERTING AT: 46:0
 PAUSES AT: 46:5
      43    for (a(); b();)
      44        break;
-     45    
+     45
 -=>  46    #for (|a();; c())
      47        break;
-     48    
+     48
      49    for (a();;)
 
 
 INSERTING AT: 47:0
 PAUSES AT: 47:4
      44        break;
-     45    
+     45
      46    for (a();; c())
 -=>  47    #    |break;
-     48    
+     48
      49    for (a();;)
      50        break;
 
 
 INSERTING AT: 48:0
 PAUSES AT: 49:5
-     45    
+     45
      46    for (a();; c())
      47        break;
  ->  48    #
  =>  49    for (|a();;)
      50        break;
-     51    
+     51
      52    for (; b();)
 
 
@@ -571,33 +571,33 @@ INSERTING AT: 49:0
 PAUSES AT: 49:5
      46    for (a();; c())
      47        break;
-     48    
+     48
 -=>  49    #for (|a();;)
      50        break;
-     51    
+     51
      52    for (; b();)
 
 
 INSERTING AT: 50:0
 PAUSES AT: 50:4
      47        break;
-     48    
+     48
      49    for (a();;)
 -=>  50    #    |break;
-     51    
+     51
      52    for (; b();)
      53        break;
 
 
 INSERTING AT: 51:0
 PAUSES AT: 52:7
-     48    
+     48
      49    for (a();;)
      50        break;
  ->  51    #
  =>  52    for (; |b();)
      53        break;
-     54    
+     54
      55    for (;; c())
 
 
@@ -605,33 +605,33 @@ INSERTING AT: 52:0
 PAUSES AT: 52:7
      49    for (a();;)
      50        break;
-     51    
+     51
 -=>  52    #for (; |b();)
      53        break;
-     54    
+     54
      55    for (;; c())
 
 
 INSERTING AT: 53:0
 PAUSES AT: 53:4
      50        break;
-     51    
+     51
      52    for (; b();)
 -=>  53    #    |break;
-     54    
+     54
      55    for (;; c())
      56        break;
 
 
 INSERTING AT: 54:0
 PAUSES AT: 55:8
-     51    
+     51
      52    for (; b();)
      53        break;
  ->  54    #
  =>  55    for (;; |c())
      56        break;
-     57    
+     57
      58    for (;;)
 
 
@@ -639,33 +639,33 @@ INSERTING AT: 55:0
 PAUSES AT: 55:8
      52    for (; b();)
      53        break;
-     54    
+     54
 -=>  55    #for (;; |c())
      56        break;
-     57    
+     57
      58    for (;;)
 
 
 INSERTING AT: 56:0
 PAUSES AT: 56:4
      53        break;
-     54    
+     54
      55    for (;; c())
 -=>  56    #    |break;
-     57    
+     57
      58    for (;;)
      59        break;
 
 
 INSERTING AT: 57:0
 PAUSES AT: 59:4
-     54    
+     54
      55    for (;; c())
      56        break;
  ->  57    #
      58    for (;;)
  =>  59        |break;
-     60    
+     60
      61    for (a(); b(); c()) {
      62        break;
 
@@ -674,10 +674,10 @@ INSERTING AT: 58:0
 PAUSES AT: 59:4
      55    for (;; c())
      56        break;
-     57    
+     57
  ->  58    #for (;;)
  =>  59        |break;
-     60    
+     60
      61    for (a(); b(); c()) {
      62        break;
 
@@ -685,58 +685,58 @@ PAUSES AT: 59:4
 INSERTING AT: 59:0
 PAUSES AT: 59:4
      56        break;
-     57    
+     57
      58    for (;;)
 -=>  59    #    |break;
-     60    
+     60
      61    for (a(); b(); c()) {
      62        break;
 
 
 INSERTING AT: 60:0
 PAUSES AT: 61:5
-     57    
+     57
      58    for (;;)
      59        break;
  ->  60    #
  =>  61    for (|a(); b(); c()) {
      62        break;
      63    }
-     64    
+     64
 
 
 INSERTING AT: 61:0
 PAUSES AT: 61:5
      58    for (;;)
      59        break;
-     60    
+     60
 -=>  61    #for (|a(); b(); c()) {
      62        break;
      63    }
-     64    
+     64
 
 
 INSERTING AT: 62:0
 PAUSES AT: 62:4
      59        break;
-     60    
+     60
      61    for (a(); b(); c()) {
 -=>  62    #    |break;
      63    }
-     64    
+     64
      65    for (let x of arr)
 
 
 INSERTING AT: 63:0
 PAUSES AT: 65:14
-     60    
+     60
      61    for (a(); b(); c()) {
      62        break;
  ->  63    #}
-     64    
+     64
  =>  65    for (let x of |arr)
      66        break;
-     67    
+     67
      68    for (let x in obj)
 
 
@@ -748,7 +748,7 @@ PAUSES AT: 65:14
  ->  64    #
  =>  65    for (let x of |arr)
      66        break;
-     67    
+     67
      68    for (let x in obj)
 
 
@@ -756,33 +756,33 @@ INSERTING AT: 65:0
 PAUSES AT: 65:14
      62        break;
      63    }
-     64    
+     64
 -=>  65    #for (let x of |arr)
      66        break;
-     67    
+     67
      68    for (let x in obj)
 
 
 INSERTING AT: 66:0
 PAUSES AT: 66:4
      63    }
-     64    
+     64
      65    for (let x of arr)
 -=>  66    #    |break;
-     67    
+     67
      68    for (let x in obj)
      69        break;
 
 
 INSERTING AT: 67:0
 PAUSES AT: 68:14
-     64    
+     64
      65    for (let x of arr)
      66        break;
  ->  67    #
  =>  68    for (let x in |obj)
      69        break;
-     70    
+     70
      71    // Switch
 
 
@@ -790,32 +790,32 @@ INSERTING AT: 68:0
 PAUSES AT: 68:14
      65    for (let x of arr)
      66        break;
-     67    
+     67
 -=>  68    #for (let x in |obj)
      69        break;
-     70    
+     70
      71    // Switch
 
 
 INSERTING AT: 69:0
 PAUSES AT: 69:4
      66        break;
-     67    
+     67
      68    for (let x in obj)
 -=>  69    #    |break;
-     70    
+     70
      71    // Switch
-     72    
+     72
 
 
 INSERTING AT: 70:0
 PAUSES AT: 73:8
-     67    
+     67
      68    for (let x in obj)
      69        break;
  ->  70    #
      71    // Switch
-     72    
+     72
  =>  73    switch (|0) {
      74    case 1:
      75        a();
@@ -826,9 +826,9 @@ INSERTING AT: 71:0
 PAUSES AT: 73:8
      68    for (let x in obj)
      69        break;
-     70    
+     70
  ->  71    #// Switch
-     72    
+     72
  =>  73    switch (|0) {
      74    case 1:
      75        a();
@@ -838,7 +838,7 @@ PAUSES AT: 73:8
 INSERTING AT: 72:0
 PAUSES AT: 73:8
      69        break;
-     70    
+     70
      71    // Switch
  ->  72    #
  =>  73    switch (|0) {
@@ -849,9 +849,9 @@ PAUSES AT: 73:8
 
 INSERTING AT: 73:0
 PAUSES AT: 73:8
-     70    
+     70
      71    // Switch
-     72    
+     72
 -=>  73    #switch (|0) {
      74    case 1:
      75        a();
@@ -861,7 +861,7 @@ PAUSES AT: 73:8
 INSERTING AT: 74:0
 PAUSES AT: 75:4
      71    // Switch
-     72    
+     72
      73    switch (0) {
  ->  74    #case 1:
  =>  75        |a();
@@ -872,7 +872,7 @@ PAUSES AT: 75:4
 
 INSERTING AT: 75:0
 PAUSES AT: 75:4
-     72    
+     72
      73    switch (0) {
      74    case 1:
 -=>  75    #    |a();
@@ -971,7 +971,7 @@ PAUSES AT: 84:4
  =>  84        |a();
      85        break;
      86    }
-     87    
+     87
 
 
 INSERTING AT: 84:0
@@ -982,7 +982,7 @@ PAUSES AT: 84:4
 -=>  84    #    |a();
      85        break;
      86    }
-     87    
+     87
 
 
 INSERTING AT: 85:0
@@ -992,7 +992,7 @@ PAUSES AT: 85:4
      84        a();
 -=>  85    #    |break;
      86    }
-     87    
+     87
      88    // Try/Catch
 
 
@@ -1002,9 +1002,9 @@ PAUSES AT: 91:4
      84        a();
      85        break;
  ->  86    #}
-     87    
+     87
      88    // Try/Catch
-     89    
+     89
      90    try {
  =>  91        |a();
      92    } catch (e) {
@@ -1019,7 +1019,7 @@ PAUSES AT: 91:4
      86    }
  ->  87    #
      88    // Try/Catch
-     89    
+     89
      90    try {
  =>  91        |a();
      92    } catch (e) {
@@ -1031,9 +1031,9 @@ INSERTING AT: 88:0
 PAUSES AT: 91:4
      85        break;
      86    }
-     87    
+     87
  ->  88    #// Try/Catch
-     89    
+     89
      90    try {
  =>  91        |a();
      92    } catch (e) {
@@ -1044,7 +1044,7 @@ PAUSES AT: 91:4
 INSERTING AT: 89:0
 PAUSES AT: 91:4
      86    }
-     87    
+     87
      88    // Try/Catch
  ->  89    #
      90    try {
@@ -1056,9 +1056,9 @@ PAUSES AT: 91:4
 
 INSERTING AT: 90:0
 PAUSES AT: 91:4
-     87    
+     87
      88    // Try/Catch
-     89    
+     89
  ->  90    #try {
  =>  91        |a();
      92    } catch (e) {
@@ -1069,7 +1069,7 @@ PAUSES AT: 91:4
 INSERTING AT: 91:0
 PAUSES AT: 91:4
      88    // Try/Catch
-     89    
+     89
      90    try {
 -=>  91    #    |a();
      92    } catch (e) {
@@ -1079,7 +1079,7 @@ PAUSES AT: 91:4
 
 INSERTING AT: 92:0
 PAUSES AT: 93:4
-     89    
+     89
      90    try {
      91        a();
  ->  92    #} catch (e) {
@@ -1108,7 +1108,7 @@ PAUSES AT: 95:4
  ->  94    #} finally {
  =>  95        |b();
      96    }
-     97    
+     97
      98    // Class
 
 
@@ -1119,7 +1119,7 @@ PAUSES AT: 95:4
      94    } finally {
 -=>  95    #    |b();
      96    }
-     97    
+     97
      98    // Class
 
 
@@ -1129,63 +1129,63 @@ PAUSES AT: 151:8
      94    } finally {
      95        b();
  ->  96    #}
-     97    
+     97
      98    // Class
-     99    
+     99
     100    class Base {
     101        constructor()
     102        {
     103            this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
     107        {
     108            a();
     109        }
-    110    
+    110
     111        method()
     112        {
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1196,61 +1196,61 @@ PAUSES AT: 151:8
      96    }
  ->  97    #
      98    // Class
-     99    
+     99
     100    class Base {
     101        constructor()
     102        {
     103            this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
     107        {
     108            a();
     109        }
-    110    
+    110
     111        method()
     112        {
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1258,70 +1258,70 @@ INSERTING AT: 98:0
 PAUSES AT: 151:8
      95        b();
      96    }
-     97    
+     97
  ->  98    #// Class
-     99    
+     99
     100    class Base {
     101        constructor()
     102        {
     103            this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
     107        {
     108            a();
     109        }
-    110    
+    110
     111        method()
     112        {
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 99:0
 PAUSES AT: 151:8
      96    }
-     97    
+     97
      98    // Class
  ->  99    #
     100    class Base {
@@ -1329,142 +1329,142 @@ PAUSES AT: 151:8
     102        {
     103            this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
     107        {
     108            a();
     109        }
-    110    
+    110
     111        method()
     112        {
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 100:0
 PAUSES AT: 151:8
-     97    
+     97
      98    // Class
-     99    
+     99
  -> 100    #class Base {
     101        constructor()
     102        {
     103            this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
     107        {
     108            a();
     109        }
-    110    
+    110
     111        method()
     112        {
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 101:0
 PAUSES AT: 103:8
      98    // Class
-     99    
+     99
     100    class Base {
  -> 101    #    constructor()
     102        {
  => 103            |this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
 
 
 INSERTING AT: 102:0
 PAUSES AT: 103:8
-     99    
+     99
     100    class Base {
     101        constructor()
  -> 102    #    {
  => 103            |this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
 
 
@@ -1475,7 +1475,7 @@ PAUSES AT: 103:8
     102        {
 -=> 103    #        |this._base = true;
     104        }
-    105    
+    105
     106        baseMethod()
 
 
@@ -1485,7 +1485,7 @@ PAUSES AT: 104:4
     102        {
     103            this._base = true;
 -=> 104    #    |}
-    105    
+    105
     106        baseMethod()
     107        {
 
@@ -1500,50 +1500,50 @@ PAUSES AT: 151:8
     107        {
     108            a();
     109        }
-    110    
+    110
     111        method()
     112        {
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1551,35 +1551,35 @@ INSERTING AT: 106:0
 PAUSES AT: 108:8
     103            this._base = true;
     104        }
-    105    
+    105
  -> 106    #    baseMethod()
     107        {
  => 108            |a();
     109        }
-    110    
+    110
     111        method()
 
 
 INSERTING AT: 107:0
 PAUSES AT: 108:8
     104        }
-    105    
+    105
     106        baseMethod()
  -> 107    #    {
  => 108            |a();
     109        }
-    110    
+    110
     111        method()
 
 
 INSERTING AT: 108:0
 PAUSES AT: 108:8
-    105    
+    105
     106        baseMethod()
     107        {
 -=> 108    #        |a();
     109        }
-    110    
+    110
     111        method()
 
 
@@ -1589,7 +1589,7 @@ PAUSES AT: 109:4
     107        {
     108            a();
 -=> 109    #    |}
-    110    
+    110
     111        method()
     112        {
 
@@ -1605,44 +1605,44 @@ PAUSES AT: 151:8
     113            a();
     114        }
     115    }
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1650,36 +1650,36 @@ INSERTING AT: 111:0
 PAUSES AT: 113:8
     108            a();
     109        }
-    110    
+    110
  -> 111    #    method()
     112        {
  => 113            |a();
     114        }
     115    }
-    116    
+    116
 
 
 INSERTING AT: 112:0
 PAUSES AT: 113:8
     109        }
-    110    
+    110
     111        method()
  -> 112    #    {
  => 113            |a();
     114        }
     115    }
-    116    
+    116
 
 
 INSERTING AT: 113:0
 PAUSES AT: 113:8
-    110    
+    110
     111        method()
     112        {
 -=> 113    #        |a();
     114        }
     115    }
-    116    
+    116
 
 
 INSERTING AT: 114:0
@@ -1689,7 +1689,7 @@ PAUSES AT: 114:4
     113            a();
 -=> 114    #    |}
     115    }
-    116    
+    116
     117    class Child extends Base {
 
 
@@ -1699,44 +1699,44 @@ PAUSES AT: 151:8
     113            a();
     114        }
  -> 115    #}
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1752,37 +1752,37 @@ PAUSES AT: 151:8
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1790,70 +1790,70 @@ INSERTING AT: 117:0
 PAUSES AT: 151:8
     114        }
     115    }
-    116    
+    116
  -> 117    #class Child extends Base {
     118        constructor()
     119        {
     120            super();
     121            this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 118:0
 PAUSES AT: 120:8
     115    }
-    116    
+    116
     117    class Child extends Base {
  -> 118    #    constructor()
     119        {
  => 120            |super();
     121            this._child = true;
     122        }
-    123    
+    123
 
 
 INSERTING AT: 119:0
 PAUSES AT: 120:8
-    116    
+    116
     117    class Child extends Base {
     118        constructor()
  -> 119    #    {
  => 120            |super();
     121            this._child = true;
     122        }
-    123    
+    123
 
 
 INSERTING AT: 120:0
@@ -1864,7 +1864,7 @@ PAUSES AT: 120:8
 -=> 120    #        |super();
     121            this._child = true;
     122        }
-    123    
+    123
 
 
 INSERTING AT: 121:0
@@ -1874,7 +1874,7 @@ PAUSES AT: 121:8
     120            super();
 -=> 121    #        |this._child = true;
     122        }
-    123    
+    123
     124        childMethod()
 
 
@@ -1884,7 +1884,7 @@ PAUSES AT: 122:4
     120            super();
     121            this._child = true;
 -=> 122    #    |}
-    123    
+    123
     124        childMethod()
     125        {
 
@@ -1899,32 +1899,32 @@ PAUSES AT: 151:8
     125        {
     126            b();
     127        }
-    128    
+    128
     129        method()
     130        {
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -1932,35 +1932,35 @@ INSERTING AT: 124:0
 PAUSES AT: 126:8
     121            this._child = true;
     122        }
-    123    
+    123
  -> 124    #    childMethod()
     125        {
  => 126            |b();
     127        }
-    128    
+    128
     129        method()
 
 
 INSERTING AT: 125:0
 PAUSES AT: 126:8
     122        }
-    123    
+    123
     124        childMethod()
  -> 125    #    {
  => 126            |b();
     127        }
-    128    
+    128
     129        method()
 
 
 INSERTING AT: 126:0
 PAUSES AT: 126:8
-    123    
+    123
     124        childMethod()
     125        {
 -=> 126    #        |b();
     127        }
-    128    
+    128
     129        method()
 
 
@@ -1970,7 +1970,7 @@ PAUSES AT: 127:4
     125        {
     126            b();
 -=> 127    #    |}
-    128    
+    128
     129        method()
     130        {
 
@@ -1986,26 +1986,26 @@ PAUSES AT: 151:8
     131            super.method();
     132            b();
     133        }
-    134    
+    134
     135        get name()
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2013,36 +2013,36 @@ INSERTING AT: 129:0
 PAUSES AT: 131:8
     126            b();
     127        }
-    128    
+    128
  -> 129    #    method()
     130        {
  => 131            |super.method();
     132            b();
     133        }
-    134    
+    134
 
 
 INSERTING AT: 130:0
 PAUSES AT: 131:8
     127        }
-    128    
+    128
     129        method()
  -> 130    #    {
  => 131            |super.method();
     132            b();
     133        }
-    134    
+    134
 
 
 INSERTING AT: 131:0
 PAUSES AT: 131:8
-    128    
+    128
     129        method()
     130        {
 -=> 131    #        |super.method();
     132            b();
     133        }
-    134    
+    134
 
 
 INSERTING AT: 132:0
@@ -2052,7 +2052,7 @@ PAUSES AT: 132:8
     131            super.method();
 -=> 132    #        |b();
     133        }
-    134    
+    134
     135        get name()
 
 
@@ -2062,7 +2062,7 @@ PAUSES AT: 133:4
     131            super.method();
     132            b();
 -=> 133    #    |}
-    134    
+    134
     135        get name()
     136        {
 
@@ -2077,21 +2077,21 @@ PAUSES AT: 151:8
     136        {
     137            return this._name;
     138        }
-    139        
+    139
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2099,35 +2099,35 @@ INSERTING AT: 135:0
 PAUSES AT: 137:8
     132            b();
     133        }
-    134    
+    134
  -> 135    #    get name()
     136        {
  => 137            |return this._name;
     138        }
-    139        
+    139
     140        set name(x)
 
 
 INSERTING AT: 136:0
 PAUSES AT: 137:8
     133        }
-    134    
+    134
     135        get name()
  -> 136    #    {
  => 137            |return this._name;
     138        }
-    139        
+    139
     140        set name(x)
 
 
 INSERTING AT: 137:0
 PAUSES AT: 137:8
-    134    
+    134
     135        get name()
     136        {
 -=> 137    #        |return this._name;
     138        }
-    139        
+    139
     140        set name(x)
 
 
@@ -2137,7 +2137,7 @@ PAUSES AT: 138:4
     136        {
     137            return this._name;
 -=> 138    #    |}
-    139        
+    139
     140        set name(x)
     141        {
 
@@ -2147,21 +2147,21 @@ PAUSES AT: 151:8
     136        {
     137            return this._name;
     138        }
- -> 139    #    
+ -> 139    #
     140        set name(x)
     141        {
     142            this._name = x;
     143        }
     144    }
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2169,36 +2169,36 @@ INSERTING AT: 140:0
 PAUSES AT: 142:8
     137            return this._name;
     138        }
-    139        
+    139
  -> 140    #    set name(x)
     141        {
  => 142            |this._name = x;
     143        }
     144    }
-    145    
+    145
 
 
 INSERTING AT: 141:0
 PAUSES AT: 142:8
     138        }
-    139        
+    139
     140        set name(x)
  -> 141    #    {
  => 142            |this._name = x;
     143        }
     144    }
-    145    
+    145
 
 
 INSERTING AT: 142:0
 PAUSES AT: 142:8
-    139        
+    139
     140        set name(x)
     141        {
 -=> 142    #        |this._name = x;
     143        }
     144    }
-    145    
+    145
 
 
 INSERTING AT: 143:0
@@ -2208,7 +2208,7 @@ PAUSES AT: 143:4
     142            this._name = x;
 -=> 143    #    |}
     144    }
-    145    
+    145
     146    // ---------
 
 
@@ -2218,15 +2218,15 @@ PAUSES AT: 151:8
     142            this._name = x;
     143        }
  -> 144    #}
-    145    
+    145
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2239,11 +2239,11 @@ PAUSES AT: 151:8
     146    // ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2251,44 +2251,44 @@ INSERTING AT: 146:0
 PAUSES AT: 151:8
     143        }
     144    }
-    145    
+    145
  -> 146    #// ---------
     147    /* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 147:0
 PAUSES AT: 151:8
     144    }
-    145    
+    145
     146    // ---------
  -> 147    #/* Misc */
     148    // ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 148:0
 PAUSES AT: 151:8
-    145    
+    145
     146    // ---------
     147    /* Misc */
  -> 148    #// ---------
-    149    
+    149
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2301,7 +2301,7 @@ PAUSES AT: 151:8
     150        {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
@@ -2309,37 +2309,37 @@ INSERTING AT: 150:0
 PAUSES AT: 151:8
     147    /* Misc */
     148    // ---------
-    149    
+    149
  -> 150    #    {
  => 151            |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 151:0
 PAUSES AT: 151:8
     148    // ---------
-    149    
+    149
     150        {
 -=> 151    #        |a();
     152        }
-    153    
+    153
     154    label:
 
 
 INSERTING AT: 152:0
 PAUSES AT: 156:8
-    149    
+    149
     150        {
     151            a();
  -> 152    #    }
-    153    
+    153
     154    label:
     155        {
  => 156            |a();
     157        }
-    158    
+    158
     159    var w1 = {x:1, y:2};
 
 
@@ -2353,7 +2353,7 @@ PAUSES AT: 156:8
     155        {
  => 156            |a();
     157        }
-    158    
+    158
     159    var w1 = {x:1, y:2};
 
 
@@ -2361,35 +2361,35 @@ INSERTING AT: 154:0
 PAUSES AT: 156:8
     151            a();
     152        }
-    153    
+    153
  -> 154    #label:
     155        {
  => 156            |a();
     157        }
-    158    
+    158
     159    var w1 = {x:1, y:2};
 
 
 INSERTING AT: 155:0
 PAUSES AT: 156:8
     152        }
-    153    
+    153
     154    label:
  -> 155    #    {
  => 156            |a();
     157        }
-    158    
+    158
     159    var w1 = {x:1, y:2};
 
 
 INSERTING AT: 156:0
 PAUSES AT: 156:8
-    153    
+    153
     154    label:
     155        {
 -=> 156    #        |a();
     157        }
-    158    
+    158
     159    var w1 = {x:1, y:2};
 
 
@@ -2399,7 +2399,7 @@ PAUSES AT: 159:0
     155        {
     156            a();
  -> 157    #    }
-    158    
+    158
  => 159    |var w1 = {x:1, y:2};
     160    with (w1) {
     161        a();
@@ -2422,7 +2422,7 @@ INSERTING AT: 159:0
 PAUSES AT: 159:0
     156            a();
     157        }
-    158    
+    158
 -=> 159    |var w1 = {x:1, y:2};
     160    with (w1) {
     161        a();
@@ -2432,22 +2432,22 @@ PAUSES AT: 159:0
 INSERTING AT: 160:0
 PAUSES AT: 160:6
     157        }
-    158    
+    158
     159    var w1 = {x:1, y:2};
 -=> 160    #with (|w1) {
     161        a();
     162    }
-    163    
+    163
 
 
 INSERTING AT: 161:0
 PAUSES AT: 161:4
-    158    
+    158
     159    var w1 = {x:1, y:2};
     160    with (w1) {
 -=> 161    #    |a();
     162    }
-    163    
+    163
     164    var v1 = 1,
 
 
@@ -2457,7 +2457,7 @@ PAUSES AT: 164:0
     160    with (w1) {
     161        a();
  -> 162    #}
-    163    
+    163
  => 164    |var v1 = 1,
     165        v2 = 1;
     166    let l1 = 2,
@@ -2480,7 +2480,7 @@ INSERTING AT: 164:0
 PAUSES AT: 164:0
     161        a();
     162    }
-    163    
+    163
 -=> 164    |var v1 = 1,
     165        v2 = 1;
     166    let l1 = 2,
@@ -2490,7 +2490,7 @@ PAUSES AT: 164:0
 INSERTING AT: 165:0
 PAUSES AT: 165:4
     162    }
-    163    
+    163
     164    var v1 = 1,
 -=> 165    #    |v2 = 1;
     166    let l1 = 2,
@@ -2500,7 +2500,7 @@ PAUSES AT: 165:4
 
 INSERTING AT: 166:0
 PAUSES AT: 166:0
-    163    
+    163
     164    var v1 = 1,
     165        v2 = 1;
 -=> 166    |let l1 = 2,
@@ -2517,7 +2517,7 @@ PAUSES AT: 167:4
 -=> 167    #    |l2 = 2;
     168    const c1 = 3,
     169        c2 = 3;
-    170    
+    170
 
 
 INSERTING AT: 168:0
@@ -2527,7 +2527,7 @@ PAUSES AT: 168:0
     167        l2 = 2;
 -=> 168    |const c1 = 3,
     169        c2 = 3;
-    170    
+    170
     171    v1 = v2 = v1;
 
 
@@ -2537,9 +2537,9 @@ PAUSES AT: 169:4
     167        l2 = 2;
     168    const c1 = 3,
 -=> 169    #    |c2 = 3;
-    170    
+    170
     171    v1 = v2 = v1;
-    172    
+    172
 
 
 INSERTING AT: 170:0
@@ -2549,7 +2549,7 @@ PAUSES AT: 171:0
     169        c2 = 3;
  -> 170    #
  => 171    |v1 = v2 = v1;
-    172    
+    172
     173    var {x, y} = obj;
     174    var [w, z] = arr;
 
@@ -2558,9 +2558,9 @@ INSERTING AT: 171:0
 PAUSES AT: 171:0
     168    const c1 = 3,
     169        c2 = 3;
-    170    
+    170
 -=> 171    |v1 = v2 = v1;
-    172    
+    172
     173    var {x, y} = obj;
     174    var [w, z] = arr;
 
@@ -2568,40 +2568,40 @@ PAUSES AT: 171:0
 INSERTING AT: 172:0
 PAUSES AT: 173:0
     169        c2 = 3;
-    170    
+    170
     171    v1 = v2 = v1;
  -> 172    #
  => 173    |var {x, y} = obj;
     174    var [w, z] = arr;
-    175    
+    175
     176    var o1 = {
 
 
 INSERTING AT: 173:0
 PAUSES AT: 173:0
-    170    
+    170
     171    v1 = v2 = v1;
-    172    
+    172
 -=> 173    |var {x, y} = obj;
     174    var [w, z] = arr;
-    175    
+    175
     176    var o1 = {
 
 
 INSERTING AT: 174:0
 PAUSES AT: 174:0
     171    v1 = v2 = v1;
-    172    
+    172
     173    var {x, y} = obj;
 -=> 174    |var [w, z] = arr;
-    175    
+    175
     176    var o1 = {
     177        p1: 1,
 
 
 INSERTING AT: 175:0
 PAUSES AT: 176:0
-    172    
+    172
     173    var {x, y} = obj;
     174    var [w, z] = arr;
  -> 175    #
@@ -2615,7 +2615,7 @@ INSERTING AT: 176:0
 PAUSES AT: 176:0
     173    var {x, y} = obj;
     174    var [w, z] = arr;
-    175    
+    175
 -=> 176    |var o1 = {
     177        p1: 1,
     178        p2: a(),
@@ -2625,7 +2625,7 @@ PAUSES AT: 176:0
 INSERTING AT: 177:0
 PAUSES AT: 184:0
     174    var [w, z] = arr;
-    175    
+    175
     176    var o1 = {
  -> 177    #    p1: 1,
     178        p2: a(),
@@ -2633,7 +2633,7 @@ PAUSES AT: 184:0
     180        ["p4"]: 1,
     181        [b()]: 1,
     182    };
-    183    
+    183
  => 184    |var a1 = [
     185        1,
     186        a(),
@@ -2642,7 +2642,7 @@ PAUSES AT: 184:0
 
 INSERTING AT: 178:0
 PAUSES AT: 184:0
-    175    
+    175
     176    var o1 = {
     177        p1: 1,
  -> 178    #    p2: a(),
@@ -2650,7 +2650,7 @@ PAUSES AT: 184:0
     180        ["p4"]: 1,
     181        [b()]: 1,
     182    };
-    183    
+    183
  => 184    |var a1 = [
     185        1,
     186        a(),
@@ -2666,7 +2666,7 @@ PAUSES AT: 184:0
     180        ["p4"]: 1,
     181        [b()]: 1,
     182    };
-    183    
+    183
  => 184    |var a1 = [
     185        1,
     186        a(),
@@ -2681,7 +2681,7 @@ PAUSES AT: 184:0
  -> 180    #    ["p4"]: 1,
     181        [b()]: 1,
     182    };
-    183    
+    183
  => 184    |var a1 = [
     185        1,
     186        a(),
@@ -2695,7 +2695,7 @@ PAUSES AT: 184:0
     180        ["p4"]: 1,
  -> 181    #    [b()]: 1,
     182    };
-    183    
+    183
  => 184    |var a1 = [
     185        1,
     186        a(),
@@ -2708,7 +2708,7 @@ PAUSES AT: 184:0
     180        ["p4"]: 1,
     181        [b()]: 1,
  -> 182    #};
-    183    
+    183
  => 184    |var a1 = [
     185        1,
     186        a(),
@@ -2731,7 +2731,7 @@ INSERTING AT: 184:0
 PAUSES AT: 184:0
     181        [b()]: 1,
     182    };
-    183    
+    183
 -=> 184    |var a1 = [
     185        1,
     186        a(),
@@ -2741,14 +2741,14 @@ PAUSES AT: 184:0
 INSERTING AT: 185:0
 PAUSES AT: 191:0
     182    };
-    183    
+    183
     184    var a1 = [
  -> 185    #    1,
     186        a(),
     187        1,
     188        b(),
     189    ];
-    190    
+    190
  => 191    |var i1 = new Base;
     192    var i2 = new Child;
     193    i2.name;
@@ -2757,14 +2757,14 @@ PAUSES AT: 191:0
 
 INSERTING AT: 186:0
 PAUSES AT: 191:0
-    183    
+    183
     184    var a1 = [
     185        1,
  -> 186    #    a(),
     187        1,
     188        b(),
     189    ];
-    190    
+    190
  => 191    |var i1 = new Base;
     192    var i2 = new Child;
     193    i2.name;
@@ -2779,7 +2779,7 @@ PAUSES AT: 191:0
  -> 187    #    1,
     188        b(),
     189    ];
-    190    
+    190
  => 191    |var i1 = new Base;
     192    var i2 = new Child;
     193    i2.name;
@@ -2793,7 +2793,7 @@ PAUSES AT: 191:0
     187        1,
  -> 188    #    b(),
     189    ];
-    190    
+    190
  => 191    |var i1 = new Base;
     192    var i2 = new Child;
     193    i2.name;
@@ -2806,7 +2806,7 @@ PAUSES AT: 191:0
     187        1,
     188        b(),
  -> 189    #];
-    190    
+    190
  => 191    |var i1 = new Base;
     192    var i2 = new Child;
     193    i2.name;
@@ -2829,7 +2829,7 @@ INSERTING AT: 191:0
 PAUSES AT: 191:0
     188        b(),
     189    ];
-    190    
+    190
 -=> 191    |var i1 = new Base;
     192    var i2 = new Child;
     193    i2.name;
@@ -2839,7 +2839,7 @@ PAUSES AT: 191:0
 INSERTING AT: 192:0
 PAUSES AT: 192:0
     189    ];
-    190    
+    190
     191    var i1 = new Base;
 -=> 192    |var i2 = new Child;
     193    i2.name;
@@ -2849,13 +2849,13 @@ PAUSES AT: 192:0
 
 INSERTING AT: 193:0
 PAUSES AT: 193:0
-    190    
+    190
     191    var i1 = new Base;
     192    var i2 = new Child;
 -=> 193    |i2.name;
     194    i2.name = 1;
     195    i2.method();
-    196    
+    196
 
 
 INSERTING AT: 194:0
@@ -2865,7 +2865,7 @@ PAUSES AT: 194:0
     193    i2.name;
 -=> 194    |i2.name = 1;
     195    i2.method();
-    196    
+    196
     197    var t1 = `${1} ${x=1} ${a()}`;
 
 
@@ -2875,7 +2875,7 @@ PAUSES AT: 195:0
     193    i2.name;
     194    i2.name = 1;
 -=> 195    |i2.method();
-    196    
+    196
     197    var t1 = `${1} ${x=1} ${a()}`;
     198    var t2 = a`${1} ${x=1} ${a()}`;
 
@@ -2888,7 +2888,7 @@ PAUSES AT: 197:0
  -> 196    #
  => 197    |var t1 = `${1} ${x=1} ${a()}`;
     198    var t2 = a`${1} ${x=1} ${a()}`;
-    199    
+    199
     200    a(a(), b());
 
 
@@ -2896,32 +2896,32 @@ INSERTING AT: 197:0
 PAUSES AT: 197:0
     194    i2.name = 1;
     195    i2.method();
-    196    
+    196
 -=> 197    |var t1 = `${1} ${x=1} ${a()}`;
     198    var t2 = a`${1} ${x=1} ${a()}`;
-    199    
+    199
     200    a(a(), b());
 
 
 INSERTING AT: 198:0
 PAUSES AT: 198:0
     195    i2.method();
-    196    
+    196
     197    var t1 = `${1} ${x=1} ${a()}`;
 -=> 198    |var t2 = a`${1} ${x=1} ${a()}`;
-    199    
+    199
     200    a(a(), b());
-    201    
+    201
 
 
 INSERTING AT: 199:0
 PAUSES AT: 200:0
-    196    
+    196
     197    var t1 = `${1} ${x=1} ${a()}`;
     198    var t2 = a`${1} ${x=1} ${a()}`;
  -> 199    #
  => 200    |a(a(), b());
-    201    
+    201
     202    if (o1.p1)
     203        a();
 
@@ -2930,9 +2930,9 @@ INSERTING AT: 200:0
 PAUSES AT: 200:0
     197    var t1 = `${1} ${x=1} ${a()}`;
     198    var t2 = a`${1} ${x=1} ${a()}`;
-    199    
+    199
 -=> 200    |a(a(), b());
-    201    
+    201
     202    if (o1.p1)
     203        a();
 
@@ -2940,46 +2940,46 @@ PAUSES AT: 200:0
 INSERTING AT: 201:0
 PAUSES AT: 202:4
     198    var t2 = a`${1} ${x=1} ${a()}`;
-    199    
+    199
     200    a(a(), b());
  -> 201    #
  => 202    if (|o1.p1)
     203        a();
-    204    
+    204
     205    if (o1["p1"])
 
 
 INSERTING AT: 202:0
 PAUSES AT: 202:4
-    199    
+    199
     200    a(a(), b());
-    201    
+    201
 -=> 202    #if (|o1.p1)
     203        a();
-    204    
+    204
     205    if (o1["p1"])
 
 
 INSERTING AT: 203:0
 PAUSES AT: 203:4
     200    a(a(), b());
-    201    
+    201
     202    if (o1.p1)
 -=> 203    #    |a();
-    204    
+    204
     205    if (o1["p1"])
     206        a();
 
 
 INSERTING AT: 204:0
 PAUSES AT: 205:4
-    201    
+    201
     202    if (o1.p1)
     203        a();
  -> 204    #
  => 205    if (|o1["p1"])
     206        a();
-    207    
+    207
     208    if (String.raw`test`)
 
 
@@ -2987,33 +2987,33 @@ INSERTING AT: 205:0
 PAUSES AT: 205:4
     202    if (o1.p1)
     203        a();
-    204    
+    204
 -=> 205    #if (|o1["p1"])
     206        a();
-    207    
+    207
     208    if (String.raw`test`)
 
 
 INSERTING AT: 206:0
 PAUSES AT: 206:4
     203        a();
-    204    
+    204
     205    if (o1["p1"])
 -=> 206    #    |a();
-    207    
+    207
     208    if (String.raw`test`)
     209        a();
 
 
 INSERTING AT: 207:0
 PAUSES AT: 208:4
-    204    
+    204
     205    if (o1["p1"])
     206        a();
  -> 207    #
  => 208    if (|String.raw`test`)
     209        a();
-    210    
+    210
     211    a(), b(), c();
 
 
@@ -3021,32 +3021,32 @@ INSERTING AT: 208:0
 PAUSES AT: 208:4
     205    if (o1["p1"])
     206        a();
-    207    
+    207
 -=> 208    #if (|String.raw`test`)
     209        a();
-    210    
+    210
     211    a(), b(), c();
 
 
 INSERTING AT: 209:0
 PAUSES AT: 209:4
     206        a();
-    207    
+    207
     208    if (String.raw`test`)
 -=> 209    #    |a();
-    210    
+    210
     211    a(), b(), c();
-    212    
+    212
 
 
 INSERTING AT: 210:0
 PAUSES AT: 211:0
-    207    
+    207
     208    if (String.raw`test`)
     209        a();
  -> 210    #
  => 211    |a(), b(), c();
-    212    
+    212
     213    a(),
     214    b(),
 
@@ -3055,9 +3055,9 @@ INSERTING AT: 211:0
 PAUSES AT: 211:0
     208    if (String.raw`test`)
     209        a();
-    210    
+    210
 -=> 211    |a(), b(), c();
-    212    
+    212
     213    a(),
     214    b(),
 
@@ -3065,46 +3065,46 @@ PAUSES AT: 211:0
 INSERTING AT: 212:0
 PAUSES AT: 213:0
     209        a();
-    210    
+    210
     211    a(), b(), c();
  -> 212    #
  => 213    |a(),
     214    b(),
     215    c();
-    216    
+    216
 
 
 INSERTING AT: 213:0
 PAUSES AT: 213:0
-    210    
+    210
     211    a(), b(), c();
-    212    
+    212
 -=> 213    |a(),
     214    b(),
     215    c();
-    216    
+    216
 
 
 INSERTING AT: 214:0
 PAUSES AT: 214:0
     211    a(), b(), c();
-    212    
+    212
     213    a(),
 -=> 214    |b(),
     215    c();
-    216    
+    216
     217    true && (a(), b(), c()) && true;
 
 
 INSERTING AT: 215:0
 PAUSES AT: 215:0
-    212    
+    212
     213    a(),
     214    b(),
 -=> 215    |c();
-    216    
+    216
     217    true && (a(), b(), c()) && true;
-    218    
+    218
 
 
 INSERTING AT: 216:0
@@ -3114,7 +3114,7 @@ PAUSES AT: 217:0
     215    c();
  -> 216    #
  => 217    |true && (a(), b(), c()) && true;
-    218    
+    218
     219    true && (
     220        a(),
 
@@ -3123,9 +3123,9 @@ INSERTING AT: 217:0
 PAUSES AT: 217:0
     214    b(),
     215    c();
-    216    
+    216
 -=> 217    |true && (a(), b(), c()) && true;
-    218    
+    218
     219    true && (
     220        a(),
 
@@ -3133,7 +3133,7 @@ PAUSES AT: 217:0
 INSERTING AT: 218:0
 PAUSES AT: 219:0
     215    c();
-    216    
+    216
     217    true && (a(), b(), c()) && true;
  -> 218    #
  => 219    |true && (
@@ -3144,9 +3144,9 @@ PAUSES AT: 219:0
 
 INSERTING AT: 219:0
 PAUSES AT: 219:0
-    216    
+    216
     217    true && (a(), b(), c()) && true;
-    218    
+    218
 -=> 219    |true && (
     220        a(),
     221        b(),
@@ -3156,33 +3156,33 @@ PAUSES AT: 219:0
 INSERTING AT: 220:0
 PAUSES AT: 226:4
     217    true && (a(), b(), c()) && true;
-    218    
+    218
     219    true && (
  -> 220    #    a(),
     221        b(),
     222        c()
     223    ) && true;
-    224    
+    224
     225    try {
  => 226        |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
 INSERTING AT: 221:0
 PAUSES AT: 226:4
-    218    
+    218
     219    true && (
     220        a(),
  -> 221    #    b(),
     222        c()
     223    ) && true;
-    224    
+    224
     225    try {
  => 226        |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
@@ -3193,11 +3193,11 @@ PAUSES AT: 226:4
     221        b(),
  -> 222    #    c()
     223    ) && true;
-    224    
+    224
     225    try {
  => 226        |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
@@ -3207,11 +3207,11 @@ PAUSES AT: 226:4
     221        b(),
     222        c()
  -> 223    #) && true;
-    224    
+    224
     225    try {
  => 226        |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
@@ -3224,7 +3224,7 @@ PAUSES AT: 226:4
     225    try {
  => 226        |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
@@ -3232,32 +3232,32 @@ INSERTING AT: 225:0
 PAUSES AT: 226:4
     222        c()
     223    ) && true;
-    224    
+    224
  -> 225    #try {
  => 226        |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
 INSERTING AT: 226:0
 PAUSES AT: 226:4
     223    ) && true;
-    224    
+    224
     225    try {
 -=> 226    #    |throw a(), b(), c();
     227    } catch { }
-    228    
+    228
     229    try {
 
 
 INSERTING AT: 227:0
 PAUSES AT: 230:4
-    224    
+    224
     225    try {
     226        throw a(), b(), c();
  -> 227    #} catch { }
-    228    
+    228
     229    try {
  => 230        |throw a(),
     231            b(),
@@ -3282,7 +3282,7 @@ INSERTING AT: 229:0
 PAUSES AT: 230:4
     226        throw a(), b(), c();
     227    } catch { }
-    228    
+    228
  -> 229    #try {
  => 230        |throw a(),
     231            b(),
@@ -3293,7 +3293,7 @@ PAUSES AT: 230:4
 INSERTING AT: 230:0
 PAUSES AT: 230:4
     227    } catch { }
-    228    
+    228
     229    try {
 -=> 230    #    |throw a(),
     231            b(),
@@ -3303,13 +3303,13 @@ PAUSES AT: 230:4
 
 INSERTING AT: 231:0
 PAUSES AT: 231:8
-    228    
+    228
     229    try {
     230        throw a(),
 -=> 231    #        |b(),
     232            c();
     233    } catch { }
-    234    
+    234
 
 
 INSERTING AT: 232:0
@@ -3319,7 +3319,7 @@ PAUSES AT: 232:8
     231            b(),
 -=> 232    #        |c();
     233    } catch { }
-    234    
+    234
 
 
 INSERTING AT: 233:0
@@ -3791,7 +3791,7 @@ PAUSES AT: 42:0
      40        function inner1() { var y; }
      41        function inner2() { var z; }
  =>  42    |}
-     43    
+     43
      44    (function() {
      45        var x;
 
@@ -3804,7 +3804,7 @@ PAUSES AT: 40:24
 -=>  40    #    function inner1() { |var y; }
      41        function inner2() { var z; }
      42    }
-     43    
+     43
 
 
 INSERTING AT: 41:0
@@ -3814,7 +3814,7 @@ PAUSES AT: 41:24
      40        function inner1() { var y; }
 -=>  41    #    function inner2() { |var z; }
      42    }
-     43    
+     43
      44    (function() {
 
 
@@ -3824,7 +3824,7 @@ PAUSES AT: 42:0
      40        function inner1() { var y; }
      41        function inner2() { var z; }
 -=>  42    |}
-     43    
+     43
      44    (function() {
      45        var x;
 
@@ -3838,38 +3838,38 @@ PAUSES AT: 44:0
  =>  44    |(function() {
      45        var x;
      46    })();
-     47    
+     47
 
 
 INSERTING AT: 44:0
 PAUSES AT: 44:0
      41        function inner2() { var z; }
      42    }
-     43    
+     43
 -=>  44    |(function() {
      45        var x;
      46    })();
-     47    
+     47
 
 
 INSERTING AT: 45:0
 PAUSES AT: 45:4
      42    }
-     43    
+     43
      44    (function() {
 -=>  45    #    |var x;
      46    })();
-     47    
+     47
      48    (() => {
 
 
 INSERTING AT: 46:0
 PAUSES AT: 46:0
-     43    
+     43
      44    (function() {
      45        var x;
 -=>  46    |})();
-     47    
+     47
      48    (() => {
      49        var x;
 
@@ -3883,38 +3883,38 @@ PAUSES AT: 48:0
  =>  48    |(() => {
      49        var x;
      50    });
-     51    
+     51
 
 
 INSERTING AT: 48:0
 PAUSES AT: 48:0
      45        var x;
      46    })();
-     47    
+     47
 -=>  48    |(() => {
      49        var x;
      50    });
-     51    
+     51
 
 
 INSERTING AT: 49:0
 PAUSES AT: 49:4
      46    })();
-     47    
+     47
      48    (() => {
 -=>  49    #    |var x;
      50    });
-     51    
+     51
      52    function* generator() {
 
 
 INSERTING AT: 50:0
 PAUSES AT: 50:0
-     47    
+     47
      48    (() => {
      49        var x;
 -=>  50    |});
-     51    
+     51
      52    function* generator() {
      53        var x;
 
@@ -3928,7 +3928,7 @@ PAUSES AT: 87:0
      52    function* generator() {
      53        var x;
      54    }
-     55    
+     55
      56    class Class {
      57        static staticMethod1() {
      58            var x;
@@ -3959,7 +3959,7 @@ PAUSES AT: 87:0
      83            var s;
      84        }
      85    }
-     86    
+     86
  =>  87    |x => x;
      88    () => 1;
      89    (x) => x;
@@ -3970,32 +3970,32 @@ INSERTING AT: 52:0
 PAUSES AT: 53:4
      49        var x;
      50    });
-     51    
+     51
  ->  52    #function* generator() {
  =>  53        |var x;
      54    }
-     55    
+     55
      56    class Class {
 
 
 INSERTING AT: 53:0
 PAUSES AT: 53:4
      50    });
-     51    
+     51
      52    function* generator() {
 -=>  53    #    |var x;
      54    }
-     55    
+     55
      56    class Class {
 
 
 INSERTING AT: 54:0
 PAUSES AT: 54:0
-     51    
+     51
      52    function* generator() {
      53        var x;
 -=>  54    |}
-     55    
+     55
      56    class Class {
      57        static staticMethod1() {
 
@@ -4036,7 +4036,7 @@ PAUSES AT: 87:0
      83            var s;
      84        }
      85    }
-     86    
+     86
  =>  87    |x => x;
      88    () => 1;
      89    (x) => x;
@@ -4047,7 +4047,7 @@ INSERTING AT: 56:0
 PAUSES AT: 87:0
      53        var x;
      54    }
-     55    
+     55
  ->  56    #class Class {
      57        static staticMethod1() {
      58            var x;
@@ -4078,7 +4078,7 @@ PAUSES AT: 87:0
      83            var s;
      84        }
      85    }
-     86    
+     86
  =>  87    |x => x;
      88    () => 1;
      89    (x) => x;
@@ -4088,7 +4088,7 @@ PAUSES AT: 87:0
 INSERTING AT: 57:0
 PAUSES AT: 58:8
      54    }
-     55    
+     55
      56    class Class {
  ->  57    #    static staticMethod1() {
  =>  58            |var x;
@@ -4099,7 +4099,7 @@ PAUSES AT: 58:8
 
 INSERTING AT: 58:0
 PAUSES AT: 58:8
-     55    
+     55
      56    class Class {
      57        static staticMethod1() {
 -=>  58    #        |var x;
@@ -4372,7 +4372,7 @@ PAUSES AT: 83:8
  =>  83            |var s;
      84        }
      85    }
-     86    
+     86
 
 
 INSERTING AT: 82:0
@@ -4384,7 +4384,7 @@ PAUSES AT: 83:8
  =>  83            |var s;
      84        }
      85    }
-     86    
+     86
 
 
 INSERTING AT: 83:0
@@ -4395,7 +4395,7 @@ PAUSES AT: 83:8
 -=>  83    #        |var s;
      84        }
      85    }
-     86    
+     86
 
 
 INSERTING AT: 84:0
@@ -4405,7 +4405,7 @@ PAUSES AT: 84:4
      83            var s;
 -=>  84    #    |}
      85    }
-     86    
+     86
      87    x => x;
 
 
@@ -4415,7 +4415,7 @@ PAUSES AT: 87:0
      83            var s;
      84        }
  ->  85    #}
-     86    
+     86
  =>  87    |x => x;
      88    () => 1;
      89    (x) => x;
@@ -4438,7 +4438,7 @@ INSERTING AT: 87:0
 PAUSES AT: 87:0
      84        }
      85    }
-     86    
+     86
 -=>  87    |x => x;
      88    () => 1;
      89    (x) => x;
@@ -4448,7 +4448,7 @@ PAUSES AT: 87:0
 INSERTING AT: 88:0
 PAUSES AT: 88:0
      85    }
-     86    
+     86
      87    x => x;
 -=>  88    |() => 1;
      89    (x) => x;
@@ -4458,7 +4458,7 @@ PAUSES AT: 88:0
 
 INSERTING AT: 89:0
 PAUSES AT: 89:0
-     86    
+     86
      87    x => x;
      88    () => 1;
 -=>  89    |(x) => x;
@@ -4519,7 +4519,7 @@ PAUSES AT: 94:0
 -=>  94    |() => {
      95        var x;
      96    };
-     97    
+     97
 
 
 INSERTING AT: 95:0
@@ -4529,7 +4529,7 @@ PAUSES AT: 95:4
      94    () => {
 -=>  95    #    |var x;
      96    };
-     97    
+     97
      98    var fObj = {
 
 
@@ -4539,7 +4539,7 @@ PAUSES AT: 96:0
      94    () => {
      95        var x;
 -=>  96    |};
-     97    
+     97
      98    var fObj = {
      99        f1: function() {
 
@@ -4560,7 +4560,7 @@ INSERTING AT: 98:0
 PAUSES AT: 98:0
      95        var x;
      96    };
-     97    
+     97
 -=>  98    |var fObj = {
      99        f1: function() {
     100            var x;
@@ -4570,7 +4570,7 @@ PAUSES AT: 98:0
 INSERTING AT: 99:0
 PAUSES AT: 100:8
      96    };
-     97    
+     97
      98    var fObj = {
  ->  99    #    f1: function() {
  => 100            |var x;
@@ -4581,7 +4581,7 @@ PAUSES AT: 100:8
 
 INSERTING AT: 100:0
 PAUSES AT: 100:8
-     97    
+     97
      98    var fObj = {
      99        f1: function() {
 -=> 100    #        |var x;
@@ -4690,9 +4690,9 @@ PAUSES AT: 111:8
  -> 109    #    f4: () =>
     110        {
  => 111            |var x;
-    112        }   
+    112        }
     113    };
-    114    
+    114
 
 
 INSERTING AT: 110:0
@@ -4702,9 +4702,9 @@ PAUSES AT: 111:8
     109        f4: () =>
  -> 110    #    {
  => 111            |var x;
-    112        }   
+    112        }
     113    };
-    114    
+    114
 
 
 INSERTING AT: 111:0
@@ -4713,9 +4713,9 @@ PAUSES AT: 111:8
     109        f4: () =>
     110        {
 -=> 111    #        |var x;
-    112        }   
+    112        }
     113    };
-    114    
+    114
 
 
 INSERTING AT: 112:0
@@ -4723,9 +4723,9 @@ PAUSES AT: 112:4
     109        f4: () =>
     110        {
     111            var x;
--=> 112    #    |}   
+-=> 112    #    |}
     113    };
-    114    
+    114
     115    function commaOneLine() {
 
 
@@ -4737,34 +4737,34 @@ PRODUCES: Could not resolve breakpoint
 
 INSERTING AT: 115:0
 PAUSES AT: 116:4
-    112        }   
+    112        }
     113    };
-    114    
+    114
  -> 115    #function commaOneLine() {
  => 116        |inline(), inline(), inline();
     117    }
-    118    
+    118
     119    function commaMultiLine() {
 
 
 INSERTING AT: 116:0
 PAUSES AT: 116:4
     113    };
-    114    
+    114
     115    function commaOneLine() {
 -=> 116    #    |inline(), inline(), inline();
     117    }
-    118    
+    118
     119    function commaMultiLine() {
 
 
 INSERTING AT: 117:0
 PAUSES AT: 117:0
-    114    
+    114
     115    function commaOneLine() {
     116        inline(), inline(), inline();
 -=> 117    |}
-    118    
+    118
     119    function commaMultiLine() {
     120        inline(),
 
@@ -4776,7 +4776,7 @@ INSERTING AT: 119:0
 PAUSES AT: 120:4
     116        inline(), inline(), inline();
     117    }
-    118    
+    118
  -> 119    #function commaMultiLine() {
  => 120        |inline(),
     121        inline(),
@@ -4787,7 +4787,7 @@ PAUSES AT: 120:4
 INSERTING AT: 120:0
 PAUSES AT: 120:4
     117    }
-    118    
+    118
     119    function commaMultiLine() {
 -=> 120    #    |inline(),
     121        inline(),
@@ -4797,13 +4797,13 @@ PAUSES AT: 120:4
 
 INSERTING AT: 121:0
 PAUSES AT: 121:4
-    118    
+    118
     119    function commaMultiLine() {
     120        inline(),
 -=> 121    #    |inline(),
     122        inline();
     123    }
-    124    
+    124
 
 
 INSERTING AT: 122:0
@@ -4813,7 +4813,7 @@ PAUSES AT: 122:4
     121        inline(),
 -=> 122    #    |inline();
     123    }
-    124    
+    124
     125    function returnOneLine() {
 
 
@@ -4823,7 +4823,7 @@ PAUSES AT: 123:0
     121        inline(),
     122        inline();
 -=> 123    |}
-    124    
+    124
     125    function returnOneLine() {
     126        return inline(), inline(), inline();
 
@@ -4835,32 +4835,32 @@ INSERTING AT: 125:0
 PAUSES AT: 126:4
     122        inline();
     123    }
-    124    
+    124
  -> 125    #function returnOneLine() {
  => 126        |return inline(), inline(), inline();
     127    }
-    128    
+    128
     129    function returnMultiLine() {
 
 
 INSERTING AT: 126:0
 PAUSES AT: 126:4
     123    }
-    124    
+    124
     125    function returnOneLine() {
 -=> 126    #    |return inline(), inline(), inline();
     127    }
-    128    
+    128
     129    function returnMultiLine() {
 
 
 INSERTING AT: 127:0
 PAUSES AT: 127:0
-    124    
+    124
     125    function returnOneLine() {
     126        return inline(), inline(), inline();
 -=> 127    |}
-    128    
+    128
     129    function returnMultiLine() {
     130        return inline(),
 
@@ -4872,7 +4872,7 @@ INSERTING AT: 129:0
 PAUSES AT: 130:4
     126        return inline(), inline(), inline();
     127    }
-    128    
+    128
  -> 129    #function returnMultiLine() {
  => 130        |return inline(),
     131            inline(),
@@ -4883,7 +4883,7 @@ PAUSES AT: 130:4
 INSERTING AT: 130:0
 PAUSES AT: 130:4
     127    }
-    128    
+    128
     129    function returnMultiLine() {
 -=> 130    #    |return inline(),
     131            inline(),
@@ -4893,13 +4893,13 @@ PAUSES AT: 130:4
 
 INSERTING AT: 131:0
 PAUSES AT: 131:8
-    128    
+    128
     129    function returnMultiLine() {
     130        return inline(),
 -=> 131    #        |inline(),
     132            inline();
     133    }
-    134    
+    134
 
 
 INSERTING AT: 132:0
@@ -4909,7 +4909,7 @@ PAUSES AT: 132:8
     131            inline(),
 -=> 132    #        |inline();
     133    }
-    134    
+    134
 
 
 INSERTING AT: 133:0
@@ -4918,7 +4918,7 @@ PAUSES AT: 133:0
     131            inline(),
     132            inline();
 -=> 133    |}
-    134    
+    134
 
 
 INSERTING AT: 134:0
@@ -4940,7 +4940,7 @@ PAUSES AT: 1:0
 -=>   1    |var unicodeVariableStr = "Non-8-bit '∙' character.";
       2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
       3    var unicodeVariable2 = 2;
-      4    
+      4
 
 
 INSERTING AT: 2:0
@@ -4949,7 +4949,7 @@ PAUSES AT: 2:0
       1    var unicodeVariableStr = "Non-8-bit '∙' character.";
 -=>   2    |var unicodeSurrogatePairStr = "Emoji '😍' character.";
       3    var unicodeVariable2 = 2;
-      4    
+      4
 
 
 INSERTING AT: 3:0
@@ -4958,7 +4958,7 @@ PAUSES AT: 3:0
       1    var unicodeVariableStr = "Non-8-bit '∙' character.";
       2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
 -=>   3    |var unicodeVariable2 = 2;
-      4    
+      4
 
 
 INSERTING AT: 4:0

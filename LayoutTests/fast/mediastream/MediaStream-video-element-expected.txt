@@ -34,7 +34,7 @@ video.videoTracks[0] properties:
   track.id = <UUID>
   track.kind = main
   track.label = Mock video device 1
-  track.language = 
+  track.language =
   track.selected = true
 
 **** check audio tracks ****
@@ -47,7 +47,7 @@ video.audioTracks[0] properties:
   track.id = <UUID>
   track.kind = main
   track.label = Mock audio device 1
-  track.language = 
+  track.language =
   track.enabled = true
 
 PASS successfullyParsed is true

@@ -1,4 +1,4 @@
-   
+
 Test the document's load event is delayed until a movie's meta data is available.
 
 

@@ -20,7 +20,7 @@ vColor   :1
 PASS location of _glesVertex should be 5
 PASS location of vColor should be 1
 FAIL pixel at (20,15) is (0,255,0,255), should be (255,0,0,255)
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 PASS successfullyParsed is true
 Some tests failed.

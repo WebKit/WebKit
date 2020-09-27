@@ -1,11 +1,11 @@
 
 
-PASS Selecting in barely visible textarea 
-PASS Selecting in barely visible div 
-PASS Selecting in textarea hidden by container 
-PASS Selecting in div hidden by container 
-PASS Selecting in absolute positioned textarea hidden by container 
-PASS Selecting in absolute positioned div hidden by container 
-PASS Selecting in absolute positioned zero content width textarea hidden by container (quirk behavior) 
-PASS Selecting in absolute positioned zero content width div hidden by container 
+PASS Selecting in barely visible textarea
+PASS Selecting in barely visible div
+PASS Selecting in textarea hidden by container
+PASS Selecting in div hidden by container
+PASS Selecting in absolute positioned textarea hidden by container
+PASS Selecting in absolute positioned div hidden by container
+PASS Selecting in absolute positioned zero content width textarea hidden by container (quirk behavior)
+PASS Selecting in absolute positioned zero content width div hidden by container
 

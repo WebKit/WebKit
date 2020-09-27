@@ -1,4 +1,4 @@
-  
+
 This tests the value of stringValue for a single file- and multiple files-<input type="file"> control.
 
 

@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: TypeError: Type error
-PASS: Invalid blend modes do not trigger a crash. 
+PASS: Invalid blend modes do not trigger a crash.

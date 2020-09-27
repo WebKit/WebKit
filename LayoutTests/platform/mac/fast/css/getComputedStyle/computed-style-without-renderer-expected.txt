@@ -54,7 +54,7 @@ column-rule-style: none
 column-rule-width: 0px
 column-span: none
 column-width: auto
-content: 
+content:
 counter-increment: none
 counter-reset: none
 cursor: auto

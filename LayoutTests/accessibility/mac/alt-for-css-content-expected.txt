@@ -6,45 +6,45 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Test1 - alt on image content with attr() function
 AXRole: AXImage
 AXDescription: ALTERNATIVE CONTENT TEST1
-AXTitle: 
-AXValue: 
+AXTitle:
+AXValue:
 
 Test2 - alt on image content that is a string
 AXRole: AXImage
 AXDescription: ALTERNATIVE CONTENT TEST2
-AXTitle: 
-AXValue: 
+AXTitle:
+AXValue:
 
 Test3 - alt on image content that is an empty string - representing that it should be ignored.
-AXRole: 
-AXDescription: 
-AXTitle: 
-AXValue: 
+AXRole:
+AXDescription:
+AXTitle:
+AXValue:
 
 Test4 - alt on text content
 AXRole: AXStaticText
-AXDescription: 
-AXTitle: 
+AXDescription:
+AXTitle:
 AXValue: ALTERNATIVE CONTENT TEST4
 
 Test5 - alt on text content that is an empty string - representing that is should be ignored.
 AXRole: AXStaticText
-AXDescription: 
-AXTitle: 
+AXDescription:
+AXTitle:
 AXValue: test5
 
 Test6 - alt on text content that uses the attr() function.
 AXRole: AXStaticText
-AXDescription: 
-AXTitle: 
+AXDescription:
+AXTitle:
 AXValue: ALTERNATIVE CONTENT TEST6
 
 alt accessed through Javascript: "ALTERNATIVE CONTENT TEST2"
 Test7 - alt does not apply to DOM nodes.
 AXRole: AXImage
 AXDescription: This is the right text
-AXTitle: 
-AXValue: 
+AXTitle:
+AXValue:
 
 PASS successfullyParsed is true
 

@@ -1,14 +1,14 @@
- 
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {784, 150}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -20,8 +20,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)

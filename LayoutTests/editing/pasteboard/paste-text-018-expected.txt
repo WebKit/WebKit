@@ -21,9 +21,9 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 
-Tests: 
+Tests:
 
-Fix for this bug: 
+Fix for this bug:
 <rdar://problem/4039676> REGRESSION (Mail): in reply,  on pasted text (without trailing newline) is eaten when pasted above date
 
 

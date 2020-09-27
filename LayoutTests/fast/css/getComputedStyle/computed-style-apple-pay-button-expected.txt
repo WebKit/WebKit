@@ -21,4 +21,4 @@ PASS getComputedStyle(buyButton).borderRadius is "4px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-    
+

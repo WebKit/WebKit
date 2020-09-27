@@ -1,8 +1,8 @@
 
-PASS Basic video stats 
-PASS Sender stats 
-PASS Receiver stats 
-PASS Transport stats 
-PASS Check ssrc is not changing in inbound rtp stats 
-PASS Stats after pc close 
+PASS Basic video stats
+PASS Sender stats
+PASS Receiver stats
+PASS Transport stats
+PASS Check ssrc is not changing in inbound rtp stats
+PASS Stats after pc close
 

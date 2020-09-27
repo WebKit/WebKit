@@ -1,7 +1,7 @@
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL about:blank, main document URL subframe-click-target-top.html, http method GET> is main frame - no should open URLs externally - no
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL resources/iframe-click-notify-done-target-top.html, main document URL subframe-click-target-top.html, http method GET> is main frame - no should open URLs externally - no
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL resources/notify-done.html, main document URL resources/notify-done.html, http method GET> is main frame - yes should open URLs externally - yes
 

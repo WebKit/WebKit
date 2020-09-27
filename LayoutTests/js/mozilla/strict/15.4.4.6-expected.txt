@@ -4,7 +4,7 @@ PASS true === true
 PASS 'use strict'; var o = obj(); [Array.prototype.pop.call(o), o] threw exception of type TypeError.
 PASS var o = obj(); [Array.prototype.pop.call(o), o] threw exception of type TypeError.
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

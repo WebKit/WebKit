@@ -1,4 +1,4 @@
- 
+
 Registering service worker
 Service worker registered
 Status is Got response for http://127.0.0.1:8000/workers/service/resources/cors-image-fetch-iframe.html, status code is 200

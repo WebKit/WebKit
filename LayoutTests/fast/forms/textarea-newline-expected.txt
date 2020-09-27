@@ -1,5 +1,5 @@
-These tests check if leading line feeds characters in textarea as default values are parsed correctly. 
-       
+These tests check if leading line feeds characters in textarea as default values are parsed correctly.
+
 PASS document.getElementById("no-line-feed").value is "Madoka"
 PASS document.getElementById("one-line-feed").value is "Sayaka"
 PASS document.getElementById("two-line-feeds").value is "\nMami"

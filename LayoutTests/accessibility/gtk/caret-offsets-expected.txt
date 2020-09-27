@@ -7,7 +7,7 @@ Block span in a list item
 Inline span in a list item
 Block span in a link in a list item
 Inline span in a link in a list item
-  
+
 a table cell		
 Block span in a link in a table cell
 Inline span in a link in a table cell	

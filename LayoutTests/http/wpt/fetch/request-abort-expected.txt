@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: FetchRequestInit.signal should be undefined, null or an AbortSignal object. This will throw in a future release.
 CONSOLE MESSAGE: FetchRequestInit.signal should be undefined, null or an AbortSignal object. This will throw in a future release.
 
-PASS Request from URL with signal 
-PASS Request from request with signal 
+PASS Request from URL with signal
+PASS Request from request with signal
 

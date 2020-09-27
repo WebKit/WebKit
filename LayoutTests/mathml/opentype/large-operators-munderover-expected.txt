@@ -2,8 +2,8 @@ This test passes if you see a large black square with a green bar overscript and
 
 ⨜
 
-PASS largeop width 
-PASS largeop height 
-PASS green bar is above 
-PASS red bar is below 
+PASS largeop width
+PASS largeop height
+PASS green bar is above
+PASS red bar is below
 

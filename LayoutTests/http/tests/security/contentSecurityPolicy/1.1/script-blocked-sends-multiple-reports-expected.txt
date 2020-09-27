@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: [Report Only] Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js because it does not appear in the script-src directive of the Content Security Policy.
-  
+
 
 --------
 Frame: 'report-only'

@@ -1,5 +1,5 @@
 Tests that cookie blocking is applied to ping loads.
-   
+
 
 --------
 Frame: '<!--frame1-->'

@@ -1,8 +1,8 @@
 
-PASS The event must propagate out of open mode shadow boundaries when the composed flag is set 1 
-PASS The event must propagate out of closed mode shadow boundaries when the composed flag is set 1 
-PASS The event must propagate out of open mode shadow boundaries when the composed flag is set 2 
-PASS The event must propagate out of closed mode shadow boundaries when the composed flag is set 2 
-PASS The event must not propagate out of open mode shadow tree in which the relative target and the relative related target are the same 
-PASS The event must not propagate out of closed mode shadow tree in which the relative target and the relative related target are the same 
+PASS The event must propagate out of open mode shadow boundaries when the composed flag is set 1
+PASS The event must propagate out of closed mode shadow boundaries when the composed flag is set 1
+PASS The event must propagate out of open mode shadow boundaries when the composed flag is set 2
+PASS The event must propagate out of closed mode shadow boundaries when the composed flag is set 2
+PASS The event must not propagate out of open mode shadow tree in which the relative target and the relative related target are the same
+PASS The event must not propagate out of closed mode shadow tree in which the relative target and the relative related target are the same
 

@@ -1,6 +1,6 @@
 Both frames can successfully open the database.
 
-  
+
 
 --------
 Frame: '<!--frame1-->'

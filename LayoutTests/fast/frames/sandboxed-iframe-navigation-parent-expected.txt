@@ -2,5 +2,5 @@ This test verifies that a sandboxed IFrame with the keywords allow-scripts and a
 
 This test will print "PASS" on success.
 
-               
+
 PASS

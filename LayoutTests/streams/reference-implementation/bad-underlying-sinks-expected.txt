@@ -1,10 +1,10 @@
 
-PASS Underlying sink: throwing start getter 
-PASS Underlying sink: throwing start method 
+PASS Underlying sink: throwing start getter
+PASS Underlying sink: throwing start method
 FAIL Underlying sink: throwing write getter a unique string
 FAIL Underlying sink: throwing write method ws.write is not a function. (In 'ws.write('a')', 'ws.write' is undefined)
 FAIL Underlying sink: throwing abort getter a unique string
 FAIL Underlying sink: throwing abort method undefined is not an object (evaluating 'ws.closed.then')
 FAIL Underlying sink: throwing close getter a unique string
-PASS Underlying sink: throwing close method 
+PASS Underlying sink: throwing close method
 

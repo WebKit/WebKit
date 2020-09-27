@@ -3,5 +3,5 @@ main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-This test makes sure that the Preload scanner preloads only the right image resource. 
-PASS PASS  
+This test makes sure that the Preload scanner preloads only the right image resource.
+PASS PASS

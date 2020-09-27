@@ -1,5 +1,5 @@
 PASS
- 
+
 This test does the following via EventSender:
 1. Click and drag the div scrollbar to a middle point.
 2. Click and drag again, this time down and to right, with the mouseup occurring in a parent frame.

@@ -1,5 +1,5 @@
 
-PASS getReader() should return a ReadableStreamDefaultReader 
-PASS getReader({mode: 'byob'}) should return a TypeError as BYOB reader is not yet implemented 
-PASS getReader({mode: 'aMode'}) should return a RangeError as 'aMode' is different from undefined and 'byob' 
+PASS getReader() should return a ReadableStreamDefaultReader
+PASS getReader({mode: 'byob'}) should return a TypeError as BYOB reader is not yet implemented
+PASS getReader({mode: 'aMode'}) should return a RangeError as 'aMode' is different from undefined and 'byob'
 

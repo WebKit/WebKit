@@ -1,12 +1,12 @@
 
-PASS DOMMatrixReadOnly.fromFloat32Array (error cases) 
-PASS DOMMatrixReadOnly.fromFloat32Array 
-PASS DOMMatrixReadOnly.fromFloat64Array (error cases) 
-PASS DOMMatrixReadOnly.fromFloat64Array 
-PASS DOMMatrix.fromFloat32Array (error cases) 
-PASS DOMMatrix.fromFloat32Array 
-PASS DOMMatrix.fromFloat64Array (error cases) 
-PASS DOMMatrix.fromFloat64Array 
-PASS DOMMatrixReadonly.toFloat32Array 
-PASS DOMMatrixReadonly.toFloat64Array 
+PASS DOMMatrixReadOnly.fromFloat32Array (error cases)
+PASS DOMMatrixReadOnly.fromFloat32Array
+PASS DOMMatrixReadOnly.fromFloat64Array (error cases)
+PASS DOMMatrixReadOnly.fromFloat64Array
+PASS DOMMatrix.fromFloat32Array (error cases)
+PASS DOMMatrix.fromFloat32Array
+PASS DOMMatrix.fromFloat64Array (error cases)
+PASS DOMMatrix.fromFloat64Array
+PASS DOMMatrixReadonly.toFloat32Array
+PASS DOMMatrixReadonly.toFloat64Array
 

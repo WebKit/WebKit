@@ -5,10 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/index-basics.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
-[Worker] 
+[Worker]
 [Worker] prepareDatabase():
 [Worker] db.createObjectStore('storeName', null)
 [Worker] store.createIndex('indexName', 'x')
@@ -66,12 +66,12 @@ PASS [Worker] event.target.result is undefined
 PASS [Worker] event.target.result is undefined
 [Worker] indexObject4.getKey('value2')
 PASS [Worker] event.target.result is "key2"
-[Worker] 
+[Worker]
 [Worker] Verify that specifying an invalid direction raises an exception:
 [Worker] Expecting TypeError exception from indexObject.openKeyCursor(0, 'invalid-direction')
 PASS [Worker] Exception was thrown.
 PASS [Worker] indexObject.openKeyCursor(0, 'invalid-direction') threw TypeError: Argument 2 ('direction') to IDBIndex.openKeyCursor must be one of: "next", "nextunique", "prev", "prevunique"
-[Worker] 
+[Worker]
 [Worker] indexObject.openKeyCursor()
 PASS [Worker] event.target.source is indexObject
 PASS [Worker] event.target.result is non-null.
@@ -91,12 +91,12 @@ PASS [Worker] event.target.result.key is "value4"
 PASS [Worker] event.target.result.primaryKey is "key4"
 [Worker] event.target.result.continue()
 PASS [Worker] event.target.result is null
-[Worker] 
+[Worker]
 [Worker] Verify that specifying an invalid direction raises an exception:
 [Worker] Expecting TypeError exception from indexObject.openCursor(0, 'invalid-direction')
 PASS [Worker] Exception was thrown.
 PASS [Worker] indexObject.openCursor(0, 'invalid-direction') threw TypeError: Argument 2 ('direction') to IDBIndex.openCursor must be one of: "next", "nextunique", "prev", "prevunique"
-[Worker] 
+[Worker]
 [Worker] indexObject.openCursor()
 PASS [Worker] event.target.source is indexObject
 PASS [Worker] event.target.result is non-null.

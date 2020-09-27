@@ -1,4 +1,4 @@
-1 
+1
 2
 This verifies that navigating through a line boundary with arrows returns
 

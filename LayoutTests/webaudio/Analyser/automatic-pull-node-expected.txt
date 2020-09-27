@@ -1,17 +1,17 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test1" 
-PASS Executing "test2" 
-PASS Executing "test3" 
-PASS Audit report 
-PASS > [test1]  
-PASS   RealtimeAnalyserNode got pulled when connected from upstream node but not to downstream node is true. 
-PASS < [test1] All assertions passed. (total 1 assertions) 
-PASS > [test2]  
-PASS   RealtimeAnalyserNode got pulled when connected from upstream node and to destination node is true. 
-PASS < [test2] All assertions passed. (total 1 assertions) 
-PASS > [test3]  
-PASS   RealtimeAnalyserNode didn't get pulled when it should not is true. 
-PASS < [test3] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test1"
+PASS Executing "test2"
+PASS Executing "test3"
+PASS Audit report
+PASS > [test1]
+PASS   RealtimeAnalyserNode got pulled when connected from upstream node but not to downstream node is true.
+PASS < [test1] All assertions passed. (total 1 assertions)
+PASS > [test2]
+PASS   RealtimeAnalyserNode got pulled when connected from upstream node and to destination node is true.
+PASS < [test2] All assertions passed. (total 1 assertions)
+PASS > [test3]
+PASS   RealtimeAnalyserNode didn't get pulled when it should not is true.
+PASS < [test3] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

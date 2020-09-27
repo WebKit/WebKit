@@ -11,27 +11,27 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Before:
-AXRole: AXScrollArea AXValue: 
-    AXRole: AXWebArea AXValue: 
-        AXRole: AXGroup AXValue: 
+AXRole: AXScrollArea AXValue:
+    AXRole: AXWebArea AXValue:
+        AXRole: AXGroup AXValue:
             AXRole: AXStaticText AXValue: Before
-        AXRole: AXGroup AXValue: 
-            AXRole: AXScrollArea AXValue: 
-                AXRole: AXWebArea AXValue: 
-                    AXRole: AXGroup AXValue: 
-                        AXRole: AXButton AXValue: 
-        AXRole: AXGroup AXValue: 
+        AXRole: AXGroup AXValue:
+            AXRole: AXScrollArea AXValue:
+                AXRole: AXWebArea AXValue:
+                    AXRole: AXGroup AXValue:
+                        AXRole: AXButton AXValue:
+        AXRole: AXGroup AXValue:
             AXRole: AXStaticText AXValue: After
-        AXRole: AXGroup AXValue: 
+        AXRole: AXGroup AXValue:
 
 After:
-AXRole: AXScrollArea AXValue: 
-    AXRole: AXWebArea AXValue: 
-        AXRole: AXGroup AXValue: 
+AXRole: AXScrollArea AXValue:
+    AXRole: AXWebArea AXValue:
+        AXRole: AXGroup AXValue:
             AXRole: AXStaticText AXValue: Before
-        AXRole: AXGroup AXValue: 
+        AXRole: AXGroup AXValue:
             AXRole: AXStaticText AXValue: After
-        AXRole: AXGroup AXValue: 
+        AXRole: AXGroup AXValue:
 
 PASS frameBodyRole == frameBody.role is false
 PASS frameGroupRole == frameGroup.role is false

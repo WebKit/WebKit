@@ -2,4 +2,4 @@ Test for http://bugs.webkit.org/show_bug.cgi?id=14972 Moving cursor down in cont
 
 PASS
 
-Pressing the down arrow when the caret is on this line should move it to this line. 
+Pressing the down arrow when the caret is on this line should move it to this line.

@@ -1,7 +1,7 @@
 
-PASS registerProperty requires a Dictionary type 
-PASS registerProperty requires a name matching <custom-property-name> 
-PASS registerProperty always allows omitting initialValue and syntax, requires name and inherits 
-PASS registerProperty requires inherits and name 
-PASS registerProperty requires initialValue to be computationally independent 
+PASS registerProperty requires a Dictionary type
+PASS registerProperty requires a name matching <custom-property-name>
+PASS registerProperty always allows omitting initialValue and syntax, requires name and inherits
+PASS registerProperty requires inherits and name
+PASS registerProperty requires initialValue to be computationally independent
 

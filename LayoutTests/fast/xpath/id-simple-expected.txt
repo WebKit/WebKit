@@ -1,6 +1,6 @@
 Test for bug 15380: XPath: id('foo') doesn't resolve correctly.
 
-  
+
 id('nested1') PASSED: [object HTMLDivElement]
 id('nested1')/div[1] PASSED: [object HTMLDivElement]
 id('nested1')//div[1] PASSED: [object HTMLDivElement]

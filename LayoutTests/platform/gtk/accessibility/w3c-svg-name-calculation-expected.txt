@@ -11,7 +11,7 @@ test1:
 test2:
 	Expected name: end
 	AXTitle: end
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test3:
 	Expected name: end
@@ -21,7 +21,7 @@ test3:
 test4:
 	Expected name: end
 	AXTitle: end
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test5:
 	Expected name: hello
@@ -31,42 +31,42 @@ test5:
 test6:
 	Expected name: hello
 	AXTitle: hello
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test7:
 	Expected name: abc
 	AXTitle: abc
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test8:
 	Expected name: hi
 	AXTitle: hi
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test9:
 	Expected name: hi
 	AXTitle: hi
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test10:
 	Expected name: hi
 	AXTitle: hi
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test11:
 	Expected name: hola
 	AXTitle: hola
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test12:
 	Expected name: hola
 	AXTitle: hola
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test13:
 	Expected name: hola
 	AXTitle: hola
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test14:
 	Expected name: bob
@@ -76,161 +76,161 @@ test14:
 test15:
 	Expected name: bob
 	AXTitle: bob
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test16:
 	Expected name: abc
 	AXTitle: abc
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test17:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test18:
 	Expected name: waz up
 	AXTitle: waz up
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test19:
 	Expected name: Hallo
 	AXTitle: Hallo
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test20:
 	Expected name: the end
 	AXTitle: the end
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test21:
 	Expected name: big end
 	AXTitle: big end
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test22:
 	Expected name: big end
 	AXTitle: big end
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test23:
 	Expected name: end
 	AXTitle: end
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test24:
-	Expected 
-	AXTitle: 
-	AXDescription: 
+	Expected
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test25:
 	Expected name: booth
 	AXTitle: booth
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test26:
 	Expected name: table
 	AXTitle: table
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test27:
 	Expected name: counter
 	AXTitle: counter
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test28:
 	Expected name: counter
 	AXTitle: counter
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test29:
 	Expected name: counter
 	AXTitle: counter
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test30:
 	Expected name: boulder
 	AXTitle: boulder
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: non-null
 test31:
 	Expected name: stone
 	AXTitle: stone
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test32:
 	Expected name: pebble
 	AXTitle: pebble
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test33:
 	Expected name: rock
 	AXTitle: rock
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test34:
 	Expected name: rock
 	AXTitle: rock
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test35:
 	Expected name: stone
 	AXTitle: stone
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test36:
 	Expected name: stone
 	AXTitle: stone
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test37:
 	Expected name: piedra
 	AXTitle: piedra
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test38:
 	Expected name: piedra
 	AXTitle: piedra
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test39:
 	Expected name: stone
 	AXTitle: stone
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test40:
 	Expected name: stone
 	AXTitle: stone
-	AXDescription: 
+	AXDescription:
 	AXTitleUIElement: null
 test41:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test42:
 	Expected name: (empty)
-	AXTitle:  
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test43:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test44:
 	Expected name: (empty)
-	AXTitle:  
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test45:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription:  
+	AXTitle:
+	AXDescription:
 	AXTitleUIElement: null
 test46:
 	Expected name: (empty)
-	AXTitle:  
+	AXTitle:
 	AXDescription: 	
 	AXTitleUIElement: null
 PASS successfullyParsed is true

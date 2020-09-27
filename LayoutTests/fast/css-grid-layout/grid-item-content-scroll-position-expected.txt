@@ -1,4 +1,4 @@
 
-PASS Checks that scroll position is kept when an element inside a grid item is showed. 
+PASS Checks that scroll position is kept when an element inside a grid item is showed.
 foo
 bar

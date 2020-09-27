@@ -1,7 +1,7 @@
- 
-link text 
- 
-This test verifies that, on Windows, linked text, linked images, and anchor elements return the anchor's href attribute for the 'value' property, and text nodes return their text for their 'title' property. 
+
+link text
+
+This test verifies that, on Windows, linked text, linked images, and anchor elements return the anchor's href attribute for the 'value' property, and text nodes return their text for their 'title' property.
 
 Bug 30928 - MSAA: Accessibility of links is wrong
 

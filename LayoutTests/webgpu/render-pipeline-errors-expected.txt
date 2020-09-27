@@ -1,12 +1,12 @@
 
-PASS GPURenderPipeline creation succeeds with no errors. 
-PASS Invalid GPUShaderModule for vertex stage should fail. 
-PASS Invalid GPUShaderModule for fragment stage should fail. 
-PASS Empty entry point for vertex stage should fail. 
-PASS Invalid GPUTextureFormat in GPUColorStateDescriptor should fail. 
-PASS Too many GPUColorStateDescriptors should fail. 
-PASS Too many GPUVertexBufferDescriptors should fail. 
-PASS Too many GPUVertexAttributeDescriptors should fail. 
-PASS Duplicate shaderLocation for vertex attributes should fail. 
-PASS Invalid entry point string should fail. 
+PASS GPURenderPipeline creation succeeds with no errors.
+PASS Invalid GPUShaderModule for vertex stage should fail.
+PASS Invalid GPUShaderModule for fragment stage should fail.
+PASS Empty entry point for vertex stage should fail.
+PASS Invalid GPUTextureFormat in GPUColorStateDescriptor should fail.
+PASS Too many GPUColorStateDescriptors should fail.
+PASS Too many GPUVertexBufferDescriptors should fail.
+PASS Too many GPUVertexAttributeDescriptors should fail.
+PASS Duplicate shaderLocation for vertex attributes should fail.
+PASS Invalid entry point string should fail.
 

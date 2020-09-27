@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'data:text/html,<script>alert(window.open('about:blank', 'A') ?%20'FAIL'%20:%20'PASS');%3C/script%3E'. The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.
 
 ALERT: PASS
- 
+

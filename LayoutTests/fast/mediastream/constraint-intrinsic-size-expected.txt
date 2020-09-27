@@ -1,5 +1,5 @@
 
-PASS setup 
-PASS height calculated correctly only width is specified 
-PASS width calculated correctly only height is specified 
+PASS setup
+PASS height calculated correctly only width is specified
+PASS width calculated correctly only height is specified
 

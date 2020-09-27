@@ -1,4 +1,4 @@
-  
+
 We should see three changed events.
 
 Saw webglcontextchanged event.

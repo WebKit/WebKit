@@ -1,4 +1,4 @@
-Required text input: 
+Required text input:
 Tests that the HTML form validation bubble gets dismissed when pressing the Escape key.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

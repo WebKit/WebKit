@@ -8,51 +8,51 @@ STEPS: over, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultipleStatementsOnOneLine:20:5
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
  ->  19        |debugger;
      20        a(); b();
      21    }
-     22    
+     22
 
 ACTION: step-over
 PAUSE AT entryMultipleStatementsOnOneLine:21:5
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
  ->  20        |a(); b();
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
 PAUSE AT entryMultipleStatementsOnOneLine:21:10
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
  ->  20        a(); |b();
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-out
@@ -61,7 +61,7 @@ PAUSE AT entryMultipleStatementsOnOneLine:22:2
      19        debugger;
      20        a(); b();
  ->  21    }|
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
 
@@ -75,31 +75,31 @@ STEPS: over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultipleStatementsOnOneLine:20:5
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
  ->  19        |debugger;
      20        a(); b();
      21    }
-     22    
+     22
 
 ACTION: step-over
 PAUSE AT entryMultipleStatementsOnOneLine:21:5
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
  ->  20        |a(); b();
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
 
 ACTION: step-over
 PAUSE AT entryMultipleStatementsOnOneLine:21:10
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
  ->  20        a(); |b();
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
 
 ACTION: step-over
@@ -108,7 +108,7 @@ PAUSE AT entryMultipleStatementsOnOneLine:22:2
      19        debugger;
      20        a(); b();
  ->  21    }|
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
 
@@ -122,61 +122,61 @@ STEPS: over, in, out, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultipleCallsInOneStatement:25:5
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
  ->  24        |debugger;
      25        add(a(), b());
      26    }
-     27    
+     27
 
 ACTION: step-over
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
 PAUSE AT entryMultipleCallsInOneStatement:26:14
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        add(a(), |b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-out
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
@@ -186,7 +186,7 @@ PAUSE AT add:8:5
       6    function add(a, b) {
  ->   7        |return a + b;
       8    }
-      9    
+      9
      10    function a() {
 
 ACTION: step-out
@@ -195,7 +195,7 @@ PAUSE AT entryMultipleCallsInOneStatement:27:2
      24        debugger;
      25        add(a(), b());
  ->  26    }|
-     27    
+     27
      28    function entryMultilineStatement() {
      29        debugger;
 
@@ -209,41 +209,41 @@ STEPS: over, in, out, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultipleCallsInOneStatement:25:5
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
  ->  24        |debugger;
      25        add(a(), b());
      26    }
-     27    
+     27
 
 ACTION: step-over
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
 PAUSE AT entryMultipleCallsInOneStatement:26:14
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        add(a(), |b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-over
@@ -252,7 +252,7 @@ PAUSE AT entryMultipleCallsInOneStatement:27:2
      24        debugger;
      25        add(a(), b());
  ->  26    }|
-     27    
+     27
      28    function entryMultilineStatement() {
      29        debugger;
 
@@ -266,81 +266,81 @@ STEPS: over, in, in, in, in, in, in, in, in, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultipleCallsInOneStatement:25:5
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
  ->  24        |debugger;
      25        add(a(), b());
      26    }
-     27    
+     27
 
 ACTION: step-over
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-in
 PAUSE AT a:13:2
-      9    
+      9
      10    function a() {
      11        return 1;
  ->  12    }|
-     13    
+     13
      14    function b() {
      15        return 2;
 
 ACTION: step-in
 PAUSE AT entryMultipleCallsInOneStatement:26:14
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        add(a(), |b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-in
 PAUSE AT b:17:2
-     13    
+     13
      14    function b() {
      15        return 2;
  ->  16    }|
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
 
 ACTION: step-in
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
@@ -350,7 +350,7 @@ PAUSE AT add:8:5
       6    function add(a, b) {
  ->   7        |return a + b;
       8    }
-      9    
+      9
      10    function a() {
 
 ACTION: step-in
@@ -359,7 +359,7 @@ PAUSE AT add:9:2
       6    function add(a, b) {
       7        return a + b;
  ->   8    }|
-      9    
+      9
      10    function a() {
      11        return 1;
 
@@ -369,7 +369,7 @@ PAUSE AT entryMultipleCallsInOneStatement:27:2
      24        debugger;
      25        add(a(), b());
  ->  26    }|
-     27    
+     27
      28    function entryMultilineStatement() {
      29        debugger;
 
@@ -383,81 +383,81 @@ STEPS: over, in, over, over, in, over, over, in, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultipleCallsInOneStatement:25:5
      21    }
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
  ->  24        |debugger;
      25        add(a(), b());
      26    }
-     27    
+     27
 
 ACTION: step-over
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-over
 PAUSE AT a:13:2
-      9    
+      9
      10    function a() {
      11        return 1;
  ->  12    }|
-     13    
+     13
      14    function b() {
      15        return 2;
 
 ACTION: step-over
 PAUSE AT entryMultipleCallsInOneStatement:26:14
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        add(a(), |b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-over
 PAUSE AT b:17:2
-     13    
+     13
      14    function b() {
      15        return 2;
  ->  16    }|
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
 
 ACTION: step-over
 PAUSE AT entryMultipleCallsInOneStatement:26:5
-     22    
+     22
      23    function entryMultipleCallsInOneStatement() {
      24        debugger;
  ->  25        |add(a(), b());
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
 
 ACTION: step-in
@@ -467,7 +467,7 @@ PAUSE AT add:8:5
       6    function add(a, b) {
  ->   7        |return a + b;
       8    }
-      9    
+      9
      10    function a() {
 
 ACTION: step-over
@@ -476,7 +476,7 @@ PAUSE AT add:9:2
       6    function add(a, b) {
       7        return a + b;
  ->   8    }|
-      9    
+      9
      10    function a() {
      11        return 1;
 
@@ -486,7 +486,7 @@ PAUSE AT entryMultipleCallsInOneStatement:27:2
      24        debugger;
      25        add(a(), b());
  ->  26    }|
-     27    
+     27
      28    function entryMultilineStatement() {
      29        debugger;
 
@@ -500,7 +500,7 @@ STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultilineStatement:30:5
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
  ->  29        |debugger;
      30        add(
@@ -509,7 +509,7 @@ PAUSE AT entryMultilineStatement:30:5
 
 ACTION: step-over
 PAUSE AT entryMultilineStatement:31:5
-     27    
+     27
      28    function entryMultilineStatement() {
      29        debugger;
  ->  30        |add(
@@ -523,7 +523,7 @@ PAUSE AT entryMultilineStatement:36:2
      33            b()
      34        );
  ->  35    }|
-     36    
+     36
      37    function entryComplexLine() {
      38        var x;
 
@@ -537,7 +537,7 @@ STEPS: over, in, out, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryMultilineStatement:30:5
      26    }
-     27    
+     27
      28    function entryMultilineStatement() {
  ->  29        |debugger;
      30        add(
@@ -546,7 +546,7 @@ PAUSE AT entryMultilineStatement:30:5
 
 ACTION: step-over
 PAUSE AT entryMultilineStatement:31:5
-     27    
+     27
      28    function entryMultilineStatement() {
      29        debugger;
  ->  30        |add(
@@ -557,11 +557,11 @@ PAUSE AT entryMultilineStatement:31:5
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -572,7 +572,7 @@ PAUSE AT entryMultilineStatement:34:9
  ->  33            |b()
      34        );
      35    }
-     36    
+     36
 
 ACTION: step-over
 PAUSE AT entryMultilineStatement:36:2
@@ -580,7 +580,7 @@ PAUSE AT entryMultilineStatement:36:2
      33            b()
      34        );
  ->  35    }|
-     36    
+     36
      37    function entryComplexLine() {
      38        var x;
 
@@ -593,13 +593,13 @@ EXPRESSION: setTimeout(entryComplexLine)
 STEPS: over, in, out, in, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryComplexLine:40:5
-     36    
+     36
      37    function entryComplexLine() {
      38        var x;
  ->  39        |debugger;
      40        a(); x = 1; b();
      41    }
-     42    
+     42
 
 ACTION: step-over
 PAUSE AT entryComplexLine:41:5
@@ -608,17 +608,17 @@ PAUSE AT entryComplexLine:41:5
      39        debugger;
  ->  40        |a(); x = 1; b();
      41    }
-     42    
+     42
      43    function entryComplexStatement() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -628,7 +628,7 @@ PAUSE AT entryComplexLine:41:10
      39        debugger;
  ->  40        a(); |x = 1; b();
      41    }
-     42    
+     42
      43    function entryComplexStatement() {
 
 ACTION: step-in
@@ -638,17 +638,17 @@ PAUSE AT entryComplexLine:41:17
      39        debugger;
  ->  40        a(); x = 1; |b();
      41    }
-     42    
+     42
      43    function entryComplexStatement() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-out
@@ -657,7 +657,7 @@ PAUSE AT entryComplexLine:42:2
      39        debugger;
      40        a(); x = 1; b();
  ->  41    }|
-     42    
+     42
      43    function entryComplexStatement() {
      44        var x;
 
@@ -670,13 +670,13 @@ EXPRESSION: setTimeout(entryComplexLine)
 STEPS: over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryComplexLine:40:5
-     36    
+     36
      37    function entryComplexLine() {
      38        var x;
  ->  39        |debugger;
      40        a(); x = 1; b();
      41    }
-     42    
+     42
 
 ACTION: step-over
 PAUSE AT entryComplexLine:41:5
@@ -685,7 +685,7 @@ PAUSE AT entryComplexLine:41:5
      39        debugger;
  ->  40        |a(); x = 1; b();
      41    }
-     42    
+     42
      43    function entryComplexStatement() {
 
 ACTION: step-over
@@ -695,7 +695,7 @@ PAUSE AT entryComplexLine:41:10
      39        debugger;
  ->  40        a(); |x = 1; b();
      41    }
-     42    
+     42
      43    function entryComplexStatement() {
 
 ACTION: step-over
@@ -705,7 +705,7 @@ PAUSE AT entryComplexLine:41:17
      39        debugger;
  ->  40        a(); x = 1; |b();
      41    }
-     42    
+     42
      43    function entryComplexStatement() {
 
 ACTION: step-over
@@ -714,7 +714,7 @@ PAUSE AT entryComplexLine:42:2
      39        debugger;
      40        a(); x = 1; b();
  ->  41    }|
-     42    
+     42
      43    function entryComplexStatement() {
      44        var x;
 
@@ -727,13 +727,13 @@ EXPRESSION: setTimeout(entryComplexStatement)
 STEPS: over, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryComplexStatement:46:5
-     42    
+     42
      43    function entryComplexStatement() {
      44        var x;
  ->  45        |debugger;
      46        add(a(), x = 1, b());
      47    }
-     48    
+     48
 
 ACTION: step-over
 PAUSE AT entryComplexStatement:47:5
@@ -742,17 +742,17 @@ PAUSE AT entryComplexStatement:47:5
      45        debugger;
  ->  46        |add(a(), x = 1, b());
      47    }
-     48    
+     48
      49    function entryCommaExpression() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -762,17 +762,17 @@ PAUSE AT entryComplexStatement:47:21
      45        debugger;
  ->  46        add(a(), x = 1, |b());
      47    }
-     48    
+     48
      49    function entryCommaExpression() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-out
@@ -782,7 +782,7 @@ PAUSE AT entryComplexStatement:47:5
      45        debugger;
  ->  46        |add(a(), x = 1, b());
      47    }
-     48    
+     48
      49    function entryCommaExpression() {
 
 ACTION: resume
@@ -795,71 +795,71 @@ STEPS: over, in, out, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryCommaExpression:51:5
      47    }
-     48    
+     48
      49    function entryCommaExpression() {
  ->  50        |debugger;
      51        a(), b(), a();
      52    }
-     53    
+     53
 
 ACTION: step-over
 PAUSE AT entryCommaExpression:52:5
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        |a(), b(), a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
 PAUSE AT entryCommaExpression:52:10
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        a(), |b(), a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-out
 PAUSE AT entryCommaExpression:52:15
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        a(), b(), |a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -868,7 +868,7 @@ PAUSE AT entryCommaExpression:53:2
      50        debugger;
      51        a(), b(), a();
  ->  52    }|
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
      55        var o = {x:{x:{a}}};
 
@@ -882,81 +882,81 @@ STEPS: over, in, in, in, in, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryCommaExpression:51:5
      47    }
-     48    
+     48
      49    function entryCommaExpression() {
  ->  50        |debugger;
      51        a(), b(), a();
      52    }
-     53    
+     53
 
 ACTION: step-over
 PAUSE AT entryCommaExpression:52:5
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        |a(), b(), a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-in
 PAUSE AT a:13:2
-      9    
+      9
      10    function a() {
      11        return 1;
  ->  12    }|
-     13    
+     13
      14    function b() {
      15        return 2;
 
 ACTION: step-in
 PAUSE AT entryCommaExpression:52:10
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        a(), |b(), a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-in
 PAUSE AT b:16:5
      12    }
-     13    
+     13
      14    function b() {
  ->  15        |return 2;
      16    }
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
 
 ACTION: step-over
 PAUSE AT b:17:2
-     13    
+     13
      14    function b() {
      15        return 2;
  ->  16    }|
-     17    
+     17
      18    function entryMultipleStatementsOnOneLine() {
      19        debugger;
 
 ACTION: step-over
 PAUSE AT entryCommaExpression:52:15
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        a(), b(), |a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-over
@@ -965,7 +965,7 @@ PAUSE AT entryCommaExpression:53:2
      50        debugger;
      51        a(), b(), a();
  ->  52    }|
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
      55        var o = {x:{x:{a}}};
 
@@ -979,41 +979,41 @@ STEPS: over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryCommaExpression:51:5
      47    }
-     48    
+     48
      49    function entryCommaExpression() {
  ->  50        |debugger;
      51        a(), b(), a();
      52    }
-     53    
+     53
 
 ACTION: step-over
 PAUSE AT entryCommaExpression:52:5
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        |a(), b(), a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-over
 PAUSE AT entryCommaExpression:52:10
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        a(), |b(), a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-over
 PAUSE AT entryCommaExpression:52:15
-     48    
+     48
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        a(), b(), |a();
      52    }
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
 
 ACTION: step-over
@@ -1022,7 +1022,7 @@ PAUSE AT entryCommaExpression:53:2
      50        debugger;
      51        a(), b(), a();
  ->  52    }|
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
      55        var o = {x:{x:{a}}};
 
@@ -1035,13 +1035,13 @@ EXPRESSION: setTimeout(entryDotPropertyAccessCall)
 STEPS: over, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryDotPropertyAccessCall:57:5
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
      55        var o = {x:{x:{a}}};
  ->  56        |debugger;
      57        o.x.x.a();
      58    }
-     59    
+     59
 
 ACTION: step-over
 PAUSE AT entryDotPropertyAccessCall:58:5
@@ -1050,17 +1050,17 @@ PAUSE AT entryDotPropertyAccessCall:58:5
      56        debugger;
  ->  57        |o.x.x.a();
      58    }
-     59    
+     59
      60    function entryBracketPropertyAccessCall() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -1069,7 +1069,7 @@ PAUSE AT entryDotPropertyAccessCall:59:2
      56        debugger;
      57        o.x.x.a();
  ->  58    }|
-     59    
+     59
      60    function entryBracketPropertyAccessCall() {
      61        var o = {x:{x:{a}}};
 
@@ -1082,13 +1082,13 @@ EXPRESSION: setTimeout(entryDotPropertyAccessCall)
 STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryDotPropertyAccessCall:57:5
-     53    
+     53
      54    function entryDotPropertyAccessCall() {
      55        var o = {x:{x:{a}}};
  ->  56        |debugger;
      57        o.x.x.a();
      58    }
-     59    
+     59
 
 ACTION: step-over
 PAUSE AT entryDotPropertyAccessCall:58:5
@@ -1097,7 +1097,7 @@ PAUSE AT entryDotPropertyAccessCall:58:5
      56        debugger;
  ->  57        |o.x.x.a();
      58    }
-     59    
+     59
      60    function entryBracketPropertyAccessCall() {
 
 ACTION: step-over
@@ -1106,7 +1106,7 @@ PAUSE AT entryDotPropertyAccessCall:59:2
      56        debugger;
      57        o.x.x.a();
  ->  58    }|
-     59    
+     59
      60    function entryBracketPropertyAccessCall() {
      61        var o = {x:{x:{a}}};
 
@@ -1119,13 +1119,13 @@ EXPRESSION: setTimeout(entryBracketPropertyAccessCall)
 STEPS: over, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryBracketPropertyAccessCall:63:5
-     59    
+     59
      60    function entryBracketPropertyAccessCall() {
      61        var o = {x:{x:{a}}};
  ->  62        |debugger;
      63        o['x']['x']['a']();
      64    }
-     65    
+     65
 
 ACTION: step-over
 PAUSE AT entryBracketPropertyAccessCall:64:5
@@ -1134,17 +1134,17 @@ PAUSE AT entryBracketPropertyAccessCall:64:5
      62        debugger;
  ->  63        |o['x']['x']['a']();
      64    }
-     65    
+     65
      66    function entryUseCall() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -1153,7 +1153,7 @@ PAUSE AT entryBracketPropertyAccessCall:65:2
      62        debugger;
      63        o['x']['x']['a']();
  ->  64    }|
-     65    
+     65
      66    function entryUseCall() {
      67        debugger;
 
@@ -1167,21 +1167,21 @@ STEPS: over, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryUseCall:68:5
      64    }
-     65    
+     65
      66    function entryUseCall() {
  ->  67        |debugger;
      68        add.call(null, 1, 2);
      69    }
-     70    
+     70
 
 ACTION: step-over
 PAUSE AT entryUseCall:69:5
-     65    
+     65
      66    function entryUseCall() {
      67        debugger;
  ->  68        |add.call(null, 1, 2);
      69    }
-     70    
+     70
      71    function entryUseApply() {
 
 ACTION: step-in
@@ -1191,7 +1191,7 @@ PAUSE AT add:8:5
       6    function add(a, b) {
  ->   7        |return a + b;
       8    }
-      9    
+      9
      10    function a() {
 
 ACTION: step-out
@@ -1200,7 +1200,7 @@ PAUSE AT entryUseCall:70:2
      67        debugger;
      68        add.call(null, 1, 2);
  ->  69    }|
-     70    
+     70
      71    function entryUseApply() {
      72        debugger;
 
@@ -1214,31 +1214,31 @@ STEPS: over, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryUseApply:73:5
      69    }
-     70    
+     70
      71    function entryUseApply() {
  ->  72        |debugger;
      73        a.apply(null, [1, 2]);
      74    }
-     75    
+     75
 
 ACTION: step-over
 PAUSE AT entryUseApply:74:5
-     70    
+     70
      71    function entryUseApply() {
      72        debugger;
  ->  73        |a.apply(null, [1, 2]);
      74    }
-     75    
+     75
      76    function entryAnonymousFunctionInvocation() {
 
 ACTION: step-in
 PAUSE AT a:12:5
       8    }
-      9    
+      9
      10    function a() {
  ->  11        |return 1;
      12    }
-     13    
+     13
      14    function b() {
 
 ACTION: step-out
@@ -1247,7 +1247,7 @@ PAUSE AT entryUseApply:75:2
      72        debugger;
      73        a.apply(null, [1, 2]);
  ->  74    }|
-     75    
+     75
      76    function entryAnonymousFunctionInvocation() {
      77        debugger;
 
@@ -1261,7 +1261,7 @@ STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryAnonymousFunctionInvocation:78:5
      74    }
-     75    
+     75
      76    function entryAnonymousFunctionInvocation() {
  ->  77        |debugger;
      78        (function() {
@@ -1270,7 +1270,7 @@ PAUSE AT entryAnonymousFunctionInvocation:78:5
 
 ACTION: step-over
 PAUSE AT entryAnonymousFunctionInvocation:79:5
-     75    
+     75
      76    function entryAnonymousFunctionInvocation() {
      77        debugger;
  ->  78        |(function() {
@@ -1284,7 +1284,7 @@ PAUSE AT entryAnonymousFunctionInvocation:82:2
      79            a();
      80        })();
  ->  81    }|
-     82    
+     82
      83    function entryFunctionWithConditionalReturn() {
      84        function testCondition(condition) {
 
@@ -1298,7 +1298,7 @@ STEPS: over, in, over, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entryAnonymousFunctionInvocation:78:5
      74    }
-     75    
+     75
      76    function entryAnonymousFunctionInvocation() {
  ->  77        |debugger;
      78        (function() {
@@ -1307,7 +1307,7 @@ PAUSE AT entryAnonymousFunctionInvocation:78:5
 
 ACTION: step-over
 PAUSE AT entryAnonymousFunctionInvocation:79:5
-     75    
+     75
      76    function entryAnonymousFunctionInvocation() {
      77        debugger;
  ->  78        |(function() {
@@ -1323,7 +1323,7 @@ PAUSE AT <anonymous>:80:9
  ->  79            |a();
      80        })();
      81    }
-     82    
+     82
 
 ACTION: step-over
 PAUSE AT <anonymous>:81:6
@@ -1332,7 +1332,7 @@ PAUSE AT <anonymous>:81:6
      79            a();
  ->  80        }|)();
      81    }
-     82    
+     82
      83    function entryFunctionWithConditionalReturn() {
 
 ACTION: step-in
@@ -1341,7 +1341,7 @@ PAUSE AT entryAnonymousFunctionInvocation:82:2
      79            a();
      80        })();
  ->  81    }|
-     82    
+     82
      83    function entryFunctionWithConditionalReturn() {
      84        function testCondition(condition) {
 
@@ -1370,11 +1370,11 @@ PAUSE AT entryFunctionWithConditionalReturn:91:5
  ->  90        |testCondition(true);
      91        testCondition(false);
      92    }
-     93    
+     93
 
 ACTION: step-in
 PAUSE AT testCondition:86:13
-     82    
+     82
      83    function entryFunctionWithConditionalReturn() {
      84        function testCondition(condition) {
  ->  85            if (|condition)
@@ -1409,12 +1409,12 @@ PAUSE AT entryFunctionWithConditionalReturn:92:5
      90        testCondition(true);
  ->  91        |testCondition(false);
      92    }
-     93    
+     93
      94    function entryEmptyFunction() {
 
 ACTION: step-in
 PAUSE AT testCondition:86:13
-     82    
+     82
      83    function entryFunctionWithConditionalReturn() {
      84        function testCondition(condition) {
  ->  85            if (|condition)
@@ -1448,7 +1448,7 @@ PAUSE AT entryFunctionWithConditionalReturn:93:2
      90        testCondition(true);
      91        testCondition(false);
  ->  92    }|
-     93    
+     93
      94    function entryEmptyFunction() {
      95        function emptyFunction() { }
 
@@ -1461,13 +1461,13 @@ EXPRESSION: setTimeout(entryEmptyFunction)
 STEPS: over, in, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entryEmptyFunction:97:5
-     93    
+     93
      94    function entryEmptyFunction() {
      95        function emptyFunction() { }
  ->  96        |debugger;
      97        emptyFunction();
      98    }
-     99    
+     99
 
 ACTION: step-over
 PAUSE AT entryEmptyFunction:98:5
@@ -1476,13 +1476,13 @@ PAUSE AT entryEmptyFunction:98:5
      96        debugger;
  ->  97        |emptyFunction();
      98    }
-     99    
+     99
     100    // ---------
 
 ACTION: step-in
 PAUSE AT emptyFunction:96:33
      92    }
-     93    
+     93
      94    function entryEmptyFunction() {
  ->  95        function emptyFunction() { }|
      96        debugger;
@@ -1495,9 +1495,9 @@ PAUSE AT entryEmptyFunction:99:2
      96        debugger;
      97        emptyFunction();
  ->  98    }|
-     99    
+     99
     100    // ---------
-    101    
+    101
 
 ACTION: resume
 RESUMED

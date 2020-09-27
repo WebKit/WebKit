@@ -5,16 +5,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Drag and drop should work between two color inputs.
 
-  
+
 Disabled color inputs should not be draggable.
 
-  
+
 Disabled color inputs should not change color when a color is dropped.
 
-  
+
 Read-only color inputs should behave like default color inputs.
 
-  
+
 PASS element('src').value is "#ff0000"
 PASS element('dest').value is "#ff0000"
 PASS element('disabled-src').value is "#9a9a9a"

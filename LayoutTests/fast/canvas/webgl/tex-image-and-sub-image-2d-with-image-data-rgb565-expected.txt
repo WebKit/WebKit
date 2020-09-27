@@ -1,4 +1,4 @@
- 
+
 Verify texImage2D and texSubImage2D code paths taking ImageData (RGB/UNSIGNED_SHORT_5_6_5)
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

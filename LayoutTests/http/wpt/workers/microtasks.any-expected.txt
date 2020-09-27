@@ -1,5 +1,5 @@
 
-PASS Microtasks should be executed earlier than macrotasks. 
-PASS Nested microtasks should be executed earlier than macrotasks. 
-PASS Microtasks should be executed in queued order. 
+PASS Microtasks should be executed earlier than macrotasks.
+PASS Nested microtasks should be executed earlier than macrotasks.
+PASS Microtasks should be executed in queued order.
 

@@ -19,4 +19,4 @@ PASS valueMissingFor("select-without-fake-placeholder-size2-multiple") is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
-            
+

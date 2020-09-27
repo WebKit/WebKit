@@ -1,6 +1,6 @@
 
 
-PASS Setup audio call 
-PASS Inactivate the audio transceiver 
-PASS Reactivate the audio transceiver 
+PASS Setup audio call
+PASS Inactivate the audio transceiver
+PASS Reactivate the audio transceiver
 

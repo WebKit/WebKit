@@ -1,29 +1,29 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "setValue;128.1" 
-PASS Executing "setValue;0.1" 
-PASS Executing "setValue;0.0" 
-PASS Executing "setter;128.1" 
-PASS Executing "setter;0.1" 
-PASS Executing "setter;0.0" 
-PASS Audit report 
-PASS > [setValue;128.1]  
-PASS   Initialize by setValueAtTime: Target value at frame 129 is 9139.311852712272 within an error of 3.6029e-8. 
-PASS < [setValue;128.1] All assertions passed. (total 1 assertions) 
-PASS > [setValue;0.1]  
-PASS   Initialize by setValueAtTime: Target value at frame 1 is 9139.311852712282 within an error of 3.6029e-8. 
-PASS < [setValue;0.1] All assertions passed. (total 1 assertions) 
-PASS > [setValue;0.0]  
-PASS   Initialize by setValueAtTime: Target value at frame 0 is 10000 within an error of 3.6029e-8. 
-PASS < [setValue;0.0] All assertions passed. (total 1 assertions) 
-PASS > [setter;128.1]  
-PASS   Initialize by setter: Target value at frame 129 is 9139.311852712272 within an error of 3.6029e-8. 
-PASS < [setter;128.1] All assertions passed. (total 1 assertions) 
-PASS > [setter;0.1]  
-PASS   Initialize by setter: Target value at frame 1 is 9139.311852712282 within an error of 3.6029e-8. 
-PASS < [setter;0.1] All assertions passed. (total 1 assertions) 
-PASS > [setter;0.0]  
-PASS   Initialize by setter: Target value at frame 0 is 10000 within an error of 0. 
-PASS < [setter;0.0] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "setValue;128.1"
+PASS Executing "setValue;0.1"
+PASS Executing "setValue;0.0"
+PASS Executing "setter;128.1"
+PASS Executing "setter;0.1"
+PASS Executing "setter;0.0"
+PASS Audit report
+PASS > [setValue;128.1]
+PASS   Initialize by setValueAtTime: Target value at frame 129 is 9139.311852712272 within an error of 3.6029e-8.
+PASS < [setValue;128.1] All assertions passed. (total 1 assertions)
+PASS > [setValue;0.1]
+PASS   Initialize by setValueAtTime: Target value at frame 1 is 9139.311852712282 within an error of 3.6029e-8.
+PASS < [setValue;0.1] All assertions passed. (total 1 assertions)
+PASS > [setValue;0.0]
+PASS   Initialize by setValueAtTime: Target value at frame 0 is 10000 within an error of 3.6029e-8.
+PASS < [setValue;0.0] All assertions passed. (total 1 assertions)
+PASS > [setter;128.1]
+PASS   Initialize by setter: Target value at frame 129 is 9139.311852712272 within an error of 3.6029e-8.
+PASS < [setter;128.1] All assertions passed. (total 1 assertions)
+PASS > [setter;0.1]
+PASS   Initialize by setter: Target value at frame 1 is 9139.311852712282 within an error of 3.6029e-8.
+PASS < [setter;0.1] All assertions passed. (total 1 assertions)
+PASS > [setter;0.0]
+PASS   Initialize by setter: Target value at frame 0 is 10000 within an error of 0.
+PASS < [setter;0.0] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

@@ -12,7 +12,7 @@ This sub-test checks that max-height with viewport percent height value is appli
 PASS
 This sub-test checks that max-height with viewport percent width value is applied to a table with auto layout.
 PASS
-This sub-test checks that when content height is greater than max-height, content height is applied to the table with auto layout. 
+This sub-test checks that when content height is greater than max-height, content height is applied to the table with auto layout.
 
 FILLER TEXT TO INCREASE CONTENT HEIGHT.
 PASS
@@ -30,7 +30,7 @@ This sub-test checks that max-height with viewport percent height value is appli
 PASS
 This sub-test checks that max-height with viewport percent width value is applied to a table with fixed layout.
 PASS
-This sub-test checks that when content height is greater than max-height, content height is applied to a table with fixed layout. 
+This sub-test checks that when content height is greater than max-height, content height is applied to a table with fixed layout.
 
 FILLER TEXT TO INCREASE CONTENT HEIGHT.
 PASS

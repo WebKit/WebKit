@@ -1,4 +1,4 @@
 
-PASS Spin in message 
-PASS Spin after message 
+PASS Spin in message
+PASS Spin after message
 

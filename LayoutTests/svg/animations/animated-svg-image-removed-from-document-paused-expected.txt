@@ -18,4 +18,4 @@ PASS internals.isImageAnimating(imageB) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

@@ -1,5 +1,5 @@
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL resources/click-notify-done-in-main.html, main document URL resources/click-notify-done-in-main.html, http method GET> is main frame - yes should open URLs externally - no
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL notify-done.html, main document URL notify-done.html, http method GET> is main frame - yes should open URLs externally - yes
 

@@ -1,6 +1,6 @@
-Before (should be empty): 
+Before (should be empty):
 
-After (should not be empty): 
+After (should not be empty):
 (GraphicsLayer
   (bounds 800.00 600.00)
   (children 1
@@ -18,5 +18,5 @@ After (should not be empty):
     )
   )
 )
-After (should be empty): 
+After (should be empty):
 

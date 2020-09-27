@@ -1,4 +1,4 @@
- 
+
 Test <video> as a source for <canvas>.
 
 RUN(video.src = 'content/counting.mp4')

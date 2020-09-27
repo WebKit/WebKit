@@ -5,109 +5,109 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS gl = initWebGL('example', 'vshader', 'fshader', [ 'pos', 'colorIn' ], [ 0, 0, 0, 1 ], 1) is non-null.
 Testing format = RGBA and type = UNSIGNED_BYTE
 Testing PACK_ALIGNMENT = 1, width = 1, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 2, width = 1, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 1, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 1, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 2, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 2, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 3, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 3, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 4, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 4, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 5, height = 1
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 4, width = 5, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 5, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 6, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 7, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 8, width = 8, height = 2
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS 255,102,0,255 is non-null.
 PASS pixel is expectedColor
 Testing PACK_ALIGNMENT = 1, width = 0, height = 0
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 Testing PACK_ALIGNMENT = 2, width = 0, height = 0
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 Testing PACK_ALIGNMENT = 4, width = 0, height = 0
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 Testing PACK_ALIGNMENT = 8, width = 0, height = 0
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 Testing PACK_ALIGNMENT = 1, width = -1, height = 1
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: INVALID_VALUE :
 Testing PACK_ALIGNMENT = 2, width = 1, height = -1
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: INVALID_VALUE :
 Testing PACK_ALIGNMENT = 4, width = 0, height = -1
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: INVALID_VALUE :
 Testing PACK_ALIGNMENT = 8, width = -1, height = -1
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: INVALID_VALUE :
 PASS successfullyParsed is true
 
 TEST COMPLETE

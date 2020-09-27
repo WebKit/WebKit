@@ -1,4 +1,4 @@
-Color: 
+Color:
 This tests that sliders are allowed to have title UI elements.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

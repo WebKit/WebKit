@@ -1,10 +1,10 @@
 
-PASS Setup worker 
-PASS FetchEvent respondWith should throw if called twice 
-PASS FetchEvent request is SameObject 
-PASS FetchEvent should be in error if responding with undefined 
-PASS FetchEvent should be in error if not responding with a Response 
-PASS FetchEvent should be in error if responding with a Promise that does not resolve to a Response 
-PASS FetchEvent should be in error if responding with a Promise that rejects 
-PASS FetchEvent should resolve when responding with a Response 
+PASS Setup worker
+PASS FetchEvent respondWith should throw if called twice
+PASS FetchEvent request is SameObject
+PASS FetchEvent should be in error if responding with undefined
+PASS FetchEvent should be in error if not responding with a Response
+PASS FetchEvent should be in error if responding with a Promise that does not resolve to a Response
+PASS FetchEvent should be in error if responding with a Promise that rejects
+PASS FetchEvent should resolve when responding with a Response
 

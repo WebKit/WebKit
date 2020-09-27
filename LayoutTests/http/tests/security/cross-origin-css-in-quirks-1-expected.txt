@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/resources/redirect.php?url=http://localhost:8000/security/resources/xorigincss1.html' because non CSS MIME types are not allowed for cross-origin stylesheets.
 
-PASS Testing cross-origin and MIME behavior for CSS. 
-PASS xorigincss1.html should not be loaded via &lt;link&gt;. 
+PASS Testing cross-origin and MIME behavior for CSS.
+PASS xorigincss1.html should not be loaded via &lt;link&gt;.
 

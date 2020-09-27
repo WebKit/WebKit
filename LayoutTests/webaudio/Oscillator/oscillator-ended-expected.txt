@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test]  
-PASS   osc.onended was called is true. 
-PASS < [test] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test]
+PASS   osc.onended was called is true.
+PASS < [test] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

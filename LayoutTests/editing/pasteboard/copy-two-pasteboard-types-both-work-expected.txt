@@ -1,5 +1,5 @@
 Copy then paste. The output should read "FooBar"
 
-Data to copy: 
+Data to copy:
 Data pasted:
 FooBar

@@ -2,12 +2,12 @@ This test passes if there is no crash.
 AXRole: AXWebArea
 AXRoleDescription: HTML content
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXWebArea>
 AXSize: NSSize: {800, 600}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXWebArea>
@@ -19,8 +19,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXWebArea>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1

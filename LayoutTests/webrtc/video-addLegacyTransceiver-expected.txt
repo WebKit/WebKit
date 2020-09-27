@@ -1,7 +1,7 @@
 
 
-PASS Expose currentDirection only for unified plan 
-PASS Setting up calls with addTransceiver but with no track 
-PASS Setting up calls with addTransceiver with a track 
-PASS Basic video exchange set up with addTransceiver 
+PASS Expose currentDirection only for unified plan
+PASS Setting up calls with addTransceiver but with no track
+PASS Setting up calls with addTransceiver with a track
+PASS Basic video exchange set up with addTransceiver
 

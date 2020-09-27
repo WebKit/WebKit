@@ -1,4 +1,4 @@
 
-PASS canShare should not exist in insecure context 
-PASS share should not exist in insecure context 
+PASS canShare should not exist in insecure context
+PASS share should not exist in insecure context
 

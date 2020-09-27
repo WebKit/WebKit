@@ -1,4 +1,4 @@
 
 
-PASS Ensure that the frame's document get collected after being stopped while using MediaDevices 
+PASS Ensure that the frame's document get collected after being stopped while using MediaDevices
 

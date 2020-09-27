@@ -3,4 +3,4 @@ This tests that when a frame navigates to a new page, closures in the old page c
 You should see PASSED at the end of page if the test passes.
 
 PASSED
-  
+

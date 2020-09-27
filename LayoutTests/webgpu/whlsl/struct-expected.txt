@@ -1,4 +1,4 @@
 
-PASS emptyStruct 
-PASS settingAnArrayInsideAStruct 
+PASS emptyStruct
+PASS settingAnArrayInsideAStruct
 

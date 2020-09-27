@@ -1,4 +1,4 @@
- 
+
 
 Test that 'webkitplaybacktargetavailabilitychanged' event is sent when at least one video element has playable media.
 

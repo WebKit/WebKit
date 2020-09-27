@@ -1,4 +1,4 @@
 
-PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope 
-PASS nextHopProtocol is expected to be 'http1/1' 
+PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope
+PASS nextHopProtocol is expected to be 'http1/1'
 

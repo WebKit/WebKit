@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/transaction-complete-workers.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
-[Worker] 
+[Worker]
 [Worker] prepareDatabase():
 [Worker] db.createObjectStore('store')
-[Worker] 
+[Worker]
 [Worker] createTransaction():
 [Worker] transaction = db.transaction('store')
 [Worker] store = transaction.objectStore('store')
@@ -21,7 +21,7 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
-[Worker] 
+[Worker]
 [Worker] recursionTest():
 [Worker] transaction = db.transaction('store')
 [Worker] store = transaction.objectStore('store')
@@ -51,10 +51,10 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
-[Worker] 
+[Worker]
 [Worker] trying a timeout callback:
 [Worker] setTimeout(timeoutTest, 0)
-[Worker] 
+[Worker]
 [Worker] timeoutTest():
 [Worker] transaction = db.transaction('store')
 [Worker] store = transaction.objectStore('store')
@@ -64,11 +64,11 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
-[Worker] 
+[Worker]
 [Worker] errorTest():
 [Worker] self.old_onerror = self.onerror
 [Worker] self.onerror = errorHandler
-[Worker] 
+[Worker]
 [Worker] errorHandler():
 [Worker] self.onerror = self.old_onerror
 [Worker] transaction = db.transaction('store')

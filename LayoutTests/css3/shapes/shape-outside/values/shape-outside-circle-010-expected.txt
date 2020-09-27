@@ -1,16 +1,16 @@
 
-PASS circle(calc(10in)) - inline style 
-PASS circle(calc(10in + 20px)) - inline style 
-PASS circle(calc(30%)) - inline style 
-PASS circle(calc(100%/4)) - inline style 
-PASS circle(calc(25%*3)) - inline style 
-PASS circle(calc(25%*3 - 10in)) - inline style 
-PASS circle(calc((12.5%*6 + 10in) / 4)) - inline style 
-PASS circle(calc(10in)) - computed style 
-PASS circle(calc(10in + 20px)) - computed style 
-PASS circle(calc(30%)) - computed style 
-PASS circle(calc(100%/4)) - computed style 
-PASS circle(calc(25%*3)) - computed style 
-PASS circle(calc(25%*3 - 10in)) - computed style 
-PASS circle(calc((12.5%*6 + 10in) / 4)) - computed style 
+PASS circle(calc(10in)) - inline style
+PASS circle(calc(10in + 20px)) - inline style
+PASS circle(calc(30%)) - inline style
+PASS circle(calc(100%/4)) - inline style
+PASS circle(calc(25%*3)) - inline style
+PASS circle(calc(25%*3 - 10in)) - inline style
+PASS circle(calc((12.5%*6 + 10in) / 4)) - inline style
+PASS circle(calc(10in)) - computed style
+PASS circle(calc(10in + 20px)) - computed style
+PASS circle(calc(30%)) - computed style
+PASS circle(calc(100%/4)) - computed style
+PASS circle(calc(25%*3)) - computed style
+PASS circle(calc(25%*3 - 10in)) - computed style
+PASS circle(calc((12.5%*6 + 10in) / 4)) - computed style
 

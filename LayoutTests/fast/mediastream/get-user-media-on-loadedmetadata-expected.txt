@@ -1,4 +1,4 @@
 
 
-PASS videoWidth and videoHeight are set on 'loadedmetadata' event 
+PASS videoWidth and videoHeight are set on 'loadedmetadata' event
 

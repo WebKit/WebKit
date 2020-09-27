@@ -1,4 +1,4 @@
-This test sets a cookie, then follows a link with a ping attribute where the ping URL matches a 'block-cookie' rule.   
+This test sets a cookie, then follows a link with a ping attribute where the ping URL matches a 'block-cookie' rule.
 
 --------
 Frame: 'link_frame'

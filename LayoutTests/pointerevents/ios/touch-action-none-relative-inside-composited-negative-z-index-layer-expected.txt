@@ -27,7 +27,7 @@
               (event region
                 (rect (8,8) width=784 height=102)
                 (touch-action
-                  (none                  
+                  (none
                     (rect (8,8) width=102 height=102)
                   )
                 )

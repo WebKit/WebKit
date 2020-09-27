@@ -16,8 +16,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.00000, 16.0000 }
 AXSize: { 784.000, 36.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -34,8 +34,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.00000, 68.0000 }
 AXSize: { 784.000, 36.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -52,8 +52,8 @@ AXParent: AXWebArea
 AXChildren: 5
 AXPosition: { 8.00000, 120.000 }
 AXSize: { 784.000, 90.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -70,8 +70,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.00000, 226.000 }
 AXSize: { 784.000, 72.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: <\n><\n><\n><\n>
 AXFocusable: 0
 AXFocused: 0
@@ -92,7 +92,7 @@ AXChildren: 0
 AXPosition: { 48.0000, 16.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 1
-AXDescription: 
+AXDescription:
 AXValue: • test 1
 AXFocusable: 0
 AXFocused: 0
@@ -111,7 +111,7 @@ AXChildren: 0
 AXPosition: { 48.0000, 34.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 2
-AXDescription: 
+AXDescription:
 AXValue: • test 2
 AXFocusable: 0
 AXFocused: 0
@@ -132,7 +132,7 @@ AXChildren: 0
 AXPosition: { 48.0000, 68.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 1
-AXDescription: 
+AXDescription:
 AXValue: 1. test 1
 AXFocusable: 0
 AXFocused: 0
@@ -151,7 +151,7 @@ AXChildren: 0
 AXPosition: { 48.0000, 86.0000 }
 AXSize: { 729.000, 18.0000 }
 AXTitle: test 2
-AXDescription: 
+AXDescription:
 AXValue: 2. test 2
 AXFocusable: 0
 AXFocused: 0
@@ -171,8 +171,8 @@ AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 8.00000, 120.000 }
 AXSize: { 769.000, 18.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: term 1
 AXFocusable: 0
 AXFocused: 0
@@ -190,8 +190,8 @@ AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 48.0000, 138.000 }
 AXSize: { 729.000, 18.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: meaning 2
 AXFocusable: 0
 AXFocused: 0
@@ -209,8 +209,8 @@ AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 8.00000, 156.000 }
 AXSize: { 769.000, 18.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: term b
 AXFocusable: 0
 AXFocused: 0
@@ -228,8 +228,8 @@ AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 48.0000, 174.000 }
 AXSize: { 729.000, 18.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: meaning 1
 AXFocusable: 0
 AXFocused: 0
@@ -247,8 +247,8 @@ AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 48.0000, 192.000 }
 AXSize: { 729.000, 18.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: meaning 2
 AXFocusable: 0
 AXFocused: 0

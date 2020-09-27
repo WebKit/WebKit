@@ -1,4 +1,4 @@
 PASS: Cross-domain access allowed.
-HTTP_ORIGIN: 
+HTTP_ORIGIN:
 
 

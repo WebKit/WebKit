@@ -1,4 +1,4 @@
 
-PASS A CSS transition targeting opacity can be reversed in-flight. 
-PASS A CSS transition targeting transform can be reversed in-flight. 
+PASS A CSS transition targeting opacity can be reversed in-flight.
+PASS A CSS transition targeting transform can be reversed in-flight.
 

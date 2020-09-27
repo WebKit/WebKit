@@ -1,6 +1,6 @@
 
-PASS 'devicechange' event fired when device list changes 
-PASS 'devicechange' events fired quickly are coalesced 
-PASS 'devicechange' event is not fired when the document doesn't has focus or permission to capture 
-PASS 'devicechange' event is fired when the document doesn't has focus but has permission to capture 
+PASS 'devicechange' event fired when device list changes
+PASS 'devicechange' events fired quickly are coalesced
+PASS 'devicechange' event is not fired when the document doesn't has focus or permission to capture
+PASS 'devicechange' event is fired when the document doesn't has focus but has permission to capture
 

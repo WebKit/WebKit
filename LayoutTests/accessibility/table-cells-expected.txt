@@ -1,6 +1,6 @@
 Example #1: Nested Stubs
 Ruritanian
-Population 
+Population
 Survey	All
 Genders	By Gender
 Males	Females
@@ -14,12 +14,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -31,8 +31,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -52,12 +52,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 36}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -69,8 +69,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -90,12 +90,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -107,8 +107,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -128,12 +128,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {71, 30}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -145,8 +145,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -166,12 +166,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -183,8 +183,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)

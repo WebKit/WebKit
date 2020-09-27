@@ -3,11 +3,11 @@ AXRole: AXStaticText
 AXSubrole: (null)
 AXRoleDescription: text
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXStaticText>
 AXSize: NSSize: {731, 36}
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Embroiled in a high-profile corruption investigation, Israels prime minister says he will resign as soon as his party chooses a new leader in September elections.
 AXFocused: 0
 AXEnabled: 1
@@ -20,8 +20,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXStaticText>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXStaticText>
 AXEditableAncestor: (null)

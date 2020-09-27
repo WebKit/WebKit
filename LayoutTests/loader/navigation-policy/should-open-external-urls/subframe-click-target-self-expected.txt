@@ -1,8 +1,8 @@
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL about:blank, main document URL subframe-click-target-self.html, http method GET> is main frame - no should open URLs externally - no
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL resources/iframe-click-notify-done-target-self.html, main document URL subframe-click-target-self.html, http method GET> is main frame - no should open URLs externally - no
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL resources/notify-done.html, main document URL subframe-click-target-self.html, http method GET> is main frame - no should open URLs externally - yes
 This page has a subframe with a link.
 Then a link is clicked in that subframe that navigates inside that subframe, and that navigation should have the "should open external urls" flag set to false even though it was from a user gesture.

@@ -1,22 +1,22 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] resume() and suspend() with timed sequence 
-PASS   Scheduling suspend #0 at 0.25 second(s) did not throw an exception. 
-PASS   Scheduling suspend #1 at 0.75 second(s) did not throw an exception. 
-PASS   Scheduling suspend #2 at 1 second(s) did not throw an exception. 
-PASS   Scheduling suspend #3 at 0.5 second(s) did not throw an exception. 
-PASS   Scheduling suspend #4 at 1.25 second(s) did not throw an exception. 
-PASS   Scheduling suspend #5 at 0 second(s) did not throw an exception. 
-PASS   Scheduling suspend #6 at 1.75 second(s) did not throw an exception. 
-PASS   The resolution order of suspend #5 is 0 at 0.00 second(s) is equal to 0. 
-PASS   The resolution order of suspend #0 is 1 at 0.25 second(s) is equal to 1. 
-PASS   The resolution order of suspend #3 is 2 at 0.50 second(s) is equal to 2. 
-PASS   The resolution order of suspend #1 is 3 at 0.75 second(s) is equal to 3. 
-PASS   The resolution order of suspend #2 is 4 at 1.00 second(s) is equal to 4. 
-PASS   The resolution order of suspend #4 is 5 at 1.25 second(s) is equal to 5. 
-PASS   The resolution order of suspend #6 is 6 at 1.75 second(s) is equal to 6. 
-PASS < [test] All assertions passed. (total 14 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] resume() and suspend() with timed sequence
+PASS   Scheduling suspend #0 at 0.25 second(s) did not throw an exception.
+PASS   Scheduling suspend #1 at 0.75 second(s) did not throw an exception.
+PASS   Scheduling suspend #2 at 1 second(s) did not throw an exception.
+PASS   Scheduling suspend #3 at 0.5 second(s) did not throw an exception.
+PASS   Scheduling suspend #4 at 1.25 second(s) did not throw an exception.
+PASS   Scheduling suspend #5 at 0 second(s) did not throw an exception.
+PASS   Scheduling suspend #6 at 1.75 second(s) did not throw an exception.
+PASS   The resolution order of suspend #5 is 0 at 0.00 second(s) is equal to 0.
+PASS   The resolution order of suspend #0 is 1 at 0.25 second(s) is equal to 1.
+PASS   The resolution order of suspend #3 is 2 at 0.50 second(s) is equal to 2.
+PASS   The resolution order of suspend #1 is 3 at 0.75 second(s) is equal to 3.
+PASS   The resolution order of suspend #2 is 4 at 1.00 second(s) is equal to 4.
+PASS   The resolution order of suspend #4 is 5 at 1.25 second(s) is equal to 5.
+PASS   The resolution order of suspend #6 is 6 at 1.75 second(s) is equal to 6.
+PASS < [test] All assertions passed. (total 14 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

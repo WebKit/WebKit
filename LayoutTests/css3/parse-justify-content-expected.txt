@@ -1,13 +1,13 @@
 Test that setting and getting justify-content works as expected
 
 
-PASS Test getting justify-content values previously set through CSS. 
-PASS Test setting invalid values to justify-content through CSS. 
-PASS Test initial value of justify-content through JS 
-PASS Test getting and setting justify-content through JS 
-PASS Test bad combinations of justify-content 
-PASS Test the value 'initial' 
-PASS Test the value 'initial' for grid containers 
-PASS Test the value 'initial' for flex containers 
-PASS Test the value 'inherit' 
+PASS Test getting justify-content values previously set through CSS.
+PASS Test setting invalid values to justify-content through CSS.
+PASS Test initial value of justify-content through JS
+PASS Test getting and setting justify-content through JS
+PASS Test bad combinations of justify-content
+PASS Test the value 'initial'
+PASS Test the value 'initial' for grid containers
+PASS Test the value 'initial' for flex containers
+PASS Test the value 'inherit'
 

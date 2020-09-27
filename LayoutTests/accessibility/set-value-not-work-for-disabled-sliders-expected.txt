@@ -1,4 +1,4 @@
-     
+
 This tests that disabled sliders can't be incremented or decremented.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

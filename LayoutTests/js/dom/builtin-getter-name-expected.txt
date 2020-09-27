@@ -1,7 +1,7 @@
 
-PASS FetchResponse property names 
-PASS ReadableStream property names 
-PASS ReadableStreamDefaultReader property names 
-PASS ReadableStreamBYOBReader property names 
-PASS WritableStreamDefaultWriter property names 
+PASS FetchResponse property names
+PASS ReadableStream property names
+PASS ReadableStreamDefaultReader property names
+PASS ReadableStreamBYOBReader property names
+PASS WritableStreamDefaultWriter property names
 

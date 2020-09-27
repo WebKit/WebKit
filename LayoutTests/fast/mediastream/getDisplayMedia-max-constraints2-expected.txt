@@ -1,4 +1,4 @@
 
-PASS setup 
-PASS Maximize the height if max width is too big 
+PASS setup
+PASS Maximize the height if max width is too big
 

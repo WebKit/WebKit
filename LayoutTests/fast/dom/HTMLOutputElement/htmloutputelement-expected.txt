@@ -18,4 +18,4 @@ PASS output3.htmlFor.value is " for-target1 for-target2 "
 PASS successfullyParsed is true
 
 TEST COMPLETE
- A value  
+ A value

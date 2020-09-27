@@ -1,11 +1,11 @@
 
-PASS equality 
-PASS notEquality 
-PASS equalityTypeFailure 
-PASS equalsWrongArgumentLength 
-PASS equalsWrongReturnType 
-PASS lessEqualWrongArgumentLength 
-PASS lessEqualWrongReturnType 
-PASS lessThanWrongArgumentLength 
-PASS lessThanWrongReturnType 
+PASS equality
+PASS notEquality
+PASS equalityTypeFailure
+PASS equalsWrongArgumentLength
+PASS equalsWrongReturnType
+PASS lessEqualWrongArgumentLength
+PASS lessEqualWrongReturnType
+PASS lessThanWrongArgumentLength
+PASS lessThanWrongReturnType
 

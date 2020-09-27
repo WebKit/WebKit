@@ -1,5 +1,5 @@
 Tests that the scroll-snap feature works properly with mixed-up snap points.
-Scroll-snap offsets for 'badHorizontalTarget': 
+Scroll-snap offsets for 'badHorizontalTarget':
 Scroll-snap offsets for 'horizontalTarget': horizontal = { 0, 300, 600, 900, 1200, 1500 }
 PASS successfullyParsed is true
 

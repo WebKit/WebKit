@@ -1,6 +1,6 @@
 
-PASS Testing calling Response.text() when still fetching data 
-PASS Testing calling Response.arrayBuffer() when still fetching data 
-PASS Testing calling Response.blob() when still fetching data 
-PASS Testing calling Response.json() when still fetching data 
+PASS Testing calling Response.text() when still fetching data
+PASS Testing calling Response.arrayBuffer() when still fetching data
+PASS Testing calling Response.blob() when still fetching data
+PASS Testing calling Response.json() when still fetching data
 

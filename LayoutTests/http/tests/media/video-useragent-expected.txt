@@ -1,5 +1,5 @@
- 
-Tests that the media player sends the WebKit User Agent string when requesting a media file.  
+
+Tests that the media player sends the WebKit User Agent string when requesting a media file.
 EVENT(canplay)
 END OF TEST
 

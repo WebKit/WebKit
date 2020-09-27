@@ -2,6 +2,6 @@ CONSOLE MESSAGE: Service Worker context closed
 CONSOLE MESSAGE: Cannot load .
 
 
-PASS Setup worker 
-PASS Service worker process crashes while handling a fetch event 
+PASS Setup worker
+PASS Service worker process crashes while handling a fetch event
 

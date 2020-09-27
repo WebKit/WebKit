@@ -1,40 +1,40 @@
 
-PASS circle(at +50px) - inline 
-PASS circle(at -50px) - inline 
-PASS circle(at +50%) - inline 
-PASS circle(at -50%) - inline 
-PASS circle(at left +50px) - inline 
-PASS circle(at left +50%) - inline 
-PASS circle(at right -50px) - inline 
-PASS circle(at right -50%) - inline 
-PASS circle(at +50px top) - inline 
-PASS circle(at +50% top) - inline 
-PASS circle(at -50px bottom) - inline 
-PASS circle(at -50% bottom) - inline 
-PASS circle(at +50px +50px) - inline 
-PASS circle(at +50% +50%) - inline 
-PASS circle(at -50px -50px) - inline 
-PASS circle(at +50px -50px) - inline 
-PASS circle(at -50px +50px) - inline 
-PASS circle(at +50% -50%) - inline 
-PASS circle(at -50% +50%) - inline 
-PASS circle(at +50px) - computed 
-PASS circle(at -50px) - computed 
-PASS circle(at +50%) - computed 
-PASS circle(at -50%) - computed 
-PASS circle(at left +50px) - computed 
-PASS circle(at left +50%) - computed 
-PASS circle(at right -50px) - computed 
-PASS circle(at right -50%) - computed 
-PASS circle(at +50px top) - computed 
-PASS circle(at +50% top) - computed 
-PASS circle(at -50px bottom) - computed 
-PASS circle(at -50% bottom) - computed 
-PASS circle(at +50px +50px) - computed 
-PASS circle(at +50% +50%) - computed 
-PASS circle(at -50px -50px) - computed 
-PASS circle(at +50px -50px) - computed 
-PASS circle(at -50px +50px) - computed 
-PASS circle(at +50% -50%) - computed 
-PASS circle(at -50% +50%) - computed 
+PASS circle(at +50px) - inline
+PASS circle(at -50px) - inline
+PASS circle(at +50%) - inline
+PASS circle(at -50%) - inline
+PASS circle(at left +50px) - inline
+PASS circle(at left +50%) - inline
+PASS circle(at right -50px) - inline
+PASS circle(at right -50%) - inline
+PASS circle(at +50px top) - inline
+PASS circle(at +50% top) - inline
+PASS circle(at -50px bottom) - inline
+PASS circle(at -50% bottom) - inline
+PASS circle(at +50px +50px) - inline
+PASS circle(at +50% +50%) - inline
+PASS circle(at -50px -50px) - inline
+PASS circle(at +50px -50px) - inline
+PASS circle(at -50px +50px) - inline
+PASS circle(at +50% -50%) - inline
+PASS circle(at -50% +50%) - inline
+PASS circle(at +50px) - computed
+PASS circle(at -50px) - computed
+PASS circle(at +50%) - computed
+PASS circle(at -50%) - computed
+PASS circle(at left +50px) - computed
+PASS circle(at left +50%) - computed
+PASS circle(at right -50px) - computed
+PASS circle(at right -50%) - computed
+PASS circle(at +50px top) - computed
+PASS circle(at +50% top) - computed
+PASS circle(at -50px bottom) - computed
+PASS circle(at -50% bottom) - computed
+PASS circle(at +50px +50px) - computed
+PASS circle(at +50% +50%) - computed
+PASS circle(at -50px -50px) - computed
+PASS circle(at +50px -50px) - computed
+PASS circle(at -50px +50px) - computed
+PASS circle(at +50% -50%) - computed
+PASS circle(at -50% +50%) - computed
 

@@ -1,4 +1,4 @@
 
-PASS Testing ordering of opening cache promises resolution 
-PASS Testing ordering of deleting cache promises resolution 
+PASS Testing ordering of opening cache promises resolution
+PASS Testing ordering of deleting cache promises resolution
 

@@ -31,7 +31,7 @@ Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(74-%209.(+%20e
 Parsed: [initial view] from: svgView(preserveAspectRatio(74- 9.(+ e.0e635
 
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(-9,).8e7e4e9ee
-Parsed: [initial view] from: svgView(preserveAspectRatio(-9,).8e7e4e9ee 
+Parsed: [initial view] from: svgView(preserveAspectRatio(-9,).8e7e4e9ee
 
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(49-,,4)30378.052
 Parsed: [initial view] from: svgView(preserveAspectRatio(49-,,4)30378.052
@@ -46,7 +46,7 @@ Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(e72(e,49.7.
 Parsed: [initial view] from: svgView(preserveAspectRatio(e72(	e	,49.7.
 
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(e55,
-Parsed: [initial view] from: svgView(preserveAspectRatio(e55, 
+Parsed: [initial view] from: svgView(preserveAspectRatio(e55,
 
 Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(263,ee1)74-
 Parsed: [initial view] from: svgView(preserveAspectRatio(263,ee1)74-	
@@ -159,4 +159,4 @@ Parsed: [initial view] from: svgView(preserveAspectRatio(71(1(+-3382.3
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

@@ -1,4 +1,4 @@
-test  
+test
 This tests that unobscured content rect is exposed to accessibility.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

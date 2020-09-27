@@ -1,5 +1,5 @@
 XMLHttpRequest: ensure that response getters properly handle error cases (see bug 125840)
 
-PASS error test 
-PASS abort test 
+PASS error test
+PASS abort test
 

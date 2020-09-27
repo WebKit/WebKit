@@ -1,4 +1,4 @@
-   
+
 Focus the text field in the frame
 Main document.hasFocus() should be true : PASS
 Sub-frame document.hasFocus() should be true : PASS

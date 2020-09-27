@@ -4,7 +4,7 @@ Output below is a series of PASS or FAIL lines showing expected and actual selec
 
 NOTE: This test will fail on Mac OS, on which these keys are NOT supposed to change the selection of a focused pop-up.
 
-  
+
 FAIL: selectedIndex should be 3 (is 0) after a PageDown from index 0
 FAIL: selectedIndex should be 4 (is 1) after a PageDown from index 1
 FAIL: selectedIndex should be 5 (is 2) after a PageDown from index 2

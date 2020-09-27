@@ -1,49 +1,49 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "0:test" 
-PASS Executing "1:test" 
-PASS Executing "2:test" 
-PASS Executing "3:test" 
-PASS Executing "4:test" 
-PASS Executing "5:test" 
-PASS Executing "6:test" 
-PASS Executing "7:test" 
-PASS Executing "8:test" 
-PASS Executing "9:test" 
-PASS Executing "10:test" 
-PASS Audit report 
-PASS > [0:test]  
-PASS   amplitude is 1 within an error of 0.00001. 
-PASS < [0:test] All assertions passed. (total 1 assertions) 
-PASS > [1:test]  
-PASS   null: amplitude is 1 within an error of 0.00001. 
-PASS < [1:test] All assertions passed. (total 1 assertions) 
-PASS > [2:test]  
-PASS   {"disableNormalization":false}: amplitude is 1 within an error of 0.00001. 
-PASS < [2:test] All assertions passed. (total 1 assertions) 
-PASS > [3:test]  
-PASS   {"disableNormalization":true}: amplitude is 10 within an error of 0.00001. 
-PASS < [3:test] All assertions passed. (total 1 assertions) 
-PASS > [4:test]  
-PASS   {"disableNormalization":"foo"}: amplitude is 10 within an error of 0.00001. 
-PASS < [4:test] All assertions passed. (total 1 assertions) 
-PASS > [5:test]  
-PASS   {"disableNormalization":null}: amplitude is 1 within an error of 0.00001. 
-PASS < [5:test] All assertions passed. (total 1 assertions) 
-PASS > [6:test]  
-PASS   {"randomKey":true}: amplitude is 1 within an error of 0.00001. 
-PASS < [6:test] All assertions passed. (total 1 assertions) 
-PASS > [7:test]  
-PASS   {"key1":"value1","key2":42}: amplitude is 1 within an error of 0.00001. 
-PASS < [7:test] All assertions passed. (total 1 assertions) 
-PASS > [8:test]  
-PASS   {"key1":"value1","disableNormalization":true}: amplitude is 10 within an error of 0.00001. 
-PASS < [8:test] All assertions passed. (total 1 assertions) 
-PASS > [9:test]  
-PASS   {"key1":"value1","disableNormalization":false}: amplitude is 1 within an error of 0.00001. 
-PASS < [9:test] All assertions passed. (total 1 assertions) 
-PASS > [10:test]  
-PASS   [1,2,3]: amplitude is 1 within an error of 0.00001. 
-PASS < [10:test] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 11 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "0:test"
+PASS Executing "1:test"
+PASS Executing "2:test"
+PASS Executing "3:test"
+PASS Executing "4:test"
+PASS Executing "5:test"
+PASS Executing "6:test"
+PASS Executing "7:test"
+PASS Executing "8:test"
+PASS Executing "9:test"
+PASS Executing "10:test"
+PASS Audit report
+PASS > [0:test]
+PASS   amplitude is 1 within an error of 0.00001.
+PASS < [0:test] All assertions passed. (total 1 assertions)
+PASS > [1:test]
+PASS   null: amplitude is 1 within an error of 0.00001.
+PASS < [1:test] All assertions passed. (total 1 assertions)
+PASS > [2:test]
+PASS   {"disableNormalization":false}: amplitude is 1 within an error of 0.00001.
+PASS < [2:test] All assertions passed. (total 1 assertions)
+PASS > [3:test]
+PASS   {"disableNormalization":true}: amplitude is 10 within an error of 0.00001.
+PASS < [3:test] All assertions passed. (total 1 assertions)
+PASS > [4:test]
+PASS   {"disableNormalization":"foo"}: amplitude is 10 within an error of 0.00001.
+PASS < [4:test] All assertions passed. (total 1 assertions)
+PASS > [5:test]
+PASS   {"disableNormalization":null}: amplitude is 1 within an error of 0.00001.
+PASS < [5:test] All assertions passed. (total 1 assertions)
+PASS > [6:test]
+PASS   {"randomKey":true}: amplitude is 1 within an error of 0.00001.
+PASS < [6:test] All assertions passed. (total 1 assertions)
+PASS > [7:test]
+PASS   {"key1":"value1","key2":42}: amplitude is 1 within an error of 0.00001.
+PASS < [7:test] All assertions passed. (total 1 assertions)
+PASS > [8:test]
+PASS   {"key1":"value1","disableNormalization":true}: amplitude is 10 within an error of 0.00001.
+PASS < [8:test] All assertions passed. (total 1 assertions)
+PASS > [9:test]
+PASS   {"key1":"value1","disableNormalization":false}: amplitude is 1 within an error of 0.00001.
+PASS < [9:test] All assertions passed. (total 1 assertions)
+PASS > [10:test]
+PASS   [1,2,3]: amplitude is 1 within an error of 0.00001.
+PASS < [10:test] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 11 tasks ran successfully.
 

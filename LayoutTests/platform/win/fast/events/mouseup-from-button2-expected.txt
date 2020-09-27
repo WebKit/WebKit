@@ -8,10 +8,10 @@ Right mouse down inside the box.
 Right mouse up.
 box
 
-type: mousedown, button: 0, 
-type: mouseup, button: 0, 
-type: click, button: 0, 
-type: mousedown, button: 2, 
-type: mouseup, button: 2, 
-type: contextmenu, button: 2, 
-type: mousedown, button: 2, 
+type: mousedown, button: 0,
+type: mouseup, button: 0,
+type: click, button: 0,
+type: mousedown, button: 2,
+type: mouseup, button: 2,
+type: contextmenu, button: 2,
+type: mousedown, button: 2,

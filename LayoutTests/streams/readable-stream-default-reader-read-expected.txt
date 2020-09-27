@@ -1,7 +1,7 @@
 
-PASS Reading twice on a stream that gets closed 
-PASS Reading twice on a closed stream 
-PASS Reading twice on an errored stream 
-PASS Reading twice on a stream that gets errored 
-PASS ReadableStream: if start rejects with no parameter, it should error the stream with an undefined error 
+PASS Reading twice on a stream that gets closed
+PASS Reading twice on a closed stream
+PASS Reading twice on an errored stream
+PASS Reading twice on a stream that gets errored
+PASS ReadableStream: if start rejects with no parameter, it should error the stream with an undefined error
 

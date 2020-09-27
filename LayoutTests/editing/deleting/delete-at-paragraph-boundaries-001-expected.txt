@@ -11,7 +11,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 
-Tests: 
+Tests:
 
 Deleting when a selection starts in a blank line created by a block with a BR placeholder in it and extends to the end of a block.
 

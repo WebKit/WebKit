@@ -13,8 +13,8 @@ AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 17.0000, -33.0000 }
 AXSize: { 14.0000, 106.000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: X
 AXFocusable: 0
 AXFocused: 0
@@ -32,8 +32,8 @@ AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 30.0000, -14.0000 }
 AXSize: { 11.0000, 81.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: D
 AXFocusable: 0
 AXFocused: 0
@@ -51,8 +51,8 @@ AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 30.0000, -26.0000 }
 AXSize: { 10.0000, 80.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: C
 AXFocusable: 0
 AXFocused: 0
@@ -70,8 +70,8 @@ AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 8.00000, -14.0000 }
 AXSize: { 10.0000, 81.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: B
 AXFocusable: 0
 AXFocused: 0
@@ -89,8 +89,8 @@ AXParent: AXSection
 AXChildren: 0
 AXPosition:  { 8.00000, -26.0000 }
 AXSize: { 10.0000, 80.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: A
 AXFocusable: 0
 AXFocused: 0

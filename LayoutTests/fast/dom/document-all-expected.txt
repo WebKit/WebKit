@@ -1,47 +1,47 @@
 Tests document.all
 
 
-PASS document.all's index getter returns all the elements in document order 
-PASS document.all's index getter returns undefined for indexes greater than length 
-PASS document.all's index getter returns undefined for indexes less than zero 
-PASS document.all's name attribute accessing works for a 
-PASS document.all's name attribute accessing works for applet 
-PASS document.all's name attribute accessing works for button 
-PASS document.all's name attribute accessing works for embed 
-PASS document.all's name attribute accessing works for form 
-PASS document.all's name attribute accessing works for frame 
-PASS document.all's name attribute accessing works for frameset 
-PASS document.all's name attribute accessing works for iframe 
-PASS document.all's name attribute accessing works for img 
-PASS document.all's name attribute accessing works for input 
-PASS document.all's name attribute accessing works for map 
-PASS document.all's name attribute accessing works for meta 
-PASS document.all's name attribute accessing works for object 
-PASS document.all's name attribute accessing works for select 
-PASS document.all's name attribute accessing works for textarea 
-PASS document.all's name attribute accessing doesn't work for div 
-PASS document.all's name attribute accessing doesn't work for span 
-PASS document.all's id attribute accessing works for a 
-PASS document.all's id attribute accessing works for applet 
-PASS document.all's id attribute accessing works for button 
-PASS document.all's id attribute accessing works for embed 
-PASS document.all's id attribute accessing works for form 
-PASS document.all's id attribute accessing works for frame 
-PASS document.all's id attribute accessing works for frameset 
-PASS document.all's id attribute accessing works for iframe 
-PASS document.all's id attribute accessing works for img 
-PASS document.all's id attribute accessing works for input 
-PASS document.all's id attribute accessing works for map 
-PASS document.all's id attribute accessing works for meta 
-PASS document.all's id attribute accessing works for object 
-PASS document.all's id attribute accessing works for select 
-PASS document.all's id attribute accessing works for textarea 
-PASS document.all's id attribute accessing works for div 
-PASS document.all's id attribute accessing works for span 
-PASS document.all will return a sub-collection if the name/id is found more than once 
-PASS document.all will return a sub-collection if the name/id is found more than once, but still adheres to the rules about what tags can have names 
-PASS document.all will return a sub-collection if the name/id is found more than once, that is live 
-PASS document.all's namedItem function requires passing an argument 
-PASS document.all's item function and legacy caller functionality allow passing no arguments 
-PASS document.all's item function and legacy caller functionality will try to convert their DOMString argument to an index before name lookup 
+PASS document.all's index getter returns all the elements in document order
+PASS document.all's index getter returns undefined for indexes greater than length
+PASS document.all's index getter returns undefined for indexes less than zero
+PASS document.all's name attribute accessing works for a
+PASS document.all's name attribute accessing works for applet
+PASS document.all's name attribute accessing works for button
+PASS document.all's name attribute accessing works for embed
+PASS document.all's name attribute accessing works for form
+PASS document.all's name attribute accessing works for frame
+PASS document.all's name attribute accessing works for frameset
+PASS document.all's name attribute accessing works for iframe
+PASS document.all's name attribute accessing works for img
+PASS document.all's name attribute accessing works for input
+PASS document.all's name attribute accessing works for map
+PASS document.all's name attribute accessing works for meta
+PASS document.all's name attribute accessing works for object
+PASS document.all's name attribute accessing works for select
+PASS document.all's name attribute accessing works for textarea
+PASS document.all's name attribute accessing doesn't work for div
+PASS document.all's name attribute accessing doesn't work for span
+PASS document.all's id attribute accessing works for a
+PASS document.all's id attribute accessing works for applet
+PASS document.all's id attribute accessing works for button
+PASS document.all's id attribute accessing works for embed
+PASS document.all's id attribute accessing works for form
+PASS document.all's id attribute accessing works for frame
+PASS document.all's id attribute accessing works for frameset
+PASS document.all's id attribute accessing works for iframe
+PASS document.all's id attribute accessing works for img
+PASS document.all's id attribute accessing works for input
+PASS document.all's id attribute accessing works for map
+PASS document.all's id attribute accessing works for meta
+PASS document.all's id attribute accessing works for object
+PASS document.all's id attribute accessing works for select
+PASS document.all's id attribute accessing works for textarea
+PASS document.all's id attribute accessing works for div
+PASS document.all's id attribute accessing works for span
+PASS document.all will return a sub-collection if the name/id is found more than once
+PASS document.all will return a sub-collection if the name/id is found more than once, but still adheres to the rules about what tags can have names
+PASS document.all will return a sub-collection if the name/id is found more than once, that is live
+PASS document.all's namedItem function requires passing an argument
+PASS document.all's item function and legacy caller functionality allow passing no arguments
+PASS document.all's item function and legacy caller functionality will try to convert their DOMString argument to an index before name lookup
 

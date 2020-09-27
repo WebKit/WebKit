@@ -1,5 +1,5 @@
 
-PASS retry()'s retryPromise rejects if document is not fully active. 
-PASS retry()'s retryPromise rejects if the document becomes not fully active. 
-PASS complete()'s completePromise rejects if document is not fully active. 
+PASS retry()'s retryPromise rejects if document is not fully active.
+PASS retry()'s retryPromise rejects if the document becomes not fully active.
+PASS complete()'s completePromise rejects if document is not fully active.
 

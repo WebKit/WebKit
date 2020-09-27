@@ -7,5 +7,5 @@ async_test@http://127.0.0.1:8000/w3c/resources/testharness.js:460:26
 http://127.0.0.1:8000/media/media-source/SourceBuffer-abort.html:16:15
 forEach@[native code]
 global code@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort.html:15:14)
-PASS SourceBuffer#abort() (video/mp4): Check the values of appendWindowStart and appendWindowEnd. 
+PASS SourceBuffer#abort() (video/mp4): Check the values of appendWindowStart and appendWindowEnd.
 

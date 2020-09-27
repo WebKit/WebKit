@@ -1,10 +1,10 @@
 
-PASS vectorMinus 
-PASS vectorNegate 
-PASS vectorMinusScalar 
-PASS vectorMinusScalar2 
-PASS matrixMinus 
-PASS matrixMinusScalar 
-PASS matrixMinusScalar2 
-PASS matrixNegate 
+PASS vectorMinus
+PASS vectorNegate
+PASS vectorMinusScalar
+PASS vectorMinusScalar2
+PASS matrixMinus
+PASS matrixMinusScalar
+PASS matrixMinusScalar2
+PASS matrixNegate
 

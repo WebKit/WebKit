@@ -8,7 +8,7 @@ http://127.0.0.1:8000/loading/resources/server-redirect.php - willSendRequest <N
 frame "<!--frame1-->" - didReceiveServerRedirectForProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/server-redirect.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/server-redirect-result.html, http status code 200>
 frame "<!--frame1-->" - didCommitLoadForFrame
-frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/server-redirect.php 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/server-redirect.php
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame

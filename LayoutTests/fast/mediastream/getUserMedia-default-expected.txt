@@ -1,7 +1,7 @@
 
-PASS Checking default video tracks settings 
-PASS Checking only audio capture 
-PASS Checking default video tracks settings except width and height 
-PASS Checking default video tracks settings except height 
-PASS Checking default video tracks settings except frameRate 
+PASS Checking default video tracks settings
+PASS Checking only audio capture
+PASS Checking default video tracks settings except width and height
+PASS Checking default video tracks settings except height
+PASS Checking default video tracks settings except frameRate
 

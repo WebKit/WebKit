@@ -1,18 +1,18 @@
 
-FAIL .wrapper 1 assert_equals: 
+FAIL .wrapper 1 assert_equals:
 <div class="wrapper" data-expected-width="200" data-expected-height="200">
   <div class="positioned border-box" data-expected-width="200" data-expected-height="200">
     <div class="fill-available border-box" data-expected-width="180" data-expected-height="180"></div>
   </div>
 </div>
 height expected 180 but got 140
-PASS .wrapper 2 
-FAIL .wrapper 3 assert_equals: 
+PASS .wrapper 2
+FAIL .wrapper 3 assert_equals:
 <div class="wrapper" data-expected-width="200" data-expected-height="200">
   <div class="positioned" data-expected-width="200" data-expected-height="200">
     <div class="fill-available border-box" data-expected-width="180" data-expected-height="180"></div>
   </div>
 </div>
 height expected 180 but got 140
-PASS .wrapper 4 
+PASS .wrapper 4
 

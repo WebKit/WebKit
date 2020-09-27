@@ -40,4 +40,4 @@ markup:
 "
 
 console:
-| 
+|

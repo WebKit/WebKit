@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/plugins/resources/mock-plugin.pl because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
-Given a `plugin-types` directive, plugins have to declare a type explicitly. No declared type, no load. This test passes if there's a console message above.  
+Given a `plugin-types` directive, plugins have to declare a type explicitly. No declared type, no load. This test passes if there's a console message above.

@@ -1,12 +1,12 @@
 
-PASS ReadableStream cancellation: integration test on an infinite stream derived from a random push source 
-PASS ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source 
-PASS ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel 
-PASS ReadableStream cancellation: should fulfill promise when cancel callback went fine 
-PASS ReadableStream cancellation: returning a value from the underlying source's cancel should not affect the fulfillment value of the promise returned by the stream's cancel 
-PASS ReadableStream cancellation: should reject promise when cancel callback raises an exception 
-PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (1) 
-PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2) 
-PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does 
-PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called 
+PASS ReadableStream cancellation: integration test on an infinite stream derived from a random push source
+PASS ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source
+PASS ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel
+PASS ReadableStream cancellation: should fulfill promise when cancel callback went fine
+PASS ReadableStream cancellation: returning a value from the underlying source's cancel should not affect the fulfillment value of the promise returned by the stream's cancel
+PASS ReadableStream cancellation: should reject promise when cancel callback raises an exception
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (1)
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2)
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does
+PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called
 

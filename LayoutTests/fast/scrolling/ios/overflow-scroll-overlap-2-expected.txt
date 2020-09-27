@@ -1,8 +1,8 @@
 Test that scrollable areas with non-trivial overlap are correctly targeted.
 
-case 1: Scrollable 1 
-case 2: 
-case 3: Scrollable 3 
-case 4: Scrollable 4 
-case 5: Scrollable 5 
+case 1: Scrollable 1
+case 2:
+case 3: Scrollable 3
+case 4: Scrollable 4
+case 5: Scrollable 5
 

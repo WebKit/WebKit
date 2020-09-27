@@ -6,7 +6,7 @@ Checking pause locations when stepping with "stepOut".
 PAUSED (debugger-statement)
 PAUSE AT testFunction:12:5
       8    function c() { return "c"; }
-      9    
+      9
      10    function testFunction() {
  ->  11        |debugger;
      12        let x = 1;
@@ -47,7 +47,7 @@ PAUSE AT testInnerFunction:31:2
      28        }
      29        alpha();
  ->  30    }|
-     31    
+     31
      32    function testAnonymousFunction() {
      33        (function() {
 
@@ -56,7 +56,7 @@ RESUMED
 -- Running test case: Debugger.stepOut.anonymousFunction
 PAUSED (debugger-statement)
 PAUSE AT <anonymous>:35:9
-     31    
+     31
      32    function testAnonymousFunction() {
      33        (function() {
  ->  34            |debugger;
@@ -70,7 +70,7 @@ PAUSE AT testAnonymousFunction:38:5
      36        })();
  ->  37        |let outer = 2;
      38    }
-     39    
+     39
      40    function testCommas() {
 
 RESUMED
@@ -79,7 +79,7 @@ RESUMED
 PAUSED (debugger-statement)
 PAUSE AT testCommas:42:5
      38    }
-     39    
+     39
      40    function testCommas() {
  ->  41        |debugger;
      42        let x = 1,
@@ -92,12 +92,12 @@ RESUMED
 PAUSED (debugger-statement)
 PAUSE AT testChainedExpressions:51:5
      47    }
-     48    
+     48
      49    function testChainedExpressions() {
  ->  50        |debugger;
      51        a() && b() && c();
      52    }
-     53    
+     53
 
 RESUMED
 
@@ -105,7 +105,7 @@ RESUMED
 PAUSED (debugger-statement)
 PAUSE AT testDeclarations:56:5
      52    }
-     53    
+     53
      54    function testDeclarations() {
  ->  55        |debugger;
      56        let x = a(),

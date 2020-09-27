@@ -10,9 +10,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting a paragraph between two paragraphs.
-Expected Results: 
+Expected Results:
 Extra newlines should be removed to maintin spacing between paragraphs. It should like this:
 Test paragraph.
 

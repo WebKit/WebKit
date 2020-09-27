@@ -5,10 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/cursor-advance.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
-[Worker] 
+[Worker]
 [Worker] prepareDatabase():
 [Worker] objectStore = db.createObjectStore(objectStoreName);
 [Worker] Now create the indexes.
@@ -86,95 +86,95 @@ PASS [Worker] expected is "null"
 [Worker] trans = db.transaction(objectStoreName)
 [Worker] objectStore = trans.objectStore(objectStoreName)
 [Worker] request = objectStore.openCursor()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7732\",\"value\":{\"name\":\"Bob\",\"height\":60,\"weight\":120},\"primaryKey\":\"237-23-7732\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7733\",\"value\":{\"name\":\"Ann\",\"height\":52,\"weight\":110},\"primaryKey\":\"237-23-7733\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7734\",\"value\":{\"name\":\"Ron\",\"height\":73,\"weight\":180},\"primaryKey\":\"237-23-7734\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7735\",\"value\":{\"name\":\"Sue\",\"height\":58,\"weight\":130},\"primaryKey\":\"237-23-7735\"}"
 [Worker] cursor.advance(2)
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7737\",\"value\":{\"name\":\"Pat\",\"height\":65,\"weight\":100},\"primaryKey\":\"237-23-7737\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7738\",\"value\":{\"name\":\"Leo\",\"height\":65,\"weight\":180},\"primaryKey\":\"237-23-7738\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7739\",\"value\":{\"name\":\"Jef\",\"height\":65,\"weight\":120},\"primaryKey\":\"237-23-7739\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7740\",\"value\":{\"name\":\"Sam\",\"height\":71,\"weight\":110},\"primaryKey\":\"237-23-7740\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7741\",\"value\":{\"name\":\"Bug\",\"height\":63,\"weight\":100},\"primaryKey\":\"237-23-7741\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7742\",\"value\":{\"name\":\"Tub\",\"height\":69,\"weight\":180},\"primaryKey\":\"237-23-7742\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7743\",\"value\":{\"name\":\"Rug\",\"height\":77,\"weight\":120},\"primaryKey\":\"237-23-7743\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",\"height\":66,\"weight\":110},\"primaryKey\":\"237-23-7744\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 [Worker] testPrefetchOutOfRange()
 [Worker] trans = db.transaction(objectStoreName)
 [Worker] objectStore = trans.objectStore(objectStoreName)
 [Worker] request = objectStore.openCursor()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7732\",\"value\":{\"name\":\"Bob\",\"height\":60,\"weight\":120},\"primaryKey\":\"237-23-7732\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7733\",\"value\":{\"name\":\"Ann\",\"height\":52,\"weight\":110},\"primaryKey\":\"237-23-7733\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7734\",\"value\":{\"name\":\"Ron\",\"height\":73,\"weight\":180},\"primaryKey\":\"237-23-7734\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7735\",\"value\":{\"name\":\"Sue\",\"height\":58,\"weight\":130},\"primaryKey\":\"237-23-7735\"}"
 [Worker] cursor.advance(7)
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7742\",\"value\":{\"name\":\"Tub\",\"height\":69,\"weight\":180},\"primaryKey\":\"237-23-7742\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7743\",\"value\":{\"name\":\"Rug\",\"height\":77,\"weight\":120},\"primaryKey\":\"237-23-7743\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 PASS [Worker] expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",\"height\":66,\"weight\":110},\"primaryKey\":\"237-23-7744\"}"
 [Worker] cursor.continue()
-[Worker] 
+[Worker]
 [Worker] prefetch():
 [Worker] testBadAdvance()
 [Worker] trans = db.transaction(objectStoreName, 'readwrite')
 [Worker] objectStore = trans.objectStore(objectStoreName)
 [Worker] request = objectStore.openCursor()
-[Worker] 
+[Worker]
 [Worker] advanceBadly():
 [Worker] Expecting TypeError exception from cursor.advance(0)
 PASS [Worker] Exception was thrown.
@@ -188,17 +188,17 @@ PASS [Worker] cursor.advance(0x100000000) threw TypeError: Value 4294967296 is o
 [Worker] Expecting TypeError exception from cursor.advance(0x20000000000000)
 PASS [Worker] Exception was thrown.
 PASS [Worker] cursor.advance(0x20000000000000) threw TypeError: Value 9007199254740992 is outside the range [0, 4294967295]
-[Worker] 
+[Worker]
 [Worker] testEdges():
 [Worker] trans = db.transaction(objectStoreName, 'readonly')
 [Worker] objectStore = trans.objectStore(objectStoreName)
 [Worker] request = objectStore.openCursor()
-[Worker] 
+[Worker]
 [Worker] onSuccess():
 [Worker] cursor = event.target.result
 PASS [Worker] cursor is non-null.
 [Worker] cursor.advance(0xffffffff)
-[Worker] 
+[Worker]
 [Worker] onSuccess():
 [Worker] cursor = event.target.result
 PASS [Worker] cursor is null
@@ -206,47 +206,47 @@ PASS [Worker] cursor is null
 [Worker] trans = db.transaction(objectStoreName, 'readwrite')
 [Worker] objectStore = trans.objectStore(objectStoreName)
 [Worker] request = objectStore.openCursor()
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7732\",\"value\":{\"name\":\"Bob\",\"height\":60,\"weight\":120},\"primaryKey\":\"237-23-7732\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7733\",\"value\":{\"name\":\"Ann\",\"height\":52,\"weight\":110},\"primaryKey\":\"237-23-7733\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7734\",\"value\":{\"name\":\"Ron\",\"height\":73,\"weight\":180},\"primaryKey\":\"237-23-7734\"}"
 [Worker] cursor.delete()
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7738\",\"value\":{\"name\":\"Leo\",\"height\":65,\"weight\":180},\"primaryKey\":\"237-23-7738\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7739\",\"value\":{\"name\":\"Jef\",\"height\":65,\"weight\":120},\"primaryKey\":\"237-23-7739\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7740\",\"value\":{\"name\":\"Sam\",\"height\":71,\"weight\":110},\"primaryKey\":\"237-23-7740\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7741\",\"value\":{\"name\":\"Bug\",\"height\":63,\"weight\":100},\"primaryKey\":\"237-23-7741\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7742\",\"value\":{\"name\":\"Tub\",\"height\":69,\"weight\":180},\"primaryKey\":\"237-23-7742\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7743\",\"value\":{\"name\":\"Rug\",\"height\":77,\"weight\":120},\"primaryKey\":\"237-23-7743\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS [Worker] expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",\"height\":66,\"weight\":110},\"primaryKey\":\"237-23-7744\"}"
 [Worker] cursor.advance(1)
-[Worker] 
+[Worker]
 [Worker] deleteSecond():
 PASS successfullyParsed is true
 

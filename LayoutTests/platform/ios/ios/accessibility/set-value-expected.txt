@@ -4,7 +4,7 @@ This makes sure that you can set the ax value through accessibility.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Initial value : AXValue: 
+Initial value : AXValue:
 Final value : AXValue: TEST
 PASS successfullyParsed is true
 

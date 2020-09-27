@@ -12,4 +12,4 @@ PASS: typeof embed.testCallback should be function and is.
 ----------
 [Embed is dynamically created element with only src specified]
 PASS: typeof embed.testCallback should be function and is.
- 
+

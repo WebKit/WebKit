@@ -1,3 +1,3 @@
 
-PASS Make sure event target is the connection 
+PASS Make sure event target is the connection
 

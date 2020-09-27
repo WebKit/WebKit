@@ -4,10 +4,10 @@ payerPhone attribute is null when requestPayerPhone is false.
 payerPhone attribute is '+12345678910' when requestPayerPhone is true.
 payerPhone attribute is '+12345678910' when requestPayerPhone is truthy.
 
-PASS Can construct a payment request (smoke test). 
-PASS payerPhone attribute is null when options is undefined. 
-PASS payerPhone attribute is null when requestPayerPhone is undefined. 
-PASS payerPhone attribute is null when requestPayerPhone is false. 
-PASS payerPhone attribute is '+12345678910' when requestPayerPhone is true. 
-PASS payerPhone attribute is '+12345678910' when requestPayerPhone is truthy. 
+PASS Can construct a payment request (smoke test).
+PASS payerPhone attribute is null when options is undefined.
+PASS payerPhone attribute is null when requestPayerPhone is undefined.
+PASS payerPhone attribute is null when requestPayerPhone is false.
+PASS payerPhone attribute is '+12345678910' when requestPayerPhone is true.
+PASS payerPhone attribute is '+12345678910' when requestPayerPhone is truthy.
 

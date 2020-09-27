@@ -10,10 +10,10 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Option-delete when no typing command is open, then undo.
-Expected Results: 
-It should like this, with the word "two" selected: 
+Expected Results:
+It should like this, with the word "two" selected:
 one two three four
 one two three four
 DeleteWord: <div id="test" class="editing">one &nbsp;three four</div>

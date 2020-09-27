@@ -1682,7 +1682,7 @@ PASS document.querySelectorAll("input:read-only").length is 1
 PASS document.querySelector("input:read-only") is document.getElementById("testcase")
 PASS getComputedStyle(document.getElementById("testcase")).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.getElementById("testcase")).backgroundColor is "rgb(1, 2, 3)"
-Testing 
+Testing
 PASS document.querySelectorAll("input:read-write").length is 1
 PASS document.querySelector("input:read-write") is document.getElementById("testcase")
 PASS document.querySelectorAll("input:read-only").length is 0

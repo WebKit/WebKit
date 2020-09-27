@@ -1,4 +1,4 @@
- 
+
 This tests that the media controls panel has the correct name and role
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

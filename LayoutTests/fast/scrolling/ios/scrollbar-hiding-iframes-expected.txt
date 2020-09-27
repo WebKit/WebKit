@@ -1,12 +1,12 @@
 Both Visible
 
- 
+
 Horizontal visible
 
 
 Vertical visible
 
- 
+
 None visible
 
 
@@ -16,7 +16,7 @@ None visible
     (scrollable area size width=800 height=600)
     (total content size width=800 height=600)
     (last committed scroll position (0,0))
-    (scrollable area parameters 
+    (scrollable area parameters
       (horizontal scroll elasticity 1)
       (vertical scroll elasticity 1)
       (horizontal scrollbar mode 0)
@@ -32,7 +32,7 @@ None visible
         (scrollable area size width=300 height=150)
         (total content size width=1008 height=1016)
         (last committed scroll position (0,0))
-        (scrollable area parameters 
+        (scrollable area parameters
           (horizontal scroll elasticity 1)
           (vertical scroll elasticity 1)
           (horizontal scrollbar mode 0)
@@ -46,7 +46,7 @@ None visible
         (scrollable area size width=300 height=150)
         (total content size width=1008 height=1016)
         (last committed scroll position (0,0))
-        (scrollable area parameters 
+        (scrollable area parameters
           (horizontal scroll elasticity 1)
           (vertical scroll elasticity 1)
           (horizontal scrollbar mode 0)
@@ -61,7 +61,7 @@ None visible
         (scrollable area size width=300 height=150)
         (total content size width=1008 height=1016)
         (last committed scroll position (0,0))
-        (scrollable area parameters 
+        (scrollable area parameters
           (horizontal scroll elasticity 1)
           (vertical scroll elasticity 1)
           (horizontal scrollbar mode 0)
@@ -76,7 +76,7 @@ None visible
         (scrollable area size width=300 height=150)
         (total content size width=1008 height=1016)
         (last committed scroll position (0,0))
-        (scrollable area parameters 
+        (scrollable area parameters
           (horizontal scroll elasticity 1)
           (vertical scroll elasticity 1)
           (horizontal scrollbar mode 0)

@@ -1,2 +1,2 @@
-WebKit bug 80610 - Crash due to owning renderer not removed from custom scrollbar. 
+WebKit bug 80610 - Crash due to owning renderer not removed from custom scrollbar.
 PASS. WebKit didn't crash.

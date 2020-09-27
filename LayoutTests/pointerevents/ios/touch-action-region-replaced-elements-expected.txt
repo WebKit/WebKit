@@ -1,4 +1,4 @@
- 
+
 
 (GraphicsLayer
   (anchor 0.00 0.00)
@@ -12,7 +12,7 @@
       (event region
         (rect (0,0) width=800 height=600)
         (touch-action
-          (none          
+          (none
             (rect (32,21) width=207 height=3)
             (rect (29,24) width=210 height=107)
             (rect (32,305) width=207 height=3)

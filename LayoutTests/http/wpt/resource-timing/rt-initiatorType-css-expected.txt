@@ -1,8 +1,8 @@
 Resource Timing: CSS initiatorType
 
 
-PASS Type: css - background-image 
-PASS Timing: css - background-image 
-PASS Type: css - @import 
-PASS Timing: css - @import 
+PASS Type: css - background-image
+PASS Timing: css - background-image
+PASS Type: css - @import
+PASS Timing: css - @import
 

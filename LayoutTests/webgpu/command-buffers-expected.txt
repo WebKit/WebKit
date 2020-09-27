@@ -1,3 +1,3 @@
 
-PASS Create a default GPUCommandEncoder. 
+PASS Create a default GPUCommandEncoder.
 

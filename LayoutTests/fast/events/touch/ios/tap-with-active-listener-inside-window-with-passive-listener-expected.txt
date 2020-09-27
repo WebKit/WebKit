@@ -31,5 +31,5 @@ Done
 Useless Click in the document, should be passive
 
 Listener document received event touchstart targetting at 300, 300
-Listener document received event touchend targetting 
+Listener document received event touchend targetting
 

@@ -1,8 +1,8 @@
 
-PASS The top browsing context can only show one payment sheet at a time. 
-PASS If an iframe shows a payment request, the top-level browsing context can't also show one. 
-PASS An iframe cannot show a payment request if the top-level window is already showing one. 
-PASS Given multiple nested browsing contexts, and window calls show() first, other nested browsing contexts can't show a request. 
-PASS Given multiple nested browsing contexts, and an iframe calls show() first, other nested browsing contexts can't show a request. 
-PASS Navigating an iframe as a nested browsing context sets 'payment request is showing boolean' to false. 
+PASS The top browsing context can only show one payment sheet at a time.
+PASS If an iframe shows a payment request, the top-level browsing context can't also show one.
+PASS An iframe cannot show a payment request if the top-level window is already showing one.
+PASS Given multiple nested browsing contexts, and window calls show() first, other nested browsing contexts can't show a request.
+PASS Given multiple nested browsing contexts, and an iframe calls show() first, other nested browsing contexts can't show a request.
+PASS Navigating an iframe as a nested browsing context sets 'payment request is showing boolean' to false.
 

@@ -3,7 +3,7 @@ This test checks if checkValidity() correctly fires an invalid event on invalid 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-  
+
 PASS Invalid control
 PASS v[i].checkValidity() is false
 PASS Invalid control

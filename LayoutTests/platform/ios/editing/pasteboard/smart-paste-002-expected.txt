@@ -10,10 +10,10 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 9 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting at the beginning of a line before a word.
-Expected Results: 
-A space should be added after the pasted word before the preexising word. It should like this: 
+Expected Results:
+A space should be added after the pasted word before the preexising word. It should like this:
 test test
 test test
 execCopyCommand: <div id="test" class="editing"> test </div>

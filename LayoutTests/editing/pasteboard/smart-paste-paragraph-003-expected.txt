@@ -11,13 +11,13 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 32 of #text > DIV > #document-fragment to 32 of #text > DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting a paragraph between two paragraphs in an input element.
-Expected Results: 
-A newline should be added between the preexisting paragraphs and the paragraph that's pasted. It should like this: 
-Test paragraph. 
+Expected Results:
+A newline should be added between the preexisting paragraphs and the paragraph that's pasted. It should like this:
+Test paragraph.
 
-Test paragraph. 
+Test paragraph.
 
 Last test paragraph.
 

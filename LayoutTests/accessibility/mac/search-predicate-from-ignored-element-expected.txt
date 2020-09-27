@@ -1,5 +1,5 @@
 First line of text
-button 
+button
 Third line of text
 This tests the ability to search for accessible elements from an ignored element.
 

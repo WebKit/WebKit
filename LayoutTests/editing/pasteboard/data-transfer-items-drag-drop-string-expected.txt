@@ -1,5 +1,5 @@
 This tests the basic functionality and properties of DataTransferItems for string data with drag and drop. This test requires DRT.
-Lorem ipsum 
+Lorem ipsum
 Drop text here if you test this manually
 Dragging text in source1: Lorem ipsum
 Verifying contents of DataTransferItems...

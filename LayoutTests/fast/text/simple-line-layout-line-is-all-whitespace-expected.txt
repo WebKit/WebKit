@@ -6,7 +6,7 @@ bar
 f
 
 
-  
+
 fo
 o
 f bar foo foobar foobar fo

@@ -1,4 +1,4 @@
 
-PASS Test that fetch sent from pagehide event handler is properly received with keepalive 
-PASS Test that fetch sent from pagehide event handler is not received with no keepalive 
+PASS Test that fetch sent from pagehide event handler is properly received with keepalive
+PASS Test that fetch sent from pagehide event handler is not received with no keepalive
 

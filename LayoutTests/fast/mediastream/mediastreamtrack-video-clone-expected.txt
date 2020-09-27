@@ -1,17 +1,17 @@
- 
- 
 
 
-PASS Setup for width test 
-PASS Setup for height test 
-PASS Setup for width+height test 
-PASS Stopping a track should not stop its clone 
-PASS Stopping a cloned track should not stop the original track 
-PASS Collecting a cloned track should not stop the original track 
-PASS Check cloned track settings after applying width constraints 
-PASS Check cloned track settings after applying width constraint to original track 
-PASS Check cloned track settings after applying height constraints 
-PASS Check cloned track settings after applying height constraints to original track 
-PASS Check cloned track settings after applying width+height constraints 
-PASS Check cloned track settings after applying width+height constraints to original track 
+
+
+PASS Setup for width test
+PASS Setup for height test
+PASS Setup for width+height test
+PASS Stopping a track should not stop its clone
+PASS Stopping a cloned track should not stop the original track
+PASS Collecting a cloned track should not stop the original track
+PASS Check cloned track settings after applying width constraints
+PASS Check cloned track settings after applying width constraint to original track
+PASS Check cloned track settings after applying height constraints
+PASS Check cloned track settings after applying height constraints to original track
+PASS Check cloned track settings after applying width+height constraints
+PASS Check cloned track settings after applying width+height constraints to original track
 

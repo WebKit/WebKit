@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Refused to execute a script for an inline event handler because 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
-  
+
 
 --------
 Frame: '<!--frame1-->'

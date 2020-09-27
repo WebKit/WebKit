@@ -9,8 +9,8 @@ This test verifies that text-type input form controls are properly reset by both
 
 You should see six element IDs below, and the word "SUCCESS" twice after each:
 
-textEmpty : SUCCESS : SUCCESS 
-textValue : SUCCESS : SUCCESS 
-passwordEmpty : SUCCESS : SUCCESS 
-passwordValue : SUCCESS : SUCCESS 
+textEmpty : SUCCESS : SUCCESS
+textValue : SUCCESS : SUCCESS
+passwordEmpty : SUCCESS : SUCCESS
+passwordValue : SUCCESS : SUCCESS
 

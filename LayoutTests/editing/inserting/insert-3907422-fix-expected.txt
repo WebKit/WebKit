@@ -6,9 +6,9 @@ Buggy code before fix would insert blockquote after body element in second paste
 "
 |     <style>
 |       "
-.editing { 
-    word-wrap: break-word; 
-    -khtml-nbsp-mode: space; 
+.editing {
+    word-wrap: break-word;
+    -khtml-nbsp-mode: space;
     -khtml-line-break: after-white-space;
 }
 "
@@ -17,9 +17,9 @@ Buggy code before fix would insert blockquote after body element in second paste
 "
 |     <title>
 |       "Editing Test"
-|     " 
+|     "
 "
-|   " 
+|   "
 "
 |   <body>
 |     class="editing"

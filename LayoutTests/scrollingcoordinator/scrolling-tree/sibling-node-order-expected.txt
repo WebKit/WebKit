@@ -4,7 +4,7 @@ Bottom
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
     (horizontal scrollbar mode 0)

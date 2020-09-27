@@ -29,7 +29,7 @@
                   (event region
                     (rect (0,0) width=500 height=500)
                     (touch-action
-                      (none                      
+                      (none
                         (rect (150,150) width=100 height=100)
                       )
                     )
@@ -61,7 +61,7 @@
                   (event region
                     (rect (0,0) width=500 height=500)
                     (touch-action
-                      (none                      
+                      (none
                         (rect (150,150) width=100 height=100)
                       )
                     )
@@ -97,7 +97,7 @@
                   (event region
                     (rect (0,0) width=500 height=500)
                     (touch-action
-                      (none                      
+                      (none
                         (rect (150,150) width=100 height=100)
                       )
                     )

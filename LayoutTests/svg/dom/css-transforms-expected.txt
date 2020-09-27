@@ -1,4 +1,4 @@
- 
+
 This is a test of precedency between CSS and SVG transform
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

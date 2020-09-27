@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/blob-simple-workers.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
 [Worker] Initial upgrade needed: Old version - 0 New version - 1

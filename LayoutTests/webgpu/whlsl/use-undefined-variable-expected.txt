@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: GPUDevice.createComputePipeline(): WHLSL compile error: 6:9: Cannot find the variable declaration.
-PASS 
+PASS
 PASS successfullyParsed is true
 
 TEST COMPLETE

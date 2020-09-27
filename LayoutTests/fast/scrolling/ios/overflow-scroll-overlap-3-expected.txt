@@ -1,11 +1,11 @@
 Test that scrollable areas with text overlap are correctly targeted.
 
-case 1: 
-case 2: Scrollable 2 
-case 3: Scrollable 3 
-case 4: 
-case 5: Scrollable 5 
-case 6: Scrollable 6 
-case 7: 
-case 8: Scrollable 8 
+case 1:
+case 2: Scrollable 2
+case 3: Scrollable 3
+case 4:
+case 5: Scrollable 5
+case 6: Scrollable 6
+case 7:
+case 8: Scrollable 8
 

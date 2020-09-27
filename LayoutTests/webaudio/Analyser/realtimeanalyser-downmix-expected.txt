@@ -1,30 +1,30 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "mono" 
-PASS Executing "stereo" 
-PASS Executing "quad" 
-PASS Executing "5.1" 
-PASS Executing "3-channel" 
-PASS Audit report 
-PASS > [mono]  
-PASS   Analyser downmix mono to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-PASS   Analyser downmix mono to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}. 
-PASS < [mono] All assertions passed. (total 2 assertions) 
-PASS > [stereo]  
-PASS   Analyser downmix stereo to mono time data is identical to the array [2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5...]. 
-PASS   Analyser downmix stereo to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1681e-7}. 
-PASS < [stereo] All assertions passed. (total 2 assertions) 
-PASS > [quad]  
-PASS   Analyser downmix quad to mono time data is identical to the array [7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5...]. 
-PASS   Analyser downmix quad to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":4.9793e-7}. 
-PASS < [quad] All assertions passed. (total 2 assertions) 
-PASS > [5.1]  
-PASS   Analyser downmix 5.1 to mono time data is identical to the array [expected array]. 
-PASS   Analyser downmix 5.1 to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":2.0215e-7}. 
-PASS < [5.1] All assertions passed. (total 2 assertions) 
-PASS > [3-channel]  
-PASS   Analyser downmix 3-channel to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-PASS   Analyser downmix 3-channel to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}. 
-PASS < [3-channel] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "mono"
+PASS Executing "stereo"
+PASS Executing "quad"
+PASS Executing "5.1"
+PASS Executing "3-channel"
+PASS Audit report
+PASS > [mono]
+PASS   Analyser downmix mono to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...].
+PASS   Analyser downmix mono to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}.
+PASS < [mono] All assertions passed. (total 2 assertions)
+PASS > [stereo]
+PASS   Analyser downmix stereo to mono time data is identical to the array [2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5...].
+PASS   Analyser downmix stereo to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1681e-7}.
+PASS < [stereo] All assertions passed. (total 2 assertions)
+PASS > [quad]
+PASS   Analyser downmix quad to mono time data is identical to the array [7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5...].
+PASS   Analyser downmix quad to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":4.9793e-7}.
+PASS < [quad] All assertions passed. (total 2 assertions)
+PASS > [5.1]
+PASS   Analyser downmix 5.1 to mono time data is identical to the array [expected array].
+PASS   Analyser downmix 5.1 to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":2.0215e-7}.
+PASS < [5.1] All assertions passed. (total 2 assertions)
+PASS > [3-channel]
+PASS   Analyser downmix 3-channel to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...].
+PASS   Analyser downmix 3-channel to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}.
+PASS < [3-channel] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

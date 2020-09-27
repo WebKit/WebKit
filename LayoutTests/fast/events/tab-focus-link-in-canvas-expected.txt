@@ -8,4 +8,4 @@ PASS document.activeElement.id is "canvas_link"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Before 
+Before

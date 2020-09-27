@@ -1,8 +1,8 @@
 
 
-PASS Setup test 
-PASS Request with text body 
-PASS Request with arrayBuffer body 
-PASS Request with cloned text body 
-PASS Request with text body then fetched 
+PASS Setup test
+PASS Request with text body
+PASS Request with arrayBuffer body
+PASS Request with cloned text body
+PASS Request with text body then fetched
 

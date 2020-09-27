@@ -3,7 +3,7 @@ Test that animated images in iframes are correctly paused / resumed when the ifr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
- 
+
 PASS !isFirstImagePaused() && isSecondImagePaused() became true
 PASS isFirstImagePaused() is false
 Translating images left so that first image is no longer visible, but second image is.

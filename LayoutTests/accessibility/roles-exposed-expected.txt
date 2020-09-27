@@ -6,379 +6,379 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 a[href]
       AXRole: AXLink
-      
+
 address
       AXRole: AXLandmarkContentInfo
-      
+
 article
       AXRole: AXArticle
-      
+
 aside
       AXRole: AXLandmarkComplementary
-      
+
 blockquote
       AXRole: AXGroup
-      
+
 button
       AXRole: AXButton
-      
+
 dl
       AXRole: AXDescriptionList
-      
+
 dt
       AXRole: AXDescriptionTerm
-      
+
 dd
       AXRole: AXDescriptionValue
-      
+
 div
       AXRole: AXSection
-      
+
 fieldset
       AXRole: AXGroup
-      
+
 legend
       AXRole: AXLabel
-      
+
 form
       AXRole: AXForm
-      
+
 header
       AXRole: AXLandmarkBanner
-      
+
 hgroup
       AXRole: AXGroup
-      
+
 h1
       AXRole: AXHeading
-      
+
 h2
       AXRole: AXHeading
-      
+
 h3
       AXRole: AXHeading
-      
+
 h4
       AXRole: AXHeading
-      
+
 h5
       AXRole: AXHeading
-      
+
 h6
       AXRole: AXHeading
-      
+
 hr
       AXRole: AXSeparator
-      
+
 img[alt='X']
       AXRole: AXImage
-      
+
 input[type='button']
       AXRole: AXButton
-      
+
 input[type='checkbox']
       AXRole: AXCheckBox
-      
+
 input[type='date']
       AXRole: AXTextField
-      
+
 input[type='datetime']
       AXRole: AXTextField
-      
+
 input[type='datetime-local']
       AXRole: AXTextField
-      
+
 input[type='email']
       AXRole: AXTextField
-      
+
 input[type='file']
       AXRole: AXButton
-      
+
 input[type='image']
       AXRole: AXButton
-      
+
 input[type='month']
       AXRole: AXTextField
-      
+
 input[type='number']
       AXRole: AXTextField
-      
+
 input[type='password']
       AXRole: AXPasswordField
-      
+
 input[type='radio']
       AXRole: AXRadioButton
-      
+
 input[type='range']
       AXRole: AXSlider
-      
+
 input[type='reset']
       AXRole: AXButton
-      
+
 input[type='search']
       AXRole: AXTextField
-      
+
 input[type='submit']
       AXRole: AXButton
-      
+
 input[type='tel']
       AXRole: AXTextField
-      
+
 input[type='text']
       AXRole: AXTextField
-      
+
 input[type='time']
       AXRole: AXTextField
-      
+
 input[type='url']
       AXRole: AXTextField
-      
+
 input[type='week']
       AXRole: AXTextField
-      
+
 math
       AXRole: AXMath
-      
+
 nav
       AXRole: AXLandmarkNavigation
-      
+
 ol
       AXRole: AXList
-      
+
 li
       AXRole: AXListItem
-      
+
 p
       AXRole: AXParagraph
-      
+
 pre
       AXRole: AXGroup
-      
+
 progress
       AXRole: AXProgressIndicator
-      
+
 select:not([multiple])
       AXRole: AXComboBox
-      
+
 select[multiple]
       AXRole: AXList
-      
+
 option
       AXRole: AXListItem
-      
+
 optgroup
       AXRole: AXListItem
-      
+
 table
       AXRole: AXTable
-      
+
 th
       AXRole: AXCell
-      
+
 td
       AXRole: AXCell
-      
+
 th
       AXRole: AXCell
-      
+
 textarea
       AXRole: AXTextField
-      
+
 ul
       AXRole: AXList
-      
+
 li
       AXRole: AXListItem
-      
+
 div[role=command]
       AXRole: AXSection
-      
+
 div[role=composite]
       AXRole: AXSection
-      
+
 div[role=input]
       AXRole: AXSection
-      
+
 div[role=landmark]
       AXRole: AXSection
-      
+
 div[role=range]
       AXRole: AXSection
-      
+
 div[role=roletype]
       AXRole: AXSection
-      
+
 div[role=section]
       AXRole: AXSection
-      
+
 div[role=sectionhead]
       AXRole: AXSection
-      
+
 div[role=select]
       AXRole: AXSection
-      
+
 div[role=structure]
       AXRole: AXSection
-      
+
 div[role=widget]
       AXRole: AXSection
-      
+
 div[role=window]
       AXRole: AXSection
-      
+
 div[role=alert]
       AXRole: AXAlert
-      
+
 div[role=alertdialog]
       AXRole: AXAlert
-      
+
 div[role=application]
       AXRole: AXEmbedded
-      
+
 div[role=article]
       AXRole: AXArticle
-      
+
 div[role=banner]
       AXRole: AXLandmarkBanner
-      
+
 div[role=button]
       AXRole: AXButton
-      
+
 div[role=checkbox]
       AXRole: AXCheckBox
-      
+
 div[role=combobox]
       AXRole: AXComboBox
-      
+
 div[role=complementary]
       AXRole: AXLandmarkComplementary
-      
+
 div[role=contentinfo]
       AXRole: AXLandmarkContentInfo
-      
+
 div[role=definition]
       AXRole: AXDefinition
-      
+
 div[role=dialog]
       AXRole: AXDialog
-      
+
 div[role=directory]
       AXRole: AXList
-      
+
 div[role=grid]
       AXRole: AXTable
-      
+
 div[role=gridcell]
       AXRole: AXCell
-      
+
 div[role=group]
       AXRole: AXGroup
-      
+
 div[role=heading]
       AXRole: AXHeading
-      
+
 div[role=img]
       AXRole: AXImage
-      
+
 div[role=link]
       AXRole: AXLink
-      
+
 div[role=list]
       AXRole: AXList
-      
+
 div[role=listitem]
       AXRole: AXListItem
-      
+
 div[role=option]
       AXRole: AXListItem
-      
+
 div[role=log]
       AXRole: AXLog
-      
+
 div[role=main]
       AXRole: AXLandmarkMain
-      
+
 div[role=marquee]
       AXRole: AXMarquee
-      
+
 div[role=math]
       AXRole: AXMath
-      
+
 div[role=menu]
       AXRole: AXMenu
-      
+
 div[role=menuitem]
       AXRole: AXMenuItem
-      
+
 div[role=menuitemcheckbox]
       AXRole: AXCheckMenuItem
-      
+
 div[role=menuitemradio]
       AXRole: AXRadioMenuItem
-      
+
 div[role=menubar]
       AXRole: AXMenuBar
-      
+
 div[role=menuitem]
       AXRole: AXMenuItem
-      
+
 div[role=menuitemcheckbox]
       AXRole: AXCheckMenuItem
-      
+
 div[role=menuitemradio]
       AXRole: AXRadioMenuItem
-      
+
 div[role=navigation]
       AXRole: AXLandmarkNavigation
-      
+
 div[role=note]
       AXRole: AXComment
-      
+
 div[role=progressbar]
       AXRole: AXProgressIndicator
-      
+
 div[role=radiogroup]
       AXRole: AXGroup
-      
+
 div[role=radio]
       AXRole: AXRadioButton
-      
+
 div[role=scrollbar]
       AXRole: AXScrollBar
-      
+
 div[role=search]
       AXRole: AXLandmarkSearch
-      
+
 div[role=separator]
       AXRole: AXSeparator
-      
+
 div[role=slider]
       AXRole: AXSlider
-      
+
 div[role=spinbutton]
       AXRole: AXSpinButton
-      
+
 div[role=tablist]
       AXRole: AXTabGroup
-      
+
 div[role=tab]
       AXRole: AXTab
-      
+
 div[role=textbox]
       AXRole: AXTextField
-      
+
 div[role=timer]
       AXRole: AXTimer
-      
+
 div[role=toolbar]
       AXRole: AXToolbar
-      
+
 div[role=treegrid]
       AXRole: AXTable
-      
+
 div[role=gridcell]
       AXRole: AXCell
-      
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

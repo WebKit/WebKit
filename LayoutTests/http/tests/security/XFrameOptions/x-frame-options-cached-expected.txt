@@ -12,4 +12,4 @@ PASS frame2.src is "http://127.0.0.1:8000/security/XFrameOptions/resources/nph-c
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

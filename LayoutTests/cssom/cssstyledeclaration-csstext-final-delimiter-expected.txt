@@ -1,5 +1,5 @@
 
-PASS inline style - text - delimiters - zero declarations 
-PASS inline style - text - delimiters - one declaration 
-PASS inline style - text - delimiters - two declarations 
+PASS inline style - text - delimiters - zero declarations
+PASS inline style - text - delimiters - one declaration
+PASS inline style - text - delimiters - two declarations
 

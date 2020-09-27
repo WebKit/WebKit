@@ -1,5 +1,5 @@
-   
 
-PASS captureStream with 2d context drawing 
-PASS captureStream cloning 
+
+PASS captureStream with 2d context drawing
+PASS captureStream cloning
 

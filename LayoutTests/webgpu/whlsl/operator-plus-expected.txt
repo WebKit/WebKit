@@ -1,8 +1,8 @@
 
-PASS vectorPlus 
-PASS vectorPlusScalar 
-PASS vectorPlusScalar2 
-PASS matrixPlus 
-PASS matrixTimesScalar 
-PASS matrixTimesScalar2 
+PASS vectorPlus
+PASS vectorPlusScalar
+PASS vectorPlusScalar2
+PASS matrixPlus
+PASS matrixTimesScalar
+PASS matrixTimesScalar2
 

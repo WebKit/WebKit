@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: SUCCESS
-This test should log a console message on success. 
+This test should log a console message on success.

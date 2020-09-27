@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: apple,orange,banana
 CONSOLE MESSAGE: [object Object]
 CONSOLE MESSAGE: [object Object]

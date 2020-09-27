@@ -8,7 +8,7 @@ Frame: 'since_this_name_is_very_long_it_would_not_be_great_to_repeat_it_in_every
 --------
 Frame: 'and_this_name_is_long_too_so_we_would_get_pretty_long_names'
 --------
-   
+
 
 --------
 Frame: '<!--frame1-->'

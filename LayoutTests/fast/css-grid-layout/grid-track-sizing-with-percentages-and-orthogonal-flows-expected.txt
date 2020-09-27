@@ -1,9 +1,9 @@
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
 This test checks that grid tracks are correctly sized when using percentage lengths and orthogonal flows.
 
 HORIZONTAL-TB container with VERTICAL-LR items.

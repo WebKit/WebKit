@@ -1,4 +1,4 @@
- 
+
 This tests that links in a image map are able to be reached through keyboard access and tabbing.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

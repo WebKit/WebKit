@@ -87,7 +87,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: 
+  keyIdentifier:
   keyLocation:   0
   modifier keys: c:0 s:0 a:0 m:0
   keyCode:       97
@@ -123,7 +123,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: 
+  keyIdentifier:
   keyLocation:   0
   modifier keys: c:1 s:0 a:0 m:0
   keyCode:       98
@@ -159,7 +159,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: 
+  keyIdentifier:
   keyLocation:   0
   modifier keys: c:0 s:1 a:0 m:0
   keyCode:       100
@@ -195,7 +195,7 @@ event type:      keypress
   cancelable:    1
   detail:        0
   view:          OK (document: OK)
-  keyIdentifier: 
+  keyIdentifier:
   keyLocation:   0
   modifier keys: c:0 s:0 a:1 m:1
   keyCode:       101

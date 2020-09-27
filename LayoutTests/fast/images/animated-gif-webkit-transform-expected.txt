@@ -15,4 +15,4 @@ PASS isSecondImagePaused() became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

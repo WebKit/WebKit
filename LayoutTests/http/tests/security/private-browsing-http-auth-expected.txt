@@ -1,5 +1,5 @@
 http://127.0.0.1:8000/security/resources/basic-auth.php?username=webkit&password=rocks - didReceiveAuthenticationChallenge - Responding with webkit:rocks
-This test makes sure that auth credentials cached during a private browsing session do not leak out after private browsing is disabled.   
+This test makes sure that auth credentials cached during a private browsing session do not leak out after private browsing is disabled.
 
 --------
 Frame: '<!--frame1-->'

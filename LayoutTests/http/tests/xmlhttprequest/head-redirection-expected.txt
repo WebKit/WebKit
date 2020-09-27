@@ -1,5 +1,5 @@
-This page tests redirection of HEAD requests with different codes (301, 302, 303, 307). 
-As described in http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics (in particular sections 7.4.2, 7.4.3, 7.4.4 and 7.4.7 as of version 22 of the document), a redirected HEAD request is expected to remain a HEAD request. 
+This page tests redirection of HEAD requests with different codes (301, 302, 303, 307).
+As described in http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics (in particular sections 7.4.2, 7.4.3, 7.4.4 and 7.4.7 as of version 22 of the document), a redirected HEAD request is expected to remain a HEAD request.
 
 This test loads a web page that does a XHR HEAD request to a first script. This script does a redirection to a second script that sends a response containing the request method as a HTTP header.
 

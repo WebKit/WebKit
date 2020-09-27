@@ -1,4 +1,4 @@
 
 
-PASS Ensuring onended events are thrown when peer connection is closed 
+PASS Ensuring onended events are thrown when peer connection is closed
 

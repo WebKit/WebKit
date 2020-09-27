@@ -1,4 +1,4 @@
-a b c 
+a b c
 d
 e f
 This tests that objects return whether they are inline or not.

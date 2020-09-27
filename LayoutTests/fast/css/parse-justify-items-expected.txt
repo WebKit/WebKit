@@ -1,14 +1,14 @@
 Test that setting and getting justify-items works as expected
 
 
-PASS Test getting justify-items set through CSS. 
-PASS Test initial value of justify-items through JS 
-PASS Test getting and setting justify-items through JS 
-PASS Test 'legacy' value resolution for the root node 
-PASS Test bad combinations of justify-items 
-PASS Test the value 'initial' 
-PASS Test the value 'initial' for grid containers 
-PASS Test the value 'initial' for flex containers 
-PASS Test the value 'inherit' 
-PASS Test the legacy alignment 
+PASS Test getting justify-items set through CSS.
+PASS Test initial value of justify-items through JS
+PASS Test getting and setting justify-items through JS
+PASS Test 'legacy' value resolution for the root node
+PASS Test bad combinations of justify-items
+PASS Test the value 'initial'
+PASS Test the value 'initial' for grid containers
+PASS Test the value 'initial' for flex containers
+PASS Test the value 'inherit'
+PASS Test the legacy alignment
 

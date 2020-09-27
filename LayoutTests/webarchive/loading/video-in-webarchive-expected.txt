@@ -1,6 +1,6 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-main frame - willPerformClientRedirectToURL: resources/video-in-webarchive.webarchive 
+main frame - willPerformClientRedirectToURL: resources/video-in-webarchive.webarchive
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame
 main frame - didStartProvisionalLoadForFrame

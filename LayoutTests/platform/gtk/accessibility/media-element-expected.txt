@@ -5,7 +5,7 @@ Dump <video> element controller accessibility object tree at 'canplaythrough' ev
 
 State at 'canplaythrough' event:
 
-    title: AXTitle: 
+    title: AXTitle:
     role: AXRole: AXVideo
 
 

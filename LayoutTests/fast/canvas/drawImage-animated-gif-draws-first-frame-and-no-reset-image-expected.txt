@@ -9,4 +9,4 @@ PASS The GIF animation has completed playing and the Canvas has been drawn.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

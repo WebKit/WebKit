@@ -3,7 +3,7 @@ PASS true === true
 PASS true === true
 PASS true === true
 PASS true === true
- PASSED! 
+ PASSED!
 All tests passed!
 PASS successfullyParsed is true
 

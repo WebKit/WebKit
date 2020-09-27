@@ -6,15 +6,15 @@ Regression test for https://bugs.webkit.org/show_bug.cgi?id=41884 : Implement bu
 PASS gl is non-null.
 PASS array is non-null.
 PASS [object WebGLBuffer] is non-null.
-PASS getError was expected value: INVALID_OPERATION : 
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: INVALID_VALUE : 
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: INVALID_VALUE : 
-PASS getError was expected value: INVALID_VALUE : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: INVALID_VALUE :
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: INVALID_VALUE :
+PASS getError was expected value: INVALID_VALUE :
+PASS getError was expected value: NO_ERROR :
 PASS gl.bufferSubData(gl.ARRAY_BUFFER, 10, null) threw exception TypeError: Type error.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,4 +1,4 @@
-        
+
 This tests that SVG shapes are exposed to ax tree as images if there are labels describing them.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,4 +1,4 @@
-AXRole: AXWebArea 
+AXRole: AXWebArea
     AXRole: AXSection AXValue: Test 1
     AXRole: AXHeading AXValue: Test 1
         AXRole: AXLink AXValue: Test 1
@@ -28,13 +28,13 @@ AXRole: AXWebArea
     AXRole: AXParagraph AXValue: Test 10<\n>Test 10<\n>
     AXRole: AXParagraph AXValue: Test 11 Test 11<\n>Test 11<\n>
     AXRole: AXParagraph AXValue: <obj>
-        AXRole: AXButton 
+        AXRole: AXButton
     AXRole: AXParagraph AXValue: Test 13  <obj>
-        AXRole: AXButton 
+        AXRole: AXButton
     AXRole: AXParagraph AXValue: Test 14  <obj>
-        AXRole: AXButton 
+        AXRole: AXButton
     AXRole: AXParagraph AXValue: <obj><\n>Test 15<\n>
-        AXRole: AXButton 
+        AXRole: AXButton
     AXRole: AXSection AXValue: End of test
 This verifies the accessibility tree when there are nested block element children.
 

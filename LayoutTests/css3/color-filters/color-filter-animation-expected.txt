@@ -1,4 +1,4 @@
-       
+
 PASS - "-apple-color-filter" property for "grayscale-box" element at 1s saw something close to: grayscale(0.5)
 PASS - "-apple-color-filter" property for "sepia-box" element at 1s saw something close to: sepia(0.5)
 PASS - "-apple-color-filter" property for "saturate-box" element at 1s saw something close to: saturate(0.5)

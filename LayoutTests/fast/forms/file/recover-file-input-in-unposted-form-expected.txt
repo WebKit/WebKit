@@ -1,4 +1,4 @@
-  
+
 To run this test manually:
 Enter something to the text field and choose files with the files choosers.
 Click here to navigate away from the page.

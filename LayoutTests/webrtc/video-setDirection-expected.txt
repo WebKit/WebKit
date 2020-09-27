@@ -1,5 +1,5 @@
 
 
-PASS Going from sendrecv to inactive and back to sendrecv 
-PASS The MediaStream should remain the same 
+PASS Going from sendrecv to inactive and back to sendrecv
+PASS The MediaStream should remain the same
 

@@ -1,4 +1,4 @@
-        
+
 PASS selectElement.selectedIndex is -1
 PASS selectElement.selectedIndex is -1
 PASS selectElement.selectedIndex is 0

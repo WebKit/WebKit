@@ -331,7 +331,7 @@ Formatted: 64 (4, 4)
   3|     sum += c;
   4|     #return sum;
   5| })()
-  6| 
+  6|
 
 Original: 41 (0, 42)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;r#eturn sum;})()
@@ -340,7 +340,7 @@ Formatted: 70 (4, 5)
   3|     sum += c;
   4|     r#eturn sum;
   5| })()
-  6| 
+  6|
 
 Original: 42 (0, 43)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;re#turn sum;})()
@@ -349,7 +349,7 @@ Formatted: 71 (4, 6)
   3|     sum += c;
   4|     re#turn sum;
   5| })()
-  6| 
+  6|
 
 Original: 43 (0, 44)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;ret#urn sum;})()
@@ -358,7 +358,7 @@ Formatted: 72 (4, 7)
   3|     sum += c;
   4|     ret#urn sum;
   5| })()
-  6| 
+  6|
 
 Original: 44 (0, 45)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retu#rn sum;})()
@@ -367,7 +367,7 @@ Formatted: 73 (4, 8)
   3|     sum += c;
   4|     retu#rn sum;
   5| })()
-  6| 
+  6|
 
 Original: 45 (0, 46)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retur#n sum;})()
@@ -376,7 +376,7 @@ Formatted: 74 (4, 9)
   3|     sum += c;
   4|     retur#n sum;
   5| })()
-  6| 
+  6|
 
 Original: 46 (0, 47)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return# sum;})()
@@ -385,7 +385,7 @@ Formatted: 75 (4, 10)
   3|     sum += c;
   4|     return# sum;
   5| })()
-  6| 
+  6|
 
 Original: 47 (0, 48)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return #sum;})()
@@ -394,7 +394,7 @@ Formatted: 76 (4, 11)
   3|     sum += c;
   4|     return #sum;
   5| })()
-  6| 
+  6|
 
 Original: 48 (0, 49)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return s#um;})()
@@ -403,7 +403,7 @@ Formatted: 77 (4, 12)
   3|     sum += c;
   4|     return s#um;
   5| })()
-  6| 
+  6|
 
 Original: 49 (0, 50)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return su#m;})()
@@ -412,7 +412,7 @@ Formatted: 78 (4, 13)
   3|     sum += c;
   4|     return su#m;
   5| })()
-  6| 
+  6|
 
 Original: 50 (0, 51)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum#;})()
@@ -421,7 +421,7 @@ Formatted: 79 (4, 14)
   3|     sum += c;
   4|     return sum#;
   5| })()
-  6| 
+  6|
 
 Original: 51 (0, 52)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;#})()
@@ -429,7 +429,7 @@ Formatted: 80 (5, 0)
   3|     sum += c;
   4|     return sum;
   5| #})()
-  6| 
+  6|
 
 Original: 52 (0, 53)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;}#)()
@@ -437,7 +437,7 @@ Formatted: 82 (5, 1)
   3|     sum += c;
   4|     return sum;
   5| }#)()
-  6| 
+  6|
 
 Original: 53 (0, 54)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})#()
@@ -445,7 +445,7 @@ Formatted: 83 (5, 2)
   3|     sum += c;
   4|     return sum;
   5| })#()
-  6| 
+  6|
 
 Original: 54 (0, 55)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})(#)
@@ -453,7 +453,7 @@ Formatted: 84 (5, 3)
   3|     sum += c;
   4|     return sum;
   5| })(#)
-  6| 
+  6|
 
 Original: 55 (0, 56)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()#
@@ -461,7 +461,7 @@ Formatted: 85 (5, 4)
   3|     sum += c;
   4|     return sum;
   5| })()#
-  6| 
+  6|
 
 
 ---- Formatted to Original ----
@@ -998,7 +998,7 @@ Formatted: 65 (4, 0)
   3|     sum += c;
   4| #    return sum;
   5| })()
-  6| 
+  6|
 Original: 41 (0, 41)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
 
@@ -1007,7 +1007,7 @@ Formatted: 66 (4, 1)
   3|     sum += c;
   4|  #   return sum;
   5| })()
-  6| 
+  6|
 Original: 41 (0, 41)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
 
@@ -1016,7 +1016,7 @@ Formatted: 67 (4, 2)
   3|     sum += c;
   4|   #  return sum;
   5| })()
-  6| 
+  6|
 Original: 41 (0, 41)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
 
@@ -1025,7 +1025,7 @@ Formatted: 68 (4, 3)
   3|     sum += c;
   4|    # return sum;
   5| })()
-  6| 
+  6|
 Original: 41 (0, 41)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
 
@@ -1034,7 +1034,7 @@ Formatted: 69 (4, 4)
   3|     sum += c;
   4|     #return sum;
   5| })()
-  6| 
+  6|
 Original: 41 (0, 41)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
 
@@ -1043,7 +1043,7 @@ Formatted: 70 (4, 5)
   3|     sum += c;
   4|     r#eturn sum;
   5| })()
-  6| 
+  6|
 Original: 41 (0, 42)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;r#eturn sum;})()
 
@@ -1052,7 +1052,7 @@ Formatted: 71 (4, 6)
   3|     sum += c;
   4|     re#turn sum;
   5| })()
-  6| 
+  6|
 Original: 42 (0, 43)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;re#turn sum;})()
 
@@ -1061,7 +1061,7 @@ Formatted: 72 (4, 7)
   3|     sum += c;
   4|     ret#urn sum;
   5| })()
-  6| 
+  6|
 Original: 43 (0, 44)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;ret#urn sum;})()
 
@@ -1070,7 +1070,7 @@ Formatted: 73 (4, 8)
   3|     sum += c;
   4|     retu#rn sum;
   5| })()
-  6| 
+  6|
 Original: 44 (0, 45)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retu#rn sum;})()
 
@@ -1079,7 +1079,7 @@ Formatted: 74 (4, 9)
   3|     sum += c;
   4|     retur#n sum;
   5| })()
-  6| 
+  6|
 Original: 45 (0, 46)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retur#n sum;})()
 
@@ -1088,7 +1088,7 @@ Formatted: 75 (4, 10)
   3|     sum += c;
   4|     return# sum;
   5| })()
-  6| 
+  6|
 Original: 46 (0, 47)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return# sum;})()
 
@@ -1097,7 +1097,7 @@ Formatted: 76 (4, 11)
   3|     sum += c;
   4|     return #sum;
   5| })()
-  6| 
+  6|
 Original: 47 (0, 48)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return #sum;})()
 
@@ -1106,7 +1106,7 @@ Formatted: 77 (4, 12)
   3|     sum += c;
   4|     return s#um;
   5| })()
-  6| 
+  6|
 Original: 48 (0, 49)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return s#um;})()
 
@@ -1115,7 +1115,7 @@ Formatted: 78 (4, 13)
   3|     sum += c;
   4|     return su#m;
   5| })()
-  6| 
+  6|
 Original: 49 (0, 50)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return su#m;})()
 
@@ -1124,7 +1124,7 @@ Formatted: 79 (4, 14)
   3|     sum += c;
   4|     return sum#;
   5| })()
-  6| 
+  6|
 Original: 50 (0, 51)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum#;})()
 
@@ -1133,7 +1133,7 @@ Formatted: 80 (4, 15)
   3|     sum += c;
   4|     return sum;#
   5| })()
-  6| 
+  6|
 Original: 51 (0, 52)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;#})()
 
@@ -1141,7 +1141,7 @@ Formatted: 81 (5, 0)
   3|     sum += c;
   4|     return sum;
   5| #})()
-  6| 
+  6|
 Original: 52 (0, 52)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;#})()
 
@@ -1149,7 +1149,7 @@ Formatted: 82 (5, 1)
   3|     sum += c;
   4|     return sum;
   5| }#)()
-  6| 
+  6|
 Original: 52 (0, 53)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;}#)()
 
@@ -1157,7 +1157,7 @@ Formatted: 83 (5, 2)
   3|     sum += c;
   4|     return sum;
   5| })#()
-  6| 
+  6|
 Original: 53 (0, 54)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})#()
 
@@ -1165,7 +1165,7 @@ Formatted: 84 (5, 3)
   3|     sum += c;
   4|     return sum;
   5| })(#)
-  6| 
+  6|
 Original: 54 (0, 55)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})(#)
 
@@ -1173,7 +1173,7 @@ Formatted: 85 (5, 4)
   3|     sum += c;
   4|     return sum;
   5| })()#
-  6| 
+  6|
 Original: 55 (0, 56)
   0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()#
 

@@ -1,4 +1,4 @@
 
-PASS test that element.attributeStyleMap exists 
-PASS test that element.attributeStyleMap has a valid width value 
+PASS test that element.attributeStyleMap exists
+PASS test that element.attributeStyleMap has a valid width value
 

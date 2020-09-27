@@ -1,4 +1,4 @@
-blah   
+blah
 
 
 This tests that the center point for a checkbox with a label is not the same as the mid point of the frame (because the frame includes the bounds of the label)

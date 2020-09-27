@@ -1,11 +1,11 @@
 x
- 
+
 1
- 
+
 +
- 
+
 static
- 
+
 text
 This tests that the text inside MathML token elements is exposed.
 

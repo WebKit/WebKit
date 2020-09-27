@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 AXRole: AXComboBox AXValue: option 1
 option 2
 
-    AXRole: AXList AXValue: 
-        AXRole: AXStaticText AXValue: 
-        AXRole: AXStaticText AXValue: 
+    AXRole: AXList AXValue:
+        AXRole: AXStaticText AXValue:
+        AXRole: AXStaticText AXValue:
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,3 @@
 This test makes sure that input elements get rendered with a sane width. You should see five time input elements, followed by five "PASS"es.
-    
+
 Pass Pass Pass Pass Pass

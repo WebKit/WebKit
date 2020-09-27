@@ -1,4 +1,4 @@
-This test makes sure that styling list elements with an SVG font does not cause a crash. 
+This test makes sure that styling list elements with an SVG font does not cause a crash.
 This test is successful if there is no crash.
 element
 element

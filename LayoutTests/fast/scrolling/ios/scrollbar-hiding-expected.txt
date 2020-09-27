@@ -1,20 +1,20 @@
 Both
 
- 
+
 Just horizontal
 
- 
+
 Just vertical
 
 None visible
 
- 
+
 (scrolling tree
   (frame scrolling node
     (scrollable area size width=800 height=600)
     (total content size width=800 height=600)
     (last committed scroll position (0,0))
-    (scrollable area parameters 
+    (scrollable area parameters
       (horizontal scroll elasticity 1)
       (vertical scroll elasticity 1)
       (horizontal scrollbar mode 0)
@@ -29,7 +29,7 @@ None visible
       (scrollable area size width=200 height=100)
       (total content size width=400 height=200)
       (last committed scroll position (0,0))
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
@@ -40,7 +40,7 @@ None visible
       (scrollable area size width=200 height=100)
       (total content size width=400 height=200)
       (last committed scroll position (0,0))
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
@@ -52,7 +52,7 @@ None visible
       (scrollable area size width=200 height=100)
       (total content size width=400 height=200)
       (last committed scroll position (0,0))
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
@@ -64,7 +64,7 @@ None visible
       (scrollable area size width=200 height=100)
       (total content size width=400 height=200)
       (last committed scroll position (0,0))
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)

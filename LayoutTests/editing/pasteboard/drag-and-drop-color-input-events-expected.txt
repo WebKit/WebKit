@@ -3,7 +3,7 @@ This test verifies that the input and change events fire when changing the value
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-  
+
 PASS src.value is "#ff0000"
 PASS dest.value is "#ff0000"
 PASS successfullyParsed is true

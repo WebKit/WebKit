@@ -1,7 +1,7 @@
 
-PASS Basic data channel exchange from offerer to receiver 
-PASS Basic data channel exchange from receiver to offerer 
-PASS Basic data channel exchange from offerer to receiver using UDP only 
-PASS Basic data channel exchange from offerer to receiver 2 
-PASS Create a second channel asynchronously and send messages 
+PASS Basic data channel exchange from offerer to receiver
+PASS Basic data channel exchange from receiver to offerer
+PASS Basic data channel exchange from offerer to receiver using UDP only
+PASS Basic data channel exchange from offerer to receiver 2
+PASS Create a second channel asynchronously and send messages
 

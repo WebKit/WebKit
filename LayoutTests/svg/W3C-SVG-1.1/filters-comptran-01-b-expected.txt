@@ -11,28 +11,28 @@ layer at (0,0) size 480x360
             RenderSVGGradientStop {stop} [offset=0.67] [color=#0000FF]
             RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
           RenderSVGResourceFilter {filter} [id="Identity"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feComponentTransfer 
+            [feComponentTransfer
                 {red: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {green: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {blue: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {alpha: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}]
               [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="Table"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feComponentTransfer 
+            [feComponentTransfer
                 {red: type="TABLE" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {green: type="TABLE" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {blue: type="TABLE" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
               [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="Linear"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feComponentTransfer 
+            [feComponentTransfer
                 {red: type="LINEAR" slope="0.50" intercept="0.25" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {green: type="LINEAR" slope="0.50" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {blue: type="LINEAR" slope="0.50" intercept="0.50" amplitude="1.00" exponent="1.00" offset="0.00"}
                 {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
               [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="Gamma"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feComponentTransfer 
+            [feComponentTransfer
                 {red: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="5.00" offset="0.00"}
                 {green: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="3.00" offset="0.00"}
                 {blue: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="1.00" offset="0.00"}

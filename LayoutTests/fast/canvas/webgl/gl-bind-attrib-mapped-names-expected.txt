@@ -19,7 +19,7 @@ vColor   :0
 PASS location of vAVeryLongNameThatWillTriggerTheNameMappingInAllCasesABCDEFGHIJKLMNOPQ should be 3
 PASS location of vColor should be 0
 PASS drawing is correct
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 PASS successfullyParsed is true
 

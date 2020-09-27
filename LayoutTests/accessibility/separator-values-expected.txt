@@ -14,7 +14,7 @@ test2 tabindex=(null)
 minValue: 0
 intValue: 0
 maxValue: 0
-AXValueDescription: 
+AXValueDescription:
 
 test3 tabindex='0'
 minValue: 0
@@ -26,7 +26,7 @@ test4 tabindex=(null)
 minValue: 0
 intValue: 0
 maxValue: 0
-AXValueDescription: 
+AXValueDescription:
 PASS successfullyParsed is true
 
 TEST COMPLETE

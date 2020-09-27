@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-This test passes if it doesn't alert the contents of innocent-victim.html.  
+This test passes if it doesn't alert the contents of innocent-victim.html.

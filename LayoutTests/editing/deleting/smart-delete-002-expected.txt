@@ -9,10 +9,10 @@ EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > DIV > DIV > BODY 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart delete when deleting the second word of a line.
-Expected Results: 
-The second word and the space before the second word should be deleted. It should like this this: 
+Expected Results:
+The second word and the space before the second word should be deleted. It should like this this:
 foo baz
 foo baz
 execDeleteCommand: <div id="test" class="editing"> foo baz </div>

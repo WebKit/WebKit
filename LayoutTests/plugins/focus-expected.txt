@@ -35,4 +35,4 @@ Test for bug 32292: "Unable to focus on embedded plugins such as Flash via javas
 
 This tests focusing Embeds and Objects. See LayoutTests/java for Applet elements.
 
-   Fallback contents.     Fallback contents. Fallback contents.      
+   Fallback contents.     Fallback contents. Fallback contents.

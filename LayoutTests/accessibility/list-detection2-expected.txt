@@ -6,20 +6,20 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS: ul[role="list"] w/ explicit role and displayed inline -> list. 
-PASS: ul[role="list"] w/ explicit role but no markers -> list. 
-PASS: ul w/ default list markers -> list. 
-PASS: ol w/ default list counters -> list. 
-PASS: ul w/ list-style-image -> list. 
-PASS: ul w/ image content on ::before -> list. 
-PASS: ul w/ image content on inline ::before -> list. 
-PASS: ul w/ bullet content on ::before -> list. 
-PASS: ul w/ bullet content on inline ::before -> list. 
-PASS: ol w/ counter content on ::before -> list. 
-PASS: ol w/ counter content on inline ::before -> list. 
-PASS: ul w/ background image (NOT A LIST) -> . 
-PASS: ul w/ background on ::before (NOT A LIST) -> . 
-PASS: ul w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> . 
-PASS: ol w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> . 
-PASS: ul w/o explicit role and no markers (NOT A LIST) -> . 
+PASS: ul[role="list"] w/ explicit role and displayed inline -> list.
+PASS: ul[role="list"] w/ explicit role but no markers -> list.
+PASS: ul w/ default list markers -> list.
+PASS: ol w/ default list counters -> list.
+PASS: ul w/ list-style-image -> list.
+PASS: ul w/ image content on ::before -> list.
+PASS: ul w/ image content on inline ::before -> list.
+PASS: ul w/ bullet content on ::before -> list.
+PASS: ul w/ bullet content on inline ::before -> list.
+PASS: ol w/ counter content on ::before -> list.
+PASS: ol w/ counter content on inline ::before -> list.
+PASS: ul w/ background image (NOT A LIST) -> .
+PASS: ul w/ background on ::before (NOT A LIST) -> .
+PASS: ul w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> .
+PASS: ol w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> .
+PASS: ul w/o explicit role and no markers (NOT A LIST) -> .
 

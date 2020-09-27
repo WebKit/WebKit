@@ -54,6 +54,6 @@ PASS document.getElementById("empty_srcset").clientWidth is 1600
 PASS currentSrcFileName("empty_srcset") is "image-set-4x.png?3"
 PASS document.getElementById("no_srcset").clientWidth is 1600
 PASS currentSrcFileName("no_srcset") is "image-set-4x.png?3"
-   
+
 some text
-         
+

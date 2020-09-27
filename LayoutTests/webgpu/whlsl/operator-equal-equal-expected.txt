@@ -1,5 +1,5 @@
 
-PASS matrixEqual 
-PASS vectorEquals 
-PASS scalarEquals 
+PASS matrixEqual
+PASS vectorEquals
+PASS scalarEquals
 

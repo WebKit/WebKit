@@ -51,7 +51,7 @@ PASS [Worker] "entryType" in PerformanceEntry.prototype is true
 PASS [Worker] "startTime" in PerformanceEntry.prototype is true
 PASS [Worker] "duration" in PerformanceEntry.prototype is true
 PASS [Worker] new PerformanceEntry() threw exception TypeError: Illegal constructor.
-[Worker] 
+[Worker]
 [Worker] Performance extensions
 PASS [Worker] Performance.prototype.getEntries is defined.
 PASS [Worker] Performance.prototype.getEntriesByType is defined.

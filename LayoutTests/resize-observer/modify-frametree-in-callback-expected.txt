@@ -1,6 +1,6 @@
 Test pass if no crash.
 
 
-PASS ResizeObserver implemented 
-PASS test0: Frametree changed in callback 
+PASS ResizeObserver implemented
+PASS test0: Frametree changed in callback
 

@@ -17,9 +17,9 @@ PASS DONE LOADING
 PASS received response object : [object ArrayBuffer].
 PASS exception correctly thrown when xhr.responseType is set to valid value too late in the loading process : InvalidStateError: The object is in an invalid state..
 response length : 670184.
-bytes at offset 0 : 46 4f 52 4d 0 a 39 e0 
-bytes at offset 356874 : a 91 f 5f 8 2f e fd 
-bytes at offset 670166 : 8 be 3 c 6 91 2 8 
+bytes at offset 0 : 46 4f 52 4d 0 a 39 e0
+bytes at offset 356874 : a 91 f 5f 8 2f e fd
+bytes at offset 670166 : 8 be 3 c 6 91 2 8
 checksum : 84637740
 PASS exception correctly thrown when xhr.responseText is accessed but responseType is 'arraybuffer' : InvalidStateError: The object is in an invalid state..
 PASS exception correctly thrown when xhr.responseXML is accessed but responseType is 'arraybuffer' : InvalidStateError: The object is in an invalid state..

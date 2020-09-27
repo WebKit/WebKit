@@ -1,4 +1,4 @@
 
-PASS Erroring a ReadableStream after checking closed should reject ReadableStreamDefaultReader closed promise 
-PASS Erroring a ReadableStream before checking closed should reject ReadableStreamDefaultReader closed promise 
+PASS Erroring a ReadableStream after checking closed should reject ReadableStreamDefaultReader closed promise
+PASS Erroring a ReadableStream before checking closed should reject ReadableStreamDefaultReader closed promise
 

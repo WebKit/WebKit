@@ -1,11 +1,11 @@
 
-PASS Basic binary data channel exchange from offerer to receiver 
-PASS test array buffer 1 
-PASS test array buffer 2 
-PASS test array buffer 3 
-PASS test array buffer 4 
-PASS test array buffer view 1 
-PASS test array buffer view 2 
-PASS test array buffer view 3 
-PASS test array buffer view 4 
+PASS Basic binary data channel exchange from offerer to receiver
+PASS test array buffer 1
+PASS test array buffer 2
+PASS test array buffer 3
+PASS test array buffer 4
+PASS test array buffer view 1
+PASS test array buffer view 2
+PASS test array buffer view 3
+PASS test array buffer view 4
 

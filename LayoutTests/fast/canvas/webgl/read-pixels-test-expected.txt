@@ -57,7 +57,7 @@ PASS color pixel at 1, 1 should be about 0
 PASS color pixel at 1, 1 should be about 0
 PASS color pixel at 1, 1 should be about 0
 
-checking: completely off top 
+checking: completely off top
 PASS color pixel at 0, 0 should be about 0
 PASS color pixel at 0, 0 should be about 0
 PASS color pixel at 0, 0 should be about 0

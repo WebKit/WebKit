@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "linear" 
-PASS Executing "exponential" 
-PASS Executing "inverse" 
-PASS Audit report 
-PASS > [linear]  
-PASS   Distance model: "linear", rolloff: 1: left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Distance model: "linear", rolloff: 1: right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [linear] All assertions passed. (total 2 assertions) 
-PASS > [exponential]  
-PASS   Distance model: "exponential", rolloff: 1.5: left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Distance model: "exponential", rolloff: 1.5: right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [exponential] All assertions passed. (total 2 assertions) 
-PASS > [inverse]  
-PASS   Distance model: "inverse", rolloff: 1: left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Distance model: "inverse", rolloff: 1: right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [inverse] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "linear"
+PASS Executing "exponential"
+PASS Executing "inverse"
+PASS Audit report
+PASS > [linear]
+PASS   Distance model: "linear", rolloff: 1: left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Distance model: "linear", rolloff: 1: right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [linear] All assertions passed. (total 2 assertions)
+PASS > [exponential]
+PASS   Distance model: "exponential", rolloff: 1.5: left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Distance model: "exponential", rolloff: 1.5: right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [exponential] All assertions passed. (total 2 assertions)
+PASS > [inverse]
+PASS   Distance model: "inverse", rolloff: 1: left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Distance model: "inverse", rolloff: 1: right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [inverse] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

@@ -4,10 +4,10 @@ payerEmail attribute is null when requestPayerEmail is false.
 payerEmail attribute is 'wpt@w3.org' when requestPayerEmail is true.
 payerEmail attribute is 'wpt@w3.org' when requestPayerEmail is truthy.
 
-PASS Can construct a payment request (smoke test). 
-PASS payerEmail attribute is null when options undefined. 
-PASS payerEmail attribute is null when requestPayerEmail is undefined. 
-PASS payerEmail attribute is null when requestPayerEmail is false. 
-PASS payerEmail attribute is 'wpt@w3.org' when requestPayerEmail is true. 
-PASS payerEmail attribute is 'wpt@w3.org' when requestPayerEmail is truthy. 
+PASS Can construct a payment request (smoke test).
+PASS payerEmail attribute is null when options undefined.
+PASS payerEmail attribute is null when requestPayerEmail is undefined.
+PASS payerEmail attribute is null when requestPayerEmail is false.
+PASS payerEmail attribute is 'wpt@w3.org' when requestPayerEmail is true.
+PASS payerEmail attribute is 'wpt@w3.org' when requestPayerEmail is truthy.
 

@@ -1,6 +1,6 @@
 
-PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments 
-PASS ReadableStream.prototype.pipeTo works generically on its this and its arguments 
-PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments 
-PASS CountQueuingStrategy.prototype.size should work generically on its this and its arguments 
+PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments
+PASS ReadableStream.prototype.pipeTo works generically on its this and its arguments
+PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments
+PASS CountQueuingStrategy.prototype.size should work generically on its this and its arguments
 

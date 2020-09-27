@@ -3,16 +3,16 @@
 
 
 
-PASS Document's named property getter should not return elements in shadow DOMs by id 
-PASS Document's named property getter should not return elements in shadow DOMs by id (duplicate id) 
-PASS Document's named property getter should not return elements in shadow DOMs by id (id attribute update) 
-PASS Document's named property getter should not return elements in shadow DOMs by id (duplicate id attribute update) 
-PASS Document's named property getter should not return elements in shadow DOMs by id (image name change) 
-PASS Document's named property getter should not return elements in shadow DOMs by id (image name change with duplicate id) 
-PASS Document's named property getter should not return elements in shadow DOMs by id (object children change) 
-PASS Document's named property getter should not return elements in shadow DOMs by id (object children change with duplicate id) 
-PASS Document's named property getter should not return elements in shadow DOMs by name 
-PASS Document's named property getter should not return elements in shadow DOMs by name (duplicate name) 
-PASS Document's named property getter should not return elements in shadow DOMs by name (name attribute update) 
-PASS Document's named property getter should not return elements in shadow DOMs by name (duplicate name attribute update) 
+PASS Document's named property getter should not return elements in shadow DOMs by id
+PASS Document's named property getter should not return elements in shadow DOMs by id (duplicate id)
+PASS Document's named property getter should not return elements in shadow DOMs by id (id attribute update)
+PASS Document's named property getter should not return elements in shadow DOMs by id (duplicate id attribute update)
+PASS Document's named property getter should not return elements in shadow DOMs by id (image name change)
+PASS Document's named property getter should not return elements in shadow DOMs by id (image name change with duplicate id)
+PASS Document's named property getter should not return elements in shadow DOMs by id (object children change)
+PASS Document's named property getter should not return elements in shadow DOMs by id (object children change with duplicate id)
+PASS Document's named property getter should not return elements in shadow DOMs by name
+PASS Document's named property getter should not return elements in shadow DOMs by name (duplicate name)
+PASS Document's named property getter should not return elements in shadow DOMs by name (name attribute update)
+PASS Document's named property getter should not return elements in shadow DOMs by name (duplicate name attribute update)
 

@@ -12,7 +12,7 @@ PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-cookie.html
 PASS Request-Method: POST
 PASS Length: 4
 PASS Body: Blip
-PASS 
+PASS
 PASS successfullyParsed is true
 
 TEST COMPLETE

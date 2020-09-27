@@ -7,7 +7,7 @@ This tests that aria trees are correctly exposed when there is role='presentatio
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXOutline AXValue: 
+AXRole: AXOutline AXValue:
   AXRole: AXRow level: 0
     AXRole: AXStaticText AXValue: Release Notes
   AXRole: AXRow level: 0

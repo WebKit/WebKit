@@ -5,278 +5,278 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 test1:
 	Expected name: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
 	AXHelp: abc
 	AXTitleUIElement: null
 test2:
 	Expected name: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test3:
 	Expected name: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
 	AXHelp: abc
 	AXTitleUIElement: null
 test4:
 	Expected name: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test5:
 	Expected name: hello
-	AXTitle: 
+	AXTitle:
 	AXDescription: hello
 	AXHelp: abc
 	AXTitleUIElement: null
 test6:
 	Expected name: hello
-	AXTitle: 
+	AXTitle:
 	AXDescription: hello
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test7:
 	Expected name: abc
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test8:
 	Expected name: hi
-	AXTitle: 
+	AXTitle:
 	AXDescription: hi
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test9:
 	Expected name: hi
-	AXTitle: 
+	AXTitle:
 	AXDescription: hi
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test10:
 	Expected name: hi
-	AXTitle: 
+	AXTitle:
 	AXDescription: hi
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test11:
 	Expected name: hola
-	AXTitle: 
+	AXTitle:
 	AXDescription: hola
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test12:
 	Expected name: hola
-	AXTitle: 
+	AXTitle:
 	AXDescription: hola
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test13:
 	Expected name: hola
-	AXTitle: 
+	AXTitle:
 	AXDescription: hola
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test14:
 	Expected name: bob
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 	AXHelp: abc
 	AXTitleUIElement: null
 test15:
 	Expected name: bob
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test16:
 	Expected name: abc
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test17:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
-	AXHelp: 
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test18:
 	Expected name: waz up
-	AXTitle: 
+	AXTitle:
 	AXDescription: waz up
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test19:
 	Expected name: Hallo
-	AXTitle: 
+	AXTitle:
 	AXDescription: Hallo
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test20:
 	Expected name: the end
-	AXTitle: 
+	AXTitle:
 	AXDescription: the end
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test21:
 	Expected name: big end
-	AXTitle: 
+	AXTitle:
 	AXDescription: big end
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test22:
 	Expected name: big end
-	AXTitle: 
+	AXTitle:
 	AXDescription: big end
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test23:
 	Expected name: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test24:
-	Expected 
-	AXTitle: 
-	AXDescription: 
-	AXHelp: 
+	Expected
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test25:
 	Expected name: booth
-	AXTitle: 
+	AXTitle:
 	AXDescription: booth
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test26:
 	Expected name: table
-	AXTitle: 
+	AXTitle:
 	AXDescription: table
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test27:
 	Expected name: counter
-	AXTitle: 
+	AXTitle:
 	AXDescription: counter
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test28:
 	Expected name: counter
-	AXTitle: 
+	AXTitle:
 	AXDescription: counter
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test29:
 	Expected name: counter
-	AXTitle: 
+	AXTitle:
 	AXDescription: counter
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test30:
 	Expected name: boulder
-	AXTitle: 
+	AXTitle:
 	AXDescription: boulder
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test31:
 	Expected name: stone
-	AXTitle: 
+	AXTitle:
 	AXDescription: stone
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test32:
 	Expected name: pebble
-	AXTitle: 
+	AXTitle:
 	AXDescription: pebble
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test33:
 	Expected name: rock
-	AXTitle: 
+	AXTitle:
 	AXDescription: rock
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test34:
 	Expected name: rock
-	AXTitle: 
+	AXTitle:
 	AXDescription: rock
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test35:
 	Expected name: stone
-	AXTitle: 
+	AXTitle:
 	AXDescription: stone
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test36:
 	Expected name: stone
-	AXTitle: 
+	AXTitle:
 	AXDescription: stone
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test37:
 	Expected name: piedra
-	AXTitle: 
+	AXTitle:
 	AXDescription: piedra
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test38:
 	Expected name: piedra
-	AXTitle: 
+	AXTitle:
 	AXDescription: piedra
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test39:
 	Expected name: stone
-	AXTitle: 
+	AXTitle:
 	AXDescription: stone
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test40:
 	Expected name: stone
-	AXTitle: 
+	AXTitle:
 	AXDescription: stone
-	AXHelp: 
+	AXHelp:
 	AXTitleUIElement: null
 test41:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
-	AXHelp: 
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test42:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription:  
-	AXHelp: 
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test43:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
-	AXHelp: 
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test44:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription:  
-	AXHelp: 
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test45:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription: 
-	AXHelp:  
+	AXTitle:
+	AXDescription:
+	AXHelp:
 	AXTitleUIElement: null
 test46:
 	Expected name: (empty)
-	AXTitle: 
-	AXDescription:  
+	AXTitle:
+	AXDescription:
 	AXHelp: 	
 	AXTitleUIElement: null
 PASS successfullyParsed is true

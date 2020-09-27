@@ -9,14 +9,14 @@ frame "frame" - didFinishLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-in-iframe-with-back-navigation-page-2.php 
+frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-in-iframe-with-back-navigation-page-2.php
 frame "frame" - didStartProvisionalLoadForFrame
 frame "frame" - didCancelClientRedirectForFrame
 frame "frame" - didCommitLoadForFrame
 frame "frame" - didFinishDocumentLoadForFrame
 frame "frame" - didHandleOnloadEventsForFrame
 frame "frame" - didFinishLoadForFrame
-frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-in-iframe-with-back-navigation-page-3.php 
+frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-in-iframe-with-back-navigation-page-3.php
 frame "frame" - didStartProvisionalLoadForFrame
 frame "frame" - didCancelClientRedirectForFrame
 frame "frame" - didCommitLoadForFrame

@@ -1,4 +1,4 @@
-Full Name: 
+Full Name:
 This tests that AtkObjects derive their names from associated labels.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

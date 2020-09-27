@@ -1,13 +1,13 @@
 Pick Your Location!
-Get specific content for your area. 
+Get specific content for your area.
 http://web.apple.com
 AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 11.0000, 11.0000 }
 AXSize: { 132.000, 90.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Pick Your Location!<\n>Get specific content for your area. <\n>http://web.apple.com<\n>
 AXFocusable: 1
 AXFocused: 0

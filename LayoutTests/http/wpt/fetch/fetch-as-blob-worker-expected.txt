@@ -1,9 +1,9 @@
 
-PASS MIME type for Blob from empty body 
-PASS MIME type for Blob from empty body with Content-Type 
-PASS MIME type for Blob 
-PASS MIME type for Blob with non-empty type 
-PASS Extract a MIME type with clone 
-PASS MIME type unchanged if headers are modified after Request() constructor 
-PASS Extract a MIME type (1) 
+PASS MIME type for Blob from empty body
+PASS MIME type for Blob from empty body with Content-Type
+PASS MIME type for Blob
+PASS MIME type for Blob with non-empty type
+PASS Extract a MIME type with clone
+PASS MIME type unchanged if headers are modified after Request() constructor
+PASS Extract a MIME type (1)
 

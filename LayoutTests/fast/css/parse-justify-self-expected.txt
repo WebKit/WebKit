@@ -1,16 +1,16 @@
 Test that setting and getting justify-self works as expected
 
 
-PASS Test getting justify-self set through CSS. 
-PASS Test initial value of justify-self through JS 
-PASS Test getting and setting justify-self through JS 
-PASS Test 'auto' value resolution for the root node 
-PASS Test bad combinations of justify-self 
-PASS Test the value 'initial' 
-PASS Test the value 'initial' for grid containers 
-PASS Test the value 'initial' for flex containers 
-PASS Test the value 'initial' for positioned elements 
-PASS Test the value 'initial' for positioned elements in grid containers 
-PASS Test the value 'initial' for positioned elements in grid containers 2 
-PASS Test the value 'inherit' 
+PASS Test getting justify-self set through CSS.
+PASS Test initial value of justify-self through JS
+PASS Test getting and setting justify-self through JS
+PASS Test 'auto' value resolution for the root node
+PASS Test bad combinations of justify-self
+PASS Test the value 'initial'
+PASS Test the value 'initial' for grid containers
+PASS Test the value 'initial' for flex containers
+PASS Test the value 'initial' for positioned elements
+PASS Test the value 'initial' for positioned elements in grid containers
+PASS Test the value 'initial' for positioned elements in grid containers 2
+PASS Test the value 'inherit'
 

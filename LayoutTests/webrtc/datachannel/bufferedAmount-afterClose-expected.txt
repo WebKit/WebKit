@@ -1,6 +1,6 @@
 
-PASS Close does not affect bufferedAmount - for text 
-PASS Close does not affect bufferedAmount - blob 
-PASS Close does not affect bufferedAmount - array buffer 
-PASS Close does not affect bufferedAmount - array buffer view 
+PASS Close does not affect bufferedAmount - for text
+PASS Close does not affect bufferedAmount - blob
+PASS Close does not affect bufferedAmount - array buffer
+PASS Close does not affect bufferedAmount - array buffer view
 

@@ -1,5 +1,5 @@
-This tests that events don't continue to target a step button if the media element is deleted while mouse down on button. 
- 
+This tests that events don't continue to target a step button if the media element is deleted while mouse down on button.
+
 
 
 clicking step forward

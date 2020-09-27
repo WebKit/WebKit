@@ -1,12 +1,12 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "smoothing test" 
-PASS Audit report 
-PASS > [smoothing test]  
-PASS   First 512-point FFT at frame 512 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000059207}. 
-PASS   512-point byte FFT equals [0,0,14,28,43,209,255,255,252,186,37,53,197,242,250,225...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Smoothed 512-point FFT at frame 1536 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000025332}. 
-PASS   512-point byte FFT equals [19,25,36,46,52,222,255,255,255,199,45,77,209,255,255,238...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [smoothing test] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "smoothing test"
+PASS Audit report
+PASS > [smoothing test]
+PASS   First 512-point FFT at frame 512 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000059207}.
+PASS   512-point byte FFT equals [0,0,14,28,43,209,255,255,252,186,37,53,197,242,250,225...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Smoothed 512-point FFT at frame 1536 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000025332}.
+PASS   512-point byte FFT equals [19,25,36,46,52,222,255,255,255,199,45,77,209,255,255,238...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [smoothing test] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

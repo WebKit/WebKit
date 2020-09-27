@@ -4,11 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Button role: AXRole: AXButton
-Button role after being detached: AXRole: 
+Button role after being detached: AXRole:
 PASS buttonRole != detachedRole is true
 Canvas button role: AXRole: AXButton
 PASS canvasButtonRole is buttonRole
-Canvas button role after being detached: AXRole: 
+Canvas button role after being detached: AXRole:
 PASS detachedCanvasButtonRole is detachedRole
 PASS successfullyParsed is true
 

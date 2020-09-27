@@ -1,5 +1,5 @@
 Resource Timing: Other initiatorType
 
 
-PASS script - module and sub-module imported scripts 
+PASS script - module and sub-module imported scripts
 

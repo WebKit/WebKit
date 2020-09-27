@@ -2,6 +2,6 @@ Test for http://bugs.webkit.org/show_bug.cgi?id=23721 Changing dropdown's select
 
 SUCCESS
 
-This select changes on focus: should not fire onchange.  
-This select changes on change: should only fire onchange once.  
-This select is changed by a timeout in the test script. It should not fire onchange.  
+This select changes on focus: should not fire onchange.
+This select changes on change: should only fire onchange once.
+This select is changed by a timeout in the test script. It should not fire onchange.

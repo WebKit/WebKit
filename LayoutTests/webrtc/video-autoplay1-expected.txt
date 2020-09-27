@@ -1,4 +1,4 @@
- 
 
-PASS Granting getUserMedia should not start paused video element 
+
+PASS Granting getUserMedia should not start paused video element
 

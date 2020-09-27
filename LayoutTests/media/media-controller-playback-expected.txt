@@ -1,4 +1,4 @@
-  
+
 RUN(controller = video.controller)
 EVENT(canplaythrough)
 RUN(controller.play())

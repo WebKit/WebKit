@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Can't close the window since it was not opened by JavaScript
 
-PASS Calling window.open with windowName '_self' should not make the window closeable by script 
+PASS Calling window.open with windowName '_self' should not make the window closeable by script
 

@@ -3,11 +3,11 @@ This tests that table and cell have the correct ARIA roles
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS: div[role="grid"] -> grid. 
-PASS: table[role="table"] -> table. 
-PASS: td[role="gridcell"] -> gridcell. 
-PASS: td -> cell. 
-PASS: td[role="cell"] -> cell. 
+PASS: div[role="grid"] -> grid.
+PASS: table[role="table"] -> table.
+PASS: td[role="gridcell"] -> gridcell.
+PASS: td -> cell.
+PASS: td[role="cell"] -> cell.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Button1 : AXLabel: Bold
-Button1 : AXValue: 
+Button1 : AXValue:
 Button2 : AXLabel: Italic
 Button2 : AXValue: 1
 PASS successfullyParsed is true

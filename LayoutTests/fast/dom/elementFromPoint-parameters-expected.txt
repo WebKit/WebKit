@@ -1,6 +1,6 @@
 Tests that the parameters to document.elementFromPoint() are mandatory and of type double.
 
 
-PASS Parameters are mandatory. 
-PASS Parameter should be finite floating point values. 
+PASS Parameters are mandatory.
+PASS Parameter should be finite floating point values.
 

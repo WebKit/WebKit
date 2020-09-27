@@ -2,41 +2,41 @@ a  b
 
 a  b
 End of test
-AXRole: AXWebArea AXValue: 
-    AXRole: AXGroup AXValue: 
-        AXRole: AXStaticText AXValue: a 
-        AXRole: AXGroup AXValue: 
-            AXRole: AXToolbar AXValue: 
-                AXRole: AXGroup AXValue: 
-                    AXRole: AXGroup AXValue: 
-                    AXRole: AXGroup AXValue: 
-                AXRole: AXButton AXValue: 
-                AXRole: AXButton AXValue: 
-                AXRole: AXGroup AXValue: 
-                AXRole: AXGroup AXValue: 
-                AXRole: AXGroup AXValue: 
+AXRole: AXWebArea AXValue:
+    AXRole: AXGroup AXValue:
+        AXRole: AXStaticText AXValue: a
+        AXRole: AXGroup AXValue:
+            AXRole: AXToolbar AXValue:
+                AXRole: AXGroup AXValue:
+                    AXRole: AXGroup AXValue:
+                    AXRole: AXGroup AXValue:
+                AXRole: AXButton AXValue:
+                AXRole: AXButton AXValue:
+                AXRole: AXGroup AXValue:
+                AXRole: AXGroup AXValue:
+                AXRole: AXGroup AXValue:
                 AXRole: AXSlider AXValue: 1
                     AXRole: AXValueIndicator AXValue: 1
                 AXRole: AXCheckBox AXValue: 0
         AXRole: AXStaticText AXValue:  b
-    AXRole: AXGroup AXValue: 
-    AXRole: AXGroup AXValue: 
-        AXRole: AXStaticText AXValue: a 
-        AXRole: AXGroup AXValue: 
-            AXRole: AXToolbar AXValue: 
-                AXRole: AXGroup AXValue: 
-                    AXRole: AXGroup AXValue: 
-                    AXRole: AXGroup AXValue: 
-                AXRole: AXButton AXValue: 
-                AXRole: AXButton AXValue: 
-                AXRole: AXGroup AXValue: 
-                AXRole: AXGroup AXValue: 
-                AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
+    AXRole: AXGroup AXValue:
+        AXRole: AXStaticText AXValue: a
+        AXRole: AXGroup AXValue:
+            AXRole: AXToolbar AXValue:
+                AXRole: AXGroup AXValue:
+                    AXRole: AXGroup AXValue:
+                    AXRole: AXGroup AXValue:
+                AXRole: AXButton AXValue:
+                AXRole: AXButton AXValue:
+                AXRole: AXGroup AXValue:
+                AXRole: AXGroup AXValue:
+                AXRole: AXGroup AXValue:
                 AXRole: AXSlider AXValue: 1
                     AXRole: AXValueIndicator AXValue: 1
                 AXRole: AXCheckBox AXValue: 0
         AXRole: AXStaticText AXValue:  b
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
 This tests ensures that if video or audio tags are used, they will emit an object replacement character in a range for string operation.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

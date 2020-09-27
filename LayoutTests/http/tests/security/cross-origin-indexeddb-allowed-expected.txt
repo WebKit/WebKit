@@ -1,6 +1,6 @@
 Both of these frames should successfully open the database:
 
-  
+
 
 --------
 Frame: '<!--frame1-->'

@@ -1,4 +1,4 @@
 
-PASS ShadowRoot.activeElement must return null the focused element is in another shadow tree when both shadow roots are open. 
-PASS ShadowRoot.activeElement must return null the focused element is in another shadow tree when both shadow roots are closed. 
+PASS ShadowRoot.activeElement must return null the focused element is in another shadow tree when both shadow roots are open.
+PASS ShadowRoot.activeElement must return null the focused element is in another shadow tree when both shadow roots are closed.
 

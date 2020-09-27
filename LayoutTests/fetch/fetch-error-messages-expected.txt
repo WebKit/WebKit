@@ -8,5 +8,5 @@ CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.formDa
 CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.json on instances of Response
 CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.text on instances of Response
 
-PASS Exercising TypeError messages in Fetch Request and Response 
+PASS Exercising TypeError messages in Fetch Request and Response
 

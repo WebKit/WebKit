@@ -1,3 +1,3 @@
 
-PASS PaymentResponse should not leak when there is a reference cycle due to the details attribute 
+PASS PaymentResponse should not leak when there is a reference cycle due to the details attribute
 

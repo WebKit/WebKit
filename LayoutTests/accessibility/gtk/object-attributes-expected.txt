@@ -35,7 +35,7 @@ AXChildren: 0
 AXPosition:  { 8.00000, 8.00000 }
 AXSize: { 784.000, 37.0000 }
 AXTitle: Heading Level 1
-AXDescription: 
+AXDescription:
 AXValue: Heading Level 1
 AXFocusable: 0
 AXFocused: 0
@@ -54,7 +54,7 @@ AXChildren: 0
 AXPosition:  { 8.00000, 66.0000 }
 AXSize: { 784.000, 28.0000 }
 AXTitle: Heading Level 2
-AXDescription: 
+AXDescription:
 AXValue: Heading Level 2
 AXFocusable: 0
 AXFocused: 0
@@ -73,7 +73,7 @@ AXChildren: 0
 AXPosition:  { 8.00000, 113.000 }
 AXSize: { 784.000, 23.0000 }
 AXTitle: Heading Level 3
-AXDescription: 
+AXDescription:
 AXValue: Heading Level 3
 AXFocusable: 0
 AXFocused: 0
@@ -92,7 +92,7 @@ AXChildren: 0
 AXPosition:  { 8.00000, 156.000 }
 AXSize: { 784.000, 19.0000 }
 AXTitle: Heading Level 4
-AXDescription: 
+AXDescription:
 AXValue: Heading Level 4
 AXFocusable: 0
 AXFocused: 0
@@ -111,7 +111,7 @@ AXChildren: 0
 AXPosition:  { 8.00000, 196.000 }
 AXSize: { 784.000, 17.0000 }
 AXTitle: Heading Level 5
-AXDescription: 
+AXDescription:
 AXValue: Heading Level 5
 AXFocusable: 0
 AXFocused: 0
@@ -130,7 +130,7 @@ AXChildren: 0
 AXPosition:  { 8.00000, 237.000 }
 AXSize: { 784.000, 13.0000 }
 AXTitle: Heading Level 6
-AXDescription: 
+AXDescription:
 AXValue: Heading Level 6
 AXFocusable: 0
 AXFocused: 0
@@ -148,8 +148,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition:  { 8.00000, 274.000 }
 AXSize: { 784.000, 19.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Link
 AXFocusable: 0
 AXFocused: 0
@@ -167,8 +167,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 10.0000, 294.000 }
 AXSize: { 23.0000, 21.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: foo
 AXFocusable: 0
 AXFocused: 0
@@ -186,8 +186,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 35.0000, 294.000 }
 AXSize: { 22.0000, 21.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: bar
 AXFocusable: 0
 AXFocused: 0
@@ -205,8 +205,8 @@ AXParent: AXWebArea
 AXChildren: 3
 AXPosition:  { 8.00000, 316.000 }
 AXSize: { 81.0000, 77.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -223,8 +223,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 8.00000, 392.000 }
 AXSize: { 784.000, 19.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: foo
 AXFocusable: 0
 AXFocused: 0
@@ -242,8 +242,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 8.00000, 410.000 }
 AXSize: { 784.000, 19.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: bar
 AXFocusable: 0
 AXFocused: 0
@@ -261,8 +261,8 @@ AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 8.00000, 428.000 }
 AXSize: { 784.000, 19.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: baz
 AXFocusable: 0
 AXFocused: 0
@@ -280,8 +280,8 @@ AXParent: AXWebArea
 AXChildren: 2
 AXPosition:  { 8.00000, 462.000 }
 AXSize: { 784.000, 53.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: This tests the exposure of Atk object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
 AXFocusable: 1
 AXFocused: 0

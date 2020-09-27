@@ -1,6 +1,6 @@
 Test that SELECT is in correct state when handling a DOM modification event for option removing.
 
-  
+
 
 Passed
 Passed

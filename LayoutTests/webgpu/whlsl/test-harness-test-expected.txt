@@ -1,37 +1,37 @@
 
 Harness Error (FAIL), message = 5 duplicate test names: "Return an expected float4 value.", "Return an expected int value.", "Return an expected uint value.", "Return an expected float value.", "Return an expected float4x4 value."
 
-PASS Return a literal of type bool. 
-PASS Return an expected float4 value. 
-PASS Return an expected int value. 
-PASS Return an expected uint value. 
-PASS Return an expected float value. 
-PASS Upload and return a bool value. 
-PASS Return an expected float4 value. 
-PASS Return an expected int value. 
-PASS Return an expected uint value. 
-PASS Return an expected float value. 
-PASS Upload many bool values and return a calculated result. 
-PASS Return an expected float4 value. 
-PASS Return an expected int value. 
-PASS Return an expected uint value. 
-PASS Return an expected float value. 
-PASS Return an expected float4 value. 
-PASS Return an expected int value. 
-PASS Return an expected uint value. 
-PASS Return an expected float value. 
-PASS Return an expected float4 value. 
-PASS Return an expected int value. 
-PASS Return an expected uint value. 
-PASS Return an expected float value. 
-PASS Upload and calculate a result from varied argument types. 
-PASS Store into a float4[]. 
-PASS Upload a int[] and store into a int[]. 
-PASS Upload a float4x4[] and store into a float4x4[]. 
-PASS Return an expected float4x4 value. 
-PASS Return an expected float4x4 value. 
-PASS Return an expected float4x4 value. 
-PASS Return an expected float4x4 value. 
-PASS Code should not compile, and no error is reported. 
-PASS Successfully compiling code in checkFail is an error. 
+PASS Return a literal of type bool.
+PASS Return an expected float4 value.
+PASS Return an expected int value.
+PASS Return an expected uint value.
+PASS Return an expected float value.
+PASS Upload and return a bool value.
+PASS Return an expected float4 value.
+PASS Return an expected int value.
+PASS Return an expected uint value.
+PASS Return an expected float value.
+PASS Upload many bool values and return a calculated result.
+PASS Return an expected float4 value.
+PASS Return an expected int value.
+PASS Return an expected uint value.
+PASS Return an expected float value.
+PASS Return an expected float4 value.
+PASS Return an expected int value.
+PASS Return an expected uint value.
+PASS Return an expected float value.
+PASS Return an expected float4 value.
+PASS Return an expected int value.
+PASS Return an expected uint value.
+PASS Return an expected float value.
+PASS Upload and calculate a result from varied argument types.
+PASS Store into a float4[].
+PASS Upload a int[] and store into a int[].
+PASS Upload a float4x4[] and store into a float4x4[].
+PASS Return an expected float4x4 value.
+PASS Return an expected float4x4 value.
+PASS Return an expected float4x4 value.
+PASS Return an expected float4x4 value.
+PASS Code should not compile, and no error is reported.
+PASS Successfully compiling code in checkFail is an error.
 

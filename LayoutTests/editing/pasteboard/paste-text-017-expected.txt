@@ -11,9 +11,9 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 
-Tests: 
+Tests:
 
-Copying and pasting a whole line followed by a blank line could remove the blank line incorrectly, as in the case described in 
+Copying and pasting a whole line followed by a blank line could remove the blank line incorrectly, as in the case described in
 <rdar://problem/3951178> REGRESSION (Mail): blank line lost after pasting as quotation.
 
 

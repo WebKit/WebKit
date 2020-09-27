@@ -1,14 +1,14 @@
 
-PASS Test invalid MIME format "video" 
-PASS Test invalid MIME format "video/" 
-PASS Test invalid MIME format "video/webm" 
-PASS Test invalid MIME format "video/webm;" 
-PASS Test invalid MIME format "video/webm;codecs" 
-PASS Test invalid MIME format "video/webm;codecs=" 
-PASS Test invalid MIME format "video/webm;codecs="" 
-PASS Test invalid MIME format "video/webm;codecs=""" 
-PASS Test invalid MIME format "video/webm;codecs=","" 
-PASS Test invalid mismatch between major type and codec ID "audio/webm;codecs="vp8"" 
+PASS Test invalid MIME format "video"
+PASS Test invalid MIME format "video/"
+PASS Test invalid MIME format "video/webm"
+PASS Test invalid MIME format "video/webm;"
+PASS Test invalid MIME format "video/webm;codecs"
+PASS Test invalid MIME format "video/webm;codecs="
+PASS Test invalid MIME format "video/webm;codecs=""
+PASS Test invalid MIME format "video/webm;codecs="""
+PASS Test invalid MIME format "video/webm;codecs=",""
+PASS Test invalid mismatch between major type and codec ID "audio/webm;codecs="vp8""
 FAIL Test invalid mismatch between major type and codec ID "audio/mp4;codecs="avc1.4d001e"" assert_equals: supported expected false but got true(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
 assert_equals@http://127.0.0.1:8000/w3c/resources/testharness.js:699:15
 http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:16:36
@@ -16,13 +16,13 @@ step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 test@http://127.0.0.1:8000/w3c/resources/testharness.js:443:22
 test_type_support@http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:14:23
 global code@http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:34:28)
-PASS Test invalid mismatch between minor type and codec ID "audio/mp4;codecs="vorbis"" 
-PASS Test invalid mismatch between minor type and codec ID "audio/webm;codecs="mp4a.40.2"" 
-PASS Test invalid mismatch between minor type and codec ID "video/mp4;codecs="vp8"" 
-PASS Test invalid mismatch between minor type and codec ID "video/webm;codecs="mp4a.40.2"" 
-PASS Test invalid mismatch between minor type and codec ID "video/mp4;codecs="vorbis"" 
-PASS Test invalid mismatch between minor type and codec ID "video/webm;codecs="mp4a.40.2"" 
-PASS Test invalid codec ID "audio/mp4;codecs="mp4a"" 
+PASS Test invalid mismatch between minor type and codec ID "audio/mp4;codecs="vorbis""
+PASS Test invalid mismatch between minor type and codec ID "audio/webm;codecs="mp4a.40.2""
+PASS Test invalid mismatch between minor type and codec ID "video/mp4;codecs="vp8""
+PASS Test invalid mismatch between minor type and codec ID "video/webm;codecs="mp4a.40.2""
+PASS Test invalid mismatch between minor type and codec ID "video/mp4;codecs="vorbis""
+PASS Test invalid mismatch between minor type and codec ID "video/webm;codecs="mp4a.40.2""
+PASS Test invalid codec ID "audio/mp4;codecs="mp4a""
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.40"" assert_equals: supported expected false but got true(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
 assert_equals@http://127.0.0.1:8000/w3c/resources/testharness.js:699:15
 http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:16:36
@@ -37,7 +37,7 @@ step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 test@http://127.0.0.1:8000/w3c/resources/testharness.js:443:22
 test_type_support@http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:14:23
 global code@http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:48:28)
-PASS Test invalid codec ID "audio/mp4;codecs="mp4a.67.3"" 
+PASS Test invalid codec ID "audio/mp4;codecs="mp4a.67.3""
 FAIL Test valid WebM type "video/webm;codecs="vp8"" assert_equals: supported expected true but got false(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
 assert_equals@http://127.0.0.1:8000/w3c/resources/testharness.js:699:15
 http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:16:36
@@ -87,15 +87,15 @@ step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 test@http://127.0.0.1:8000/w3c/resources/testharness.js:443:22
 test_type_support@http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:14:23
 global code@http://127.0.0.1:8000/media/media-source/mediasource-is-type-supported.html:55:28)
-PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e"" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.42001e"" 
-PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.2"" 
-PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.5"" 
-PASS Test valid MP4 type "audio/mp4;codecs="mp4a.67"" 
-PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2"" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.2"" 
-PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2 , avc1.4d001e "" 
-PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.5"" 
-PASS Test valid MP4 type "VIdeo/Mp4;CDdeCS="mp4A.40.2"" 
-PASS Test valid MP4 type "VIDEO/MP4;CDDECS="MP4A.40.2"" 
+PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.42001e""
+PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.2""
+PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.5""
+PASS Test valid MP4 type "audio/mp4;codecs="mp4a.67""
+PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.2""
+PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2 , avc1.4d001e ""
+PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.5""
+PASS Test valid MP4 type "VIdeo/Mp4;CDdeCS="mp4A.40.2""
+PASS Test valid MP4 type "VIDEO/MP4;CDDECS="MP4A.40.2""
 

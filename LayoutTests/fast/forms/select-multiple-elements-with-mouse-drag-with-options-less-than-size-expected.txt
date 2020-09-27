@@ -2,7 +2,7 @@ Select multiple options with mouse drag with no. of options less than the size a
 
 Also test mouse drag on select element without multiple attribute select only the option under mouse
 
-  
+
 Test for select element with multiple attribute
 Dragging down
 PASS document.getElementById("selectId").options[0].selected is true

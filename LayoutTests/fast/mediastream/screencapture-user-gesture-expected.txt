@@ -1,5 +1,5 @@
 
-PASS Allow getDisplayMedia call in case of user gesture 
-PASS Disallow getDisplayMedia calls in case of user gesture if not the first call 
-PASS Deny getDisplayMedia call if no user gesture 
+PASS Allow getDisplayMedia call in case of user gesture
+PASS Disallow getDisplayMedia calls in case of user gesture if not the first call
+PASS Deny getDisplayMedia call if no user gesture
 

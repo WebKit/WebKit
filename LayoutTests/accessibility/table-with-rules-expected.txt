@@ -9,12 +9,12 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
-AXHelp: 
+AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {58, 20}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXTable>
@@ -26,7 +26,7 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
-AXLanguage: 
+AXLanguage:
 AXDOMIdentifier: testTable2
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
@@ -51,12 +51,12 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
-AXHelp: 
+AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {63, 24}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXTable>
@@ -68,7 +68,7 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
-AXLanguage: 
+AXLanguage:
 AXDOMIdentifier: testTable3
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
@@ -93,12 +93,12 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
-AXHelp: 
+AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {57, 20}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXTable>
@@ -110,7 +110,7 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
-AXLanguage: 
+AXLanguage:
 AXDOMIdentifier: testTable4
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXTable>
@@ -135,12 +135,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {29, 20}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -152,8 +152,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
@@ -166,12 +166,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {30, 20}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -183,8 +183,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)

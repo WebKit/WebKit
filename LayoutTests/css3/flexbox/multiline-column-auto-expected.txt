@@ -1,8 +1,8 @@
 
-PASS .flexbox 1 
-PASS .flexbox 2 
-PASS .flexbox 3 
-PASS .flexbox 4 
+PASS .flexbox 1
+PASS .flexbox 2
+PASS .flexbox 3
+PASS .flexbox 4
 Test to make sure that multiline columns break at the right places when auto sized.
 
 

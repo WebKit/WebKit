@@ -1,6 +1,6 @@
 Test that setting and getting display: flex and inline-flex works as expected
 
 
-PASS Test getting |display| set through CSS 
-PASS Test getting and setting display through JS 
+PASS Test getting |display| set through CSS
+PASS Test getting and setting display through JS
 

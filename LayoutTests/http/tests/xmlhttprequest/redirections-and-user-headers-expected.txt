@@ -1,10 +1,10 @@
 
-PASS Check headers after same-origin redirection to same-origin resource (simple request) 
-PASS Check headers after same-origin redirection to same-origin resource (not simple request) 
-PASS Check headers after same origin redirection to cross-origin resource (simple request) 
-PASS Check headers after same origin redirection to cross-origin resource (not simple request) 
-PASS Check headers after cross-origin redirection to same-origin resource (simple request) 
-PASS Check headers after cross-origin redirection to same-origin resource (not simple request) 
-PASS Check headers after cross-origin redirection to cross-origin resource (simple request) 
-PASS Check headers after cross-origin redirection to cross-origin resource (not simple request) 
+PASS Check headers after same-origin redirection to same-origin resource (simple request)
+PASS Check headers after same-origin redirection to same-origin resource (not simple request)
+PASS Check headers after same origin redirection to cross-origin resource (simple request)
+PASS Check headers after same origin redirection to cross-origin resource (not simple request)
+PASS Check headers after cross-origin redirection to same-origin resource (simple request)
+PASS Check headers after cross-origin redirection to same-origin resource (not simple request)
+PASS Check headers after cross-origin redirection to cross-origin resource (simple request)
+PASS Check headers after cross-origin redirection to cross-origin resource (not simple request)
 

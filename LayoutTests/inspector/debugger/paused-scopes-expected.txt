@@ -204,7 +204,7 @@ CALLFRAME: entry
 
 
 -- Running test case: PausedCallFrameScope.TriggerThirdPause
-CALLFRAME: 
+CALLFRAME:
 
 ---- Scope Chain ----
   SCOPE: Name () - Type (Closure) - Hash (:<sourceID>:36:14)

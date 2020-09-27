@@ -1,4 +1,4 @@
- 
+
 This tests image map behavior when there are multiple maps with the same name.
 1: PASS: Hit the first map in the document.
 2: PASS: Hit the second map after the first was renamed.

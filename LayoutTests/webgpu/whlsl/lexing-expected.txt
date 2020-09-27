@@ -1,6 +1,6 @@
 
-PASS lexingKeywordLikeIdentifiers 
-PASS keywordsAsIdentifiers 
-PASS comments 
-PASS operatorNames 
+PASS lexingKeywordLikeIdentifiers
+PASS keywordsAsIdentifiers
+PASS comments
+PASS operatorNames
 

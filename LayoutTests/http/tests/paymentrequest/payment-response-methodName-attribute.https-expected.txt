@@ -1,5 +1,5 @@
 Expect the payment method identifier to be 'https://apple.com/apple-pay'.
 
-PASS Can construct a payment request (smoke test). 
-PASS Expect the payment method identifier to be 'https://apple.com/apple-pay'. 
+PASS Can construct a payment request (smoke test).
+PASS Expect the payment method identifier to be 'https://apple.com/apple-pay'.
 

@@ -1,4 +1,4 @@
 
-PASS Unit-less non-zero animation-duration should be invalid 
-PASS Unit-less non-zero transition-duration should be invalid 
+PASS Unit-less non-zero animation-duration should be invalid
+PASS Unit-less non-zero transition-duration should be invalid
 

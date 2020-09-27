@@ -1,3 +1,3 @@
 
-PASS Testing that "pointerover" and "pointerenter" precede "pointerdown" and that "pointerout" and "pointerleave" follow "pointerup". 
+PASS Testing that "pointerover" and "pointerenter" precede "pointerdown" and that "pointerout" and "pointerleave" follow "pointerup".
 

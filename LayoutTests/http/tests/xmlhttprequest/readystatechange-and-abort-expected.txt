@@ -1,8 +1,8 @@
 
-PASS Test onreadystatechange invocation when abort()-ed in UNSENT state. 
-PASS Test onreadystatechange invocation when abort()-ed in OPENED state. 
-PASS Test onreadystatechange invocation when abort()-ed right after calling send(). 
-PASS Test onreadystatechange invocation when abort()-ed in HEADERS_RECEIVED state. 
-PASS Test onreadystatechange invocation when abort()-ed in LOADING state. 
-PASS Test onreadystatechange invocation when abort()-ed in DONE state. 
+PASS Test onreadystatechange invocation when abort()-ed in UNSENT state.
+PASS Test onreadystatechange invocation when abort()-ed in OPENED state.
+PASS Test onreadystatechange invocation when abort()-ed right after calling send().
+PASS Test onreadystatechange invocation when abort()-ed in HEADERS_RECEIVED state.
+PASS Test onreadystatechange invocation when abort()-ed in LOADING state.
+PASS Test onreadystatechange invocation when abort()-ed in DONE state.
 

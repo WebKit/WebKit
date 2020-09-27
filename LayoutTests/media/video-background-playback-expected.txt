@@ -1,4 +1,4 @@
-  
+
 Test switching application state when <video> is not allowed to play in background.
 
 RUN(internals.setMediaSessionRestrictions('videoaudio', 'BackgroundProcessPlaybackRestricted'))

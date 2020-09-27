@@ -3,8 +3,8 @@ This verifies the expected roles and values are exposed for foreign content in M
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXMath 
-    AXRole: AXGroup 
+AXRole: AXMath
+    AXRole: AXGroup
         AXRole: AXSection AXValue: SVG
     AXRole: AXStatic AXValue: HTML
 PASS successfullyParsed is true

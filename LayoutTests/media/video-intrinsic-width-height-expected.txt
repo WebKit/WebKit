@@ -1,7 +1,7 @@
 
-PASS no width/height attributes 
-PASS only width attribute 
-PASS only height attribute 
-PASS both width/height attributes 
-PASS both width/height attributes and style 
-       
+PASS no width/height attributes
+PASS only width attribute
+PASS only height attribute
+PASS both width/height attributes
+PASS both width/height attributes and style
+

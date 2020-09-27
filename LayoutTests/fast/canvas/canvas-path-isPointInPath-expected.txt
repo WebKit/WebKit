@@ -27,4 +27,4 @@ PASS ctx.isPointInPath(new Date(), 50, 50, 'evenodd') threw exception TypeError:
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

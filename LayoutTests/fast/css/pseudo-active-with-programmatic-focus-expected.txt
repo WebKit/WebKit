@@ -1,5 +1,5 @@
 
-    
+
 Verify that :active remain consistent when the focus is changing.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

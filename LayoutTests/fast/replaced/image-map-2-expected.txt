@@ -1,4 +1,4 @@
- 
+
 This box should turn green when hovered, except when the pointer is over the top left quarter.
 
 Green

@@ -1,10 +1,10 @@
 
-PASS Window's named property getter should not return elements in shadow DOMs by id 
-PASS Window's named property getter should not return elements in shadow DOMs by id (duplicate id) 
-PASS Window's named property getter should not return elements in shadow DOMs by id (id attribute update) 
-PASS Window's named property getter should not return elements in shadow DOMs by id (duplicate id attribute update) 
-PASS Window's named property getter should not return elements in shadow DOMs by name 
-PASS Window's named property getter should not return elements in shadow DOMs by name (duplicate name) 
-PASS Window's named property getter should not return elements in shadow DOMs by name (name attribute update) 
-PASS Window's named property getter should not return elements in shadow DOMs by name (duplicate name attribute update) 
+PASS Window's named property getter should not return elements in shadow DOMs by id
+PASS Window's named property getter should not return elements in shadow DOMs by id (duplicate id)
+PASS Window's named property getter should not return elements in shadow DOMs by id (id attribute update)
+PASS Window's named property getter should not return elements in shadow DOMs by id (duplicate id attribute update)
+PASS Window's named property getter should not return elements in shadow DOMs by name
+PASS Window's named property getter should not return elements in shadow DOMs by name (duplicate name)
+PASS Window's named property getter should not return elements in shadow DOMs by name (name attribute update)
+PASS Window's named property getter should not return elements in shadow DOMs by name (duplicate name attribute update)
 

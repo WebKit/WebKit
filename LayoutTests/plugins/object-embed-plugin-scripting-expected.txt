@@ -20,4 +20,4 @@ plugin <object> with nested plugin <embed> of the same name should have a plugin
 
 empty <object> with nested plugin <embed> of the same name should have a plugin and does
 
-            
+

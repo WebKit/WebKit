@@ -5,7 +5,7 @@ Dump <video> element controller accessibility object tree at 'canplaythrough' ev
 
 State at 'canplaythrough' event:
 
-    description: AXDescription: 
+    description: AXDescription:
     role: AXRole: AXGroup
     subrole: AXSubrole: AXVideo
 
@@ -14,15 +14,15 @@ State at 'canplaythrough' event:
         role: AXRole: AXToolbar
 
 
-            description: AXDescription: 
+            description: AXDescription:
             role: AXRole: AXGroup
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXGroup
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXGroup
 
 
@@ -39,11 +39,11 @@ State at 'canplaythrough' event:
             subrole: AXSubrole: AXApplicationTimer
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXGroup
 
 
-                    description: AXDescription: 
+                    description: AXDescription:
                     role: AXRole: AXStaticText
 
 
@@ -51,7 +51,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXSlider
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXValueIndicator
 
 
@@ -60,19 +60,19 @@ State at 'canplaythrough' event:
             subrole: AXSubrole: AXApplicationTimer
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXGroup
 
 
-                    description: AXDescription: 
+                    description: AXDescription:
                     role: AXRole: AXStaticText
 
 
-            description: AXDescription: 
+            description: AXDescription:
             role: AXRole: AXGroup
 
 
-            description: AXDescription: 
+            description: AXDescription:
             role: AXRole: AXGroup
 
 
@@ -80,7 +80,7 @@ State at 'canplaythrough' event:
             role: AXRole: AXSlider
 
 
-                description: AXDescription: 
+                description: AXDescription:
                 role: AXRole: AXValueIndicator
 
 

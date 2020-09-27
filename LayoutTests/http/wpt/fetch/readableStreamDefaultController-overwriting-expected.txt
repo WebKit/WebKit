@@ -1,5 +1,5 @@
 
-PASS Overwrite ReadableStreamDefaultController enqueue 
-PASS Overwrite ReadableStreamDefaultController error 
-PASS Overwrite ReadableStreamDefaultController close 
+PASS Overwrite ReadableStreamDefaultController enqueue
+PASS Overwrite ReadableStreamDefaultController error
+PASS Overwrite ReadableStreamDefaultController close
 

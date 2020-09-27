@@ -39,9 +39,9 @@ PASS internals.isPreloaded('resources/preload-test.jpg?8'); is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
-   
- 
- 
 
- 
-      
+
+
+
+
+

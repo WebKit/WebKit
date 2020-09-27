@@ -1,9 +1,9 @@
 
-PASS intBitAnd 
-PASS intBitOr 
-PASS intBitXor 
-PASS intBitNot 
-PASS intLShift 
-PASS intRShift 
-PASS intSimpleMath 
+PASS intBitAnd
+PASS intBitOr
+PASS intBitXor
+PASS intBitNot
+PASS intLShift
+PASS intRShift
+PASS intSimpleMath
 

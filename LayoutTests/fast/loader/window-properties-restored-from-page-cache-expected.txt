@@ -1,20 +1,20 @@
 This test makes sure that various properties on the window object are correctly reconnected after restoring a page from the page cache.
-[object ApplicationCache] 
-[object console] 
-[object Crypto] 
-[object History] 
-[object Storage] 
-true 
-[object BarProp] 
-[object StyleMedia] 
-[object BarProp] 
-[object Navigator] 
-[object BarProp] 
-[object Screen] 
-[object BarProp] 
-true 
-[object Storage] 
-[object BarProp] 
-[object BarProp] 
+[object ApplicationCache]
+[object console]
+[object Crypto]
+[object History]
+[object Storage]
+true
+[object BarProp]
+[object StyleMedia]
+[object BarProp]
+[object Navigator]
+[object BarProp]
+[object Screen]
+[object BarProp]
+true
+[object Storage]
+[object BarProp]
+[object BarProp]
 
 All tests passed.

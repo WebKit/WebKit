@@ -1,4 +1,4 @@
-     
+
 Test play() of multiple video elements when some are of a type that allows concurrent playback and others are not.
 
 RUN(internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted'))

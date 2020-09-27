@@ -21,13 +21,13 @@ PASS dtmfsender.insertDTMF("1", "20"); threw exception SyntaxError (DOM Exceptio
 PASS dtmfsender.insertDTMF("1", "7000"); threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS dtmfsender.insertDTMF("1", "70", "10"); threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS ontonechange was called 1
-PASS ontonechange was called 
+PASS ontonechange was called
 PASS ontonechange was called 4
-PASS ontonechange was called 
+PASS ontonechange was called
 PASS ontonechange was called 1
 PASS ontonechange was called 2
 PASS ontonechange was called 3
-PASS ontonechange was called 
+PASS ontonechange was called
 PASS event.tone is ""
 PASS successfullyParsed is true
 

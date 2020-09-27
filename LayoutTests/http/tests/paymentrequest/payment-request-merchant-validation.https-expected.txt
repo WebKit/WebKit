@@ -1,11 +1,11 @@
 
-PASS Calling complete() twice throws an InvalidStateError. 
-PASS Calling complete() after abort() throws an InvalidStateError. 
-PASS Calling complete() with a promise that is rejected aborts the request. 
-PASS Calling complete() with a number aborts the request with a TypeError. 
-PASS Calling complete() with undefined aborts the request with a TypeError. 
-PASS Calling complete() with null aborts the request with a TypeError. 
-PASS Calling complete() with a string aborts the request with a TypeError. 
-PASS Calling complete() with a promise resolving to a valid merchant session does not abort the request. 
-PASS Calling complete() with a valid merchant session does not abort the request. 
+PASS Calling complete() twice throws an InvalidStateError.
+PASS Calling complete() after abort() throws an InvalidStateError.
+PASS Calling complete() with a promise that is rejected aborts the request.
+PASS Calling complete() with a number aborts the request with a TypeError.
+PASS Calling complete() with undefined aborts the request with a TypeError.
+PASS Calling complete() with null aborts the request with a TypeError.
+PASS Calling complete() with a string aborts the request with a TypeError.
+PASS Calling complete() with a promise resolving to a valid merchant session does not abort the request.
+PASS Calling complete() with a valid merchant session does not abort the request.
 

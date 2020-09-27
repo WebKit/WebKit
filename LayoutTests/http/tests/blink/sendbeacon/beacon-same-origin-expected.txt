@@ -12,7 +12,7 @@ PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-same-origin.html
 PASS Request-Method: POST
 PASS Length: 10
 PASS Body: SameOrigin
-PASS 
+PASS
 Sending beacon with type: [object Uint32Array]
 PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
 PASS Beacon sent successfully
@@ -22,7 +22,7 @@ PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-same-origin.html
 PASS Request-Method: POST
 PASS Length: 40
 PASS Body: QAAAAEEAAABCAAAAQwAAAEQAAABFAAAARgAAAEcAAABIAAAASQAAAA==
-PASS 
+PASS
 Sending beacon with type: [object Blob]
 PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
 PASS Beacon sent successfully
@@ -32,7 +32,7 @@ PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-same-origin.html
 PASS Request-Method: POST
 PASS Length: 11
 PASS Body: hello world
-PASS 
+PASS
 Sending beacon with type: [object FormData]
 PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
 PASS Beacon sent successfully
@@ -42,7 +42,7 @@ PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-same-origin.html
 PASS Request-Method: POST
 PASS Length: 9
 PASS Body: key=value
-PASS 
+PASS
 Sending beacon with type: [object URLSearchParams]
 PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
 PASS Beacon sent successfully
@@ -52,7 +52,7 @@ PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-same-origin.html
 PASS Request-Method: POST
 PASS Length: 7
 PASS Body: YT1iJmM9ZA==
-PASS 
+PASS
 PASS successfullyParsed is true
 
 TEST COMPLETE

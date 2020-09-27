@@ -3,7 +3,7 @@ This test checks if the invalid event is correctly handled by document.oninvalid
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-  
+
 PASS Handled
 PASS successfullyParsed is true
 

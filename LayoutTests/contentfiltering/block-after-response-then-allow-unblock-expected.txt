@@ -4,7 +4,7 @@ frame "<!--frame1-->" - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame
-frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/pass.html 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/pass.html
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
@@ -13,7 +13,7 @@ frame "<!--frame1-->" - didFailProvisionalLoadWithError
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 frame "<!--frame1-->" - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
-frame "<!--frame1-->" - willPerformClientRedirectToURL: x-apple-content-filter://mock-unblock 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: x-apple-content-filter://mock-unblock
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame
 frame "<!--frame1-->" - didCancelClientRedirectForFrame

@@ -3,5 +3,5 @@ Verifies that a sandboxed IFrame cannot open new windows using window.open(). Ex
 
 This test will print "PASS" on success.
 
-               
+
 PASS

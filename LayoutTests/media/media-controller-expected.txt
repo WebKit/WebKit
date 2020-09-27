@@ -1,4 +1,4 @@
-  
+
 Test presence of MediaController constructor, controller, and mediaGroup attributes:
 EXPECTED (typeof(MediaController) != 'undefined') OK
 EXPECTED (video.controller == 'null') OK

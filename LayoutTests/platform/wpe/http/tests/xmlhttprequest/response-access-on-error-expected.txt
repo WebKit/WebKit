@@ -2,6 +2,6 @@ CONSOLE MESSAGE: Load cannot follow more than 20 redirections
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/infinite-loop.php due to access control checks.
 XMLHttpRequest: ensure that response getters properly handle error cases (see bug 125840)
 
-PASS error test 
-PASS abort test 
+PASS error test
+PASS abort test
 

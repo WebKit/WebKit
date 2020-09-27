@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 EVENT(error)
 END OF TEST
- 
+

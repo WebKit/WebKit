@@ -1,5 +1,5 @@
 
 
-PASS TextTrackCue.align, script-created cue 
-PASS TextTrackCue.align, parsed cue 
+PASS TextTrackCue.align, script-created cue
+PASS TextTrackCue.align, parsed cue
 

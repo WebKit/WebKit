@@ -1,4 +1,4 @@
-main frame - willPerformClientRedirectToURL: http://A=a%25B=b 
+main frame - willPerformClientRedirectToURL: http://A=a%25B=b
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame
 main frame - didCancelClientRedirectForFrame

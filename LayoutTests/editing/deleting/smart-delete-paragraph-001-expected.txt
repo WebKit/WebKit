@@ -8,9 +8,9 @@ EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY 
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting a paragraph between two paragraphs.
-Expected Results: 
+Expected Results:
 Extra newlines should be removed to maintin spacing between paragraphs. It should like this:
 Test paragraph.
 

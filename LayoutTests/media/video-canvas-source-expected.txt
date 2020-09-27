@@ -3,7 +3,7 @@ Test to ensure we don't taint a canvas when drawing from a video the uses source
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
- 
+
 PASS !!ctx.getImageData(0, 0, width, height) is true
 EVENT(canplaythrough)
 END OF TEST

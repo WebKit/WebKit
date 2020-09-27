@@ -13,7 +13,7 @@ PAUSE AT triggerDebuggerStatement:3:5
  ->   2        |debugger;
       3        let after = 2;
       4    }
-      5    
+      5
 
 
 
@@ -22,13 +22,13 @@ PASS: Paused
 PASS: Should be paused in a Worker CallFrame.
 PASS: Pause reason should be a breakpoint.
 PAUSE AT triggerBreakpoint:9:5
-      5    
+      5
       6    function triggerBreakpoint() {
       7        let alpha = 1;
  ->   8        |let beta = 2; // BREAKPOINT
       9        let gamma = 3;
      10    }
-     11    
+     11
 
 
 
@@ -38,11 +38,11 @@ PASS: Should be paused in a Worker CallFrame.
 PASS: Pause reason should be an exception.
 PAUSE AT triggerException:14:9
      10    }
-     11    
+     11
      12    function triggerException() {
  ->  13        [].x|.x;
      14    }
-     15    
+     15
      16    function triggerAssertion() {
 
 
@@ -54,11 +54,11 @@ PASS: Should be paused in a Worker CallFrame.
 PASS: Pause reason should be an exception.
 PAUSE AT triggerAssertion:18:19
      14    }
-     15    
+     15
      16    function triggerAssertion() {
  ->  17        console.assert|(false, "Assertion");
      18    }
-     19    
+     19
      20    onmessage = function(event) {
 
 

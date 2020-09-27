@@ -10,4 +10,4 @@ PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue(
 PASS successfullyParsed is true
 
 TEST COMPLETE
-   
+

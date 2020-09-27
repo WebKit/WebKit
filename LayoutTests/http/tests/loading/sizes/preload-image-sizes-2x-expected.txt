@@ -3,7 +3,7 @@ main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/sizes/preload-image-sizes-2x.html 
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/sizes/preload-image-sizes-2x.html
 main frame - didStartProvisionalLoadForFrame
 main frame - didCancelClientRedirectForFrame
 main frame - didCommitLoadForFrame
@@ -58,4 +58,4 @@ PASS internals.isPreloaded('resources/base-image3.png?10'); is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
-             
+

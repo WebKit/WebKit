@@ -3,7 +3,7 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load safari-extension://test1 due to acce
 This test ensures that XHR/Fetch will bypass CORS for user extension URLS in case the page is running user scripts.
 
 
-PASS Bypassing CORS on synchronous XHR - should trigger a CORS error message 
-PASS Bypassing CORS on synchronous XHR - should not trigger a CORS error message 
-PASS Bypassing CORS on asynchronous fetch - should not trigger a CORS error message 
+PASS Bypassing CORS on synchronous XHR - should trigger a CORS error message
+PASS Bypassing CORS on synchronous XHR - should not trigger a CORS error message
+PASS Bypassing CORS on asynchronous fetch - should not trigger a CORS error message
 

@@ -8,4 +8,4 @@ PASS input.helpText is "AXHint: Fill out this field"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Required text input: 
+Required text input:

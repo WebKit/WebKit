@@ -1,4 +1,4 @@
 
-PASS Setup worker 
-PASS Ensure all fetches are intercepted 
+PASS Setup worker
+PASS Ensure all fetches are intercepted
 

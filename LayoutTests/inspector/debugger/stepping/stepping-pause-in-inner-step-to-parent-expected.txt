@@ -9,22 +9,22 @@ STEPS: in, in, resume
 PAUSED (breakpoint)
 PAUSE AT pause:12:5
       8    }
-      9    
+      9
      10    function pause() {
  ->  11        |var x; // BREAKPOINT
      12    }
-     13    
+     13
      14    // ---------
 
 ACTION: step-in
 PAUSE AT pause:13:2
-      9    
+      9
      10    function pause() {
      11        var x; // BREAKPOINT
  ->  12    }|
-     13    
+     13
      14    // ---------
-     15    
+     15
 
 ACTION: step-in
 PAUSE AT entry:9:2
@@ -32,7 +32,7 @@ PAUSE AT entry:9:2
       6    function entry() {
       7        pause();
  ->   8    }|
-      9    
+      9
      10    function pause() {
      11        var x; // BREAKPOINT
 
@@ -46,22 +46,22 @@ STEPS: over, over, resume
 PAUSED (breakpoint)
 PAUSE AT pause:12:5
       8    }
-      9    
+      9
      10    function pause() {
  ->  11        |var x; // BREAKPOINT
      12    }
-     13    
+     13
      14    // ---------
 
 ACTION: step-over
 PAUSE AT pause:13:2
-      9    
+      9
      10    function pause() {
      11        var x; // BREAKPOINT
  ->  12    }|
-     13    
+     13
      14    // ---------
-     15    
+     15
 
 ACTION: step-over
 PAUSE AT entry:9:2
@@ -69,7 +69,7 @@ PAUSE AT entry:9:2
       6    function entry() {
       7        pause();
  ->   8    }|
-      9    
+      9
      10    function pause() {
      11        var x; // BREAKPOINT
 
@@ -83,11 +83,11 @@ STEPS: out, resume
 PAUSED (breakpoint)
 PAUSE AT pause:12:5
       8    }
-      9    
+      9
      10    function pause() {
  ->  11        |var x; // BREAKPOINT
      12    }
-     13    
+     13
      14    // ---------
 
 ACTION: step-out
@@ -96,7 +96,7 @@ PAUSE AT entry:9:2
       6    function entry() {
       7        pause();
  ->   8    }|
-      9    
+      9
      10    function pause() {
      11        var x; // BREAKPOINT
 

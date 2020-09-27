@@ -5,7 +5,7 @@ RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRate
 * set video.src
 EVENT(loadedmetadata)
 
-* video.play() should fail 
+* video.play() should fail
 RUN(handlePromise(video.play()))
 EXPECTED (video.paused == 'true') OK
 

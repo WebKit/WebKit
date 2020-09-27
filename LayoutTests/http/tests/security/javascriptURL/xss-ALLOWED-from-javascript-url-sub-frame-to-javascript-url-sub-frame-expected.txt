@@ -1,6 +1,6 @@
 This tests that a javascript: URL subframe can access a sibling javascript: URL subframe.
 
-  
+
 
 --------
 Frame: 'firstSubFrame'

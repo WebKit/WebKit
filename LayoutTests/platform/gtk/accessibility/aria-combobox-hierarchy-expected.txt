@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 AXRole: AXComboBox AXValue: option 1<\n>option 2<\n>
-    AXRole: AXMenu 
+    AXRole: AXMenu
         AXRole: AXMenuItem AXValue: option 1
         AXRole: AXMenuItem AXValue: option 2
 PASS successfullyParsed is true

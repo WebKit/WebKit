@@ -7,12 +7,12 @@ CONSOLE MESSAGE: User gesture is not detected. To use the platform authenticator
 CONSOLE MESSAGE: User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events.
 CONSOLE MESSAGE: User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events.
 
-PASS CTAP HID with init sub stage data not sent error in a mock hid authenticator. 
-PASS CTAP HID with init sub stage empty report error in a mock hid authenticator. 
-PASS CTAP HID with init sub stage wrong channel id error in a mock hid authenticator. 
-PASS CTAP HID with init sub stage wrong nonce error in a mock hid authenticator. 
-PASS CTAP HID with msg sub stage data not sent error in a mock hid authenticator. 
-PASS CTAP HID with msg sub stage empty report error in a mock hid authenticator. 
-PASS CTAP HID with msg sub stage wrong channel id error in a mock hid authenticator. 
-PASS CTAP HID with request::msg stage wrong channel id error in a mock hid authenticator. 
+PASS CTAP HID with init sub stage data not sent error in a mock hid authenticator.
+PASS CTAP HID with init sub stage empty report error in a mock hid authenticator.
+PASS CTAP HID with init sub stage wrong channel id error in a mock hid authenticator.
+PASS CTAP HID with init sub stage wrong nonce error in a mock hid authenticator.
+PASS CTAP HID with msg sub stage data not sent error in a mock hid authenticator.
+PASS CTAP HID with msg sub stage empty report error in a mock hid authenticator.
+PASS CTAP HID with msg sub stage wrong channel id error in a mock hid authenticator.
+PASS CTAP HID with request::msg stage wrong channel id error in a mock hid authenticator.
 

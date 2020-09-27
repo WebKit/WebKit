@@ -4,8 +4,8 @@ This tests that a group has a tabindex < 0, it will not have a label exposed for
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Description: AXDescription: 
-Title: AXTitle: 
+Description: AXDescription:
+Title: AXTitle:
 PASS successfullyParsed is true
 
 TEST COMPLETE

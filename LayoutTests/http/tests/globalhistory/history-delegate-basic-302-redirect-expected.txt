@@ -2,7 +2,7 @@ WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-b
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/resources/redirect.php?url=notify-done.html 
+main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/resources/redirect.php?url=notify-done.html
 main frame - didStartProvisionalLoadForFrame
 main frame - didReceiveServerRedirectForProvisionalLoadForFrame
 WebView performed a client redirect from "http://127.0.0.1:8000/globalhistory/history-delegate-basic-302-redirect.html" to "http://127.0.0.1:8000/resources/redirect.php?url=notify-done.html".

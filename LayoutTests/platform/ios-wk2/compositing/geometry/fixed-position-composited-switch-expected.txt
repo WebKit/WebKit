@@ -1,4 +1,4 @@
-Before (should be empty): 
+Before (should be empty):
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -17,7 +17,7 @@ Before (should be empty):
   )
 )
 
-After (should not be empty): 
+After (should not be empty):
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -35,5 +35,5 @@ After (should not be empty):
     )
   )
 )
-After (should be empty): 
+After (should be empty):
 

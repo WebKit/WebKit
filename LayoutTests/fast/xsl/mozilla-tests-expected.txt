@@ -19,14 +19,14 @@ Result:true
 
 Testing xsl:if
 Test: <xsl:if test="'a'='b'">a equals b</xsl:if>
-<xsl:if test="'a'!='b'">a does not equal b</xsl:if> 
+<xsl:if test="'a'!='b'">a does not equal b</xsl:if>
 Desired Result: a does not equal to b
 Result:a does not equal b
 
 Testing xsl:if
 Test: <xsl:if test="2+1-3"> 2+1-3 is true</xsl:if>
  <xsl:if test="not(2+1-3)"> not(2+1-3) is true</xsl:if>
-Desired Result:not(2+1-3) is true 
+Desired Result:not(2+1-3) is true
 Result:not(2+1-3) is true
 
 Testing xsl:choose
@@ -88,19 +88,19 @@ Desired Result:	1
 Result:	1
 Creating Elements with xsl:element and xsl:attribute
 Test:	<xsl:element name="FONT">
-<xsl:attribute name="COLOR">blue</xsl:attribute> 
-Passed 
+<xsl:attribute name="COLOR">blue</xsl:attribute>
+Passed
 </xsl:element>
 Desired Result:	Passed
 Result:	Passed
 Using Attribute Sets
 Test:	<FONT xsl:use-attribute-sets="style1">
-Passed 
+Passed
 </FONT>
 Desired Result:	Passed
 Result:	Passed
 Test:	<xsl:element name="FONT" use-attribute-sets="style1 style2">
-Passed 
+Passed
 </xsl:element>
 Desired Result:	Passed
 Result:	Passed
@@ -109,9 +109,9 @@ Test:	<xsl:number value="4"/>
 Desired Result:	4
 Result:	4
 Test:	see source
-Desired Result:	1. x 
+Desired Result:	1. x
 1. y
-1. z 
+1. z
 Result:	1. x
 1. y
 1. z

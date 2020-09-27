@@ -2,5 +2,5 @@ PASS document.getElementById("search1").offsetWidth is document.getElementById("
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+
 

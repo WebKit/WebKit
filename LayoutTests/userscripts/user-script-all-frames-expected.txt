@@ -1,4 +1,4 @@
-If any thingers appear on this page, the test has failed.  
+If any thingers appear on this page, the test has failed.
 
 --------
 Frame: '<!--frame1-->'

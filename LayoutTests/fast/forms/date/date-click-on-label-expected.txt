@@ -5,4 +5,4 @@ PASS document.activeElement.id is "date1"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Label: 
+Label:

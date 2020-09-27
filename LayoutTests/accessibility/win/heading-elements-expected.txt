@@ -10,7 +10,7 @@ h5
 
 h6
 
-This test verifies that, on Windows, heading elements return their tag name for their 'role' property and a positional description of "L#", where # is the heading level, for their description. 
+This test verifies that, on Windows, heading elements return their tag name for their 'role' property and a positional description of "L#", where # is the heading level, for their description.
 
 Bug 30937 - MSAA: Accessibility of headings is not correct
 

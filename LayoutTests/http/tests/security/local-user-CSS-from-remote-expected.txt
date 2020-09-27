@@ -1,5 +1,5 @@
-This test is to see if a remote file can include a local user stylesheet. 
-To run this test manually you must set your user style sheet in your Safari preferences to LayoutTests/http/tests/security/resources/cssStyle.css 
+This test is to see if a remote file can include a local user stylesheet.
+To run this test manually you must set your user style sheet in your Safari preferences to LayoutTests/http/tests/security/resources/cssStyle.css
 If the background is yellow then the user stylesheet was loaded.
 
 Test Passed: Local user stylesheet loaded.

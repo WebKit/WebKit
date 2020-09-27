@@ -9,7 +9,7 @@ This tests that we are getting the correct string for document range if the end 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-String: 
+String:
 ￼ Some text
 
 Message content.

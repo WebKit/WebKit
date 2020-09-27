@@ -4,8 +4,8 @@ AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.00000, 9.00000 }
 AXSize: { 291.000, 123.000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: hello
 AXFocusable: 0
 AXFocused: 0

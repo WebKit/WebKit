@@ -1,3 +1,3 @@
 
-PASS Testing that starting and ending an interaction outside of an element while touching over it in between correctly dispatches a touchend event. 
+PASS Testing that starting and ending an interaction outside of an element while touching over it in between correctly dispatches a touchend event.
 

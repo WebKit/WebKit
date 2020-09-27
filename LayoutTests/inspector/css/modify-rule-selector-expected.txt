@@ -1,6 +1,6 @@
 Testing that selectors are able to be modified more than once.
 
- 
+
 Selector before mutation: .foo
 Selector after mutation: span.foo
 

@@ -1,16 +1,16 @@
 
-PASS prefixPlusPlus 
-PASS prefixPlusPlusResult 
-PASS postfixPlusPlus 
-PASS postfixPlusPlusResult 
-PASS prefixMinusMinus 
-PASS prefixMinusMinusResult 
-PASS postfixMinusMinus 
-PASS postfixMinusMinusResult 
-PASS plusEquals 
-PASS plusEqualsResult 
-PASS minusEquals 
-PASS minusEqualsResult 
-PASS timesEquals 
-PASS timesEqualsResult 
+PASS prefixPlusPlus
+PASS prefixPlusPlusResult
+PASS postfixPlusPlus
+PASS postfixPlusPlusResult
+PASS prefixMinusMinus
+PASS prefixMinusMinusResult
+PASS postfixMinusMinus
+PASS postfixMinusMinusResult
+PASS plusEquals
+PASS plusEqualsResult
+PASS minusEquals
+PASS minusEqualsResult
+PASS timesEquals
+PASS timesEqualsResult
 

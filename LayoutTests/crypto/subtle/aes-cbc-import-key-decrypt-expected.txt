@@ -3,7 +3,7 @@ Test decrypting using AES-CBC with an imported 128bit key
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Expected plain text: 
+Expected plain text:
 PASS bytesToASCIIString(plainText) is expectedPlainText
 Expected plain text: A
 PASS bytesToASCIIString(plainText) is expectedPlainText

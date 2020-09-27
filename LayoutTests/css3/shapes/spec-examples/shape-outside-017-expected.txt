@@ -2,5 +2,5 @@ The test passes if the short green horizontal bars are the right of the shape, t
 
 XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXXXXXXXXXXX
 
-PASS CSS Test: Shape from box value - content-box 
+PASS CSS Test: Shape from box value - content-box
 

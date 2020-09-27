@@ -5,8 +5,8 @@ findme2
 
 findme3
 
-PASS Search from frame in normal tree 
-PASS Search from frame in display:none subtree 
-PASS Search from frame in zero sized subtree 
-PASS Search from frame in zero sized subtree with overflow:hidden 
+PASS Search from frame in normal tree
+PASS Search from frame in display:none subtree
+PASS Search from frame in zero sized subtree
+PASS Search from frame in zero sized subtree with overflow:hidden
 

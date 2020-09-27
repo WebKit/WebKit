@@ -1,6 +1,6 @@
 
-PASS Testing integer body passed to response 
-PASS Testing object body passed to response 
-PASS Testing integer body passed to request 
-PASS Testing object body passed to request 
+PASS Testing integer body passed to response
+PASS Testing object body passed to response
+PASS Testing integer body passed to request
+PASS Testing object body passed to request
 

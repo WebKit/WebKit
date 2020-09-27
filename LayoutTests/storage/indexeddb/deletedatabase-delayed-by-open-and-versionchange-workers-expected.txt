@@ -5,30 +5,30 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/deletedatabase-delayed-by-open-and-versionchange.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
-[Worker] 
+[Worker]
 [Worker] prepareDatabase():
 [Worker] versionChangeComplete = false
 [Worker] h = event.target.result
 [Worker] blockedCalled = false
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] h.createObjectStore('testObjectStore').put('bar', 'foo')
-[Worker] 
+[Worker]
 [Worker] onVersionChange():
 PASS [Worker] event.target.version is 1
 PASS [Worker] event.oldVersion is 1
 PASS [Worker] event.newVersion is null
-[Worker] 
+[Worker]
 [Worker] transactionOnComplete():
 [Worker] versionChangeComplete = true
-[Worker] 
+[Worker]
 [Worker] onOpenSuccess():
 PASS [Worker] blockedCalled is true
 [Worker] h = event.target.result
 [Worker] h.close()
-[Worker] 
+[Worker]
 [Worker] deleteDatabaseOnSuccess():
 PASS [Worker] versionChangeComplete is true
 PASS successfullyParsed is true

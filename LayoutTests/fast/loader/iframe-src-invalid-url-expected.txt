@@ -1,6 +1,6 @@
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL data:text/html,    <iframe id='iframe' src='<p>FAILURE</p>'></iframe>, main document URL iframe-src-invalid-url.html, http method GET> is main frame - no should open URLs externally - no
- - decidePolicyForNavigationAction 
+ - decidePolicyForNavigationAction
 <NSURLRequest URL about:blank, main document URL iframe-src-invalid-url.html, http method GET> is main frame - no should open URLs externally - no
 Test passes if the second iframe navigates to about:blank.
 

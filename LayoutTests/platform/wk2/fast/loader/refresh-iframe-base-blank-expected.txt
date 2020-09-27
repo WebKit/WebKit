@@ -2,7 +2,7 @@ main frame - didFinishDocumentLoadForFrame
 frame "<!--frame1-->" - didStartProvisionalLoadForFrame
 frame "<!--frame1-->" - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
-frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/refresh-iframe-base-blank-frame.html 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: resources/refresh-iframe-base-blank-frame.html
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame

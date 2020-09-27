@@ -1,4 +1,4 @@
 
-PASS Ensure that cloning works when load is finished 
-PASS Ensure that cloning works when load is ongoing 
+PASS Ensure that cloning works when load is finished
+PASS Ensure that cloning works when load is ongoing
 

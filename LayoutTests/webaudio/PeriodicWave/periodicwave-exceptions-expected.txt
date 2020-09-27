@@ -1,12 +1,12 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "non-finite values" 
-PASS Audit report 
-PASS > [non-finite values] Constructor should throw for non-finite coefficients 
-PASS   createPeriodicWave([1, Infinity], [1,1]) threw TypeError: "The provided value is non-finite". 
-PASS   createPeriodicWave([1, NaN], [1,1]) threw TypeError: "The provided value is non-finite". 
-PASS   createPeriodicWave([1, 1], [1, Infinity]) threw TypeError: "The provided value is non-finite". 
-PASS   createPeriodicWave([1, 1], [1, NaN]) threw TypeError: "The provided value is non-finite". 
-PASS < [non-finite values] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "non-finite values"
+PASS Audit report
+PASS > [non-finite values] Constructor should throw for non-finite coefficients
+PASS   createPeriodicWave([1, Infinity], [1,1]) threw TypeError: "The provided value is non-finite".
+PASS   createPeriodicWave([1, NaN], [1,1]) threw TypeError: "The provided value is non-finite".
+PASS   createPeriodicWave([1, 1], [1, Infinity]) threw TypeError: "The provided value is non-finite".
+PASS   createPeriodicWave([1, 1], [1, NaN]) threw TypeError: "The provided value is non-finite".
+PASS < [non-finite values] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

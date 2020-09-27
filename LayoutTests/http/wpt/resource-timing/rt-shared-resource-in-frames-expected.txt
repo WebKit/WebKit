@@ -1,7 +1,7 @@
 Resource Timing: Shared Entry has Distinct Entry per Frame
 
 
-PASS main frame has shared resource entry 
-PASS iframe1 has shared resource entry 
-PASS iframe2 has shared resource entry 
- 
+PASS main frame has shared resource entry
+PASS iframe1 has shared resource entry
+PASS iframe2 has shared resource entry
+

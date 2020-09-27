@@ -7,13 +7,13 @@ EXPRESSION: setTimeout(entryTemplateString)
 STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTemplateString:17:5
-     13    
+     13
      14    function entryTemplateString() {
      15        let x;
  ->  16        |debugger;
      17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      18    }
-     19    
+     19
 
 ACTION: step-over
 PAUSE AT entryTemplateString:18:5
@@ -22,7 +22,7 @@ PAUSE AT entryTemplateString:18:5
      16        debugger;
  ->  17        |let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      18    }
-     19    
+     19
      20    function entryTaggedTemplateString() {
 
 ACTION: step-over
@@ -31,7 +31,7 @@ PAUSE AT entryTemplateString:19:2
      16        debugger;
      17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
  ->  18    }|
-     19    
+     19
      20    function entryTaggedTemplateString() {
      21        let x;
 
@@ -44,13 +44,13 @@ EXPRESSION: setTimeout(entryTemplateString)
 STEPS: over, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTemplateString:17:5
-     13    
+     13
      14    function entryTemplateString() {
      15        let x;
  ->  16        |debugger;
      17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      18    }
-     19    
+     19
 
 ACTION: step-over
 PAUSE AT entryTemplateString:18:5
@@ -59,7 +59,7 @@ PAUSE AT entryTemplateString:18:5
      16        debugger;
  ->  17        |let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      18    }
-     19    
+     19
      20    function entryTaggedTemplateString() {
 
 ACTION: step-in
@@ -69,7 +69,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function tag(strings, ...values) {
 
 ACTION: step-out
@@ -79,7 +79,7 @@ PAUSE AT entryTemplateString:18:67
      16        debugger;
  ->  17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${|a()}`;
      18    }
-     19    
+     19
      20    function entryTaggedTemplateString() {
 
 ACTION: step-in
@@ -89,7 +89,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function tag(strings, ...values) {
 
 ACTION: step-out
@@ -98,7 +98,7 @@ PAUSE AT entryTemplateString:19:2
      16        debugger;
      17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
  ->  18    }|
-     19    
+     19
      20    function entryTaggedTemplateString() {
      21        let x;
 
@@ -111,13 +111,13 @@ EXPRESSION: setTimeout(entryTaggedTemplateString)
 STEPS: over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTaggedTemplateString:23:5
-     19    
+     19
      20    function entryTaggedTemplateString() {
      21        let x;
  ->  22        |debugger;
      23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      24    }
-     25    
+     25
 
 ACTION: step-over
 PAUSE AT entryTaggedTemplateString:24:5
@@ -126,7 +126,7 @@ PAUSE AT entryTaggedTemplateString:24:5
      22        debugger;
  ->  23        |let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      24    }
-     25    
+     25
      26    // ---------
 
 ACTION: step-over
@@ -135,9 +135,9 @@ PAUSE AT entryTaggedTemplateString:25:2
      22        debugger;
      23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
  ->  24    }|
-     25    
+     25
      26    // ---------
-     27    
+     27
 
 ACTION: resume
 RESUMED
@@ -148,13 +148,13 @@ EXPRESSION: setTimeout(entryTaggedTemplateString)
 STEPS: over, in, out, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTaggedTemplateString:23:5
-     19    
+     19
      20    function entryTaggedTemplateString() {
      21        let x;
  ->  22        |debugger;
      23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      24    }
-     25    
+     25
 
 ACTION: step-over
 PAUSE AT entryTaggedTemplateString:24:5
@@ -163,7 +163,7 @@ PAUSE AT entryTaggedTemplateString:24:5
      22        debugger;
  ->  23        |let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      24    }
-     25    
+     25
      26    // ---------
 
 ACTION: step-in
@@ -173,7 +173,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function tag(strings, ...values) {
 
 ACTION: step-out
@@ -183,7 +183,7 @@ PAUSE AT entryTaggedTemplateString:24:70
      22        debugger;
  ->  23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${|a()}`;
      24    }
-     25    
+     25
      26    // ---------
 
 ACTION: step-in
@@ -193,7 +193,7 @@ PAUSE AT a:8:5
       6    function a() {
  ->   7        |return 1;
       8    }
-      9    
+      9
      10    function tag(strings, ...values) {
 
 ACTION: step-out
@@ -203,17 +203,17 @@ PAUSE AT entryTaggedTemplateString:24:15
      22        debugger;
  ->  23        let str = |tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
      24    }
-     25    
+     25
      26    // ---------
 
 ACTION: step-in
 PAUSE AT tag:12:5
       8    }
-      9    
+      9
      10    function tag(strings, ...values) {
  ->  11        |return "ignored";
      12    }
-     13    
+     13
      14    function entryTemplateString() {
 
 ACTION: step-out
@@ -222,9 +222,9 @@ PAUSE AT entryTaggedTemplateString:25:2
      22        debugger;
      23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
  ->  24    }|
-     25    
+     25
      26    // ---------
-     27    
+     27
 
 ACTION: resume
 RESUMED

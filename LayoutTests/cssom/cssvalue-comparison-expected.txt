@@ -1,107 +1,107 @@
 This test verifies that CSSValue objects comparison works correctly.
 
 
-PASS Two CSSValues "20%" for property "width" are equal. 
-PASS Two CSSValues "2em" for property "width" are equal. 
-PASS Two CSSValues "2rem" for property "width" are equal. 
-PASS Two CSSValues "20px" for property "width" are equal. 
-PASS Two CSSValues "2cm" for property "width" are equal. 
-PASS Two CSSValues "20mm" for property "width" are equal. 
-PASS Two CSSValues "4in" for property "width" are equal. 
-PASS Two CSSValues "20pt" for property "width" are equal. 
-PASS Two CSSValues "10pc" for property "width" are equal. 
-PASS Two CSSValues "6vw" for property "width" are equal. 
-PASS Two CSSValues "6vh" for property "width" are equal. 
-PASS Two CSSValues "4vmin" for property "width" are equal. 
-PASS Two CSSValues "-webkit-calc(-100px + 100%)" for property "width" are equal. 
-PASS Two CSSValues "20%" and "2em" for property "width" are not equal. 
-PASS Two CSSValues "rotate(15deg)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "rotate(1.55rad)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "rotate(200grad)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "rotate(0.5turn)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "rotate(15deg)" and "rotate(1.55rad)" for property "-webkit-transform" are not equal. 
-PASS Two CSSValues "url(dummy://test.png)" for property "background-image" are equal. 
-PASS Two CSSValues "url(dummy://green.png)" for property "background-image" are equal. 
-PASS Two CSSValues "url(dummy://test.png)" and "url(dummy://green.png)" for property "background-image" are not equal. 
-PASS Two CSSValues "bold" for property "font-weight" are equal. 
-PASS Two CSSValues "inherit" for property "font-weight" are equal. 
-PASS Two CSSValues "bold" and "inherit" for property "font-weight" are not equal. 
-PASS Two CSSValues "counter(a)" for property "content" are equal. 
-PASS Two CSSValues "counters(a, '.')" for property "content" are equal. 
-PASS Two CSSValues "counter(a)" and "counters(a, '.')" for property "content" are not equal. 
-PASS Two CSSValues "attr(a)" for property "content" are equal. 
-PASS Two CSSValues "attr(p)" for property "content" are equal. 
-PASS Two CSSValues "attr(a)" and "attr(p)" for property "content" are not equal. 
-PASS Two CSSValues "rect(40px, 0, 45px, -5px)" for property "clip" are equal. 
-PASS Two CSSValues "rect(10px, 5px, 15px, -10px)" for property "clip" are equal. 
-PASS Two CSSValues "rect(40px, 0, 45px, -5px)" and "rect(10px, 5px, 15px, -10px)" for property "clip" are not equal. 
-PASS Two CSSValues "30px 75px 15px 15px" for property "border-radius" are equal. 
-PASS Two CSSValues "164px / 82px" for property "border-radius" are equal. 
-PASS Two CSSValues "40px" for property "border-radius" are equal. 
-PASS Two CSSValues "30px 75px 15px 15px" and "164px / 82px" for property "border-radius" are not equal. 
-PASS Two CSSValues "rgb(255,0,0)" for property "stop-color" are equal. 
-PASS Two CSSValues "#FF5566" for property "stop-color" are equal. 
-PASS Two CSSValues "rgb(255,0,0)" and "#FF5566" for property "stop-color" are not equal. 
-PASS Two CSSValues "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" for property "-webkit-clip-path" are equal. 
-PASS Two CSSValues "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "-webkit-clip-path" are equal. 
-PASS Two CSSValues "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" and "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "-webkit-clip-path" are not equal. 
-PASS Two CSSValues "10s" for property "-webkit-animation-duration" are equal. 
-PASS Two CSSValues "100ms" for property "-webkit-animation-duration" are equal. 
-PASS Two CSSValues "10s" and "100ms" for property "-webkit-animation-duration" are not equal. 
-PASS Two CSSValues "red" for property "color" are equal. 
-PASS Two CSSValues "blue" for property "color" are equal. 
-PASS Two CSSValues "red" and "blue" for property "color" are not equal. 
-PASS Two CSSValues "url(resources/greenbox.png)" for property "border-image-source" are equal. 
-PASS Two CSSValues "url(resources/redbox.png)" for property "border-image-source" are equal. 
-PASS Two CSSValues "url(resources/greenbox.png)" and "url(resources/redbox.png)" for property "border-image-source" are not equal. 
-PASS Two CSSValues "1 2 3 4" for property "border-image-slice" are equal. 
-PASS Two CSSValues "2 3 4 5" for property "border-image-slice" are equal. 
-PASS Two CSSValues "1 2 3 4" and "2 3 4 5" for property "border-image-slice" are not equal. 
-PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" for property "cursor" are equal. 
-PASS Two CSSValues "url(resources/cursor.png) 1 1, wait" for property "cursor" are equal. 
-PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" and "url(resources/cursor.png) 1 1, wait" for property "cursor" are not equal. 
-PASS Two CSSValues "italic bold 12px/30px arial" for property "font" are equal. 
-PASS Two CSSValues "italic bold 8px/16px helvetica" for property "font" are equal. 
-PASS Two CSSValues "italic bold 12px/30px arial" and "italic bold 8px/16px helvetica" for property "font" are not equal. 
-PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background-image" are equal. 
-PASS Two CSSValues "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are equal. 
-PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" and "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are not equal. 
-PASS Two CSSValues "radial-gradient(circle, #ccc, #000)" for property "background-image" are equal. 
-PASS Two CSSValues "linear-gradient(#000, #234)" for property "background-image" are equal. 
-PASS Two CSSValues "linear-gradient(to top, #000, #234)" for property "background-image" are equal. 
-PASS Two CSSValues "linear-gradient(#000, #234)" and "linear-gradient(to top, #000, #234)" for property "background-image" are not equal. 
-PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" for property "background-image" are equal. 
-PASS Two CSSValues "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are equal. 
-PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" and "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are not equal. 
-PASS Two CSSValues "below 10px" for property "-webkit-box-reflect" are equal. 
-PASS Two CSSValues "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" are equal. 
-PASS Two CSSValues "below 10px" and "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" are not equal. 
-PASS Two CSSValues "0 -20px 10px red, 0 20px 10px blue" for property "-webkit-box-shadow" are equal. 
-PASS Two CSSValues "0 20px 10px blue" for property "-webkit-box-shadow" are equal. 
-PASS Two CSSValues "5px 5px 5px rgba(0, 0, 0, 0.3)" for property "-webkit-box-shadow" are equal. 
-PASS Two CSSValues "0 -20px 10px red, 0 20px 10px blue" and "0 20px 10px blue" for property "-webkit-box-shadow" are not equal. 
-PASS Two CSSValues "cubic-bezier(0.25, 0.1, 0.25, 1)" for property "-webkit-transition-timing-function" are equal. 
-PASS Two CSSValues "linear" for property "-webkit-transition-timing-function" are equal. 
-PASS Two CSSValues "steps(3, end)" for property "-webkit-transition-timing-function" are equal. 
-PASS Two CSSValues "cubic-bezier(0.25, 0.1, 0.25, 1)" and "linear" for property "-webkit-transition-timing-function" are not equal. 
-PASS Two CSSValues "rotate(30deg)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "translate(50px,50px)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "scale(2,4)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "skew(30deg,20deg)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "-webkit-transform" are equal. 
-PASS Two CSSValues "rotate(30deg)" and "translate(50px,50px)" for property "-webkit-transform" are not equal. 
-PASS Two CSSValues "inline-box" for property "-webkit-line-box-contain" are equal. 
-PASS Two CSSValues "font" for property "-webkit-line-box-contain" are equal. 
-PASS Two CSSValues "glyphs" for property "-webkit-line-box-contain" are equal. 
-PASS Two CSSValues "replaced" for property "-webkit-line-box-contain" are equal. 
-PASS Two CSSValues "inline-box" and "font" for property "-webkit-line-box-contain" are not equal. 
-PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal. 
-PASS Two CSSValues "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal. 
-PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal. 
-PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal. 
-PASS Two CSSValues "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal. 
-PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal. 
-PASS Two CSSValues "grayscale(100%) sepia(100%)" for property "-webkit-filter" are equal. 
-PASS Two CSSValues "sepia(10%) grayscale(50%)" for property "-webkit-filter" are equal. 
-PASS Two CSSValues "grayscale(100%) sepia(100%)" and "sepia(10%) grayscale(50%)" for property "-webkit-filter" are not equal. 
+PASS Two CSSValues "20%" for property "width" are equal.
+PASS Two CSSValues "2em" for property "width" are equal.
+PASS Two CSSValues "2rem" for property "width" are equal.
+PASS Two CSSValues "20px" for property "width" are equal.
+PASS Two CSSValues "2cm" for property "width" are equal.
+PASS Two CSSValues "20mm" for property "width" are equal.
+PASS Two CSSValues "4in" for property "width" are equal.
+PASS Two CSSValues "20pt" for property "width" are equal.
+PASS Two CSSValues "10pc" for property "width" are equal.
+PASS Two CSSValues "6vw" for property "width" are equal.
+PASS Two CSSValues "6vh" for property "width" are equal.
+PASS Two CSSValues "4vmin" for property "width" are equal.
+PASS Two CSSValues "-webkit-calc(-100px + 100%)" for property "width" are equal.
+PASS Two CSSValues "20%" and "2em" for property "width" are not equal.
+PASS Two CSSValues "rotate(15deg)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "rotate(1.55rad)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "rotate(200grad)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "rotate(0.5turn)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "rotate(15deg)" and "rotate(1.55rad)" for property "-webkit-transform" are not equal.
+PASS Two CSSValues "url(dummy://test.png)" for property "background-image" are equal.
+PASS Two CSSValues "url(dummy://green.png)" for property "background-image" are equal.
+PASS Two CSSValues "url(dummy://test.png)" and "url(dummy://green.png)" for property "background-image" are not equal.
+PASS Two CSSValues "bold" for property "font-weight" are equal.
+PASS Two CSSValues "inherit" for property "font-weight" are equal.
+PASS Two CSSValues "bold" and "inherit" for property "font-weight" are not equal.
+PASS Two CSSValues "counter(a)" for property "content" are equal.
+PASS Two CSSValues "counters(a, '.')" for property "content" are equal.
+PASS Two CSSValues "counter(a)" and "counters(a, '.')" for property "content" are not equal.
+PASS Two CSSValues "attr(a)" for property "content" are equal.
+PASS Two CSSValues "attr(p)" for property "content" are equal.
+PASS Two CSSValues "attr(a)" and "attr(p)" for property "content" are not equal.
+PASS Two CSSValues "rect(40px, 0, 45px, -5px)" for property "clip" are equal.
+PASS Two CSSValues "rect(10px, 5px, 15px, -10px)" for property "clip" are equal.
+PASS Two CSSValues "rect(40px, 0, 45px, -5px)" and "rect(10px, 5px, 15px, -10px)" for property "clip" are not equal.
+PASS Two CSSValues "30px 75px 15px 15px" for property "border-radius" are equal.
+PASS Two CSSValues "164px / 82px" for property "border-radius" are equal.
+PASS Two CSSValues "40px" for property "border-radius" are equal.
+PASS Two CSSValues "30px 75px 15px 15px" and "164px / 82px" for property "border-radius" are not equal.
+PASS Two CSSValues "rgb(255,0,0)" for property "stop-color" are equal.
+PASS Two CSSValues "#FF5566" for property "stop-color" are equal.
+PASS Two CSSValues "rgb(255,0,0)" and "#FF5566" for property "stop-color" are not equal.
+PASS Two CSSValues "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" for property "-webkit-clip-path" are equal.
+PASS Two CSSValues "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "-webkit-clip-path" are equal.
+PASS Two CSSValues "polygon(evenodd, 10px 75px, 180px 180px, 100px 10px, 10px 180px, 180px 75px, 10px 75px)" and "polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%)" for property "-webkit-clip-path" are not equal.
+PASS Two CSSValues "10s" for property "-webkit-animation-duration" are equal.
+PASS Two CSSValues "100ms" for property "-webkit-animation-duration" are equal.
+PASS Two CSSValues "10s" and "100ms" for property "-webkit-animation-duration" are not equal.
+PASS Two CSSValues "red" for property "color" are equal.
+PASS Two CSSValues "blue" for property "color" are equal.
+PASS Two CSSValues "red" and "blue" for property "color" are not equal.
+PASS Two CSSValues "url(resources/greenbox.png)" for property "border-image-source" are equal.
+PASS Two CSSValues "url(resources/redbox.png)" for property "border-image-source" are equal.
+PASS Two CSSValues "url(resources/greenbox.png)" and "url(resources/redbox.png)" for property "border-image-source" are not equal.
+PASS Two CSSValues "1 2 3 4" for property "border-image-slice" are equal.
+PASS Two CSSValues "2 3 4 5" for property "border-image-slice" are equal.
+PASS Two CSSValues "1 2 3 4" and "2 3 4 5" for property "border-image-slice" are not equal.
+PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" for property "cursor" are equal.
+PASS Two CSSValues "url(resources/cursor.png) 1 1, wait" for property "cursor" are equal.
+PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" and "url(resources/cursor.png) 1 1, wait" for property "cursor" are not equal.
+PASS Two CSSValues "italic bold 12px/30px arial" for property "font" are equal.
+PASS Two CSSValues "italic bold 8px/16px helvetica" for property "font" are equal.
+PASS Two CSSValues "italic bold 12px/30px arial" and "italic bold 8px/16px helvetica" for property "font" are not equal.
+PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background-image" are equal.
+PASS Two CSSValues "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are equal.
+PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" and "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are not equal.
+PASS Two CSSValues "radial-gradient(circle, #ccc, #000)" for property "background-image" are equal.
+PASS Two CSSValues "linear-gradient(#000, #234)" for property "background-image" are equal.
+PASS Two CSSValues "linear-gradient(to top, #000, #234)" for property "background-image" are equal.
+PASS Two CSSValues "linear-gradient(#000, #234)" and "linear-gradient(to top, #000, #234)" for property "background-image" are not equal.
+PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" for property "background-image" are equal.
+PASS Two CSSValues "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are equal.
+PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" and "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are not equal.
+PASS Two CSSValues "below 10px" for property "-webkit-box-reflect" are equal.
+PASS Two CSSValues "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" are equal.
+PASS Two CSSValues "below 10px" and "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))" for property "-webkit-box-reflect" are not equal.
+PASS Two CSSValues "0 -20px 10px red, 0 20px 10px blue" for property "-webkit-box-shadow" are equal.
+PASS Two CSSValues "0 20px 10px blue" for property "-webkit-box-shadow" are equal.
+PASS Two CSSValues "5px 5px 5px rgba(0, 0, 0, 0.3)" for property "-webkit-box-shadow" are equal.
+PASS Two CSSValues "0 -20px 10px red, 0 20px 10px blue" and "0 20px 10px blue" for property "-webkit-box-shadow" are not equal.
+PASS Two CSSValues "cubic-bezier(0.25, 0.1, 0.25, 1)" for property "-webkit-transition-timing-function" are equal.
+PASS Two CSSValues "linear" for property "-webkit-transition-timing-function" are equal.
+PASS Two CSSValues "steps(3, end)" for property "-webkit-transition-timing-function" are equal.
+PASS Two CSSValues "cubic-bezier(0.25, 0.1, 0.25, 1)" and "linear" for property "-webkit-transition-timing-function" are not equal.
+PASS Two CSSValues "rotate(30deg)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "translate(50px,50px)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "scale(2,4)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "skew(30deg,20deg)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "matrix(0.4,0.5,-0.5,0.4,0,0)" for property "-webkit-transform" are equal.
+PASS Two CSSValues "rotate(30deg)" and "translate(50px,50px)" for property "-webkit-transform" are not equal.
+PASS Two CSSValues "inline-box" for property "-webkit-line-box-contain" are equal.
+PASS Two CSSValues "font" for property "-webkit-line-box-contain" are equal.
+PASS Two CSSValues "glyphs" for property "-webkit-line-box-contain" are equal.
+PASS Two CSSValues "replaced" for property "-webkit-line-box-contain" are equal.
+PASS Two CSSValues "inline-box" and "font" for property "-webkit-line-box-contain" are not equal.
+PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal.
+PASS Two CSSValues "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal.
+PASS Two CSSValues "-webkit-image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "-webkit-image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal.
+PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" for property "background-image" are equal.
+PASS Two CSSValues "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are equal.
+PASS Two CSSValues "image-set(url(dummy://test.png) 1x, url(dummy://test.png) 2x)" and "image-set(url(dummy://small.png) 2x, url(dummy://big.png) 3x)" for property "background-image" are not equal.
+PASS Two CSSValues "grayscale(100%) sepia(100%)" for property "-webkit-filter" are equal.
+PASS Two CSSValues "sepia(10%) grayscale(50%)" for property "-webkit-filter" are equal.
+PASS Two CSSValues "grayscale(100%) sepia(100%)" and "sepia(10%) grayscale(50%)" for property "-webkit-filter" are not equal.
 

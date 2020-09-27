@@ -1,4 +1,4 @@
-   
+
 This tests that radio buttons are exposed as distinct types from checkboxes, that they can report the right value whether it's checked, and they can report they're part of a group.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

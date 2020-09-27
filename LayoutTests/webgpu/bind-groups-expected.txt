@@ -1,8 +1,8 @@
 
-PASS Create and use a basic GPUBindGroup. 
-PASS Create and use many GPUBindGroups in a single compute pass. 
-PASS Create and access a uniform-buffer in a GPUBindGroup. 
-PASS Create and access a sampled texture in a GPUBindGroup. 
-PASS Create and use multiple GPUBindGroups in a single dispatch. 
-PASS Bind a single GPUBuffer with different offsets in different GPUBindGroups 
+PASS Create and use a basic GPUBindGroup.
+PASS Create and use many GPUBindGroups in a single compute pass.
+PASS Create and access a uniform-buffer in a GPUBindGroup.
+PASS Create and access a sampled texture in a GPUBindGroup.
+PASS Create and use multiple GPUBindGroups in a single dispatch.
+PASS Bind a single GPUBuffer with different offsets in different GPUBindGroups
 

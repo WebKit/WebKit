@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
 CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
-  
 
-PASS same origin iframe has regular quota 
-PASS cross origin iframe has reduced quota 
-PASS cross origin iframe has reduced quota after resetting quota 
+
+PASS same origin iframe has regular quota
+PASS cross origin iframe has reduced quota
+PASS cross origin iframe has reduced quota after resetting quota
 

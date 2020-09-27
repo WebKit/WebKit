@@ -1,12 +1,12 @@
 
-PASS getting arraybuffer response within abort event callback 
-PASS getting arraybuffer response within abort event callback (aborting in loadend) 
-PASS getting blob response within abort event callback 
-PASS getting blob response within abort event callback (aborting in loadend) 
-PASS getting json response within abort event callback 
-PASS getting json response within abort event callback (aborting in loadend) 
-PASS getting document response within abort event callback 
-PASS getting document response within abort event callback (aborting in loadend) 
-PASS getting text response within abort event callback 
-PASS getting text response within abort event callback (aborting in loadend) 
+PASS getting arraybuffer response within abort event callback
+PASS getting arraybuffer response within abort event callback (aborting in loadend)
+PASS getting blob response within abort event callback
+PASS getting blob response within abort event callback (aborting in loadend)
+PASS getting json response within abort event callback
+PASS getting json response within abort event callback (aborting in loadend)
+PASS getting document response within abort event callback
+PASS getting document response within abort event callback (aborting in loadend)
+PASS getting text response within abort event callback
+PASS getting text response within abort event callback (aborting in loadend)
 

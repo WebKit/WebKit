@@ -1,5 +1,5 @@
 Implicit defaults
- 
+
 Option
 Menu item 1
 menubar

@@ -1,5 +1,5 @@
 
-PASS Manual redirect fetch should not disrupt follow redirect fetch of the same resource 
-PASS Follow redirect fetch should not disrupt manual redirect fetch of the same resource 
-PASS Being loaded resources with different redirect mode should not break each other 
+PASS Manual redirect fetch should not disrupt follow redirect fetch of the same resource
+PASS Follow redirect fetch should not disrupt manual redirect fetch of the same resource
+PASS Being loaded resources with different redirect mode should not break each other
 

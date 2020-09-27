@@ -19,4 +19,4 @@ PASS img2.height is 103
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

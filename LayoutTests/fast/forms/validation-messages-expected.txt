@@ -1,15 +1,15 @@
-Required text input: 
-Required checkbox input: 
-Required radio input: 
-Required radio input:   
-Required file input: 
-Required email input: 
-Required url input: 
-Required input with pattern: 
-Required input with minlength=100: 
-Required range with min=5: 
-Required range with max=5: 
-Required range with step=3 / min=0: 
+Required text input:
+Required checkbox input:
+Required radio input:
+Required radio input:
+Required file input:
+Required email input:
+Required url input:
+Required input with pattern:
+Required input with minlength=100:
+Required range with min=5:
+Required range with max=5:
+Required range with step=3 / min=0:
 Tests the HTML form validation messages being shown on UI side.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

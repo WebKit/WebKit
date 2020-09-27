@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://localhost:8800/WebKit/beacon/contentextensions/beacon-redirect-blocked.html from loading a resource from http://127.0.0.1:8800/WebKit/beacon/resources/beacon-preflight.py?allowCors=1&cmd=put&id=f470f43c-258c-4c82-b880-ace3bcdb211c&redirect_status=307&location=http%3A%2F%2F127.0.0.1%3A8800%2FWebKit%2Fbeacon%2Fresources%2Fbeacon-preflight.py%3FallowCors%3D1%26cmd%3Dput%26id%3Df470f43c-258c-4c82-b880-ace3bcdb211c&count=1
 CONSOLE MESSAGE: Beacon API cannot load http://localhost:8800/WebKit/beacon/resources/redirect.py?redirect_status=307&location=http%3A%2F%2F127.0.0.1%3A8800%2FWebKit%2Fbeacon%2Fresources%2Fbeacon-preflight.py%3FallowCors%3D1%26cmd%3Dput%26id%3Df470f43c-258c-4c82-b880-ace3bcdb211c. The URL was blocked by a content blocker
 
-PASS Content extensions should be able to block beacon redirects 
+PASS Content extensions should be able to block beacon redirects
 

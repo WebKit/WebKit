@@ -1,3 +1,3 @@
-Test that fallback among codecs is done correctly regardless of their order.          
+Test that fallback among codecs is done correctly regardless of their order.
 END OF TEST
 

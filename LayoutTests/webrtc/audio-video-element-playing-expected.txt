@@ -1,4 +1,4 @@
-  
 
-PASS Verify that, contrary to video elements, audio elements are playing even if video tracks have not started generated any video frame 
+
+PASS Verify that, contrary to video elements, audio elements are playing even if video tracks have not started generated any video frame
 

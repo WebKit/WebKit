@@ -1,5 +1,5 @@
 
-PASS Element colors are correct in light color scheme with light and dark color scheme 
-PASS Dark color scheme enabled 
+PASS Element colors are correct in light color scheme with light and dark color scheme
+PASS Dark color scheme enabled
 FAIL Element colors are correct in dark color scheme with light and dark color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
 

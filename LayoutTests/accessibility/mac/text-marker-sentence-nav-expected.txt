@@ -4,7 +4,7 @@ test audio file.
 كيف حالك؟
 both   spaces
 line breaks. Right?
-This is my first sentence. 
+This is my first sentence.
 
 This is my second sentence. This is my third sentence. This is my fourth sentence.
 This tests that sentence navigation is working correctly.
@@ -13,16 +13,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Current character is: T
-Current sentence is: This is a sentence, right? 
-Pre sentence start to next sentence end: This is a sentence, right? 
+Current sentence is: This is a sentence, right?
+Pre sentence start to next sentence end: This is a sentence, right?
 
 Current character is: t
 Current sentence is: test audio [ATTACHMENT]file.
 Pre sentence start to next sentence end: test audio [ATTACHMENT]file.
 
 Current character is: 巧
-Current sentence is: 巧克力 是食物吗? 
-Pre sentence start to next sentence end: 巧克力 是食物吗? 
+Current sentence is: 巧克力 是食物吗?
+Pre sentence start to next sentence end: 巧克力 是食物吗?
 
 Current character is: ك
 Current sentence is: كيف حالك؟
@@ -33,19 +33,19 @@ Current sentence is: both   spaces
 Pre sentence start to next sentence end: both   spaces
 
 Current character is: i
-Current sentence is: line breaks. 
-Pre sentence start to next sentence end: line breaks. 
+Current sentence is: line breaks.
+Pre sentence start to next sentence end: line breaks.
 
-Sentence: This is my first sentence. 
-Sentence: 
-Sentence: This is my second sentence. 
-Sentence: This is my third sentence. 
+Sentence: This is my first sentence.
+Sentence:
+Sentence: This is my second sentence.
+Sentence: This is my third sentence.
 Sentence: This is my fourth sentence.
 Sentence: This is my fourth sentence.
-Sentence: This is my third sentence. 
-Sentence: This is my second sentence. 
-Sentence: 
-Sentence: This is my first sentence. 
+Sentence: This is my third sentence.
+Sentence: This is my second sentence.
+Sentence:
+Sentence: This is my first sentence.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,6 +1,6 @@
 Verifies that 2D canvases with higher than 5120x2880 resolution don't create accelerated backing stores.
 
- 
+
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 5208.00 6171.00)

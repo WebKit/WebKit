@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test WaveShaperNode" 
-PASS Audit report 
-PASS > [Test WaveShaperNode]  
-PASS   WaveShaper successfully handled change in oversampling is true. 
-PASS < [Test WaveShaperNode] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test WaveShaperNode"
+PASS Audit report
+PASS > [Test WaveShaperNode]
+PASS   WaveShaper successfully handled change in oversampling is true.
+PASS < [Test WaveShaperNode] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

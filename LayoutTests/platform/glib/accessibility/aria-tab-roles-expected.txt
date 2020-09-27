@@ -14,7 +14,7 @@ PASS tab1.childrenCount is 0
 tab2.role = AXRole: AXTab
 tab2.title = AXTitle: Veges
 tabPanel.role = AXRole: AXScrollArea
-tabPanel.subrole = 
+tabPanel.subrole =
 PASS successfullyParsed is true
 
 TEST COMPLETE

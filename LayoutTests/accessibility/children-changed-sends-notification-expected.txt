@@ -3,7 +3,7 @@ This test ensures that a notification is being emitted when children are added o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Plain text paragraph 
+Plain text paragraph
 
 PARAGRAPH notification: AXChildrenAdded
 GLOBAL notification: AXChildrenAdded on element with role AXRole: AXParagraph

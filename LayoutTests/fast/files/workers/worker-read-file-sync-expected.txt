@@ -14,15 +14,15 @@ Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading an empty file as array buffer
 result size: 0
-result: 
+result:
 Received exception undefined: TypeError
 Test reading an empty file as binary string
 result size: 0
-result: 
+result:
 Received exception undefined: TypeError
 Test reading an empty file as text
 result size: 0
-result: 
+result:
 Received exception undefined: TypeError
 Test reading an empty file as data URL
 result size: 5

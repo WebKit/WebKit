@@ -4,7 +4,7 @@ Output below is a series of PASS or FAIL lines showing expected and actual selec
 
 NOTE: This test will fail on Mac OS, on which these keys are NOT supposed to change the selection of a focused pop-up.
 
-  
+
 PASS: testPageDownNoDisabledElements passed
 PASS: testPageUpNoDisabledElements passed
 PASS: testHomeNoDisabledElements passed

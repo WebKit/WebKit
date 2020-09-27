@@ -9,7 +9,7 @@ PASS document.cookie == firstPartyCookie=value, cookies seen server-side == {"fi
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+
 
 --------
 Frame: '<!--frame1-->'

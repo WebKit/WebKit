@@ -2,4 +2,4 @@ This tests text selection drag from a textarea and drop to an input, and vice ve
 
 PASS: to input
 PASS: to textarea
- 
+

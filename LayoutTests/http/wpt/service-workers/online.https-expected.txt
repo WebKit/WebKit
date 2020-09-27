@@ -1,4 +1,4 @@
 
-PASS Setup worker 
-PASS Test service worker online/offline 
+PASS Setup worker
+PASS Test service worker online/offline
 

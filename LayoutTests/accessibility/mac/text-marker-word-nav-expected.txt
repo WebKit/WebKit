@@ -23,7 +23,7 @@ Pre word start to next word end: word1
 
 Current character is: t
 Left word is: test
-Right word is: 
+Right word is:
 Pre word start to next word end: test'line break'Thisislongword
 
 Current character is: T
@@ -31,13 +31,13 @@ Left word is: Thisislongword
 Right word is: Thisislongword
 Pre word start to next word end: Thisislongword
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: I'll
 Pre word start to next word end:  I'll
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: try
 Pre word start to next word end:  try
 
@@ -46,8 +46,8 @@ Left word is: editable
 Right word is: editable
 Pre word start to next word end: editable
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: [ATTACHMENT]
 Pre word start to next word end:  [ATTACHMENT]
 
@@ -61,7 +61,7 @@ Left word is: can't
 Right word is: can't
 Pre word start to next word end: can't
 
-Current character is: 
+Current character is:
 Left word is: 巧克力
 Right word is: 巧克力
 Pre word start to next word end: select'line break'巧克力
@@ -83,36 +83,36 @@ Pre word start to next word end: 是食物
 
 Current character is: ف
 Left word is: كيف
-Right word is:  
-Pre word start to next word end: كيف 
+Right word is:
+Pre word start to next word end: كيف
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: حالك
 Pre word start to next word end:  حالك
 
 Current character is: h
 Left word is: both
-Right word is:    
-Pre word start to next word end: both   
+Right word is:
+Pre word start to next word end: both
 
 Current character is: s
 Left word is: spaces
-Right word is: 
+Right word is:
 Pre word start to next word end: spaces'line break'
 
 Current character is: e
 Left word is: some
-Right word is: 
+Right word is:
 Pre word start to next word end: some'line break'
 
 Current character is: 'line break'
-Left word is: 
-Right word is: 
+Left word is:
+Right word is:
 Pre word start to next word end: 'line break'text
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: [ATTACHMENT]
 Pre word start to next word end:  [ATTACHMENT]
 
@@ -128,7 +128,7 @@ Pre word start to next word end: file
 
 Current character is: t
 Left word is: Edit
-Right word is:  
+Right word is:
 Pre word start to next word end: Edit text
 
 Test going forward.

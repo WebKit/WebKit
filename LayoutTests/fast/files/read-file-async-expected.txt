@@ -34,7 +34,7 @@ readyState: 1
 Received load event
 readyState: 2
 result size: 0
-result: 
+result:
 Received loadend event
 Test reading an empty file as binary string
 readyState: 0
@@ -43,7 +43,7 @@ readyState: 1
 Received load event
 readyState: 2
 result size: 0
-result: 
+result:
 Received loadend event
 Test reading an empty file as text
 readyState: 0
@@ -52,7 +52,7 @@ readyState: 1
 Received load event
 readyState: 2
 result size: 0
-result: 
+result:
 Received loadend event
 Test reading an empty file as data URL
 readyState: 0
@@ -194,7 +194,7 @@ result size: 5
 result: Hello
 Received loadend event
 readyState after recalling read method: 1
-result after recalling read method: 
+result after recalling read method:
 error after recalling read method: null
 Received loadstart event
 readyState: 1
@@ -211,7 +211,7 @@ error code: 8
 result: null
 Received loadend event
 readyState after recalling read method: 1
-result after recalling read method: 
+result after recalling read method:
 error after recalling read method: null
 Received loadstart event
 readyState: 1
@@ -228,7 +228,7 @@ readyState: 1
 Received load event
 readyState: 2
 result size: 0
-result: 
+result:
 Received loadend event
 DONE
 

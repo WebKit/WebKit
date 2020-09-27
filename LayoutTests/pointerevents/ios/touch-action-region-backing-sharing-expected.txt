@@ -43,7 +43,7 @@
             (rect (0,50) width=150 height=50)
             (rect (50,100) width=100 height=50)
             (touch-action
-              (none              
+              (none
                 (rect (0,0) width=100 height=50)
                 (rect (0,50) width=150 height=50)
                 (rect (50,100) width=100 height=50)

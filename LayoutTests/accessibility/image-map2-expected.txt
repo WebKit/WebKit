@@ -4,12 +4,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {784, 36}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -21,7 +21,7 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
+AXLanguage:
 AXDOMIdentifier: result
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
@@ -34,12 +34,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink>
 AXSize: NSSize: {123, 62}
-AXTitle: 
+AXTitle:
 AXDescription: Link1
-AXValue: 
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink>
@@ -51,15 +51,15 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 AXPath: <AXLink>
 
@@ -68,12 +68,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink>
 AXSize: NSSize: {122, 14}
-AXTitle: 
+AXTitle:
 AXDescription: Link2
-AXValue: 
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink>
@@ -85,19 +85,19 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
 
 
- 
+

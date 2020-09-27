@@ -6,19 +6,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Image1:
-	AXTitle: 
+	AXTitle:
 	AXDescription: test1
-	AXHelp: 
+	AXHelp:
 Image2:
-	AXTitle: 
+	AXTitle:
 	AXDescription: alt
 	AXHelp: test2
 Image3:
-	AXTitle: 
+	AXTitle:
 	AXDescription: test3
-	AXHelp: 
+	AXHelp:
 Image4:
-	AXTitle: 
+	AXTitle:
 	AXDescription: alt
 	AXHelp: test4
 PASS imagesGroup.childAtIndex(0).childrenCount is 2

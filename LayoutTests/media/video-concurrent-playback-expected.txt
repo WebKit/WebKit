@@ -1,4 +1,4 @@
-  
+
 Test play() when concurrent playback not allowed.
 
 RUN(internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted'))

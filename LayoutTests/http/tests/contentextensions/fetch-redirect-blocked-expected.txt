@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Refused to connect to http://localhost:8000/resources/square128
 CONSOLE MESSAGE: Blocked by Content Security Policy.
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/resources/square128.png due to access control checks.
 
-PASS Ensure CSP happens before content blocker checks 
+PASS Ensure CSP happens before content blocker checks
 

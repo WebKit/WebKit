@@ -1,14 +1,14 @@
 
-PASS Set HTTP URL frame location.protocol to x 
-PASS Set data URL frame location.protocol to x 
-PASS Set HTTP URL frame location.protocol to data 
+PASS Set HTTP URL frame location.protocol to x
+PASS Set data URL frame location.protocol to x
+PASS Set HTTP URL frame location.protocol to data
 FAIL Set data URL frame location.protocol to data The object can not be cloned.
-PASS Set HTTP URL frame location.protocol to file 
-PASS Set data URL frame location.protocol to file 
-PASS Set HTTP URL frame location.protocol to ftp 
-PASS Set data URL frame location.protocol to ftp 
-PASS Set HTTP URL frame location.protocol to gopher 
-PASS Set data URL frame location.protocol to gopher 
-PASS Set HTTP URL frame location.protocol to http+x 
-PASS Set data URL frame location.protocol to http+x 
+PASS Set HTTP URL frame location.protocol to file
+PASS Set data URL frame location.protocol to file
+PASS Set HTTP URL frame location.protocol to ftp
+PASS Set data URL frame location.protocol to ftp
+PASS Set HTTP URL frame location.protocol to gopher
+PASS Set data URL frame location.protocol to gopher
+PASS Set HTTP URL frame location.protocol to http+x
+PASS Set data URL frame location.protocol to http+x
 

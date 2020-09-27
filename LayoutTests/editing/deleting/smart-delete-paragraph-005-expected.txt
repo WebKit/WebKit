@@ -6,8 +6,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart delete when deleting a line with only a blank line above it. Test must exist at the top of the file in order to correctly test the original bug.
-Expected Results: 
+Expected Results:
 Everything should be deleted.
 

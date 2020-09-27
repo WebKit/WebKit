@@ -1,5 +1,5 @@
 
-PASS Setup worker 
-PASS Service worker should not be throttleable 
-PASS Service worker should be throttleable 
+PASS Setup worker
+PASS Service worker should not be throttleable
+PASS Service worker should be throttleable
 

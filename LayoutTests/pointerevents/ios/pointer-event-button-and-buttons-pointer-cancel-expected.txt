@@ -1,3 +1,3 @@
 
-PASS Testing the values of the button and buttons properties with cancelation. 
+PASS Testing the values of the button and buttons properties with cancelation.
 

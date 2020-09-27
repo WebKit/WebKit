@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/resources/redirect.php?url=/security/resources/xorigincss2.html' because non CSS MIME types are not allowed in strict mode.
 
-PASS Testing same-origin and MIME behavior for CSS. 
-PASS xorigincss2.html should not be loaded either via &lt;link&gt; or @import. 
+PASS Testing same-origin and MIME behavior for CSS.
+PASS xorigincss2.html should not be loaded either via &lt;link&gt; or @import.
 

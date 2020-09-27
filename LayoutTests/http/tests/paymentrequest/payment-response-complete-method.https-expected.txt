@@ -3,11 +3,11 @@
 ✅ Passing "success" eventually closes the sheet and doesn't throw.
 ✅ Passing "fail" eventually closes the sheet and doesn't throw.
 
-PASS Can construct a payment request (smoke test). 
+PASS Can construct a payment request (smoke test).
 PASS If the value of the internal slot [[completeCalled]] is true,
-      reject promise with an "InvalidStateError" DOMException. 
+      reject promise with an "InvalidStateError" DOMException.
 PASS Passing no argument defaults to "unknown",
-      eventually closing the sheet and doesn't throw. 
-PASS Passing "success" eventually closes the sheet and doesn't throw. 
-PASS Passing "fail" eventually closes the sheet and doesn't throw. 
+      eventually closing the sheet and doesn't throw.
+PASS Passing "success" eventually closes the sheet and doesn't throw.
+PASS Passing "fail" eventually closes the sheet and doesn't throw.
 

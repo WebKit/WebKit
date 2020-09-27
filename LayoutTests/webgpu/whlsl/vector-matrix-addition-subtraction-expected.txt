@@ -1,6 +1,6 @@
 
-PASS vectorAddition 
-PASS vectorSubtraction 
-PASS matrixAddition 
-PASS matrixSubtraction 
+PASS vectorAddition
+PASS vectorSubtraction
+PASS matrixAddition
+PASS matrixSubtraction
 

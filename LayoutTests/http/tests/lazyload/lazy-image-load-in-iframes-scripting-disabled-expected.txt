@@ -3,5 +3,5 @@ CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/lazyload/res
 CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/lazyload/resources/lazy-load-in-iframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/lazyload/resources/lazy-load-in-iframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
-PASS Verify that iframe's with scripting off disallow lazy image loading. 
+PASS Verify that iframe's with scripting off disallow lazy image loading.
 

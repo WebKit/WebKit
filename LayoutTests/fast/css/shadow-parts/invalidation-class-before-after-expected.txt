@@ -1,6 +1,6 @@
 The following text should be green:
 
-PASS Part in selected host changed color 
-PASS Before pseudo element of part in selected host changed color 
-PASS After pseudo element of part in selected host changed color 
+PASS Part in selected host changed color
+PASS Before pseudo element of part in selected host changed color
+PASS After pseudo element of part in selected host changed color
 

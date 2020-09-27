@@ -16,7 +16,7 @@ holding connection until versionchange event
 
 Starting worker: resources/dont-commit-on-blocked-worker.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] opening database connection
 [Worker] request = indexedDB.open('dont-commit-on-blocked.html', 2)
 [Worker] state = 'setversion'
@@ -24,18 +24,18 @@ Starting worker: resources/dont-commit-on-blocked-worker.js
 [Worker] request.onupgradeneeded = onSetVersionSuccess
 [Worker] spinning for 100ms to let events be queued but prevent dispatch
 [Worker] done spinning
-[Worker] 
+[Worker]
 [Worker] onSetVersionBlocked():
 PASS [Worker] state is "setversion"
 [Worker] state = 'blocked'
-[Worker] 
+[Worker]
 [Worker] onSetVersionSuccess():
 [Worker] db = event.target.result
 PASS [Worker] state is "blocked"
 [Worker] state = 'success'
 [Worker] creating object store - will fail if transaction commited after blocked event
 [Worker] db.createObjectStore('store2')
-[Worker] 
+[Worker]
 [Worker] onTransactionComplete
 PASS [Worker] state is "success"
 PASS [Worker] Number(db.version) is 2

@@ -12,13 +12,13 @@ URL: https://127.0.0.1:8443/ssl/media-stream/get-user-media-nested.html
 Frame: '<!--frame1-->'
 --------
 URL: https://localhost:8443/ssl/media-stream/resources/get-user-media-frame.html?fail;3
- 
+
 
 --------
 Frame: '<!--frame2-->'
 --------
 URL: https://localhost:8443/ssl/media-stream/resources/get-user-media-frame.html?fail;2
- 
+
 
 --------
 Frame: '<!--frame3-->'

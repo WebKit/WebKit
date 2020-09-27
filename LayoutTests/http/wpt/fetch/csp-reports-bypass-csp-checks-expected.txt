@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Refused to connect to http://localhost:8888/test because it does not appear in the connect-src directive of the Content Security Policy.
 
-PASS CSP violation reports should not be CSP checked 
+PASS CSP violation reports should not be CSP checked
 

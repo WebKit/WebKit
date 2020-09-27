@@ -7,7 +7,7 @@ PASS !!Function("function f() { \"use strict\"; }; 010") is true
 PASS true === true
 PASS !!Function("function f() { 010; }") is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

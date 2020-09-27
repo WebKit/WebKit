@@ -1,7 +1,7 @@
 
-PASS Starting an audio connection 
-PASS Ensuring connection state is connected 
-PASS Ensuring mock audio source is received on the remote side 
-PASS Using replaceTrack for audio 
-PASS Ensuring remote audio gets the replacing track data 
+PASS Starting an audio connection
+PASS Ensuring connection state is connected
+PASS Ensuring mock audio source is received on the remote side
+PASS Using replaceTrack for audio
+PASS Ensuring remote audio gets the replacing track data
 

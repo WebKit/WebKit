@@ -1,13 +1,13 @@
 
-PASS Setting up tests 
+PASS Setting up tests
 FAIL CORS that succeeds with credentials: false; method: GET (allowed: get); header: X-Test,1 (allowed: x-test) promise_test: Unhandled rejection with value: object "TypeError: Preflight response is not successful"
 FAIL CORS that succeeds with credentials: false; method: SUPER (allowed: *); header: X-Test,1 (allowed: x-test) promise_test: Unhandled rejection with value: object "TypeError: Preflight response is not successful"
 FAIL CORS that succeeds with credentials: false; method: OK (allowed: *); header: X-Test,1 (allowed: *) promise_test: Unhandled rejection with value: object "TypeError: Preflight response is not successful"
-PASS CORS that fails with credentials: true; method: OK (allowed: *); header: X-Test,1 (allowed: *) 
-PASS CORS that fails with credentials: true; method: PUT (allowed: *); header:  (allowed: ) 
+PASS CORS that fails with credentials: true; method: OK (allowed: *); header: X-Test,1 (allowed: *)
+PASS CORS that fails with credentials: true; method: PUT (allowed: *); header:  (allowed: )
 FAIL CORS that succeeds with credentials: true; method: PUT (allowed: PUT); header:  (allowed: *) promise_test: Unhandled rejection with value: object "TypeError: Preflight response is not successful"
-PASS CORS that fails with credentials: true; method: PUT (allowed: put); header:  (allowed: *) 
-PASS CORS that fails with credentials: true; method: GET (allowed: get); header: X-Test,1 (allowed: *) 
-PASS CORS that fails with credentials: true; method: GET (allowed: *); header: X-Test,1 (allowed: *) 
+PASS CORS that fails with credentials: true; method: PUT (allowed: put); header:  (allowed: *)
+PASS CORS that fails with credentials: true; method: GET (allowed: get); header: X-Test,1 (allowed: *)
+PASS CORS that fails with credentials: true; method: GET (allowed: *); header: X-Test,1 (allowed: *)
 FAIL CORS that succeeds with credentials: true; method: * (allowed: *); header: *,1 (allowed: *) promise_test: Unhandled rejection with value: object "TypeError: Preflight response is not successful"
 

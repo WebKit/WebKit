@@ -1,6 +1,6 @@
 
-PASS HTMLElement should have onanimation* event handlers. 
-PASS Window should have onanimation* event handlers. 
-PASS SVGElement should have onanimation* event handlers. 
-PASS Document should have onanimation* event handlers. 
+PASS HTMLElement should have onanimation* event handlers.
+PASS Window should have onanimation* event handlers.
+PASS SVGElement should have onanimation* event handlers.
+PASS Document should have onanimation* event handlers.
 

@@ -1,4 +1,4 @@
 There are two checkboxes below, both are required, only one is checked.
 
- 
+
 SUCCESS

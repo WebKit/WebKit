@@ -19,12 +19,12 @@ Calc test with registered property
 Substitution test
 
 
-PASS Registration is successful 
-PASS JS Attributes are valid for element 1 
-PASS JS Attributes are valid for element 2 
-PASS JS Attributes are valid for element 3 
-PASS Test that calc is not substituted for unregistered property 
-PASS Test that calc is substituted for custom property with length syntax 
-PASS Test that calc is substituted for custom property with length syntax 2 
-PASS Test that variables are substituted from JS 
+PASS Registration is successful
+PASS JS Attributes are valid for element 1
+PASS JS Attributes are valid for element 2
+PASS JS Attributes are valid for element 3
+PASS Test that calc is not substituted for unregistered property
+PASS Test that calc is substituted for custom property with length syntax
+PASS Test that calc is substituted for custom property with length syntax 2
+PASS Test that variables are substituted from JS
 

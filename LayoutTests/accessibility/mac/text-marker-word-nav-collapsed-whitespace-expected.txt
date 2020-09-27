@@ -6,21 +6,21 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Current character is: 1
 Left word is: Test1
-Right word is:  
-Pre word start to next word end: Test1 
+Right word is:
+Pre word start to next word end: Test1
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: Test2
 Pre word start to next word end:  Test2
 
 Current character is: 2
 Left word is: Test2
-Right word is:  
-Pre word start to next word end: Test2 
+Right word is:
+Pre word start to next word end: Test2
 
-Current character is:  
-Left word is:  
+Current character is:
+Left word is:
 Right word is: Test3
 Pre word start to next word end:  Test3
 

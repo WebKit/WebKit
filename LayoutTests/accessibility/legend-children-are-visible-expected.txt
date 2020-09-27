@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 fieldset description: AXDescription: Not link Link
-legend child 1: string value: AXValue: Not link 
+legend child 1: string value: AXValue: Not link
 legend child 2: title: AXTitle: Link
 PASS successfullyParsed is true
 

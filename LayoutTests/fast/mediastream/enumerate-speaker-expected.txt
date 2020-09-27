@@ -1,4 +1,4 @@
 
-PASS Before gum, no audiooutput is exposed 
-PASS audiooutput devices 
+PASS Before gum, no audiooutput is exposed
+PASS audiooutput devices
 

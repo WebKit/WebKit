@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Not allowed to follow a redirection while loading http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii
 CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii due to access control checks.
 
-PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 
-PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 2 
+PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode)
+PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 2
 

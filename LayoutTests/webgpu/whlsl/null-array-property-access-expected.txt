@@ -1,8 +1,8 @@
 
-PASS storeNullArrayRef 
-PASS loadNullArrayRef 
-PASS nullNamedAccess 
-PASS nullNamedAccess2 
-PASS nullNamedAccessSink 
-PASS nullNamedAccessSink2 
+PASS storeNullArrayRef
+PASS loadNullArrayRef
+PASS nullNamedAccess
+PASS nullNamedAccess2
+PASS nullNamedAccessSink
+PASS nullNamedAccessSink2
 

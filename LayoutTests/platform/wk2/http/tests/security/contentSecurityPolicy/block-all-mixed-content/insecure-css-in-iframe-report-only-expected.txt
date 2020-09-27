@@ -4,7 +4,7 @@ frame "<!--frame1-->" - didCommitLoadForFrame
 CONSOLE MESSAGE: [Report Only] Blocked mixed content http://127.0.0.1:8000/security/mixedContent/resources/style.css because 'block-all-mixed-content' appears in the Content Security Policy.
 CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php was not allowed to run insecure content from http://127.0.0.1:8000/security/mixedContent/resources/style.css.
 
-frame "<!--frame1-->" - willPerformClientRedirectToURL: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php 
+frame "<!--frame1-->" - willPerformClientRedirectToURL: https://127.0.0.1:8443/security/contentSecurityPolicy/resources/echo-report.php?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame

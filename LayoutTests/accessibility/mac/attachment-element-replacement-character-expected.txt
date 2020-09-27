@@ -4,7 +4,7 @@ This tests that attachment element replacements are present in strings.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-String: 
+String:
 some [ATTACHMENT] test
 This tests that attachment element replacements are present in strings.
 

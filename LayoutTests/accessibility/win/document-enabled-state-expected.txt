@@ -1,6 +1,6 @@
-This tests that the enabled state of the document is true. 
+This tests that the enabled state of the document is true.
 
-Bug #67974: MSAA: WebKit reports the document state as disabled 
+Bug #67974: MSAA: WebKit reports the document state as disabled
 
 This test must be run inside of DumpRenderTree.
 PASS accessibilityController.focusedElement.parentElement().role is "AXRole: document"

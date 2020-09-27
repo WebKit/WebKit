@@ -1,7 +1,7 @@
 
-PASS Setup stream 
-PASS Hide page, video and audio should be muted 
-PASS Show page, video and audio should be unmuted 
-PASS Hide and mute page, video and audio should be muted 
-PASS Show page, video and audio should remain muted 
+PASS Setup stream
+PASS Hide page, video and audio should be muted
+PASS Show page, video and audio should be unmuted
+PASS Hide and mute page, video and audio should be muted
+PASS Show page, video and audio should remain muted
 

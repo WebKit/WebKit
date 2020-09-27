@@ -1,4 +1,4 @@
 
-PASS plusEquals 
-PASS plusEqualsResult 
+PASS plusEquals
+PASS plusEqualsResult
 

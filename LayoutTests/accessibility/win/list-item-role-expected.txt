@@ -1,4 +1,4 @@
-This test verifies that, on Windows, list items return the "list item" role. 
+This test verifies that, on Windows, list items return the "list item" role.
 
 Bug 32688 - MSAA: Accessibility role of list items is wrong
 

@@ -1,4 +1,4 @@
 
 
-PASS Ensuring frame document gets collected after being stopped in the middle of IDB operations 
+PASS Ensuring frame document gets collected after being stopped in the middle of IDB operations
 

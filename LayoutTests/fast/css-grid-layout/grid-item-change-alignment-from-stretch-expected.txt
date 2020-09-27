@@ -2,16 +2,16 @@ Test to verify that grid item's stretched size is reset when changing to a diffe
 
 XXXXX
 
-PASS Checking stretched size before changing to self-start. 
-PASS Checking size after changing to self-start. 
-PASS Checking stretched size before changing to self-end. 
-PASS Checking size after changing to self-end. 
-PASS Checking stretched size before changing to start. 
-PASS Checking size after changing to start. 
-PASS Checking stretched size before changing to end. 
-PASS Checking size after changing to end. 
-PASS Checking stretched size before changing to center. 
-PASS Checking size after changing to center. 
-PASS Checking stretched size before changing to baseline. 
-PASS Checking size after changing to baseline. 
+PASS Checking stretched size before changing to self-start.
+PASS Checking size after changing to self-start.
+PASS Checking stretched size before changing to self-end.
+PASS Checking size after changing to self-end.
+PASS Checking stretched size before changing to start.
+PASS Checking size after changing to start.
+PASS Checking stretched size before changing to end.
+PASS Checking size after changing to end.
+PASS Checking stretched size before changing to center.
+PASS Checking size after changing to center.
+PASS Checking stretched size before changing to baseline.
+PASS Checking size after changing to baseline.
 

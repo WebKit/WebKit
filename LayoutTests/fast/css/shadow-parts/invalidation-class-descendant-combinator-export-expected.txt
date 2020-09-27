@@ -1,4 +1,4 @@
 The following text should be green:
 
-PASS Part in selected host changed color 
+PASS Part in selected host changed color
 

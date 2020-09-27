@@ -9,6 +9,6 @@ CONSOLE MESSAGE: Refused to apply inline style because it violates the following
 A test paragraph
 
 This is a testharness.js-based test.
-PASS Test that paragraph remains green and error events received. 
+PASS Test that paragraph remains green and error events received.
 Harness: the test ran to completion.
 

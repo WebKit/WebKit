@@ -1,4 +1,4 @@
-recorded: 
+recorded:
 (translate
   (x 0.00)
   (y 0.00))
@@ -9,7 +9,7 @@ recorded:
   (composite-operation source-over)
   (blend-mode normal))
 
-replayed: 
+replayed:
 (
   (clip at (512,0) size 512x200)
 (translate

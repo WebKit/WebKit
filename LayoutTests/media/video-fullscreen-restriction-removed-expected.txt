@@ -8,7 +8,7 @@ RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForFullscree
 
 EVENT(canplaythrough)
 
-* video.play() should fail 
+* video.play() should fail
 RUN(video.play())
 EXPECTED (video.paused == 'true') OK
 

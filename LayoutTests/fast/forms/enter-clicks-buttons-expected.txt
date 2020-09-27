@@ -2,10 +2,10 @@ Test for <rdar://5483519> Pressing Enter on selected buttons should fire onclick
 
 In a form:
 
-button type="button"  button type="submit"  button type="reset"       
+button type="button"  button type="submit"  button type="reset"
 Outside a form:
 
-button type="button" button type="submit" button type="reset"    
+button type="button" button type="submit" button type="reset"
 
 
 Sending Enter keypresses...

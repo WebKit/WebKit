@@ -1,4 +1,4 @@
- 
+
 Checks that a texture that is not -texture-complete- does not draw if filtering needs mips
 
 PASS texture that is not -texture-complete- when TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255

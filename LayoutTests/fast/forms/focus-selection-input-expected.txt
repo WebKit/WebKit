@@ -23,13 +23,13 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 
 This test checks whether the selection is restored, cleared, or set to the full range when using different ways to focus a text field. These results all match Mozilla, except test 6, which selects the whole field contents to match all other cases of keyboard focus. When running manually, please follow the steps below. In the test harness, the test runs automatically.
 
-1) Hit tab, the whole phrase "SUCCESS and SUCCESS" should be selected:  
-2) Hit Ctrl-Option-J (or Alt-J on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:  
-3) , only the word "SUCCESS" should be selected:  
-4) Click in the input field, nothing should be selected:  
-5) Click this label, only the word "SUCCESS" should be selected:  
-6) Hit Ctrl-Option-U (or Alt-U on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:  
-7) , only the word "SUCCESS" should be selected:  
+1) Hit tab, the whole phrase "SUCCESS and SUCCESS" should be selected:
+2) Hit Ctrl-Option-J (or Alt-J on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:
+3) , only the word "SUCCESS" should be selected:
+4) Click in the input field, nothing should be selected:
+5) Click this label, only the word "SUCCESS" should be selected:
+6) Hit Ctrl-Option-U (or Alt-U on Windows), the whole phrase "SUCCESS and SUCCESS" should be selected:
+7) , only the word "SUCCESS" should be selected:
 8)  , the whole phrase "SUCCESS and SUCCESS" should be selected:
 
 

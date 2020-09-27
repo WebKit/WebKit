@@ -1,14 +1,14 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "simple-output" 
-PASS Executing "oscillator-output" 
-PASS Audit report 
-PASS > [simple-output]  
-PASS   The initial delay contains zeros. contains only the constant 0. 
-PASS   The actual content contains 3.1415927410125732 contains only the constant 3.1415927410125732. 
-PASS < [simple-output] All assertions passed. (total 2 assertions) 
-PASS > [oscillator-output]  
-PASS   The rendered buffer contains only the constant 0. 
-PASS < [oscillator-output] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "simple-output"
+PASS Executing "oscillator-output"
+PASS Audit report
+PASS > [simple-output]
+PASS   The initial delay contains zeros. contains only the constant 0.
+PASS   The actual content contains 3.1415927410125732 contains only the constant 3.1415927410125732.
+PASS < [simple-output] All assertions passed. (total 2 assertions)
+PASS > [oscillator-output]
+PASS   The rendered buffer contains only the constant 0.
+PASS < [oscillator-output] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

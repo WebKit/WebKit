@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 
-PASS ResizeObserver implemented 
-PASS guard 
-PASS test0: The change of zoom shouldn't affect resizeObserver size. 
-PASS test1: The change of zoom shouldn't affect svg resizeObserver size. 
+PASS ResizeObserver implemented
+PASS guard
+PASS test0: The change of zoom shouldn't affect resizeObserver size.
+PASS test1: The change of zoom shouldn't affect svg resizeObserver size.
 

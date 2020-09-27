@@ -1,6 +1,6 @@
 Click on play button: video1 should start to play, then video2 should also start to play
-Play video 1     
+Play video 1
 
-PASS Ensuring video is not playing if no user gesture 
-PASS Should not autoplay even when a video is already playing audio 
+PASS Ensuring video is not playing if no user gesture
+PASS Should not autoplay even when a video is already playing audio
 

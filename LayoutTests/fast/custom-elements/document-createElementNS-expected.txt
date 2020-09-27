@@ -1,6 +1,6 @@
 
-PASS document.createElement invoke a custom element constructor with no arguments 
-PASS document.createElementNS must create an instance of custom elements 
-PASS document.createElementNS must set the prefix after constructing a custom element 
-PASS document.createElementNS must use the element returned by the constructor 
+PASS document.createElement invoke a custom element constructor with no arguments
+PASS document.createElementNS must create an instance of custom elements
+PASS document.createElementNS must set the prefix after constructing a custom element
+PASS document.createElementNS must use the element returned by the constructor
 

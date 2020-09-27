@@ -9,5 +9,5 @@ Test 1 PASS: Loaded script http://127.0.0.1:8000/security/resources/allow-if-ori
 Test 2 PASS: Did not load script http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&delay=1000&contentType=text/javascript from localhost:8080 (crossOrigin=anonymous)
 Test 3 PASS: Loaded script http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&delay=1000&contentType=text/javascript from localhost:8080
 Test 4 PASS: Did not load script http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&delay=1000&contentType=text/javascript from localhost:8080 (crossOrigin=anonymous)
-  
-  
+
+

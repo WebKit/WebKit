@@ -1,8 +1,8 @@
 Resource Timing: Element localName initiatorType
 
 
-PASS Type: video - <video src> 
-PASS Timing: video - <video src> 
-PASS Type: audio - <audio src> 
-PASS Timing: audio - <audio src> 
+PASS Type: video - <video src>
+PASS Timing: video - <video src>
+PASS Type: audio - <audio src>
+PASS Timing: audio - <audio src>
 

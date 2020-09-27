@@ -9,4 +9,4 @@ PASS internals.imageFrameIndex(image) is >= 2
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

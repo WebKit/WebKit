@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
 CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
 
-PASS Testing synthetic response body size padding 
-PASS Testing non opaque response body size padding 
-PASS Testing opaque response body size padding 
-PASS Hitting cache quota for non opaque responses 
-PASS Hitting cache quota for padded responses 
+PASS Testing synthetic response body size padding
+PASS Testing non opaque response body size padding
+PASS Testing opaque response body size padding
+PASS Hitting cache quota for non opaque responses
+PASS Hitting cache quota for padded responses
 

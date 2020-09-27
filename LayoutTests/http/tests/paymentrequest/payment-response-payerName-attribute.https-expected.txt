@@ -4,10 +4,10 @@ payerName attribute is null when requestPayerName is false.
 payerName attribute is 'web platform test' when requestPayerName is true.
 payerName attribute is 'web platform test' when requestPayerName is truthy.
 
-PASS Can construct a payment request (smoke test). 
-PASS payerName attribute is null when option is undefined. 
-PASS payerName attribute is null when requestPayerName is undefined. 
-PASS payerName attribute is null when requestPayerName is false. 
-PASS payerName attribute is 'web platform test' when requestPayerName is true. 
-PASS payerName attribute is 'web platform test' when requestPayerName is truthy. 
+PASS Can construct a payment request (smoke test).
+PASS payerName attribute is null when option is undefined.
+PASS payerName attribute is null when requestPayerName is undefined.
+PASS payerName attribute is null when requestPayerName is false.
+PASS payerName attribute is 'web platform test' when requestPayerName is true.
+PASS payerName attribute is 'web platform test' when requestPayerName is truthy.
 

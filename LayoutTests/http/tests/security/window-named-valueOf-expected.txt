@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: Threw exception: TypeError: Cannot set prototype of immutable prototype object
-This passes if it doesn't alert the contents of innocent-victim.  
+This passes if it doesn't alert the contents of innocent-victim.

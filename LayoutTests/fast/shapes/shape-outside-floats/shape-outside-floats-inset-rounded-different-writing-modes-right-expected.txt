@@ -13,16 +13,16 @@ X
 X
 X
 
-PASS 1st square doesn't overlap shape. 
-PASS 2nd square is properly affected by shape. 
-PASS 3rd square is properly affected by shape. 
-PASS 4th square is properly affected by shape. 
-PASS 5th square is properly affected by shape. 
-PASS 6th square is properly affected by shape. 
-PASS 7th square is properly affected by shape. 
-PASS 8th square is properly affected by shape. 
-PASS 9th square is properly affected by shape. 
-PASS 10th square is properly affected by shape. 
-PASS 11th square is properly affected by shape. 
-PASS 12th square doesn't overlap shape. 
+PASS 1st square doesn't overlap shape.
+PASS 2nd square is properly affected by shape.
+PASS 3rd square is properly affected by shape.
+PASS 4th square is properly affected by shape.
+PASS 5th square is properly affected by shape.
+PASS 6th square is properly affected by shape.
+PASS 7th square is properly affected by shape.
+PASS 8th square is properly affected by shape.
+PASS 9th square is properly affected by shape.
+PASS 10th square is properly affected by shape.
+PASS 11th square is properly affected by shape.
+PASS 12th square doesn't overlap shape.
 

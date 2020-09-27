@@ -1,2 +1,2 @@
- 
+
 PASS -- 0 sized rects did not trigger an exception

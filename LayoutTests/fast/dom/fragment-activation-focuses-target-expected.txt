@@ -20,7 +20,7 @@ PASS document.activeElement is document.body
 PASS successfullyParsed is true
 
 TEST COMPLETE
-link1 link2 
+link1 link2
 
 fragment1
 fragment2

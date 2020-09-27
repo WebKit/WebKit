@@ -1,7 +1,7 @@
 
-PASS Create texture view from swap chain. 
-PASS Create basic depth texture from device. 
-PASS Create basic 4x multisampled texture. 
-PASS Create basic 3D texture from device. 
-PASS Create a render target texture (which can be sampled) from device. 
+PASS Create texture view from swap chain.
+PASS Create basic depth texture from device.
+PASS Create basic 4x multisampled texture.
+PASS Create basic 3D texture from device.
+PASS Create a render target texture (which can be sampled) from device.
 

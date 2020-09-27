@@ -1,6 +1,6 @@
 
-PASS Object.getOwnPropertyNames(localStorage) on an empty local storage should return an empty array. 
-PASS Object.defineProperty can be used to add items to localStorage. 
-PASS Operator delete can be used to remove items from localStorage. 
-PASS The configurable modifier does effect the result when used in adding properties to localStorage with Object.defineProperty. 
+PASS Object.getOwnPropertyNames(localStorage) on an empty local storage should return an empty array.
+PASS Object.defineProperty can be used to add items to localStorage.
+PASS Operator delete can be used to remove items from localStorage.
+PASS The configurable modifier does effect the result when used in adding properties to localStorage with Object.defineProperty.
 

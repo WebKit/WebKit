@@ -1,4 +1,4 @@
-Test for https://bugs.webkit.org/show_bug.cgi?id=34966. 
+Test for https://bugs.webkit.org/show_bug.cgi?id=34966.
 You should see the video below.
 
 

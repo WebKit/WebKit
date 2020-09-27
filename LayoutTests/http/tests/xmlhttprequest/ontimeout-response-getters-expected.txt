@@ -1,6 +1,6 @@
 
-PASS getting arraybuffer response within timeout event callback 
-PASS getting blob response within timeout event callback 
-PASS getting json response within timeout event callback 
-PASS getting document response within timeout event callback 
+PASS getting arraybuffer response within timeout event callback
+PASS getting blob response within timeout event callback
+PASS getting json response within timeout event callback
+PASS getting document response within timeout event callback
 

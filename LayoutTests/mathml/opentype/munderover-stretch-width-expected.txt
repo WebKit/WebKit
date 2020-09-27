@@ -28,13 +28,13 @@ This test passes if you see both the red and blue things have the same width as 
 ↜
 ↜
 
-PASS simple stretchy over 
-PASS simple stretchy under 
-PASS embellished op over with wide base 
-PASS embellished op over with narrow base 
-PASS unembellished op under with plain op over 
-PASS nested embellished op 
-PASS nested non-munderover embellished op 
-PASS simple stretchy under should equal over 
-PASS all stretchy embellished op 
+PASS simple stretchy over
+PASS simple stretchy under
+PASS embellished op over with wide base
+PASS embellished op over with narrow base
+PASS unembellished op under with plain op over
+PASS nested embellished op
+PASS nested non-munderover embellished op
+PASS simple stretchy under should equal over
+PASS all stretchy embellished op
 

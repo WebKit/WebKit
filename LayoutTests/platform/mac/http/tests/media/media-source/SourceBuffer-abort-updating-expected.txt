@@ -10,5 +10,5 @@ step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 async_test@http://127.0.0.1:8000/w3c/resources/testharness.js:460:26
 mediaTest@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:41:15
 global code@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:88:14)
-PASS SourceBuffer#abort() (video/mp4) : Check the algorithm when the updating attribute is true. 
+PASS SourceBuffer#abort() (video/mp4) : Check the algorithm when the updating attribute is true.
 

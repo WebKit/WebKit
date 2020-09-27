@@ -1,6 +1,6 @@
 Test DOMPoint and DOMPointReadOnly interfaces
 
 
-PASS test DOMPoint matrixTransform with 3d matrix 
-PASS test DOMPoint matrixTransform with perspective point 
+PASS test DOMPoint matrixTransform with 3d matrix
+PASS test DOMPoint matrixTransform with perspective point
 

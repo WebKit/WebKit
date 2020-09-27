@@ -1,85 +1,85 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "1-pole tail" 
-PASS Executing "2 real pole test" 
-PASS Executing "2 complex poles" 
-PASS Executing "repeated poles" 
-PASS Executing "4-th order" 
-PASS Audit report 
-PASS > [1-pole tail]  
-PASS   1-pole: tail end frame is less than or equal to 16384. 
-PASS   1-pole: output[0:127] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[128:255] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[256:383] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[384:511] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[512:639] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[640:767] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[768:895] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[896:1023] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[1024:1151] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[1152:1279] is not constantly 0 (contains 128 different values). 
-PASS   1-pole: output[1280:1407] is not constantly 0 (contains 128 different values). 
-PASS   output[1408:16383] contains only the constant 0. 
-PASS < [1-pole tail] All assertions passed. (total 13 assertions) 
-PASS > [2 real pole test]  
-PASS   2 real poles: tail end frame is less than or equal to 16384. 
-PASS   2 real poles: output[0:127] is not constantly 0 (contains 126 different values). 
-PASS   2 real poles: output[128:255] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[256:383] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[384:511] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[512:639] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[640:767] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[768:895] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[896:1023] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[1024:1151] is not constantly 0 (contains 128 different values). 
-PASS   2 real poles: output[1152:1279] is not constantly 0 (contains 128 different values). 
-PASS   output[1280:16383] contains only the constant 0. 
-PASS < [2 real pole test] All assertions passed. (total 12 assertions) 
-PASS > [2 complex poles]  
-PASS   2 complex poles: tail end frame is less than or equal to 16384. 
-PASS   2 complex poles: output[0:127] is not constantly 0 (contains 126 different values). 
-PASS   2 complex poles: output[128:255] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[256:383] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[384:511] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[512:639] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[640:767] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[768:895] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[896:1023] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[1024:1151] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[1152:1279] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[1280:1407] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[1408:1535] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[1536:1663] is not constantly 0 (contains 128 different values). 
-PASS   2 complex poles: output[1664:1791] is not constantly 0 (contains 128 different values). 
-PASS   output[1792:16383] contains only the constant 0. 
-PASS < [2 complex poles] All assertions passed. (total 16 assertions) 
-PASS > [repeated poles]  
-PASS   2 repeated poles: tail end frame is less than or equal to 16384. 
-PASS   2 repeated poles: output[0:127] is not constantly 0 (contains 126 different values). 
-PASS   2 repeated poles: output[128:255] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[256:383] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[384:511] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[512:639] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[640:767] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[768:895] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[896:1023] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1024:1151] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1152:1279] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1280:1407] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1408:1535] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1536:1663] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1664:1791] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1792:1919] is not constantly 0 (contains 128 different values). 
-PASS   2 repeated poles: output[1920:2047] is not constantly 0 (contains 128 different values). 
-PASS   output[2048:16383] contains only the constant 0. 
-PASS < [repeated poles] All assertions passed. (total 18 assertions) 
-PASS > [4-th order]  
-PASS   Filter outputs[0:511] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.4902e-8,"relativeThreshold":0}. 
-PASS   Filter outputs[512:] is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   cascaded biquad output[0:511] is not constantly 0 (contains 432 different values). 
-PASS   cascaded biquad output[512:] contains only the constant 0. 
-PASS   4-th order output[0:511] is not constantly 0 (contains 384 different values). 
-PASS   4-th order output[512:] contains only the constant 0. 
-PASS < [4-th order] All assertions passed. (total 6 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "1-pole tail"
+PASS Executing "2 real pole test"
+PASS Executing "2 complex poles"
+PASS Executing "repeated poles"
+PASS Executing "4-th order"
+PASS Audit report
+PASS > [1-pole tail]
+PASS   1-pole: tail end frame is less than or equal to 16384.
+PASS   1-pole: output[0:127] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[128:255] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[256:383] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[384:511] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[512:639] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[640:767] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[768:895] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[896:1023] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[1024:1151] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[1152:1279] is not constantly 0 (contains 128 different values).
+PASS   1-pole: output[1280:1407] is not constantly 0 (contains 128 different values).
+PASS   output[1408:16383] contains only the constant 0.
+PASS < [1-pole tail] All assertions passed. (total 13 assertions)
+PASS > [2 real pole test]
+PASS   2 real poles: tail end frame is less than or equal to 16384.
+PASS   2 real poles: output[0:127] is not constantly 0 (contains 126 different values).
+PASS   2 real poles: output[128:255] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[256:383] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[384:511] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[512:639] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[640:767] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[768:895] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[896:1023] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[1024:1151] is not constantly 0 (contains 128 different values).
+PASS   2 real poles: output[1152:1279] is not constantly 0 (contains 128 different values).
+PASS   output[1280:16383] contains only the constant 0.
+PASS < [2 real pole test] All assertions passed. (total 12 assertions)
+PASS > [2 complex poles]
+PASS   2 complex poles: tail end frame is less than or equal to 16384.
+PASS   2 complex poles: output[0:127] is not constantly 0 (contains 126 different values).
+PASS   2 complex poles: output[128:255] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[256:383] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[384:511] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[512:639] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[640:767] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[768:895] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[896:1023] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[1024:1151] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[1152:1279] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[1280:1407] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[1408:1535] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[1536:1663] is not constantly 0 (contains 128 different values).
+PASS   2 complex poles: output[1664:1791] is not constantly 0 (contains 128 different values).
+PASS   output[1792:16383] contains only the constant 0.
+PASS < [2 complex poles] All assertions passed. (total 16 assertions)
+PASS > [repeated poles]
+PASS   2 repeated poles: tail end frame is less than or equal to 16384.
+PASS   2 repeated poles: output[0:127] is not constantly 0 (contains 126 different values).
+PASS   2 repeated poles: output[128:255] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[256:383] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[384:511] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[512:639] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[640:767] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[768:895] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[896:1023] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1024:1151] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1152:1279] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1280:1407] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1408:1535] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1536:1663] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1664:1791] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1792:1919] is not constantly 0 (contains 128 different values).
+PASS   2 repeated poles: output[1920:2047] is not constantly 0 (contains 128 different values).
+PASS   output[2048:16383] contains only the constant 0.
+PASS < [repeated poles] All assertions passed. (total 18 assertions)
+PASS > [4-th order]
+PASS   Filter outputs[0:511] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.4902e-8,"relativeThreshold":0}.
+PASS   Filter outputs[512:] is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   cascaded biquad output[0:511] is not constantly 0 (contains 432 different values).
+PASS   cascaded biquad output[512:] contains only the constant 0.
+PASS   4-th order output[0:511] is not constantly 0 (contains 384 different values).
+PASS   4-th order output[512:] contains only the constant 0.
+PASS < [4-th order] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

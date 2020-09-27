@@ -1,4 +1,4 @@
 
-PASS Test that calling OffscreenCanvas's constructor generates correct width and height. 
-PASS Test that OffscreenCanvas constructor handles invalid arguments correctly 
+PASS Test that calling OffscreenCanvas's constructor generates correct width and height.
+PASS Test that OffscreenCanvas constructor handles invalid arguments correctly
 

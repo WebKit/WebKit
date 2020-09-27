@@ -1,16 +1,16 @@
 This test passes if the brace stretches symmetrically and is large enough to cover its sibling.
 
 {
- 
+
 {
- 
+
 {
- 
+
 {
 
 
-PASS large depth 
-PASS large depth (explicit symmetric attribute) 
-PASS large height 
-PASS large height (explicit symmetric attribute) 
+PASS large depth
+PASS large depth (explicit symmetric attribute)
+PASS large height
+PASS large height (explicit symmetric attribute)
 

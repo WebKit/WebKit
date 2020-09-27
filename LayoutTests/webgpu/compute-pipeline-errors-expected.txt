@@ -1,6 +1,6 @@
 
-PASS Compute compilation failed due to incorrect entry point string. 
-PASS Compute pipeline creation succeeded. 
-PASS MSL pipeline creation failed due to invalid GPUShaderModule. 
-PASS MSL pipeline creation failed due to incorrect entry point string. 
+PASS Compute compilation failed due to incorrect entry point string.
+PASS Compute pipeline creation succeeded.
+PASS MSL pipeline creation failed due to invalid GPUShaderModule.
+PASS MSL pipeline creation failed due to incorrect entry point string.
 

@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: Refused to load data:application/x-webkit-test-netscape,logifloaded because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
-Given a `plugin-types` directive, plugins have to declare a type explicitly. No declared type, no load. This test passes if there's a console message above and "FAIL!" isn't logged.  
+Given a `plugin-types` directive, plugins have to declare a type explicitly. No declared type, no load. This test passes if there's a console message above and "FAIL!" isn't logged.

@@ -11,5 +11,5 @@ CONSOLE MESSAGE: TypeError: Can only call ReadableStreamDefaultReader.cancel on 
 CONSOLE MESSAGE: TypeError: Can only call ReadableStreamDefaultReader.read on instances of ReadableStreamDefaultReader
 CONSOLE MESSAGE: TypeError: The ReadableStreamDefaultReader.closed getter can only be used on instances of ReadableStreamDefaultReader
 
-PASS Exercising TypeError messages in ReadableStream, ReadableStreamDefaultController and ReadableStreamDefaultReader 
+PASS Exercising TypeError messages in ReadableStream, ReadableStreamDefaultController and ReadableStreamDefaultReader
 

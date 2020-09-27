@@ -1,13 +1,13 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "context-creation-smoketest" 
-PASS Executing "rendering-thread-smoketest" 
-PASS Audit report 
-PASS > [context-creation-smoketest] Creating 500 contexts up front. 
-PASS   The number of created contexts without a crash is equal to 500. 
-PASS < [context-creation-smoketest] All assertions passed. (total 1 assertions) 
-PASS > [rendering-thread-smoketest] Rendering 500 contexts sequentially. 
-PASS   The number of contexts rendered without a crash is equal to 500. 
-PASS < [rendering-thread-smoketest] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "context-creation-smoketest"
+PASS Executing "rendering-thread-smoketest"
+PASS Audit report
+PASS > [context-creation-smoketest] Creating 500 contexts up front.
+PASS   The number of created contexts without a crash is equal to 500.
+PASS < [context-creation-smoketest] All assertions passed. (total 1 assertions)
+PASS > [rendering-thread-smoketest] Rendering 500 contexts sequentially.
+PASS   The number of contexts rendered without a crash is equal to 500.
+PASS < [rendering-thread-smoketest] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

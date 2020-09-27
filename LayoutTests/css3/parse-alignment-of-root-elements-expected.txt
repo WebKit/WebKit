@@ -1,30 +1,30 @@
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: *** Test 'auto' value resolution for the document root node. ***
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: *** Test 'auto' value resolution for the shadow DOM root node. ***
-CONSOLE MESSAGE: 
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: *** Test 'auto' value resolution for the shadow DOM 'slotted' elements. ***
 Test to verify auto value resolution works as expected in root elements (eg. document root / shadow roots / slotted elements / elements inside slot)
 
 
-PASS Check out how the DOM's root element resolves the align-self 'auto' values. 
-PASS Check out how the DOM's root element align-items's value is used to resolve its children's align-self 'auto' values. 
-PASS Check out how the DOM's root element deals with 'auto' value in align-items. 
-PASS Check out how the DOM's root element resolves the justify-self 'auto' values. 
-PASS Check out how the DOM's root element justify-items's value is used to resolve its children's justify-self 'auto' values. 
-PASS Check out how the DOM's root element deals with 'auto' value in justify-items. 
-PASS Check out how the DOM's root element justify-items's value with 'legacy' keyword is used to resolve any descendant's justify-items 'auto' values. 
-PASS Check out how the DOM's root element recomputes its descendant's style when 'legacy' keyword is removed from its justify-items value. 
-PASS Shadow Node inherits from ShadowHost to resolve the 'auto' values for align-self. 
-PASS Shadow Node inherits from ShadowHost to resolve the 'auto' values for justify-self. 
-PASS Check out how the 'legacy' keyword in justify-items propagates from the DOM Tree to the Shadow Node. 
+PASS Check out how the DOM's root element resolves the align-self 'auto' values.
+PASS Check out how the DOM's root element align-items's value is used to resolve its children's align-self 'auto' values.
+PASS Check out how the DOM's root element deals with 'auto' value in align-items.
+PASS Check out how the DOM's root element resolves the justify-self 'auto' values.
+PASS Check out how the DOM's root element justify-items's value is used to resolve its children's justify-self 'auto' values.
+PASS Check out how the DOM's root element deals with 'auto' value in justify-items.
+PASS Check out how the DOM's root element justify-items's value with 'legacy' keyword is used to resolve any descendant's justify-items 'auto' values.
+PASS Check out how the DOM's root element recomputes its descendant's style when 'legacy' keyword is removed from its justify-items value.
+PASS Shadow Node inherits from ShadowHost to resolve the 'auto' values for align-self.
+PASS Shadow Node inherits from ShadowHost to resolve the 'auto' values for justify-self.
+PASS Check out how the 'legacy' keyword in justify-items propagates from the DOM Tree to the Shadow Node.
 FAIL Check out how align-self uses the 'shadowHost' as 'slotted' element's parent while 'slot' is not assigned. assert_equals: alignItems is not what is should. expected "normal" but got "end"
 FAIL Check out how justify-self uses the 'shadowHost' as 'slotted' element's parent while 'slot' is not assigned. assert_equals: justifyItems is not what is should. expected "left" but got "normal"
-PASS Check out how the 'legacy' keyword in justify-items affects the 'slotted' elements while 'slot' is not assigned. 
-PASS Check out how align-self uses the 'slot' element's parent (Shadow Node) as 'slotted' element' s parent after the 'slot' is assigned. 
-PASS Check out how justify-self uses the 'slot' element's parent (Shadow Node) as 'slotted' element' s parent after the 'slot' is assigned. 
-PASS Check out how the 'legacy' keyword affects the 'slotted' elements after the 'slot' is assigned. 
-PASS The 'slot' element should not use its parent inside the ShadowDOM tree to resolve the align-self 'auto' values because Blink does not support slots in the flat tree. 
-PASS The 'slot' element should not use its parent inside the ShadowDOM tree to resolve the justify-self 'auto' values because Blink does not support slots in the flat tree. 
+PASS Check out how the 'legacy' keyword in justify-items affects the 'slotted' elements while 'slot' is not assigned.
+PASS Check out how align-self uses the 'slot' element's parent (Shadow Node) as 'slotted' element' s parent after the 'slot' is assigned.
+PASS Check out how justify-self uses the 'slot' element's parent (Shadow Node) as 'slotted' element' s parent after the 'slot' is assigned.
+PASS Check out how the 'legacy' keyword affects the 'slotted' elements after the 'slot' is assigned.
+PASS The 'slot' element should not use its parent inside the ShadowDOM tree to resolve the align-self 'auto' values because Blink does not support slots in the flat tree.
+PASS The 'slot' element should not use its parent inside the ShadowDOM tree to resolve the justify-self 'auto' values because Blink does not support slots in the flat tree.
 

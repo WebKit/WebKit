@@ -1,4 +1,4 @@
 
 
-PASS Ensure that the frame's document get collected after being stopped while doing some webkit media session calls 
+PASS Ensure that the frame's document get collected after being stopped while doing some webkit media session calls
 

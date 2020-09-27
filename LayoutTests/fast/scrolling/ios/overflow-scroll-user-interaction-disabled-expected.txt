@@ -1,5 +1,5 @@
 Test that a 'visibility:hidden' or 'pointer-events:none' scroll layer does not block scrolling of overlapped scrollers.
 
-case 1: Scrollable 1 
-case 2: Scrollable 3 
+case 1: Scrollable 1
+case 2: Scrollable 3
 

@@ -2,8 +2,8 @@ CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:8443/pinkelephant due to access control checks.
 
 
-PASS Setup worker 
-PASS Test self.clients.claim 
-PASS Test data URL frame 
-PASS Test blob URL frame 
+PASS Setup worker
+PASS Test self.clients.claim
+PASS Test data URL frame
+PASS Test blob URL frame
 

@@ -1,12 +1,12 @@
 
-PASS import-meta-url-expose.js#test1 
+PASS import-meta-url-expose.js#test1
 FAIL import-meta-url-expose.js#test2 assert_equals: expected "http://localhost:8800/WebKit/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js#test2" but got "http://localhost:8800/WebKit/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js"
-PASS import-meta-url-expose.js#test4 
-PASS import-meta-url-expose.js#testA 
-PASS import-meta-url-expose.js 
+PASS import-meta-url-expose.js#test4
+PASS import-meta-url-expose.js#testA
+PASS import-meta-url-expose.js
 FAIL import-meta-url-expose.js#testC assert_equals: expected "http://localhost:8800/WebKit/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js#testC" but got "http://localhost:8800/WebKit/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js"
 FAIL import-meta-url-expose.js#testD assert_equals: expected "http://localhost:8800/WebKit/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js#testD" but got "http://localhost:8800/WebKit/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js"
-PASS import-meta-url-expose.js#testCC 
-PASS import-meta-url-expose.js#testEE 
-PASS import-meta-url-expose.js#testGGG 
+PASS import-meta-url-expose.js#testCC
+PASS import-meta-url-expose.js#testEE
+PASS import-meta-url-expose.js#testGGG
 

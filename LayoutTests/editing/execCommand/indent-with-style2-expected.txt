@@ -1,5 +1,5 @@
 This tests indenting paragraphs with different inline styles combinations.
-Bug 32233 Radar 7442387 
+Bug 32233 Radar 7442387
 Bug 32843 Radar 7489326
 
 one

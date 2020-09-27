@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-Test that a child frame can't define a function and the use it to access parent properties after document.domain write blocks the access.  
+Test that a child frame can't define a function and the use it to access parent properties after document.domain write blocks the access.
 
 
 

@@ -1,4 +1,4 @@
-  
+
 Testing clicks on select1
 Scrolled down by itemHeight on down arrow click: PASS
 Scrolled up by itemHeight on up arrow click: PASS

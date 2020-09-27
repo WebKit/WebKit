@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Web SQL is deprecated. Please use IndexedDB instead.
 
-PASS openDatabase deprecation 
+PASS openDatabase deprecation
 

@@ -3,16 +3,16 @@ This verifies the expected roles and values are exposed for mfenced.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXGroup AXSubrole: AXDocumentMath AXValue: 
-    AXRole: AXGroup AXSubrole: AXMathFenced AXValue: 
+AXRole: AXGroup AXSubrole: AXDocumentMath AXValue:
+    AXRole: AXGroup AXSubrole: AXMathFenced AXValue:
         AXRole: AXStaticText AXSubrole: AXMathFenceOperator AXValue: {
-        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: 2
         AXRole: AXStaticText AXSubrole: AXMathSeparatorOperator AXValue: ,
-        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: a
         AXRole: AXStaticText AXSubrole: AXMathSeparatorOperator AXValue: ;
-        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue: 
+        AXRole: AXGroup AXSubrole: AXMathIdentifier AXValue:
             AXRole: AXStaticText AXSubrole:  AXValue: e
         AXRole: AXStaticText AXSubrole: AXMathFenceOperator AXValue: }
 PASS successfullyParsed is true

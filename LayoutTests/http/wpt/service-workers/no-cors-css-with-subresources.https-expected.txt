@@ -1,5 +1,5 @@
 
 
-PASS Setup worker 
-PASS Subresources of an opaque CSS should not be visible to service worker 
+PASS Setup worker
+PASS Subresources of an opaque CSS should not be visible to service worker
 

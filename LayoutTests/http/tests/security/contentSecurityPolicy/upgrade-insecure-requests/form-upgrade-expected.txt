@@ -1,5 +1,5 @@
 
 
-PASS Same-host form submissions are upgraded. 
-PASS Cross-host form submissions are upgraded. 
+PASS Same-host form submissions are upgraded.
+PASS Cross-host form submissions are upgraded.
 

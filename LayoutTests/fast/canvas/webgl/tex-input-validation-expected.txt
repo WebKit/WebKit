@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS gl = create3DContext() is non-null.
 PASS tex = gl.createTexture() is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Checking TexImage2D: a set of inputs that are valid in GL but invalid in GLES2
 PASS getError was expected value: INVALID_ENUM :  internalFormat: RGBA target: 0x8064 format: RGBA type: UNSIGNED_BYTE border: 0
@@ -37,46 +37,46 @@ PASS getError was expected value: NO_ERROR : paramName: TEXTURE_WRAP_T
 Checking CopyTexImage2D: a set of inputs that are valid in GL but invalid in GLES2
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS getError was expected value: INVALID_ENUM :  colorBufferFormat: RGB565 internalFormat: 0x8054 target: TEXTURE_2D border: 0
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS getError was expected value: INVALID_VALUE :  colorBufferFormat: RGB565 internalFormat: RGBA target: TEXTURE_2D border: 1
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS getError was expected value: INVALID_OPERATION :  colorBufferFormat: RGB565 internalFormat: RGBA target: TEXTURE_2D border: 0
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS getError was expected value: NO_ERROR :  colorBufferFormat: RGB565 internalFormat: RGB target: TEXTURE_2D border: 0
 
 Checking CopyTexSubImage2D: a set of inputs that are valid in GL but invalid in GLES2
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: NO_ERROR :  colorBufferFormat: RGB5_A1 internalFormat: RGBA target: TEXTURE_2D
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: INVALID_OPERATION :  colorBufferFormat: RGB565 internalFormat: RGBA target: TEXTURE_2D
 
 Checking CopyTex{Sub}Image2D: copy from WebGL internal framebuffer
 PASS gl is non-null.
 PASS tex = gl.createTexture() is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: NO_ERROR :  colorBufferFormat: RGBA internalFormat: RGBA
 PASS gl is non-null.
 PASS tex = gl.createTexture() is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: INVALID_OPERATION :  colorBufferFormat: RGB internalFormat: RGBA
 PASS gl is non-null.
 PASS tex = gl.createTexture() is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: NO_ERROR :  colorBufferFormat: RGBA internalFormat: RGBA
 PASS gl is non-null.
 PASS tex = gl.createTexture() is non-null.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS getError was expected value: INVALID_OPERATION :  colorBufferFormat: RGB internalFormat: RGBA
 PASS successfullyParsed is true
 

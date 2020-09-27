@@ -1,4 +1,4 @@
-  
+
 PASS - "-webkit-clip-path" property for "path1" element at 1s saw something close to: path("M 80 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -50 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")
 PASS - "-webkit-clip-path" property for "path2" element at 1s saw something close to: path("M 100 40 l 20 0 l 0 60 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")
 PASS - "-webkit-clip-path" property for "path3" element at 1s saw something close to: path(evenodd, "M 100 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")

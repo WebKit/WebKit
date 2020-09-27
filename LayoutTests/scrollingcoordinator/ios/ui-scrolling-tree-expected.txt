@@ -4,7 +4,7 @@
     (scrollable area size width=320 height=548)
     (total content size width=1308 height=2021)
     (last committed scroll position (0,0))
-    (scrollable area parameters 
+    (scrollable area parameters
       (horizontal scroll elasticity 1)
       (vertical scroll elasticity 1)
       (horizontal scrollbar mode 0)
@@ -14,7 +14,7 @@
     (max layoutViewport origin (988,1473))
     (behavior for fixed 0)
     (fixed node
-      (fixed constraints 
+      (fixed constraints
         (viewport-rect-at-last-layout (0,0) width=320 height=548)
         (layer-position-at-last-layout (12,10)))
       (layer top left (12,10)))))

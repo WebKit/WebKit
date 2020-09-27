@@ -6,4 +6,4 @@ CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:800
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/video-element-resource-type.html from loading a resource from http://localhost:8000/media/resources/test-25fps.mp4
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/video-element-resource-type.html from loading a resource from http://localhost:8000/media/resources/test.mp4
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/video-element-resource-type.html from loading a resource from http://localhost:8000/media/resources/test.mp4
-        
+

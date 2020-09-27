@@ -1,10 +1,10 @@
 
-PASS No arguments - inline 
-PASS Radial arguments - inline 
-PASS Position argument - inline 
-PASS Radial and position argument - inline 
-PASS No arguments - computed 
-PASS Radial arguments - computed 
-PASS Position argument - computed 
-PASS Radial and position argument - computed 
+PASS No arguments - inline
+PASS Radial arguments - inline
+PASS Position argument - inline
+PASS Radial and position argument - inline
+PASS No arguments - computed
+PASS Radial arguments - computed
+PASS Position argument - computed
+PASS Radial and position argument - computed
 

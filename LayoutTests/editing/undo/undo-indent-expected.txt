@@ -8,7 +8,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of OL > DIV > BODY >
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 This tests indenting "three" then undoing the indent. You should see one, two and three numbered 1 through 3 then four as a sublist with number 1.
-Bugzilla bug 
+Bugzilla bug
 Radar bug
 
 one

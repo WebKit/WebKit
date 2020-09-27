@@ -4,7 +4,7 @@ PASS true === true
 PASS 'use strict'; delete "foo"[0] threw exception of type TypeError.
 PASS delete "foo"[0] is false
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

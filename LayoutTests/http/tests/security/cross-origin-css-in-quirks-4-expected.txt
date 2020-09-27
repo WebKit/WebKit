@@ -1,4 +1,4 @@
 
-PASS Testing cross-origin and MIME behavior for CSS. 
-PASS xorigincss3.html should be loaded via &lt;link&gt; 
+PASS Testing cross-origin and MIME behavior for CSS.
+PASS xorigincss3.html should be loaded via &lt;link&gt;
 

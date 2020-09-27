@@ -1,5 +1,5 @@
 OPEN FILE PANEL
-This tests the ability of the <video> element to load blob URLs. In the browser, select a video file: 
+This tests the ability of the <video> element to load blob URLs. In the browser, select a video file:
 
 EVENT(change)
 EVENT(loadedmetadata)

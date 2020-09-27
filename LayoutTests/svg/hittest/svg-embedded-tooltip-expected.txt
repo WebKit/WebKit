@@ -1,4 +1,4 @@
-  
+
 
 Verifying the inline SVG:
 PASS

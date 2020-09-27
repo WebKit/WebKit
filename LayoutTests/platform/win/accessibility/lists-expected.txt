@@ -15,12 +15,12 @@ AXRole: AXList
 AXSubrole: AXContentList
 AXRoleDescription: content list
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXList>
 AXSize: NSSize: {784, 36}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXList>
@@ -32,8 +32,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXList>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
@@ -46,12 +46,12 @@ AXRole: AXList
 AXSubrole: AXContentList
 AXRoleDescription: content list
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXList>
 AXSize: NSSize: {784, 36}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXList>
@@ -63,8 +63,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXList>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
@@ -77,12 +77,12 @@ AXRole: AXList
 AXSubrole: AXDefinitionList
 AXRoleDescription: description list
 AXChildren: <array of size 5>
-AXHelp: 
+AXHelp:
 AXParent: <AXList>
 AXSize: NSSize: {784, 90}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXList>
@@ -94,8 +94,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXList>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
@@ -108,12 +108,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {784, 72}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -125,8 +125,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXElementBusy: 0
@@ -138,12 +138,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -155,8 +155,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXElementBusy: 0
@@ -166,12 +166,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -183,8 +183,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXElementBusy: 0
@@ -196,12 +196,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -213,8 +213,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXElementBusy: 0
@@ -224,12 +224,12 @@ AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -241,8 +241,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXElementBusy: 0
@@ -254,12 +254,12 @@ AXRole: AXGroup
 AXSubrole: AXTerm
 AXRoleDescription: term
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -271,8 +271,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXElementBusy: 0
 
@@ -281,12 +281,12 @@ AXRole: AXGroup
 AXSubrole: AXDescription
 AXRoleDescription: description
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -298,8 +298,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXElementBusy: 0
 
@@ -308,12 +308,12 @@ AXRole: AXGroup
 AXSubrole: AXTerm
 AXRoleDescription: term
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -325,8 +325,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXElementBusy: 0
 
@@ -335,12 +335,12 @@ AXRole: AXGroup
 AXSubrole: AXDescription
 AXRoleDescription: description
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -352,8 +352,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXElementBusy: 0
 
@@ -362,12 +362,12 @@ AXRole: AXGroup
 AXSubrole: AXDescription
 AXRoleDescription: description
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {729, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXGroup>
@@ -379,8 +379,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXElementBusy: 0
 

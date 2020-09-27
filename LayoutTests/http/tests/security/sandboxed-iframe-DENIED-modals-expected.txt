@@ -10,4 +10,4 @@ CONSOLE MESSAGE: Use of window.print is not allowed in a sandboxed frame when th
 CONSOLE MESSAGE: document.execCommand returned false
 This test passes if opening modal dialogs is blocked and the corresponding calls return immediately with the expected values.
 
-    
+

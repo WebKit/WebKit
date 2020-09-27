@@ -1,3 +1,3 @@
 
-PASS Classic script tags with crossorigin attribute must load data URLs 
+PASS Classic script tags with crossorigin attribute must load data URLs
 

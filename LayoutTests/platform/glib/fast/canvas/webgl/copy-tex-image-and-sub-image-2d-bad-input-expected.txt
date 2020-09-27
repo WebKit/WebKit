@@ -2,37 +2,37 @@ CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not rende
 CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
 CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
 CONSOLE MESSAGE: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
- 
+
 Verify copyTexImage2D and copyTexSubImage2D can handle bad input
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Testing with antialias on
 Testing copyTexImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 Testing copyTexSubImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 Testing with antialias off
 Testing copyTexImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 Testing copyTexSubImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor

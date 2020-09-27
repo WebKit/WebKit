@@ -2,5 +2,5 @@ CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 This test makes sure that link preload preloads resources
 
-PASS Makes sure that preloaded resources are downloaded 
+PASS Makes sure that preloaded resources are downloaded
 

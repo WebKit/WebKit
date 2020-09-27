@@ -5,18 +5,18 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Test 1
 	W3C Name: foo
-	W3C Description: 
+	W3C Description:
 Test 2
-	W3C Name: 
+	W3C Name:
 	W3C Description: bar
 Test 3
 	W3C Name: baz
-	W3C Description: 
+	W3C Description:
 Test 4
 	W3C Name: cell 1 cell 4
-	W3C Description: 
+	W3C Description:
 Test 5
-	W3C Name: 
+	W3C Name:
 	W3C Description: cell 1 cell 4
 PASS successfullyParsed is true
 

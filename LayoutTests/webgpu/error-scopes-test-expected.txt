@@ -1,10 +1,10 @@
 
-PASS Capture a single GPUValidation error. 
-PASS Capture a single GPUOutOfMemory error. 
-PASS Ignore errors past the first. 
-PASS Captured errors match error scope filter. 
-PASS Reject popErrorScope if no scope exists. 
-PASS Filter 'none' should capture but not report errors. 
-PASS Push and pop many error scopes with no rejections. 
-PASS Catch many errors in nested scopes. 
+PASS Capture a single GPUValidation error.
+PASS Capture a single GPUOutOfMemory error.
+PASS Ignore errors past the first.
+PASS Captured errors match error scope filter.
+PASS Reject popErrorScope if no scope exists.
+PASS Filter 'none' should capture but not report errors.
+PASS Push and pop many error scopes with no rejections.
+PASS Catch many errors in nested scopes.
 

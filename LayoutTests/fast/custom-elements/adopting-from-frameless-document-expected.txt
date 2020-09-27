@@ -1,20 +1,20 @@
 
-PASS A custom element candidate created by document.createElementNS in the document of the template elements should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by innerHTML in the document of the template elements should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.write in the document of the template elements should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.createElementNS in a new document should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by innerHTML in a new document should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.write in a new document should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.createElementNS in a cloned document should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by innerHTML in a cloned document should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.write in a cloned document should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.createElementNS in a document created by createHTMLDocument should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by innerHTML in a document created by createHTMLDocument should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.write in a document created by createHTMLDocument should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.createElementNS in an HTML document created by createDocument should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by innerHTML in an HTML document created by createDocument should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.write in an HTML document created by createDocument should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.createElementNS in an HTML document fetched by XHR should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by innerHTML in an HTML document fetched by XHR should be upgraded once adopted into a document with a definition 
-PASS A custom element candidate created by document.write in an HTML document fetched by XHR should be upgraded once adopted into a document with a definition 
+PASS A custom element candidate created by document.createElementNS in the document of the template elements should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by innerHTML in the document of the template elements should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.write in the document of the template elements should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.createElementNS in a new document should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by innerHTML in a new document should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.write in a new document should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.createElementNS in a cloned document should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by innerHTML in a cloned document should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.write in a cloned document should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.createElementNS in a document created by createHTMLDocument should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by innerHTML in a document created by createHTMLDocument should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.write in a document created by createHTMLDocument should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.createElementNS in an HTML document created by createDocument should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by innerHTML in an HTML document created by createDocument should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.write in an HTML document created by createDocument should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.createElementNS in an HTML document fetched by XHR should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by innerHTML in an HTML document fetched by XHR should be upgraded once adopted into a document with a definition
+PASS A custom element candidate created by document.write in an HTML document fetched by XHR should be upgraded once adopted into a document with a definition
 

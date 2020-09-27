@@ -1,4 +1,4 @@
-Websites 
+Websites
 
 This tests that an input field with a datalist is conveyed as listbox popup.
 

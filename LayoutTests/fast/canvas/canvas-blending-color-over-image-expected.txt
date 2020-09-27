@@ -142,4 +142,4 @@ PASS actualColor(0, 0)[3] is within 5 of 255
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

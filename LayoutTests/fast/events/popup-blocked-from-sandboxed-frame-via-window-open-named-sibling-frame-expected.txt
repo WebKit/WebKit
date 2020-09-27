@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'about:blank'. The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.
 
 ALERT: PASS
- 
+

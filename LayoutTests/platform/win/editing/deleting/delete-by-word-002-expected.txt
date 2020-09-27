@@ -1,7 +1,7 @@
-Tests: 
+Tests:
 Option-delete when no typing command is open, then undo.
-Expected Results: 
-It should like this, with the word "two" selected: 
+Expected Results:
+It should like this, with the word "two" selected:
 one two three four
 one two three four
 DeleteWord: <div id="test" class="editing">one three four</div>

@@ -1,4 +1,4 @@
-Required text input: 
+Required text input:
 Tests that the HTML form validation bubble disappears when its associated element is detached.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

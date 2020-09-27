@@ -5,112 +5,112 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Meter1
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 6 blocks used (out of 8 total)
 AXValueSettable: false
 
 
 Meter2
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75%
 AXValueSettable: false
 
 
 Meter3
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
-AXValueDescription: 
+AXTitle:
+AXDescription:
+AXValueDescription:
 AXValueSettable: false
 
 
 Meter4
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 12cm
 AXValueSettable: false
 
 
 Meter5
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 2cm
 AXValueSettable: false
 
 
 Meter6
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 12cm
 AXValueSettable: false
 
 
 Meter7
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 2cm
 AXValueSettable: false
 
 
 Meter8
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75 out of 100
 AXValueSettable: false
 
 
 Meter9
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75 percent
 AXValueSettable: false
 
 
 Meter10
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75 percent
 AXValueSettable: false
 
 
 Meter11
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75 (100 total)
 AXValueSettable: false
 
 
 Meter12
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75 (out of 100 total)
 AXValueSettable: false
 
 
 Meter13
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 75 (out of 100 total)
 AXValueSettable: false
 
 
 Meter14
 AXRole: AXLevelIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValueDescription: 7 of 10
 AXValueSettable: false
 

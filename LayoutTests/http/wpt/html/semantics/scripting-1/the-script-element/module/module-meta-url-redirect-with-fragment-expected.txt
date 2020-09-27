@@ -1,12 +1,12 @@
 
-PASS import-meta-url-expose.js#test1 
-PASS import-meta-url-expose.js#test2 
-PASS import-meta-url-expose.js#test4 
-PASS import-meta-url-expose.js#testA 
-PASS import-meta-url-expose.js 
-PASS import-meta-url-expose.js#testC 
-PASS import-meta-url-expose.js#testD 
-PASS import-meta-url-expose.js#testCC 
-PASS import-meta-url-expose.js#testEE 
-PASS import-meta-url-expose.js#testGGG 
+PASS import-meta-url-expose.js#test1
+PASS import-meta-url-expose.js#test2
+PASS import-meta-url-expose.js#test4
+PASS import-meta-url-expose.js#testA
+PASS import-meta-url-expose.js
+PASS import-meta-url-expose.js#testC
+PASS import-meta-url-expose.js#testD
+PASS import-meta-url-expose.js#testCC
+PASS import-meta-url-expose.js#testEE
+PASS import-meta-url-expose.js#testGGG
 

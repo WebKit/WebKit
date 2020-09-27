@@ -7,12 +7,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink: 'Delicious cake'>
 AXSize: NSSize: {280, 215}
 AXTitle: Delicious cake
-AXDescription: 
-AXValue: 
+AXDescription:
+AXValue:
 AXFocused: 1
 AXEnabled: 1
 AXWindow: <AXLink: 'Delicious cake'>
@@ -24,7 +24,7 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'Delicious cake'>
-AXLanguage: 
+AXLanguage:
 AXDOMIdentifier: test
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink: 'Delicious cake'>
@@ -32,7 +32,7 @@ AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 
 
@@ -41,12 +41,12 @@ AXRole: AXImage
 AXSubrole: (null)
 AXRoleDescription: image
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXImage>
 AXSize: NSSize: {280, 210}
-AXTitle: 
+AXTitle:
 AXDescription: Delicious cake
-AXValue: 
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXImage>
@@ -58,15 +58,15 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXImage>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXImage>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: LayoutTests/accessibility/resources/cake.png
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 
 

@@ -1,4 +1,4 @@
- 
+
 Fix for bug 70547-- changing the text of an option in a select element with no selected option (-1) should preserve that option
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

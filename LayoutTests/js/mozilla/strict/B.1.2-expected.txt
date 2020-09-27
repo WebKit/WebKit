@@ -16,7 +16,7 @@ PASS true === true
 PASS !!Function("'use strict'; \"\\0x\"") is true
 PASS !!Function("\"\\0x\"") is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

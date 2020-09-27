@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "timeconstant-0" 
-PASS Audit report 
-PASS > [timeconstant-0]  
-PASS   Output for frame [11, 21) contains only the constant 0. 
-PASS   Output for frame [21, 101) contains only the constant 0.5. 
-PASS   Output for frame [101, 128) contains only the constant 1. 
-PASS < [timeconstant-0] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "timeconstant-0"
+PASS Audit report
+PASS > [timeconstant-0]
+PASS   Output for frame [11, 21) contains only the constant 0.
+PASS   Output for frame [21, 101) contains only the constant 0.5.
+PASS   Output for frame [101, 128) contains only the constant 1.
+PASS < [timeconstant-0] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

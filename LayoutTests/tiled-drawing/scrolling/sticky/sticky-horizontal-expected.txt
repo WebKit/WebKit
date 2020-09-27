@@ -6,7 +6,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
   (contents size 2008 585)
   (requested scroll position 800 0)
   (requested scroll position represents programmatic scroll 1)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
     (horizontal scrollbar mode 0)

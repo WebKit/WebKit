@@ -1,6 +1,6 @@
 Example #1: Nested Stubs
 Ruritanian
-Population 
+Population
 Survey	All
 Genders	By Gender
 Males	Females
@@ -15,8 +15,8 @@ AXParent: AXRow
 AXChildren: 0
 AXPosition: { 234.000, 27.0000 }
 AXSize: { 144.000, 66.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
@@ -35,8 +35,8 @@ AXParent: AXRow
 AXChildren: 0
 AXPosition: { 446.000, 57.0000 }
 AXSize: { 53.0000, 36.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Males
 AXFocusable: 0
 AXFocused: 0
@@ -55,8 +55,8 @@ AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000, 27.0000 }
 AXSize: { 143.000, 66.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
@@ -75,8 +75,8 @@ AXParent: AXRow
 AXChildren: 0
 AXPosition: { 370.000, 93.0000 }
 AXSize: { 69.0000, 30.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: 3333
 AXFocusable: 0
 AXFocused: 0
@@ -95,8 +95,8 @@ AXParent: AXRow
 AXChildren: 0
 AXPosition: { 439.000, 183.000 }
 AXSize: { 52.0000, 30.0000 }
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 AXValue: 1111
 AXFocusable: 0
 AXFocused: 0

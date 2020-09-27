@@ -1,17 +1,17 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "reject-promise" 
-PASS Executing "promise-results" 
-PASS Audit report 
-PASS > [reject-promise]  
-PASS   Promise from calling startRendering twice rejected correctly with InvalidStateError: Rendering was already started. 
-PASS < [reject-promise] All assertions passed. (total 1 assertions) 
-PASS > [promise-results]  
-PASS   context.state is equal to closed. 
-PASS   renderedData.numberOfChannels is equal to 2. 
-PASS   renderedData.length is equal to 48000. 
-PASS   Output channel 0 contains only the constant 1. 
-PASS   Output channel 1 contains only the constant 2. 
-PASS < [promise-results] All assertions passed. (total 5 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "reject-promise"
+PASS Executing "promise-results"
+PASS Audit report
+PASS > [reject-promise]
+PASS   Promise from calling startRendering twice rejected correctly with InvalidStateError: Rendering was already started.
+PASS < [reject-promise] All assertions passed. (total 1 assertions)
+PASS > [promise-results]
+PASS   context.state is equal to closed.
+PASS   renderedData.numberOfChannels is equal to 2.
+PASS   renderedData.length is equal to 48000.
+PASS   Output channel 0 contains only the constant 1.
+PASS   Output channel 1 contains only the constant 2.
+PASS < [promise-results] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

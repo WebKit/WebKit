@@ -28,7 +28,7 @@ PASS true === true
 PASS 'use strict'; var r = /foo/; delete r.lastIndex threw exception of type TypeError.
 PASS var r = /foo/; delete r.lastIndex is false
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

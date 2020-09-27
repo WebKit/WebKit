@@ -1,5 +1,5 @@
 
 
-PASS Test that load event is fired for JS Image() fetches 
-PASS Test that load event is fired for <img> created via JS and attached below viewport 
+PASS Test that load event is fired for JS Image() fetches
+PASS Test that load event is fired for <img> created via JS and attached below viewport
 

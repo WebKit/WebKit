@@ -6,10 +6,10 @@ This tests that when you have nested inline continuations, we add the children c
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXGroup AXValue: 
+AXRole: AXGroup AXValue:
   AXRole: AXStaticText AXValue: test1
   AXRole: AXStaticText AXValue: test2
-  AXRole: AXGroup AXValue: 
+  AXRole: AXGroup AXValue:
     AXRole: AXStaticText AXValue: test3
 PASS content.childrenCount is 3
 PASS successfullyParsed is true

@@ -1,4 +1,4 @@
- 
 
-PASS Basic video exchange with media session interruption 
+
+PASS Basic video exchange with media session interruption
 

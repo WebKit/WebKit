@@ -1,7 +1,7 @@
 Resource Timing: Entries per Frame
 
 
-PASS main frame resources differ from other frames 
-PASS iframe1 resources differ from other frames 
-PASS iframe2 resources differ from other frames 
- 
+PASS main frame resources differ from other frames
+PASS iframe1 resources differ from other frames
+PASS iframe2 resources differ from other frames
+

@@ -1,23 +1,23 @@
 
-PASS Element colors are correct in light color scheme with only light color scheme 
-PASS Dark color scheme enabled 
+PASS Element colors are correct in light color scheme with only light color scheme
+PASS Dark color scheme enabled
 FAIL Element colors are correct in dark color scheme with only light color scheme assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 255, 255)"
-PASS Light color scheme enabled 
-PASS Supported color schemes changed to light and dark 
-PASS Element colors are correct in light color scheme with light and dark color scheme 
-PASS Dark color scheme enabled 
-PASS Element colors are correct in dark color scheme with light and dark color scheme 
-PASS Light color scheme enabled 
-PASS Supported color schemes changed to dark 
+PASS Light color scheme enabled
+PASS Supported color schemes changed to light and dark
+PASS Element colors are correct in light color scheme with light and dark color scheme
+PASS Dark color scheme enabled
+PASS Element colors are correct in dark color scheme with light and dark color scheme
+PASS Light color scheme enabled
+PASS Supported color schemes changed to dark
 FAIL Element colors are correct in light color scheme with only dark color scheme assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 0, 0)"
-PASS Dark color scheme enabled 
-PASS Element colors are correct in dark color scheme with only dark color scheme 
-PASS Supported color schemes changed to light and a bogus value 
+PASS Dark color scheme enabled
+PASS Element colors are correct in dark color scheme with only dark color scheme
+PASS Supported color schemes changed to light and a bogus value
 FAIL Element colors are correct in dark color scheme with only light color scheme assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 255, 255)"
-PASS Supported color schemes changed to empty value 
+PASS Supported color schemes changed to empty value
 FAIL Element colors are correct in dark color scheme with implicit light color scheme assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 255, 255)"
-PASS Supported color schemes changed to light,dark 
+PASS Supported color schemes changed to light,dark
 FAIL Element colors are in light color scheme since comma is not an allowed seperator assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 255, 255)"
-PASS Supported color schemes changed to a bogus value and dark 
-PASS Element colors are correct in dark color scheme with dark color scheme 
+PASS Supported color schemes changed to a bogus value and dark
+PASS Element colors are correct in dark color scheme with dark color scheme
 

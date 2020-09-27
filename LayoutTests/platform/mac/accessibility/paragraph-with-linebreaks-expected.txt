@@ -10,11 +10,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Role of the paragraph with break lines: AXRole: AXGroup
-Value of the paragraph with break lines: AXValue: 
+Value of the paragraph with break lines: AXValue:
 
 
 Role of the paragraph with wrapped lines: AXRole: AXGroup
-Value of the paragraph with wrapped lines: AXValue: 
+Value of the paragraph with wrapped lines: AXValue:
 
 
 PASS successfullyParsed is true

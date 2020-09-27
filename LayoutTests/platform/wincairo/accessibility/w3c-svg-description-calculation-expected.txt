@@ -5,99 +5,99 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 test1:
 	Expected description: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test2:
 	Expected description: end
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test3:
 	Expected description: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test4:
 	Expected description: end
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test5:
 	Expected description: 123
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test6:
 	Expected description: 123
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test7:
 	Expected description: end
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test8:
 	Expected description: 554
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test9:
 	Expected description: 567
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test10:
 	Expected description: 123
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test11:
 	Expected description: 123
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test12:
 	Expected description: 123
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test13:
 	Expected description: 12
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test14:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test15:
 	Expected description: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test16:
 	Expected description: 222
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test17:
 	Expected description: 911
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test18:
 	Expected description: 123
-	AXTitle: 
+	AXTitle:
 	AXDescription: abc
 test19:
 	Expected description: 123
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test20:
 	Expected description: the end
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test21:
 	Expected description: the end
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test22:
 	Expected description: end
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test23:
 	Expected description: abc
 	AXTitle: end
 	AXDescription: end
 test24:
 	Expected description: abc
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 test25:
 	Expected description: counter
@@ -105,7 +105,7 @@ test25:
 	AXDescription: end
 test26:
 	Expected description: counter
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 test27:
 	Expected description: barra
@@ -113,7 +113,7 @@ test27:
 	AXDescription: end
 test28:
 	Expected description: barra
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 test29:
 	Expected description: (empty)
@@ -121,7 +121,7 @@ test29:
 	AXDescription: abc
 test30:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 test31:
 	Expected description: (empty)
@@ -129,52 +129,52 @@ test31:
 	AXDescription: abc
 test32:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 test33:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: bob
 test34:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
 test35:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: end
 test36:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: booth
 test37:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: counter
 test38:
 	Expected description: (empty)
-	AXTitle: 
+	AXTitle:
 	AXDescription: table
 test39:
 	Expected description: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test40:
 	Expected description: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test41:
 	Expected description: (empty)
-	AXTitle: 
-	AXDescription:  
+	AXTitle:
+	AXDescription:
 test42:
 	Expected description: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 test43:
 	Expected description: (empty)
-	AXTitle: 
-	AXDescription: 
+	AXTitle:
+	AXDescription:
 PASS successfullyParsed is true
 
 TEST COMPLETE

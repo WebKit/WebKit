@@ -1,4 +1,4 @@
- The Actual Canvas 
+ The Actual Canvas
 Given MIMEType: image/png
 Used MIMEType: image/png
 MIME types are the SAME.
@@ -11,7 +11,7 @@ Given MIMEType: image/gif
 Used MIMEType: image/gif
 MIME types are the SAME.
 
-Given MIMEType: 
+Given MIMEType:
 Used MIMEType: image/png
 MIME types DIFFER.
 

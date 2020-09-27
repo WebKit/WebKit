@@ -1,4 +1,4 @@
-   
 
-PASS captureStream with 2d context drawing 
+
+PASS captureStream with 2d context drawing
 

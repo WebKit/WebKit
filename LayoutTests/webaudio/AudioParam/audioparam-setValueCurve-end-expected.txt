@@ -1,29 +1,29 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "0: linearRampToValueAtTime" 
-PASS Executing "1: linearRampToValueAtTime" 
-PASS Executing "2: exponentialRampToValueAtTime" 
-PASS Executing "3: exponentialRampToValueAtTime" 
-PASS Executing "4: setTargetAtTime" 
-PASS Executing "5: setTargetAtTime" 
-PASS Audit report 
-PASS > [0: linearRampToValueAtTime]  
-PASS   setValueCurve(..., 0, 0.01).linearRampToValueAtTime(2, 0.02): value at time 0.01 is 0.3 within an error of 3.9737e-8. 
-PASS < [0: linearRampToValueAtTime] All assertions passed. (total 1 assertions) 
-PASS > [1: linearRampToValueAtTime]  
-PASS   setValueCurve(..., 0, 0.0100390625).linearRampToValueAtTime(2, 0.02): value at time 0.010078125 is 0.3066666666666668 within an error of 1.8141e-8. 
-PASS < [1: linearRampToValueAtTime] All assertions passed. (total 1 assertions) 
-PASS > [2: exponentialRampToValueAtTime]  
-PASS   setValueCurve(..., 0, 0.01).exponentialRampToValueAtTime(2, 0.02): value at time 0.01 is 0.3 within an error of 3.9737e-8. 
-PASS < [2: exponentialRampToValueAtTime] All assertions passed. (total 1 assertions) 
-PASS > [3: exponentialRampToValueAtTime]  
-PASS   setValueCurve(..., 0, 0.0100390625).exponentialRampToValueAtTime(2, 0.02): value at time 0.010078125 is 0.30224022883150364 within an error of 7.8294e-8. 
-PASS < [3: exponentialRampToValueAtTime] All assertions passed. (total 1 assertions) 
-PASS > [4: setTargetAtTime]  
-PASS   setValueCurve(..., 0, 0.01).setTargetAtTime(2, 0.02, 0.01): value at time 0.01 is 0.30000000000000004 within an error of 1.5895e-7. 
-PASS < [4: setTargetAtTime] All assertions passed. (total 1 assertions) 
-PASS > [5: setTargetAtTime]  
-PASS   setValueCurve(..., 0, 0.0100390625).setTargetAtTime(2, 0.02, 0.01): value at time 0.010078125 is 0.30662767190080054 within an error of 1.3278e-7. 
-PASS < [5: setTargetAtTime] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "0: linearRampToValueAtTime"
+PASS Executing "1: linearRampToValueAtTime"
+PASS Executing "2: exponentialRampToValueAtTime"
+PASS Executing "3: exponentialRampToValueAtTime"
+PASS Executing "4: setTargetAtTime"
+PASS Executing "5: setTargetAtTime"
+PASS Audit report
+PASS > [0: linearRampToValueAtTime]
+PASS   setValueCurve(..., 0, 0.01).linearRampToValueAtTime(2, 0.02): value at time 0.01 is 0.3 within an error of 3.9737e-8.
+PASS < [0: linearRampToValueAtTime] All assertions passed. (total 1 assertions)
+PASS > [1: linearRampToValueAtTime]
+PASS   setValueCurve(..., 0, 0.0100390625).linearRampToValueAtTime(2, 0.02): value at time 0.010078125 is 0.3066666666666668 within an error of 1.8141e-8.
+PASS < [1: linearRampToValueAtTime] All assertions passed. (total 1 assertions)
+PASS > [2: exponentialRampToValueAtTime]
+PASS   setValueCurve(..., 0, 0.01).exponentialRampToValueAtTime(2, 0.02): value at time 0.01 is 0.3 within an error of 3.9737e-8.
+PASS < [2: exponentialRampToValueAtTime] All assertions passed. (total 1 assertions)
+PASS > [3: exponentialRampToValueAtTime]
+PASS   setValueCurve(..., 0, 0.0100390625).exponentialRampToValueAtTime(2, 0.02): value at time 0.010078125 is 0.30224022883150364 within an error of 7.8294e-8.
+PASS < [3: exponentialRampToValueAtTime] All assertions passed. (total 1 assertions)
+PASS > [4: setTargetAtTime]
+PASS   setValueCurve(..., 0, 0.01).setTargetAtTime(2, 0.02, 0.01): value at time 0.01 is 0.30000000000000004 within an error of 1.5895e-7.
+PASS < [4: setTargetAtTime] All assertions passed. (total 1 assertions)
+PASS > [5: setTargetAtTime]
+PASS   setValueCurve(..., 0, 0.0100390625).setTargetAtTime(2, 0.02, 0.01): value at time 0.010078125 is 0.30662767190080054 within an error of 1.3278e-7.
+PASS < [5: setTargetAtTime] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

@@ -1,6 +1,6 @@
 PASS successfullyParsed is true
 
-TEST COMPLETE 
+TEST COMPLETE
 Does the event have an inputType method? YES
 Does the event have InputEvent's prototype? YES
 What is the event's id? editable

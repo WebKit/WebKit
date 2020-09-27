@@ -5,13 +5,13 @@ This tests the hierarchy of an image with alt text and a map.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXWebArea AXTitle:  AXDescription: 
-  AXRole: AXGroup AXTitle:  AXDescription: 
+AXRole: AXWebArea AXTitle:  AXDescription:
+  AXRole: AXGroup AXTitle:  AXDescription:
     AXRole: AXImage AXTitle:  AXDescription: foo bar baz
-      AXRole: AXLink AXTitle: foo AXDescription: 
-      AXRole: AXLink AXTitle: bar AXDescription: 
-      AXRole: AXLink AXTitle: baz AXDescription: 
-  AXRole: AXGroup AXTitle:  AXDescription: 
+      AXRole: AXLink AXTitle: foo AXDescription:
+      AXRole: AXLink AXTitle: bar AXDescription:
+      AXRole: AXLink AXTitle: baz AXDescription:
+  AXRole: AXGroup AXTitle:  AXDescription:
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,4 +1,4 @@
 
-PASS badIntLiteralForInt 
-PASS badIntLiteralForFloat 
+PASS badIntLiteralForInt
+PASS badIntLiteralForFloat
 

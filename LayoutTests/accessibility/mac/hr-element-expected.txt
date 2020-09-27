@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 hr1 role: AXRole: AXSplitter
 hr1 subrole: AXSubrole: AXContentSeparator
 hr1 roleDescription: AXRoleDescription: separator
-hr1 description: AXDescription: 
+hr1 description: AXDescription:
 hr1 is value settable: false
 hr1 orientation: AXOrientation: AXHorizontalOrientation
 hr1 is enabled: false
@@ -14,7 +14,7 @@ hr1 is enabled: false
 hr2 role: AXRole: AXSplitter
 hr2 subrole: AXSubrole: AXContentSeparator
 hr2 roleDescription: AXRoleDescription: separator
-hr2 description: AXDescription: 
+hr2 description: AXDescription:
 hr2 is value settable: false
 hr2 orientation: AXOrientation: AXHorizontalOrientation
 hr2 is enabled: false
@@ -30,7 +30,7 @@ hr3 is enabled: false
 hr4 role: AXRole: AXSplitter
 hr4 subrole: AXSubrole: AXContentSeparator
 hr4 roleDescription: AXRoleDescription: separator
-hr4 description: AXDescription: 
+hr4 description: AXDescription:
 hr4 is value settable: false
 hr4 orientation: AXOrientation: AXVerticalOrientation
 hr4 is enabled: false

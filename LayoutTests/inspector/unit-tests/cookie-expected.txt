@@ -3,7 +3,7 @@ Testing WI.Cookie.
 
 == Running test suite: Cookie
 -- Running test case: WI.Cookie.parseCookieRequestHeader
-HEADER: Cookie: 
+HEADER: Cookie:
 PASS: Should have 0 cookies.
 
 HEADER: Cookie: foo=bar

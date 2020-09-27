@@ -12,5 +12,5 @@ mediaTest@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-removed.ht
 http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-removed.html:48:14
 forEach@[native code]
 global code@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-removed.html:47:14)
-PASS SourceBuffer#abort (video/mp4) : if this object has been removed from the sourceBuffers attribute of the parent media source, then throw an INVALID_STATE_ERR exception and abort these steps. 
+PASS SourceBuffer#abort (video/mp4) : if this object has been removed from the sourceBuffers attribute of the parent media source, then throw an INVALID_STATE_ERR exception and abort these steps.
 

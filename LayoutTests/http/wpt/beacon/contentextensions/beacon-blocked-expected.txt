@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://localhost:8800/WebKit/beacon/contentextensions/beacon-blocked.html from loading a resource from http://localhost:8800/WebKit/beacon/resources/beacon-preflight.py
 CONSOLE MESSAGE: Beacon API cannot load http://localhost:8800/WebKit/beacon/resources/beacon-preflight.py. Resource blocked by content blocker
 
-PASS Content extensions should be able to block beacons 
+PASS Content extensions should be able to block beacons
 

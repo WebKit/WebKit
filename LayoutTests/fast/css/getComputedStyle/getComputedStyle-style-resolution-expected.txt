@@ -1,7 +1,7 @@
 Text
 
-PASS No style resolution when style is valid. 
-PASS No style resolution when parent style is invalid and querying non-inherited property. 
-PASS This still works with 'inherit' 
-PASS Explicit 'inherit' chain triggers style resolution 
+PASS No style resolution when style is valid.
+PASS No style resolution when parent style is invalid and querying non-inherited property.
+PASS This still works with 'inherit'
+PASS Explicit 'inherit' chain triggers style resolution
 

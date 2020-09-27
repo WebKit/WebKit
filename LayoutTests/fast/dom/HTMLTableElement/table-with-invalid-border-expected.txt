@@ -1,4 +1,4 @@
-https://bugs.webkit.org/show_bug.cgi?id=102112: There should be a black box below. 
+https://bugs.webkit.org/show_bug.cgi?id=102112: There should be a black box below.
 
 PASS getComputedStyle(document.querySelector("table")).borderTopWidth is "1px"
 

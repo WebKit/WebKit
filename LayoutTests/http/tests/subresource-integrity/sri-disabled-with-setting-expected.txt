@@ -1,6 +1,6 @@
 
-PASS Test that Subresource Integrity's 'integrity' property is not exposed on the <link> element. 
-PASS Test that Subresource Integrity's 'integrity' property is not exposed on the <script> element. 
-PASS Script: Same-origin with incorrect hash, but should evaluate successfully due to Subresource Integrity being disabled. 
-PASS Style: Same-origin with incorrect hash, but should evaluate successfully due to Subresource Integrity being disabled. 
+PASS Test that Subresource Integrity's 'integrity' property is not exposed on the <link> element.
+PASS Test that Subresource Integrity's 'integrity' property is not exposed on the <script> element.
+PASS Script: Same-origin with incorrect hash, but should evaluate successfully due to Subresource Integrity being disabled.
+PASS Style: Same-origin with incorrect hash, but should evaluate successfully due to Subresource Integrity being disabled.
 

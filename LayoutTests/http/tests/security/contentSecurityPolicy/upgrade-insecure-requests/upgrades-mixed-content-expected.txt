@@ -1,2 +1,2 @@
 ALERT: PASS
-This page should alert "PASS" and not generate any mixed content warnings in the console. 
+This page should alert "PASS" and not generate any mixed content warnings in the console.

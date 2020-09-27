@@ -1,16 +1,16 @@
 
-PASS Test that the setting a non-existing named property with Object.defineProperty creates the property ([OverrideBuiltins] specified). 
-PASS Test that the setting a non-existing indexed property with Object.defineProperty creates the property ([OverrideBuiltins] specified). 
-PASS Test that the setting an existing named property with Object.defineProperty replaces the value ([OverrideBuiltins] specified). 
-PASS Test that the setting an existing indexed property with Object.defineProperty replaces the value ([OverrideBuiltins] specified). 
-PASS Test that the setting a non-existing but invalid named property with Object.defineProperty throws ([OverrideBuiltins] specified). 
-PASS Test that the setting a non-data descriptor property with Object.defineProperty does not set anything ([OverrideBuiltins] specified). 
-PASS Test that the setting a named property with Object.defineProperty that shadows an existing prototype value still creates the item ([OverrideBuiltins] specified). 
-PASS Test that the setting a non-existing named property with Object.defineProperty creates the property ([OverrideBuiltins] not specified). 
-PASS Test that the setting a non-existing indexed property with Object.defineProperty creates the property ([OverrideBuiltins] not specified). 
-PASS Test that the setting an existing named property with Object.defineProperty replaces the value ([OverrideBuiltins] not specified). 
-PASS Test that the setting an existing indexed property with Object.defineProperty replaces the value ([OverrideBuiltins] not specified). 
-PASS Test that the setting a non-data descriptor property with Object.defineProperty does not set anything ([OverrideBuiltins] not specified). 
-PASS Test that the setting a named property with Object.defineProperty that shadows an existing prototype value still creates the item ([OverrideBuiltins] not specified). 
-PASS Test that the trying to set a named property, matching a builtin property name, with Object.defineProperty does nothing ([OverrideBuiltins] not specified). 
+PASS Test that the setting a non-existing named property with Object.defineProperty creates the property ([OverrideBuiltins] specified).
+PASS Test that the setting a non-existing indexed property with Object.defineProperty creates the property ([OverrideBuiltins] specified).
+PASS Test that the setting an existing named property with Object.defineProperty replaces the value ([OverrideBuiltins] specified).
+PASS Test that the setting an existing indexed property with Object.defineProperty replaces the value ([OverrideBuiltins] specified).
+PASS Test that the setting a non-existing but invalid named property with Object.defineProperty throws ([OverrideBuiltins] specified).
+PASS Test that the setting a non-data descriptor property with Object.defineProperty does not set anything ([OverrideBuiltins] specified).
+PASS Test that the setting a named property with Object.defineProperty that shadows an existing prototype value still creates the item ([OverrideBuiltins] specified).
+PASS Test that the setting a non-existing named property with Object.defineProperty creates the property ([OverrideBuiltins] not specified).
+PASS Test that the setting a non-existing indexed property with Object.defineProperty creates the property ([OverrideBuiltins] not specified).
+PASS Test that the setting an existing named property with Object.defineProperty replaces the value ([OverrideBuiltins] not specified).
+PASS Test that the setting an existing indexed property with Object.defineProperty replaces the value ([OverrideBuiltins] not specified).
+PASS Test that the setting a non-data descriptor property with Object.defineProperty does not set anything ([OverrideBuiltins] not specified).
+PASS Test that the setting a named property with Object.defineProperty that shadows an existing prototype value still creates the item ([OverrideBuiltins] not specified).
+PASS Test that the trying to set a named property, matching a builtin property name, with Object.defineProperty does nothing ([OverrideBuiltins] not specified).
 

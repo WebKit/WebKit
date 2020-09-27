@@ -1,23 +1,23 @@
 
-PASS Element colors are correct in light color scheme with only light color scheme 
-PASS Dark color scheme enabled 
-PASS Element colors are correct in dark color scheme with only light color scheme 
-PASS Light color scheme enabled 
-PASS Supported color schemes changed to light and dark 
-PASS Element colors are correct in light color scheme with light and dark color scheme 
-PASS Dark color scheme enabled 2 
-PASS Element colors are correct in dark color scheme with light and dark color scheme 
-PASS Light color scheme enabled 2 
-PASS Supported color schemes changed to dark 
-PASS Element colors are correct in light color scheme with only dark color scheme 
-PASS Dark color scheme enabled 3 
-PASS Element colors are correct in dark color scheme with only dark color scheme 
-PASS Supported color schemes changed to light and a bogus value 
-PASS Element colors are correct in dark color scheme with only light color scheme 2 
-PASS Supported color schemes changed to empty value 
-PASS Element colors are correct in dark color scheme with implicit light color scheme 
-PASS Supported color schemes changed to light,dark 
-PASS Element colors are in light color scheme since comma is not an allowed seperator 
-PASS Supported color schemes changed to a bogus value and dark 
-PASS Element colors are correct in dark color scheme with dark color scheme 
+PASS Element colors are correct in light color scheme with only light color scheme
+PASS Dark color scheme enabled
+PASS Element colors are correct in dark color scheme with only light color scheme
+PASS Light color scheme enabled
+PASS Supported color schemes changed to light and dark
+PASS Element colors are correct in light color scheme with light and dark color scheme
+PASS Dark color scheme enabled 2
+PASS Element colors are correct in dark color scheme with light and dark color scheme
+PASS Light color scheme enabled 2
+PASS Supported color schemes changed to dark
+PASS Element colors are correct in light color scheme with only dark color scheme
+PASS Dark color scheme enabled 3
+PASS Element colors are correct in dark color scheme with only dark color scheme
+PASS Supported color schemes changed to light and a bogus value
+PASS Element colors are correct in dark color scheme with only light color scheme 2
+PASS Supported color schemes changed to empty value
+PASS Element colors are correct in dark color scheme with implicit light color scheme
+PASS Supported color schemes changed to light,dark
+PASS Element colors are in light color scheme since comma is not an allowed seperator
+PASS Supported color schemes changed to a bogus value and dark
+PASS Element colors are correct in dark color scheme with dark color scheme
 

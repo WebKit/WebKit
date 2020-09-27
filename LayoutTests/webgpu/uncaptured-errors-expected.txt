@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: GPUDevice.createBuffer(): Buffer cannot have both MAP_READ and MAP_WRITE usage!
 CONSOLE MESSAGE: GPUDevice.createBuffer(): Buffer cannot have both MAP_READ and MAP_WRITE usage!
 
-PASS Fire an uncaptured GPUDevice error event at 'device'. 
-PASS Intercept an uncaptured error with GPUDevice.onuncapturederror EventHandler. 
-PASS GPUUncapturedErrorEvent async test. 
+PASS Fire an uncaptured GPUDevice error event at 'device'.
+PASS Intercept an uncaptured error with GPUDevice.onuncapturederror EventHandler.
+PASS GPUUncapturedErrorEvent async test.
 

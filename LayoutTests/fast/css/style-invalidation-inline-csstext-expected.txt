@@ -1,10 +1,10 @@
 
-PASS Setting cssText invalidates style 
-PASS Adding more properties to cssText invalidates style 
-PASS Changing a property value invalidates style 
-PASS Changing another property value invalidates style 
-PASS Setting cssText without changing it doesn't invalidate style 
-PASS Non-semantic change to cssText doesn't invalidate style 
-PASS Removing a property invalidates style 
-PASS Clearing cssText invalidates style 
+PASS Setting cssText invalidates style
+PASS Adding more properties to cssText invalidates style
+PASS Changing a property value invalidates style
+PASS Changing another property value invalidates style
+PASS Setting cssText without changing it doesn't invalidate style
+PASS Non-semantic change to cssText doesn't invalidate style
+PASS Removing a property invalidates style
+PASS Clearing cssText invalidates style
 

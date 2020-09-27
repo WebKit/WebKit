@@ -1,6 +1,6 @@
 Personalia:
-Name: 
-Email: 
+Name:
+Email:
 This tests that elements in a fieldset are having the correct traits.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

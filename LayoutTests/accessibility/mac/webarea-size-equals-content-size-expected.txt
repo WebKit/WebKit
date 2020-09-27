@@ -1,11 +1,11 @@
 
-text 
-text 
-text 
-text 
-text 
-text 
-text 
+text
+text
+text
+text
+text
+text
+text
 text
 This tests that an ARIA menu bar is exposed as a menu bar.
 

@@ -31,7 +31,7 @@ Loaded: resources/viewspec-target.svg#svgView(transform(74-%209.(+%20e.0e635
 Parsed: [initial view] from: svgView(transform(74- 9.(+ e.0e635
 
 Loaded: resources/viewspec-target.svg#svgView(transform(-9,).8e7e4e9ee
-Parsed: [initial view] from: svgView(transform(-9,).8e7e4e9ee 
+Parsed: [initial view] from: svgView(transform(-9,).8e7e4e9ee
 
 Loaded: resources/viewspec-target.svg#svgView(transform(49-,,4)30378.052
 Parsed: [initial view] from: svgView(transform(49-,,4)30378.052
@@ -46,7 +46,7 @@ Loaded: resources/viewspec-target.svg#svgView(transform(e72(e,49.7.
 Parsed: [initial view] from: svgView(transform(e72(	e	,49.7.
 
 Loaded: resources/viewspec-target.svg#svgView(transform(e55,
-Parsed: [initial view] from: svgView(transform(e55, 
+Parsed: [initial view] from: svgView(transform(e55,
 
 Loaded: resources/viewspec-target.svg#svgView(transform(263,ee1)74-
 Parsed: [initial view] from: svgView(transform(263,ee1)74-	
@@ -159,4 +159,4 @@ Parsed: [initial view] from: svgView(transform(71(1(+-3382.3
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

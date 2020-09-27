@@ -1,13 +1,13 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "loop-count" 
-PASS Executing "delayed-start" 
-PASS Audit report 
-PASS > [loop-count]  
-PASS   The output of actual and expected loops is identical to the array [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,0,0.125,0.25,0.375,0.5,0.625,0.75,0.875...]. 
-PASS < [loop-count] All assertions passed. (total 1 assertions) 
-PASS > [delayed-start]  
-PASS   The content of the left and right channel is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS < [delayed-start] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "loop-count"
+PASS Executing "delayed-start"
+PASS Audit report
+PASS > [loop-count]
+PASS   The output of actual and expected loops is identical to the array [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,0,0.125,0.25,0.375,0.5,0.625,0.75,0.875...].
+PASS < [loop-count] All assertions passed. (total 1 assertions)
+PASS > [delayed-start]
+PASS   The content of the left and right channel is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS < [delayed-start] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

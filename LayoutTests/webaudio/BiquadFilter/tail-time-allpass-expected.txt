@@ -1,78 +1,78 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "allpass-complex-roots" 
-PASS Executing "allpass-real-distinct-roots" 
-PASS Executing "allpass-repeated-roots" 
-PASS Audit report 
-PASS > [allpass-complex-roots] complex roots 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): Actual Tail Frame 2560 is greater than or equal to 2317. 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[128:255] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[256:383] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[384:511] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[512:639] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[640:767] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[768:895] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[896:1023] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1024:1151] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1152:1279] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1280:1407] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1408:1535] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1536:1663] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1664:1791] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1792:1919] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1920:2047] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2048:2175] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2176:2303] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2304:2431] is not constantly 0 (contains 128 different values). 
-PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2688:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [allpass-complex-roots] All assertions passed. (total 21 assertions) 
-PASS > [allpass-real-distinct-roots] real distinct roots 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): Actual Tail Frame 7296 is greater than or equal to 4822. 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[0:127] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[128:255] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[256:383] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[384:511] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[512:639] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[640:767] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[768:895] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[896:1023] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1024:1151] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1152:1279] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1280:1407] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1408:1535] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1536:1663] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1664:1791] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1792:1919] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1920:2047] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2048:2175] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2176:2303] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2304:2431] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2432:2559] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2560:2687] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2688:2815] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2816:2943] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2944:3071] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3072:3199] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3200:3327] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3328:3455] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3456:3583] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3584:3711] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3712:3839] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3840:3967] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3968:4095] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4096:4223] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4224:4351] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4352:4479] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4480:4607] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4608:4735] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4736:4863] is not constantly 0 (contains 128 different values). 
-PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[5120:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS < [allpass-real-distinct-roots] All assertions passed. (total 40 assertions) 
-PASS > [allpass-repeated-roots] repeated real root 
-PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): Actual Tail Frame 106 is greater than or equal to 17. 
-PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): output[0:127] is not constantly 0 (contains 106 different values). 
-PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [allpass-repeated-roots] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "allpass-complex-roots"
+PASS Executing "allpass-real-distinct-roots"
+PASS Executing "allpass-repeated-roots"
+PASS Audit report
+PASS > [allpass-complex-roots] complex roots
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): Actual Tail Frame 2560 is greater than or equal to 2317.
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[0:127] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[128:255] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[256:383] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[384:511] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[512:639] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[640:767] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[768:895] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[896:1023] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1024:1151] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1152:1279] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1280:1407] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1408:1535] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1536:1663] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1664:1791] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1792:1919] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[1920:2047] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2048:2175] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2176:2303] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2304:2431] is not constantly 0 (contains 128 different values).
+PASS   Complex roots: Biquad({"type":"allpass","Q":200,"frequency":4096}): output[2688:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [allpass-complex-roots] All assertions passed. (total 21 assertions)
+PASS > [allpass-real-distinct-roots] real distinct roots
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): Actual Tail Frame 7296 is greater than or equal to 4822.
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[0:127] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[128:255] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[256:383] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[384:511] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[512:639] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[640:767] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[768:895] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[896:1023] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1024:1151] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1152:1279] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1280:1407] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1408:1535] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1536:1663] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1664:1791] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1792:1919] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[1920:2047] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2048:2175] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2176:2303] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2304:2431] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2432:2559] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2560:2687] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2688:2815] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2816:2943] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[2944:3071] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3072:3199] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3200:3327] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3328:3455] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3456:3583] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3584:3711] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3712:3839] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3840:3967] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[3968:4095] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4096:4223] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4224:4351] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4352:4479] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4480:4607] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4608:4735] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[4736:4863] is not constantly 0 (contains 128 different values).
+PASS   Distinct roots: Biquad({"type":"allpass","Q":0.001,"frequency":2048}): output[5120:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS < [allpass-real-distinct-roots] All assertions passed. (total 40 assertions)
+PASS > [allpass-repeated-roots] repeated real root
+PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): Actual Tail Frame 106 is greater than or equal to 17.
+PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): output[0:127] is not constantly 0 (contains 106 different values).
+PASS   Repeated roots: Biquad({"type":"allpass","Q":0.5,"frequency":2048}): output[384:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [allpass-repeated-roots] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

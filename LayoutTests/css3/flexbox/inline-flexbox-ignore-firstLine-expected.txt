@@ -1,5 +1,5 @@
 
-PASS .inline-flexbox 1 
+PASS .inline-flexbox 1
 This test inline-flexbox item should ignore flex container's firstLine pseudo element.
 
 The first item.

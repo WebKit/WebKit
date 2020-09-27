@@ -1,22 +1,22 @@
 
-PASS inset(10px round +10px +20px +30px +40px) - inline 
-PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px) - inline 
-PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px) - inline 
-PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px) - inline 
-PASS inset(10px round +10px +20px +30px +40px / +10px +20px +30px +40px ) - inline 
-PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px / 10.1200px 20.34px 30.56px 40.780px) - inline 
-PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px / 10.123px 20.00px 30.10px 40.5678px) - inline 
-PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px / +10.1200px +20.340px +30.56px +40.780px) - inline 
-PASS inset(10px round +10.123px +20.00px +30.10px +40.5678px / 10.123px +20.00px +30.10px +40.5678px) - inline 
-PASS inset(10px round +10px +20px +30px +40px) - computed 
-PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px) - computed 
-PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px) - computed 
-PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px) - computed 
-PASS inset(10px round +10px +20px +30px +40px / +10px +20px +30px +40px ) - computed 
-PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px / 10.1200px 20.34px 30.56px 40.780px) - computed 
-PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px / 10.123px 20.00px 30.10px 40.5678px) - computed 
-PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px / +10.1200px +20.340px +30.56px +40.780px) - computed 
-PASS inset(10px round +10.123px +20.00px +30.10px +40.5678px / 10.123px +20.00px +30.10px +40.5678px) - computed 
+PASS inset(10px round +10px +20px +30px +40px) - inline
+PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px) - inline
+PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px) - inline
+PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px) - inline
+PASS inset(10px round +10px +20px +30px +40px / +10px +20px +30px +40px ) - inline
+PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px / 10.1200px 20.34px 30.56px 40.780px) - inline
+PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px / 10.123px 20.00px 30.10px 40.5678px) - inline
+PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px / +10.1200px +20.340px +30.56px +40.780px) - inline
+PASS inset(10px round +10.123px +20.00px +30.10px +40.5678px / 10.123px +20.00px +30.10px +40.5678px) - inline
+PASS inset(10px round +10px +20px +30px +40px) - computed
+PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px) - computed
+PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px) - computed
+PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px) - computed
+PASS inset(10px round +10px +20px +30px +40px / +10px +20px +30px +40px ) - computed
+PASS inset(10px round 10.1200px 20.34px 30.56px 40.780px / 10.1200px 20.34px 30.56px 40.780px) - computed
+PASS inset(10px round 10.123px 20.00px 30.10px 40.5678px / 10.123px 20.00px 30.10px 40.5678px) - computed
+PASS inset(10px round +10.1200px +20.340px +30.56px +40.780px / +10.1200px +20.340px +30.56px +40.780px) - computed
+PASS inset(10px round +10.123px +20.00px +30.10px +40.5678px / 10.123px +20.00px +30.10px +40.5678px) - computed
 FAIL inset(10px round -10px -20px -30px -40px) - invalid assert_equals: expected (object) null but got (string) ""
 FAIL inset(10px round -10.1200px -20.340px -30.56px -40.780px) - invalid assert_equals: expected (object) null but got (string) ""
 FAIL inset(10px round -10px -20px -30px -40px / -10px -20px -30px -40px) - invalid assert_equals: expected (object) null but got (string) ""

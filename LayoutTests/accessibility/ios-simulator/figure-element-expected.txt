@@ -7,35 +7,35 @@ Test figure with aria-label.
 figure1: [object AccessibilityUIElement]
 figure1 AXRoleDescription: figure
 figure1 AXLabel: Figure 1.
-figure1 AXHint: 
+figure1 AXHint:
 PASS !titleUIElement is true
 
 Test figure with title attribute.
 figure2: [object AccessibilityUIElement]
 figure2 AXRoleDescription: figure
 figure2 AXLabel: Figure 2.
-figure2 AXHint: 
+figure2 AXHint:
 PASS !titleUIElement is true
 
 Test figure with aria-describedby.
 figure3: [object AccessibilityUIElement]
 figure3 AXRoleDescription: figure
-figure3 AXLabel: 
+figure3 AXLabel:
 figure3 AXHint: This is the description for Figure 3.
 PASS !titleUIElement is true
 
 Test figure with aria-roledescription attribute.
 figure4: [object AccessibilityUIElement]
 figure4 AXRoleDescription: ARIA role description for Figure 4.
-figure4 AXLabel: 
-figure4 AXHint: 
+figure4 AXLabel:
+figure4 AXHint:
 PASS !titleUIElement is true
 
 Test figure with figcaption element.
 figure5: [object AccessibilityUIElement]
 figure5 AXRoleDescription: figure
 figure5 AXLabel: Caption for Figure 5.
-figure5 AXHint: 
+figure5 AXHint:
 PASS titleUIElement.isEqual(figureCaption) is true
 
 Test figure with figcaption element and title attribute.

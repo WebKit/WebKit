@@ -10,7 +10,7 @@ PASS true === true
 PASS Function("'use strict'; var x,arguments;") threw exception of type SyntaxError.
 PASS !!Function("var x,arguments;") is true
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8000/security/resources/abe-allow-star.php denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Cannot load image http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/security/resources/abe-allow-star.php due to access control checks.
- 
 
-PASS Loading an image in no-cors mode after a CORS invalid redirection is ok 
-PASS Loading an image in cors mode after a CORS invalid redirection is stopped 
+
+PASS Loading an image in no-cors mode after a CORS invalid redirection is ok
+PASS Loading an image in cors mode after a CORS invalid redirection is stopped
 

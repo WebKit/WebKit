@@ -1,6 +1,6 @@
 
 
-PASS wdith 100 height 100 video 
-PASS width 100 video 
-PASS height 100 video  
+PASS wdith 100 height 100 video
+PASS width 100 video
+PASS height 100 video
 

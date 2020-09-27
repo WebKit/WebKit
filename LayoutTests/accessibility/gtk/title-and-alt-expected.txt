@@ -1,5 +1,5 @@
 
-Functional label:   
+Functional label:
 This tests the exposure of alt and title information.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -3,7 +3,7 @@ Check that BreakpointLogMessageLexer correctly tokenizes breakpoint action log m
 
 == Running test suite: Debugger.BreakpointLogMessageLexer
 -- Running test case: EmptyMessage
-Input: 
+Input:
 PASS: Token stream should match expected tokens.
 
 -- Running test case: TextOnly

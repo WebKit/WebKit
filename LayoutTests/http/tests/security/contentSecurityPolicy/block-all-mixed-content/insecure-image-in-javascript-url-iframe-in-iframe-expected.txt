@@ -6,7 +6,7 @@ frame "<!--frame2-->" - didCommitLoadForFrame
 frame "<!--frame2-->" - didFinishDocumentLoadForFrame
 frame "<!--frame2-->" - didHandleOnloadEventsForFrame
 frame "<!--frame2-->" - didFinishLoadForFrame
-frame "<!--frame2-->" - willPerformClientRedirectToURL: javascript:document.write('%3Cimg%20src=%22http://127.0.0.1:8000/security/resources/compass.jpg%22%3E'); 
+frame "<!--frame2-->" - willPerformClientRedirectToURL: javascript:document.write('%3Cimg%20src=%22http://127.0.0.1:8000/security/resources/compass.jpg%22%3E');
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.
 frame "<!--frame1-->" - didFinishLoadForFrame

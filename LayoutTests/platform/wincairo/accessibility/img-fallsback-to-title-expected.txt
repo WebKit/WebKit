@@ -6,13 +6,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Image1:
-	AXTitle: 
+	AXTitle:
 	AXDescription: test1
 Image2:
 	AXTitle: alt
 	AXDescription: alt
 Image3:
-	AXTitle: 
+	AXTitle:
 	AXDescription: test3
 Image4:
 	AXTitle: alt

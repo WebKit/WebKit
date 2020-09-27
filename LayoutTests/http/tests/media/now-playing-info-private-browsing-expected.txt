@@ -1,4 +1,4 @@
- 
+
 Tests that the NowPlaying title is not set when in private browsing mode.
 
 * NowPlaying should not be active before playback has started.

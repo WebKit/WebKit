@@ -1,6 +1,6 @@
- 
-   
-     
+
+
+
 EXPECTED (videos[0].getAttribute('poster') == 'content/abe.png') OK
 EXPECTED (relativeURL(videos[0].poster) == 'content/abe.png') OK
 EXPECTED (videos[1].getAttribute('poster') == 'content/abe.png') OK

@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: Refused to load https://www.youtube.com/v/UF8uR6Z6KLc because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
- 
+

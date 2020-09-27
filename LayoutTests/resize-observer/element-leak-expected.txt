@@ -1,4 +1,4 @@
 
-PASS ResizeObserver implemented 
-PASS Test elements leak in 20 iframes 
+PASS ResizeObserver implemented
+PASS Test elements leak in 20 iframes
 

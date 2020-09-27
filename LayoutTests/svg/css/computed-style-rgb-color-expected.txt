@@ -7,5 +7,5 @@ PASS getComputedStyle(document.querySelector('svg>rect#half-transparent')).fill 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-    
+
 

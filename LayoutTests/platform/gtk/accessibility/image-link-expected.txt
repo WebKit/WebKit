@@ -9,7 +9,7 @@ AXChildren: 1
 AXPosition: { 8.00000, 99.0000 }
 AXSize: { 280.000, 214.000 }
 AXTitle: Delicious cake
-AXDescription: 
+AXDescription:
 AXValue: <obj>
 AXFocusable: 1
 AXFocused: 1
@@ -30,7 +30,7 @@ AXChildren: 0
 AXPosition: { 8.00000, 100.000 }
 AXSize: { 280.000, 210.000 }
 AXTitle: Delicious cake
-AXDescription: 
+AXDescription:
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

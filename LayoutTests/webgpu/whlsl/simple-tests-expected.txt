@@ -1,7 +1,7 @@
 
-PASS simpleUnreachableCode 
-PASS simpleNoReturn 
-PASS simpleRecursiveStruct 
-PASS simpleRecursion 
-PASS simpleRecursion2 
+PASS simpleUnreachableCode
+PASS simpleNoReturn
+PASS simpleRecursiveStruct
+PASS simpleRecursion
+PASS simpleRecursion2
 

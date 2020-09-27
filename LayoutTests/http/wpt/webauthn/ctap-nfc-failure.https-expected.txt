@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events.
 CONSOLE MESSAGE: User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events.
 
-PASS CTAP NFC with empty apdu response in a mock nfc authenticator. 
-PASS CTAP NFC with wrong data error in a mock nfc authenticator. 
+PASS CTAP NFC with empty apdu response in a mock nfc authenticator.
+PASS CTAP NFC with wrong data error in a mock nfc authenticator.
 

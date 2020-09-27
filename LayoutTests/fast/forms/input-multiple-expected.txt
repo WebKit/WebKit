@@ -1,5 +1,5 @@
 This tests that you can get and set the multiple attribute as a property in JavaScript.
-  
+
 Test 1 passed.
 Test 2 passed.
 Test 3 passed.

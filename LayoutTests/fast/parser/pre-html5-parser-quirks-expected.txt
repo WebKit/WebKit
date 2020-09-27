@@ -1,6 +1,6 @@
 This tests that certain pre-HTML5 parser rules are applied when the WebKitUsePreHTML5ParserQuirks preference is set. See https://webkit.org/b/40961 and https://webkit.org/b/42909 for details.
 
-        
+
 
 --------
 Frame: '<!--frame1-->'

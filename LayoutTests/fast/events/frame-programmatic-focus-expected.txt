@@ -1,4 +1,4 @@
-  
+
 This page tests that frames receive focus events when one of their child elements is programmatically focused, and receive blur events when an element not in that frame is programmatically focused.
 
 <input> focused

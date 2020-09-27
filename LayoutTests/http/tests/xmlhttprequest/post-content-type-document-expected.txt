@@ -1,4 +1,4 @@
 
-PASS sending HTML document should set the Content-Type to text/html;charset=UTF-8. 
-PASS sending XML document should set the Content-Type to application/xml;charset=UTF-8. 
+PASS sending HTML document should set the Content-Type to text/html;charset=UTF-8.
+PASS sending XML document should set the Content-Type to application/xml;charset=UTF-8.
 

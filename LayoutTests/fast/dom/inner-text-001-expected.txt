@@ -8,8 +8,8 @@ Item 2
 1	2	3
 4	5	6
 
-Right here is an inline block. 
-And an  inline	table	with	one	row  is here, too. 
+Right here is an inline block.
+And an  inline	table	with	one	row  is here, too.
 And an  inline	table	with	rows  not far behind.
 Check collapsed margins
 
@@ -33,8 +33,8 @@ Item 2
 1	2	3
 4	5	6
 
-Right here is an inline block. 
-And an  inline	table	with	one	row  is here, too. 
+Right here is an inline block.
+And an  inline	table	with	one	row  is here, too.
 And an  inline	table	with	rows  not far behind.
 Check collapsed margins
 

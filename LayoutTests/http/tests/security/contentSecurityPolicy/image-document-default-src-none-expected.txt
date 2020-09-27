@@ -2,4 +2,4 @@ CONSOLE MESSAGE: Refused to apply inline style because it violates the following
 
 CONSOLE MESSAGE: Refused to apply inline style because it violates the following Content Security Policy directive: "default-src 'none'". Either the 'unsafe-inline' keyword, a hash ('sha256-15TqmL1cbLqMXH1nK4EwD191NLSXxlbnYzFAfbG/xp8='), or a nonce ('nonce-...') is required to enable inline execution. Note also that 'style-src' was not explicitly set, so 'default-src' is used as a fallback.
 
-Ensure that we don't crash when loading an ImageDocument that sets CSP headers 
+Ensure that we don't crash when loading an ImageDocument that sets CSP headers

@@ -56,7 +56,7 @@ PASS data[0] is 0
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is 0
- 
+
 Verifying blurry shadow...
 PASS data[0] is 0
 PASS data[1] is 0
@@ -102,7 +102,7 @@ PASS data[0] is 0
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is 0
- 
+
 Verifying rotated alpha shadow...
 PASS data[0] is 0
 PASS data[1] is 0
@@ -156,7 +156,7 @@ PASS data[0] is 0
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is 0
- 
+
 Verifying rotated blurry shadow...
 PASS data[0] is 0
 PASS data[1] is 0
@@ -206,7 +206,7 @@ PASS data[0] is 0
 PASS data[1] is 0
 PASS data[2] is 0
 PASS data[3] is 0
- 
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

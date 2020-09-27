@@ -1,6 +1,6 @@
 The inner element of validation should not be modifiable.
 
-  
+
 PASS renderTreeAfterEditing is renderTreeBeforeEditing
 PASS successfullyParsed is true
 

@@ -1,11 +1,11 @@
-line 1 
+line 1
 line 2
 This verifies that we are getting correct line text marker ranges on iOS.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-line 1 
+line 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

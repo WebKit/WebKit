@@ -1,4 +1,4 @@
-  
+
 This tests that we can adjust focus and selection via accessibility API.
 
 

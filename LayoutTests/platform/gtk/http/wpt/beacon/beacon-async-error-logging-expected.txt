@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Beacon API cannot load http://invalid.localhost/. Error resolving “invalid.localhost”: Name or service not known
 
-PASS Should log an error message in the console 
+PASS Should log an error message in the console
 

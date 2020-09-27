@@ -6,7 +6,7 @@ Code injected into window:
 setTimeout(function() {write(window.opener.top.frames[0], 'FAIL: XSS was allowed.');}, 100);
 setTimeout(function() {write(window.opener.top.frames[1], 'SUCCESS: Window remained in original SecurityOrigin.');}, 200);
 setTimeout(function() { if (window.testRunner) testRunner.globalFlag = true; }, 300);</script>
- 
+
 
 --------
 Frame: '<!--frame1-->'

@@ -2,7 +2,7 @@ This test checks if setSelectionRange(), selectionStart, and selectionEnd on a t
 
 If this test passed you'll see a bunch of correct selection ranges below. Check the expected file for the correct ranges.
 
-    
+
 ===textarea===
 setSelectionRange():
 3, 7

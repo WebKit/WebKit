@@ -1,10 +1,10 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test]  
-PASS   SNR is greater than or equal to 129.4. 
-PASS   Maximum difference is less than or equal to 0.0000019894. 
-PASS < [test] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test]
+PASS   SNR is greater than or equal to 129.4.
+PASS   Maximum difference is less than or equal to 0.0000019894.
+PASS < [test] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

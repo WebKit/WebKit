@@ -12,12 +12,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {239, 78}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -29,8 +29,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -52,12 +52,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {239, 78}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -69,8 +69,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -92,12 +92,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {120, 60}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -109,8 +109,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -132,12 +132,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 2>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {120, 60}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -149,8 +149,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)
@@ -172,12 +172,12 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {120, 30}
-AXTitle: 
-AXDescription: 
-AXValue: 
+AXTitle:
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXCell>
@@ -189,8 +189,8 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXFocusableAncestor: <AXCell>
 AXEditableAncestor: (null)

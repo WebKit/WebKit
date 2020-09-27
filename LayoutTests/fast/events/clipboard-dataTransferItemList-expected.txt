@@ -1,7 +1,7 @@
 To manually test, press your browser shortcut for copy and then for paste. Several lines that say 'PASS' should appear below.
 
-Copy handler: 
-Paste handler: 
+Copy handler:
+Paste handler:
 Running test with Legacy copy handler and Legacy paste handler
 PASS: 4 === 4
 PASS: sample === sample

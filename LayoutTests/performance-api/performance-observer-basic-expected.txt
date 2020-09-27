@@ -55,7 +55,7 @@ PASS [Worker] obs instanceof PerformanceObserver is true
 PASS [Worker] obs === observer is true
 PASS [Worker] thisObject instanceof PerformanceObserver is true
 PASS [Worker] thisObject === observer is true
-[Worker] 
+[Worker]
 [Worker] PerformanceObserverEntryList APIs
 PASS [Worker] list.getEntries() instanceof Array is true
 PASS [Worker] list.getEntries().length === 2 is true

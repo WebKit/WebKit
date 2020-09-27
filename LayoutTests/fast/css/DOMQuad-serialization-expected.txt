@@ -1,5 +1,5 @@
 
-PASS DOMQuad has a toJSON function 
-PASS The values of all the points in a DOMQuad are serialized to JSON. 
-PASS The values of all the points in a DOMQuad are preserved through a round-trip through JSON.stringify and JSON.parse 
+PASS DOMQuad has a toJSON function
+PASS The values of all the points in a DOMQuad are serialized to JSON.
+PASS The values of all the points in a DOMQuad are preserved through a round-trip through JSON.stringify and JSON.parse
 

@@ -5,10 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/objectstore-basics.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-[Worker] 
+[Worker]
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
-[Worker] 
+[Worker]
 [Worker] prepareDatabase():
 [Worker] store = db.createObjectStore('storeName', null)
 [Worker] storeNames = db.objectStoreNames
@@ -81,10 +81,10 @@ PASS [Worker] store.indexNames[1] is undefined.
 PASS [Worker] store.indexNames[100] is undefined.
 PASS [Worker] store.indexNames.item(1) is null
 PASS [Worker] store.indexNames.item(100) is null
-[Worker] 
+[Worker]
 [Worker] openAgain():
 [Worker] indexedDB.open(dbname)
-[Worker] 
+[Worker]
 [Worker] addData():
 [Worker] db = event.target.result
 [Worker] transaction = db.transaction(['storeName'], 'readwrite')
@@ -156,16 +156,16 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
-[Worker] 
+[Worker]
 [Worker] testPreConditions():
 [Worker] indexedDB.open(dbname, 3)
-[Worker] 
+[Worker]
 [Worker] upgradeNeeded():
 [Worker] storeWithInLineKeys = db.createObjectStore('storeWithInLineKeys', {keyPath: 'key'})
 [Worker] storeWithOutOfLineKeys = db.createObjectStore('storeWithOutIOfLineKeys')
 [Worker] storeWithIndex = db.createObjectStore('storeWithIndex')
 [Worker] index = storeWithIndex.createIndex('indexName', 'indexKey')
-[Worker] 
+[Worker]
 [Worker] IDBObjectStore.put()
 [Worker] The object store uses in-line keys and the key parameter was provided.
 [Worker] Expecting exception from storeWithInLineKeys.put({key: 1}, 'key')
@@ -197,7 +197,7 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
-[Worker] 
+[Worker]
 [Worker] IDBObjectStore.add()
 [Worker] The object store uses in-line keys and the key parameter was provided.
 [Worker] Expecting exception from storeWithInLineKeys.add({key: 1}, 'key')

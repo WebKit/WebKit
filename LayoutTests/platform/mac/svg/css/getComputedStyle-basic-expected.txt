@@ -108,7 +108,7 @@ rect: style.getPropertyValue(column-span) : none
 rect: style.getPropertyCSSValue(column-span) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-width) : auto
 rect: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(content) : 
+rect: style.getPropertyValue(content) :
 rect: style.getPropertyCSSValue(content) : [object CSSValueList]
 rect: style.getPropertyValue(counter-increment) : none
 rect: style.getPropertyCSSValue(counter-increment) : [object CSSPrimitiveValue]
@@ -632,7 +632,7 @@ g: style.getPropertyValue(column-span) : none
 g: style.getPropertyCSSValue(column-span) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-width) : auto
 g: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(content) : 
+g: style.getPropertyValue(content) :
 g: style.getPropertyCSSValue(content) : [object CSSValueList]
 g: style.getPropertyValue(counter-increment) : none
 g: style.getPropertyCSSValue(counter-increment) : [object CSSPrimitiveValue]

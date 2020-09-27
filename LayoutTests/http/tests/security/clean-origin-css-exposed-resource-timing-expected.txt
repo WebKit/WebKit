@@ -1,3 +1,3 @@
 
-PASS CSS subresources of a clean stylesheet should populate resource timing entries 
+PASS CSS subresources of a clean stylesheet should populate resource timing entries
 

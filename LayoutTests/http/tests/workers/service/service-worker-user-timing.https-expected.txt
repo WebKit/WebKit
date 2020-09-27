@@ -1,4 +1,4 @@
 
-PASS Setup worker 
-PASS Verify service worker had 2 UserTiming entries 
+PASS Setup worker
+PASS Verify service worker had 2 UserTiming entries
 

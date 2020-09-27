@@ -2,4 +2,4 @@ CONSOLE MESSAGE: The 'options' directive has been replaced with 'unsafe-inline' 
 CONSOLE MESSAGE: The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.
 CONSOLE MESSAGE: The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.
 CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
-This test passes if it doesn't alert fail. 
+This test passes if it doesn't alert fail.

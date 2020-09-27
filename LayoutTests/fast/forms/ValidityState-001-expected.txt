@@ -1,6 +1,6 @@
 Each form control in this document exposes a validity attribute that returns a live instance of ValidityState.
 
-      
+
 Test for FIELDSET: SUCCESS
 Test for SELECT: SUCCESS
 Test for INPUT: SUCCESS

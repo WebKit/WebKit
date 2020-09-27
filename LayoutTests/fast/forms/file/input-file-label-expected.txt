@@ -1,4 +1,4 @@
-  
+
 This tests the label of a file chooser button.
 
 PASS The label of a single file chooser button is "Choose File".

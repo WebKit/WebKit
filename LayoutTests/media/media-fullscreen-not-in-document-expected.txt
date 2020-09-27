@@ -19,7 +19,7 @@ RUN(mediaElement.webkitEnterFullScreen())
 EVENT(webkitfullscreenerror)
 EXPECTED (mediaElement.webkitDisplayingFullscreen == 'false') OK
 
-*** Creating <audio> element with "content/silence.mpg" not in the document, should NOT support fullscreen 
+*** Creating <audio> element with "content/silence.mpg" not in the document, should NOT support fullscreen
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(canplaythrough)

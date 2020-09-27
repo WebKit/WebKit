@@ -1,20 +1,20 @@
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
-PASS .grid 6 
-PASS .grid 7 
-PASS .grid 8 
-PASS .grid 9 
-PASS .grid 10 
-PASS .grid 11 
-PASS .grid 12 
-PASS .grid 13 
-PASS .grid 14 
-PASS .grid 15 
-PASS .grid 16 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+PASS .grid 8
+PASS .grid 9
+PASS .grid 10
+PASS .grid 11
+PASS .grid 12
+PASS .grid 13
+PASS .grid 14
+PASS .grid 15
+PASS .grid 16
 Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'auto' width, which will reduce the available space for tracks; however, they can grow exceeding their content's max-width.
 
 XXX X XX X

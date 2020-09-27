@@ -5,7 +5,7 @@ This tests that we are adding children correctly when having CSS first-letter se
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXGroup AXValue: 
+AXRole: AXGroup AXValue:
   AXRole: AXStaticText AXValue: Test text
 PASS content.childrenCount is 1
 PASS successfullyParsed is true

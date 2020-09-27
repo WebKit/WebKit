@@ -1,4 +1,4 @@
 
-PASS Checking various connection state for video exchange 
-PASS Checking connection state event when closing peer connetion 
+PASS Checking various connection state for video exchange
+PASS Checking connection state event when closing peer connetion
 

@@ -1,6 +1,6 @@
 Resource Timing: Fetch initiatorType
 
 
-PASS Type: fetch 
-PASS Timing: fetch 
+PASS Type: fetch
+PASS Timing: fetch
 

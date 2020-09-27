@@ -3,12 +3,12 @@ This verifies the expected roles and values are exposed for mo.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXMath 
+AXRole: AXMath
     AXRole: AXStatic AXValue: *
     AXRole: AXStatic AXValue: *
     AXRole: AXStatic AXValue: *
     AXRole: AXStatic AXValue: *
-    AXRole: AXGroup 
+    AXRole: AXGroup
         AXRole: AXStatic AXValue: (
         AXRole: AXStatic AXValue: x
         AXRole: AXStatic AXValue: ,

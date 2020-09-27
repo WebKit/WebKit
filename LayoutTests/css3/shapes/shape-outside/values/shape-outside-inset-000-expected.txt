@@ -1,18 +1,18 @@
 
-PASS 1 inset - inline 
-PASS 2 insets - inline 
-PASS 3 insets - inline 
-PASS 4 insets - inline 
-PASS 1 inset and round - inline 
-PASS 2 insets and round - inline 
-PASS 3 insets and round - inline 
-PASS 4 insets and round - inline 
-PASS 1 inset - computed 
-PASS 2 insets - computed 
-PASS 3 insets - computed 
-PASS 4 insets - computed 
-PASS 1 inset and round - computed 
-PASS 2 insets and round - computed 
-PASS 3 insets and round - computed 
-PASS 4 insets and round - computed 
+PASS 1 inset - inline
+PASS 2 insets - inline
+PASS 3 insets - inline
+PASS 4 insets - inline
+PASS 1 inset and round - inline
+PASS 2 insets and round - inline
+PASS 3 insets and round - inline
+PASS 4 insets and round - inline
+PASS 1 inset - computed
+PASS 2 insets - computed
+PASS 3 insets - computed
+PASS 4 insets - computed
+PASS 1 inset and round - computed
+PASS 2 insets and round - computed
+PASS 3 insets and round - computed
+PASS 4 insets and round - computed
 

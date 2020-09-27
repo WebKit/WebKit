@@ -2,4 +2,4 @@ This test verifies that script elements are not inserted into the document if th
 
 PASS: documentWithScript.getElementsByTagName("script").length should be 0 and is.
 PASS: documentWithSVGScript.getElementsByTagName("script").length should be 0 and is.
- 
+

@@ -11,13 +11,13 @@ PASS: All Targets paused.
 PASS: Active CalleFrame should be in a Worker.
 PASS: Pause reason should be a breakpoint.
 PAUSE AT triggerBreakpoint:9:5
-      5    
+      5
       6    function triggerBreakpoint() {
       7        let alpha = 1;
  ->   8        |let beta = 2; // BREAKPOINT
       9        let gamma = 3;
      10    }
-     11    
+     11
 
 
 

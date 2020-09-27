@@ -1,14 +1,14 @@
 CONSOLE MESSAGE: GPUDevice.createBuffer(): Buffer cannot have both MAP_READ and MAP_WRITE usage!
 
-PASS GPUBuffers can be created with both read-only and STORAGE usages. 
-PASS unmap on already unmapped, mappable GPUBuffer should not generate error. 
-PASS GPUBuffer created via createBufferMapped cannot be remapped. 
-PASS GPUBufferDescriptor with both MAP_READ and MAP_WRITE usage should fail. 
-PASS Too-large GPUBufferDescriptor size should fail with out-of-memory error. 
-PASS mapReadAsync on non-MAP_READ GPUBuffer should fail. 
-PASS mapWriteAsync on non-MAP_WRITE GPUBuffer should fail. 
-PASS unmap on non-mappable GPUBuffer should fail. 
-PASS createBufferMapped: non-4-byte-aligned GPUBufferDesriptor size should fail. 
-PASS Any method call on an invalid GPUBuffer should fail. 
-PASS Any method call on a destroyed GPUBuffer should fail. 
+PASS GPUBuffers can be created with both read-only and STORAGE usages.
+PASS unmap on already unmapped, mappable GPUBuffer should not generate error.
+PASS GPUBuffer created via createBufferMapped cannot be remapped.
+PASS GPUBufferDescriptor with both MAP_READ and MAP_WRITE usage should fail.
+PASS Too-large GPUBufferDescriptor size should fail with out-of-memory error.
+PASS mapReadAsync on non-MAP_READ GPUBuffer should fail.
+PASS mapWriteAsync on non-MAP_WRITE GPUBuffer should fail.
+PASS unmap on non-mappable GPUBuffer should fail.
+PASS createBufferMapped: non-4-byte-aligned GPUBufferDesriptor size should fail.
+PASS Any method call on an invalid GPUBuffer should fail.
+PASS Any method call on a destroyed GPUBuffer should fail.
 

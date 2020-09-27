@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "null" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 This tests that a data: URL subframe can't access a sibling data: URL subframe.
 
-  
+
 
 --------
 Frame: 'firstSubFrame'

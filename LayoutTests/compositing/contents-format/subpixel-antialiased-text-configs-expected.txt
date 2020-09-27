@@ -11,7 +11,7 @@ Child composited layer
 
 Child composited layer
 
-Text here.  
+Text here.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)

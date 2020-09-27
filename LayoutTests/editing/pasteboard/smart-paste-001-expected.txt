@@ -8,10 +8,10 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 10 of #text > DIV > DIV > BODY > HTML > #document to 10 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting after a word at the end of a line.
-Expected Results: 
-A space should be added between the preexisting word and the word that's pasted. It should like this: 
+Expected Results:
+A space should be added between the preexisting word and the word that's pasted. It should like this:
 test test
 test test
 execCopyCommand: <div id="test" class="editing"> test </div>

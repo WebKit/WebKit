@@ -1,4 +1,4 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 
-PASS Test that beacon sent from unload event handler is properly received 
+PASS Test that beacon sent from unload event handler is properly received
 

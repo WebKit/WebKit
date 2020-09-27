@@ -1,6 +1,6 @@
 
-PASS .flexbox, .inline-flexbox 1 
-PASS .flexbox, .inline-flexbox 2 
+PASS .flexbox, .inline-flexbox 1
+PASS .flexbox, .inline-flexbox 2
 This test flex item should ignore flex container's firstLetter pseudo element.
 
 The first item.

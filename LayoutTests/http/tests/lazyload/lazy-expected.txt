@@ -1,7 +1,7 @@
 
 
 
-PASS Test that document load event is fired 
-PASS Test that <img> in viewport is loaded, and not a placeholder 
-PASS Test that <img> below viewport is a placeholder, with lazyimage enabled 
+PASS Test that document load event is fired
+PASS Test that <img> in viewport is loaded, and not a placeholder
+PASS Test that <img> below viewport is a placeholder, with lazyimage enabled
 

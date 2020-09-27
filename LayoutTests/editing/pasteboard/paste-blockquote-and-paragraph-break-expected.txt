@@ -1,5 +1,5 @@
 We copy and paste a blockquoted paragraph plus a paragraph break.
-The paragraph break shouldn't be inside the blockquote on paste.  
+The paragraph break shouldn't be inside the blockquote on paste.
 You should see 'hello' (blockquoted), 'world' (not quoted, black text), 'hello' (blockquoted), empty paragraph.
 See <rdar://problem/5368833<
 

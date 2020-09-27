@@ -10,4 +10,4 @@ PASS getElemById('sel3').setAttribute('size', '1+ef'); clientHeight('sel3') is c
 PASS successfullyParsed is true
 
 TEST COMPLETE
-    
+

@@ -1,4 +1,4 @@
-2 thingers should appear on this page. Otherwise the test has failed.  
+2 thingers should appear on this page. Otherwise the test has failed.
 
 --------
 Frame: '<!--frame1-->'

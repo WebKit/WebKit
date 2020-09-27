@@ -1,4 +1,4 @@
-   
 
-PASS captureStream with webrtc - h264 high profile 
+
+PASS captureStream with webrtc - h264 high profile
 

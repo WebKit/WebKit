@@ -2,5 +2,5 @@ Check that data: is still allowed for non-CORS cross-origin image fetches.
 
 PASS background image loaded
 
-PASS Testing cross-origin and MIME behavior for CSS. 
+PASS Testing cross-origin and MIME behavior for CSS.
 

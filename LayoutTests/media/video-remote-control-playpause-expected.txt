@@ -1,4 +1,4 @@
-  
+
 Test play and pause with "remote control" interface.
 
 EVENT(canplaythrough)

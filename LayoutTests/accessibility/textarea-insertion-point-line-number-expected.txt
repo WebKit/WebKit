@@ -14,7 +14,7 @@ PASS textareaAXUIElement.insertionPointLineNumber is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+
 Line1
 
 Line3

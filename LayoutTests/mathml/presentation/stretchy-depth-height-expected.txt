@@ -1,14 +1,14 @@
 This test passes if the depth and height of braces match the maximum depth and height of its siblings.
 
 {
- 
+
 {
- 
+
 {
- 
+
 {
-x	y	z	x	y	z	x	y	z	x	y	z	x	y	z 
- 
+x	y	z	x	y	z	x	y	z	x	y	z	x	y	z
+
 {
 1
 2
@@ -44,22 +44,22 @@ x	y	z	x	y	z	x	y	z	x	y	z	x	y	z
 5
 5
 6
- 
+
 {
 |
 }
- 
+
 {
 p
 {
 |
 
 
-PASS symmetric stretching 
-PASS large depth 
-PASS large height 
-PASS mtable 
-PASS several siblings with different heights/depths 
-PASS testing several operators in one mrow 
-PASS testing with non-stretchy mo 
+PASS symmetric stretching
+PASS large depth
+PASS large height
+PASS mtable
+PASS several siblings with different heights/depths
+PASS testing several operators in one mrow
+PASS testing with non-stretchy mo
 

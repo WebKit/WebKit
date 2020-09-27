@@ -1,9 +1,9 @@
 
-PASS Test that the return value of deleting properties is correct ([OverrideBuiltins] specified). 
-PASS Test that the return value of deleting numeric properties is correct ([OverrideBuiltins] specified). 
-PASS Test that deleting a property that does not exist in the map, but does on the prototype, will return true and not remove the property from the prototype ([OverrideBuiltins] specified). 
-PASS Test that the return value of deleting properties is correct ([OverrideBuiltins] not specified). 
-PASS Test that the return value of deleting numeric properties is correct ([OverrideBuiltins] not specified). 
-PASS Test that you can't delete a builtin property ([OverrideBuiltins] not specified). 
-PASS Test that deleting a property that does not exist in the map, but does on the prototype, will return true and not remove the property from the prototype ([OverrideBuiltins] not specified). 
+PASS Test that the return value of deleting properties is correct ([OverrideBuiltins] specified).
+PASS Test that the return value of deleting numeric properties is correct ([OverrideBuiltins] specified).
+PASS Test that deleting a property that does not exist in the map, but does on the prototype, will return true and not remove the property from the prototype ([OverrideBuiltins] specified).
+PASS Test that the return value of deleting properties is correct ([OverrideBuiltins] not specified).
+PASS Test that the return value of deleting numeric properties is correct ([OverrideBuiltins] not specified).
+PASS Test that you can't delete a builtin property ([OverrideBuiltins] not specified).
+PASS Test that deleting a property that does not exist in the map, but does on the prototype, will return true and not remove the property from the prototype ([OverrideBuiltins] not specified).
 

@@ -1,8 +1,8 @@
-       
 
-PASS Test that document load event is fired 
-PASS Test that values for loading are case insensitive 
-PASS Test that <img> with loading=lazy or auto or no attribute or invalid value are loaded as a placeholder 
-PASS Test that <img> with loading=eager is fully loaded, and not a placeholder 
-PASS Test that deferred <img> are fully loaded when lazyload is turned off 
+
+PASS Test that document load event is fired
+PASS Test that values for loading are case insensitive
+PASS Test that <img> with loading=lazy or auto or no attribute or invalid value are loaded as a placeholder
+PASS Test that <img> with loading=eager is fully loaded, and not a placeholder
+PASS Test that deferred <img> are fully loaded when lazyload is turned off
 

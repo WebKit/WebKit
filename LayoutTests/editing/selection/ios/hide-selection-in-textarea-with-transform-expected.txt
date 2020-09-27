@@ -1,4 +1,4 @@
-The caret should appear 
+The caret should appear
 The caret should not appear
 This test verifies that a textarea with a transform that is completely clipped by an overflow: hidden container can be treated as a hidden editable area. To run the test manually, tap the top button and verify that a caret is shown and the keyboard appears. Then, tap the bottom button and verify that the caret is hidden, but the keyboard is still shown.
 

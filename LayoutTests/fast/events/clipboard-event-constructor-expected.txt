@@ -1,9 +1,9 @@
 
-PASS First parameter is mandatory 
-PASS Omit init dictionary 
-PASS bubbles member 
-PASS cancelable member 
-PASS composed member 
-PASS bubbles / cancelable / composed members 
-PASS Passing a bad type for clipboardData member should throw 
+PASS First parameter is mandatory
+PASS Omit init dictionary
+PASS bubbles member
+PASS cancelable member
+PASS composed member
+PASS bubbles / cancelable / composed members
+PASS Passing a bad type for clipboardData member should throw
 

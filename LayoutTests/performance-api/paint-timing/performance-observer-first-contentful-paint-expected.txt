@@ -3,7 +3,7 @@ PASS performance.getEntries().length is 1
 PASS performance.getEntriesByName("first-contentful-paint").length is 1
 PASS performance.getEntriesByName("first-contentful-paint", "paint").length is 1
 PASS performance.getEntriesByType("paint").length is 1
-PASS PerformanceObserver first-contentful-paint callback wasn't fired again 
+PASS PerformanceObserver first-contentful-paint callback wasn't fired again
 PASS successfullyParsed is true
 
 TEST COMPLETE

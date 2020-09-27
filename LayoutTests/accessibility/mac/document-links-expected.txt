@@ -4,12 +4,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink>
 AXSize: NSSize: {123, 62}
-AXTitle: 
+AXTitle:
 AXDescription: Link1
-AXValue: 
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink>
@@ -21,15 +21,15 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 AXPath: <AXLink>
 
@@ -38,12 +38,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink>
 AXSize: NSSize: {113, 22}
-AXTitle: 
+AXTitle:
 AXDescription: Link2
-AXValue: 
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink>
@@ -55,15 +55,15 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 AXPath: <AXLink>
 
@@ -72,12 +72,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink: 'link 3'>
 AXSize: NSSize: {37, 18}
 AXTitle: link 3
-AXDescription: 
-AXValue: 
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink: 'link 3'>
@@ -89,15 +89,15 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 3'>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink: 'link 3'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: http://webkit.org/
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 
 ------------
@@ -105,12 +105,12 @@ AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
-AXHelp: 
+AXHelp:
 AXParent: <AXLink: 'link 4'>
 AXSize: NSSize: {37, 18}
 AXTitle: link 4
-AXDescription: 
-AXValue: 
+AXDescription:
+AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXLink: 'link 4'>
@@ -122,15 +122,15 @@ AXLinkedUIElements: <array of size 0>
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 4'>
-AXLanguage: 
-AXDOMIdentifier: 
+AXLanguage:
+AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXLink: 'link 4'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXURL: LayoutTests/accessibility/mac/document-links.html#asdf
 AXAccessKey: (null)
-AXLinkRelationshipType: 
+AXLinkRelationshipType:
 AXElementBusy: 0
 
 ------------

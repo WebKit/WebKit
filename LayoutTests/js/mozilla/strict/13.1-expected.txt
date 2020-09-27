@@ -198,7 +198,7 @@ PASS true === true
 PASS 'use strict'; Function("arguments","'use strict';") threw exception of type SyntaxError.
 PASS Function("arguments","'use strict';") threw exception of type SyntaxError.
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

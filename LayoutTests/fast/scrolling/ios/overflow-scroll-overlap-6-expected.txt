@@ -1,6 +1,6 @@
 Test that absolute positioned layer inside stacking-context overflow:scroll is correctly hit tested.
 
-case 1: 
-case 2: 
-case 3: Scrollable 3 
+case 1:
+case 2:
+case 3: Scrollable 3
 

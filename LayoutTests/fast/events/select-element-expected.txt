@@ -1,6 +1,6 @@
 This test verifies that the Home/End/PageUp/PageDown keys work correctly for <select> elements. Since it requires eventSender.keyDown, it will not run solo in the web browser; it must be run with run-webkit-tests.
 
-    
+
 PASS sendKeyAndExpectIndex("ss", "pageDown", 0, 3) is true
 PASS sendKeyAndExpectIndex("ss", "pageDown", 1, 4) is true
 PASS sendKeyAndExpectIndex("ss", "pageDown", 2, 5) is true

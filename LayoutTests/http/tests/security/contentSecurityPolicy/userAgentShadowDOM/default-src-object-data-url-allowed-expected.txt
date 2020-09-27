@@ -1,2 +1,2 @@
 ALERT: PASS
-This test passes if it doesn't alert FAIL and does alert PASS.  
+This test passes if it doesn't alert FAIL and does alert PASS.

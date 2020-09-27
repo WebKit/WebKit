@@ -1,9 +1,9 @@
 
-PASS Cleaning existing caches 
-PASS Cache.put called twice with matching Requests - keys should remain the same - testing persistency 
-PASS Cleaning created caches 
-PASS Checking persistency of cache keys 
-PASS Checking persistency of response 
-PASS Checking persistency of response body 
-PASS Testing overriding of an existing cached record that is not in memory 
+PASS Cleaning existing caches
+PASS Cache.put called twice with matching Requests - keys should remain the same - testing persistency
+PASS Cleaning created caches
+PASS Checking persistency of cache keys
+PASS Checking persistency of response
+PASS Checking persistency of response body
+PASS Testing overriding of an existing cached record that is not in memory
 

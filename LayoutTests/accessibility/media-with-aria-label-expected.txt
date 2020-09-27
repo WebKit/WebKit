@@ -1,4 +1,4 @@
- 
+
 
 This tests ensures that aria-label is conveyed for video and audio elements.
 

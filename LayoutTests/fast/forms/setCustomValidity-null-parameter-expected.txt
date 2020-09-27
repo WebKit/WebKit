@@ -1,12 +1,12 @@
 Test that the parameter to setCustomValidity() is not nullable
 
 
-PASS button Element 
-PASS input Element 
-PASS select Element 
-PASS textarea Element 
-PASS fieldset Element 
-PASS keygen Element 
-PASS object Element 
-PASS output Element 
+PASS button Element
+PASS input Element
+PASS select Element
+PASS textarea Element
+PASS fieldset Element
+PASS keygen Element
+PASS object Element
+PASS output Element
 

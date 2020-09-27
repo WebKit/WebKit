@@ -1,17 +1,17 @@
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 1]
 CONSOLE MESSAGE:    [case 1] let e = new Error('Error thrown from main script body');
 CONSOLE MESSAGE:       [Error] e = 'Error: Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] e.name = 'Error'
 CONSOLE MESSAGE:       [Error] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] e.toString() = 'Error: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 1] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [Error] caughtE = 'Error: Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] caughtE.name = 'Error'
 CONSOLE MESSAGE:       [Error] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] caughtE.toString() = 'Error: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 1] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 1] in window.onerror: err.name = undefined
@@ -22,20 +22,20 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 2]
 CONSOLE MESSAGE:    [case 2] let e = new EvalError('Error thrown from main script body');
 CONSOLE MESSAGE:       [EvalError] e = 'EvalError: Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] e.name = 'EvalError'
 CONSOLE MESSAGE:       [EvalError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] e.toString() = 'EvalError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 2] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [EvalError] caughtE = 'EvalError: Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] caughtE.name = 'EvalError'
 CONSOLE MESSAGE:       [EvalError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] caughtE.toString() = 'EvalError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 2] in window.onerror: err = EvalError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 2] in window.onerror: err.name = undefined
@@ -46,20 +46,20 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: EvalError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 3]
 CONSOLE MESSAGE:    [case 3] let e = new RangeError('Error thrown from main script body');
 CONSOLE MESSAGE:       [RangeError] e = 'RangeError: Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] e.name = 'RangeError'
 CONSOLE MESSAGE:       [RangeError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] e.toString() = 'RangeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 3] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [RangeError] caughtE = 'RangeError: Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] caughtE.name = 'RangeError'
 CONSOLE MESSAGE:       [RangeError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] caughtE.toString() = 'RangeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 3] in window.onerror: err = RangeError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 3] in window.onerror: err.name = undefined
@@ -70,20 +70,20 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: RangeError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 4]
 CONSOLE MESSAGE:    [case 4] let e = new ReferenceError('Error thrown from main script body');
 CONSOLE MESSAGE:       [ReferenceError] e = 'ReferenceError: Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] e.name = 'ReferenceError'
 CONSOLE MESSAGE:       [ReferenceError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] e.toString() = 'ReferenceError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 4] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [ReferenceError] caughtE = 'ReferenceError: Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] caughtE.name = 'ReferenceError'
 CONSOLE MESSAGE:       [ReferenceError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] caughtE.toString() = 'ReferenceError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 4] in window.onerror: err = ReferenceError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 4] in window.onerror: err.name = undefined
@@ -94,20 +94,20 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: ReferenceError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 5]
 CONSOLE MESSAGE:    [case 5] let e = new SyntaxError('Error thrown from main script body');
 CONSOLE MESSAGE:       [SyntaxError] e = 'SyntaxError: Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] e.name = 'SyntaxError'
 CONSOLE MESSAGE:       [SyntaxError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] e.toString() = 'SyntaxError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 5] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [SyntaxError] caughtE = 'SyntaxError: Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] caughtE.name = 'SyntaxError'
 CONSOLE MESSAGE:       [SyntaxError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] caughtE.toString() = 'SyntaxError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 5] in window.onerror: err = SyntaxError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 5] in window.onerror: err.name = undefined
@@ -118,20 +118,20 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: SyntaxError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 6]
 CONSOLE MESSAGE:    [case 6] let e = new TypeError('Error thrown from main script body');
 CONSOLE MESSAGE:       [TypeError] e = 'TypeError: Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] e.name = 'TypeError'
 CONSOLE MESSAGE:       [TypeError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] e.toString() = 'TypeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 6] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [TypeError] caughtE = 'TypeError: Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] caughtE.name = 'TypeError'
 CONSOLE MESSAGE:       [TypeError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] caughtE.toString() = 'TypeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 6] in window.onerror: err = TypeError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 6] in window.onerror: err.name = undefined
@@ -142,20 +142,20 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: TypeError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 7]
 CONSOLE MESSAGE:    [case 7] let e = new URIError('Error thrown from main script body');
 CONSOLE MESSAGE:       [URIError] e = 'URIError: Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] e.name = 'URIError'
 CONSOLE MESSAGE:       [URIError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] e.toString() = 'URIError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 7] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [URIError] caughtE = 'URIError: Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] caughtE.name = 'URIError'
 CONSOLE MESSAGE:       [URIError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] caughtE.toString() = 'URIError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 7] in window.onerror: err = URIError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 7] in window.onerror: err.name = undefined
@@ -166,7 +166,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: URIError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 8]
 CONSOLE MESSAGE:    [case 8] let e = new Error('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 8] e.name = 'MyError';
@@ -174,13 +174,13 @@ CONSOLE MESSAGE:       [Error] e = 'MyError: Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] e.name = 'MyError'
 CONSOLE MESSAGE:       [Error] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] e.toString() = 'MyError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 8] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [Error] caughtE = 'MyError: Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] caughtE.name = 'MyError'
 CONSOLE MESSAGE:       [Error] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [Error] caughtE.toString() = 'MyError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 8] in window.onerror: err = MyError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 8] in window.onerror: err.name = undefined
@@ -191,7 +191,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MyError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 9]
 CONSOLE MESSAGE:    [case 9] let e = new EvalError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 9] e.name = 'MyEvalError';
@@ -199,13 +199,13 @@ CONSOLE MESSAGE:       [EvalError] e = 'MyEvalError: Error thrown from main scri
 CONSOLE MESSAGE:       [EvalError] e.name = 'MyEvalError'
 CONSOLE MESSAGE:       [EvalError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] e.toString() = 'MyEvalError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 9] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [EvalError] caughtE = 'MyEvalError: Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] caughtE.name = 'MyEvalError'
 CONSOLE MESSAGE:       [EvalError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [EvalError] caughtE.toString() = 'MyEvalError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 9] in window.onerror: err = MyEvalError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 9] in window.onerror: err.name = undefined
@@ -216,7 +216,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MyEvalError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 10]
 CONSOLE MESSAGE:    [case 10] let e = new RangeError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 10] e.name = 'MyRangeError';
@@ -224,13 +224,13 @@ CONSOLE MESSAGE:       [RangeError] e = 'MyRangeError: Error thrown from main sc
 CONSOLE MESSAGE:       [RangeError] e.name = 'MyRangeError'
 CONSOLE MESSAGE:       [RangeError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] e.toString() = 'MyRangeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 10] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [RangeError] caughtE = 'MyRangeError: Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] caughtE.name = 'MyRangeError'
 CONSOLE MESSAGE:       [RangeError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [RangeError] caughtE.toString() = 'MyRangeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 10] in window.onerror: err = MyRangeError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 10] in window.onerror: err.name = undefined
@@ -241,7 +241,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MyRangeError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 11]
 CONSOLE MESSAGE:    [case 11] let e = new ReferenceError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 11] e.name = 'MyReferenceError';
@@ -249,13 +249,13 @@ CONSOLE MESSAGE:       [ReferenceError] e = 'MyReferenceError: Error thrown from
 CONSOLE MESSAGE:       [ReferenceError] e.name = 'MyReferenceError'
 CONSOLE MESSAGE:       [ReferenceError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] e.toString() = 'MyReferenceError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 11] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [ReferenceError] caughtE = 'MyReferenceError: Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] caughtE.name = 'MyReferenceError'
 CONSOLE MESSAGE:       [ReferenceError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [ReferenceError] caughtE.toString() = 'MyReferenceError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 11] in window.onerror: err = MyReferenceError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 11] in window.onerror: err.name = undefined
@@ -266,7 +266,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MyReferenceError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 12]
 CONSOLE MESSAGE:    [case 12] let e = new SyntaxError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 12] e.name = 'MySyntaxError';
@@ -274,13 +274,13 @@ CONSOLE MESSAGE:       [SyntaxError] e = 'MySyntaxError: Error thrown from main 
 CONSOLE MESSAGE:       [SyntaxError] e.name = 'MySyntaxError'
 CONSOLE MESSAGE:       [SyntaxError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] e.toString() = 'MySyntaxError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 12] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [SyntaxError] caughtE = 'MySyntaxError: Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] caughtE.name = 'MySyntaxError'
 CONSOLE MESSAGE:       [SyntaxError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [SyntaxError] caughtE.toString() = 'MySyntaxError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 12] in window.onerror: err = MySyntaxError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 12] in window.onerror: err.name = undefined
@@ -291,7 +291,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MySyntaxError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 13]
 CONSOLE MESSAGE:    [case 13] let e = new TypeError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 13] e.name = 'MyTypeError';
@@ -299,13 +299,13 @@ CONSOLE MESSAGE:       [TypeError] e = 'MyTypeError: Error thrown from main scri
 CONSOLE MESSAGE:       [TypeError] e.name = 'MyTypeError'
 CONSOLE MESSAGE:       [TypeError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] e.toString() = 'MyTypeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 13] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [TypeError] caughtE = 'MyTypeError: Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] caughtE.name = 'MyTypeError'
 CONSOLE MESSAGE:       [TypeError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [TypeError] caughtE.toString() = 'MyTypeError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 13] in window.onerror: err = MyTypeError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 13] in window.onerror: err.name = undefined
@@ -316,7 +316,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MyTypeError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 14]
 CONSOLE MESSAGE:    [case 14] let e = new URIError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 14] e.name = 'MyURIError';
@@ -324,13 +324,13 @@ CONSOLE MESSAGE:       [URIError] e = 'MyURIError: Error thrown from main script
 CONSOLE MESSAGE:       [URIError] e.name = 'MyURIError'
 CONSOLE MESSAGE:       [URIError] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] e.toString() = 'MyURIError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 14] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:       [URIError] caughtE = 'MyURIError: Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] caughtE.name = 'MyURIError'
 CONSOLE MESSAGE:       [URIError] caughtE.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:       [URIError] caughtE.toString() = 'MyURIError: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 14] in window.onerror: err = MyURIError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 14] in window.onerror: err.name = undefined
@@ -341,7 +341,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: MyURIError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 15]
 CONSOLE MESSAGE:    [case 15] let e = new Error('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 15] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -354,7 +354,7 @@ CONSOLE MESSAGE:       [Error] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:    [case 15] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [Error] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 15] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 15] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -366,7 +366,7 @@ CONSOLE MESSAGE:       [Error] caughtE.message = 'Error thrown from main script 
 CONSOLE MESSAGE:    [case 15] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [Error] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 15] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 15] in window.onerror: err.name = undefined
@@ -377,7 +377,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 16]
 CONSOLE MESSAGE:    [case 16] let e = new EvalError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 16] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -390,7 +390,7 @@ CONSOLE MESSAGE:       [EvalError] e.message = 'Error thrown from main script bo
 CONSOLE MESSAGE:    [case 16] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [EvalError] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 16] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 16] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -402,7 +402,7 @@ CONSOLE MESSAGE:       [EvalError] caughtE.message = 'Error thrown from main scr
 CONSOLE MESSAGE:    [case 16] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [EvalError] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 16] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 16] in window.onerror: err.name = undefined
@@ -413,7 +413,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 17]
 CONSOLE MESSAGE:    [case 17] let e = new RangeError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 17] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -426,7 +426,7 @@ CONSOLE MESSAGE:       [RangeError] e.message = 'Error thrown from main script b
 CONSOLE MESSAGE:    [case 17] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [RangeError] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 17] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 17] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -438,7 +438,7 @@ CONSOLE MESSAGE:       [RangeError] caughtE.message = 'Error thrown from main sc
 CONSOLE MESSAGE:    [case 17] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [RangeError] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 17] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 17] in window.onerror: err.name = undefined
@@ -449,7 +449,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 18]
 CONSOLE MESSAGE:    [case 18] let e = new ReferenceError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 18] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -462,7 +462,7 @@ CONSOLE MESSAGE:       [ReferenceError] e.message = 'Error thrown from main scri
 CONSOLE MESSAGE:    [case 18] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [ReferenceError] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 18] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 18] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -474,7 +474,7 @@ CONSOLE MESSAGE:       [ReferenceError] caughtE.message = 'Error thrown from mai
 CONSOLE MESSAGE:    [case 18] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [ReferenceError] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 18] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 18] in window.onerror: err.name = undefined
@@ -485,7 +485,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 19]
 CONSOLE MESSAGE:    [case 19] let e = new SyntaxError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 19] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -498,7 +498,7 @@ CONSOLE MESSAGE:       [SyntaxError] e.message = 'Error thrown from main script 
 CONSOLE MESSAGE:    [case 19] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [SyntaxError] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 19] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 19] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -510,7 +510,7 @@ CONSOLE MESSAGE:       [SyntaxError] caughtE.message = 'Error thrown from main s
 CONSOLE MESSAGE:    [case 19] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [SyntaxError] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 19] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 19] in window.onerror: err.name = undefined
@@ -521,7 +521,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 20]
 CONSOLE MESSAGE:    [case 20] let e = new TypeError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 20] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -534,7 +534,7 @@ CONSOLE MESSAGE:       [TypeError] e.message = 'Error thrown from main script bo
 CONSOLE MESSAGE:    [case 20] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [TypeError] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 20] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 20] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -546,7 +546,7 @@ CONSOLE MESSAGE:       [TypeError] caughtE.message = 'Error thrown from main scr
 CONSOLE MESSAGE:    [case 20] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [TypeError] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 20] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 20] in window.onerror: err.name = undefined
@@ -557,7 +557,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 21]
 CONSOLE MESSAGE:    [case 21] let e = new URIError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 21] in 'name' getter[0]: error.message = 'Error thrown from main script body'
@@ -570,7 +570,7 @@ CONSOLE MESSAGE:       [URIError] e.message = 'Error thrown from main script bod
 CONSOLE MESSAGE:    [case 21] in 'name' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [URIError] e.toString() = 'GetterErrorName: getter[2] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 21] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 21] in 'name' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -582,7 +582,7 @@ CONSOLE MESSAGE:       [URIError] caughtE.message = 'Error thrown from main scri
 CONSOLE MESSAGE:    [case 21] in 'name' getter[5]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [URIError] caughtE.toString() = 'GetterErrorName: getter[5] Error thrown from main script body: Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 21] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 21] in window.onerror: err.name = undefined
@@ -593,7 +593,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 22]
 CONSOLE MESSAGE:    [case 22] let e = new Error('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 22] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -604,7 +604,7 @@ CONSOLE MESSAGE:       [Error] e.message = 'Error thrown from main script body'
 CONSOLE MESSAGE:    [case 22] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [Error] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 22] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 22] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -614,7 +614,7 @@ CONSOLE MESSAGE:       [Error] caughtE.message = 'Error thrown from main script 
 CONSOLE MESSAGE:    [case 22] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [Error] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 22] in window.onerror: err = Error: Error thrown from main script body
 CONSOLE MESSAGE:    [case 22] in window.onerror: err.name = undefined
@@ -625,7 +625,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 23]
 CONSOLE MESSAGE:    [case 23] let e = new EvalError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 23] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -636,7 +636,7 @@ CONSOLE MESSAGE:       [EvalError] e.message = 'Error thrown from main script bo
 CONSOLE MESSAGE:    [case 23] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [EvalError] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 23] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 23] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -646,7 +646,7 @@ CONSOLE MESSAGE:       [EvalError] caughtE.message = 'Error thrown from main scr
 CONSOLE MESSAGE:    [case 23] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [EvalError] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 23] in window.onerror: err = EvalError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 23] in window.onerror: err.name = undefined
@@ -657,7 +657,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: EvalError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 24]
 CONSOLE MESSAGE:    [case 24] let e = new RangeError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 24] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -668,7 +668,7 @@ CONSOLE MESSAGE:       [RangeError] e.message = 'Error thrown from main script b
 CONSOLE MESSAGE:    [case 24] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [RangeError] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 24] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 24] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -678,7 +678,7 @@ CONSOLE MESSAGE:       [RangeError] caughtE.message = 'Error thrown from main sc
 CONSOLE MESSAGE:    [case 24] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [RangeError] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 24] in window.onerror: err = RangeError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 24] in window.onerror: err.name = undefined
@@ -689,7 +689,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: RangeError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 25]
 CONSOLE MESSAGE:    [case 25] let e = new ReferenceError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 25] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -700,7 +700,7 @@ CONSOLE MESSAGE:       [ReferenceError] e.message = 'Error thrown from main scri
 CONSOLE MESSAGE:    [case 25] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [ReferenceError] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 25] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 25] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -710,7 +710,7 @@ CONSOLE MESSAGE:       [ReferenceError] caughtE.message = 'Error thrown from mai
 CONSOLE MESSAGE:    [case 25] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [ReferenceError] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 25] in window.onerror: err = ReferenceError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 25] in window.onerror: err.name = undefined
@@ -721,7 +721,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: ReferenceError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 26]
 CONSOLE MESSAGE:    [case 26] let e = new SyntaxError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 26] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -732,7 +732,7 @@ CONSOLE MESSAGE:       [SyntaxError] e.message = 'Error thrown from main script 
 CONSOLE MESSAGE:    [case 26] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [SyntaxError] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 26] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 26] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -742,7 +742,7 @@ CONSOLE MESSAGE:       [SyntaxError] caughtE.message = 'Error thrown from main s
 CONSOLE MESSAGE:    [case 26] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [SyntaxError] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 26] in window.onerror: err = SyntaxError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 26] in window.onerror: err.name = undefined
@@ -753,7 +753,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: SyntaxError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 27]
 CONSOLE MESSAGE:    [case 27] let e = new TypeError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 27] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -764,7 +764,7 @@ CONSOLE MESSAGE:       [TypeError] e.message = 'Error thrown from main script bo
 CONSOLE MESSAGE:    [case 27] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [TypeError] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 27] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 27] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -774,7 +774,7 @@ CONSOLE MESSAGE:       [TypeError] caughtE.message = 'Error thrown from main scr
 CONSOLE MESSAGE:    [case 27] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [TypeError] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 27] in window.onerror: err = TypeError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 27] in window.onerror: err.name = undefined
@@ -785,7 +785,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: TypeError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test [case 28]
 CONSOLE MESSAGE:    [case 28] let e = new URIError('Error thrown from main script body');
 CONSOLE MESSAGE:    [case 28] in 'toString' getter[0]: error.message = 'Error thrown from main script body'
@@ -796,7 +796,7 @@ CONSOLE MESSAGE:       [URIError] e.message = 'Error thrown from main script bod
 CONSOLE MESSAGE:    [case 28] in 'toString' getter[1]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [URIError] e.toString() = 'GetterErrorToString: getter[1] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    [case 28] let caughtE; try { throw e } catch(err) { caughtE = err }
 CONSOLE MESSAGE:    [case 28] in 'toString' getter[2]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
@@ -806,7 +806,7 @@ CONSOLE MESSAGE:       [URIError] caughtE.message = 'Error thrown from main scri
 CONSOLE MESSAGE:    [case 28] in 'toString' getter[3]: error.message = 'Error thrown from main script body'
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE:       [URIError] caughtE.toString() = 'GetterErrorToString: getter[3] Error thrown from main script body'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE:    throw e;
 CONSOLE MESSAGE:    [case 28] in window.onerror: err = URIError: Error thrown from main script body
 CONSOLE MESSAGE:    [case 28] in window.onerror: err.name = undefined
@@ -817,7 +817,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: URIError: Error thrown from main script body
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test uncaught error from a script from another domain
 CONSOLE MESSAGE:    [case 29] in window.onerror: err = Script error.
 CONSOLE MESSAGE:    [case 29] in window.onerror: err.name = undefined
@@ -828,7 +828,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'Secret_2'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test uncaught error from a script from another domain with 'name' getters installed
 CONSOLE MESSAGE:    [case 30] in window.onerror: err = Script error.
 CONSOLE MESSAGE:    [case 30] in window.onerror: err.name = undefined
@@ -839,7 +839,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Unexpected identifier 'Secret_2'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test uncaught error from a script from another domain with 'toString' getters installed
 CONSOLE MESSAGE:    [case 31] in window.onerror: err = Script error.
 CONSOLE MESSAGE:    [case 31] in window.onerror: err.name = undefined
@@ -850,7 +850,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'Secret_2'
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown Error from a script from another domain
 CONSOLE MESSAGE:    [case 32] var e = new Error('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 32] e.name = 'OtherScriptError'
@@ -870,7 +870,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown EvalError from a script from another domain
 CONSOLE MESSAGE:    [case 33] var e = new EvalError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 33] e.name = 'OtherScriptEvalError'
@@ -890,7 +890,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptEvalError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown RangeError from a script from another domain
 CONSOLE MESSAGE:    [case 34] var e = new RangeError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 34] e.name = 'OtherScriptRangeError'
@@ -910,7 +910,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptRangeError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown ReferenceError from a script from another domain
 CONSOLE MESSAGE:    [case 35] var e = new ReferenceError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 35] e.name = 'OtherScriptReferenceError'
@@ -930,7 +930,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptReferenceError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown SyntaxError from a script from another domain
 CONSOLE MESSAGE:    [case 36] var e = new SyntaxError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 36] e.name = 'OtherScriptSyntaxError'
@@ -950,7 +950,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptSyntaxError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown TypeError from a script from another domain
 CONSOLE MESSAGE:    [case 37] var e = new TypeError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 37] e.name = 'OtherScriptTypeError'
@@ -970,7 +970,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptTypeError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown URIError from a script from another domain
 CONSOLE MESSAGE:    [case 38] var e = new URIError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 38] e.name = 'OtherScriptURIError'
@@ -990,7 +990,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptURIError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown Error from a script from another domain
 CONSOLE MESSAGE:    [case 39] var e = new Error('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 39] e.name = 'OtherScriptError'
@@ -1018,7 +1018,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown EvalError from a script from another domain
 CONSOLE MESSAGE:    [case 40] var e = new EvalError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 40] e.name = 'OtherScriptEvalError'
@@ -1046,7 +1046,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown RangeError from a script from another domain
 CONSOLE MESSAGE:    [case 41] var e = new RangeError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 41] e.name = 'OtherScriptRangeError'
@@ -1074,7 +1074,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown ReferenceError from a script from another domain
 CONSOLE MESSAGE:    [case 42] var e = new ReferenceError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 42] e.name = 'OtherScriptReferenceError'
@@ -1102,7 +1102,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown SyntaxError from a script from another domain
 CONSOLE MESSAGE:    [case 43] var e = new SyntaxError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 43] e.name = 'OtherScriptSyntaxError'
@@ -1130,7 +1130,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown TypeError from a script from another domain
 CONSOLE MESSAGE:    [case 44] var e = new TypeError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 44] e.name = 'OtherScriptTypeError'
@@ -1158,7 +1158,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown URIError from a script from another domain
 CONSOLE MESSAGE:    [case 45] var e = new URIError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 45] e.name = 'OtherScriptURIError'
@@ -1186,7 +1186,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: Error: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown Error from a script from another domain
 CONSOLE MESSAGE:    [case 46] var e = new Error('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 46] e.name = 'OtherScriptError'
@@ -1212,7 +1212,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown EvalError from a script from another domain
 CONSOLE MESSAGE:    [case 47] var e = new EvalError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 47] e.name = 'OtherScriptEvalError'
@@ -1238,7 +1238,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptEvalError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown RangeError from a script from another domain
 CONSOLE MESSAGE:    [case 48] var e = new RangeError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 48] e.name = 'OtherScriptRangeError'
@@ -1264,7 +1264,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptRangeError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown ReferenceError from a script from another domain
 CONSOLE MESSAGE:    [case 49] var e = new ReferenceError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 49] e.name = 'OtherScriptReferenceError'
@@ -1290,7 +1290,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptReferenceError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown SyntaxError from a script from another domain
 CONSOLE MESSAGE:    [case 50] var e = new SyntaxError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 50] e.name = 'OtherScriptSyntaxError'
@@ -1316,7 +1316,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptSyntaxError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown TypeError from a script from another domain
 CONSOLE MESSAGE:    [case 51] var e = new TypeError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 51] e.name = 'OtherScriptTypeError'
@@ -1342,7 +1342,7 @@ CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: OtherScriptTypeError: Error thrown from other script with Secret
-CONSOLE MESSAGE: 
+CONSOLE MESSAGE:
 CONSOLE MESSAGE: Test thrown URIError from a script from another domain
 CONSOLE MESSAGE:    [case 52] var e = new URIError('Error thrown from other script with Secret');
 CONSOLE MESSAGE:    [case 52] e.name = 'OtherScriptURIError'

@@ -1,24 +1,24 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "construction" 
-PASS Executing "properties" 
-PASS Audit report 
-PASS > [construction] Construct AudioScheduledSourceNode 
-PASS   new AudioScheduledSourceNode(c) threw TypeError: "Illegal constructor". 
-PASS < [construction] All assertions passed. (total 1 assertions) 
-PASS > [properties] Test properties on derived nodes 
-PASS   AudioScheduledSourceNode.prototype has an own property of "start". 
-PASS   AudioScheduledSourceNode.prototype has an own property of "stop". 
-PASS   AudioScheduledSourceNode.prototype has an own property of "onended". 
-PASS   ConstantSourceNode.prototype does not have an own property of "start". 
-PASS   ConstantSourceNode.prototype does not have an own property of "stop". 
-PASS   ConstantSourceNode.prototype does not have an own property of "onended". 
-PASS   OscillatorNode.prototype does not have an own property of "start". 
-PASS   OscillatorNode.prototype does not have an own property of "stop". 
-PASS   OscillatorNode.prototype does not have an own property of "onended". 
-PASS   AudioBufferSourceNode.prototype does not have an own property of "stop". 
-PASS   AudioBufferSourceNode.prototype does not have an own property of "onended". 
-PASS   AudioBufferSourceNode.prototype has an own property of "start". 
-PASS < [properties] All assertions passed. (total 12 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "construction"
+PASS Executing "properties"
+PASS Audit report
+PASS > [construction] Construct AudioScheduledSourceNode
+PASS   new AudioScheduledSourceNode(c) threw TypeError: "Illegal constructor".
+PASS < [construction] All assertions passed. (total 1 assertions)
+PASS > [properties] Test properties on derived nodes
+PASS   AudioScheduledSourceNode.prototype has an own property of "start".
+PASS   AudioScheduledSourceNode.prototype has an own property of "stop".
+PASS   AudioScheduledSourceNode.prototype has an own property of "onended".
+PASS   ConstantSourceNode.prototype does not have an own property of "start".
+PASS   ConstantSourceNode.prototype does not have an own property of "stop".
+PASS   ConstantSourceNode.prototype does not have an own property of "onended".
+PASS   OscillatorNode.prototype does not have an own property of "start".
+PASS   OscillatorNode.prototype does not have an own property of "stop".
+PASS   OscillatorNode.prototype does not have an own property of "onended".
+PASS   AudioBufferSourceNode.prototype does not have an own property of "stop".
+PASS   AudioBufferSourceNode.prototype does not have an own property of "onended".
+PASS   AudioBufferSourceNode.prototype has an own property of "start".
+PASS < [properties] All assertions passed. (total 12 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

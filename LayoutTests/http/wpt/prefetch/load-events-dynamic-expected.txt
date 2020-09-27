@@ -1,3 +1,3 @@
 
-PASS Makes sure that dynamically added prefetch does not fire beforeload, error or load events. 
+PASS Makes sure that dynamically added prefetch does not fire beforeload, error or load events.
 

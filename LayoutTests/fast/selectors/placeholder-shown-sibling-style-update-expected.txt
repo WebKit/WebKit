@@ -16,4 +16,4 @@ PASS getComputedStyle(document.getElementById("target4")).backgroundColor is "rg
 PASS successfullyParsed is true
 
 TEST COMPLETE
-  
+

@@ -4,7 +4,7 @@ This tests that we are getting the correct string for document range if the end 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-String: 
+String:
 text
 This tests that we are getting the correct string for document range if the end visible position has after anchor type.
 

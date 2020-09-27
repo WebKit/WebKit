@@ -1,6 +1,6 @@
 document-write-plaintext.js has MIME type application/x-javascript
 script1.js has MIME type application/x-javascript
 
-This test requires DumpRenderTree to see the log of what resources are loaded. 
+This test requires DumpRenderTree to see the log of what resources are loaded.
 
 The first script document.writes a plaintext tag so the main parser will not load the subsequent resources. Preload scanner won't know this so it will still kick off the loads, allowing us to verify that preloading is working as expected.

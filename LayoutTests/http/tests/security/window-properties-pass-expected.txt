@@ -1,4 +1,4 @@
-Test that window properties set for initial document are kept if security check passes 
+Test that window properties set for initial document are kept if security check passes
 
 --------
 Frame: '<!--frame1-->'

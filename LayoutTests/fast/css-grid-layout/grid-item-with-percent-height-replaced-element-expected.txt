@@ -1,9 +1,9 @@
 
-PASS .grid 1 
-PASS .grid 2 
-PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
 This test checks that percentage heights are properly resolved for grid items that are replaced elements. You shouldn't see any red if the test is working as expected.
 
 1) 100% height on the image (grid item) should be resolved against the height of the grid area (200px). Actually we don't need the 100% height in this case as the grid items are stretched by default.

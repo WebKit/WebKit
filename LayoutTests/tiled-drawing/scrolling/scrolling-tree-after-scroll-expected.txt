@@ -4,7 +4,7 @@
   (contents size 785 5021)
   (requested scroll position 0 3000)
   (requested scroll position represents programmatic scroll 1)
-  (scrollable area parameters 
+  (scrollable area parameters
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
     (horizontal scrollbar mode 0)

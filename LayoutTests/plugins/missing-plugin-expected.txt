@@ -1,2 +1,2 @@
- 
+
 This tests that a missing plug-in does not cause an assertion failure. Bug 41900

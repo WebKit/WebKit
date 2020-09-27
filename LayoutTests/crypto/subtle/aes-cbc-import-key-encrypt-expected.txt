@@ -3,7 +3,7 @@ Test encrypting using AES-CBC with an imported 128bit key
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Plain text: 
+Plain text:
 PASS bytesToHexString(cipherText) is expectedCipherText
 Plain text: A
 PASS bytesToHexString(cipherText) is expectedCipherText

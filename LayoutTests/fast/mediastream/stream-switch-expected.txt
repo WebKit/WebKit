@@ -1,5 +1,5 @@
 
 
-PASS Check switching between playing with and without stream 
-PASS Check adding and removing a track to a stream 
+PASS Check switching between playing with and without stream
+PASS Check adding and removing a track to a stream
 

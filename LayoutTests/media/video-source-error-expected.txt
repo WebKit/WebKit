@@ -1,5 +1,5 @@
 
-1. Test that errors fired while evaluating/loading <source> elements are fired at the <source> and not at the <video> element. 
+1. Test that errors fired while evaluating/loading <source> elements are fired at the <source> and not at the <video> element.
 2. Verifiy that an 'error' event fired while processing/loading a <source> element does not set the media element's 'error' attribute.
 
 EVENT(loadstart)

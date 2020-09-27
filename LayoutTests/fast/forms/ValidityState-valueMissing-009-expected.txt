@@ -1,6 +1,6 @@
 There's a list of form control elements below, required attribute applies to them but they're empty: validity.valueMissing should be true.
 
-      
+
 SUCCESS
 SUCCESS
 SUCCESS

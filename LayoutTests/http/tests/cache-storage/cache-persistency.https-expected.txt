@@ -1,8 +1,8 @@
 
 
-PASS Cleaning existing caches 
-PASS Clear memory representation but keep disk persistency 
-PASS Cleaning added caches from previous test 
-PASS Adding/Removing caches and clearing in memory representation at various times 
-PASS Cleaning added caches 
+PASS Cleaning existing caches
+PASS Clear memory representation but keep disk persistency
+PASS Cleaning added caches from previous test
+PASS Adding/Removing caches and clearing in memory representation at various times
+PASS Cleaning added caches
 

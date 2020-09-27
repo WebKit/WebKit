@@ -9,34 +9,34 @@ CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferuiv: invalid array size / srcO
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferfv: invalid array size / srcOffset
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferfv: invalid array size / srcOffset
 
-PASS uniform1uiv data with typed array of type ui 
-PASS uniform1uiv data with sequence of type ui 
-PASS uniform2uiv data with typed array of type ui 
-PASS uniform2uiv data with sequence of type ui 
-PASS uniform3uiv data with typed array of type ui 
-PASS uniform3uiv data with sequence of type ui 
-PASS uniform4uiv data with typed array of type ui 
-PASS uniform4uiv data with sequence of type ui 
-PASS uniformMatrix2x3fv data with typed array of type f 
-PASS uniformMatrix2x3fv data with sequence of type f 
-PASS uniformMatrix3x2fv data with typed array of type f 
-PASS uniformMatrix3x2fv data with sequence of type f 
-PASS uniformMatrix2x4fv data with typed array of type f 
-PASS uniformMatrix2x4fv data with sequence of type f 
-PASS uniformMatrix4x2fv data with typed array of type f 
-PASS uniformMatrix4x2fv data with sequence of type f 
-PASS uniformMatrix3x4fv data with typed array of type f 
-PASS uniformMatrix3x4fv data with sequence of type f 
-PASS uniformMatrix4x3fv data with typed array of type f 
-PASS uniformMatrix4x3fv data with sequence of type f 
-PASS vertexAttribI4iv values with typed array of type i 
-PASS vertexAttribI4iv values with sequence of type i 
-PASS vertexAttribI4uiv values with typed array of type ui 
-PASS vertexAttribI4uiv values with sequence of type ui 
-PASS clearBufferiv values with typed array of type i 
-PASS clearBufferiv values with sequence of type i 
-PASS clearBufferuiv values with typed array of type ui 
-PASS clearBufferuiv values with sequence of type ui 
-PASS clearBufferfv values with typed array of type f 
-PASS clearBufferfv values with sequence of type f 
+PASS uniform1uiv data with typed array of type ui
+PASS uniform1uiv data with sequence of type ui
+PASS uniform2uiv data with typed array of type ui
+PASS uniform2uiv data with sequence of type ui
+PASS uniform3uiv data with typed array of type ui
+PASS uniform3uiv data with sequence of type ui
+PASS uniform4uiv data with typed array of type ui
+PASS uniform4uiv data with sequence of type ui
+PASS uniformMatrix2x3fv data with typed array of type f
+PASS uniformMatrix2x3fv data with sequence of type f
+PASS uniformMatrix3x2fv data with typed array of type f
+PASS uniformMatrix3x2fv data with sequence of type f
+PASS uniformMatrix2x4fv data with typed array of type f
+PASS uniformMatrix2x4fv data with sequence of type f
+PASS uniformMatrix4x2fv data with typed array of type f
+PASS uniformMatrix4x2fv data with sequence of type f
+PASS uniformMatrix3x4fv data with typed array of type f
+PASS uniformMatrix3x4fv data with sequence of type f
+PASS uniformMatrix4x3fv data with typed array of type f
+PASS uniformMatrix4x3fv data with sequence of type f
+PASS vertexAttribI4iv values with typed array of type i
+PASS vertexAttribI4iv values with sequence of type i
+PASS vertexAttribI4uiv values with typed array of type ui
+PASS vertexAttribI4uiv values with sequence of type ui
+PASS clearBufferiv values with typed array of type i
+PASS clearBufferiv values with sequence of type i
+PASS clearBufferuiv values with typed array of type ui
+PASS clearBufferuiv values with sequence of type ui
+PASS clearBufferfv values with typed array of type f
+PASS clearBufferfv values with sequence of type f
 

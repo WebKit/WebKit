@@ -1,5 +1,5 @@
 This tests outdenting different selections in the lists. The test should not hang.
-Bugzilla bug 
+Bugzilla bug
 Radar bug
 
 hello world

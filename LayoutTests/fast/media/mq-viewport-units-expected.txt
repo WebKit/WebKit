@@ -3,8 +3,8 @@ Description
 This tests validates that the viewport units work in media queries.
 
 
-PASS vw unit sanity check 
-PASS vh unit sanity check 
-PASS vmax unit sanity check 
-PASS vmin unit sanity check 
+PASS vw unit sanity check
+PASS vh unit sanity check
+PASS vmax unit sanity check
+PASS vmin unit sanity check
 

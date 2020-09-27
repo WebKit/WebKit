@@ -3,8 +3,8 @@ FAIL -20px - inline - invalid assert_equals: expected (object) null but got (str
 FAIL -.4567px - inline - invalid assert_equals: expected (object) null but got (string) ""
 FAIL nonLength - inline - invalid assert_equals: expected (object) null but got (string) ""
 FAIL 10 - inline - invalid assert_equals: expected (object) null but got (string) ""
-PASS -20px - computed - invalid 
-PASS -.4567px - computed - invalid 
-PASS nonLength - computed - invalid 
-PASS 10 - computed - invalid 
+PASS -20px - computed - invalid
+PASS -.4567px - computed - invalid
+PASS nonLength - computed - invalid
+PASS 10 - computed - invalid
 

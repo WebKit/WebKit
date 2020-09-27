@@ -70,14 +70,14 @@ Current paragraph is: text
 Pre paragraph start to next paragraph end: text
 
 Paragraph: this is my first paragraph. Of text. it has some text.
-Paragraph: 
-Paragraph: 
+Paragraph:
+Paragraph:
 Paragraph: this is my second paragraph. Of text. it has some text.
 Paragraph: this is my third paragraph. Of text. it has some text.
 Paragraph: this is my third paragraph. Of text. it has some text.
 Paragraph: this is my second paragraph. Of text. it has some text.
-Paragraph: 
-Paragraph: 
+Paragraph:
+Paragraph:
 Paragraph: this is my first paragraph. Of text. it has some text.
 Test going forward.
 End paragraph: text

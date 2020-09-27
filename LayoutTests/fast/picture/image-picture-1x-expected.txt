@@ -25,6 +25,6 @@ PASS currentSrcFileName("no_srcset") is "image-set-4x.png?3"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-   
+
 some text
-         
+

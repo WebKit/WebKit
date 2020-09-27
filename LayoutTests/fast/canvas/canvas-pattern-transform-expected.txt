@@ -5,7 +5,7 @@ PASS function () {
                 ctx.setTransform({a: 1, m11: 11, b: 2, m12: 12, c: 3, m21: 21, d: 4, m22: 22, e: 5, m41: 41, f: 6, m42: 42});
             } threw exception TypeError: init.a and init.m11 do not match.
 
-Testing canvas repeat transform  pattern transform 
+Testing canvas repeat transform  pattern transform
 Checking point 4 4
 PASS imgdata[0] is expectedRed
 PASS imgdata[1] is expectedGreen

@@ -1,5 +1,5 @@
 Updated value for contenteditable
- 
+
 This tests that setting value to a text control would dispatch input events.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

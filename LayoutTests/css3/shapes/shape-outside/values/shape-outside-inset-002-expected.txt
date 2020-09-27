@@ -1,82 +1,82 @@
 
-PASS inset(10px round 10px) - inline 
-PASS inset(10px round 10px / 10px) - inline 
-PASS inset(10px round 10px / 10px 20px) - inline 
-PASS inset(10px round 10px / 10px 20px 30px) - inline 
-PASS inset(10px round 10px / 10px 20px 30px 40px) - inline 
-PASS inset(10px round 10px 20px) - inline 
-PASS inset(10px round 10px 20px / 10px) - inline 
-PASS inset(10px round 10px 20px / 10px 20px) - inline 
-PASS inset(10px round 10px 20px / 10px 20px 30px) - inline 
-PASS inset(10px round 10px 20px / 10px 20px 30px 40px) - inline 
-PASS inset(10px round 10px 20px 30px) - inline 
-PASS inset(10px round 10px 20px 30px / 10px) - inline 
-PASS inset(10px round 10px 20px 30px / 10px 20px) - inline 
-PASS inset(10px round 10px 20px 30px / 10px 20px 30px) - inline 
-PASS inset(10px round 10px 20px 30px / 10px 20px 30px 40px) - inline 
-PASS inset(10px round 10px 20px 30px 40px) - inline 
-PASS inset(10px round 10px 20px 30px 40px / 10px) - inline 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px) - inline 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px) - inline 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px 40px) - inline 
-PASS inset(10% round 10%) - inline 
-PASS inset(10% round 10% / 10%) - inline 
-PASS inset(10% round 10% / 10% 20%) - inline 
-PASS inset(10% round 10% / 10% 20% 30%) - inline 
-PASS inset(10% round 10% / 10% 20% 30% 40%) - inline 
-PASS inset(10% round 10% 20%) - inline 
-PASS inset(10% round 10% 20% / 10%) - inline 
-PASS inset(10% round 10% 20% / 10% 20%) - inline 
-PASS inset(10% round 10% 20% / 10% 20% 30%) - inline 
-PASS inset(10% round 10% 20% / 10% 20% 30% 40%) - inline 
-PASS inset(10% round 10% 20% 30%) - inline 
-PASS inset(10% round 10% 20% 30% / 10%) - inline 
-PASS inset(10% round 10% 20% 30% / 10% 20%) - inline 
-PASS inset(10% round 10% 20% 30% / 10% 20% 30%) - inline 
-PASS inset(10% round 10% 20% 30% / 10% 20% 30% 40%) - inline 
-PASS inset(10% round 10% 20% 30% 40%) - inline 
-PASS inset(10% round 10% 20% 30% 40% / 10%) - inline 
-PASS inset(10% round 10% 20% 30% 40% / 10% 20%) - inline 
-PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30%) - inline 
-PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30% 40%) - inline 
-PASS inset(10px round 10px) - computed 
-PASS inset(10px round 10px / 10px) - computed 
-PASS inset(10px round 10px / 10px 20px) - computed 
-PASS inset(10px round 10px / 10px 20px 30px) - computed 
-PASS inset(10px round 10px / 10px 20px 30px 40px) - computed 
-PASS inset(10px round 10px 20px) - computed 
-PASS inset(10px round 10px 20px / 10px) - computed 
-PASS inset(10px round 10px 20px / 10px 20px) - computed 
-PASS inset(10px round 10px 20px / 10px 20px 30px) - computed 
-PASS inset(10px round 10px 20px / 10px 20px 30px 40px) - computed 
-PASS inset(10px round 10px 20px 30px) - computed 
-PASS inset(10px round 10px 20px 30px / 10px) - computed 
-PASS inset(10px round 10px 20px 30px / 10px 20px) - computed 
-PASS inset(10px round 10px 20px 30px / 10px 20px 30px) - computed 
-PASS inset(10px round 10px 20px 30px / 10px 20px 30px 40px) - computed 
-PASS inset(10px round 10px 20px 30px 40px) - computed 
-PASS inset(10px round 10px 20px 30px 40px / 10px) - computed 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px) - computed 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px) - computed 
-PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px 40px) - computed 
-PASS inset(10% round 10%) - computed 
-PASS inset(10% round 10% / 10%) - computed 
-PASS inset(10% round 10% / 10% 20%) - computed 
-PASS inset(10% round 10% / 10% 20% 30%) - computed 
-PASS inset(10% round 10% / 10% 20% 30% 40%) - computed 
-PASS inset(10% round 10% 20%) - computed 
-PASS inset(10% round 10% 20% / 10%) - computed 
-PASS inset(10% round 10% 20% / 10% 20%) - computed 
-PASS inset(10% round 10% 20% / 10% 20% 30%) - computed 
-PASS inset(10% round 10% 20% / 10% 20% 30% 40%) - computed 
-PASS inset(10% round 10% 20% 30%) - computed 
-PASS inset(10% round 10% 20% 30% / 10%) - computed 
-PASS inset(10% round 10% 20% 30% / 10% 20%) - computed 
-PASS inset(10% round 10% 20% 30% / 10% 20% 30%) - computed 
-PASS inset(10% round 10% 20% 30% / 10% 20% 30% 40%) - computed 
-PASS inset(10% round 10% 20% 30% 40%) - computed 
-PASS inset(10% round 10% 20% 30% 40% / 10%) - computed 
-PASS inset(10% round 10% 20% 30% 40% / 10% 20%) - computed 
-PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30%) - computed 
-PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30% 40%) - computed 
+PASS inset(10px round 10px) - inline
+PASS inset(10px round 10px / 10px) - inline
+PASS inset(10px round 10px / 10px 20px) - inline
+PASS inset(10px round 10px / 10px 20px 30px) - inline
+PASS inset(10px round 10px / 10px 20px 30px 40px) - inline
+PASS inset(10px round 10px 20px) - inline
+PASS inset(10px round 10px 20px / 10px) - inline
+PASS inset(10px round 10px 20px / 10px 20px) - inline
+PASS inset(10px round 10px 20px / 10px 20px 30px) - inline
+PASS inset(10px round 10px 20px / 10px 20px 30px 40px) - inline
+PASS inset(10px round 10px 20px 30px) - inline
+PASS inset(10px round 10px 20px 30px / 10px) - inline
+PASS inset(10px round 10px 20px 30px / 10px 20px) - inline
+PASS inset(10px round 10px 20px 30px / 10px 20px 30px) - inline
+PASS inset(10px round 10px 20px 30px / 10px 20px 30px 40px) - inline
+PASS inset(10px round 10px 20px 30px 40px) - inline
+PASS inset(10px round 10px 20px 30px 40px / 10px) - inline
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px) - inline
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px) - inline
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px 40px) - inline
+PASS inset(10% round 10%) - inline
+PASS inset(10% round 10% / 10%) - inline
+PASS inset(10% round 10% / 10% 20%) - inline
+PASS inset(10% round 10% / 10% 20% 30%) - inline
+PASS inset(10% round 10% / 10% 20% 30% 40%) - inline
+PASS inset(10% round 10% 20%) - inline
+PASS inset(10% round 10% 20% / 10%) - inline
+PASS inset(10% round 10% 20% / 10% 20%) - inline
+PASS inset(10% round 10% 20% / 10% 20% 30%) - inline
+PASS inset(10% round 10% 20% / 10% 20% 30% 40%) - inline
+PASS inset(10% round 10% 20% 30%) - inline
+PASS inset(10% round 10% 20% 30% / 10%) - inline
+PASS inset(10% round 10% 20% 30% / 10% 20%) - inline
+PASS inset(10% round 10% 20% 30% / 10% 20% 30%) - inline
+PASS inset(10% round 10% 20% 30% / 10% 20% 30% 40%) - inline
+PASS inset(10% round 10% 20% 30% 40%) - inline
+PASS inset(10% round 10% 20% 30% 40% / 10%) - inline
+PASS inset(10% round 10% 20% 30% 40% / 10% 20%) - inline
+PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30%) - inline
+PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30% 40%) - inline
+PASS inset(10px round 10px) - computed
+PASS inset(10px round 10px / 10px) - computed
+PASS inset(10px round 10px / 10px 20px) - computed
+PASS inset(10px round 10px / 10px 20px 30px) - computed
+PASS inset(10px round 10px / 10px 20px 30px 40px) - computed
+PASS inset(10px round 10px 20px) - computed
+PASS inset(10px round 10px 20px / 10px) - computed
+PASS inset(10px round 10px 20px / 10px 20px) - computed
+PASS inset(10px round 10px 20px / 10px 20px 30px) - computed
+PASS inset(10px round 10px 20px / 10px 20px 30px 40px) - computed
+PASS inset(10px round 10px 20px 30px) - computed
+PASS inset(10px round 10px 20px 30px / 10px) - computed
+PASS inset(10px round 10px 20px 30px / 10px 20px) - computed
+PASS inset(10px round 10px 20px 30px / 10px 20px 30px) - computed
+PASS inset(10px round 10px 20px 30px / 10px 20px 30px 40px) - computed
+PASS inset(10px round 10px 20px 30px 40px) - computed
+PASS inset(10px round 10px 20px 30px 40px / 10px) - computed
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px) - computed
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px) - computed
+PASS inset(10px round 10px 20px 30px 40px / 10px 20px 30px 40px) - computed
+PASS inset(10% round 10%) - computed
+PASS inset(10% round 10% / 10%) - computed
+PASS inset(10% round 10% / 10% 20%) - computed
+PASS inset(10% round 10% / 10% 20% 30%) - computed
+PASS inset(10% round 10% / 10% 20% 30% 40%) - computed
+PASS inset(10% round 10% 20%) - computed
+PASS inset(10% round 10% 20% / 10%) - computed
+PASS inset(10% round 10% 20% / 10% 20%) - computed
+PASS inset(10% round 10% 20% / 10% 20% 30%) - computed
+PASS inset(10% round 10% 20% / 10% 20% 30% 40%) - computed
+PASS inset(10% round 10% 20% 30%) - computed
+PASS inset(10% round 10% 20% 30% / 10%) - computed
+PASS inset(10% round 10% 20% 30% / 10% 20%) - computed
+PASS inset(10% round 10% 20% 30% / 10% 20% 30%) - computed
+PASS inset(10% round 10% 20% 30% / 10% 20% 30% 40%) - computed
+PASS inset(10% round 10% 20% 30% 40%) - computed
+PASS inset(10% round 10% 20% 30% 40% / 10%) - computed
+PASS inset(10% round 10% 20% 30% 40% / 10% 20%) - computed
+PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30%) - computed
+PASS inset(10% round 10% 20% 30% 40% / 10% 20% 30% 40%) - computed
 

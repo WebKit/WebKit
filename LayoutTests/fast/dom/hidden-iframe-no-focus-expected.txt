@@ -1,4 +1,4 @@
 Press tab twice. The second input should be focused.
 
-  
+
 PASS

@@ -26,5 +26,5 @@ Promise rejected with: TypeError: Can only call RTCPeerConnection.setLocalDescri
 Promise rejected with: TypeError: Can only call RTCPeerConnection.setRemoteDescription on instances of RTCPeerConnection
 Promise rejected with: TypeError: Can only call RTCPeerConnection.addIceCandidate on instances of RTCPeerConnection
 
-PASS Exercising TypeError messages in RTCPeerConnection 
+PASS Exercising TypeError messages in RTCPeerConnection
 

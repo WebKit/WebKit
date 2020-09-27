@@ -1,4 +1,4 @@
-  
 
-PASS Ensure CORP checks in case image is cached 
+
+PASS Ensure CORP checks in case image is cached
 

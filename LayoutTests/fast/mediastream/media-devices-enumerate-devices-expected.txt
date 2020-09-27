@@ -1,5 +1,5 @@
 
-PASS Enumerate devices without permission 
-PASS Enumerate devices with persistent access 
-PASS Enumerate devices after authentication, without persistent access 
+PASS Enumerate devices without permission
+PASS Enumerate devices with persistent access
+PASS Enumerate devices after authentication, without persistent access
 

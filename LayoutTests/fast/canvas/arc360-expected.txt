@@ -1,1 +1,1 @@
-Test canvas arc() start / end points when the arc is >= 360 degrees. The result should be a circle with two line segments connected to the left hand side, towards the top left and bottom left corners. 
+Test canvas arc() start / end points when the arc is >= 360 degrees. The result should be a circle with two line segments connected to the left hand side, towards the top left and bottom left corners.

@@ -1,12 +1,12 @@
 
 
-PASS Cleaning existing caches 
-PASS Create a cache storage and look at the representation 
-PASS Look at the representation a second time after removing the iframe 
-PASS Remove a cache and look at the representation a second time 
-PASS Look at the representation a second time after reloading the iframe 
-PASS A cache is created 
-PASS A cache is persisting 
-PASS A cache is going in remove bucket 
-PASS A removed cache gets collected 
+PASS Cleaning existing caches
+PASS Create a cache storage and look at the representation
+PASS Look at the representation a second time after removing the iframe
+PASS Remove a cache and look at the representation a second time
+PASS Look at the representation a second time after reloading the iframe
+PASS A cache is created
+PASS A cache is persisting
+PASS A cache is going in remove bucket
+PASS A removed cache gets collected
 

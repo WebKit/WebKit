@@ -2,56 +2,56 @@ Test for bugzilla bug : 18092. 'Baseline of last row cells in the table' is not 
 
 'Baseline of last cell aligned with rowspan cell' should aligned with 'baseline of rowspan cell'.
 
-Test 1 : 
+Test 1 :
 PASS (document.getElementById('T1-1').offsetTop + document.getElementById('T1-1').offsetHeight) is (document.getElementById('T1-2').offsetTop + document.getElementById('T1-2').offsetHeight)
 
-Test 2 : 
+Test 2 :
 PASS (document.getElementById('T2-1').offsetTop + document.getElementById('T2-1').offsetHeight) is (document.getElementById('T2-2').offsetTop + document.getElementById('T2-2').offsetHeight)
 
-Test 3 : 
+Test 3 :
 PASS (document.getElementById('T3-1').offsetTop + document.getElementById('T3-1').offsetHeight) is (document.getElementById('T3-2').offsetTop + document.getElementById('T3-2').offsetHeight)
 
-Test 4 : 
+Test 4 :
 PASS (document.getElementById('T4-1').offsetTop + document.getElementById('T4-1').offsetHeight) is (document.getElementById('T4-2').offsetTop + document.getElementById('T4-2').offsetHeight)
 
-Test 5 : 
+Test 5 :
 PASS (document.getElementById('T5-1').offsetTop + document.getElementById('T5-1').offsetHeight) is (document.getElementById('T5-2').offsetTop + document.getElementById('T5-2').offsetHeight)
 
-Test 7 : 
+Test 7 :
 PASS (document.getElementById('T7-1').offsetTop + document.getElementById('T7-1').offsetHeight) is (document.getElementById('T7-2').offsetTop + document.getElementById('T7-2').offsetHeight)
 
-Test 8 : 
+Test 8 :
 PASS (document.getElementById('T8-1').offsetTop + document.getElementById('T8-1').offsetHeight) is (document.getElementById('T8-2').offsetTop + document.getElementById('T8-2').offsetHeight)
 
-Test 9 : 
+Test 9 :
 PASS (document.getElementById('T9-1').offsetTop + document.getElementById('T9-1').offsetHeight) is (document.getElementById('T9-2').offsetTop + document.getElementById('T9-2').offsetHeight)
 
-Test 10 : 
+Test 10 :
 PASS (document.getElementById('T10-1').offsetTop + document.getElementById('T10-1').offsetHeight) is (document.getElementById('T10-4').offsetTop + document.getElementById('T10-4').offsetHeight)
 PASS (document.getElementById('T10-2').offsetTop + document.getElementById('T10-2').offsetHeight) is (document.getElementById('T10-3').offsetTop + document.getElementById('T10-3').offsetHeight)
 
-Test 11 : 
+Test 11 :
 PASS (document.getElementById('T11-1').offsetTop + document.getElementById('T11-1').offsetHeight) is (document.getElementById('T11-3').offsetTop + document.getElementById('T11-3').offsetHeight)
 PASS (document.getElementById('T11-2').offsetTop + document.getElementById('T11-2').offsetHeight) is (document.getElementById('T11-4').offsetTop + document.getElementById('T11-4').offsetHeight)
 
-Test 12 : 
+Test 12 :
 PASS (document.getElementById('T12-1').offsetTop + document.getElementById('T12-1').offsetHeight) is (document.getElementById('T12-3').offsetTop + document.getElementById('T12-3').offsetHeight)
 PASS (document.getElementById('T12-2').offsetTop + document.getElementById('T12-2').offsetHeight) is (document.getElementById('T12-4').offsetTop + document.getElementById('T12-4').offsetHeight)
 
-Test 13 : 
+Test 13 :
 PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-2').offsetTop + document.getElementById('T13-2').offsetHeight)
 PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-3').offsetTop + document.getElementById('T13-3').offsetHeight)
 PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-4').offsetTop + document.getElementById('T13-4').offsetHeight)
 PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-5').offsetTop + document.getElementById('T13-5').offsetHeight)
 
-Test 14 : 
+Test 14 :
 PASS (document.getElementById('T14-1').offsetTop + document.getElementById('T14-1').offsetHeight) is (document.getElementById('T14-2').offsetTop + document.getElementById('T14-2').offsetHeight)
 
-Test 15 : 
+Test 15 :
 PASS (document.getElementById('T15-1').offsetTop + document.getElementById('T15-1').offsetHeight) is (document.getElementById('T15-2').offsetTop + document.getElementById('T15-2').offsetHeight)
 PASS (document.getElementById('T15-1').offsetTop + document.getElementById('T15-1').offsetHeight) is (document.getElementById('T15-3').offsetTop + document.getElementById('T15-3').offsetHeight)
 
-Test 16 : 
+Test 16 :
 PASS (document.getElementById('T16-1').offsetTop + document.getElementById('T16-1').offsetHeight) is (document.getElementById('T16-2').offsetTop + document.getElementById('T16-2').offsetHeight)
 PASS (document.getElementById('T16-1').offsetTop + document.getElementById('T16-1').offsetHeight) is (document.getElementById('T16-3').offsetTop + document.getElementById('T16-3').offsetHeight)
 

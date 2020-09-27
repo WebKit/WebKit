@@ -1,5 +1,5 @@
 Tests that 'initial' is handled correctly for the flex-flow shorthand.
 
 
-PASS initial value is correct 
+PASS initial value is correct
 

@@ -6,7 +6,7 @@
 
 
 
-  
+
 This tests that we can detect a search field based on a few heuristics.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

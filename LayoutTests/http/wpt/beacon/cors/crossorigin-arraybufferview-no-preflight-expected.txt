@@ -1,4 +1,4 @@
 
-PASS Beacon load should not be sent if server is not trusted. 
-PASS Should send beacon with no CORS preflight 
+PASS Beacon load should not be sent if server is not trusted.
+PASS Should send beacon with no CORS preflight
 

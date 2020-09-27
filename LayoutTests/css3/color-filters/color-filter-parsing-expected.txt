@@ -1,38 +1,38 @@
 
-PASS Parse none 
-PASS Parse auto 
-PASS Parsing garbage value returns none 
-PASS Parsing garbage function returns none 
-PASS Parse brightness() 
-PASS Parse contrast() 
-PASS Parse grayscale() 
-PASS Parse hue-rotate() 
-PASS Parse invert 
-PASS Parse opacity() 
-PASS Parse saturate() 
-PASS Parse sepia() 
-PASS drop-shadow() is not allowed in -apple-color-filter 
-PASS blur() is not allowed in -apple-color-filter 
-PASS Canonicalize grayscale() argument 
-PASS Canonicalize hue-rotate() argument 
-PASS Negative value for brightness() is invalid 
-PASS Negative value for contrast() is invalid 
-PASS Negative value for grayscale() is invalid 
-PASS Negative value allowed for hue-rotate() 
-PASS Negative value for invert() is invalid 
-PASS Negative value for opacity() is invalid 
-PASS Negative value for saturate() is invalid 
-PASS Negative value for sepia() is invalid 
-PASS brightness(): values of amount over 100% are allowed, providing brighter results 
-PASS contrast(): values of amount over 100% are allowed, providing results with more contrast 
-PASS Values of amount over 100% are allowed but UAs must clamp the values to 1 
-PASS hue-rotate(): implementations must not normalize this value in order to allow animations beyond 360deg 
-PASS invert(): values of amount over 100% are allowed but UAs must clamp the values to 1 
-PASS opacity(): values of amount over 100% are allowed but UAs must clamp the values to 1 
-PASS saturate(): values of amount over 100% are allowed, providing super-saturated results 
-PASS sepia(): values of amount over 100% are allowed but UAs must clamp the values to 1 
-PASS Parse filter list 
-PASS Filter list with blur is invalid 
-PASS Parse apple-invert-lightness() 
-PASS apple-invert-lightness() takes no arguments 
+PASS Parse none
+PASS Parse auto
+PASS Parsing garbage value returns none
+PASS Parsing garbage function returns none
+PASS Parse brightness()
+PASS Parse contrast()
+PASS Parse grayscale()
+PASS Parse hue-rotate()
+PASS Parse invert
+PASS Parse opacity()
+PASS Parse saturate()
+PASS Parse sepia()
+PASS drop-shadow() is not allowed in -apple-color-filter
+PASS blur() is not allowed in -apple-color-filter
+PASS Canonicalize grayscale() argument
+PASS Canonicalize hue-rotate() argument
+PASS Negative value for brightness() is invalid
+PASS Negative value for contrast() is invalid
+PASS Negative value for grayscale() is invalid
+PASS Negative value allowed for hue-rotate()
+PASS Negative value for invert() is invalid
+PASS Negative value for opacity() is invalid
+PASS Negative value for saturate() is invalid
+PASS Negative value for sepia() is invalid
+PASS brightness(): values of amount over 100% are allowed, providing brighter results
+PASS contrast(): values of amount over 100% are allowed, providing results with more contrast
+PASS Values of amount over 100% are allowed but UAs must clamp the values to 1
+PASS hue-rotate(): implementations must not normalize this value in order to allow animations beyond 360deg
+PASS invert(): values of amount over 100% are allowed but UAs must clamp the values to 1
+PASS opacity(): values of amount over 100% are allowed but UAs must clamp the values to 1
+PASS saturate(): values of amount over 100% are allowed, providing super-saturated results
+PASS sepia(): values of amount over 100% are allowed but UAs must clamp the values to 1
+PASS Parse filter list
+PASS Filter list with blur is invalid
+PASS Parse apple-invert-lightness()
+PASS apple-invert-lightness() takes no arguments
 

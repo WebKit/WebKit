@@ -1,7 +1,7 @@
 button 1
 button 2
 button 3
- 
+
 This test thats disabled and aria-disabled change the traits returned.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

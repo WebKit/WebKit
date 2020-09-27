@@ -1,15 +1,15 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Synchronous graph manipulation with suspend() and resume() 
-PASS   Frame at which context is suspended is equal to 12800. 
-PASS   Connecting a constant buffer to destination and starting at 12800 frame did not throw an exception. 
-PASS   Context is suspended is equal to 25600. 
-PASS   Disconnecting a constant buffer at 25600 frame did not throw an exception. 
-PASS   Buffer frame [0, 12800) contains only the constant 0. 
-PASS   Buffer frame [12800, 25600) contains only the constant 1. 
-PASS   Buffer frame [25600, 38400) contains only the constant 0. 
-PASS < [test] All assertions passed. (total 7 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Synchronous graph manipulation with suspend() and resume()
+PASS   Frame at which context is suspended is equal to 12800.
+PASS   Connecting a constant buffer to destination and starting at 12800 frame did not throw an exception.
+PASS   Context is suspended is equal to 25600.
+PASS   Disconnecting a constant buffer at 25600 frame did not throw an exception.
+PASS   Buffer frame [0, 12800) contains only the constant 0.
+PASS   Buffer frame [12800, 25600) contains only the constant 1.
+PASS   Buffer frame [25600, 38400) contains only the constant 0.
+PASS < [test] All assertions passed. (total 7 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

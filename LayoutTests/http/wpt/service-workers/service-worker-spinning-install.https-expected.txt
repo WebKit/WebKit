@@ -1,5 +1,5 @@
 
-PASS Spin at running  
-PASS Spin in install 
-PASS Spin after install 
+PASS Spin at running
+PASS Spin in install
+PASS Spin after install
 

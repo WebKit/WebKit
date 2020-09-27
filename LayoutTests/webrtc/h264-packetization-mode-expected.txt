@@ -1,6 +1,6 @@
 
-PASS Make sure packetization mode 1 is offered 
-PASS Offer without explicit H264 packetization mode 
-PASS Offer with explicit H264 packetization mode 0 
-PASS Offer with explicit H264 packetization mode 1 
+PASS Make sure packetization mode 1 is offered
+PASS Offer without explicit H264 packetization mode
+PASS Offer with explicit H264 packetization mode 0
+PASS Offer with explicit H264 packetization mode 1
 

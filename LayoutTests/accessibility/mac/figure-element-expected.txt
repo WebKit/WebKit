@@ -7,20 +7,20 @@ Test figure with aria-label.
 figure1 role: AXRole: AXGroup
 figure1 roleDescription: AXRoleDescription: figure
 figure1 description: AXDescription: aria-label attribute
-figure1 helpText: AXHelp: 
+figure1 helpText: AXHelp:
 PASS !titleUIElement is true
 
 Test figure with title attribute.
 figure2 role: AXRole: AXGroup
 figure2 roleDescription: AXRoleDescription: figure
 figure2 description: AXDescription: title attribute
-figure2 helpText: AXHelp: 
+figure2 helpText: AXHelp:
 PASS !titleUIElement is true
 
 Test figure with aria-describedby.
 figure3 role: AXRole: AXGroup
 figure3 roleDescription: AXRoleDescription: figure
-figure3 description: AXDescription: 
+figure3 description: AXDescription:
 figure3 helpText: AXHelp: p referenced by aria-describedby
 PASS !titleUIElement is true
 
@@ -28,7 +28,7 @@ Test figure with figcaption element.
 figure4 role: AXRole: AXGroup
 figure4 roleDescription: AXRoleDescription: figure
 figure4 description: AXDescription: Figcaption element
-figure4 helpText: AXHelp: 
+figure4 helpText: AXHelp:
 PASS titleUIElement.isEqual(figureCaption) is true
 
 Test figure with figcaption element and title attribute.

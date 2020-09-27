@@ -2,29 +2,29 @@ Tests generation of synthetic and real GL errors
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 Testing getActiveAttrib
 PASS context.getActiveAttrib(null, 2) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getActiveAttrib must be an instance of WebGLProgram.
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS context.getActiveAttrib(program, 2) is null
-PASS getError was expected value: INVALID_VALUE : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: INVALID_VALUE :
+PASS getError was expected value: NO_ERROR :
 Testing getActiveUniform
 PASS context.getActiveUniform(null, 0) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getActiveUniform must be an instance of WebGLProgram.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS context.getActiveUniform(program, 50) is null
-PASS getError was expected value: INVALID_VALUE : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: INVALID_VALUE :
+PASS getError was expected value: NO_ERROR :
 Testing attempts to manipulate the default framebuffer
 PASS context.bindFramebuffer(context.FRAMEBUFFER, null) is undefined.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, null) is undefined.
-PASS getError was expected value: INVALID_OPERATION : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: NO_ERROR :
 PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, null, 0) is undefined.
-PASS getError was expected value: INVALID_OPERATION : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: INVALID_OPERATION :
+PASS getError was expected value: NO_ERROR :
 PASS successfullyParsed is true
 
 TEST COMPLETE

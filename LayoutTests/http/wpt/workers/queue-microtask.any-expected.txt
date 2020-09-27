@@ -1,6 +1,6 @@
 
-PASS Queued microtasks should be drained before executing macrotasks 
-PASS queueMicrotask's callback has zero arguments and self as |this| 
-PASS queueMicrotask and Promise uses the same Microtask queue 
-PASS queueMicrotask should reject non-function arguments 
+PASS Queued microtasks should be drained before executing macrotasks
+PASS queueMicrotask's callback has zero arguments and self as |this|
+PASS queueMicrotask and Promise uses the same Microtask queue
+PASS queueMicrotask should reject non-function arguments
 

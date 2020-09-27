@@ -1,6 +1,6 @@
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
-main frame - willPerformClientRedirectToURL: http://A=a%B=b 
+main frame - willPerformClientRedirectToURL: http://A=a%B=b
 main frame - didFinishLoadForFrame
 main frame - didCancelClientRedirectForFrame
 Tests that we do not redirect to an invalid URL initiated by <meta http-equiv="refresh">. This test PASSED if you see an entry in the dumped frame load callbacks of the form: "willPerformClientRedirectToURL: http://A=a%B=b" followed by "didCancelClientRedirectForFrame".

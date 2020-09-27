@@ -1,6 +1,6 @@
- 
-PASS Test addSourceBuffer() with empty type 
-PASS Test addSourceBuffer() with unsupported type 
+
+PASS Test addSourceBuffer() with empty type
+PASS Test addSourceBuffer() with unsupported type
 FAIL Test addSourceBuffer() with Vorbis and VP8 assert_true: video/webm;codecs="vp8,vorbis" is supported expected true got false(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
 assert_true@http://127.0.0.1:8000/w3c/resources/testharness.js:663:15
 http://127.0.0.1:8000/media/media-source/mediasource-addsourcebuffer.html:32:26
@@ -15,6 +15,6 @@ http://127.0.0.1:8000/media/media-source/mediasource-util.js:339:29
 onSourceOpen@http://127.0.0.1:8000/media/media-source/mediasource-util.js:149:21
 step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 http://127.0.0.1:8000/w3c/resources/testharness.js:1189:33)
-PASS Test addSourceBuffer() with AAC and H.264 
-PASS Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers 
+PASS Test addSourceBuffer() with AAC and H.264
+PASS Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers
 

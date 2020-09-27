@@ -11,7 +11,7 @@ PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 2, expected 2)
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 14, expected 14)
- 
+
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 0, expected 0)
 PASS Range.startContainer check (got [object Text], expected [object Text])
@@ -20,7 +20,7 @@ PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 2, expected 2)
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 14, expected 14)
- 
+
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 0, expected 0)
 PASS Range.startContainer check (got [object Text], expected [object Text])
@@ -29,7 +29,7 @@ PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 4, expected 4)
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 10, expected 10)
- 
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

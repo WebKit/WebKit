@@ -1,5 +1,5 @@
 
-PASS Setup worker 
-PASS Frame to a registered scope 
-PASS Clean-up 
+PASS Setup worker
+PASS Frame to a registered scope
+PASS Clean-up
 

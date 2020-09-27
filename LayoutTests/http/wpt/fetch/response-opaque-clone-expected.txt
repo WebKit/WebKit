@@ -1,6 +1,6 @@
 
-PASS Check opaque response can be cloned and cached correctly 
-PASS fetched response 
-PASS cloned response 
-PASS cached response 
+PASS Check opaque response can be cloned and cached correctly
+PASS fetched response
+PASS cloned response
+PASS cached response
 

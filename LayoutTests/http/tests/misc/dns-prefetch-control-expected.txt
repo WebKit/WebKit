@@ -2,7 +2,7 @@ This is a test of DNS prefetch control. It's considered a pass if it doesn't cra
 
 The following frames contain links that are expected to trigger a DNS prefetch.
 
-              
+
 The following frames contain links that are not expected to cause a DNS prefetch.
 
-          
+

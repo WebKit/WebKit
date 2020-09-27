@@ -1,5 +1,5 @@
 Click here to copy
- 
+
 Verifies that a promise scheduled right before a programmatically triggered paste does not resolve during the paste. To test manually, tap the frame to copy some text, and then tap the editable area to paste. The promise should run after the paste event handler.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

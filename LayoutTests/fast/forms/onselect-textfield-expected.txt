@@ -1,5 +1,5 @@
 
-This tests onSelect for text fields. 
+This tests onSelect for text fields.
 
 Calling focus on text field
 After focus: text field selection start: 0 end: 10

@@ -8,15 +8,15 @@ Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading a blob containing empty file
 result size: 0
-result: 
+result:
 Received exception undefined: TypeError
 Test reading a blob containing empty text
 result size: 0
-result: 
+result:
 Received exception undefined: TypeError
 Test reading a blob containing empty files and empty texts
 result size: 0
-result: 
+result:
 Received exception undefined: TypeError
 Test reading a blob containing single file
 result size: 5

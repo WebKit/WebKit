@@ -1,19 +1,19 @@
- 
+
 This tests that you can reach the links within an image map.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Link1 role: AXRole: AXLink
-Link1 title: AXTitle: 
+Link1 title: AXTitle:
 Link1 description: AXDescription: Link1
 
 Link2 role: AXRole: AXLink
-Link2 title: AXTitle: 
+Link2 title: AXTitle:
 Link2 description: AXDescription: Link2
 
 Link3 role: AXRole: AXLink
-Link3 title: AXTitle: 
+Link3 title: AXTitle:
 Link3 description: AXDescription: Link3
 
 PASS successfullyParsed is true

@@ -1,5 +1,5 @@
 
-PASS Throws if the promise [[state]] is not "interactive" 
-PASS Calling abort must not change the [[state]] until after "interactive" 
-PASS calling .abort() causes acceptPromise to reject and closes the request. 
+PASS Throws if the promise [[state]] is not "interactive"
+PASS Calling abort must not change the [[state]] until after "interactive"
+PASS calling .abort() causes acceptPromise to reject and closes the request.
 

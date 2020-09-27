@@ -2,8 +2,8 @@ To manually test, drag 'Drag Me' to 'Drop Here' and drop. Several lines that say
 
 Drag Me
 Drop Here
-Drag handler: 
-Drop handler: 
+Drag handler:
+Drop handler:
 Running test with Legacy drag handler and Legacy drop handler
 PASS: 4 === 4
 PASS: sample === sample

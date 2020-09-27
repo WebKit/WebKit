@@ -2,11 +2,11 @@ Test XMLHttpRequest responseURL.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-req.readyState = 0: responseURL = 
+req.readyState = 0: responseURL =
 PASS req.responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS req.responseURL is ""
-req.readyState = 1: responseURL = 
+req.readyState = 1: responseURL =
 PASS req.responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async

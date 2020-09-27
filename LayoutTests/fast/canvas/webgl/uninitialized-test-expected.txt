@@ -7,50 +7,50 @@ PASS Context created.
 Reading an uninitialized texture (texImage2D) should succeed with all bytes set to 0.
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Reading an uninitialized portion of a texture (copyTexImage2D) should succeed with all bytes set to 0.
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Reading an uninitialized portion of a texture (copyTexImage2D with negative x and y) should succeed with all bytes set to 0.
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Reading an uninitialized portion of a texture (copyTexImage2D from WebGL internal fbo) should succeed with all bytes set to 0.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Reading an uninitialized portion of a texture (copyTexSubImage2D) should succeed with all bytes set to 0.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Reading an uninitialized portion of a texture (copyTexSubImage2D with negative x and y) should succeed with all bytes set to 0.
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 Reading an uninitialized portion of a texture (copyTexSubImage2D from WebGL internal fbo) should succeed with all bytes set to 0.
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS All data initialized
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 
 PASS successfullyParsed is true
 

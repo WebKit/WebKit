@@ -1,4 +1,4 @@
 
-PASS name property value for DedicatedWorkerGlobalScope 
-PASS name property is replaceable for DedicatedWorkerGlobalScope 
+PASS name property value for DedicatedWorkerGlobalScope
+PASS name property is replaceable for DedicatedWorkerGlobalScope
 

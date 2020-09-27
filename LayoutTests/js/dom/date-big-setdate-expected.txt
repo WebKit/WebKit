@@ -1,4 +1,4 @@
-This test checks for regression against: 3381 Date.prototype.setDate() incorrect for values >=128. 
+This test checks for regression against: 3381 Date.prototype.setDate() incorrect for values >=128.
 12975: DST changes in US affect JavaScript date calculations
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

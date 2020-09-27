@@ -1,13 +1,13 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "build-buffers" 
-PASS Executing "synthesize-verify" 
-PASS Audit report 
-PASS > [build-buffers]  
-PASS   Build buffers did not throw an exception. 
-PASS < [build-buffers] All assertions passed. (total 1 assertions) 
-PASS > [synthesize-verify]  
-PASS   Doubling playbackRate decreased the interval between impulses to half 
-PASS < [synthesize-verify] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "build-buffers"
+PASS Executing "synthesize-verify"
+PASS Audit report
+PASS > [build-buffers]
+PASS   Build buffers did not throw an exception.
+PASS < [build-buffers] All assertions passed. (total 1 assertions)
+PASS > [synthesize-verify]
+PASS   Doubling playbackRate decreased the interval between impulses to half
+PASS < [synthesize-verify] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

@@ -1,2 +1,2 @@
-This form control should have a green background: 
+This form control should have a green background:
 SUCCESS

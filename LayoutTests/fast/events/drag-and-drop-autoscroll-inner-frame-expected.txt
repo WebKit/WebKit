@@ -1,4 +1,4 @@
-For manual testing, drag and drop "Drop Me" downwards and then upwards. 
+For manual testing, drag and drop "Drop Me" downwards and then upwards.
 Check autoscroll within an inner frame by drag-and-drop
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

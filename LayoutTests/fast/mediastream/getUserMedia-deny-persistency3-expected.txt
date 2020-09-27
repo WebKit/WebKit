@@ -1,3 +1,3 @@
 
-PASS Testing same page getUserMedia deny persistency, the first denied request being audio and video, the second granted request being audio 
+PASS Testing same page getUserMedia deny persistency, the first denied request being audio and video, the second granted request being audio
 

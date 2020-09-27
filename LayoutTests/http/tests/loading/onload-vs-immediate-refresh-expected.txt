@@ -2,7 +2,7 @@ main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 ALERT: SUCCESS
-main frame - willPerformClientRedirectToURL: data:text/html,%3Cbody%20onload='if(window.testRunner)testRunner.notifyDone();'%3EYou%20should%20have%20seen%20an%20alert. 
+main frame - willPerformClientRedirectToURL: data:text/html,%3Cbody%20onload='if(window.testRunner)testRunner.notifyDone();'%3EYou%20should%20have%20seen%20an%20alert.
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 main frame - didStartProvisionalLoadForFrame

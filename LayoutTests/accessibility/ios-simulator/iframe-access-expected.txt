@@ -6,12 +6,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 AXIdentifier: content
 AXIdentifier: iframe
-AXIdentifier: 
-AXIdentifier: 
-AXIdentifier: 
+AXIdentifier:
+AXIdentifier:
+AXIdentifier:
 AXIdentifier: frame-button
 AXIdentifier: frame-link
-AXIdentifier: 
+AXIdentifier:
 PASS successfullyParsed is true
 
 TEST COMPLETE

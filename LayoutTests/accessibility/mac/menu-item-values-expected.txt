@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Item 1 Value: AXValue: 0
-Item 1 Char mark: 
+Item 1 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
@@ -14,22 +14,22 @@ PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 3 Value: AXValue: 0
-Item 3 Char mark: 
+Item 3 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 4 Value: AXValue: 0
-Item 4 Char mark: 
+Item 4 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 5 Value: AXValue: 0
-Item 5 Char mark: 
+Item 5 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 6 Value: AXValue: 0
-Item 6 Char mark: 
+Item 6 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
@@ -39,17 +39,17 @@ PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 8 Value: AXValue: 2
-Item 8 Char mark: 
+Item 8 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 9 Value: AXValue: 0
-Item 9 Char mark: 
+Item 9 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 
 Item 10 Value: AXValue: 0
-Item 10 Char mark: 
+Item 10 Char mark:
 PASS item.isAttributeSupported('AXValue') is true
 
 

@@ -1,12 +1,12 @@
 
-PASS circle() - inline 
-PASS circle(50px) - inline 
-PASS circle(50%) - inline 
-PASS circle(closest-side) - inline 
-PASS circle(farthest-side) - inline 
-PASS circle() - computed 
-PASS circle(50px) - computed 
-PASS circle(50%) - computed 
-PASS circle(closest-side) - computed 
-PASS circle(farthest-side) - computed 
+PASS circle() - inline
+PASS circle(50px) - inline
+PASS circle(50%) - inline
+PASS circle(closest-side) - inline
+PASS circle(farthest-side) - inline
+PASS circle() - computed
+PASS circle(50px) - computed
+PASS circle(50%) - computed
+PASS circle(closest-side) - computed
+PASS circle(farthest-side) - computed
 

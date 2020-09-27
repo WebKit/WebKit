@@ -8,5 +8,5 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 Bug 9358: REGRESSION: Assertion failure in HTMLInputElement::setValueFromRenderer (value == constrainValue(value)) when deleting all text
 https://bugs.webkit.org/show_bug.cgi?id=9358
 
-Assertion fails when all characters are deleted: 
+Assertion fails when all characters are deleted:
 SUCCESS if the test didn't crash and you see this message.

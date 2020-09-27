@@ -1,7 +1,7 @@
 PASS 'use strict'; var f = fn(); delete f.prototype threw exception of type TypeError.
 PASS var f = fn(); delete f.prototype is false
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

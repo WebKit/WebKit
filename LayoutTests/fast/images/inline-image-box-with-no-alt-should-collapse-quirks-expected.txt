@@ -1,13 +1,13 @@
 QUIRKS mode.
 
 1. 'alt' attribute is not set (image box should not collapse):
- 20px 20px 
+ 20px 20px
 
 2. 'alt' attribute is set to a non-empty value (image box should not collapse):
- 20px 20px  20px 20px 
+ 20px 20px  20px 20px
 
 3. 'alt' attribute is set to empty value (image box should collapse):
-0px 0px 
+0px 0px
 
 4. 'alt' attribute is set to empty value but other attributes/properties prevent collapsing (image box should not collapse):
 image box is blockified: 20px 20px

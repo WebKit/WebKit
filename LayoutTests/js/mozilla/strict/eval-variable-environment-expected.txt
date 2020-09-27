@@ -22,7 +22,7 @@ PASS true === true
 PASS 'use strict'; function test() {   eval('"use strict"; var x = 2;');   return typeof x; } test(); is "undefined"
 PASS function test() {   eval('"use strict"; var x = 2;');   return typeof x; } test(); is "undefined"
 PASS true === true
- PASSED! 
+ PASSED!
 PASS successfullyParsed is true
 
 TEST COMPLETE

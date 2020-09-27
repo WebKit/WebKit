@@ -5,47 +5,47 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Meter1
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter2
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter3
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter4
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter5
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter6
 AXRole: AXProgressIndicator
-AXTitle: 
+AXTitle:
 AXDescription: centimeters
 
 AXValueSettable: false
@@ -53,7 +53,7 @@ AXValueSettable: false
 
 Meter7
 AXRole: AXProgressIndicator
-AXTitle: 
+AXTitle:
 AXDescription: centimeters
 
 AXValueSettable: false
@@ -61,56 +61,56 @@ AXValueSettable: false
 
 Meter8
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter9
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter10
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter11
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter12
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter13
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 
 
 Meter14
 AXRole: AXProgressIndicator
-AXTitle: 
-AXDescription: 
+AXTitle:
+AXDescription:
 
 AXValueSettable: false
 

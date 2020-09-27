@@ -20,10 +20,10 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting between smart paste exempt characters.
-Expected Results: 
-No spaces should be added before or after the pasted word. It should look like this: 
+Expected Results:
+No spaces should be added before or after the pasted word. It should look like this:
 -test-
 -test-
 execCutCommand: <div id="test" class="editing"><br></div>

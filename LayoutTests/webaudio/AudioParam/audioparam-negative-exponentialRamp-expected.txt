@@ -1,22 +1,22 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "both negative values" 
-PASS Executing "negative-end" 
-PASS Executing "positive-end" 
-PASS Executing "propagate" 
-PASS Audit report 
-PASS > [both negative values]  
-PASS   Negative exponential ramp from -1 to -2 is identical to the array [expected array]. 
-PASS < [both negative values] All assertions passed. (total 1 assertions) 
-PASS > [negative-end]  
-PASS   Exponential ramp from 2 to -1 contains only the constant 2. 
-PASS < [negative-end] All assertions passed. (total 1 assertions) 
-PASS > [positive-end]  
-PASS   Exponential ramp from -1 to 1 contains only the constant -1. 
-PASS < [positive-end] All assertions passed. (total 1 assertions) 
-PASS > [propagate]  
-PASS   Exponential ramp from -1 to 1 after the end of the linear ramp contains only the constant -1. 
-PASS   Exponential ramp after end of ramp contains only the constant 1. 
-PASS < [propagate] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "both negative values"
+PASS Executing "negative-end"
+PASS Executing "positive-end"
+PASS Executing "propagate"
+PASS Audit report
+PASS > [both negative values]
+PASS   Negative exponential ramp from -1 to -2 is identical to the array [expected array].
+PASS < [both negative values] All assertions passed. (total 1 assertions)
+PASS > [negative-end]
+PASS   Exponential ramp from 2 to -1 contains only the constant 2.
+PASS < [negative-end] All assertions passed. (total 1 assertions)
+PASS > [positive-end]
+PASS   Exponential ramp from -1 to 1 contains only the constant -1.
+PASS < [positive-end] All assertions passed. (total 1 assertions)
+PASS > [propagate]
+PASS   Exponential ramp from -1 to 1 after the end of the linear ramp contains only the constant -1.
+PASS   Exponential ramp after end of ramp contains only the constant 1.
+PASS < [propagate] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

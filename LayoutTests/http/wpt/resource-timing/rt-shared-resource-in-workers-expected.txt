@@ -1,8 +1,8 @@
 Resource Timing: Entries per Worker
 
 
-PASS Workers have PerformanceObserver and PerformanceResourceTiming 
-PASS window has shared entry 
-PASS worker1 has shared entry 
-PASS worker2 has shared entry 
+PASS Workers have PerformanceObserver and PerformanceResourceTiming
+PASS window has shared entry
+PASS worker1 has shared entry
+PASS worker2 has shared entry
 

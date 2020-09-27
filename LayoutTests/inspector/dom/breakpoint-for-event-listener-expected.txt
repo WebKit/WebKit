@@ -4,7 +4,7 @@ CONSOLE MESSAGE: BREAKPOINT ACTION LOG 3
 CONSOLE MESSAGE: BREAKPOINT ACTION LOG 4
 Testing DOMAgent.setBreakpointForEventListener and DOMAgent.removeBreakpointForEventListener.
 
-  
+
 
 == Running test suite: DOM.BreakpointForEventListener
 -- Running test case: DOM.setBreakpointForEventListener

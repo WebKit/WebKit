@@ -1,4 +1,4 @@
 
-PASS Cleaning existing caches 
-PASS Clearing all disk cache 
+PASS Cleaning existing caches
+PASS Clearing all disk cache
 

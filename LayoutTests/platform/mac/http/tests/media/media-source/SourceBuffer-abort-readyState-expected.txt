@@ -10,5 +10,5 @@ step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
 async_test@http://127.0.0.1:8000/w3c/resources/testharness.js:460:26
 mediaTest@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-readyState.html:41:15
 global code@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-readyState.html:67:14)
-PASS SourceBuffer#abort() (video/mp4) : If the readyState attribute of the parent media source is not in the "open" state then throw an INVALID_STATE_ERR exception and abort these steps. 
+PASS SourceBuffer#abort() (video/mp4) : If the readyState attribute of the parent media source is not in the "open" state then throw an INVALID_STATE_ERR exception and abort these steps.
 

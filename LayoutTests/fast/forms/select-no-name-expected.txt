@@ -1,5 +1,5 @@
 Test for bug 20184: SELECT with no name generates invalid query string.
 
- 
+
 PASS
 reload

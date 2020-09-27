@@ -1,3 +1,3 @@
 
-PASS Suspending animations should pause running accelerated animations. 
+PASS Suspending animations should pause running accelerated animations.
 

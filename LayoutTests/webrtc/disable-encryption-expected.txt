@@ -1,5 +1,5 @@
 
 
-PASS Basic data channel exchange without encryption 
-PASS Make sure a pc with encryption and a pc without encryption cannot talk 
+PASS Basic data channel exchange without encryption
+PASS Make sure a pc with encryption and a pc without encryption cannot talk
 

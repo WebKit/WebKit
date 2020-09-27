@@ -6,7 +6,7 @@ This tests that when you have a two nested inline continuations and the child on
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXWebArea 
+AXRole: AXWebArea
   AXRole: AXSection AXValue: test1<\n>test2<\n>
     AXRole: AXSection AXValue: test2
 PASS successfullyParsed is true

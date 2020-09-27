@@ -4,16 +4,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 AXRole: AXGroup
-AXDescription: 
+AXDescription:
 
   AXRole: AXGroup
-  AXDescription: 
+  AXDescription:
 
     AXRole: AXButton
-    AXDescription: 
+    AXDescription:
 
     AXRole: AXStaticText
-    AXDescription: 
+    AXDescription:
 
 PASS object.role is 'AXRole: AXStaticText'
 FAIL stringValue should be AXValue: text3. Was AXValue: .

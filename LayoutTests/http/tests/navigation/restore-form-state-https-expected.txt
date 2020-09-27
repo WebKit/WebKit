@@ -1,4 +1,4 @@
-This is test page that has a secure form. It is part of a test to show that form state is restored during back/forward navigations. 
+This is test page that has a secure form. It is part of a test to show that form state is restored during back/forward navigations.
 
 Test Passed
 
@@ -9,7 +9,7 @@ Test Passed
 
 
 
- 
+
 
 
 ============== Back Forward List ==============

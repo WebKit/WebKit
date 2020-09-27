@@ -1,4 +1,4 @@
-  
+
 This tests that the role exposed when a button has the attribute aria-pressed is toggle buttons in GTK.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,4 +1,4 @@
 This tests that onchange correctly fires after calling setValueForUser(). It can only be run using DumpRenderTree.
 
-PASS 
+PASS
 

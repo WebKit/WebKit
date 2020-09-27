@@ -1,10 +1,10 @@
 
-PASS CSSRule and CSSPageRule types 
-PASS Existence of CSSRule attributes 
-PASS Writability of CSSRule attributes 
-PASS Values of CSSRule attributes 
-PASS Existence and type of CSSPageRule attributes 
-PASS Values of CSSPageRule attributes 
-PASS Mutability of CSSPageRule's style attribute 
-PASS CSSPageRule's style has [PutForwards] 
+PASS CSSRule and CSSPageRule types
+PASS Existence of CSSRule attributes
+PASS Writability of CSSRule attributes
+PASS Values of CSSRule attributes
+PASS Existence and type of CSSPageRule attributes
+PASS Values of CSSPageRule attributes
+PASS Mutability of CSSPageRule's style attribute
+PASS CSSPageRule's style has [PutForwards]
 

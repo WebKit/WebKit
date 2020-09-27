@@ -1,6 +1,6 @@
 
-PASS pushState to a new path in unique origin should fail with SecurityError 
-PASS pushState #hash in unique origin should not fail with SecurityError 
-PASS pushState ?query in unique origin should not fail with SecurityError 
-PASS pushState ?query#hash in unique origin should not fail with SecurityError 
+PASS pushState to a new path in unique origin should fail with SecurityError
+PASS pushState #hash in unique origin should not fail with SecurityError
+PASS pushState ?query in unique origin should not fail with SecurityError
+PASS pushState ?query#hash in unique origin should not fail with SecurityError
 

@@ -4,19 +4,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 test1
-	ariaDropEffects: 
+	ariaDropEffects:
 	ariaIsGrabbed: false
 	has grabbed attribute: false
 test2
-	ariaDropEffects: 
+	ariaDropEffects:
 	ariaIsGrabbed: false
 	has grabbed attribute: false
 test3
-	ariaDropEffects: 
+	ariaDropEffects:
 	ariaIsGrabbed: true
 	has grabbed attribute: true
 test4
-	ariaDropEffects: 
+	ariaDropEffects:
 	ariaIsGrabbed: false
 	has grabbed attribute: true
 test5

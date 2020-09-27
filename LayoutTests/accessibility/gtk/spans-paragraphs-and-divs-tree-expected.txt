@@ -1,4 +1,4 @@
-AXRole: AXWebArea 
+AXRole: AXWebArea
     AXRole: AXParagraph AXValue: Block span in a link in a paragraph<\n>Inline span in a link in a paragraph
         AXRole: AXLink AXValue: Block span in a link in a paragraph<\n>Inline span in a link in a paragraph
     AXRole: AXParagraph AXValue: Block span in a paragraph<\n>Inline span in a paragraph

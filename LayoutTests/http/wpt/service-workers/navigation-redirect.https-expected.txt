@@ -1,7 +1,7 @@
 
-PASS Setup worker 1 
-PASS Frame redirecting to an unregistered scope 
-PASS Setup worker 2 
-PASS Frame redirecting to a registered scope 
-PASS Clean-up 
+PASS Setup worker 1
+PASS Frame redirecting to an unregistered scope
+PASS Setup worker 2
+PASS Frame redirecting to a registered scope
+PASS Clean-up
 

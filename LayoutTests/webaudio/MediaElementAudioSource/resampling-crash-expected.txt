@@ -1,8 +1,8 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "resampling-crash" 
-PASS Audit report 
-PASS > [resampling-crash] Verify no crash when resampling from 192k to 44.1k 
-PASS < [resampling-crash] All assertions passed. (total 0 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "resampling-crash"
+PASS Audit report
+PASS > [resampling-crash] Verify no crash when resampling from 192k to 44.1k
+PASS < [resampling-crash] All assertions passed. (total 0 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

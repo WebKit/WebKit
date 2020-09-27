@@ -1,9 +1,9 @@
 
 Has strike before adding underline in:
-| 
+|
 
 Has strike after adding underline in:
-| 
+|
 
 Has strike in:
 | <u>

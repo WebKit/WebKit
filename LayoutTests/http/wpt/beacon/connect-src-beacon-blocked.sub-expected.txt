@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Refused to connect to http://www.localhost:8800/common/text-plain.txt because it does not appear in the connect-src directive of the Content Security Policy.
 
-PASS sendBeacon should not throw. 
-PASS redirect case 
+PASS sendBeacon should not throw.
+PASS redirect case
 

@@ -1,4 +1,4 @@
- 
+
 Test for bug 32613 This tests that middle clicking on the part of an image map that does have a link will not scroll.
 
 Success! Div with overflow was not scrolled

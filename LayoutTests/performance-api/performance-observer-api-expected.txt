@@ -50,7 +50,7 @@ PASS [Worker] observer.observe({entryTypes:["mark", "not-real"]}) did not throw 
 PASS [Worker] observer.observe({entryTypes:["mark", "measure"]}) did not throw exception.
 PASS [Worker] observer.disconnect() did not throw exception.
 PASS [Worker] observer.disconnect() did not throw exception.
-[Worker] 
+[Worker]
 [Worker] PerformanceObserverEntryList
 PASS [Worker] PerformanceObserverEntryList is defined.
 PASS [Worker] PerformanceObserverEntryList.prototype.getEntries is defined.

@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Total canvas memory use exceeds the maximum limit (15 MB).
 This test requires Internals.
 
- 
+

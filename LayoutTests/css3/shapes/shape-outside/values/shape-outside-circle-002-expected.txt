@@ -1,44 +1,44 @@
 
-PASS circle(at 50%) serializes as circle(at 50% 50%) - inline 
-PASS circle(at 50px) serializes as circle(at 50px 50%) - inline 
-PASS circle(at 50% 50%) serializes as circle(at 50% 50%) - inline 
-PASS circle(at 50% 50px) serializes as circle(at 50% 50px) - inline 
-PASS circle(at 50px 50%) serializes as circle(at 50px 50%) - inline 
-PASS circle(at 50px 50px) serializes as circle(at 50px 50px) - inline 
-PASS circle(at left) serializes as circle(at 0% 50%) - inline 
-PASS circle(at top) serializes as circle(at 50% 0%) - inline 
-PASS circle(at right) serializes as circle(at 100% 50%) - inline 
-PASS circle(at bottom) serializes as circle(at 50% 100%) - inline 
-PASS circle(at center) serializes as circle(at 50% 50%) - inline 
-PASS circle(at left top) serializes as circle(at 0% 0%) - inline 
-PASS circle(at left bottom) serializes as circle(at 0% 100%) - inline 
-PASS circle(at left center) serializes as circle(at 0% 50%) - inline 
-PASS circle(at top left) serializes as circle(at 0% 0%) - inline 
-PASS circle(at top right) serializes as circle(at 100% 0%) - inline 
-PASS circle(at top center) serializes as circle(at 50% 0%) - inline 
-PASS circle(at right top) serializes as circle(at 100% 0%) - inline 
-PASS circle(at right bottom) serializes as circle(at 100% 100%) - inline 
-PASS circle(at right center) serializes as circle(at 100% 50%) - inline 
-PASS circle(at bottom left) serializes as circle(at 0% 100%) - inline 
-PASS circle(at bottom right) serializes as circle(at 100% 100%) - inline 
-PASS circle(at bottom center) serializes as circle(at 50% 100%) - inline 
-PASS circle(at center top) serializes as circle(at 50% 0%) - inline 
-PASS circle(at center left) serializes as circle(at 0% 50%) - inline 
-PASS circle(at center right) serializes as circle(at 100% 50%) - inline 
-PASS circle(at center bottom) serializes as circle(at 50% 100%) - inline 
-PASS circle(at center center) serializes as circle(at 50% 50%) - inline 
-PASS circle(at left 50%) serializes as circle(at 0% 50%) - inline 
-PASS circle(at left 50px) serializes as circle(at 0% 50px) - inline 
-PASS circle(at 50% top) serializes as circle(at 50% 0%) - inline 
-PASS circle(at 50px top) serializes as circle(at 50px 0%) - inline 
-PASS circle(at right 80%) serializes as circle(at 100% 80%) - inline 
-PASS circle(at right 80px) serializes as circle(at 100% 80px) - inline 
-PASS circle(at 70% bottom) serializes as circle(at 70% 100%) - inline 
-PASS circle(at 70px bottom) serializes as circle(at 70px 100%) - inline 
-PASS circle(at center 60%) serializes as circle(at 50% 60%) - inline 
-PASS circle(at center 60px) serializes as circle(at 50% 60px) - inline 
-PASS circle(at 60% center) serializes as circle(at 60% 50%) - inline 
-PASS circle(at 60px center) serializes as circle(at 60px 50%) - inline 
+PASS circle(at 50%) serializes as circle(at 50% 50%) - inline
+PASS circle(at 50px) serializes as circle(at 50px 50%) - inline
+PASS circle(at 50% 50%) serializes as circle(at 50% 50%) - inline
+PASS circle(at 50% 50px) serializes as circle(at 50% 50px) - inline
+PASS circle(at 50px 50%) serializes as circle(at 50px 50%) - inline
+PASS circle(at 50px 50px) serializes as circle(at 50px 50px) - inline
+PASS circle(at left) serializes as circle(at 0% 50%) - inline
+PASS circle(at top) serializes as circle(at 50% 0%) - inline
+PASS circle(at right) serializes as circle(at 100% 50%) - inline
+PASS circle(at bottom) serializes as circle(at 50% 100%) - inline
+PASS circle(at center) serializes as circle(at 50% 50%) - inline
+PASS circle(at left top) serializes as circle(at 0% 0%) - inline
+PASS circle(at left bottom) serializes as circle(at 0% 100%) - inline
+PASS circle(at left center) serializes as circle(at 0% 50%) - inline
+PASS circle(at top left) serializes as circle(at 0% 0%) - inline
+PASS circle(at top right) serializes as circle(at 100% 0%) - inline
+PASS circle(at top center) serializes as circle(at 50% 0%) - inline
+PASS circle(at right top) serializes as circle(at 100% 0%) - inline
+PASS circle(at right bottom) serializes as circle(at 100% 100%) - inline
+PASS circle(at right center) serializes as circle(at 100% 50%) - inline
+PASS circle(at bottom left) serializes as circle(at 0% 100%) - inline
+PASS circle(at bottom right) serializes as circle(at 100% 100%) - inline
+PASS circle(at bottom center) serializes as circle(at 50% 100%) - inline
+PASS circle(at center top) serializes as circle(at 50% 0%) - inline
+PASS circle(at center left) serializes as circle(at 0% 50%) - inline
+PASS circle(at center right) serializes as circle(at 100% 50%) - inline
+PASS circle(at center bottom) serializes as circle(at 50% 100%) - inline
+PASS circle(at center center) serializes as circle(at 50% 50%) - inline
+PASS circle(at left 50%) serializes as circle(at 0% 50%) - inline
+PASS circle(at left 50px) serializes as circle(at 0% 50px) - inline
+PASS circle(at 50% top) serializes as circle(at 50% 0%) - inline
+PASS circle(at 50px top) serializes as circle(at 50px 0%) - inline
+PASS circle(at right 80%) serializes as circle(at 100% 80%) - inline
+PASS circle(at right 80px) serializes as circle(at 100% 80px) - inline
+PASS circle(at 70% bottom) serializes as circle(at 70% 100%) - inline
+PASS circle(at 70px bottom) serializes as circle(at 70px 100%) - inline
+PASS circle(at center 60%) serializes as circle(at 50% 60%) - inline
+PASS circle(at center 60px) serializes as circle(at 50% 60px) - inline
+PASS circle(at 60% center) serializes as circle(at 60% 50%) - inline
+PASS circle(at 60px center) serializes as circle(at 60px 50%) - inline
 FAIL circle(at center top 50%) serializes as circle(at 50% 50%) - inline assert_equals: expected "circle(at 50% 50%)" but got ""
 FAIL circle(at center top 50px) serializes as circle(at 50% 50px) - inline assert_equals: expected "circle(at 50% 50px)" but got ""
 FAIL circle(at center left 50%) serializes as circle(at 50% 50%) - inline assert_equals: expected "circle(at 50% 50%)" but got ""
@@ -87,78 +87,78 @@ FAIL circle(at right 80% bottom) serializes as circle(at 20% 100%) - inline asse
 FAIL circle(at right 80px bottom) serializes as circle(at right 80px top 100%) - inline assert_equals: expected "circle(at right 80px top 100%)" but got ""
 FAIL circle(at right 80% top) serializes as circle(at 20% 0%) - inline assert_equals: expected "circle(at 20% 0%)" but got ""
 FAIL circle(at right 80px top) serializes as circle(at right 80px top 0%) - inline assert_equals: expected "circle(at right 80px top 0%)" but got ""
-PASS circle(at left 50% top 50%) serializes as circle(at 50% 50%) - inline 
-PASS circle(at left 50% top 50px) serializes as circle(at 50% 50px) - inline 
-PASS circle(at left 50% bottom 70%) serializes as circle(at 50% 30%) - inline 
-PASS circle(at left 50% bottom 70px) serializes as circle(at left 50% bottom 70px) - inline 
-PASS circle(at left 50px top 50%) serializes as circle(at 50px 50%) - inline 
-PASS circle(at left 50px top 50px) serializes as circle(at 50px 50px) - inline 
-PASS circle(at left 50px bottom 70%) serializes as circle(at 50px 30%) - inline 
-PASS circle(at left 50px bottom 70px) serializes as circle(at left 50px bottom 70px) - inline 
-PASS circle(at top 50% left 50%) serializes as circle(at 50% 50%) - inline 
-PASS circle(at top 50% left 50px) serializes as circle(at 50px 50%) - inline 
-PASS circle(at top 50% right 80%) serializes as circle(at 20% 50%) - inline 
-PASS circle(at top 50% right 80px) serializes as circle(at right 80px top 50%) - inline 
-PASS circle(at top 50px left 50%) serializes as circle(at 50% 50px) - inline 
-PASS circle(at top 50px left 50px) serializes as circle(at 50px 50px) - inline 
-PASS circle(at top 50px right 80%) serializes as circle(at 20% 50px) - inline 
-PASS circle(at top 50px right 80px) serializes as circle(at right 80px top 50px) - inline 
-PASS circle(at bottom 70% left 50%) serializes as circle(at 50% 30%) - inline 
-PASS circle(at bottom 70% left 50px) serializes as circle(at 50px 30%) - inline 
-PASS circle(at bottom 70% right 80%) serializes as circle(at 20% 30%) - inline 
-PASS circle(at bottom 70% right 80px) serializes as circle(at right 80px top 30%) - inline 
-PASS circle(at bottom 70px left 50%) serializes as circle(at left 50% bottom 70px) - inline 
-PASS circle(at bottom 70px left 50px) serializes as circle(at left 50px bottom 70px) - inline 
-PASS circle(at bottom 70px right 80%) serializes as circle(at left 20% bottom 70px) - inline 
-PASS circle(at bottom 70px right 80px) serializes as circle(at right 80px bottom 70px) - inline 
-PASS circle(at right 80% top 50%) serializes as circle(at 20% 50%) - inline 
-PASS circle(at right 80% top 50px) serializes as circle(at 20% 50px) - inline 
-PASS circle(at right 80% bottom 70%) serializes as circle(at 20% 30%) - inline 
-PASS circle(at right 80% bottom 70px) serializes as circle(at left 20% bottom 70px) - inline 
-PASS circle(at right 80px top 50%) serializes as circle(at right 80px top 50%) - inline 
-PASS circle(at right 80px top 50px) serializes as circle(at right 80px top 50px) - inline 
-PASS circle(at right 80px bottom 70%) serializes as circle(at right 80px top 30%) - inline 
-PASS circle(at right 80px bottom 70px) serializes as circle(at right 80px bottom 70px) - inline 
-PASS circle(at 50%) serializes as circle(at 50% 50%) - computed 
-PASS circle(at 50px) serializes as circle(at 50px 50%) - computed 
-PASS circle(at 50% 50%) serializes as circle(at 50% 50%) - computed 
-PASS circle(at 50% 50px) serializes as circle(at 50% 50px) - computed 
-PASS circle(at 50px 50%) serializes as circle(at 50px 50%) - computed 
-PASS circle(at 50px 50px) serializes as circle(at 50px 50px) - computed 
-PASS circle(at left) serializes as circle(at 0% 50%) - computed 
-PASS circle(at top) serializes as circle(at 50% 0%) - computed 
-PASS circle(at right) serializes as circle(at 100% 50%) - computed 
-PASS circle(at bottom) serializes as circle(at 50% 100%) - computed 
-PASS circle(at center) serializes as circle(at 50% 50%) - computed 
-PASS circle(at left top) serializes as circle(at 0% 0%) - computed 
-PASS circle(at left bottom) serializes as circle(at 0% 100%) - computed 
-PASS circle(at left center) serializes as circle(at 0% 50%) - computed 
-PASS circle(at top left) serializes as circle(at 0% 0%) - computed 
-PASS circle(at top right) serializes as circle(at 100% 0%) - computed 
-PASS circle(at top center) serializes as circle(at 50% 0%) - computed 
-PASS circle(at right top) serializes as circle(at 100% 0%) - computed 
-PASS circle(at right bottom) serializes as circle(at 100% 100%) - computed 
-PASS circle(at right center) serializes as circle(at 100% 50%) - computed 
-PASS circle(at bottom left) serializes as circle(at 0% 100%) - computed 
-PASS circle(at bottom right) serializes as circle(at 100% 100%) - computed 
-PASS circle(at bottom center) serializes as circle(at 50% 100%) - computed 
-PASS circle(at center top) serializes as circle(at 50% 0%) - computed 
-PASS circle(at center left) serializes as circle(at 0% 50%) - computed 
-PASS circle(at center right) serializes as circle(at 100% 50%) - computed 
-PASS circle(at center bottom) serializes as circle(at 50% 100%) - computed 
-PASS circle(at center center) serializes as circle(at 50% 50%) - computed 
-PASS circle(at left 50%) serializes as circle(at 0% 50%) - computed 
-PASS circle(at left 50px) serializes as circle(at 0% 50px) - computed 
-PASS circle(at 50% top) serializes as circle(at 50% 0%) - computed 
-PASS circle(at 50px top) serializes as circle(at 50px 0%) - computed 
-PASS circle(at right 80%) serializes as circle(at 100% 80%) - computed 
-PASS circle(at right 80px) serializes as circle(at 100% 80px) - computed 
-PASS circle(at 70% bottom) serializes as circle(at 70% 100%) - computed 
-PASS circle(at 70px bottom) serializes as circle(at 70px 100%) - computed 
-PASS circle(at center 60%) serializes as circle(at 50% 60%) - computed 
-PASS circle(at center 60px) serializes as circle(at 50% 60px) - computed 
-PASS circle(at 60% center) serializes as circle(at 60% 50%) - computed 
-PASS circle(at 60px center) serializes as circle(at 60px 50%) - computed 
+PASS circle(at left 50% top 50%) serializes as circle(at 50% 50%) - inline
+PASS circle(at left 50% top 50px) serializes as circle(at 50% 50px) - inline
+PASS circle(at left 50% bottom 70%) serializes as circle(at 50% 30%) - inline
+PASS circle(at left 50% bottom 70px) serializes as circle(at left 50% bottom 70px) - inline
+PASS circle(at left 50px top 50%) serializes as circle(at 50px 50%) - inline
+PASS circle(at left 50px top 50px) serializes as circle(at 50px 50px) - inline
+PASS circle(at left 50px bottom 70%) serializes as circle(at 50px 30%) - inline
+PASS circle(at left 50px bottom 70px) serializes as circle(at left 50px bottom 70px) - inline
+PASS circle(at top 50% left 50%) serializes as circle(at 50% 50%) - inline
+PASS circle(at top 50% left 50px) serializes as circle(at 50px 50%) - inline
+PASS circle(at top 50% right 80%) serializes as circle(at 20% 50%) - inline
+PASS circle(at top 50% right 80px) serializes as circle(at right 80px top 50%) - inline
+PASS circle(at top 50px left 50%) serializes as circle(at 50% 50px) - inline
+PASS circle(at top 50px left 50px) serializes as circle(at 50px 50px) - inline
+PASS circle(at top 50px right 80%) serializes as circle(at 20% 50px) - inline
+PASS circle(at top 50px right 80px) serializes as circle(at right 80px top 50px) - inline
+PASS circle(at bottom 70% left 50%) serializes as circle(at 50% 30%) - inline
+PASS circle(at bottom 70% left 50px) serializes as circle(at 50px 30%) - inline
+PASS circle(at bottom 70% right 80%) serializes as circle(at 20% 30%) - inline
+PASS circle(at bottom 70% right 80px) serializes as circle(at right 80px top 30%) - inline
+PASS circle(at bottom 70px left 50%) serializes as circle(at left 50% bottom 70px) - inline
+PASS circle(at bottom 70px left 50px) serializes as circle(at left 50px bottom 70px) - inline
+PASS circle(at bottom 70px right 80%) serializes as circle(at left 20% bottom 70px) - inline
+PASS circle(at bottom 70px right 80px) serializes as circle(at right 80px bottom 70px) - inline
+PASS circle(at right 80% top 50%) serializes as circle(at 20% 50%) - inline
+PASS circle(at right 80% top 50px) serializes as circle(at 20% 50px) - inline
+PASS circle(at right 80% bottom 70%) serializes as circle(at 20% 30%) - inline
+PASS circle(at right 80% bottom 70px) serializes as circle(at left 20% bottom 70px) - inline
+PASS circle(at right 80px top 50%) serializes as circle(at right 80px top 50%) - inline
+PASS circle(at right 80px top 50px) serializes as circle(at right 80px top 50px) - inline
+PASS circle(at right 80px bottom 70%) serializes as circle(at right 80px top 30%) - inline
+PASS circle(at right 80px bottom 70px) serializes as circle(at right 80px bottom 70px) - inline
+PASS circle(at 50%) serializes as circle(at 50% 50%) - computed
+PASS circle(at 50px) serializes as circle(at 50px 50%) - computed
+PASS circle(at 50% 50%) serializes as circle(at 50% 50%) - computed
+PASS circle(at 50% 50px) serializes as circle(at 50% 50px) - computed
+PASS circle(at 50px 50%) serializes as circle(at 50px 50%) - computed
+PASS circle(at 50px 50px) serializes as circle(at 50px 50px) - computed
+PASS circle(at left) serializes as circle(at 0% 50%) - computed
+PASS circle(at top) serializes as circle(at 50% 0%) - computed
+PASS circle(at right) serializes as circle(at 100% 50%) - computed
+PASS circle(at bottom) serializes as circle(at 50% 100%) - computed
+PASS circle(at center) serializes as circle(at 50% 50%) - computed
+PASS circle(at left top) serializes as circle(at 0% 0%) - computed
+PASS circle(at left bottom) serializes as circle(at 0% 100%) - computed
+PASS circle(at left center) serializes as circle(at 0% 50%) - computed
+PASS circle(at top left) serializes as circle(at 0% 0%) - computed
+PASS circle(at top right) serializes as circle(at 100% 0%) - computed
+PASS circle(at top center) serializes as circle(at 50% 0%) - computed
+PASS circle(at right top) serializes as circle(at 100% 0%) - computed
+PASS circle(at right bottom) serializes as circle(at 100% 100%) - computed
+PASS circle(at right center) serializes as circle(at 100% 50%) - computed
+PASS circle(at bottom left) serializes as circle(at 0% 100%) - computed
+PASS circle(at bottom right) serializes as circle(at 100% 100%) - computed
+PASS circle(at bottom center) serializes as circle(at 50% 100%) - computed
+PASS circle(at center top) serializes as circle(at 50% 0%) - computed
+PASS circle(at center left) serializes as circle(at 0% 50%) - computed
+PASS circle(at center right) serializes as circle(at 100% 50%) - computed
+PASS circle(at center bottom) serializes as circle(at 50% 100%) - computed
+PASS circle(at center center) serializes as circle(at 50% 50%) - computed
+PASS circle(at left 50%) serializes as circle(at 0% 50%) - computed
+PASS circle(at left 50px) serializes as circle(at 0% 50px) - computed
+PASS circle(at 50% top) serializes as circle(at 50% 0%) - computed
+PASS circle(at 50px top) serializes as circle(at 50px 0%) - computed
+PASS circle(at right 80%) serializes as circle(at 100% 80%) - computed
+PASS circle(at right 80px) serializes as circle(at 100% 80px) - computed
+PASS circle(at 70% bottom) serializes as circle(at 70% 100%) - computed
+PASS circle(at 70px bottom) serializes as circle(at 70px 100%) - computed
+PASS circle(at center 60%) serializes as circle(at 50% 60%) - computed
+PASS circle(at center 60px) serializes as circle(at 50% 60px) - computed
+PASS circle(at 60% center) serializes as circle(at 60% 50%) - computed
+PASS circle(at 60px center) serializes as circle(at 60px 50%) - computed
 FAIL circle(at center top 50%) serializes as circle(at 50% 50%) - computed assert_equals: expected "circle(at 50% 50%)" but got "none"
 FAIL circle(at center top 50px) serializes as circle(at 50% 50px) - computed assert_equals: expected "circle(at 50% 50px)" but got "none"
 FAIL circle(at center left 50%) serializes as circle(at 50% 50%) - computed assert_equals: expected "circle(at 50% 50%)" but got "none"
@@ -207,36 +207,36 @@ FAIL circle(at right 80% bottom) serializes as circle(at 20% 100%) - computed as
 FAIL circle(at right 80px bottom) serializes as circle(at right 80px top 100%) - computed assert_equals: expected "circle(at right 80px top 100%)" but got "none"
 FAIL circle(at right 80% top) serializes as circle(at 20% 0%) - computed assert_equals: expected "circle(at 20% 0%)" but got "none"
 FAIL circle(at right 80px top) serializes as circle(at right 80px top 0%) - computed assert_equals: expected "circle(at right 80px top 0%)" but got "none"
-PASS circle(at left 50% top 50%) serializes as circle(at 50% 50%) - computed 
-PASS circle(at left 50% top 50px) serializes as circle(at 50% 50px) - computed 
-PASS circle(at left 50% bottom 70%) serializes as circle(at 50% 30%) - computed 
-PASS circle(at left 50% bottom 70px) serializes as circle(at left 50% bottom 70px) - computed 
-PASS circle(at left 50px top 50%) serializes as circle(at 50px 50%) - computed 
-PASS circle(at left 50px top 50px) serializes as circle(at 50px 50px) - computed 
-PASS circle(at left 50px bottom 70%) serializes as circle(at 50px 30%) - computed 
-PASS circle(at left 50px bottom 70px) serializes as circle(at left 50px bottom 70px) - computed 
-PASS circle(at top 50% left 50%) serializes as circle(at 50% 50%) - computed 
-PASS circle(at top 50% left 50px) serializes as circle(at 50px 50%) - computed 
-PASS circle(at top 50% right 80%) serializes as circle(at 20% 50%) - computed 
-PASS circle(at top 50% right 80px) serializes as circle(at right 80px top 50%) - computed 
-PASS circle(at top 50px left 50%) serializes as circle(at 50% 50px) - computed 
-PASS circle(at top 50px left 50px) serializes as circle(at 50px 50px) - computed 
-PASS circle(at top 50px right 80%) serializes as circle(at 20% 50px) - computed 
-PASS circle(at top 50px right 80px) serializes as circle(at right 80px top 50px) - computed 
-PASS circle(at bottom 70% left 50%) serializes as circle(at 50% 30%) - computed 
-PASS circle(at bottom 70% left 50px) serializes as circle(at 50px 30%) - computed 
-PASS circle(at bottom 70% right 80%) serializes as circle(at 20% 30%) - computed 
-PASS circle(at bottom 70% right 80px) serializes as circle(at right 80px top 30%) - computed 
-PASS circle(at bottom 70px left 50%) serializes as circle(at left 50% bottom 70px) - computed 
-PASS circle(at bottom 70px left 50px) serializes as circle(at left 50px bottom 70px) - computed 
-PASS circle(at bottom 70px right 80%) serializes as circle(at left 20% bottom 70px) - computed 
-PASS circle(at bottom 70px right 80px) serializes as circle(at right 80px bottom 70px) - computed 
-PASS circle(at right 80% top 50%) serializes as circle(at 20% 50%) - computed 
-PASS circle(at right 80% top 50px) serializes as circle(at 20% 50px) - computed 
-PASS circle(at right 80% bottom 70%) serializes as circle(at 20% 30%) - computed 
-PASS circle(at right 80% bottom 70px) serializes as circle(at left 20% bottom 70px) - computed 
-PASS circle(at right 80px top 50%) serializes as circle(at right 80px top 50%) - computed 
-PASS circle(at right 80px top 50px) serializes as circle(at right 80px top 50px) - computed 
-PASS circle(at right 80px bottom 70%) serializes as circle(at right 80px top 30%) - computed 
-PASS circle(at right 80px bottom 70px) serializes as circle(at right 80px bottom 70px) - computed 
+PASS circle(at left 50% top 50%) serializes as circle(at 50% 50%) - computed
+PASS circle(at left 50% top 50px) serializes as circle(at 50% 50px) - computed
+PASS circle(at left 50% bottom 70%) serializes as circle(at 50% 30%) - computed
+PASS circle(at left 50% bottom 70px) serializes as circle(at left 50% bottom 70px) - computed
+PASS circle(at left 50px top 50%) serializes as circle(at 50px 50%) - computed
+PASS circle(at left 50px top 50px) serializes as circle(at 50px 50px) - computed
+PASS circle(at left 50px bottom 70%) serializes as circle(at 50px 30%) - computed
+PASS circle(at left 50px bottom 70px) serializes as circle(at left 50px bottom 70px) - computed
+PASS circle(at top 50% left 50%) serializes as circle(at 50% 50%) - computed
+PASS circle(at top 50% left 50px) serializes as circle(at 50px 50%) - computed
+PASS circle(at top 50% right 80%) serializes as circle(at 20% 50%) - computed
+PASS circle(at top 50% right 80px) serializes as circle(at right 80px top 50%) - computed
+PASS circle(at top 50px left 50%) serializes as circle(at 50% 50px) - computed
+PASS circle(at top 50px left 50px) serializes as circle(at 50px 50px) - computed
+PASS circle(at top 50px right 80%) serializes as circle(at 20% 50px) - computed
+PASS circle(at top 50px right 80px) serializes as circle(at right 80px top 50px) - computed
+PASS circle(at bottom 70% left 50%) serializes as circle(at 50% 30%) - computed
+PASS circle(at bottom 70% left 50px) serializes as circle(at 50px 30%) - computed
+PASS circle(at bottom 70% right 80%) serializes as circle(at 20% 30%) - computed
+PASS circle(at bottom 70% right 80px) serializes as circle(at right 80px top 30%) - computed
+PASS circle(at bottom 70px left 50%) serializes as circle(at left 50% bottom 70px) - computed
+PASS circle(at bottom 70px left 50px) serializes as circle(at left 50px bottom 70px) - computed
+PASS circle(at bottom 70px right 80%) serializes as circle(at left 20% bottom 70px) - computed
+PASS circle(at bottom 70px right 80px) serializes as circle(at right 80px bottom 70px) - computed
+PASS circle(at right 80% top 50%) serializes as circle(at 20% 50%) - computed
+PASS circle(at right 80% top 50px) serializes as circle(at 20% 50px) - computed
+PASS circle(at right 80% bottom 70%) serializes as circle(at 20% 30%) - computed
+PASS circle(at right 80% bottom 70px) serializes as circle(at left 20% bottom 70px) - computed
+PASS circle(at right 80px top 50%) serializes as circle(at right 80px top 50%) - computed
+PASS circle(at right 80px top 50px) serializes as circle(at right 80px top 50px) - computed
+PASS circle(at right 80px bottom 70%) serializes as circle(at right 80px top 30%) - computed
+PASS circle(at right 80px bottom 70px) serializes as circle(at right 80px bottom 70px) - computed
 

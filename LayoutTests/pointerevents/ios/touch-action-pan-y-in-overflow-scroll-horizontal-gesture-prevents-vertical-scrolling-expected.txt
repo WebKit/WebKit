@@ -1,3 +1,3 @@
 
-PASS Testing that panning in the x-axis first on an element with touch-action: pan-y prevents future vertical scrolling within an 'overflow: scroll' element. 
+PASS Testing that panning in the x-axis first on an element with touch-action: pan-y prevents future vertical scrolling within an 'overflow: scroll' element.
 

@@ -9,7 +9,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 1. First line
 second line
-2. Long long long long long long long long long long long long long long long long long long long long long long 
+2. Long long long long long long long long long long long long long long long long long long long long long long
 long long long long long long long long long long long long long
 PASS successfullyParsed is true
 

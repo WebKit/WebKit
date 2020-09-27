@@ -1,5 +1,5 @@
 
-PASS makeArrayRefFromArrayRef 
-PASS makeArrayRefFromLocal 
-PASS makeArrayRefFromPointer 
+PASS makeArrayRefFromArrayRef
+PASS makeArrayRefFromLocal
+PASS makeArrayRefFromPointer
 

@@ -2,20 +2,20 @@ Verify limits on the lengths of attrib locations.
 Test attrib location underneath the length limit
 PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
 PASS attrib location should not be -1
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 Test attrib location exactly at the length limit
 PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
 PASS attrib location should not be -1
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 Test attrib location over the length limit
 Shader compilation should fail
 PASS wtu.loadShaderFromScript(gl, "badVertexShader", gl.VERTEX_SHADER, function (err) {}) is null
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
 Attempt to bind too-long attrib location should produce error
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: INVALID_VALUE :
 Attempt to fetch too-long attrib location should produce error
 PASS gl.getAttribLocation(program, "vPosition01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567") is -1
-PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: INVALID_VALUE :
 PASS successfullyParsed is true
 
 TEST COMPLETE

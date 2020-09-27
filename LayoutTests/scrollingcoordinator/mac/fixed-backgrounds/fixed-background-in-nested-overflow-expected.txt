@@ -7,7 +7,7 @@ Fixed background
     (scrollable area size width=800 height=600)
     (total content size width=800 height=600)
     (last committed scroll position (0,0))
-    (scrollable area parameters 
+    (scrollable area parameters
       (horizontal scroll elasticity 2)
       (vertical scroll elasticity 2)
       (horizontal scrollbar mode 0)
@@ -21,7 +21,7 @@ Fixed background
       (scrollable area size width=405 height=305)
       (total content size width=405 height=1020)
       (last committed scroll position (0,0))
-      (scrollable area parameters 
+      (scrollable area parameters
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
         (horizontal scrollbar mode 0)
@@ -32,7 +32,7 @@ Fixed background
         (scrollable area size width=355 height=305)
         (total content size width=410 height=1020)
         (last committed scroll position (0,0))
-        (scrollable area parameters 
+        (scrollable area parameters
           (horizontal scroll elasticity 0)
           (vertical scroll elasticity 0)
           (horizontal scrollbar mode 0)

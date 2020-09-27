@@ -387,16 +387,16 @@ Exception
 
 
 Unmodified Selection
-Selection : 
-[Selection] : 
-String(Selection) : 
-String([Selection]) : 
+Selection :
+[Selection] :
+String(Selection) :
+String([Selection]) :
 Selection.toString : function toString() { [native code] }
 TypeError: Can only call Selection.toString on instances of Selection
-Selection.toString() : 
-[Selection].toString() : 
-Selection.valueOf() : 
-[Selection].valueOf() : 
+Selection.toString() :
+[Selection].toString() :
+Selection.valueOf() :
+[Selection].valueOf() :
 
 Selection with modified toString and valueOf
 Selection : valueOf

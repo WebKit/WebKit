@@ -6,874 +6,874 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 a[href]
       AXRole: AXLink
-      
+
 a:not([href])
-      AXRole: 
-      
+      AXRole:
+
 abbr:not([title])
-      AXRole: 
-      
+      AXRole:
+
 abbr[title]
       AXRole: AXStatic
-      
+
 address
       AXRole: AXGroup
-      
+
 article
       AXRole: AXArticle
-      
+
 aside
       AXRole: AXLandmarkComplementary
-      
+
 audio
-      AXRole: 
-      
+      AXRole:
+
 b
-      AXRole: 
-      
+      AXRole:
+
 bdo
-      AXRole: 
-      
+      AXRole:
+
 blockquote
       AXRole: AXBlockquote
-      
+
 button
       AXRole: AXButton
-      
+
 canvas
-      AXRole: 
-      
+      AXRole:
+
 cite
       AXRole: AXStatic
-      
+
 code
       AXRole: AXStatic
-      
+
 del:not([datetime])
       AXRole: AXDeletion
-      
+
 del[datetime]
       AXRole: AXDeletion
-      
+
 dfn
       AXRole: AXDefinition
-      
+
 dl
       AXRole: AXDescriptionList
-      
+
 dt
       AXRole: AXDescriptionTerm
-      
+
 dd
       AXRole: AXDescriptionValue
-      
+
 div
       AXRole: AXSection
-      
+
 em
-      AXRole: 
-      
+      AXRole:
+
 fieldset
       AXRole: AXGroup
-      
+
 legend
       AXRole: AXLabel
-      
+
 figure
       AXRole: AXGroup
-      
+
 footer
       AXRole: AXLandmarkContentInfo
-      
+
 form
       AXRole: AXForm
-      
+
 header
       AXRole: AXLandmarkBanner
-      
+
 hgroup
       AXRole: AXGroup
-      
+
 h1
       AXRole: AXHeading
-      
+
 h2
       AXRole: AXHeading
-      
+
 h3
       AXRole: AXHeading
-      
+
 h4
       AXRole: AXHeading
-      
+
 h5
       AXRole: AXHeading
-      
+
 h6
       AXRole: AXHeading
-      
+
 hr
       AXRole: AXSeparator
-      
+
 i
-      AXRole: 
-      
+      AXRole:
+
 img:not([src]):not([alt])
-      AXRole: 
-      
+      AXRole:
+
 img[alt='']
-      AXRole: 
-      
+      AXRole:
+
 img[src]:not([alt])
-      AXRole: 
-      
+      AXRole:
+
 img[alt='X']
       AXRole: AXImage
-      
+
 img[usemap][alt='X']
       AXRole: AXImageMap
-      
+
 img[usemap]:not([alt])
-      AXRole: 
-      
+      AXRole:
+
 input[type='button']
       AXRole: AXButton
-      
+
 input[type='color']
       AXRole: AXButton
-      
+
 input[type='checkbox']
       AXRole: AXCheckBox
-      
+
 input[type='date']
       AXRole: AXTextField
-      
+
 input[type='datetime']
       AXRole: AXTextField
-      
+
 input[type='datetime-local']
       AXRole: AXTextField
-      
+
 input[type='email']
       AXRole: AXTextField
-      
+
 input[type='file']
       AXRole: AXButton
-      
+
 input[type='hidden']
-      AXRole: 
-      
+      AXRole:
+
 input[type='image']
       AXRole: AXButton
-      
+
 input[type='month']
       AXRole: AXTextField
-      
+
 input[type='number']
       AXRole: AXTextField
-      
+
 input[type='password']
       AXRole: AXPasswordField
-      
+
 input[type='radio']
       AXRole: AXRadioButton
-      
+
 input[type='range']
       AXRole: AXSlider
-      
+
 input[type='reset']
       AXRole: AXButton
-      
+
 input[type='search']
       AXRole: AXTextField
-      
+
 input[type='submit']
       AXRole: AXButton
-      
+
 input[type='tel']
       AXRole: AXTextField
-      
+
 input[type='text']
       AXRole: AXTextField
-      
+
 input[type='time']
       AXRole: AXTextField
-      
+
 input[type='url']
       AXRole: AXTextField
-      
+
 input[type='week']
       AXRole: AXTextField
-      
+
 ins:not([datetime])
       AXRole: AXInsertion
-      
+
 ins[datetime]
       AXRole: AXInsertion
-      
+
 map
-      AXRole: 
-      
+      AXRole:
+
 area
-      AXRole: 
-      
+      AXRole:
+
 mark
-      AXRole: 
-      
+      AXRole:
+
 math
       AXRole: AXMath
-      
+
 merror
       AXRole: AXGroup
-      
+
 mfenced
       AXRole: AXGroup
-      
+
 mfrac
       AXRole: AXMathFraction
-      
+
 mi
       AXRole: AXStatic
-      
+
 mn
       AXRole: AXStatic
-      
+
 mo
       AXRole: AXStatic
-      
+
 mroot
       AXRole: AXMathRoot
-      
+
 msqrt
       AXRole: AXMathRoot
-      
+
 mrow
       AXRole: AXGroup
-      
+
 ms
       AXRole: AXStatic
-      
+
 msub
       AXRole: AXSection
-      
+
 mi
       AXRole: AXStatic
-      
+
 mi
       AXRole: AXSubscript
-      
+
 msup
       AXRole: AXSection
-      
+
 mi
       AXRole: AXStatic
-      
+
 mi
       AXRole: AXSuperscript
-      
+
 msubsup
       AXRole: AXSection
-      
+
 mi
       AXRole: AXStatic
-      
+
 mi
       AXRole: AXSubscript
-      
+
 mi
       AXRole: AXSuperscript
-      
+
 mmultiscripts
       AXRole: AXSection
-      
+
 mi
       AXRole: AXStatic
-      
+
 mi
       AXRole: AXSubscript
-      
+
 mi
       AXRole: AXSuperscript
-      
+
 mprescripts
-      AXRole: 
-      
+      AXRole:
+
 mi
       AXRole: AXSubscript
-      
+
 mi
       AXRole: AXSuperscript
-      
+
 mtext
       AXRole: AXStatic
-      
+
 mtable
       AXRole: AXTable
-      
+
 mlabeledtr
       AXRole: AXRow
-      
+
 mtd
       AXRole: AXCell
-      
+
 mtr
       AXRole: AXRow
-      
+
 mtd
       AXRole: AXCell
-      
+
 nav
       AXRole: AXLandmarkNavigation
-      
+
 ol
       AXRole: AXList
-      
+
 li
       AXRole: AXListItem
-      
+
 p
       AXRole: AXParagraph
-      
+
 pre
       AXRole: AXSection
-      
+
 progress
       AXRole: AXProgressIndicator
-      
+
 q
-      AXRole: 
-      
+      AXRole:
+
 s
-      AXRole: 
-      
+      AXRole:
+
 samp
       AXRole: AXStatic
-      
+
 section:not([aria-label]:not([aria-labelledby])
       AXRole: AXSection
-      
+
 section[aria-label]
       AXRole: AXLandmarkRegion
-      
+
 section[aria-labelledby]
       AXRole: AXLandmarkRegion
-      
+
 select:not([multiple])
       AXRole: AXComboBox
-      
+
 option
       AXRole: AXMenuItem
-      
+
 optgroup
-      AXRole: 
-      
+      AXRole:
+
 select[multiple]
       AXRole: AXListBox
-      
+
 option
       AXRole: AXListItem
-      
+
 optgroup
       AXRole: AXListItem
-      
+
 small
-      AXRole: 
-      
+      AXRole:
+
 span:not([onclick])
-      AXRole: 
-      
+      AXRole:
+
 span[onclick]
       AXRole: AXStatic
-      
+
 strong
-      AXRole: 
-      
+      AXRole:
+
 sub
       AXRole: AXSubscript
-      
+
 sup
       AXRole: AXSuperscript
-      
+
 svg
-      AXRole: 
-      
+      AXRole:
+
 table
       AXRole: AXTable
-      
+
 caption
       AXRole: AXCaption
-      
+
 thead
-      AXRole: 
-      
+      AXRole:
+
 tr
       AXRole: AXRow
-      
+
 th
       AXRole: AXColumnHeader
-      
+
 tbody
-      AXRole: 
-      
+      AXRole:
+
 tr
       AXRole: AXRow
-      
+
 td
       AXRole: AXCell
-      
+
 tfoot
-      AXRole: 
-      
+      AXRole:
+
 tr
       AXRole: AXRow
-      
+
 th
       AXRole: AXRowHeader
-      
+
 textarea
       AXRole: AXTextField
-      
+
 time:not([datetime])
       AXRole: AXStatic
-      
+
 time[datetime]
       AXRole: AXStatic
-      
+
 ul
       AXRole: AXList
-      
+
 li
       AXRole: AXListItem
-      
+
 var
       AXRole: AXStatic
-      
+
 wbr
-      AXRole: 
-      
+      AXRole:
+
 div[role=command]
       AXRole: AXSection
-      
+
 div[role=composite]
       AXRole: AXSection
-      
+
 div[role=input]
       AXRole: AXSection
-      
+
 div[role=landmark]
       AXRole: AXSection
-      
+
 div[role=range]
       AXRole: AXSection
-      
+
 div[role=roletype]
       AXRole: AXSection
-      
+
 div[role=section]
       AXRole: AXSection
-      
+
 div[role=sectionhead]
       AXRole: AXSection
-      
+
 div[role=select]
       AXRole: AXSection
-      
+
 div[role=structure]
       AXRole: AXSection
-      
+
 div[role=widget]
       AXRole: AXSection
-      
+
 div[role=window]
       AXRole: AXSection
-      
+
 div[role=alert]
       AXRole: AXNotification
-      
+
 div[role=alertdialog]
       AXRole: AXAlert
-      
+
 div[role=application]
       AXRole: AXEmbedded
-      
+
 div[role=article]
       AXRole: AXArticle
-      
+
 div[role=banner]
       AXRole: AXLandmarkBanner
-      
+
 div[role=blockquote]
       AXRole: AXBlockquote
-      
+
 div[role=button]
       AXRole: AXButton
-      
+
 div[role=caption]
       AXRole: AXCaption
-      
+
 div[role=checkbox]
       AXRole: AXCheckBox
-      
+
 div[role=combobox]
       AXRole: AXComboBox
-      
+
 div[role=complementary]
       AXRole: AXLandmarkComplementary
-      
+
 div[role=contentinfo]
       AXRole: AXLandmarkContentInfo
-      
+
 div[role=definition]
       AXRole: AXDefinition
-      
+
 div[role=deletion]
       AXRole: AXDeletion
-      
+
 div[role=dialog]
       AXRole: AXDialog
-      
+
 div[role=directory]
       AXRole: AXList
-      
+
 div[role=doc-abstract]
       AXRole: AXSection
-      
+
 div[role=doc-acknowledgments]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-afterword]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-appendix]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-backlink]
       AXRole: AXLink
-      
+
 div[role=doc-biblioentry]
       AXRole: AXListItem
-      
+
 div[role=doc-bibliography]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-biblioref]
       AXRole: AXLink
-      
+
 div[role=doc-chapter]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-colophon]
       AXRole: AXSection
-      
+
 div[role=doc-conclusion]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-cover]
       AXRole: AXImage
-      
+
 div[role=doc-credit]
       AXRole: AXSection
-      
+
 div[role=doc-credits]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-dedication]
       AXRole: AXSection
-      
+
 div[role=doc-endnote]
       AXRole: AXListItem
-      
+
 div[role=doc-endnotes]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-epigraph]
       AXRole: AXSection
-      
+
 div[role=doc-epilogue]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-errata]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-example]
       AXRole: AXSection
-      
+
 div[role=doc-footnote]
       AXRole: AXFootnote
-      
+
 div[role=doc-foreword]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-glossary]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-glossref]
       AXRole: AXLink
-      
+
 div[role=doc-index]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-introduction]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-noteref]
       AXRole: AXLink
-      
+
 div[role=doc-notice]
       AXRole: AXComment
-      
+
 div[role=doc-pagebreak]
       AXRole: AXSeparator
-      
+
 div[role=doc-pagelist]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-part]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-preface]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-prologue]
       AXRole: AXLandmarkRegion
-      
+
 div[role=doc-pullquote]
       AXRole: AXSection
-      
+
 div[role=doc-qna]
       AXRole: AXSection
-      
+
 div[role=doc-subtitle]
       AXRole: AXHeading
-      
+
 div[role=doc-tip]
       AXRole: AXComment
-      
+
 div[role=doc-toc]
       AXRole: AXLandmarkRegion
-      
+
 div[role=document]
       AXRole: AXDocument
-      
+
 div[role=figure]
       AXRole: AXGroup
-      
+
 div[role=form]
       AXRole: AXLandmarkForm
-      
+
 div[role=graphics-document]
       AXRole: AXDocument
-      
+
 div[role=graphics-object]
       AXRole: AXGroup
-      
+
 div[role=graphics-symbol]
       AXRole: AXImage
-      
+
 div[role=grid]
       AXRole: AXTable
-      
+
 div[role=rowgroup]
-      AXRole: 
-      
+      AXRole:
+
 div[role=row]
       AXRole: AXRow
-      
+
 div[role=rowheader]
       AXRole: AXRowHeader
-      
+
 div[role=columnheader]
       AXRole: AXColumnHeader
-      
+
 div[role=gridcell]
       AXRole: AXCell
-      
+
 div[role=feed]
       AXRole: AXGroup
-      
+
 div[role=group]
       AXRole: AXGroup
-      
+
 div[role=heading]
       AXRole: AXHeading
-      
+
 div[role=img]
       AXRole: AXImage
-      
+
 div[role=insertion]
       AXRole: AXInsertion
-      
+
 div[role=link]
       AXRole: AXLink
-      
+
 div[role=list]
       AXRole: AXList
-      
+
 div[role=listitem]
       AXRole: AXListItem
-      
+
 div[role=listbox]
       AXRole: AXListBox
-      
+
 div[role=option]
       AXRole: AXListItem
-      
+
 div[role=log]
       AXRole: AXLog
-      
+
 div[role=main]
       AXRole: AXLandmarkMain
-      
+
 div[role=marquee]
       AXRole: AXMarquee
-      
+
 div[role=math]
       AXRole: AXMath
-      
+
 div[role=menu]
       AXRole: AXMenu
-      
+
 div[role=menuitem]
       AXRole: AXMenuItem
-      
+
 div[role=menuitemcheckbox]
       AXRole: AXCheckMenuItem
-      
+
 div[role=menuitemradio]
       AXRole: AXRadioMenuItem
-      
+
 div[role=menubar]
       AXRole: AXMenuBar
-      
+
 div[role=menuitem]
       AXRole: AXMenuItem
-      
+
 div[role=menuitemcheckbox]
       AXRole: AXCheckMenuItem
-      
+
 div[role=menuitemradio]
       AXRole: AXRadioMenuItem
-      
+
 div[role=meter]
       AXRole: AXLevelIndicator
-      
+
 div[role=navigation]
       AXRole: AXLandmarkNavigation
-      
+
 div[role=note]
       AXRole: AXComment
-      
+
 div[role=paragraph]
       AXRole: AXParagraph
-      
+
 div[role=presentation]
-      AXRole: 
-      
+      AXRole:
+
 div[role=progressbar]
       AXRole: AXProgressIndicator
-      
+
 div[role=radiogroup]
       AXRole: AXGroup
-      
+
 div[role=radio]
       AXRole: AXRadioButton
-      
+
 div[role=region]:not([aria-label]:not([aria-labelledby])
       AXRole: AXSection
-      
+
 div[role=region][aria-label]
       AXRole: AXLandmarkRegion
-      
+
 div[role=region][aria-labelledby]
       AXRole: AXLandmarkRegion
-      
+
 div[role=scrollbar]
       AXRole: AXScrollBar
-      
+
 div[role=search]
       AXRole: AXLandmarkSearch
-      
+
 div[role=searchbox]
       AXRole: AXTextField
-      
+
 div[role=separator]
       AXRole: AXSeparator
-      
+
 div[role=slider]
       AXRole: AXSlider
-      
+
 div[role=spinbutton]
       AXRole: AXSpinButton
-      
+
 div[role=status]
       AXRole: AXStatusBar
-      
+
 div[role=subscript]
       AXRole: AXSubscript
-      
+
 div[role=superscript]
       AXRole: AXSuperscript
-      
+
 div[role=switch]
       AXRole: AXToggleButton
-      
+
 div[role=tablist]
       AXRole: AXTabGroup
-      
+
 div[role=tab]
       AXRole: AXTab
-      
+
 div[role=tabpanel]
       AXRole: AXScrollArea
-      
+
 div[role=term]
       AXRole: AXDescriptionTerm
-      
+
 div[role=textbox]
       AXRole: AXTextField
-      
+
 div[role=time]
       AXRole: AXStatic
-      
+
 div[role=timer]
       AXRole: AXTimer
-      
+
 div[role=toolbar]
       AXRole: AXToolbar
-      
+
 div[role=tooltip]
       AXRole: AXUserInterfaceTooltip
-      
+
 div[role=tree]
       AXRole: AXTree
-      
+
 div[role=treeitem]
       AXRole: AXTreeItem
-      
+
 div[role=group]
-      AXRole: 
-      
+      AXRole:
+
 div[role=treeitem]
       AXRole: AXTreeItem
-      
+
 div[role=treegrid]
       AXRole: AXTreeGrid
-      
+
 div[role=rowgroup]
-      AXRole: 
-      
+      AXRole:
+
 div[role=row]
       AXRole: AXRow
-      
+
 div[role=rowheader]
       AXRole: AXRowHeader
-      
+
 div[role=columnheader]
       AXRole: AXColumnHeader
-      
+
 div[role=gridcell]
       AXRole: AXCell
-      
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

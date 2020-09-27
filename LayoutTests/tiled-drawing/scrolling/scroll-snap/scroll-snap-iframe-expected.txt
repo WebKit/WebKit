@@ -1,5 +1,5 @@
 Tests that the scroll-snap feature works properly in iframes.
- 
+
 Testing scroll-snap glide for horizontalTarget:
 PASS div scrolled to next window.
 Testing scroll-snap snap for horizontalTarget:

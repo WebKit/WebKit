@@ -1,5 +1,5 @@
 This tests indenting "three" then executes the undo command after changing the editability to false. You should see one, two numbered 1 through 2 then three and four as a sublist starting with number 1. The undo should have no effect.
-Bugzilla bug 
+Bugzilla bug
 Radar bug
 
 one

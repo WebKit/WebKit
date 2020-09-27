@@ -1,4 +1,4 @@
-           
+
 PASS - "backgroundImage" property for "brightness" element at 1s saw something close to: filter(url(image.svg), brightness(0.5))
 PASS - "backgroundImage" property for "blur" element at 1s saw something close to: filter(url(image.svg), blur(5px))
 PASS - "backgroundImage" property for "grayscale" element at 1s saw something close to: filter(url(image.svg), grayscale(0.5))

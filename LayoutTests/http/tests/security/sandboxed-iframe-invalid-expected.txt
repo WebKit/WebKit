@@ -2,4 +2,4 @@ CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allowScripts' is 
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allowScripts', 'allowSameOrigin', 'allowFoobarbloop' are invalid sandbox flags.
 Test that an iframe with invalid sandbox flags generates a relevant warning.
 
- 
+

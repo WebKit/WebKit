@@ -28,4 +28,4 @@ PASS ctx.stroke(new Date()) threw exception TypeError: Argument 1 ('path') to Ca
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

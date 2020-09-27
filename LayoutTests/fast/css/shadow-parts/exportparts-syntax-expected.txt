@@ -1,8 +1,8 @@
 The following text should be green:
 
-PASS Shortcut notation 
-PASS Full notation 
-PASS Skip bad entries 
-PASS Mapping multiple parts to a single export 
-PASS Multiple exports for a single part 
+PASS Shortcut notation
+PASS Full notation
+PASS Skip bad entries
+PASS Mapping multiple parts to a single export
+PASS Multiple exports for a single part
 

@@ -14,4 +14,4 @@ TEST COMPLETE
 This test passes if the image below is a 200px green square when the deviceScaleFactor is 1.
 It tests that the 1x resource is ignored since it contains invalid descriptors.
 The 2x resource has an intrinsic width of 200px, since it's a 400px wide image at 2x DPR.
-         
+

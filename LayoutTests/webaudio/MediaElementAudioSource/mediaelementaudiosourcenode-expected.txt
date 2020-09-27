@@ -1,17 +1,17 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Basic tests for MediaElementAudioSourceNode API 
-PASS   audioNode.numberOfInputs is equal to 0. 
-PASS   audioNode.numberOfOutputs is equal to 1. 
-PASS   audioNode.connect(0, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode". 
-PASS   audioNode.connect(context.destination, 5, 0) threw IndexSizeError: "Output index exceeds number of outputs". 
-PASS   audioNode.connect(context.destination, 0, 5) threw IndexSizeError: "Input index exceeds number of inputs". 
-PASS   mediaSource.mediaElement instanceof HTMLMediaElement is true. 
-PASS   mediaSource.mediaElement is same object is true. 
-PASS   audioNode.connect(context.destination, 0, 0) did not throw an exception. 
-PASS   context.createMediaElementSource(audioElement) threw InvalidStateError: "Media element is already associated with an audio source node". 
-PASS < [test] All assertions passed. (total 9 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Basic tests for MediaElementAudioSourceNode API
+PASS   audioNode.numberOfInputs is equal to 0.
+PASS   audioNode.numberOfOutputs is equal to 1.
+PASS   audioNode.connect(0, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode".
+PASS   audioNode.connect(context.destination, 5, 0) threw IndexSizeError: "Output index exceeds number of outputs".
+PASS   audioNode.connect(context.destination, 0, 5) threw IndexSizeError: "Input index exceeds number of inputs".
+PASS   mediaSource.mediaElement instanceof HTMLMediaElement is true.
+PASS   mediaSource.mediaElement is same object is true.
+PASS   audioNode.connect(context.destination, 0, 0) did not throw an exception.
+PASS   context.createMediaElementSource(audioElement) threw InvalidStateError: "Media element is already associated with an audio source node".
+PASS < [test] All assertions passed. (total 9 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

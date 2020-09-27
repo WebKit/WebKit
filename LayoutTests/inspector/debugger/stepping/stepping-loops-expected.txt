@@ -7,7 +7,7 @@ EXPRESSION: setTimeout(entryWhile)
 STEPS: over, over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryWhile:13:5
-      9    
+      9
      10    function entryWhile() {
      11        let i = 2;
  ->  12        |debugger;
@@ -23,7 +23,7 @@ PAUSE AT entryWhile:14:12
  ->  13        while (|i > 0)
      14            --i;
      15    }
-     16    
+     16
 
 ACTION: step-over
 PAUSE AT entryWhile:15:9
@@ -32,7 +32,7 @@ PAUSE AT entryWhile:15:9
      13        while (i > 0)
  ->  14            |--i;
      15    }
-     16    
+     16
      17    function entryDoWhile() {
 
 ACTION: step-over
@@ -43,7 +43,7 @@ PAUSE AT entryWhile:14:12
  ->  13        while (|i > 0)
      14            --i;
      15    }
-     16    
+     16
 
 ACTION: step-over
 PAUSE AT entryWhile:15:9
@@ -52,7 +52,7 @@ PAUSE AT entryWhile:15:9
      13        while (i > 0)
  ->  14            |--i;
      15    }
-     16    
+     16
      17    function entryDoWhile() {
 
 ACTION: step-over
@@ -63,7 +63,7 @@ PAUSE AT entryWhile:14:12
  ->  13        while (|i > 0)
      14            --i;
      15    }
-     16    
+     16
 
 ACTION: step-over
 PAUSE AT entryWhile:16:2
@@ -71,7 +71,7 @@ PAUSE AT entryWhile:16:2
      13        while (i > 0)
      14            --i;
  ->  15    }|
-     16    
+     16
      17    function entryDoWhile() {
      18        let i = 2;
 
@@ -84,7 +84,7 @@ EXPRESSION: setTimeout(entryDoWhile)
 STEPS: over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryDoWhile:20:5
-     16    
+     16
      17    function entryDoWhile() {
      18        let i = 2;
  ->  19        |debugger;
@@ -100,7 +100,7 @@ PAUSE AT entryDoWhile:22:9
  ->  21            |--i;
      22        } while (i > 0);
      23    }
-     24    
+     24
 
 ACTION: step-over
 PAUSE AT entryDoWhile:23:14
@@ -109,7 +109,7 @@ PAUSE AT entryDoWhile:23:14
      21            --i;
  ->  22        } while (|i > 0);
      23    }
-     24    
+     24
      25    function entryTraditionalFor() {
 
 ACTION: step-over
@@ -120,7 +120,7 @@ PAUSE AT entryDoWhile:22:9
  ->  21            |--i;
      22        } while (i > 0);
      23    }
-     24    
+     24
 
 ACTION: step-over
 PAUSE AT entryDoWhile:23:14
@@ -129,7 +129,7 @@ PAUSE AT entryDoWhile:23:14
      21            --i;
  ->  22        } while (|i > 0);
      23    }
-     24    
+     24
      25    function entryTraditionalFor() {
 
 ACTION: step-over
@@ -138,7 +138,7 @@ PAUSE AT entryDoWhile:24:2
      21            --i;
      22        } while (i > 0);
  ->  23    }|
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
 
@@ -152,7 +152,7 @@ STEPS: over, over, over, over, over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTraditionalFor:27:5
      23    }
-     24    
+     24
      25    function entryTraditionalFor() {
  ->  26        |debugger;
      27        for (let i = 0; i < 2; ++i)
@@ -161,23 +161,23 @@ PAUSE AT entryTraditionalFor:27:5
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:10
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (|let i = 0; i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:21
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; |i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:29:9
@@ -186,28 +186,28 @@ PAUSE AT entryTraditionalFor:29:9
      27        for (let i = 0; i < 2; ++i)
  ->  28            |a();
      29    }
-     30    
+     30
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:28
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:21
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; |i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:29:9
@@ -216,28 +216,28 @@ PAUSE AT entryTraditionalFor:29:9
      27        for (let i = 0; i < 2; ++i)
  ->  28            |a();
      29    }
-     30    
+     30
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:28
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:21
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; |i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:30:2
@@ -245,7 +245,7 @@ PAUSE AT entryTraditionalFor:30:2
      27        for (let i = 0; i < 2; ++i)
      28            a();
  ->  29    }|
-     30    
+     30
      31    function entryTraditionalForNoInit() {
      32        let i = 0;
 
@@ -259,7 +259,7 @@ STEPS: over, in, in, over, in, in, over, in, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTraditionalFor:27:5
      23    }
-     24    
+     24
      25    function entryTraditionalFor() {
  ->  26        |debugger;
      27        for (let i = 0; i < 2; ++i)
@@ -268,23 +268,23 @@ PAUSE AT entryTraditionalFor:27:5
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:10
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (|let i = 0; i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-in
 PAUSE AT entryTraditionalFor:28:21
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; |i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-in
 PAUSE AT entryTraditionalFor:29:9
@@ -293,28 +293,28 @@ PAUSE AT entryTraditionalFor:29:9
      27        for (let i = 0; i < 2; ++i)
  ->  28            |a();
      29    }
-     30    
+     30
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:28
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-in
 PAUSE AT entryTraditionalFor:28:21
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; |i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-in
 PAUSE AT entryTraditionalFor:29:9
@@ -323,28 +323,28 @@ PAUSE AT entryTraditionalFor:29:9
      27        for (let i = 0; i < 2; ++i)
  ->  28            |a();
      29    }
-     30    
+     30
      31    function entryTraditionalForNoInit() {
 
 ACTION: step-over
 PAUSE AT entryTraditionalFor:28:28
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; i < 2; |++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-in
 PAUSE AT entryTraditionalFor:28:21
-     24    
+     24
      25    function entryTraditionalFor() {
      26        debugger;
  ->  27        for (let i = 0; |i < 2; ++i)
      28            a();
      29    }
-     30    
+     30
 
 ACTION: step-in
 PAUSE AT entryTraditionalFor:30:2
@@ -352,7 +352,7 @@ PAUSE AT entryTraditionalFor:30:2
      27        for (let i = 0; i < 2; ++i)
      28            a();
  ->  29    }|
-     30    
+     30
      31    function entryTraditionalForNoInit() {
      32        let i = 0;
 
@@ -365,7 +365,7 @@ EXPRESSION: setTimeout(entryTraditionalForNoInit)
 STEPS: over, in, over, in, in, over, in, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTraditionalForNoInit:34:5
-     30    
+     30
      31    function entryTraditionalForNoInit() {
      32        let i = 0;
  ->  33        |debugger;
@@ -381,7 +381,7 @@ PAUSE AT entryTraditionalForNoInit:35:12
  ->  34        for (; |i < 2; ++i)
      35            a();
      36    }
-     37    
+     37
 
 ACTION: step-in
 PAUSE AT entryTraditionalForNoInit:36:9
@@ -390,7 +390,7 @@ PAUSE AT entryTraditionalForNoInit:36:9
      34        for (; i < 2; ++i)
  ->  35            |a();
      36    }
-     37    
+     37
      38    function entryForIn() {
 
 ACTION: step-over
@@ -401,7 +401,7 @@ PAUSE AT entryTraditionalForNoInit:35:19
  ->  34        for (; i < 2; |++i)
      35            a();
      36    }
-     37    
+     37
 
 ACTION: step-in
 PAUSE AT entryTraditionalForNoInit:35:12
@@ -411,7 +411,7 @@ PAUSE AT entryTraditionalForNoInit:35:12
  ->  34        for (; |i < 2; ++i)
      35            a();
      36    }
-     37    
+     37
 
 ACTION: step-in
 PAUSE AT entryTraditionalForNoInit:36:9
@@ -420,7 +420,7 @@ PAUSE AT entryTraditionalForNoInit:36:9
      34        for (; i < 2; ++i)
  ->  35            |a();
      36    }
-     37    
+     37
      38    function entryForIn() {
 
 ACTION: step-over
@@ -431,7 +431,7 @@ PAUSE AT entryTraditionalForNoInit:35:19
  ->  34        for (; i < 2; |++i)
      35            a();
      36    }
-     37    
+     37
 
 ACTION: step-in
 PAUSE AT entryTraditionalForNoInit:35:12
@@ -441,7 +441,7 @@ PAUSE AT entryTraditionalForNoInit:35:12
  ->  34        for (; |i < 2; ++i)
      35            a();
      36    }
-     37    
+     37
 
 ACTION: step-in
 PAUSE AT entryTraditionalForNoInit:37:2
@@ -449,7 +449,7 @@ PAUSE AT entryTraditionalForNoInit:37:2
      34        for (; i < 2; ++i)
      35            a();
  ->  36    }|
-     37    
+     37
      38    function entryForIn() {
      39        let o = {key1: 1, key2: 2};
 
@@ -462,7 +462,7 @@ EXPRESSION: setTimeout(entryForIn)
 STEPS: over, over, over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryForIn:41:5
-     37    
+     37
      38    function entryForIn() {
      39        let o = {key1: 1, key2: 2};
  ->  40        |debugger;
@@ -478,7 +478,7 @@ PAUSE AT entryForIn:42:26
  ->  41        for (let property in |o)
      42            a();
      43    }
-     44    
+     44
 
 ACTION: step-over
 PAUSE AT entryForIn:42:10
@@ -488,7 +488,7 @@ PAUSE AT entryForIn:42:10
  ->  41        for (|let property in o)
      42            a();
      43    }
-     44    
+     44
 
 ACTION: step-over
 PAUSE AT entryForIn:43:9
@@ -497,7 +497,7 @@ PAUSE AT entryForIn:43:9
      41        for (let property in o)
  ->  42            |a();
      43    }
-     44    
+     44
      45    function entryForOf() {
 
 ACTION: step-over
@@ -508,7 +508,7 @@ PAUSE AT entryForIn:42:10
  ->  41        for (|let property in o)
      42            a();
      43    }
-     44    
+     44
 
 ACTION: step-over
 PAUSE AT entryForIn:43:9
@@ -517,7 +517,7 @@ PAUSE AT entryForIn:43:9
      41        for (let property in o)
  ->  42            |a();
      43    }
-     44    
+     44
      45    function entryForOf() {
 
 ACTION: step-over
@@ -528,7 +528,7 @@ PAUSE AT entryForIn:42:10
  ->  41        for (|let property in o)
      42            a();
      43    }
-     44    
+     44
 
 ACTION: step-over
 PAUSE AT entryForIn:44:2
@@ -536,7 +536,7 @@ PAUSE AT entryForIn:44:2
      41        for (let property in o)
      42            a();
  ->  43    }|
-     44    
+     44
      45    function entryForOf() {
      46        let arr = [1, 2];
 
@@ -549,7 +549,7 @@ EXPRESSION: setTimeout(entryForOf)
 STEPS: over, over, over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryForOf:48:5
-     44    
+     44
      45    function entryForOf() {
      46        let arr = [1, 2];
  ->  47        |debugger;
@@ -565,7 +565,7 @@ PAUSE AT entryForOf:49:23
  ->  48        for (let value of |arr)
      49            a();
      50    }
-     51    
+     51
 
 ACTION: step-over
 PAUSE AT entryForOf:49:10
@@ -575,7 +575,7 @@ PAUSE AT entryForOf:49:10
  ->  48        for (|let value of arr)
      49            a();
      50    }
-     51    
+     51
 
 ACTION: step-over
 PAUSE AT entryForOf:50:9
@@ -584,7 +584,7 @@ PAUSE AT entryForOf:50:9
      48        for (let value of arr)
  ->  49            |a();
      50    }
-     51    
+     51
      52    function entryWhileBreakContinue() {
 
 ACTION: step-over
@@ -595,7 +595,7 @@ PAUSE AT entryForOf:49:10
  ->  48        for (|let value of arr)
      49            a();
      50    }
-     51    
+     51
 
 ACTION: step-over
 PAUSE AT entryForOf:50:9
@@ -604,7 +604,7 @@ PAUSE AT entryForOf:50:9
      48        for (let value of arr)
  ->  49            |a();
      50    }
-     51    
+     51
      52    function entryWhileBreakContinue() {
 
 ACTION: step-over
@@ -615,7 +615,7 @@ PAUSE AT entryForOf:49:10
  ->  48        for (|let value of arr)
      49            a();
      50    }
-     51    
+     51
 
 ACTION: step-over
 PAUSE AT entryForOf:51:2
@@ -623,7 +623,7 @@ PAUSE AT entryForOf:51:2
      48        for (let value of arr)
      49            a();
  ->  50    }|
-     51    
+     51
      52    function entryWhileBreakContinue() {
      53        let i = 0;
 
@@ -636,7 +636,7 @@ EXPRESSION: setTimeout(entryWhileBreakContinue)
 STEPS: over, over, over, over, over, over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryWhileBreakContinue:55:5
-     51    
+     51
      52    function entryWhileBreakContinue() {
      53        let i = 0;
  ->  54        |debugger;
@@ -732,7 +732,7 @@ PAUSE AT entryWhileBreakContinue:61:13
  ->  60                |break;
      61        }
      62    }
-     63    
+     63
 
 ACTION: step-over
 PAUSE AT entryWhileBreakContinue:63:2
@@ -740,7 +740,7 @@ PAUSE AT entryWhileBreakContinue:63:2
      60                break;
      61        }
  ->  62    }|
-     63    
+     63
      64    function entryForBreakContinue() {
      65        let i = 0;
 
@@ -753,7 +753,7 @@ EXPRESSION: setTimeout(entryForBreakContinue)
 STEPS: over, over, over, over, over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryForBreakContinue:67:5
-     63    
+     63
      64    function entryForBreakContinue() {
      65        let i = 0;
  ->  66        |debugger;
@@ -829,7 +829,7 @@ PAUSE AT entryForBreakContinue:73:13
  ->  72                |break;
      73        }
      74    }
-     75    
+     75
 
 ACTION: step-over
 PAUSE AT entryForBreakContinue:75:2
@@ -837,7 +837,7 @@ PAUSE AT entryForBreakContinue:75:2
      72                break;
      73        }
  ->  74    }|
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
 
@@ -851,7 +851,7 @@ STEPS: over, next, over, next, over, over, next, over, next, over, over, next, o
 PAUSED (debugger-statement)
 PAUSE AT entryForWithCommas:78:5
      74    }
-     75    
+     75
      76    function entryForWithCommas() {
  ->  77        |debugger;
      78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
@@ -860,43 +860,43 @@ PAUSE AT entryForWithCommas:78:5
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:79:10
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (|let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-next
 PAUSE AT entryForWithCommas:79:21
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, |length = 0; length = 2, i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:79:33
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; |length = 2, i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-next
 PAUSE AT entryForWithCommas:79:45
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, |i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:80:9
@@ -905,48 +905,48 @@ PAUSE AT entryForWithCommas:80:9
      78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
  ->  79            |a();
      80    }
-     81    
+     81
      82    // ---------
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:79:57
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, i < length; |length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-next
 PAUSE AT entryForWithCommas:79:69
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, i < length; length = 1, |++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:79:33
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; |length = 2, i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-next
 PAUSE AT entryForWithCommas:79:45
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, |i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:80:9
@@ -955,48 +955,48 @@ PAUSE AT entryForWithCommas:80:9
      78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
  ->  79            |a();
      80    }
-     81    
+     81
      82    // ---------
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:79:57
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, i < length; |length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-next
 PAUSE AT entryForWithCommas:79:69
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, i < length; length = 1, |++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:79:33
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; |length = 2, i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-next
 PAUSE AT entryForWithCommas:79:45
-     75    
+     75
      76    function entryForWithCommas() {
      77        debugger;
  ->  78        for (let i = 0, length = 0; length = 2, |i < length; length = 1, ++i)
      79            a();
      80    }
-     81    
+     81
 
 ACTION: step-over
 PAUSE AT entryForWithCommas:81:2
@@ -1004,9 +1004,9 @@ PAUSE AT entryForWithCommas:81:2
      78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
      79            a();
  ->  80    }|
-     81    
+     81
      82    // ---------
-     83    
+     83
 
 ACTION: resume
 RESUMED

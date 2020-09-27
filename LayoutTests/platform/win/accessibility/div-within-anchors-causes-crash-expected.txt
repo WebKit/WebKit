@@ -1,24 +1,24 @@
 End of test
 Before:
-AXRole: AXWebArea AXValue: 
+AXRole: AXWebArea AXValue:
     AXRole: AXLink AXValue: about:blank
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: End of test
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: This can cause a crash.
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: On success, you will see a series of "
         AXRole: AXStaticText AXValue: PASS
         AXRole: AXStaticText AXValue: " messages, followed by "
         AXRole: AXStaticText AXValue: TEST COMPLETE
         AXRole: AXStaticText AXValue: ".
 After:
-AXRole: AXWebArea AXValue: 
-    AXRole: AXGroup AXValue: 
+AXRole: AXWebArea AXValue:
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: End of test
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: This can cause a crash.
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: On success, you will see a series of "
         AXRole: AXStaticText AXValue: PASS
         AXRole: AXStaticText AXValue: " messages, followed by "

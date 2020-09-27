@@ -1,10 +1,10 @@
 End of test
 Before:
-AXRole: AXWebArea 
-    AXRole: AXLink AXValue: 
+AXRole: AXWebArea
+    AXRole: AXLink AXValue:
     AXRole: AXSection AXValue: End of test
 After:
-AXRole: AXWebArea 
+AXRole: AXWebArea
     AXRole: AXSection AXValue: End of test
 This can cause a crash.
 

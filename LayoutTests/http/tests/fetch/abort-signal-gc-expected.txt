@@ -1,4 +1,4 @@
 
-PASS GC should collect a signal after its controller 
-PASS GC should collect a signal after its request 
+PASS GC should collect a signal after its controller
+PASS GC should collect a signal after its request
 

@@ -1,5 +1,5 @@
 
-PASS MediaRecorder will fire a dataavailable event which only contains video buffers for a video-only stream when stop() is called 
-PASS MediaRecorder will fire a dataavailable event which only contains audio buffers for a audio-only stream when stop() is called 
-PASS MediaRecorder will fire a dataavailable event which only contains both video and audio buffers when stop() is called 
+PASS MediaRecorder will fire a dataavailable event which only contains video buffers for a video-only stream when stop() is called
+PASS MediaRecorder will fire a dataavailable event which only contains audio buffers for a audio-only stream when stop() is called
+PASS MediaRecorder will fire a dataavailable event which only contains both video and audio buffers when stop() is called
 

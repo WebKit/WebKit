@@ -1,5 +1,5 @@
 fake
- 
+
 fake
 This test validates we don't crash asking for range for bounds when encountering a shadow dom element.
 

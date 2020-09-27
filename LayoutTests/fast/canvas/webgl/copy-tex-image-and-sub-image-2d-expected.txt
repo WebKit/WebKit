@@ -1,34 +1,34 @@
- 
+
 Verify copyTexImage2D and copyTexSubImage2D
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Testing with antialias on
 Testing copyTexImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 Testing copyTexSubImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 Testing with antialias off
 Testing copyTexImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor
 Testing copyTexSubImage2D
-PASS getError was expected value: NO_ERROR : 
-PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR :
+PASS getError was expected value: NO_ERROR :
 PASS pixel is correctColor
 PASS pixel is correctColor
 PASS pixel is correctColor

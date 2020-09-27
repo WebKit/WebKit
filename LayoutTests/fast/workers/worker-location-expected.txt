@@ -6,12 +6,12 @@ location: file:<...>/fast/workers/resources/worker-common.js
 location.href: file:<...>/fast/workers/resources/worker-common.js
 location.href === location.toString(): true
 location.protocol: file:
-location.host: 
-location.hostname: 
-location.port: 
+location.host:
+location.hostname:
+location.port:
 location.pathname: <...>/fast/workers/resources/worker-common.js
-location.search: 
-location.hash: 
+location.search:
+location.hash:
 location.origin: file://
 Object.getOwnPropertyDescriptor(location.__proto__, 'toString').writable === true: true
 Object.getOwnPropertyDescriptor(location.__proto__, 'toString').enumerable === true: true

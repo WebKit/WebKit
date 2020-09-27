@@ -1,5 +1,5 @@
 main frame - didFinishDocumentLoadForFrame
-main frame - willPerformClientRedirectToURL: http://A=a%B=b 
+main frame - willPerformClientRedirectToURL: http://A=a%B=b
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 main frame - didCancelClientRedirectForFrame

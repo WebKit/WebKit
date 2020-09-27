@@ -1,66 +1,66 @@
 
-PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected open mode shadow root 
-PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a connected closed mode shadow root 
-PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root 
-PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a connected open mode shadow root 
-PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected open mode shadow root 
+PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a connected open mode shadow root
+PASS slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a connected open mode shadow root
+PASS slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a connected open mode shadow root
+PASS slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a connected open mode shadow root
+PASS slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty in a disconnected open mode shadow root
+PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a connected closed mode shadow root
+PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected closed mode shadow root
+PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a connected open mode shadow root
+PASS slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty in a disconnected open mode shadow root
 

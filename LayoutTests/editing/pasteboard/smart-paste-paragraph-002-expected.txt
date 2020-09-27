@@ -10,13 +10,13 @@ EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range fr
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of PRE > BODY > HTML > #document to 3 of PRE > BODY > HTML > #document toDOMRange:range from 0 of PRE > PRE > BODY > HTML > #document to 0 of PRE > PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-Tests: 
+Tests:
 Smart paste when pasting a paragraph between two paragraphs in a pre element.
-Expected Results: 
-A space should be added between the preexisting word and the word that's pasted. It should like this: 
-Test paragraph. 
+Expected Results:
+A space should be added between the preexisting word and the word that's pasted. It should like this:
+Test paragraph.
 
-Test paragraph. 
+Test paragraph.
 
 Last test paragraph.
 Test paragraph.

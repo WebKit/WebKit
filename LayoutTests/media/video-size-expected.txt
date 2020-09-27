@@ -21,7 +21,7 @@ EXPECTED (video.clientHeight == '103') OK
 EXPECTED (video.videoWidth == '0') OK
 EXPECTED (video.videoHeight == '0') OK
 
-Setting 'src' to "content/test.[extension]" 
+Setting 'src' to "content/test.[extension]"
 Testing movie with 'poster' and 'src', should be <video> size.
 EXPECTED (video.clientWidth == '320') OK
 EXPECTED (video.clientHeight == '240') OK

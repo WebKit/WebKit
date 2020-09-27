@@ -1,6 +1,6 @@
 
-PASS Plugging in getUserMedia audio stream into Web Audio 
-PASS Web Audio should work even if number of channels of a track increases from 1 to 2 
-PASS Web Audio should work with mock audio destination 
-PASS Check echo cancellation can be disabled in getUserMedia call 
+PASS Plugging in getUserMedia audio stream into Web Audio
+PASS Web Audio should work even if number of channels of a track increases from 1 to 2
+PASS Web Audio should work with mock audio destination
+PASS Check echo cancellation can be disabled in getUserMedia call
 

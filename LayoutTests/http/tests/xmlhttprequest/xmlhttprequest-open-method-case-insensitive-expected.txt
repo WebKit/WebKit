@@ -1,13 +1,13 @@
 non-standard method names should be returned as is per step-5 of http://xhr.spec.whatwg.org/#the-open()-method.
 
 
-PASS XMLHttpRequest: open() - case-insensitive methods test 
-PASS XMLHttpRequest: open() - case-insensitive methods test 1 
-PASS XMLHttpRequest: open() - case-insensitive methods test 2 
-PASS XMLHttpRequest: open() - case-insensitive methods test 3 
-PASS XMLHttpRequest: open() - case-insensitive methods test 4 
-PASS XMLHttpRequest: open() - case-insensitive methods test 5 
-PASS XMLHttpRequest: open() - case-insensitive methods test 6 
-PASS XMLHttpRequest: open() - case-insensitive methods test 7 
-PASS XMLHttpRequest: open() - case-insensitive methods test 8 
+PASS XMLHttpRequest: open() - case-insensitive methods test
+PASS XMLHttpRequest: open() - case-insensitive methods test 1
+PASS XMLHttpRequest: open() - case-insensitive methods test 2
+PASS XMLHttpRequest: open() - case-insensitive methods test 3
+PASS XMLHttpRequest: open() - case-insensitive methods test 4
+PASS XMLHttpRequest: open() - case-insensitive methods test 5
+PASS XMLHttpRequest: open() - case-insensitive methods test 6
+PASS XMLHttpRequest: open() - case-insensitive methods test 7
+PASS XMLHttpRequest: open() - case-insensitive methods test 8
 

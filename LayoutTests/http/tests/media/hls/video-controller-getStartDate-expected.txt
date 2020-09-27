@@ -1,4 +1,4 @@
- 
+
 Test that getStartDate() returns appropriate NaN or date.
 
 EVENT(canplaythrough)

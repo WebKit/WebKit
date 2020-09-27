@@ -1,4 +1,4 @@
-  
+
 PASS: Canvas of size 0x0 created data: url with no content - 'data:,'.
 PASS: Canvas of size 0x100 created data: url with no content - 'data:,'.
 PASS: Canvas of size 100x0 created data: url with no content - 'data:,'.

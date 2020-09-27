@@ -1,5 +1,5 @@
 
-PASS Setup worker 
-PASS ExtendableEvent waitUntil should support non promise parameters 
-PASS Event constructors 
+PASS Setup worker
+PASS ExtendableEvent waitUntil should support non promise parameters
+PASS Event constructors
 

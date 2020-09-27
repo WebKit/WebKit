@@ -11,21 +11,21 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Before:
-AXRole: AXScrollArea 
-    AXRole: AXWebArea 
+AXRole: AXScrollArea
+    AXRole: AXWebArea
         AXRole: AXParagraph AXValue: Before
         AXRole: AXGroup AXValue: <obj>
-            AXRole: AXGroup 
-                AXRole: AXScrollArea 
-                    AXRole: AXWebArea 
+            AXRole: AXGroup
+                AXRole: AXScrollArea
+                    AXRole: AXWebArea
                         AXRole: AXGroup AXValue: <obj>
-                            AXRole: AXButton 
+                            AXRole: AXButton
         AXRole: AXParagraph AXValue: After
         AXRole: AXParagraph AXValue: End of test
 
 After:
-AXRole: AXScrollArea 
-    AXRole: AXWebArea 
+AXRole: AXScrollArea
+    AXRole: AXWebArea
         AXRole: AXParagraph AXValue: Before
         AXRole: AXParagraph AXValue: After
         AXRole: AXParagraph AXValue: End of test

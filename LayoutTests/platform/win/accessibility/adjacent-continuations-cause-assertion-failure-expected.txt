@@ -7,16 +7,16 @@ Make sure that a debug assert is not triggered when constructing the accessibili
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXWebArea AXValue: 
+AXRole: AXWebArea AXValue:
     AXRole: AXStaticText AXValue: x
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: y
     AXRole: AXStaticText AXValue: z
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: End of test
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: Make sure that a debug assert is not triggered when constructing the accessibility tree for this page.
-    AXRole: AXGroup AXValue: 
+    AXRole: AXGroup AXValue:
         AXRole: AXStaticText AXValue: On success, you will see a series of "
         AXRole: AXStaticText AXValue: PASS
         AXRole: AXStaticText AXValue: " messages, followed by "

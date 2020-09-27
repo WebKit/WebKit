@@ -1,6 +1,6 @@
 Check if the appearance of a validation message for <select> is good.
 
- 
+
 The top of the bubble should be on the bottom of the host node:
 PASS bubbleRect.top is hostRect.bottom
 

@@ -1,13 +1,13 @@
 Test that setting and getting align-content works as expected
 
 
-PASS Test getting align-content values previously set through CSS. 
-PASS Test setting invalid values to align-content through CSS. 
-PASS Test initial value of align-content through JS 
-PASS Test getting and setting align-content through JS 
-PASS Test bad combinations of align-content 
-PASS Test the value 'initial' 
-PASS Test the value 'initial' for grid containers 
-PASS Test the value 'initial' for flex containers 
-PASS Test the value 'inherit' 
+PASS Test getting align-content values previously set through CSS.
+PASS Test setting invalid values to align-content through CSS.
+PASS Test initial value of align-content through JS
+PASS Test getting and setting align-content through JS
+PASS Test bad combinations of align-content
+PASS Test the value 'initial'
+PASS Test the value 'initial' for grid containers
+PASS Test the value 'initial' for flex containers
+PASS Test the value 'inherit'
 

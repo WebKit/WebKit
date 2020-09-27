@@ -2,4 +2,4 @@ CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
 EVENT(error)
 END OF TEST
- 
+

@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] upmix a 2-channel source ScriptProcessorNode with 8-channel output 
-PASS   Number of channels in output buffer is equal to 6. 
-PASS   Length of output buffer is equal to 512. 
-PASS   onaudioprocess was called with the correct input data is true. 
-PASS < [test] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] upmix a 2-channel source ScriptProcessorNode with 8-channel output
+PASS   Number of channels in output buffer is equal to 6.
+PASS   Length of output buffer is equal to 512.
+PASS   onaudioprocess was called with the correct input data is true.
+PASS < [test] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

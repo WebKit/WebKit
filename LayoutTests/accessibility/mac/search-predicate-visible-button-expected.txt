@@ -37,15 +37,15 @@ tree item
 isVisible test start
 
 test button 1
-test test test test 
-test test test test 
-test test test test 
-test test test test 
-test test test test 
-test test test test 
-test test test test 
-test test test test 
-test test test test 
+test test test test
+test test test test
+test test test test
+test test test test
+test test test test
+test test test test
+test test test test
+test test test test
+test test test test
 test button 2
 test button 3
 This tests the ability to search for accessible elements by key or text.

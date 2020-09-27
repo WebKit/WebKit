@@ -1,29 +1,29 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "sine" 
-PASS Executing "square" 
-PASS Executing "sawtooth" 
-PASS Executing "triangle" 
-PASS Executing "auto-sawtooth" 
-PASS Executing "periodic-wave" 
-PASS Audit report 
-PASS > [sine]  
-PASS   Sum of positive and negative frequency sine oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000015349,"relativeThreshold":0}. 
-PASS < [sine] All assertions passed. (total 1 assertions) 
-PASS > [square]  
-PASS   Sum of positive and negative frequency square oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000011496,"relativeThreshold":0}. 
-PASS < [square] All assertions passed. (total 1 assertions) 
-PASS > [sawtooth]  
-PASS   Sum of positive and negative frequency sawtooth oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000011506,"relativeThreshold":0}. 
-PASS < [sawtooth] All assertions passed. (total 1 assertions) 
-PASS > [triangle]  
-PASS   Sum of positive and negative frequency triangle oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000010133,"relativeThreshold":0}. 
-PASS < [triangle] All assertions passed. (total 1 assertions) 
-PASS > [auto-sawtooth]  
-PASS   Sum of positive and negative frequency-ramped sawtooth oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000012368,"relativeThreshold":0}. 
-PASS < [auto-sawtooth] All assertions passed. (total 1 assertions) 
-PASS > [periodic-wave]  
-PASS   Sum of positive and negative frequency custom oscillators equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000022352,"relativeThreshold":0}. 
-PASS < [periodic-wave] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "sine"
+PASS Executing "square"
+PASS Executing "sawtooth"
+PASS Executing "triangle"
+PASS Executing "auto-sawtooth"
+PASS Executing "periodic-wave"
+PASS Audit report
+PASS > [sine]
+PASS   Sum of positive and negative frequency sine oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000015349,"relativeThreshold":0}.
+PASS < [sine] All assertions passed. (total 1 assertions)
+PASS > [square]
+PASS   Sum of positive and negative frequency square oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000011496,"relativeThreshold":0}.
+PASS < [square] All assertions passed. (total 1 assertions)
+PASS > [sawtooth]
+PASS   Sum of positive and negative frequency sawtooth oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000011506,"relativeThreshold":0}.
+PASS < [sawtooth] All assertions passed. (total 1 assertions)
+PASS > [triangle]
+PASS   Sum of positive and negative frequency triangle oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.000010133,"relativeThreshold":0}.
+PASS < [triangle] All assertions passed. (total 1 assertions)
+PASS > [auto-sawtooth]
+PASS   Sum of positive and negative frequency-ramped sawtooth oscillators equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0.0000012368,"relativeThreshold":0}.
+PASS < [auto-sawtooth] All assertions passed. (total 1 assertions)
+PASS > [periodic-wave]
+PASS   Sum of positive and negative frequency custom oscillators equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000022352,"relativeThreshold":0}.
+PASS < [periodic-wave] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

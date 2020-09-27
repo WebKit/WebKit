@@ -1,26 +1,26 @@
 
-PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope 
-PASS Same Origin request must have timing data 
-PASS Cross Origin resource without Timing-Allow-Origin must have filtered timing data 
-PASS Cross Origin resource with Timing-Allow-Origin null value must have filtered timing data 
-PASS Cross Origin resource with Timing-Allow-Origin wildcard must have timing data 
-PASS Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (only entry) 
-PASS Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, comma separated) 
-PASS Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, multiple headers) 
-PASS Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, comma separated) 
-PASS Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, multiple headers) 
-PASS Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (case-sensitive) 
-PASS Redirect to Same Origin request must have timing data 
-PASS Redirect to Cross Origin resource without Timing-Allow-Origin must have filtered timing data 
-PASS Redirect to Cross Origin resource with Timing-Allow-Origin null value must have filtered timing data 
-PASS Redirect to Cross Origin resource with Timing-Allow-Origin wildcard must have timing data 
-PASS Redirect to Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (only entry) 
-PASS Redirect to Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, comma separated) 
-PASS Redirect to Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, multiple headers) 
-PASS Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, comma separated) 
-PASS Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, multiple headers) 
-PASS Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (case-sensitive) 
-PASS Multiple level redirect to Same Origin resource must have timing data 
-PASS Multiple level redirect to Cross Origin resource without Timing-Allow-Origin must have must have filtered timing data 
-PASS Multiple level redirect to Cross Origin resource with Timing-Allow-Origin must have must have timing data 
+PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope
+PASS Same Origin request must have timing data
+PASS Cross Origin resource without Timing-Allow-Origin must have filtered timing data
+PASS Cross Origin resource with Timing-Allow-Origin null value must have filtered timing data
+PASS Cross Origin resource with Timing-Allow-Origin wildcard must have timing data
+PASS Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (only entry)
+PASS Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, comma separated)
+PASS Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, multiple headers)
+PASS Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, comma separated)
+PASS Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, multiple headers)
+PASS Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (case-sensitive)
+PASS Redirect to Same Origin request must have timing data
+PASS Redirect to Cross Origin resource without Timing-Allow-Origin must have filtered timing data
+PASS Redirect to Cross Origin resource with Timing-Allow-Origin null value must have filtered timing data
+PASS Redirect to Cross Origin resource with Timing-Allow-Origin wildcard must have timing data
+PASS Redirect to Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (only entry)
+PASS Redirect to Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, comma separated)
+PASS Redirect to Cross Origin resource with origin in Timing-Allow-Origin list must have timing data (middle entry, multiple headers)
+PASS Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, comma separated)
+PASS Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (other origins, multiple headers)
+PASS Redirect to Cross Origin resource with origin not in Timing-Allow-Origin list must have filtered timing data (case-sensitive)
+PASS Multiple level redirect to Same Origin resource must have timing data
+PASS Multiple level redirect to Cross Origin resource without Timing-Allow-Origin must have must have filtered timing data
+PASS Multiple level redirect to Cross Origin resource with Timing-Allow-Origin must have must have timing data
 

@@ -1,8 +1,8 @@
 
 
-PASS Setup connection with sendonly transceiver 
-PASS Set transceiver as inactive 
-PASS Set transceiver as sendonly 
-PASS track event stream test - audio 
-PASS track event stream test - video 
+PASS Setup connection with sendonly transceiver
+PASS Set transceiver as inactive
+PASS Set transceiver as sendonly
+PASS track event stream test - audio
+PASS track event stream test - video
 

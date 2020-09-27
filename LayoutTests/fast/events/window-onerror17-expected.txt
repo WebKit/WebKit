@@ -1,6 +1,6 @@
 Test that window.onerror is called on window object for events created using new ErrorEvent('error', {}).
 
-Main frame window.onerror: 
+Main frame window.onerror:
 msg: Some error
 url: Some file
 line: 42

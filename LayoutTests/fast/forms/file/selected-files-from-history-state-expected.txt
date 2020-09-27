@@ -2,7 +2,7 @@ Tests that selected files in file input elements are correctly retrieved by Form
 
 
 
-PASS 
+PASS
 PASS successfullyParsed is true
 
 TEST COMPLETE

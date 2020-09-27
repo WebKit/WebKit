@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8080/security/contentSecurityPolicy/resources/alert-fail.js because it appears in neither the script-src directive nor the default-src directive of the Content Security Policy.
-This page should neither alert "FAIL" nor generate any mixed content warnings in the console. 
+This page should neither alert "FAIL" nor generate any mixed content warnings in the console.

@@ -4,7 +4,7 @@ Tests for the Runtime.parse command.
 == Running test suite: Runtime.parse
 -- Running test case: SyntaxErrorType.None
 PASS: Should be SyntaxErrorType None.
-Source: 
+Source:
 
 PASS: Should be SyntaxErrorType None.
 Source: ;
@@ -350,7 +350,7 @@ Error Message: Unexpected end of script
 Error Range: {"startOffset":17,"endOffset":17}
 
 PASS: Should be SyntaxErrorType Recoverable.
-Source: var x = {prop:123 
+Source: var x = {prop:123
                           ^
 Error Message: Unexpected end of script
 Error Range: {"startOffset":18,"endOffset":18}
@@ -362,7 +362,7 @@ Error Message: Unexpected end of script
 Error Range: {"startOffset":18,"endOffset":18}
 
 PASS: Should be SyntaxErrorType Recoverable.
-Source: var x = {prop:123, 
+Source: var x = {prop:123,
                            ^
 Error Message: Unexpected end of script
 Error Range: {"startOffset":19,"endOffset":19}

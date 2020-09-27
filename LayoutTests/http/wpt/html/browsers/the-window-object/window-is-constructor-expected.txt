@@ -1,3 +1,3 @@
 
-PASS Window is a constructor, and throwing TypeError when it is called. 
+PASS Window is a constructor, and throwing TypeError when it is called.
 

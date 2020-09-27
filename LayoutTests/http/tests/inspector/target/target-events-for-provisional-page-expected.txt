@@ -1,6 +1,6 @@
-Test that cross domain navigation results in the following sequence of events in Target domain: 
-1. Target.targetCreated for provisional page. 
-2. Target.didCommitProvisionalTarget when provisional load is committed. 
+Test that cross domain navigation results in the following sequence of events in Target domain:
+1. Target.targetCreated for provisional page.
+2. Target.didCommitProvisionalTarget when provisional load is committed.
 3. Target.targetDestroyed for the old target after the navigation request is committed.
 
 

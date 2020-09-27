@@ -16,7 +16,7 @@ CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-A
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
 Tests the behavior of whitelisting origins and removing them later.
 
-Testing: source origin: http://127.0.0.1:8000 destination origin: http:localhost 
+Testing: source origin: http://127.0.0.1:8000 destination origin: http:localhost
 Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
 PASS: NetworkError:  A network error occurred.
 Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting PASS)

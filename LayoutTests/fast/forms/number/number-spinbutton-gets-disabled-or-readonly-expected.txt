@@ -1,4 +1,4 @@
- 
+
 This tests if the value of a number input form does not continue to increase/decrease in the following scenario.
 (1) Click the spin button of the input form.
 (2) Hook the 'mouseup' event and disable the input form.

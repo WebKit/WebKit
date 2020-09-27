@@ -2,5 +2,5 @@ Element.focus() shouldn't work in cross-origin iframe without user interaction.
 
 
 
-PASS Element.focus() shouldn't work in cross-origin iframe without user interaction 
+PASS Element.focus() shouldn't work in cross-origin iframe without user interaction
 

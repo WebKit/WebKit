@@ -1,9 +1,9 @@
-Some text  Some other text   
+Some text  Some other text
 aria
 
 labelledby
 
-Some text 
+Some text
 This tests that the aria-label attribute works on element.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

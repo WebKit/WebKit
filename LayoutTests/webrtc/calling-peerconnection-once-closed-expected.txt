@@ -1,10 +1,10 @@
 
-PASS Ensuring closed connection getters do not crash 
-PASS Ensuring closed connection createOffer does not crash 
-PASS Ensuring closed connection createDataChannel does not crash 
-PASS Ensuring closed connection addTransceiver does not crash 
-PASS Ensuring closed connection addTrack does not crash 
-PASS Ensuring closed connection setRemoteDescription does not crash 
-PASS Ensuring closed connection setLocalDescription does not crash 
-PASS Ensuring closed connection createAnswer does not crash 
+PASS Ensuring closed connection getters do not crash
+PASS Ensuring closed connection createOffer does not crash
+PASS Ensuring closed connection createDataChannel does not crash
+PASS Ensuring closed connection addTransceiver does not crash
+PASS Ensuring closed connection addTrack does not crash
+PASS Ensuring closed connection setRemoteDescription does not crash
+PASS Ensuring closed connection setLocalDescription does not crash
+PASS Ensuring closed connection createAnswer does not crash
 

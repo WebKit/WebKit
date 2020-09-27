@@ -1,11 +1,11 @@
 
-PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope 
-PASS Type: fetch 
-PASS Timing: fetch 
-PASS Type: xmlhttprequest (asynchronous) 
-PASS Timing: xmlhttprequest (asynchronous) 
-PASS Type: xmlhttprequest (synchronous) 
-PASS Timing: xmlhttprequest (synchronous) 
-PASS Type: other - importScripts 
-PASS Timing: other - importScripts 
+PASS Must have PerformanceObserver and PerformanceResourceTiming in DedicatedWorkerGlobalScope
+PASS Type: fetch
+PASS Timing: fetch
+PASS Type: xmlhttprequest (asynchronous)
+PASS Timing: xmlhttprequest (asynchronous)
+PASS Type: xmlhttprequest (synchronous)
+PASS Timing: xmlhttprequest (synchronous)
+PASS Type: other - importScripts
+PASS Timing: other - importScripts
 

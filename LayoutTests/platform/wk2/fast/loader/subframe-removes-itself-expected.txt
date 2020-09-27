@@ -4,4 +4,4 @@ frame "<!--frame1-->" - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 frame "<!--frame1-->" - didFailLoadWithError
 main frame - didFinishLoadForFrame
-This tests a subframe that removes itself to make sure a delegate message to indicate the interrupted load fires. 
+This tests a subframe that removes itself to make sure a delegate message to indicate the interrupted load fires.

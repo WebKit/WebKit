@@ -1,4 +1,4 @@
-  
+
 Verifies the correct states are exposed for native and ARIA text input fields
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

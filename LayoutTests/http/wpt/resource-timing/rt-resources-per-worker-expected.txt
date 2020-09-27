@@ -1,8 +1,8 @@
 Resource Timing: Entries per Worker
 
 
-PASS Workers have PerformanceObserver and PerformanceResourceTiming 
-PASS window resources differ from other contexts 
-PASS worker1 resources differ from other contexts 
-PASS worker2 resources differ from other contexts 
+PASS Workers have PerformanceObserver and PerformanceResourceTiming
+PASS window resources differ from other contexts
+PASS worker1 resources differ from other contexts
+PASS worker2 resources differ from other contexts
 

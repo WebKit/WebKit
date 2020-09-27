@@ -2,4 +2,4 @@ This tests the generic drag and drop where the copy of the content is requested 
 
 PASS: input
 PASS: textarea
- 
+

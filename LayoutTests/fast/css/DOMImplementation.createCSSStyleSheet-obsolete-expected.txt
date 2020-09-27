@@ -1,3 +1,3 @@
 
-PASS DOMImplementation.createCSSStyleSheet should not exist 
+PASS DOMImplementation.createCSSStyleSheet should not exist
 

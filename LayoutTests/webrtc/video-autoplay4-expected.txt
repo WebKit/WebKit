@@ -1,4 +1,4 @@
-  
 
-PASS Granting getUserMedia should not start paused media or media that cannot autoplay due to autoplay restrictions 
+
+PASS Granting getUserMedia should not start paused media or media that cannot autoplay due to autoplay restrictions
 

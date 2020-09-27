@@ -1,4 +1,4 @@
- 
 
-PASS Granting getUserMedia should not pause playing video element 
+
+PASS Granting getUserMedia should not pause playing video element
 

@@ -26,4 +26,4 @@ PASS currentSrcFileName("fractional_sizes") is "image-set-4x.png?1599"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-             
+

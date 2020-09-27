@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8800/WebKit/beacon/resou
 CONSOLE MESSAGE: Blocked by Content Security Policy.
 CONSOLE MESSAGE: Beacon API cannot load http://127.0.0.1:8800/WebKit/beacon/resources/beacon-preflight.py?allowCors=1&cmd=put&id=2539e883-7dfb-4dde-a227-a41c670d5fe1&redirect_status=307&location=http%3A%2F%2F127.0.0.1%3A8800%2FWebKit%2Fbeacon%2Fresources%2Fbeacon-preflight.py%3FallowCors%3D1%26cmd%3Dput%26id%3D2539e883-7dfb-4dde-a227-a41c670d5fe1&count=1. Blocked by Content Security Policy.
 
-PASS Redirect is blocked by CSP 
+PASS Redirect is blocked by CSP
 

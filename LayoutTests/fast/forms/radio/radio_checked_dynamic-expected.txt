@@ -1,4 +1,4 @@
-This will test that radio buttons can be moved in and out of forms while maintaining only one checked button per group, per form. 
+This will test that radio buttons can be moved in and out of forms while maintaining only one checked button per group, per form.
 Test 1: Transfer radio buttons from <body> to <form>:
 
 Test 1 Passed
@@ -10,6 +10,6 @@ Test 3: Transfer radio buttons from <form> to <body> with a dormant state in the
 Test 3 Passed
 
 Test 4: Transfer from <form> to <form>
- 
+
 Test 4 Passed
 

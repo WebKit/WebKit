@@ -1,4 +1,4 @@
 
-PASS vectorClamp 
-PASS matrixClamp 
+PASS vectorClamp
+PASS matrixClamp
 

@@ -1,8 +1,8 @@
-    
 
-PASS Setting video exchange 
-PASS Track is enabled, video should not be black 
-PASS Track is enabled and rotated, local video should not be black and should change size 
-PASS Track is enabled and rotated, remote video should not be black and should change size 
-PASS Track is enabled and rotated again, video should not be black and should change size 
+
+PASS Setting video exchange
+PASS Track is enabled, video should not be black
+PASS Track is enabled and rotated, local video should not be black and should change size
+PASS Track is enabled and rotated, remote video should not be black and should change size
+PASS Track is enabled and rotated again, video should not be black and should change size
 

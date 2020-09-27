@@ -1,5 +1,5 @@
 If the requestShipping member is true, then shippingAddress's PaymentAddress must match the expected values.
 
-PASS Can construct a payment request (smoke test). 
-PASS If the requestShipping member is true, then shippingAddress's PaymentAddress must match the expected values. 
+PASS Can construct a payment request (smoke test).
+PASS If the requestShipping member is true, then shippingAddress's PaymentAddress must match the expected values.
 

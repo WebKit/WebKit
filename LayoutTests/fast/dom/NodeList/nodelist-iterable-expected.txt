@@ -2,13 +2,13 @@
 
 
 
-    
 
-PASS for (node of NodeList) 
-PASS for ([index, node] of NodeList.entries()) 
-PASS for (index of NodeList.keys()) 
-PASS for (node of NodeList.values()) 
-PASS NodeList.prototype.forEach() 
-PASS Delete earlier element in live NodeList 
-PASS Delete later element in live NodeList 
+
+PASS for (node of NodeList)
+PASS for ([index, node] of NodeList.entries())
+PASS for (index of NodeList.keys())
+PASS for (node of NodeList.values())
+PASS NodeList.prototype.forEach()
+PASS Delete earlier element in live NodeList
+PASS Delete later element in live NodeList
 

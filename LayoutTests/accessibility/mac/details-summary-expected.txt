@@ -29,8 +29,8 @@ PASS details2.subrole is 'AXSubrole: AXDetails'
 PASS details2.isExpanded is false
 PASS details3.subrole is 'AXSubrole: AXApplicationGroup'
 PASS details3.isExpanded is true
-Received AXExpandedChanged notification 
-Received AXExpandedChanged notification 
+Received AXExpandedChanged notification
+Received AXExpandedChanged notification
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Beacon API cannot load http://localhost:8800/. Reached maximum amount of queued data of 64Kb for keepalive requests
 CONSOLE MESSAGE: Beacon API cannot load http://localhost:8800/. Reached maximum amount of queued data of 64Kb for keepalive requests
 
-PASS Beacon with a body above the Quota Limit should fail. 
-PASS Multiple Beacons Quota Limit 
+PASS Beacon with a body above the Quota Limit should fail.
+PASS Multiple Beacons Quota Limit
 

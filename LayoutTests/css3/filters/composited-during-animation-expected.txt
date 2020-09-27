@@ -1,4 +1,4 @@
-        
+
 PASS: Element grayscale-box had filter value grayscale(1) before animation.
 PASS: Element sepia-box had filter value sepia(1) before animation.
 PASS: Element saturate-box had filter value saturate(1) before animation.

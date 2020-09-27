@@ -4,12 +4,12 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/contentextensi
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/async-xhr-onerror.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/url-blocking-test.js
 CONSOLE MESSAGE: Resource blocked by content blocker
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/contentextensions/resources/url-blocking-test.js due to access control checks.
-Asynchronous onreadystatechange status: 0, readyState:1, responseText: 
+Asynchronous onreadystatechange status: 0, readyState:1, responseText:
 Finished runTest. Waiting for callbacks
-Asynchronous onreadystatechange status: 0, readyState:1, responseText: 
+Asynchronous onreadystatechange status: 0, readyState:1, responseText:
 Finished runTest. Waiting for callbacks
-Asynchronous onreadystatechange status: 0, readyState:4, responseText: 
+Asynchronous onreadystatechange status: 0, readyState:4, responseText:
 onerror was called.
-Asynchronous onreadystatechange status: 0, readyState:4, responseText: 
+Asynchronous onreadystatechange status: 0, readyState:4, responseText:
 onerror was called.
 

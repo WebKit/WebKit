@@ -1,3 +1,3 @@
-The form control should have a green background: 
+The form control should have a green background:
 
 SUCCESS

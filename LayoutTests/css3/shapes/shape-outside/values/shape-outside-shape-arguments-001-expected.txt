@@ -1,6 +1,6 @@
 
-PASS Positive number variations - inline 
-PASS Negative number variations - inline 
-PASS Positive number variations - computed 
-PASS Negative number variations - computed 
+PASS Positive number variations - inline
+PASS Negative number variations - inline
+PASS Positive number variations - computed
+PASS Negative number variations - computed
 

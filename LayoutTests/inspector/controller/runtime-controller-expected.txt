@@ -16,7 +16,7 @@ Source: {a:1}
 PASS: Evaluation should produce an object.
 Source: {a:1, b:2}
 PASS: Evaluation should produce an object.
-Source:    {a:1, b:2}  
+Source:    {a:1, b:2}
 PASS: Evaluation should produce an object.
 Source: { let a = 1; a += 1; a }
 PASS: Evaluation should produce an exception.
@@ -33,7 +33,7 @@ PASS: Evaluation should produce the labeled statement's value.
 
 Source: await 1
 PASS: Transformed. Should log the value or an exception.
-Source:    await 2   
+Source:    await 2
 PASS: Transformed. Should log the value or an exception.
 Source: var x = await 3
 PASS: Transformed. Should log the value or an exception.

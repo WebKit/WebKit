@@ -1,5 +1,5 @@
 PASS Did not observe unnecessary scrolling
-  
+
 This test verifies that moving focus between two fields that are at the same y offset does not induce vertical scrolling. To test manually, focus the left field and press any key. Focus should move to the right field, and there should be no scrolling.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

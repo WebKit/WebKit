@@ -1,4 +1,4 @@
- 
+
 This tests that the input title is exposed correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

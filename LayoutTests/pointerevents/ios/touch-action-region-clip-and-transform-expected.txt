@@ -16,7 +16,7 @@
           (event region
             (rect (0,0) width=200 height=200)
             (touch-action
-              (none              
+              (none
                 (rect (150,150) width=50 height=50)
               )
             )
@@ -29,7 +29,7 @@
           (event region
             (rect (0,0) width=200 height=200)
             (touch-action
-              (none              
+              (none
                 (rect (150,150) width=50 height=50)
               )
             )
@@ -42,7 +42,7 @@
           (event region
             (rect (0,0) width=200 height=200)
             (touch-action
-              (none              
+              (none
                 (rect (150,150) width=50 height=50)
               )
             )
@@ -57,7 +57,7 @@
             (rect (0,150) width=350 height=50)
             (rect (150,200) width=200 height=150)
             (touch-action
-              (none              
+              (none
                 (rect (150,150) width=50 height=50)
               )
             )
@@ -72,7 +72,7 @@
             (rect (0,150) width=350 height=50)
             (rect (150,200) width=200 height=150)
             (touch-action
-              (none              
+              (none
                 (rect (150,150) width=50 height=50)
               )
             )
@@ -88,7 +88,7 @@
             (rect (0,150) width=350 height=50)
             (rect (150,200) width=200 height=150)
             (touch-action
-              (none              
+              (none
                 (rect (150,150) width=50 height=50)
               )
             )

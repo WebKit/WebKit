@@ -1,4 +1,4 @@
- 
+
 EXPECTED (context.getImageData(88, 115, 1, 1).data == [208,0,0,255] with tolerance 5 OK
 EXPECTED (context.getImageData(237, 88, 1, 1).data == [208,0,0,255] with tolerance 5 OK
 EXPECTED (context.getImageData(200, 237, 1, 1).data == [208,0,0,255] with tolerance 5 OK

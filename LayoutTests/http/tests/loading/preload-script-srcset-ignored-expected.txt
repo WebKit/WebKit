@@ -3,5 +3,5 @@ main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-This test makes sure that the Preload scanner doesn't preload the script resource, since it's defined in a srcset attribute. 
+This test makes sure that the Preload scanner doesn't preload the script resource, since it's defined in a srcset attribute.
 PASS

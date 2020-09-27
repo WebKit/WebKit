@@ -10,18 +10,18 @@ WebSocketTest.onopen() was called with testId = 0.
 WebSocketTest.onclose() was called with testId = 0.
 PASS PASS: worker: event.wasClean is true
 PASS PASS: worker: event.code is 1005
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 PASS PASS: worker: event.wasClean is true
 PASS PASS: worker: event.code is 1005
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 WebSocketTest.onopen() was called with testId = 1.
 WebSocketTest.onclose() was called with testId = 1.
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 WebSocketTest.onopen() was called with testId = 2.
 WebSocketTest.onclose() was called with testId = 2.
 PASS PASS: worker: event.wasClean is true
@@ -34,26 +34,26 @@ WebSocketTest.onopen() was called with testId = 3.
 WebSocketTest.onclose() was called with testId = 3.
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 WebSocketTest.onopen() was called with testId = 4.
 WebSocketTest.onclose() was called with testId = 4.
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 WebSocketTest.onopen() was called with testId = 5.
 WebSocketTest.onclose() was called with testId = 5.
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 PASS PASS: worker: event.wasClean is false
 PASS PASS: worker: event.code is 1006
-PASS PASS: worker: event.reason is 
+PASS PASS: worker: event.reason is
 WebSocketTest.onopen() was called with testId = 6.
 WebSocketTest.onclose() was called with testId = 6.
 PASS PASS: worker: event.wasClean is true

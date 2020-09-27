@@ -728,7 +728,7 @@ Formatted: 105 (7, 4)
   6|     sum += c;
   7|     #return sum;
   8| })()
-  9| 
+  9|
 
 Original: 69 (2, 28)
   0| (function(a,b,c){/*
@@ -739,7 +739,7 @@ Formatted: 111 (7, 5)
   6|     sum += c;
   7|     r#eturn sum;
   8| })()
-  9| 
+  9|
 
 Original: 70 (2, 29)
   0| (function(a,b,c){/*
@@ -750,7 +750,7 @@ Formatted: 112 (7, 6)
   6|     sum += c;
   7|     re#turn sum;
   8| })()
-  9| 
+  9|
 
 Original: 71 (2, 30)
   0| (function(a,b,c){/*
@@ -761,7 +761,7 @@ Formatted: 113 (7, 7)
   6|     sum += c;
   7|     ret#urn sum;
   8| })()
-  9| 
+  9|
 
 Original: 72 (2, 31)
   0| (function(a,b,c){/*
@@ -772,7 +772,7 @@ Formatted: 114 (7, 8)
   6|     sum += c;
   7|     retu#rn sum;
   8| })()
-  9| 
+  9|
 
 Original: 73 (2, 32)
   0| (function(a,b,c){/*
@@ -783,7 +783,7 @@ Formatted: 115 (7, 9)
   6|     sum += c;
   7|     retur#n sum;
   8| })()
-  9| 
+  9|
 
 Original: 74 (2, 33)
   0| (function(a,b,c){/*
@@ -794,7 +794,7 @@ Formatted: 116 (7, 10)
   6|     sum += c;
   7|     return# sum;
   8| })()
-  9| 
+  9|
 
 Original: 75 (2, 34)
   0| (function(a,b,c){/*
@@ -805,7 +805,7 @@ Formatted: 117 (7, 11)
   6|     sum += c;
   7|     return #sum;
   8| })()
-  9| 
+  9|
 
 Original: 76 (2, 35)
   0| (function(a,b,c){/*
@@ -816,7 +816,7 @@ Formatted: 118 (7, 12)
   6|     sum += c;
   7|     return s#um;
   8| })()
-  9| 
+  9|
 
 Original: 77 (2, 36)
   0| (function(a,b,c){/*
@@ -827,7 +827,7 @@ Formatted: 119 (7, 13)
   6|     sum += c;
   7|     return su#m;
   8| })()
-  9| 
+  9|
 
 Original: 78 (2, 37)
   0| (function(a,b,c){/*
@@ -838,7 +838,7 @@ Formatted: 120 (7, 14)
   6|     sum += c;
   7|     return sum#;
   8| })()
-  9| 
+  9|
 
 Original: 79 (2, 38)
   0| (function(a,b,c){/*
@@ -848,7 +848,7 @@ Formatted: 121 (8, 0)
   6|     sum += c;
   7|     return sum;
   8| #})()
-  9| 
+  9|
 
 Original: 80 (2, 39)
   0| (function(a,b,c){/*
@@ -858,7 +858,7 @@ Formatted: 123 (8, 1)
   6|     sum += c;
   7|     return sum;
   8| }#)()
-  9| 
+  9|
 
 Original: 81 (2, 40)
   0| (function(a,b,c){/*
@@ -868,7 +868,7 @@ Formatted: 124 (8, 2)
   6|     sum += c;
   7|     return sum;
   8| })#()
-  9| 
+  9|
 
 Original: 82 (2, 41)
   0| (function(a,b,c){/*
@@ -878,7 +878,7 @@ Formatted: 125 (8, 3)
   6|     sum += c;
   7|     return sum;
   8| })(#)
-  9| 
+  9|
 
 Original: 83 (2, 42)
   0| (function(a,b,c){/*
@@ -888,7 +888,7 @@ Formatted: 126 (8, 4)
   6|     sum += c;
   7|     return sum;
   8| })()#
-  9| 
+  9|
 
 
 ---- Formatted to Original ----
@@ -2016,7 +2016,7 @@ Formatted: 106 (7, 0)
   6|     sum += c;
   7| #    return sum;
   8| })()
-  9| 
+  9|
 Original: 69 (2, 27)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2027,7 +2027,7 @@ Formatted: 107 (7, 1)
   6|     sum += c;
   7|  #   return sum;
   8| })()
-  9| 
+  9|
 Original: 69 (2, 27)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2038,7 +2038,7 @@ Formatted: 108 (7, 2)
   6|     sum += c;
   7|   #  return sum;
   8| })()
-  9| 
+  9|
 Original: 69 (2, 27)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2049,7 +2049,7 @@ Formatted: 109 (7, 3)
   6|     sum += c;
   7|    # return sum;
   8| })()
-  9| 
+  9|
 Original: 69 (2, 27)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2060,7 +2060,7 @@ Formatted: 110 (7, 4)
   6|     sum += c;
   7|     #return sum;
   8| })()
-  9| 
+  9|
 Original: 69 (2, 27)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2071,7 +2071,7 @@ Formatted: 111 (7, 5)
   6|     sum += c;
   7|     r#eturn sum;
   8| })()
-  9| 
+  9|
 Original: 69 (2, 28)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2082,7 +2082,7 @@ Formatted: 112 (7, 6)
   6|     sum += c;
   7|     re#turn sum;
   8| })()
-  9| 
+  9|
 Original: 70 (2, 29)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2093,7 +2093,7 @@ Formatted: 113 (7, 7)
   6|     sum += c;
   7|     ret#urn sum;
   8| })()
-  9| 
+  9|
 Original: 71 (2, 30)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2104,7 +2104,7 @@ Formatted: 114 (7, 8)
   6|     sum += c;
   7|     retu#rn sum;
   8| })()
-  9| 
+  9|
 Original: 72 (2, 31)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2115,7 +2115,7 @@ Formatted: 115 (7, 9)
   6|     sum += c;
   7|     retur#n sum;
   8| })()
-  9| 
+  9|
 Original: 73 (2, 32)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2126,7 +2126,7 @@ Formatted: 116 (7, 10)
   6|     sum += c;
   7|     return# sum;
   8| })()
-  9| 
+  9|
 Original: 74 (2, 33)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2137,7 +2137,7 @@ Formatted: 117 (7, 11)
   6|     sum += c;
   7|     return #sum;
   8| })()
-  9| 
+  9|
 Original: 75 (2, 34)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2148,7 +2148,7 @@ Formatted: 118 (7, 12)
   6|     sum += c;
   7|     return s#um;
   8| })()
-  9| 
+  9|
 Original: 76 (2, 35)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2159,7 +2159,7 @@ Formatted: 119 (7, 13)
   6|     sum += c;
   7|     return su#m;
   8| })()
-  9| 
+  9|
 Original: 77 (2, 36)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2170,7 +2170,7 @@ Formatted: 120 (7, 14)
   6|     sum += c;
   7|     return sum#;
   8| })()
-  9| 
+  9|
 Original: 78 (2, 37)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2181,7 +2181,7 @@ Formatted: 121 (7, 15)
   6|     sum += c;
   7|     return sum;#
   8| })()
-  9| 
+  9|
 Original: 79 (2, 38)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2191,7 +2191,7 @@ Formatted: 122 (8, 0)
   6|     sum += c;
   7|     return sum;
   8| #})()
-  9| 
+  9|
 Original: 80 (2, 38)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2201,7 +2201,7 @@ Formatted: 123 (8, 1)
   6|     sum += c;
   7|     return sum;
   8| }#)()
-  9| 
+  9|
 Original: 80 (2, 39)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2211,7 +2211,7 @@ Formatted: 124 (8, 2)
   6|     sum += c;
   7|     return sum;
   8| })#()
-  9| 
+  9|
 Original: 81 (2, 40)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2221,7 +2221,7 @@ Formatted: 125 (8, 3)
   6|     sum += c;
   7|     return sum;
   8| })(#)
-  9| 
+  9|
 Original: 82 (2, 41)
   0| (function(a,b,c){/*
   1|  * multi-line comment
@@ -2231,7 +2231,7 @@ Formatted: 126 (8, 4)
   6|     sum += c;
   7|     return sum;
   8| })()#
-  9| 
+  9|
 Original: 83 (2, 42)
   0| (function(a,b,c){/*
   1|  * multi-line comment

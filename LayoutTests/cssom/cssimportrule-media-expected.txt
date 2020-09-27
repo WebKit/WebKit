@@ -1,6 +1,6 @@
 
-PASS doc.styleSheets[0].cssRules[0].cssText == '@import url("resources/import.css");' 
-PASS doc.styleSheets[1].cssRules[0].cssText == '@import url("resources/import.css") all;' 
-PASS doc.styleSheets[2].cssRules[0].cssText == '@import url("resources/import.css") not tv;' 
-PASS doc.styleSheets[3].cssRules[0].cssText == '@import url("resources/import.css") screen, tv;' 
+PASS doc.styleSheets[0].cssRules[0].cssText == '@import url("resources/import.css");'
+PASS doc.styleSheets[1].cssRules[0].cssText == '@import url("resources/import.css") all;'
+PASS doc.styleSheets[2].cssRules[0].cssText == '@import url("resources/import.css") not tv;'
+PASS doc.styleSheets[3].cssRules[0].cssText == '@import url("resources/import.css") screen, tv;'
 

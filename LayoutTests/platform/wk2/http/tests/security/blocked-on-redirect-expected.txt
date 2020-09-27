@@ -2,4 +2,4 @@ http://127.0.0.1:8000/security/blocked-on-redirect.html - didFinishLoading
 http://127.0.0.1:8000/resources/redirect.php?code=307&url=http://localhost:25/security/resources/post-done.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/resources/redirect.php?code=307&url=http://localhost:25/security/resources/post-done.html, main document URL http://127.0.0.1:8000/security/blocked-on-redirect.html, http method GET> redirectResponse (null)
 CONSOLE MESSAGE: Not allowed to use restricted network port: http://localhost:25/security/resources/post-done.html
 http://127.0.0.1:8000/resources/redirect.php?code=307&url=http://localhost:25/security/resources/post-done.html - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://localhost:25/security/resources/post-done.html">
-This test produces output in the console. Only the initial URL should be logged. 
+This test produces output in the console. Only the initial URL should be logged.

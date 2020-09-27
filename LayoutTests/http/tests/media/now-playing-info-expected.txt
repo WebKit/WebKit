@@ -1,4 +1,4 @@
- 
+
 Tests that the NowPlaying information is updated correctly as attributes change.
 
 * NowPlaying should not be active before playback has started.

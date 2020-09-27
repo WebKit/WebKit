@@ -4,4 +4,4 @@ PASS successfullyParsed is true
 TEST COMPLETE
 This test makes sure there is no crash when the CSSFontSelector is cleared in between two canvas setFont() calls. The test is successful if there is no crash.
 
-Test 
+Test

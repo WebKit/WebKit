@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8080" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 This test checks if frameElement is accessible from the same or cross origin iframe.
 
- 
+
 
 --------
 Frame: '<!--frame1-->'

@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Time 'role': AXRole: AXWebArea
-Time 'subrole': 
-Time 'value': 
+Time 'subrole':
+Time 'value':
 PASS successfullyParsed is true
 
 TEST COMPLETE

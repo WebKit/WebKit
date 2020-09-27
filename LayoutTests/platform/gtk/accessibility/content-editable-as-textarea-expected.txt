@@ -9,7 +9,7 @@ Value: AXValue: hello<\n>world
 Value (writable): true
 String with range: ello
 worl
-Attributed string with range: 
+Attributed string with range:
 	Default text attributes:
 		editable:true
 		invisible:false

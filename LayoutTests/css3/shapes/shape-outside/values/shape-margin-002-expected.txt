@@ -1,10 +1,10 @@
 
-PASS 10.12345px - inline 
-PASS .5px - inline 
-PASS +15px - inline 
-PASS +10.678px - inline 
-PASS 10.12345px - computed 
-PASS .5px - computed 
-PASS +15px - computed 
-PASS +10.678px - computed 
+PASS 10.12345px - inline
+PASS .5px - inline
+PASS +15px - inline
+PASS +10.678px - inline
+PASS 10.12345px - computed
+PASS .5px - computed
+PASS +15px - computed
+PASS +10.678px - computed
 

@@ -1,3 +1,3 @@
 
-PASS Testing that isTrusted is true for pointer events. 
+PASS Testing that isTrusted is true for pointer events.
 

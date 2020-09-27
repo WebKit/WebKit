@@ -1,5 +1,5 @@
 This is the test for window.internals.counterValueForElementById
-   
+
 PASS window.internals.counterValue(document.getElementById('before')) is '0'
 PASS window.internals.counterValue(document.getElementById('after')) is '0'
 PASS window.internals.counterValue(document.getElementById('before_after')) is '0 0'

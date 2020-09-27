@@ -13,7 +13,7 @@ PASS one bold command converted "<span id='test' style='font-weight:normal;'><b>
 PASS one bold command converted "<div><b>hello</b><br><br><b>world</b></div>" to "<div>hello<br><br>world</div>
 PASS one italic command converted "<i>hello </i><img>" to "hello <img>
 PASS one italic command converted "<i><b>hello</b>world</i>" to "<b>hello</b>world
-PASS one italic command converted "<span style='font-style: normal;'> <i> hello </i> </span>" to "  hello  
+PASS one italic command converted "<span style='font-style: normal;'> <i> hello </i> </span>" to "  hello
 PASS one italic command converted "<p><i>hello</i><span style='font-style:italic;'>world</span></p>" to "<p>helloworld</p>
 PASS one italic command converted "<s><b>hello<i> world</i></b></s>" to "<s><b><i>hello world</i></b></s>
 
@@ -27,7 +27,7 @@ PASS one bold command converted "<span id='test' style='font-weight:normal;'><b>
 PASS one bold command converted "<div><b>hello</b><br><br><b>world</b></div>" to "<div>hello<br><br>world</div>
 PASS one italic command converted "<i>hello </i><img>" to "hello <img>
 PASS one italic command converted "<i><b>hello</b>world</i>" to "<b>hello</b>world
-PASS one italic command converted "<span style='font-style: normal;'> <i> hello </i> </span>" to "  hello  
+PASS one italic command converted "<span style='font-style: normal;'> <i> hello </i> </span>" to "  hello
 PASS one italic command converted "<p><i>hello</i><span style='font-style:italic;'>world</span></p>" to "<p>helloworld</p>
 PASS one italic command converted "<s><b>hello<i> world</i></b></s>" to "<s><b><i>hello world</i></b></s>
 
@@ -41,7 +41,7 @@ PASS one bold command converted "<span id='test' style='font-weight:normal;'><b>
 PASS one bold command converted "<div><b>hello</b><br><br><b>world</b></div>" to "<div>hello<br><br>world</div>
 PASS one italic command converted "<i>hello </i><img>" to "hello <img>
 PASS one italic command converted "<i><b>hello</b>world</i>" to "<b>hello</b>world
-PASS one italic command converted "<span style='font-style: normal;'> <i> hello </i> </span>" to "  hello  
+PASS one italic command converted "<span style='font-style: normal;'> <i> hello </i> </span>" to "  hello
 PASS one italic command converted "<p><i>hello</i><span style='font-style:italic;'>world</span></p>" to "<p>helloworld</p>
 PASS one italic command converted "<s><b>hello<i> world</i></b></s>" to "<s><b><i>hello world</i></b></s>
 

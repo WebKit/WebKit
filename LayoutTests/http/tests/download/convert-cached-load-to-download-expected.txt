@@ -3,4 +3,4 @@ Downloading URL with suggested filename "mock-plugin-cacheable.pl"
 Download completed.
 The download should succeed.
 
-Download plugin 
+Download plugin

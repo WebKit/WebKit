@@ -5,4 +5,4 @@ Test that offline applications' main resources are not affected by URL hashes.
 Should say SUCCESS:
 
 SUCCESS
-  
+

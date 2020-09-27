@@ -1,6 +1,6 @@
 Check if the position of a validation message for a listbox is good.
 
- 
+
 The top of the bubble should be on the bottom of the host node:
 PASS bubbleRect.top is hostRect.bottom
 

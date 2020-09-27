@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: injected: blank.xhtml
-This test should not infinitely inject user scripts. 
+This test should not infinitely inject user scripts.

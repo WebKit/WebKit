@@ -1,19 +1,19 @@
 
-PASS Exception should be thrown for TRACE request 
-PASS Exception should be thrown for TRACK request 
-PASS Exception should be thrown for CONNECT request 
-PASS Synchronous XHR request should succeed with GET 
-PASS Synchronous XHR request should throw exception with OPTIONS 
-PASS Synchronous XHR request should throw exception with HEAD 
-PASS Synchronous XHR request should throw exception with PUT 
-PASS Synchronous XHR request should throw exception with DELETE 
-PASS Synchronous XHR request should throw exception with INVALID 
-PASS Synchronous XHR request should throw exception with POST 
-PASS Asynchronous XHR request should succeed with GET 
-PASS Asynchronous XHR request should calls onError callback with OPTIONS 
-PASS Asynchronous XHR request should calls onError callback with HEAD 
-PASS Asynchronous XHR request should calls onError callback with PUT 
-PASS Asynchronous XHR request should calls onError callback with DELETE 
-PASS Asynchronous XHR request should calls onError callback with INVALID 
-PASS Asynchronous XHR request should calls onError callback with POST 
+PASS Exception should be thrown for TRACE request
+PASS Exception should be thrown for TRACK request
+PASS Exception should be thrown for CONNECT request
+PASS Synchronous XHR request should succeed with GET
+PASS Synchronous XHR request should throw exception with OPTIONS
+PASS Synchronous XHR request should throw exception with HEAD
+PASS Synchronous XHR request should throw exception with PUT
+PASS Synchronous XHR request should throw exception with DELETE
+PASS Synchronous XHR request should throw exception with INVALID
+PASS Synchronous XHR request should throw exception with POST
+PASS Asynchronous XHR request should succeed with GET
+PASS Asynchronous XHR request should calls onError callback with OPTIONS
+PASS Asynchronous XHR request should calls onError callback with HEAD
+PASS Asynchronous XHR request should calls onError callback with PUT
+PASS Asynchronous XHR request should calls onError callback with DELETE
+PASS Asynchronous XHR request should calls onError callback with INVALID
+PASS Asynchronous XHR request should calls onError callback with POST
 

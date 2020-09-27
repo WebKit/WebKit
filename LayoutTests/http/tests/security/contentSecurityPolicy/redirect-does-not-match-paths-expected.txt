@@ -1,8 +1,8 @@
 
 
-PASS CSP ignores paths of redirected resources in matching algorithm for scripts. 
-PASS CSP ignores paths of redirect resources in matching algorithm for images. 
-PASS CSP ignores paths of redirect resources in matching algorithm for frames. 
-PASS CSP ignores paths of redirected resources in matching algorithm for stylesheets. 
-PASS CSP ignores paths of redirect resources in matching algorithm for XHR. 
+PASS CSP ignores paths of redirected resources in matching algorithm for scripts.
+PASS CSP ignores paths of redirect resources in matching algorithm for images.
+PASS CSP ignores paths of redirect resources in matching algorithm for frames.
+PASS CSP ignores paths of redirected resources in matching algorithm for stylesheets.
+PASS CSP ignores paths of redirect resources in matching algorithm for XHR.
 

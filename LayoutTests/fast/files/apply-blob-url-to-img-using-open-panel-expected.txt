@@ -1,5 +1,5 @@
 OPEN FILE PANEL
- 
+
 Old image: 0 x 0
 New image: 76 x 103
 DONE

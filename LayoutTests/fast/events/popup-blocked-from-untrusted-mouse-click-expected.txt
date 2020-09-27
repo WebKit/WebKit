@@ -1,4 +1,4 @@
 
-open a new window 
+open a new window
 The JavaScript created (untrusted) event inside a user-initiated (trusted) event should not cache the UserGesture status. This test is for bug https://bugs.webkit.org/show_bug.cgi?id=50508.
 PASSED

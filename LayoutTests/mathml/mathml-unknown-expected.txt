@@ -1,5 +1,5 @@
 This test passes if the unknown MathML elements do not create any renderer.
 
-Content MathML element: 
+Content MathML element:
 
 Non-standard MathML element:

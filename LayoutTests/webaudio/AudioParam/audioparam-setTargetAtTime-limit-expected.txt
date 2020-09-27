@@ -1,19 +1,19 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "approach 1" 
-PASS Executing "approach 0" 
-PASS Executing "crbug.com/835294" 
-PASS Audit report 
-PASS > [approach 1]  
-PASS   Initial output of 664 samples for setTargetAtTime(1, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000024,"relativeThreshold":0}. 
-PASS   Tail output for setTargetAtTime(1, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":9.8234e-7}. 
-PASS < [approach 1] All assertions passed. (total 2 assertions) 
-PASS > [approach 0]  
-PASS   Initial output of 480 samples for setTargetAtTime(0, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.747e-8,"relativeThreshold":0}. 
-PASS   Tail output for setTargetAtTime(0, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00002331,"relativeThreshold":0}. 
-PASS < [approach 0] All assertions passed. (total 2 assertions) 
-PASS > [crbug.com/835294]  
-PASS   Output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":9.8172e-7,"relativeThreshold":0}. 
-PASS < [crbug.com/835294] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "approach 1"
+PASS Executing "approach 0"
+PASS Executing "crbug.com/835294"
+PASS Audit report
+PASS > [approach 1]
+PASS   Initial output of 664 samples for setTargetAtTime(1, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000024,"relativeThreshold":0}.
+PASS   Tail output for setTargetAtTime(1, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":9.8234e-7}.
+PASS < [approach 1] All assertions passed. (total 2 assertions)
+PASS > [approach 0]
+PASS   Initial output of 480 samples for setTargetAtTime(0, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.747e-8,"relativeThreshold":0}.
+PASS   Tail output for setTargetAtTime(0, 0, 0.001) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00002331,"relativeThreshold":0}.
+PASS < [approach 0] All assertions passed. (total 2 assertions)
+PASS > [crbug.com/835294]
+PASS   Output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":9.8172e-7,"relativeThreshold":0}.
+PASS < [crbug.com/835294] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

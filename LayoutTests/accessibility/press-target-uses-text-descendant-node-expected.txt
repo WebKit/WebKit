@@ -1,4 +1,4 @@
-click only works on span inside link, not red link edges   
+click only works on span inside link, not red link edges
 Make sure that when performing a press, we target the deepest descendant, but also one that is an Element at the least.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

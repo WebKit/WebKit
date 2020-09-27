@@ -1,4 +1,4 @@
 
 
-PASS Refresh rendering when starting to play a video 
+PASS Refresh rendering when starting to play a video
 

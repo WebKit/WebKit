@@ -1,47 +1,47 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "AudioBufferSource looping test" 
-PASS Audit report 
-PASS > [AudioBufferSource looping test]  
-PASS   Generate 19 test cases did not throw an exception. 
-PASS   Case 0: loop whole buffer by default with loopStart == loopEnd == 0 is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...]. 
-PASS   Case 0: loop whole buffer by default with loopStart == loopEnd == 0: tail contains only the constant 0. 
-PASS   Case 1: loop whole buffer explicitly is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...]. 
-PASS   Case 1: loop whole buffer explicitly: tail contains only the constant 0. 
-PASS   Case 2: loop from middle to end of buffer is identical to the array [0,1,2,3,4,5,6,7,4,5,6,7,4,5,6,7...]. 
-PASS   Case 2: loop from middle to end of buffer: tail contains only the constant 0. 
-PASS   Case 3: loop from start to middle of buffer is identical to the array [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3...]. 
-PASS   Case 3: loop from start to middle of buffer: tail contains only the constant 0. 
-PASS   Case 4: loop from 4 -> 6 is identical to the array [0,1,2,3,4,5,4,5,4,5,4,5,4,5,4,5...]. 
-PASS   Case 4: loop from 4 -> 6: tail contains only the constant 0. 
-PASS   Case 5: loop from 3 -> 7 is identical to the array [0,1,2,3,4,5,6,3,4,5,6,3,4,5,6,3...]. 
-PASS   Case 5: loop from 3 -> 7: tail contains only the constant 0. 
-PASS   Case 6: loop from 4 -> 6 with playbackRate of 0.5 is identical to the array [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,4,4.5,5,5.5...]. 
-PASS   Case 6: loop from 4 -> 6 with playbackRate of 0.5: tail contains only the constant 0. 
-PASS   Case 7: loop from 4 -> 6 with playbackRate of 1.5 is identical to the array [0,1.5,3,4.5,4,5.5,5,4.5,4,5.5,5,4.5,4,5.5,5,4.5...]. 
-PASS   Case 7: loop from 4 -> 6 with playbackRate of 1.5: tail contains only the constant 0. 
-PASS   Case 8: loop from 2 -> 5 with offset 6 is identical to the array [2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2...]. 
-PASS   Case 8: loop from 2 -> 5 with offset 6: tail contains only the constant 0. 
-PASS   Case 9: loop from 3 -> 6 with offset 1 is identical to the array [1,2,3,4,5,3,4,5,3,4,5,3,4,5,3,4...]. 
-PASS   Case 9: loop from 3 -> 6 with offset 1: tail contains only the constant 0. 
-PASS   Case 10: loop from 3 -> 6 with offset 4 is identical to the array [4,5,3,4,5,3,4,5,3,4,5,3,4,5,3,4...]. 
-PASS   Case 10: loop from 3 -> 6 with offset 4: tail contains only the constant 0. 
-PASS   Case 11: illegal playbackRate of 47 greater than loop length is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 11: illegal playbackRate of 47 greater than loop length: tail contains only the constant 0. 
-PASS   Case 12: illegal loop: loopStartFrame > loopEndFrame is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...]. 
-PASS   Case 12: illegal loop: loopStartFrame > loopEndFrame: tail contains only the constant 0. 
-PASS   Case 13: illegal loop: loopStartFrame == loopEndFrame is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...]. 
-PASS   Case 13: illegal loop: loopStartFrame == loopEndFrame: tail contains only the constant 0. 
-PASS   Case 14: illegal loop: loopStartFrame < 0 is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...]. 
-PASS   Case 14: illegal loop: loopStartFrame < 0: tail contains only the constant 0. 
-PASS   Case 15: illegal loop: loopEndFrame > bufferLength is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...]. 
-PASS   Case 15: illegal loop: loopEndFrame > bufferLength: tail contains only the constant 0. 
-PASS   Case 16: loop from 3 -> 6 with offset 1 for 20 frames is identical to the array [1,2,3,4,5,3,4,5,3,4,5,3,4,5,3,4...]. 
-PASS   Case 16: loop from 3 -> 6 with offset 1 for 20 frames: tail contains only the constant 0. 
-PASS   Case 17: loop from 3 -> 8 with offset 1 for 3 frames is identical to the array [1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 17: loop from 3 -> 8 with offset 1 for 3 frames: tail contains only the constant 0. 
-PASS   Case 18: loop from 3 -> 8 with offset 7 for 3 frames is identical to the array [7,3,4,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 18: loop from 3 -> 8 with offset 7 for 3 frames: tail contains only the constant 0. 
-PASS < [AudioBufferSource looping test] All assertions passed. (total 39 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "AudioBufferSource looping test"
+PASS Audit report
+PASS > [AudioBufferSource looping test]
+PASS   Generate 19 test cases did not throw an exception.
+PASS   Case 0: loop whole buffer by default with loopStart == loopEnd == 0 is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
+PASS   Case 0: loop whole buffer by default with loopStart == loopEnd == 0: tail contains only the constant 0.
+PASS   Case 1: loop whole buffer explicitly is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
+PASS   Case 1: loop whole buffer explicitly: tail contains only the constant 0.
+PASS   Case 2: loop from middle to end of buffer is identical to the array [0,1,2,3,4,5,6,7,4,5,6,7,4,5,6,7...].
+PASS   Case 2: loop from middle to end of buffer: tail contains only the constant 0.
+PASS   Case 3: loop from start to middle of buffer is identical to the array [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3...].
+PASS   Case 3: loop from start to middle of buffer: tail contains only the constant 0.
+PASS   Case 4: loop from 4 -> 6 is identical to the array [0,1,2,3,4,5,4,5,4,5,4,5,4,5,4,5...].
+PASS   Case 4: loop from 4 -> 6: tail contains only the constant 0.
+PASS   Case 5: loop from 3 -> 7 is identical to the array [0,1,2,3,4,5,6,3,4,5,6,3,4,5,6,3...].
+PASS   Case 5: loop from 3 -> 7: tail contains only the constant 0.
+PASS   Case 6: loop from 4 -> 6 with playbackRate of 0.5 is identical to the array [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,4,4.5,5,5.5...].
+PASS   Case 6: loop from 4 -> 6 with playbackRate of 0.5: tail contains only the constant 0.
+PASS   Case 7: loop from 4 -> 6 with playbackRate of 1.5 is identical to the array [0,1.5,3,4.5,4,5.5,5,4.5,4,5.5,5,4.5,4,5.5,5,4.5...].
+PASS   Case 7: loop from 4 -> 6 with playbackRate of 1.5: tail contains only the constant 0.
+PASS   Case 8: loop from 2 -> 5 with offset 6 is identical to the array [2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2...].
+PASS   Case 8: loop from 2 -> 5 with offset 6: tail contains only the constant 0.
+PASS   Case 9: loop from 3 -> 6 with offset 1 is identical to the array [1,2,3,4,5,3,4,5,3,4,5,3,4,5,3,4...].
+PASS   Case 9: loop from 3 -> 6 with offset 1: tail contains only the constant 0.
+PASS   Case 10: loop from 3 -> 6 with offset 4 is identical to the array [4,5,3,4,5,3,4,5,3,4,5,3,4,5,3,4...].
+PASS   Case 10: loop from 3 -> 6 with offset 4: tail contains only the constant 0.
+PASS   Case 11: illegal playbackRate of 47 greater than loop length is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 11: illegal playbackRate of 47 greater than loop length: tail contains only the constant 0.
+PASS   Case 12: illegal loop: loopStartFrame > loopEndFrame is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
+PASS   Case 12: illegal loop: loopStartFrame > loopEndFrame: tail contains only the constant 0.
+PASS   Case 13: illegal loop: loopStartFrame == loopEndFrame is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
+PASS   Case 13: illegal loop: loopStartFrame == loopEndFrame: tail contains only the constant 0.
+PASS   Case 14: illegal loop: loopStartFrame < 0 is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
+PASS   Case 14: illegal loop: loopStartFrame < 0: tail contains only the constant 0.
+PASS   Case 15: illegal loop: loopEndFrame > bufferLength is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
+PASS   Case 15: illegal loop: loopEndFrame > bufferLength: tail contains only the constant 0.
+PASS   Case 16: loop from 3 -> 6 with offset 1 for 20 frames is identical to the array [1,2,3,4,5,3,4,5,3,4,5,3,4,5,3,4...].
+PASS   Case 16: loop from 3 -> 6 with offset 1 for 20 frames: tail contains only the constant 0.
+PASS   Case 17: loop from 3 -> 8 with offset 1 for 3 frames is identical to the array [1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 17: loop from 3 -> 8 with offset 1 for 3 frames: tail contains only the constant 0.
+PASS   Case 18: loop from 3 -> 8 with offset 7 for 3 frames is identical to the array [7,3,4,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 18: loop from 3 -> 8 with offset 7 for 3 frames: tail contains only the constant 0.
+PASS < [AudioBufferSource looping test] All assertions passed. (total 39 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

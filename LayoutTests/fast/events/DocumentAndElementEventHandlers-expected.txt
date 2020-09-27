@@ -1,8 +1,8 @@
 
-PASS oncopy EventHandler on Document 
-PASS oncopy EventHander on Element 
-PASS oncut EventHandler on Document 
-PASS oncut EventHander on Element 
-PASS onpaste EventHandler on Document 
-PASS onpaste EventHander on Element 
+PASS oncopy EventHandler on Document
+PASS oncopy EventHander on Element
+PASS oncut EventHandler on Document
+PASS oncut EventHander on Element
+PASS onpaste EventHandler on Document
+PASS onpaste EventHander on Element
 

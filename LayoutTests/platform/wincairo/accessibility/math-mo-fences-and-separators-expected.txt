@@ -3,29 +3,29 @@ This verifies the expected roles and values are exposed for mo.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: equation AXValue: 
-    AXRole: equation AXValue: 
+AXRole: equation AXValue:
+    AXRole: equation AXValue:
         AXRole: AXStaticText AXValue: *
-    AXRole: equation AXValue: 
+    AXRole: equation AXValue:
         AXRole: AXStaticText AXValue: *
-    AXRole: equation AXValue: 
+    AXRole: equation AXValue:
         AXRole: AXStaticText AXValue: *
-    AXRole: equation AXValue: 
+    AXRole: equation AXValue:
         AXRole: AXStaticText AXValue: *
-    AXRole: equation AXValue: 
-        AXRole: equation AXValue: 
+    AXRole: equation AXValue:
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: (
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: x
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: ,
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: y
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: ;
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: z
-        AXRole: equation AXValue: 
+        AXRole: equation AXValue:
             AXRole: AXStaticText AXValue: ]
 PASS successfullyParsed is true
 
