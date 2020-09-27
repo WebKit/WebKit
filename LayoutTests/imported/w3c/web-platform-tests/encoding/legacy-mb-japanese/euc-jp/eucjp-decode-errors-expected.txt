@@ -1,13 +1,13 @@
 
-PASS lead not 0x00 and no more bytes: B0 
-PASS lead not 0x00 and no more bytes: B0 B5 B0 
-PASS lead not 0x00 and no more bytes: B0 B0 B0 
-PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: FF 
-PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 FF 
-PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: 91 
-PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 91 
-PASS trail byte outside 0xA1-0xFE: B0 31 
-PASS trail byte outside 0xA1-0xFE: B0 FF 
-PASS trail byte outside 0xA1-0xFE: B0 A0 
-PASS pointer is null: A2 B9 
+PASS lead not 0x00 and no more bytes: B0
+PASS lead not 0x00 and no more bytes: B0 B5 B0
+PASS lead not 0x00 and no more bytes: B0 B0 B0
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: FF
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 FF
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: 91
+PASS lead byte outside 0x8E, 0x8F, or the range 0xA1 to 0xFE: B0 B5 91
+PASS trail byte outside 0xA1-0xFE: B0 31
+PASS trail byte outside 0xA1-0xFE: B0 FF
+PASS trail byte outside 0xA1-0xFE: B0 A0
+PASS pointer is null: A2 B9
 

@@ -1,5 +1,33 @@
 2020-09-27  Darin Adler  <darin@apple.com>
 
+        Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp
+        https://bugs.webkit.org/show_bug.cgi?id=217037
+
+        Reviewed by Zalan Bujtas.
+
+        To run at a resaonable speed, we may want to find a way to change these encoding tests to not
+        decode each character separately since that's not critical to what they are testing; this likely
+        would result in tests fast enough to run as regression tests (right now they are skipped) and
+        much smaller output files too. But for now, these are colossal files.
+
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-cseucpkdfmtjapanese-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-errors-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-x-euc-jp-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-cseucpkdfmtjapanese-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-hangul-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-x-euc-jp-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-han-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-hangul-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-misc-expected.txt:
+        * web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-expected.txt:
+        Remove trailing spaces.
+
+2020-09-27  Darin Adler  <darin@apple.com>
+
         Remove trailing spaces from expected.txt files in imported/w3c/web-platform-tests/encoding/legacy-mb-korean
         https://bugs.webkit.org/show_bug.cgi?id=217036
 
