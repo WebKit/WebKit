@@ -1,5 +1,48 @@
 2020-09-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267412. rdar://problem/69594162
+
+    Crashtracer inside PDFPlugin::createScrollbar.
+    <rdar://problem/69256031> and https://bugs.webkit.org/show_bug.cgi?id=216810
+    
+    Reviewed by Tim Horton.
+    
+    To quote Tim from r264945:
+    No new tests; timing is such that I can't reproduce without inserting
+    intentional delays into the main thread hops, which is further than
+    I'm willing to go for a test.
+    
+    This is a speculative fix due to the aforementioned reproducibility issue.
+    
+    * WebProcess/Plugins/PDF/PDFPlugin.mm:
+    (WebKit::PDFPlugin::installPDFDocument): With all the past fixes in place, its apparent
+      the plug-in HAS been torn down, and it's somewhat common to bypass the other "hasBeenDestroyed"
+      checks. So put an explicit check here followed by an explicit release assert.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267412 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-22  Brady Eidson  <beidson@apple.com>
+
+            Crashtracer inside PDFPlugin::createScrollbar.
+            <rdar://problem/69256031> and https://bugs.webkit.org/show_bug.cgi?id=216810
+
+            Reviewed by Tim Horton.
+
+            To quote Tim from r264945:
+            No new tests; timing is such that I can't reproduce without inserting
+            intentional delays into the main thread hops, which is further than
+            I'm willing to go for a test.
+
+            This is a speculative fix due to the aforementioned reproducibility issue.
+
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (WebKit::PDFPlugin::installPDFDocument): With all the past fixes in place, its apparent
+              the plug-in HAS been torn down, and it's somewhat common to bypass the other "hasBeenDestroyed"
+              checks. So put an explicit check here followed by an explicit release assert.
+
+2020-09-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267394. rdar://problem/69593980
 
     paper.io ad close buttons cannot be iteracted with via trackpad on iPad
