@@ -300,9 +300,6 @@ class Port(object):
             return False
 
     def do_text_results_differ(self, expected_text, actual_text):
-        # Ignore trailing spaces in expected files. We will remove this code after removing trailing spaces from all expected.txt files.
-        if not expected_text.startswith("<?xml"):
-            expected_text = re.compile(" +$", re.MULTILINE).sub("", expected_text)
         return expected_text != actual_text
 
     def do_audio_results_differ(self, expected_audio, actual_audio):

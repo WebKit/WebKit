@@ -1,3 +1,13 @@
+2020-09-27  Darin Adler  <darin@apple.com>
+
+        Remove run-webkit-tests code that strips trailing spaces when comparing expected.txt files
+        https://bugs.webkit.org/show_bug.cgi?id=217041
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.do_text_results_differ): Removed code to strip the expected text before comparing.
+
 2020-09-25  Darin Adler  <darin@apple.com>
 
         Change dumpAsText to strip trailing spaces
