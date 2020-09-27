@@ -1,64 +1,64 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "invalid constructor" 
-PASS Executing "required options" 
-PASS Executing "invalid option values" 
-PASS Executing "default constructor" 
-PASS Executing "valid constructor" 
-PASS Executing "multiple contexts" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   context = new OfflineAudioContext(...) did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [invalid constructor]  
-PASS   new AudioBuffer() threw TypeError: "Not enough arguments". 
-PASS   new AudioBuffer(1) threw TypeError: "Type error". 
-PASS   new AudioBuffer(Date, 42) threw TypeError: "Member AudioBufferOptions.sampleRate is required and must be an instance of float". 
-PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
-PASS > [required options]  
-PASS   buffer = new AudioBuffer({}) threw TypeError: "Member AudioBufferOptions.length is required and must be an instance of unsigned long". 
-PASS   buffer = new AudioBuffer({length: 1}) threw TypeError: "Member AudioBufferOptions.sampleRate is required and must be an instance of float". 
-PASS   buffer = new AudioBuffer({sampleRate: 48000}) threw TypeError: "Member AudioBufferOptions.length is required and must be an instance of unsigned long". 
-PASS   buffer = new AudioBuffer({numberOfChannels: 1} threw TypeError: "Member AudioBufferOptions.length is required and must be an instance of unsigned long". 
-PASS   buffer0 = new AudioBuffer({length: 21, sampleRate: 48000} did not throw an exception. 
-PASS   buffer0.numberOfChannels is equal to 1. 
-PASS   buffer0.length is equal to 21. 
-PASS   buffer0.sampleRate is equal to 48000. 
-PASS   buffer1 = new AudioBuffer({numberOfChannels: 3, length: 1, sampleRate: 48000}) did not throw an exception. 
-PASS   buffer1.numberOfChannels is equal to 3. 
-PASS   buffer1.length is equal to 1. 
-PASS   buffer1.sampleRate is equal to 48000. 
-PASS < [required options] All assertions passed. (total 12 assertions) 
-PASS > [invalid option values]  
-PASS   new AudioBuffer({"numberOfChannels":0,"length":1,"sampleRate":16000}) threw NotSupportedError: "Number of channels cannot be 0.". 
-PASS   new AudioBuffer({"numberOfChannels":99,"length":0,"sampleRate":16000}) threw NotSupportedError: "Number of channels cannot be more than max supported.". 
-PASS   new AudioBuffer({"numberOfChannels":1,"length":0,"sampleRate":16000}) threw NotSupportedError: "Length must be at least 1.". 
-PASS   new AudioBuffer({"numberOfChannels":1,"length":1,"sampleRate":100}) threw NotSupportedError: "Sample rate is not in the supported range.". 
-PASS < [invalid option values] All assertions passed. (total 4 assertions) 
-PASS > [default constructor]  
-PASS   buffer = new AudioBuffer({"numberOfChannels":5,"length":17,"sampleRate":16000}) did not throw an exception. 
-PASS   buffer.numberOfChannels is equal to 5. 
-PASS   buffer.length is equal to 17. 
-PASS   buffer.sampleRate is equal to 16000. 
-PASS < [default constructor] All assertions passed. (total 4 assertions) 
-PASS > [valid constructor]  
-PASS   new AudioBuffer({"numberOfChannels":3,"length":42,"sampleRate":54321}) did not throw an exception. 
-PASS   buffer.numberOfChannels is equal to 3. 
-PASS   buffer.length is equal to 42. 
-PASS   buffer.sampleRate is equal to 54321. 
-PASS   buffer.getChannelData(0) did not throw an exception. 
-PASS   buffer.getChannelData(0) length is equal to 42. 
-PASS   buffer.getChannelData(1) did not throw an exception. 
-PASS   buffer.getChannelData(1) length is equal to 42. 
-PASS   buffer.getChannelData(2) did not throw an exception. 
-PASS   buffer.getChannelData(2) length is equal to 42. 
-PASS   buffer.getChannelData(3) threw IndexSizeError: "Index must be less than number of channels.". 
-PASS < [valid constructor] All assertions passed. (total 11 assertions) 
-PASS > [multiple contexts]  
-PASS   c1 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
-PASS   c2 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
-PASS   AudioBuffer shared between two different contexts correctly 
-PASS < [multiple contexts] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "invalid constructor"
+PASS Executing "required options"
+PASS Executing "invalid option values"
+PASS Executing "default constructor"
+PASS Executing "valid constructor"
+PASS Executing "multiple contexts"
+PASS Audit report
+PASS > [initialize]
+PASS   context = new OfflineAudioContext(...) did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [invalid constructor]
+PASS   new AudioBuffer() threw TypeError: "Not enough arguments".
+PASS   new AudioBuffer(1) threw TypeError: "Type error".
+PASS   new AudioBuffer(Date, 42) threw TypeError: "Member AudioBufferOptions.sampleRate is required and must be an instance of float".
+PASS < [invalid constructor] All assertions passed. (total 3 assertions)
+PASS > [required options]
+PASS   buffer = new AudioBuffer({}) threw TypeError: "Member AudioBufferOptions.length is required and must be an instance of unsigned long".
+PASS   buffer = new AudioBuffer({length: 1}) threw TypeError: "Member AudioBufferOptions.sampleRate is required and must be an instance of float".
+PASS   buffer = new AudioBuffer({sampleRate: 48000}) threw TypeError: "Member AudioBufferOptions.length is required and must be an instance of unsigned long".
+PASS   buffer = new AudioBuffer({numberOfChannels: 1} threw TypeError: "Member AudioBufferOptions.length is required and must be an instance of unsigned long".
+PASS   buffer0 = new AudioBuffer({length: 21, sampleRate: 48000} did not throw an exception.
+PASS   buffer0.numberOfChannels is equal to 1.
+PASS   buffer0.length is equal to 21.
+PASS   buffer0.sampleRate is equal to 48000.
+PASS   buffer1 = new AudioBuffer({numberOfChannels: 3, length: 1, sampleRate: 48000}) did not throw an exception.
+PASS   buffer1.numberOfChannels is equal to 3.
+PASS   buffer1.length is equal to 1.
+PASS   buffer1.sampleRate is equal to 48000.
+PASS < [required options] All assertions passed. (total 12 assertions)
+PASS > [invalid option values]
+PASS   new AudioBuffer({"numberOfChannels":0,"length":1,"sampleRate":16000}) threw NotSupportedError: "Number of channels cannot be 0.".
+PASS   new AudioBuffer({"numberOfChannels":99,"length":0,"sampleRate":16000}) threw NotSupportedError: "Number of channels cannot be more than max supported.".
+PASS   new AudioBuffer({"numberOfChannels":1,"length":0,"sampleRate":16000}) threw NotSupportedError: "Length must be at least 1.".
+PASS   new AudioBuffer({"numberOfChannels":1,"length":1,"sampleRate":100}) threw NotSupportedError: "Sample rate is not in the supported range.".
+PASS < [invalid option values] All assertions passed. (total 4 assertions)
+PASS > [default constructor]
+PASS   buffer = new AudioBuffer({"numberOfChannels":5,"length":17,"sampleRate":16000}) did not throw an exception.
+PASS   buffer.numberOfChannels is equal to 5.
+PASS   buffer.length is equal to 17.
+PASS   buffer.sampleRate is equal to 16000.
+PASS < [default constructor] All assertions passed. (total 4 assertions)
+PASS > [valid constructor]
+PASS   new AudioBuffer({"numberOfChannels":3,"length":42,"sampleRate":54321}) did not throw an exception.
+PASS   buffer.numberOfChannels is equal to 3.
+PASS   buffer.length is equal to 42.
+PASS   buffer.sampleRate is equal to 54321.
+PASS   buffer.getChannelData(0) did not throw an exception.
+PASS   buffer.getChannelData(0) length is equal to 42.
+PASS   buffer.getChannelData(1) did not throw an exception.
+PASS   buffer.getChannelData(1) length is equal to 42.
+PASS   buffer.getChannelData(2) did not throw an exception.
+PASS   buffer.getChannelData(2) length is equal to 42.
+PASS   buffer.getChannelData(3) threw IndexSizeError: "Index must be less than number of channels.".
+PASS < [valid constructor] All assertions passed. (total 11 assertions)
+PASS > [multiple contexts]
+PASS   c1 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...].
+PASS   c2 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...].
+PASS   AudioBuffer shared between two different contexts correctly
+PASS < [multiple contexts] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully.
 

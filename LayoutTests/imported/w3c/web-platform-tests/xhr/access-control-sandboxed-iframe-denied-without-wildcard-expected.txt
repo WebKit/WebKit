@@ -1,5 +1,5 @@
 
 
-PASS Check that path exists and is accessible via CORS XHR request 
-PASS Sandboxed iframe is denied CORS access to server that allows parent origin 
+PASS Check that path exists and is accessible via CORS XHR request
+PASS Sandboxed iframe is denied CORS access to server that allows parent origin
 

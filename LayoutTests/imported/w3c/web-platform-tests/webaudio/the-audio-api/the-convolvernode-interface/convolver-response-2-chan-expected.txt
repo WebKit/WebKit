@@ -1,54 +1,54 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "1-channel input" 
-PASS Executing "2-channel input" 
-PASS Executing "3-channel input" 
-PASS Executing "4-channel input" 
-PASS Executing "5.1-channel input" 
-PASS Executing "2-channel input, explicit mode" 
-PASS Executing "3-channel input explicit mode" 
-PASS Executing "4-channel input explicit mode" 
-PASS Executing "5.1-channel input explicit mode" 
-PASS Audit report 
-PASS > [initialize] Convolver response with one channel 
-PASS   new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [1-channel input] produces 2-channel output 
-PASS   1: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   1: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [1-channel input] All assertions passed. (total 2 assertions) 
-PASS > [2-channel input] produces 2-channel output 
-PASS   2: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   2: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [2-channel input] All assertions passed. (total 2 assertions) 
-PASS > [3-channel input] 3->2 downmix producing 2-channel output 
-PASS   3: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   3: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [3-channel input] All assertions passed. (total 2 assertions) 
-PASS > [4-channel input] 4->2 downmix producing 2-channel output 
-PASS   4: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   4: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [4-channel input] All assertions passed. (total 2 assertions) 
-PASS > [5.1-channel input] 5.1->2 downmix producing 2-channel output 
-PASS   5.1: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000011511867343774294,"relativeThreshold":0}. 
-PASS   5.1: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000011511867343774294,"relativeThreshold":0}. 
-PASS < [5.1-channel input] All assertions passed. (total 2 assertions) 
-PASS > [2-channel input, explicit mode] produces 2-channel output 
-PASS   2-in explicit mode: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   2-in explicit mode: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [2-channel input, explicit mode] All assertions passed. (total 2 assertions) 
-PASS > [3-channel input explicit mode] 3->1 downmix producing 2-channel output 
-PASS   3-in explicit: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   3-in explicit: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [3-channel input explicit mode] All assertions passed. (total 2 assertions) 
-PASS > [4-channel input explicit mode] 4->1 downmix producing 2-channel output 
-PASS   4-in explicit: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS   4-in explicit: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}. 
-PASS < [4-channel input explicit mode] All assertions passed. (total 2 assertions) 
-PASS > [5.1-channel input explicit mode] 5.1->1 downmix producing 2-channel output 
-PASS   5.1-in explicit: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000016280238925805544,"relativeThreshold":0}. 
-PASS   5.1-in explicit: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000016280238925805544,"relativeThreshold":0}. 
-PASS < [5.1-channel input explicit mode] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 10 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "1-channel input"
+PASS Executing "2-channel input"
+PASS Executing "3-channel input"
+PASS Executing "4-channel input"
+PASS Executing "5.1-channel input"
+PASS Executing "2-channel input, explicit mode"
+PASS Executing "3-channel input explicit mode"
+PASS Executing "4-channel input explicit mode"
+PASS Executing "5.1-channel input explicit mode"
+PASS Audit report
+PASS > [initialize] Convolver response with one channel
+PASS   new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [1-channel input] produces 2-channel output
+PASS   1: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   1: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [1-channel input] All assertions passed. (total 2 assertions)
+PASS > [2-channel input] produces 2-channel output
+PASS   2: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   2: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [2-channel input] All assertions passed. (total 2 assertions)
+PASS > [3-channel input] 3->2 downmix producing 2-channel output
+PASS   3: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   3: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [3-channel input] All assertions passed. (total 2 assertions)
+PASS > [4-channel input] 4->2 downmix producing 2-channel output
+PASS   4: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   4: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [4-channel input] All assertions passed. (total 2 assertions)
+PASS > [5.1-channel input] 5.1->2 downmix producing 2-channel output
+PASS   5.1: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000011511867343774294,"relativeThreshold":0}.
+PASS   5.1: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000011511867343774294,"relativeThreshold":0}.
+PASS < [5.1-channel input] All assertions passed. (total 2 assertions)
+PASS > [2-channel input, explicit mode] produces 2-channel output
+PASS   2-in explicit mode: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   2-in explicit mode: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [2-channel input, explicit mode] All assertions passed. (total 2 assertions)
+PASS > [3-channel input explicit mode] 3->1 downmix producing 2-channel output
+PASS   3-in explicit: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   3-in explicit: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [3-channel input explicit mode] All assertions passed. (total 2 assertions)
+PASS > [4-channel input explicit mode] 4->1 downmix producing 2-channel output
+PASS   4-in explicit: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS   4-in explicit: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+PASS < [4-channel input explicit mode] All assertions passed. (total 2 assertions)
+PASS > [5.1-channel input explicit mode] 5.1->1 downmix producing 2-channel output
+PASS   5.1-in explicit: Channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000016280238925805544,"relativeThreshold":0}.
+PASS   5.1-in explicit: Channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000016280238925805544,"relativeThreshold":0}.
+PASS < [5.1-channel input explicit mode] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 10 tasks ran successfully.
 

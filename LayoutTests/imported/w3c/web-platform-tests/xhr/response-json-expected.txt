@@ -1,6 +1,6 @@
 
-PASS json response with no data: response property is null 
-PASS json response with malformed data: response property is null 
-PASS JSON object roundtrip 
-PASS JSON roundtrip with Japanese text 
+PASS json response with no data: response property is null
+PASS json response with malformed data: response property is null
+PASS JSON object roundtrip
+PASS JSON roundtrip with Japanese text
 

@@ -1,5 +1,5 @@
 
-PASS setRemoteDescription() with valid state and answer should succeed 
-PASS Calling setRemoteDescription(answer) from stable state should reject with InvalidStateError 
-PASS Calling setRemoteDescription(answer) from have-remote-offer state should reject with InvalidStateError 
+PASS setRemoteDescription() with valid state and answer should succeed
+PASS Calling setRemoteDescription(answer) from stable state should reject with InvalidStateError
+PASS Calling setRemoteDescription(answer) from have-remote-offer state should reject with InvalidStateError
 

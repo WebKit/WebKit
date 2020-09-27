@@ -1,6 +1,6 @@
 
-PASS Tests requestSession accepts XRSessionInit dictionary 
-PASS Tests requestSession accepts XRSessionInit dictionary with empty feature lists 
-PASS Tests requestSession ignores unknown strings in optionalFeatures 
-PASS Tests requestSession ignores unknown objects in optionalFeatures 
+PASS Tests requestSession accepts XRSessionInit dictionary
+PASS Tests requestSession accepts XRSessionInit dictionary with empty feature lists
+PASS Tests requestSession ignores unknown strings in optionalFeatures
+PASS Tests requestSession ignores unknown objects in optionalFeatures
 

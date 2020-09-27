@@ -3,7 +3,7 @@ Description
 This test validates that the XHR2 timeout property behaves as expected in in a worker context.
 
 
-PASS Timeout test: No events should fire for an unsent, unaborted request 
-PASS Timeout test: time to abort is -1, timeout set at 2000 
-PASS Timeout test: time to abort is 5000, timeout set at 2000 
+PASS Timeout test: No events should fire for an unsent, unaborted request
+PASS Timeout test: time to abort is -1, timeout set at 2000
+PASS Timeout test: time to abort is 5000, timeout set at 2000
 

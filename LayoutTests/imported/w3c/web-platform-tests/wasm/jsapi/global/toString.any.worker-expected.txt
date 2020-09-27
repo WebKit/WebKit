@@ -1,4 +1,4 @@
 
-PASS Object.prototype.toString on an Global 
-PASS @@toStringTag exists on the prototype with the appropriate descriptor 
+PASS Object.prototype.toString on an Global
+PASS @@toStringTag exists on the prototype with the appropriate descriptor
 

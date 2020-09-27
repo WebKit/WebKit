@@ -1,15 +1,15 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "create context" 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [create context] Create context for test 
-PASS < [create context] All assertions passed. (total 0 assertions) 
-PASS > [test] GainNode functionality 
-PASS   Left output from gain node equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}. 
-PASS   Right output from gain node equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}. 
-PASS   Left SNR (in dB) is greater than or equal to 148.71. 
-PASS   Right SNR (in dB) is greater than or equal to 148.71. 
-PASS < [test] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "create context"
+PASS Executing "test"
+PASS Audit report
+PASS > [create context] Create context for test
+PASS < [create context] All assertions passed. (total 0 assertions)
+PASS > [test] GainNode functionality
+PASS   Left output from gain node equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}.
+PASS   Right output from gain node equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1877e-7}.
+PASS   Left SNR (in dB) is greater than or equal to 148.71.
+PASS   Right SNR (in dB) is greater than or equal to 148.71.
+PASS < [test] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

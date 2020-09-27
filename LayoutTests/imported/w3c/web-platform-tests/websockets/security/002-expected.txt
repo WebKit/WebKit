@@ -1,3 +1,3 @@
 
-PASS WebSockets: check Sec-WebSocket-Key 
+PASS WebSockets: check Sec-WebSocket-Key
 

@@ -1,5 +1,5 @@
 
-PASS multiple return values from wasm to js 
-PASS multiple return values inside wasm 
+PASS multiple return values from wasm to js
+PASS multiple return values inside wasm
 FAIL multiple return values from js to wasm assert_array_equals: expected property 6 to be "next call 2" but got "valueOf get 1" (expected array ["@@iterator getter", "@@iterator call", "next getter", "next call 1", "done call 1", "value call 1", "next call 2", "done call 2", "value call 2", "next call 3", "done call 3", "valueOf get 1", "valueOf call 1", "valueOf get 2", "valueOf call 2"] got ["@@iterator getter", "@@iterator call", "next getter", "next call 1", "done call 1", "value call 1", "valueOf get 1", "valueOf call 1", "next call 2", "done call 2", "value call 2", "valueOf get 2", "valueOf call 2", "next call 3", "done call 3"])
 

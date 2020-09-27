@@ -1,70 +1,70 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "coefficient-normalization" 
-PASS Executing "one-zero" 
-PASS Executing "one-pole" 
-PASS Executing "0: lowpass" 
-PASS Executing "1: highpass" 
-PASS Executing "2: bandpass" 
-PASS Executing "3: notch" 
-PASS Executing "4: allpass" 
-PASS Executing "5: lowshelf" 
-PASS Executing "6: highshelf" 
-PASS Executing "7: peaking" 
-PASS Executing "multi-channel" 
-PASS Executing "4th-order-iir" 
-PASS Audit report 
-PASS > [coefficient-normalization]  
-PASS   createIIRFilter with normalized coefficients did not throw an exception. 
-PASS   createIIRFilter with unnormalized coefficients did not throw an exception. 
-PASS   Output of IIR filter with unnormalized coefficients equals [expected array] with an element-wise tolerance of {"absoluteThreshold":2.1958e-38,"relativeThreshold":0}. 
-PASS < [coefficient-normalization] All assertions passed. (total 3 assertions) 
-PASS > [one-zero]  
-PASS   IIR 1-zero output equals [0.5,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [one-zero] All assertions passed. (total 1 assertions) 
-PASS > [one-pole]  
-PASS   IIR 1-pole output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":2.7657e-8,"relativeThreshold":0}. 
-PASS < [one-pole] All assertions passed. (total 1 assertions) 
-PASS > [0: lowpass]  
-PASS   IIRFilter for Biquad lowpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000049834}. 
-PASS   SNR for IIRFIlter for Biquad lowpass is greater than or equal to 91.221. 
-PASS < [0: lowpass] All assertions passed. (total 2 assertions) 
-PASS > [1: highpass]  
-PASS   IIRFilter for Biquad highpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000029,"relativeThreshold":0.00003}. 
-PASS   SNR for IIRFIlter for Biquad highpass is greater than or equal to 105.459. 
-PASS < [1: highpass] All assertions passed. (total 2 assertions) 
-PASS > [2: bandpass]  
-PASS   IIRFilter for Biquad bandpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":2e-7,"relativeThreshold":0.00087}. 
-PASS   SNR for IIRFIlter for Biquad bandpass is greater than or equal to 104.06. 
-PASS < [2: bandpass] All assertions passed. (total 2 assertions) 
-PASS > [3: notch]  
-PASS   IIRFilter for Biquad notch equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000422}. 
-PASS   SNR for IIRFIlter for Biquad notch is greater than or equal to 91.312. 
-PASS < [3: notch] All assertions passed. (total 2 assertions) 
-PASS > [4: allpass]  
-PASS   IIRFilter for Biquad allpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000431}. 
-PASS   SNR for IIRFIlter for Biquad allpass is greater than or equal to 91.319. 
-PASS < [4: allpass] All assertions passed. (total 2 assertions) 
-PASS > [5: lowshelf]  
-PASS   IIRFilter for Biquad lowshelf equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000298}. 
-PASS   SNR for IIRFIlter for Biquad lowshelf is greater than or equal to 90.609. 
-PASS < [5: lowshelf] All assertions passed. (total 2 assertions) 
-PASS > [6: highshelf]  
-PASS   IIRFilter for Biquad highshelf equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000124}. 
-PASS   SNR for IIRFIlter for Biquad highshelf is greater than or equal to 103.159. 
-PASS < [6: highshelf] All assertions passed. (total 2 assertions) 
-PASS > [7: peaking]  
-PASS   IIRFilter for Biquad peaking equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000505}. 
-PASS   SNR for IIRFIlter for Biquad peaking is greater than or equal to 91.504. 
-PASS < [7: peaking] All assertions passed. (total 2 assertions) 
-PASS > [multi-channel]  
-PASS   Max difference between IIR and Biquad on channel 0 is less than or equal to 0.000037671. 
-PASS   Max difference between IIR and Biquad on channel 1 is less than or equal to 0.000030071. 
-PASS   Max difference between IIR and Biquad on channel 2 is less than or equal to 0.000026241. 
-PASS < [multi-channel] All assertions passed. (total 3 assertions) 
-PASS > [4th-order-iir]  
-PASS   4-th order IIRFilter (biquad ref) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.59e-7,"relativeThreshold":0.0000211}. 
-PASS   SNR of 4-th order IIRFilter (biquad ref) is greater than or equal to 108.947. 
-PASS < [4th-order-iir] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 13 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "coefficient-normalization"
+PASS Executing "one-zero"
+PASS Executing "one-pole"
+PASS Executing "0: lowpass"
+PASS Executing "1: highpass"
+PASS Executing "2: bandpass"
+PASS Executing "3: notch"
+PASS Executing "4: allpass"
+PASS Executing "5: lowshelf"
+PASS Executing "6: highshelf"
+PASS Executing "7: peaking"
+PASS Executing "multi-channel"
+PASS Executing "4th-order-iir"
+PASS Audit report
+PASS > [coefficient-normalization]
+PASS   createIIRFilter with normalized coefficients did not throw an exception.
+PASS   createIIRFilter with unnormalized coefficients did not throw an exception.
+PASS   Output of IIR filter with unnormalized coefficients equals [expected array] with an element-wise tolerance of {"absoluteThreshold":2.1958e-38,"relativeThreshold":0}.
+PASS < [coefficient-normalization] All assertions passed. (total 3 assertions)
+PASS > [one-zero]
+PASS   IIR 1-zero output equals [0.5,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [one-zero] All assertions passed. (total 1 assertions)
+PASS > [one-pole]
+PASS   IIR 1-pole output equals [expected array] with an element-wise tolerance of {"absoluteThreshold":2.7657e-8,"relativeThreshold":0}.
+PASS < [one-pole] All assertions passed. (total 1 assertions)
+PASS > [0: lowpass]
+PASS   IIRFilter for Biquad lowpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.000049834}.
+PASS   SNR for IIRFIlter for Biquad lowpass is greater than or equal to 91.221.
+PASS < [0: lowpass] All assertions passed. (total 2 assertions)
+PASS > [1: highpass]
+PASS   IIRFilter for Biquad highpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000029,"relativeThreshold":0.00003}.
+PASS   SNR for IIRFIlter for Biquad highpass is greater than or equal to 105.459.
+PASS < [1: highpass] All assertions passed. (total 2 assertions)
+PASS > [2: bandpass]
+PASS   IIRFilter for Biquad bandpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":2e-7,"relativeThreshold":0.00087}.
+PASS   SNR for IIRFIlter for Biquad bandpass is greater than or equal to 104.06.
+PASS < [2: bandpass] All assertions passed. (total 2 assertions)
+PASS > [3: notch]
+PASS   IIRFilter for Biquad notch equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000422}.
+PASS   SNR for IIRFIlter for Biquad notch is greater than or equal to 91.312.
+PASS < [3: notch] All assertions passed. (total 2 assertions)
+PASS > [4: allpass]
+PASS   IIRFilter for Biquad allpass equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000431}.
+PASS   SNR for IIRFIlter for Biquad allpass is greater than or equal to 91.319.
+PASS < [4: allpass] All assertions passed. (total 2 assertions)
+PASS > [5: lowshelf]
+PASS   IIRFilter for Biquad lowshelf equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000298}.
+PASS   SNR for IIRFIlter for Biquad lowshelf is greater than or equal to 90.609.
+PASS < [5: lowshelf] All assertions passed. (total 2 assertions)
+PASS > [6: highshelf]
+PASS   IIRFilter for Biquad highshelf equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000124}.
+PASS   SNR for IIRFIlter for Biquad highshelf is greater than or equal to 103.159.
+PASS < [6: highshelf] All assertions passed. (total 2 assertions)
+PASS > [7: peaking]
+PASS   IIRFilter for Biquad peaking equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0.0000505}.
+PASS   SNR for IIRFIlter for Biquad peaking is greater than or equal to 91.504.
+PASS < [7: peaking] All assertions passed. (total 2 assertions)
+PASS > [multi-channel]
+PASS   Max difference between IIR and Biquad on channel 0 is less than or equal to 0.000037671.
+PASS   Max difference between IIR and Biquad on channel 1 is less than or equal to 0.000030071.
+PASS   Max difference between IIR and Biquad on channel 2 is less than or equal to 0.000026241.
+PASS < [multi-channel] All assertions passed. (total 3 assertions)
+PASS > [4th-order-iir]
+PASS   4-th order IIRFilter (biquad ref) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.59e-7,"relativeThreshold":0.0000211}.
+PASS   SNR of 4-th order IIRFilter (biquad ref) is greater than or equal to 108.947.
+PASS < [4th-order-iir] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 13 tasks ran successfully.
 

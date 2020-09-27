@@ -1,4 +1,4 @@
 Blocked access to external URL http://www1.localhost:8800/xhr/resources/nocors/folder.txt
 
-PASS XMLHttpRequest: getResponseHeader() in error state (failing cross-origin test) 
+PASS XMLHttpRequest: getResponseHeader() in error state (failing cross-origin test)
 

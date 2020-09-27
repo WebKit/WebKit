@@ -1,7 +1,7 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
+PASS # AUDIT TASK RUNNER STARTED.
 FAIL Executing "load-worklet-and-suspend" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-PASS Audit report 
-PASS > [load-worklet-and-suspend]  
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS Audit report
+PASS > [load-worklet-and-suspend]
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

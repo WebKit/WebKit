@@ -1,7 +1,7 @@
 
-PASS Default "sync-xhr" feature policy ["*"] allows the top-level document. 
-PASS Default "sync-xhr" feature policy ["*"] allows same-origin iframes. 
-PASS Default "sync-xhr" feature policy ["*"] allows cross-origin iframes. 
-PASS Feature policy "sync-xhr" can be disabled in cross-origin iframes using "allow" attribute. 
-PASS Feature policy "sync-xhr" can be disabled in same-origin iframes using "allow" attribute. 
+PASS Default "sync-xhr" feature policy ["*"] allows the top-level document.
+PASS Default "sync-xhr" feature policy ["*"] allows same-origin iframes.
+PASS Default "sync-xhr" feature policy ["*"] allows cross-origin iframes.
+PASS Feature policy "sync-xhr" can be disabled in cross-origin iframes using "allow" attribute.
+PASS Feature policy "sync-xhr" can be disabled in same-origin iframes using "allow" attribute.
 

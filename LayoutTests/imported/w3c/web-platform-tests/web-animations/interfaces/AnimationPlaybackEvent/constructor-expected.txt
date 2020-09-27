@@ -1,4 +1,4 @@
 
-PASS Event created without an event parameter has null time values 
-PASS Created event reflects times specified in constructor 
+PASS Event created without an event parameter has null time values
+PASS Created event reflects times specified in constructor
 

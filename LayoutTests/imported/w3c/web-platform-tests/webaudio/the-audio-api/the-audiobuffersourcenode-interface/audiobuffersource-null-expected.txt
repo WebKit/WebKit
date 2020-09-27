@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "ABSN with null buffer" 
-PASS Audit report 
-PASS > [ABSN with null buffer]  
-PASS   Setting ABSN.buffer to AudioBuffer did not throw an exception. 
-PASS   Setting ABSN.buffer = null did not throw an exception. 
-PASS   ABSN output contains only the constant 0. 
-PASS < [ABSN with null buffer] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "ABSN with null buffer"
+PASS Audit report
+PASS > [ABSN with null buffer]
+PASS   Setting ABSN.buffer to AudioBuffer did not throw an exception.
+PASS   Setting ABSN.buffer = null did not throw an exception.
+PASS   ABSN output contains only the constant 0.
+PASS < [ABSN with null buffer] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

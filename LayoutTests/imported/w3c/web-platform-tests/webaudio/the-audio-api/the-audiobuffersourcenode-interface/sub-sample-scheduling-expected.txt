@@ -1,53 +1,53 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "sub-sample accurate start" 
-PASS Executing "sub-sample accurate stop" 
-PASS Executing "sub-sample-grain" 
-PASS Executing "sub-sample accurate start with playbackRate" 
-PASS Audit report 
-PASS > [sub-sample accurate start]  
-PASS   src0 start frame is equal to 33.1. 
-PASS   output0[0:33] contains only the constant 0. 
-PASS   output0[34:8190] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   src1 start frame is equal to 33.9. 
-PASS   output1[0:33] contains only the constant 0. 
-PASS   output1[34:8190] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [sub-sample accurate start] All assertions passed. (total 6 assertions) 
-PASS > [sub-sample accurate stop]  
-PASS   src0 end frame is equal to 32. 
-PASS   output0[32] is not equal to 0. 
-PASS   output0[33:] contains only the constant 0. 
-PASS   src1 end frame is equal to 33.1. 
-PASS   output1[33] is not equal to 0. 
-PASS   output1[34:] contains only the constant 0. 
-PASS   src2 end frame is equal to 33.9. 
-PASS   output2[33] is not equal to 0. 
-PASS   output2[34:] contains only the constant 0. 
-PASS < [sub-sample accurate stop] All assertions passed. (total 9 assertions) 
-PASS > [sub-sample-grain]  
-PASS   src0 grain start is equal to 3.1. 
-PASS   src0 grain duration is equal to 34.1. 
-PASS   src0 grain end is equal to 37.2. 
-PASS   output0 is identical to the array [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-PASS   output0[3] is equal to 0. 
-PASS   output0[4] is not equal to 0. 
-PASS   output0[37] is not equal to 0. 
-PASS   output0[38] is equal to 0. 
-PASS   src1 grain start is equal to 5.8. 
-PASS   src1 grain duration is equal to 38.1. 
-PASS   src1 grain end is equal to 43.9. 
-PASS   output1 is identical to the array [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1...]. 
-PASS   output1[5] is equal to 0. 
-PASS   output1[6] is not equal to 0. 
-PASS   output1[43] is not equal to 0. 
-PASS   output1[44] is equal to 0. 
-PASS < [sub-sample-grain] All assertions passed. (total 16 assertions) 
-PASS > [sub-sample accurate start with playbackRate]  
-PASS   Source start frame is equal to 17.8. 
-PASS   With playbackRate 0.25: output0[17] is equal to 0. 
-PASS   With playbackRate 0.25: output0[18] is 1.0499999999999998 within an error of 4.542e-8. 
-PASS   With playbackRate 4: output1[17] is equal to 0. 
-PASS   With playbackRate 4: output1[18] is 1.7999999999999972 within an error of 4.542e-8. 
-PASS < [sub-sample accurate start with playbackRate] All assertions passed. (total 5 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "sub-sample accurate start"
+PASS Executing "sub-sample accurate stop"
+PASS Executing "sub-sample-grain"
+PASS Executing "sub-sample accurate start with playbackRate"
+PASS Audit report
+PASS > [sub-sample accurate start]
+PASS   src0 start frame is equal to 33.1.
+PASS   output0[0:33] contains only the constant 0.
+PASS   output0[34:8190] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   src1 start frame is equal to 33.9.
+PASS   output1[0:33] contains only the constant 0.
+PASS   output1[34:8190] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [sub-sample accurate start] All assertions passed. (total 6 assertions)
+PASS > [sub-sample accurate stop]
+PASS   src0 end frame is equal to 32.
+PASS   output0[32] is not equal to 0.
+PASS   output0[33:] contains only the constant 0.
+PASS   src1 end frame is equal to 33.1.
+PASS   output1[33] is not equal to 0.
+PASS   output1[34:] contains only the constant 0.
+PASS   src2 end frame is equal to 33.9.
+PASS   output2[33] is not equal to 0.
+PASS   output2[34:] contains only the constant 0.
+PASS < [sub-sample accurate stop] All assertions passed. (total 9 assertions)
+PASS > [sub-sample-grain]
+PASS   src0 grain start is equal to 3.1.
+PASS   src0 grain duration is equal to 34.1.
+PASS   src0 grain end is equal to 37.2.
+PASS   output0 is identical to the array [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1...].
+PASS   output0[3] is equal to 0.
+PASS   output0[4] is not equal to 0.
+PASS   output0[37] is not equal to 0.
+PASS   output0[38] is equal to 0.
+PASS   src1 grain start is equal to 5.8.
+PASS   src1 grain duration is equal to 38.1.
+PASS   src1 grain end is equal to 43.9.
+PASS   output1 is identical to the array [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1...].
+PASS   output1[5] is equal to 0.
+PASS   output1[6] is not equal to 0.
+PASS   output1[43] is not equal to 0.
+PASS   output1[44] is equal to 0.
+PASS < [sub-sample-grain] All assertions passed. (total 16 assertions)
+PASS > [sub-sample accurate start with playbackRate]
+PASS   Source start frame is equal to 17.8.
+PASS   With playbackRate 0.25: output0[17] is equal to 0.
+PASS   With playbackRate 0.25: output0[18] is 1.0499999999999998 within an error of 4.542e-8.
+PASS   With playbackRate 4: output1[17] is equal to 0.
+PASS   With playbackRate 4: output1[18] is 1.7999999999999972 within an error of 4.542e-8.
+PASS < [sub-sample accurate start with playbackRate] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

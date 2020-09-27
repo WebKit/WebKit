@@ -1,13 +1,13 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Oscillator k-rate detune" 
-PASS Executing "Oscillator k-rate frequency" 
-PASS Audit report 
-PASS > [Oscillator k-rate detune]  
-PASS   k-rate detune: Difference between a-rate and k-rate outputs is not constantly 0 (contains 510 different values). 
-PASS < [Oscillator k-rate detune] All assertions passed. (total 1 assertions) 
-PASS > [Oscillator k-rate frequency]  
-PASS   k-rate frequency: Difference between a-rate and k-rate outputs is not constantly 0 (contains 510 different values). 
-PASS < [Oscillator k-rate frequency] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Oscillator k-rate detune"
+PASS Executing "Oscillator k-rate frequency"
+PASS Audit report
+PASS > [Oscillator k-rate detune]
+PASS   k-rate detune: Difference between a-rate and k-rate outputs is not constantly 0 (contains 510 different values).
+PASS < [Oscillator k-rate detune] All assertions passed. (total 1 assertions)
+PASS > [Oscillator k-rate frequency]
+PASS   k-rate frequency: Difference between a-rate and k-rate outputs is not constantly 0 (contains 510 different values).
+PASS < [Oscillator k-rate frequency] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

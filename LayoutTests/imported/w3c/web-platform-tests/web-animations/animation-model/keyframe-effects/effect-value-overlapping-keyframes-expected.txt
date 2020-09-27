@@ -1,4 +1,4 @@
 
-PASS Overlapping keyframes at 0 and 1 use the appropriate value when the progress is outside the range [0, 1] 
-PASS Overlapping keyframes between 0 and 1 use the appropriate value on each side of the overlap point 
+PASS Overlapping keyframes at 0 and 1 use the appropriate value when the progress is outside the range [0, 1]
+PASS Overlapping keyframes between 0 and 1 use the appropriate value on each side of the overlap point
 

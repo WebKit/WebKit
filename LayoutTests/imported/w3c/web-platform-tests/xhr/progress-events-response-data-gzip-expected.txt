@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: progress events and GZIP encoding 
+PASS XMLHttpRequest: progress events and GZIP encoding
 

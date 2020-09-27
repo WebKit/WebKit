@@ -1,28 +1,28 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS checkAddTransceiverNoTrack 
-PASS checkAddTransceiverWithTrack 
-PASS checkAddTransceiverWithAddTrack 
-PASS checkAddTransceiverWithDirection 
+PASS checkAddTransceiverNoTrack
+PASS checkAddTransceiverWithTrack
+PASS checkAddTransceiverWithAddTrack
+PASS checkAddTransceiverWithDirection
 FAIL checkMsidNoTrackId promise_test: Unhandled rejection with value: object "SyntaxError: Expects 2 fields."
-PASS checkAddTransceiverWithSetRemoteOfferSending 
-PASS checkAddTransceiverWithSetRemoteOfferNoSend 
-PASS checkAddTransceiverBadKind 
-PASS checkNoMidOffer 
-PASS checkNoMidAnswer 
-PASS checkSetDirection 
-PASS checkCurrentDirection 
-PASS checkSendrecvWithNoSendTrack 
-PASS checkSendrecvWithTracklessStream 
-PASS checkAddTransceiverNoTrackDoesntPair 
-PASS checkAddTransceiverWithTrackDoesntPair 
-PASS checkAddTransceiverThenReplaceTrackDoesntPair 
+PASS checkAddTransceiverWithSetRemoteOfferSending
+PASS checkAddTransceiverWithSetRemoteOfferNoSend
+PASS checkAddTransceiverBadKind
+PASS checkNoMidOffer
+PASS checkNoMidAnswer
+PASS checkSetDirection
+PASS checkCurrentDirection
+PASS checkSendrecvWithNoSendTrack
+PASS checkSendrecvWithTracklessStream
+PASS checkAddTransceiverNoTrackDoesntPair
+PASS checkAddTransceiverWithTrackDoesntPair
+PASS checkAddTransceiverThenReplaceTrackDoesntPair
 FAIL checkAddTransceiverThenAddTrackPairs assert_equals: expected "[{sender:{track:{}}}]" but got "[{sender:{track:{}}},{}]"
-PASS checkAddTrackPairs 
-PASS checkReplaceTrackNullDoesntPreventPairing 
-PASS checkRemoveAndReadd 
-PASS checkAddTrackExistingTransceiverThenRemove 
+PASS checkAddTrackPairs
+PASS checkReplaceTrackNullDoesntPreventPairing
+PASS checkRemoveAndReadd
+PASS checkAddTrackExistingTransceiverThenRemove
 FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 FAIL checkMute assert_true: expected true got false
 FAIL checkStop assert_equals: expected "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}},stopped:true}]" but got "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null},stopped:true}]"
@@ -31,12 +31,12 @@ FAIL checkStopAfterSetLocalOffer assert_equals: expected "[{mid:null,stopped:tru
 FAIL checkStopAfterSetRemoteOffer assert_equals: expected "[]" but got "[{isTrusted:true}]"
 FAIL checkStopAfterCreateAnswer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
 TIMEOUT checkStopAfterSetLocalAnswer Test timed out
-NOTRUN checkStopAfterClose 
-NOTRUN checkLocalRollback 
-NOTRUN checkRollbackAndSetRemoteOfferWithDifferentType 
-NOTRUN checkRemoteRollback 
-NOTRUN checkMsectionReuse 
-NOTRUN checkStopAfterCreateOfferWithReusedMsection 
-NOTRUN checkAddIceCandidateToStoppedTransceiver 
-NOTRUN checkBundleTagRejected 
+NOTRUN checkStopAfterClose
+NOTRUN checkLocalRollback
+NOTRUN checkRollbackAndSetRemoteOfferWithDifferentType
+NOTRUN checkRemoteRollback
+NOTRUN checkMsectionReuse
+NOTRUN checkStopAfterCreateOfferWithReusedMsection
+NOTRUN checkAddIceCandidateToStoppedTransceiver
+NOTRUN checkBundleTagRejected
 

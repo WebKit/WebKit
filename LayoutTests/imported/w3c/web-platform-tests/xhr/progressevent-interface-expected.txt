@@ -1,9 +1,9 @@
 
-PASS The ProgressEvent interface 
-PASS interface prototype object 
-PASS The ProgressEvent interface 1 
-PASS The ProgressEvent interface 2 
-PASS The ProgressEvent interface 3 
-PASS Interface objects properties should not be Enumerable 
-PASS Should be able to delete ProgressEvent. 
+PASS The ProgressEvent interface
+PASS interface prototype object
+PASS The ProgressEvent interface 1
+PASS The ProgressEvent interface 2
+PASS The ProgressEvent interface 3
+PASS Interface objects properties should not be Enumerable
+PASS Should be able to delete ProgressEvent.
 

@@ -1,8 +1,8 @@
 
-PASS existence of XMLHttpRequest 
-PASS existence of WebSocket 
-PASS existence of EventSource 
-PASS existence of MessageChannel 
+PASS existence of XMLHttpRequest
+PASS existence of WebSocket
+PASS existence of EventSource
+PASS existence of MessageChannel
 FAIL existence of Worker assert_true: expected true got false
 FAIL existence of SharedWorker assert_true: expected true got false
 

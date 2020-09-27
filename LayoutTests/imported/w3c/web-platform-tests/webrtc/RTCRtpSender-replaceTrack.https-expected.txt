@@ -1,12 +1,12 @@
 
-PASS Calling replaceTrack on closed connection should reject with InvalidStateError 
-PASS Calling replaceTrack with track of different kind should reject with TypeError 
-PASS Calling replaceTrack on stopped sender should reject with InvalidStateError 
-PASS Calling replaceTrack on sender with null track and not set to session description should resolve with sender.track set to given track 
-PASS Calling replaceTrack on sender not set to session description should resolve with sender.track set to given track 
-PASS Calling replaceTrack(null) on sender not set to session description should resolve with sender.track set to null 
-PASS Calling replaceTrack(null) on sender set to session description should resolve with sender.track set to null 
-PASS Calling replaceTrack on sender with stopped track and and set to session description should resolve with sender.track set to given track 
-PASS Calling replaceTrack on sender with similar track and and set to session description should resolve with sender.track set to new track 
-PASS ReplaceTrack transmits the new track not the old track 
+PASS Calling replaceTrack on closed connection should reject with InvalidStateError
+PASS Calling replaceTrack with track of different kind should reject with TypeError
+PASS Calling replaceTrack on stopped sender should reject with InvalidStateError
+PASS Calling replaceTrack on sender with null track and not set to session description should resolve with sender.track set to given track
+PASS Calling replaceTrack on sender not set to session description should resolve with sender.track set to given track
+PASS Calling replaceTrack(null) on sender not set to session description should resolve with sender.track set to null
+PASS Calling replaceTrack(null) on sender set to session description should resolve with sender.track set to null
+PASS Calling replaceTrack on sender with stopped track and and set to session description should resolve with sender.track set to given track
+PASS Calling replaceTrack on sender with similar track and and set to session description should resolve with sender.track set to new track
+PASS ReplaceTrack transmits the new track not the old track
 

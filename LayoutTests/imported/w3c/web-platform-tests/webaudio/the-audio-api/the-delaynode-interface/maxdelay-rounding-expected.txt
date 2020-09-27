@@ -1,10 +1,10 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "maxdelay-rounding" 
-PASS Audit report 
-PASS > [maxdelay-rounding] Test DelayNode when maxDelayTime requires rounding 
-PASS   output[0:44099] contains only the constant 0. 
-PASS   output[44100:] is not constantly 0 (contains 44100 different values). 
-PASS < [maxdelay-rounding] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "maxdelay-rounding"
+PASS Audit report
+PASS > [maxdelay-rounding] Test DelayNode when maxDelayTime requires rounding
+PASS   output[0:44099] contains only the constant 0.
+PASS   output[44100:] is not constantly 0 (contains 44100 different values).
+PASS < [maxdelay-rounding] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

@@ -1,19 +1,19 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "exceptions-channels" 
-PASS Executing "exceptions-properties" 
-PASS Audit report 
-PASS > [exceptions-channels]  
-PASS   context.createChannelMerger() did not throw an exception. 
-PASS   context.createChannelMerger(0) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
-PASS   context.createChannelMerger(32) did not throw an exception. 
-PASS   context.createChannelMerger(33) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
-PASS < [exceptions-channels] All assertions passed. (total 4 assertions) 
-PASS > [exceptions-properties]  
-PASS   merger.channelCount is equal to 1. 
-PASS   merger.channelCount = 3 threw InvalidStateError: "Channel count cannot be changed from 1.". 
-PASS   merger.channelCountMode is equal to explicit. 
-PASS   merger.channelCountMode = "max" threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
-PASS < [exceptions-properties] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "exceptions-channels"
+PASS Executing "exceptions-properties"
+PASS Audit report
+PASS > [exceptions-channels]
+PASS   context.createChannelMerger() did not throw an exception.
+PASS   context.createChannelMerger(0) threw IndexSizeError: "Number of inputs is not in the allowed range.".
+PASS   context.createChannelMerger(32) did not throw an exception.
+PASS   context.createChannelMerger(33) threw IndexSizeError: "Number of inputs is not in the allowed range.".
+PASS < [exceptions-channels] All assertions passed. (total 4 assertions)
+PASS > [exceptions-properties]
+PASS   merger.channelCount is equal to 1.
+PASS   merger.channelCount = 3 threw InvalidStateError: "Channel count cannot be changed from 1.".
+PASS   merger.channelCountMode is equal to explicit.
+PASS   merger.channelCountMode = "max" threw InvalidStateError: "Channel count mode cannot be changed from explicit.".
+PASS < [exceptions-properties] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

@@ -1,4 +1,4 @@
 
-PASS Redirects should not reset the timer 
-PASS CORS preflights should not reset the timer 
+PASS Redirects should not reset the timer
+PASS CORS preflights should not reset the timer
 

@@ -1,3 +1,3 @@
 
-PASS WebSockets: replacing close 
+PASS WebSockets: replacing close
 

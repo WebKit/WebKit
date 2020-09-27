@@ -3,4 +3,4 @@ CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
 CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
 
 FAIL shared worker with multiple documents ReferenceError: Can't find variable: SharedWorker
- 
+

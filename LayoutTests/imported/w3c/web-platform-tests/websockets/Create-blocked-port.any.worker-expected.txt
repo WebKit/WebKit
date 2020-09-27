@@ -1,5 +1,5 @@
 
-PASS Basic check 
+PASS Basic check
 FAIL WebSocket blocked port test 1 The operation is insecure.
 FAIL WebSocket blocked port test 7 The operation is insecure.
 FAIL WebSocket blocked port test 9 The operation is insecure.

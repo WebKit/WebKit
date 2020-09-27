@@ -1,4 +1,4 @@
 
-PASS XMLHttpRequest: User-Agent header is preserved on redirect 
+PASS XMLHttpRequest: User-Agent header is preserved on redirect
 FAIL XMLHttpRequest: User-Agent header is preserved on redirect 1 assert_equals: expected "User-Agent: TEST\n" but got "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14) AppleWebKit/605.1.15 (KHTML, like Gecko)\n"
 

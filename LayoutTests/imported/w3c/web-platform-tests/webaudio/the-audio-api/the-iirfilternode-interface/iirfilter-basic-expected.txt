@@ -1,45 +1,45 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "existence" 
-PASS Executing "parameters" 
-PASS Executing "exceptions-createIIRFilter" 
-PASS Executing "exceptions-getFrequencyData" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   Initialize context for testing did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [existence]  
-PASS   context.createIIRFilter does exist. 
-PASS < [existence] All assertions passed. (total 1 assertions) 
-PASS > [parameters]  
-PASS   numberOfInputs is equal to 1. 
-PASS   numberOfOutputs is equal to 1. 
-PASS   channelCountMode is equal to max. 
-PASS   channelInterpretation is equal to speakers. 
-PASS < [parameters] All assertions passed. (total 4 assertions) 
-PASS > [exceptions-createIIRFilter]  
-PASS   createIIRFilter() threw TypeError: "Not enough arguments". 
-PASS   createIIRFilter(new Float32Array(1)) threw TypeError: "Not enough arguments". 
-PASS   createIIRFilter(null, null) threw TypeError: "Value is not a sequence". 
-PASS   createIIRFilter([], []) threw NotSupportedError: "feedforward array must have a length between 1 and 20". 
-PASS   createIIRFilter([1], []) threw NotSupportedError: "feedback array must have a length between 1 and 20". 
-PASS   createIIRFilter([], [1]) threw NotSupportedError: "feedforward array must have a length between 1 and 20". 
-PASS   createIIRFilter(new Float32Array(20), new Float32Array(20)) did not throw an exception. 
-PASS   createIIRFilter(new Float32Array(21), [1]) threw NotSupportedError: "feedforward array must have a length between 1 and 20". 
-PASS   createIIRFilter([1], new Float32Array(21)) threw NotSupportedError: "feedback array must have a length between 1 and 20". 
-PASS   createIIRFilter([1], new Float32Array(2)) threw InvalidStateError: "first value of feedback array cannot be zero". 
-PASS   createIIRFilter(new Float32Array(10), [1]) threw InvalidStateError: "feedforward array must contain a non-zero value". 
-PASS   createIIRFilter([1], [1, NaN, Infinity]) threw TypeError: "The provided value is non-finite". 
-PASS   createIIRFilter([1, NaN, Infinity], [1]) threw TypeError: "The provided value is non-finite". 
-PASS   createIIRFilter([1, 'abc', []], [1]) threw TypeError: "The provided value is non-finite". 
-PASS < [exceptions-createIIRFilter] All assertions passed. (total 14 assertions) 
-PASS > [exceptions-getFrequencyData]  
-PASS   getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) threw TypeError: "Argument 1 ('frequencyHz') to IIRFilterNode.getFrequencyResponse must be an instance of Float32Array". 
-PASS   getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) threw TypeError: "Argument 2 ('magResponse') to IIRFilterNode.getFrequencyResponse must be an instance of Float32Array". 
-PASS   getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) threw TypeError: "Argument 3 ('phaseResponse') to IIRFilterNode.getFrequencyResponse must be an instance of Float32Array". 
-PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(1), new Float32Array(20)) threw InvalidAccessError: "Arrays must have the same length". 
-PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(20), new Float32Array(1)) threw InvalidAccessError: "Arrays must have the same length". 
-PASS < [exceptions-getFrequencyData] All assertions passed. (total 5 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "existence"
+PASS Executing "parameters"
+PASS Executing "exceptions-createIIRFilter"
+PASS Executing "exceptions-getFrequencyData"
+PASS Audit report
+PASS > [initialize]
+PASS   Initialize context for testing did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [existence]
+PASS   context.createIIRFilter does exist.
+PASS < [existence] All assertions passed. (total 1 assertions)
+PASS > [parameters]
+PASS   numberOfInputs is equal to 1.
+PASS   numberOfOutputs is equal to 1.
+PASS   channelCountMode is equal to max.
+PASS   channelInterpretation is equal to speakers.
+PASS < [parameters] All assertions passed. (total 4 assertions)
+PASS > [exceptions-createIIRFilter]
+PASS   createIIRFilter() threw TypeError: "Not enough arguments".
+PASS   createIIRFilter(new Float32Array(1)) threw TypeError: "Not enough arguments".
+PASS   createIIRFilter(null, null) threw TypeError: "Value is not a sequence".
+PASS   createIIRFilter([], []) threw NotSupportedError: "feedforward array must have a length between 1 and 20".
+PASS   createIIRFilter([1], []) threw NotSupportedError: "feedback array must have a length between 1 and 20".
+PASS   createIIRFilter([], [1]) threw NotSupportedError: "feedforward array must have a length between 1 and 20".
+PASS   createIIRFilter(new Float32Array(20), new Float32Array(20)) did not throw an exception.
+PASS   createIIRFilter(new Float32Array(21), [1]) threw NotSupportedError: "feedforward array must have a length between 1 and 20".
+PASS   createIIRFilter([1], new Float32Array(21)) threw NotSupportedError: "feedback array must have a length between 1 and 20".
+PASS   createIIRFilter([1], new Float32Array(2)) threw InvalidStateError: "first value of feedback array cannot be zero".
+PASS   createIIRFilter(new Float32Array(10), [1]) threw InvalidStateError: "feedforward array must contain a non-zero value".
+PASS   createIIRFilter([1], [1, NaN, Infinity]) threw TypeError: "The provided value is non-finite".
+PASS   createIIRFilter([1, NaN, Infinity], [1]) threw TypeError: "The provided value is non-finite".
+PASS   createIIRFilter([1, 'abc', []], [1]) threw TypeError: "The provided value is non-finite".
+PASS < [exceptions-createIIRFilter] All assertions passed. (total 14 assertions)
+PASS > [exceptions-getFrequencyData]
+PASS   getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) threw TypeError: "Argument 1 ('frequencyHz') to IIRFilterNode.getFrequencyResponse must be an instance of Float32Array".
+PASS   getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) threw TypeError: "Argument 2 ('magResponse') to IIRFilterNode.getFrequencyResponse must be an instance of Float32Array".
+PASS   getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) threw TypeError: "Argument 3 ('phaseResponse') to IIRFilterNode.getFrequencyResponse must be an instance of Float32Array".
+PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(1), new Float32Array(20)) threw InvalidAccessError: "Arrays must have the same length".
+PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(20), new Float32Array(1)) threw InvalidAccessError: "Arrays must have the same length".
+PASS < [exceptions-getFrequencyData] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

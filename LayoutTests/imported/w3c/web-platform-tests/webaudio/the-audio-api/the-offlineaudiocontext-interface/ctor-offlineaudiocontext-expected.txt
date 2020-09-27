@@ -1,46 +1,46 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "basic" 
-PASS Executing "options-1" 
-PASS Executing "options-2" 
-PASS Executing "options-3" 
-PASS Audit report 
-PASS > [basic] Old-style constructor 
-PASS   new OfflineAudioContext(3) threw TypeError: "Type error". 
-PASS   new OfflineAudioContext(3, 42) threw TypeError: "Type error". 
-PASS   context = new OfflineAudioContext(3, 42, 12345) did not throw an exception. 
-PASS   context.length is equal to 42. 
-PASS   context.sampleRate is equal to 12345. 
-PASS   context.destination.channelCount is equal to 3. 
-PASS   context.destination.channelCountMode is equal to explicit. 
-PASS   context.destination.channelInterpretation is equal to speakers. 
-PASS < [basic] All assertions passed. (total 8 assertions) 
-PASS > [options-1] Required options 
-PASS   new OfflineAudioContext() threw TypeError: "Not enough arguments". 
-PASS   new OfflineAudioContext({}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long". 
-PASS   new OfflineAudioContext({"length":42}) threw TypeError: "Member OfflineAudioContextOptions.sampleRate is required and must be an instance of float". 
-PASS   new OfflineAudioContext({"sampleRate":12345}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long". 
-PASS   c2 = new OfflineAudioContext({"length":42,"sampleRate":12345}) did not throw an exception. 
-PASS   c2.destination.channelCount is equal to 1. 
-PASS   c2.length is equal to 42. 
-PASS   c2.sampleRate is equal to 12345. 
-PASS   c2.destination.channelCountMode is equal to explicit. 
-PASS   c2.destination.channelInterpretation is equal to speakers. 
-PASS < [options-1] All assertions passed. (total 10 assertions) 
-PASS > [options-2] Invalid options 
-PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw SyntaxError: "Number of channels is not in range". 
-PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw SyntaxError: "length cannot be 0". 
-PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw SyntaxError: "sampleRate is not in range". 
-PASS < [options-2] All assertions passed. (total 3 assertions) 
-PASS > [options-3] Valid options 
-PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000}) did not throw an exception. 
-PASS   c.length is equal to 1. 
-PASS   c.sampleRate is equal to 8000. 
-PASS   c.destination.channelCount is equal to 1. 
-PASS   c.destination.channelCountMode is equal to explicit. 
-PASS   c.destination.channelCountMode is equal to speakers. 
-PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000,"numberOfChannels":7}) did not throw an exception. 
-PASS   c.destination.channelCount is equal to 7. 
-PASS < [options-3] All assertions passed. (total 8 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "basic"
+PASS Executing "options-1"
+PASS Executing "options-2"
+PASS Executing "options-3"
+PASS Audit report
+PASS > [basic] Old-style constructor
+PASS   new OfflineAudioContext(3) threw TypeError: "Type error".
+PASS   new OfflineAudioContext(3, 42) threw TypeError: "Type error".
+PASS   context = new OfflineAudioContext(3, 42, 12345) did not throw an exception.
+PASS   context.length is equal to 42.
+PASS   context.sampleRate is equal to 12345.
+PASS   context.destination.channelCount is equal to 3.
+PASS   context.destination.channelCountMode is equal to explicit.
+PASS   context.destination.channelInterpretation is equal to speakers.
+PASS < [basic] All assertions passed. (total 8 assertions)
+PASS > [options-1] Required options
+PASS   new OfflineAudioContext() threw TypeError: "Not enough arguments".
+PASS   new OfflineAudioContext({}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long".
+PASS   new OfflineAudioContext({"length":42}) threw TypeError: "Member OfflineAudioContextOptions.sampleRate is required and must be an instance of float".
+PASS   new OfflineAudioContext({"sampleRate":12345}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long".
+PASS   c2 = new OfflineAudioContext({"length":42,"sampleRate":12345}) did not throw an exception.
+PASS   c2.destination.channelCount is equal to 1.
+PASS   c2.length is equal to 42.
+PASS   c2.sampleRate is equal to 12345.
+PASS   c2.destination.channelCountMode is equal to explicit.
+PASS   c2.destination.channelInterpretation is equal to speakers.
+PASS < [options-1] All assertions passed. (total 10 assertions)
+PASS > [options-2] Invalid options
+PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw SyntaxError: "Number of channels is not in range".
+PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw SyntaxError: "length cannot be 0".
+PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw SyntaxError: "sampleRate is not in range".
+PASS < [options-2] All assertions passed. (total 3 assertions)
+PASS > [options-3] Valid options
+PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000}) did not throw an exception.
+PASS   c.length is equal to 1.
+PASS   c.sampleRate is equal to 8000.
+PASS   c.destination.channelCount is equal to 1.
+PASS   c.destination.channelCountMode is equal to explicit.
+PASS   c.destination.channelCountMode is equal to speakers.
+PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000,"numberOfChannels":7}) did not throw an exception.
+PASS   c.destination.channelCount is equal to 7.
+PASS < [options-3] All assertions passed. (total 8 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

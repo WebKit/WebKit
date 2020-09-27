@@ -1,5 +1,5 @@
 Note: This test takes 20 seconds to run.
 
 
-PASS WebSockets: 20s inactivity after handshake 
+PASS WebSockets: 20s inactivity after handshake
 

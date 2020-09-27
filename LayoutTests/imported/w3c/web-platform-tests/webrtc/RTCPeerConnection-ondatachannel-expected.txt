@@ -1,10 +1,10 @@
 
 FAIL Data channel event should fire when new data channel is announced to the remote peer assert_equals: Expect channel ready state to be open expected "open" but got "connecting"
 FAIL Should be able to send data in a datachannel event handler The object is in an invalid state.
-PASS Open event should not be raised when closing the channel in the datachannel event 
-PASS Open event should be raised when closing the channel in the datachannel event after enqueuing a task 
+PASS Open event should not be raised when closing the channel in the datachannel event
+PASS Open event should be raised when closing the channel in the datachannel event after enqueuing a task
 FAIL Open event should not be raised when sending and immediately closing the channel in the datachannel event The object is in an invalid state.
 FAIL In-band negotiated channel created on remote peer should match the same configuration as local peer assert_equals: expected (object) null but got (number) 65535
 FAIL In-band negotiated channel created on remote peer should match the same (default) configuration as local peer assert_equals: expected (object) null but got (number) 65535
-PASS Negotiated channel should not fire datachannel event on remote peer 
+PASS Negotiated channel should not fire datachannel event on remote peer
 

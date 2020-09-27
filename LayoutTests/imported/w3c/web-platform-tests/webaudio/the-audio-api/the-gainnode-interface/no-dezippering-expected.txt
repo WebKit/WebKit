@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test0" 
-PASS Executing "test2" 
-PASS Executing "test3" 
-PASS Audit report 
-PASS > [test0] Dezippering of GainNode removed 
-PASS   output[0:127] contains only the constant 1. 
-PASS   output[128:] contains only the constant 0.5. 
-PASS < [test0] All assertions passed. (total 2 assertions) 
-PASS > [test2] Compare value setter and setValueAtTime 
-PASS   .value setter output is identical to the array [expected array]. 
-PASS   .value setter output matches setValueAtTime output is true. 
-PASS < [test2] All assertions passed. (total 2 assertions) 
-PASS > [test3] Automation effects 
-PASS   With modulation: .value setter output is identical to the array [expected array]. 
-PASS   With modulation: .value setter output matches setValueAtTime output is true. 
-PASS < [test3] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test0"
+PASS Executing "test2"
+PASS Executing "test3"
+PASS Audit report
+PASS > [test0] Dezippering of GainNode removed
+PASS   output[0:127] contains only the constant 1.
+PASS   output[128:] contains only the constant 0.5.
+PASS < [test0] All assertions passed. (total 2 assertions)
+PASS > [test2] Compare value setter and setValueAtTime
+PASS   .value setter output is identical to the array [expected array].
+PASS   .value setter output matches setValueAtTime output is true.
+PASS < [test2] All assertions passed. (total 2 assertions)
+PASS > [test3] Automation effects
+PASS   With modulation: .value setter output is identical to the array [expected array].
+PASS   With modulation: .value setter output matches setValueAtTime output is true.
+PASS < [test3] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

@@ -1,46 +1,46 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "createConstantSource()" 
-PASS Executing "new ConstantSourceNode()" 
-PASS Executing "start/stop exceptions" 
-PASS Audit report 
-PASS > [createConstantSource()]  
-PASS   Factory method: node = context.createConstantSource() did not throw an exception. 
-PASS   Factory method: node instance of ConstantSourceNode is equal to true. 
-PASS   Factory method: node.numberOfInputs is equal to 0. 
-PASS   Factory method: node.numberOfOutputs is equal to 1. 
-PASS   Factory method: node.channelCount is equal to 2. 
-PASS   Factory method: node.channelCountMode is equal to max. 
-PASS   Factory method: node.channelInterpretation is equal to speakers. 
-PASS   Factory method: node.offset.value is equal to 1. 
-PASS   Factory method: node.offset.defaultValue is equal to 1. 
-PASS   Factory method: node.offset.minValue is equal to -3.4028234663852886e+38. 
-PASS   Factory method: node.offset.maxValue is equal to 3.4028234663852886e+38. 
-PASS < [createConstantSource()] All assertions passed. (total 11 assertions) 
-PASS > [new ConstantSourceNode()]  
-PASS   Constructor: node = new ConstantSourceNode() did not throw an exception. 
-PASS   Constructor: node instance of ConstantSourceNode is equal to true. 
-PASS   Constructor: node.numberOfInputs is equal to 0. 
-PASS   Constructor: node.numberOfOutputs is equal to 1. 
-PASS   Constructor: node.channelCount is equal to 2. 
-PASS   Constructor: node.channelCountMode is equal to max. 
-PASS   Constructor: node.channelInterpretation is equal to speakers. 
-PASS   Constructor: node.offset.value is equal to 1. 
-PASS   Constructor: node.offset.defaultValue is equal to 1. 
-PASS   Constructor: node.offset.minValue is equal to -3.4028234663852886e+38. 
-PASS   Constructor: node.offset.maxValue is equal to 3.4028234663852886e+38. 
-PASS < [new ConstantSourceNode()] All assertions passed. (total 11 assertions) 
-PASS > [start/stop exceptions]  
-PASS   start(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   start(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   start(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   Calling stop() before start() threw InvalidStateError: "cannot call stop without calling start first.". 
-PASS   start(-1) threw RangeError: "when value should be positive". 
-PASS   Calling start() twice threw InvalidStateError: "The object is in an invalid state.". 
-PASS   stop(-1) threw RangeError: "when value should be positive". 
-PASS   stop(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   stop(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   stop(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS < [start/stop exceptions] All assertions passed. (total 10 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "createConstantSource()"
+PASS Executing "new ConstantSourceNode()"
+PASS Executing "start/stop exceptions"
+PASS Audit report
+PASS > [createConstantSource()]
+PASS   Factory method: node = context.createConstantSource() did not throw an exception.
+PASS   Factory method: node instance of ConstantSourceNode is equal to true.
+PASS   Factory method: node.numberOfInputs is equal to 0.
+PASS   Factory method: node.numberOfOutputs is equal to 1.
+PASS   Factory method: node.channelCount is equal to 2.
+PASS   Factory method: node.channelCountMode is equal to max.
+PASS   Factory method: node.channelInterpretation is equal to speakers.
+PASS   Factory method: node.offset.value is equal to 1.
+PASS   Factory method: node.offset.defaultValue is equal to 1.
+PASS   Factory method: node.offset.minValue is equal to -3.4028234663852886e+38.
+PASS   Factory method: node.offset.maxValue is equal to 3.4028234663852886e+38.
+PASS < [createConstantSource()] All assertions passed. (total 11 assertions)
+PASS > [new ConstantSourceNode()]
+PASS   Constructor: node = new ConstantSourceNode() did not throw an exception.
+PASS   Constructor: node instance of ConstantSourceNode is equal to true.
+PASS   Constructor: node.numberOfInputs is equal to 0.
+PASS   Constructor: node.numberOfOutputs is equal to 1.
+PASS   Constructor: node.channelCount is equal to 2.
+PASS   Constructor: node.channelCountMode is equal to max.
+PASS   Constructor: node.channelInterpretation is equal to speakers.
+PASS   Constructor: node.offset.value is equal to 1.
+PASS   Constructor: node.offset.defaultValue is equal to 1.
+PASS   Constructor: node.offset.minValue is equal to -3.4028234663852886e+38.
+PASS   Constructor: node.offset.maxValue is equal to 3.4028234663852886e+38.
+PASS < [new ConstantSourceNode()] All assertions passed. (total 11 assertions)
+PASS > [start/stop exceptions]
+PASS   start(NaN) threw TypeError: "The provided value is non-finite".
+PASS   start(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   start(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS   Calling stop() before start() threw InvalidStateError: "cannot call stop without calling start first.".
+PASS   start(-1) threw RangeError: "when value should be positive".
+PASS   Calling start() twice threw InvalidStateError: "The object is in an invalid state.".
+PASS   stop(-1) threw RangeError: "when value should be positive".
+PASS   stop(NaN) threw TypeError: "The provided value is non-finite".
+PASS   stop(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   stop(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS < [start/stop exceptions] All assertions passed. (total 10 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

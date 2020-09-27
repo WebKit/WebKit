@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: getResponseHeader() and HTTP trailer 
+PASS XMLHttpRequest: getResponseHeader() and HTTP trailer
 

@@ -1,6 +1,6 @@
 
-PASS Test sending messages to workers with no port. 
-PASS Test sending message to a worker on a port. 
-PASS Test getting messages from a worker on a port. 
-PASS Test sending many messages to workers using ports. 
+PASS Test sending messages to workers with no port.
+PASS Test sending message to a worker on a port.
+PASS Test getting messages from a worker on a port.
+PASS Test sending many messages to workers using ports.
 

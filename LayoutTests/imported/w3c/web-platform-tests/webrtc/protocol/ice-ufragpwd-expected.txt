@@ -1,4 +1,4 @@
 
-PASS setRemoteDescription with a ice-ufrag containing a non-ice-char fails 
-PASS setRemoteDescription with a ice-pwd containing a non-ice-char fails 
+PASS setRemoteDescription with a ice-ufrag containing a non-ice-char fails
+PASS setRemoteDescription with a ice-pwd containing a non-ice-char fails
 

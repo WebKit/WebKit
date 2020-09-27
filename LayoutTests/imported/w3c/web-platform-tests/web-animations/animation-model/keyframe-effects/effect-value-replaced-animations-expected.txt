@@ -1,7 +1,7 @@
 
-PASS Removed animations do not contribute to animated style 
+PASS Removed animations do not contribute to animated style
 FAIL Removed animations do not contribute to the effect stack assert_approx_equals: Opacity value should not include the removed animation expected 0.4 +/- 0.0001 but got 0.30000001192092896
-PASS Persisted animations contribute to animated style 
+PASS Persisted animations contribute to animated style
 FAIL Persisted animations contribute to the effect stack assert_approx_equals: Opacity value should NOT include the contribution of the removed animation expected 0.4 +/- 0.0001 but got 0.30000001192092896
 FAIL Animations persisted before they would be removed contribute to the effect stack assert_approx_equals: Opacity value should include the contribution of the persisted animation expected 0.5 +/- 0.0001 but got 0.30000001192092896
 

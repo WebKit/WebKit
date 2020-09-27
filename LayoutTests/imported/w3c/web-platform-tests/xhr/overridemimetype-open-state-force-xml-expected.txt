@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: overrideMimeType() in open state, XML MIME type with UTF-8 charset 
+PASS XMLHttpRequest: overrideMimeType() in open state, XML MIME type with UTF-8 charset
 

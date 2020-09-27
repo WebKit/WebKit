@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Test sample-accurate scheduling 
-PASS   Content of left and right channels match and is identical to the array [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Non-zero sample found at sample offset 0 is true. 
-PASS   Non-zero sample found at sample offset 3 is true. 
-PASS   Non-zero sample found at sample offset 512 is true. 
-PASS   Non-zero sample found at sample offset 517 is true. 
-PASS   Non-zero sample found at sample offset 1000 is true. 
-PASS   Non-zero sample found at sample offset 1005 is true. 
-PASS   Non-zero sample found at sample offset 20000 is true. 
-PASS   Non-zero sample found at sample offset 21234 is true. 
-PASS   Non-zero sample found at sample offset 37590 is true. 
-PASS   Number of impulses found is equal to 9. 
-PASS   bad offset is equal to 0. 
-PASS < [test] All assertions passed. (total 12 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Test sample-accurate scheduling
+PASS   Content of left and right channels match and is identical to the array [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Non-zero sample found at sample offset 0 is true.
+PASS   Non-zero sample found at sample offset 3 is true.
+PASS   Non-zero sample found at sample offset 512 is true.
+PASS   Non-zero sample found at sample offset 517 is true.
+PASS   Non-zero sample found at sample offset 1000 is true.
+PASS   Non-zero sample found at sample offset 1005 is true.
+PASS   Non-zero sample found at sample offset 20000 is true.
+PASS   Non-zero sample found at sample offset 21234 is true.
+PASS   Non-zero sample found at sample offset 37590 is true.
+PASS   Number of impulses found is equal to 9.
+PASS   bad offset is equal to 0.
+PASS < [test] All assertions passed. (total 12 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

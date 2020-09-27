@@ -1,3 +1,3 @@
 
-PASS  WorkerLocation.search with <fragment> in <query>  
+PASS  WorkerLocation.search with <fragment> in <query>
 

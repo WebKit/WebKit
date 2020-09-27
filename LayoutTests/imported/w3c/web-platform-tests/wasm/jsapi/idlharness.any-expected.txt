@@ -1,18 +1,18 @@
 
-PASS wasm-js-api interfaces. 
-PASS WebAssembly namespace: operation validate(BufferSource) 
-PASS WebAssembly namespace: operation compile(BufferSource) 
-PASS WebAssembly namespace: operation instantiate(BufferSource, optional object) 
-PASS WebAssembly namespace: operation instantiate(Module, optional object) 
-PASS Module interface: existence and properties of interface object 
-PASS Module interface object length 
-PASS Module interface object name 
-PASS Module interface: existence and properties of interface prototype object 
-PASS Module interface: existence and properties of interface prototype object's "constructor" property 
-PASS Module interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Module interface: operation exports(Module) 
-PASS Module interface: operation imports(Module) 
-PASS Module interface: operation customSections(Module, DOMString) 
+PASS wasm-js-api interfaces.
+PASS WebAssembly namespace: operation validate(BufferSource)
+PASS WebAssembly namespace: operation compile(BufferSource)
+PASS WebAssembly namespace: operation instantiate(BufferSource, optional object)
+PASS WebAssembly namespace: operation instantiate(Module, optional object)
+PASS Module interface: existence and properties of interface object
+PASS Module interface object length
+PASS Module interface object name
+PASS Module interface: existence and properties of interface prototype object
+PASS Module interface: existence and properties of interface prototype object's "constructor" property
+PASS Module interface: existence and properties of interface prototype object's @@unscopables property
+PASS Module interface: operation exports(Module)
+PASS Module interface: operation imports(Module)
+PASS Module interface: operation customSections(Module, DOMString)
 FAIL Module must be primary interface of mod assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
 FAIL Stringification of mod assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
 FAIL Module interface: mod must inherit property "exports(Module)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
@@ -21,45 +21,45 @@ FAIL Module interface: mod must inherit property "imports(Module)" with the prop
 FAIL Module interface: calling imports(Module) on mod with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
 FAIL Module interface: mod must inherit property "customSections(Module, DOMString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
 FAIL Module interface: calling customSections(Module, DOMString) on mod with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mod"
-PASS Instance interface: existence and properties of interface object 
-PASS Instance interface object length 
-PASS Instance interface object name 
-PASS Instance interface: existence and properties of interface prototype object 
-PASS Instance interface: existence and properties of interface prototype object's "constructor" property 
-PASS Instance interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Instance interface: attribute exports 
+PASS Instance interface: existence and properties of interface object
+PASS Instance interface object length
+PASS Instance interface object name
+PASS Instance interface: existence and properties of interface prototype object
+PASS Instance interface: existence and properties of interface prototype object's "constructor" property
+PASS Instance interface: existence and properties of interface prototype object's @@unscopables property
+PASS Instance interface: attribute exports
 FAIL Instance must be primary interface of instance assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: instance"
 FAIL Stringification of instance assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: instance"
 FAIL Instance interface: instance must inherit property "exports" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: instance"
-PASS Memory interface: existence and properties of interface object 
-PASS Memory interface object length 
-PASS Memory interface object name 
-PASS Memory interface: existence and properties of interface prototype object 
-PASS Memory interface: existence and properties of interface prototype object's "constructor" property 
-PASS Memory interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Memory interface: operation grow(unsigned long) 
-PASS Memory interface: attribute buffer 
-PASS Memory must be primary interface of memory 
-PASS Stringification of memory 
-PASS Memory interface: memory must inherit property "grow(unsigned long)" with the proper type 
-PASS Memory interface: calling grow(unsigned long) on memory with too few arguments must throw TypeError 
-PASS Memory interface: memory must inherit property "buffer" with the proper type 
-PASS Table interface: existence and properties of interface object 
-PASS Table interface object length 
-PASS Table interface object name 
-PASS Table interface: existence and properties of interface prototype object 
-PASS Table interface: existence and properties of interface prototype object's "constructor" property 
-PASS Table interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Table interface: operation grow(unsigned long) 
-PASS Table interface: operation get(unsigned long) 
-PASS Table interface: operation set(unsigned long, Function?) 
-PASS Table interface: attribute length 
-PASS Global interface: existence and properties of interface object 
-PASS Global interface object length 
-PASS Global interface object name 
-PASS Global interface: existence and properties of interface prototype object 
-PASS Global interface: existence and properties of interface prototype object's "constructor" property 
-PASS Global interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Global interface: operation valueOf() 
-PASS Global interface: attribute value 
+PASS Memory interface: existence and properties of interface object
+PASS Memory interface object length
+PASS Memory interface object name
+PASS Memory interface: existence and properties of interface prototype object
+PASS Memory interface: existence and properties of interface prototype object's "constructor" property
+PASS Memory interface: existence and properties of interface prototype object's @@unscopables property
+PASS Memory interface: operation grow(unsigned long)
+PASS Memory interface: attribute buffer
+PASS Memory must be primary interface of memory
+PASS Stringification of memory
+PASS Memory interface: memory must inherit property "grow(unsigned long)" with the proper type
+PASS Memory interface: calling grow(unsigned long) on memory with too few arguments must throw TypeError
+PASS Memory interface: memory must inherit property "buffer" with the proper type
+PASS Table interface: existence and properties of interface object
+PASS Table interface object length
+PASS Table interface object name
+PASS Table interface: existence and properties of interface prototype object
+PASS Table interface: existence and properties of interface prototype object's "constructor" property
+PASS Table interface: existence and properties of interface prototype object's @@unscopables property
+PASS Table interface: operation grow(unsigned long)
+PASS Table interface: operation get(unsigned long)
+PASS Table interface: operation set(unsigned long, Function?)
+PASS Table interface: attribute length
+PASS Global interface: existence and properties of interface object
+PASS Global interface object length
+PASS Global interface object name
+PASS Global interface: existence and properties of interface prototype object
+PASS Global interface: existence and properties of interface prototype object's "constructor" property
+PASS Global interface: existence and properties of interface prototype object's @@unscopables property
+PASS Global interface: operation valueOf()
+PASS Global interface: attribute value
 

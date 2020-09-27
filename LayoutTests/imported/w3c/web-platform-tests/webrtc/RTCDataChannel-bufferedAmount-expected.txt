@@ -6,8 +6,8 @@ FAIL bufferedAmount should increase to byte length of buffer sent assert_equals:
 FAIL bufferedAmount should increase to size of blob sent promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL bufferedAmount should increase by byte length for each message sent assert_unreached: Unexpected promise rejection: Error: assert_equals: Expect bufferedAmount to be the total length of all messages queued to send expected 5 but got 0 Reached unreachable code
 TIMEOUT Data channel bufferedamountlow event fires after send() is complete Test timed out
-NOTRUN Data channel bufferedamount is data.length on send(data) 
-NOTRUN Data channel bufferedamount returns the same amount if no more data is sent on the channel 
-NOTRUN Data channel bufferedamountlow event fires only once after multiple consecutive send() calls 
-NOTRUN Data channel bufferedamountlow event fires after each sent message 
+NOTRUN Data channel bufferedamount is data.length on send(data)
+NOTRUN Data channel bufferedamount returns the same amount if no more data is sent on the channel
+NOTRUN Data channel bufferedamountlow event fires only once after multiple consecutive send() calls
+NOTRUN Data channel bufferedamountlow event fires after each sent message
 

@@ -1,5 +1,5 @@
 
 PASS Tasks enqueued on the port-message-queue of an enabled port,
   are transferred along with the port, when the transfer happens in the same task
-  during which postMessage is called 
+  during which postMessage is called
 

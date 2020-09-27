@@ -1,19 +1,19 @@
 
-PASS new RTCPeerConnection() should have default configuration.iceServers of undefined 
-PASS new RTCPeerConnection(config) - {} should succeed 
-PASS setConfiguration(config) - {} should succeed 
-PASS new RTCPeerConnection(config) - { iceServers: null } should throw TypeError 
-PASS setConfiguration(config) - { iceServers: null } should throw TypeError 
-PASS new RTCPeerConnection(config) - { iceServers: undefined } should succeed 
-PASS setConfiguration(config) - { iceServers: undefined } should succeed 
-PASS new RTCPeerConnection(config) - { iceServers: [] } should succeed 
-PASS setConfiguration(config) - { iceServers: [] } should succeed 
-PASS new RTCPeerConnection(config) - { iceServers: [null] } should throw TypeError 
-PASS setConfiguration(config) - { iceServers: [null] } should throw TypeError 
-PASS new RTCPeerConnection(config) - { iceServers: [undefined] } should throw TypeError 
-PASS setConfiguration(config) - { iceServers: [undefined] } should throw TypeError 
-PASS new RTCPeerConnection(config) - { iceServers: [{}] } should throw TypeError 
-PASS setConfiguration(config) - { iceServers: [{}] } should throw TypeError 
+PASS new RTCPeerConnection() should have default configuration.iceServers of undefined
+PASS new RTCPeerConnection(config) - {} should succeed
+PASS setConfiguration(config) - {} should succeed
+PASS new RTCPeerConnection(config) - { iceServers: null } should throw TypeError
+PASS setConfiguration(config) - { iceServers: null } should throw TypeError
+PASS new RTCPeerConnection(config) - { iceServers: undefined } should succeed
+PASS setConfiguration(config) - { iceServers: undefined } should succeed
+PASS new RTCPeerConnection(config) - { iceServers: [] } should succeed
+PASS setConfiguration(config) - { iceServers: [] } should succeed
+PASS new RTCPeerConnection(config) - { iceServers: [null] } should throw TypeError
+PASS setConfiguration(config) - { iceServers: [null] } should throw TypeError
+PASS new RTCPeerConnection(config) - { iceServers: [undefined] } should throw TypeError
+PASS setConfiguration(config) - { iceServers: [undefined] } should throw TypeError
+PASS new RTCPeerConnection(config) - { iceServers: [{}] } should throw TypeError
+PASS setConfiguration(config) - { iceServers: [{}] } should throw TypeError
 FAIL new RTCPeerConnection(config) - with stun server should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL setConfiguration(config) - with stun server should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL new RTCPeerConnection(config) - with stun server array should succeed assert_equals: expected (string) "password" but got (undefined) undefined
@@ -26,22 +26,22 @@ FAIL new RTCPeerConnection(config) - with turns server and empty string username
 FAIL setConfiguration(config) - with turns server and empty string username, credential should succeed Bad Configuration Parameters
 FAIL new RTCPeerConnection(config) - with turn server and empty string username, credential should succeed Bad Configuration Parameters
 FAIL setConfiguration(config) - with turn server and empty string username, credential should succeed Bad Configuration Parameters
-PASS new RTCPeerConnection(config) - with one turns server, one turn server, username, credential should succeed 
-PASS setConfiguration(config) - with one turns server, one turn server, username, credential should succeed 
+PASS new RTCPeerConnection(config) - with one turns server, one turn server, username, credential should succeed
+PASS setConfiguration(config) - with one turns server, one turn server, username, credential should succeed
 FAIL new RTCPeerConnection(config) - with stun server and credentialType password should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL setConfiguration(config) - with stun server and credentialType password should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-PASS new RTCPeerConnection(config) - with turn server and no credentials should throw InvalidAccessError 
-PASS setConfiguration(config) - with turn server and no credentials should throw InvalidAccessError 
-PASS new RTCPeerConnection(config) - with turn server and only username should throw InvalidAccessError 
-PASS setConfiguration(config) - with turn server and only username should throw InvalidAccessError 
-PASS new RTCPeerConnection(config) - with turn server and only credential should throw InvalidAccessError 
-PASS setConfiguration(config) - with turn server and only credential should throw InvalidAccessError 
-PASS new RTCPeerConnection(config) - with turns server and no credentials should throw InvalidAccessError 
-PASS setConfiguration(config) - with turns server and no credentials should throw InvalidAccessError 
-PASS new RTCPeerConnection(config) - with turns server and only username should throw InvalidAccessError 
-PASS setConfiguration(config) - with turns server and only username should throw InvalidAccessError 
-PASS new RTCPeerConnection(config) - with turns server and only credential should throw InvalidAccessError 
-PASS setConfiguration(config) - with turns server and only credential should throw InvalidAccessError 
+PASS new RTCPeerConnection(config) - with turn server and no credentials should throw InvalidAccessError
+PASS setConfiguration(config) - with turn server and no credentials should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turn server and only username should throw InvalidAccessError
+PASS setConfiguration(config) - with turn server and only username should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turn server and only credential should throw InvalidAccessError
+PASS setConfiguration(config) - with turn server and only credential should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turns server and no credentials should throw InvalidAccessError
+PASS setConfiguration(config) - with turns server and no credentials should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turns server and only username should throw InvalidAccessError
+PASS setConfiguration(config) - with turns server and only username should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turns server and only credential should throw InvalidAccessError
+PASS setConfiguration(config) - with turns server and only credential should throw InvalidAccessError
 FAIL new RTCPeerConnection(config) - with "" url should throw SyntaxError assert_throws_dom: function "() =>
       makePc({ iceServers: [{
         urls: ''
@@ -118,8 +118,8 @@ FAIL setConfiguration(config) - with credentialType token should throw TypeError
         urls: [],
         credentialType: 'token'
       }] })" did not throw
-PASS new RTCPeerConnection(config) - with url field should throw TypeError 
-PASS setConfiguration(config) - with url field should throw TypeError 
+PASS new RTCPeerConnection(config) - with url field should throw TypeError
+PASS setConfiguration(config) - with url field should throw TypeError
 FAIL new RTCPeerConnection(config) - with turns server, credentialType password, and RTCOauthCredential credential should throw InvalidAccessError assert_throws_dom: function "() =>
       makePc({ iceServers: [{
         urls: 'turns:turn.example.org',

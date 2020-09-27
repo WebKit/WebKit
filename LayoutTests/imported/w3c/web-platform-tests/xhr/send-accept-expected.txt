@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: send() - Accept 
+PASS XMLHttpRequest: send() - Accept
 

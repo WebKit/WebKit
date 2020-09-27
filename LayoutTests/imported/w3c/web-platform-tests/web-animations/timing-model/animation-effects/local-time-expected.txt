@@ -1,4 +1,4 @@
 
-PASS Local time is current time for animation effects associated with an animation 
-PASS Local time is unresolved for animation effects not associated with an animation 
+PASS Local time is current time for animation effects associated with an animation
+PASS Local time is unresolved for animation effects not associated with an animation
 

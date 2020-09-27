@@ -12,13 +12,13 @@ FAIL iteration composition of opacity animation assert_equals: Animated opacity 
 FAIL iteration composition of box-shadow animation assert_equals: Animated box-shadow style at 0s of the third iteration expected "rgb(240, 240, 240) 20px 20px 20px 0px" but got "rgb(0, 0, 0) 0px 0px 0px 0px"
 FAIL iteration composition of filter blur animation assert_equals: Animated filter blur style at 0s of the third iteration expected "blur(20px)" but got "blur(0px)"
 FAIL iteration composition of filter brightness for different unit animation assert_equals: Animated filter brightness style at 0s of the third iteration expected "brightness(2.6)" but got "brightness(1)"
-PASS iteration composition of filter brightness animation 
+PASS iteration composition of filter brightness animation
 FAIL iteration composition of filter drop-shadow animation assert_equals: Animated filter drop-shadow style at 0s of the third iteration expected "drop-shadow(rgb(240, 240, 240) 20px 20px 20px)" but got "drop-shadow(rgb(0, 0, 0) 0px 0px 0px)"
 FAIL iteration composition of same filter list animation assert_equals: Animated filter list at 0s of the third iteration expected "brightness(3) contrast(3)" but got "brightness(1) contrast(1)"
 FAIL iteration composition of discrete filter list because of mismatch of the order assert_equals: Animated filter list at 0s of the third iteration expected "brightness(1) contrast(1)" but got "contrast(2) brightness(2)"
 FAIL iteration composition of different length filter list animation assert_equals: Animated filter list at 50s of the first iteration expected "sepia(0.5) contrast(1.5)" but got "sepia(1) contrast(2)"
-PASS iteration composition of transform(rotate) animation 
-PASS iteration composition of transform: [ scale(0), scale(1) ] animation 
+PASS iteration composition of transform(rotate) animation
+PASS iteration composition of transform: [ scale(0), scale(1) ] animation
 FAIL iteration composition of transform: [ scale(1), scale(2) ] animation assert_approx_equals: expected matrix(3, 0, 0, 3, 0, 0) but got matrix(1, 0, 0, 1, 0, 0): Animated transform(scale) style at 0s of the third iteration expected 3 +/- 0.0001 but got 1
 FAIL iteration composition of transform: scale(2) animation assert_approx_equals: expected matrix(2, 0, 0, 2, 0, 0) but got matrix(0, 0, 0, 0, 0, 0): Animated transform(scale) style at 0s of the third iteration expected 2 +/- 0.0001 but got 0
 FAIL iteration composition of transform list animation assert_approx_equals: expected matrix(1, 0, 0, 1, 20, 0) but got matrix(1, 0, 0, 1, 0, 0): Animated transform list at 0s of the third iteration expected 20 +/- 0.0001 but got 0

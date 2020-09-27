@@ -1,5 +1,5 @@
 
-PASS Worker constructor 
-PASS MessageEvent.data 
-PASS MessageEvent.type 
+PASS Worker constructor
+PASS MessageEvent.data
+PASS MessageEvent.type
 

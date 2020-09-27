@@ -1,14 +1,14 @@
 
-PASS All property keys are recognized 
-PASS KeyframeEffect.getTiming does NOT trigger a style change event 
-PASS KeyframeEffect.getComputedTiming does NOT trigger a style change event 
-PASS KeyframeEffect.updateTiming does NOT trigger a style change event 
-PASS KeyframeEffect.target does NOT trigger a style change event 
-PASS KeyframeEffect.pseudoElement does NOT trigger a style change event 
-PASS KeyframeEffect.iterationComposite does NOT trigger a style change event 
-PASS KeyframeEffect.composite does NOT trigger a style change event 
-PASS KeyframeEffect.getKeyframes does NOT trigger a style change event 
-PASS KeyframeEffect.setKeyframes does NOT trigger a style change event 
-PASS KeyframeEffect.KeyframeEffect constructor does NOT trigger a style change event 
-PASS KeyframeEffect.KeyframeEffect copy constructor does NOT trigger a style change event 
+PASS All property keys are recognized
+PASS KeyframeEffect.getTiming does NOT trigger a style change event
+PASS KeyframeEffect.getComputedTiming does NOT trigger a style change event
+PASS KeyframeEffect.updateTiming does NOT trigger a style change event
+PASS KeyframeEffect.target does NOT trigger a style change event
+PASS KeyframeEffect.pseudoElement does NOT trigger a style change event
+PASS KeyframeEffect.iterationComposite does NOT trigger a style change event
+PASS KeyframeEffect.composite does NOT trigger a style change event
+PASS KeyframeEffect.getKeyframes does NOT trigger a style change event
+PASS KeyframeEffect.setKeyframes does NOT trigger a style change event
+PASS KeyframeEffect.KeyframeEffect constructor does NOT trigger a style change event
+PASS KeyframeEffect.KeyframeEffect copy constructor does NOT trigger a style change event
 

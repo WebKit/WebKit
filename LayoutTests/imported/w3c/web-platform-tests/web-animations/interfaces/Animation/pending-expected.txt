@@ -1,6 +1,6 @@
 
-PASS reports true -> false when initially played 
-PASS reports true -> false when paused 
-PASS reports true -> true when played without a timeline 
-PASS reports true -> true when paused without a timeline 
+PASS reports true -> false when initially played
+PASS reports true -> false when paused
+PASS reports true -> true when played without a timeline
+PASS reports true -> true when paused without a timeline
 

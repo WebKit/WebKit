@@ -1,6 +1,6 @@
 
-PASS setRemoteDescription(pranswer) from stable state should reject with InvalidStateError 
-PASS setRemoteDescription(pranswer) from have-local-offer state should succeed 
-PASS setRemoteDescription(pranswer) multiple times should succeed 
-PASS setRemoteDescription(answer) from have-remote-pranswer state should succeed 
+PASS setRemoteDescription(pranswer) from stable state should reject with InvalidStateError
+PASS setRemoteDescription(pranswer) from have-local-offer state should succeed
+PASS setRemoteDescription(pranswer) multiple times should succeed
+PASS setRemoteDescription(answer) from have-remote-pranswer state should succeed
 

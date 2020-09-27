@@ -1,40 +1,40 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test mono input" 
-PASS Executing "test stereo input" 
-PASS Executing "test mono input setValue" 
-PASS Executing "test stereo input setValue" 
-PASS Executing "test mono input automation" 
-PASS Audit report 
-PASS > [test mono input] Test StereoPanner with mono input has no dezippering 
-PASS   Mono: Left channel, pan = -1:  contains only the constant 1. 
-PASS   Mono: Right channel, pan = -1: contains only the constant 0. 
-PASS   Mono: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":6.1233e-17,"relativeThreshold":0}. 
-PASS   Mono: Right channel, pan = 1: contains only the constant 1. 
-PASS < [test mono input] All assertions passed. (total 4 assertions) 
-PASS > [test stereo input] Test StereoPanner with stereo input has no dezippering 
-PASS   Stereo: Left channel, pan = -1:  contains only the constant 3. 
-PASS   Stereo: Right channel, pan = -1: contains only the constant 0. 
-PASS   Stereo: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":6.1233e-17,"relativeThreshold":0}. 
-PASS   Stereo: Right channel, pan = 1: contains only the constant 3. 
-PASS < [test stereo input] All assertions passed. (total 4 assertions) 
-PASS > [test mono input setValue] Test StereoPanner with mono input value setter vs setValueAtTime 
-PASS   Mono Left .value setter output is identical to the array [expected array]. 
-PASS   Mono Left .value setter output matches setValueAtTime output is true. 
-PASS   Mono Right .value setter output is identical to the array [expected array]. 
-PASS   Mono Right .value setter output matches setValueAtTime output is true. 
-PASS < [test mono input setValue] All assertions passed. (total 4 assertions) 
-PASS > [test stereo input setValue] Test StereoPanner with mono input value setter  vs setValueAtTime 
-PASS   Stereo Left .value setter output is identical to the array [expected array]. 
-PASS   Stereo Left .value setter output matches setValueAtTime output is true. 
-PASS   Stereo Right .value setter output is identical to the array [expected array]. 
-PASS   Stereo Right .value setter output matches setValueAtTime output is true. 
-PASS < [test stereo input setValue] All assertions passed. (total 4 assertions) 
-PASS > [test mono input automation] Test StereoPanner with mono input and automation 
-PASS   Modulated Stereo Left .value setter output is identical to the array [expected array]. 
-PASS   Modulated Stereo Left .value setter output matches setValueAtTime output is true. 
-PASS   Modulated Stereo Right .value setter output is identical to the array [expected array]. 
-PASS   Modulated Stereo Right .value setter output matches setValueAtTime output is true. 
-PASS < [test mono input automation] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test mono input"
+PASS Executing "test stereo input"
+PASS Executing "test mono input setValue"
+PASS Executing "test stereo input setValue"
+PASS Executing "test mono input automation"
+PASS Audit report
+PASS > [test mono input] Test StereoPanner with mono input has no dezippering
+PASS   Mono: Left channel, pan = -1:  contains only the constant 1.
+PASS   Mono: Right channel, pan = -1: contains only the constant 0.
+PASS   Mono: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":6.1233e-17,"relativeThreshold":0}.
+PASS   Mono: Right channel, pan = 1: contains only the constant 1.
+PASS < [test mono input] All assertions passed. (total 4 assertions)
+PASS > [test stereo input] Test StereoPanner with stereo input has no dezippering
+PASS   Stereo: Left channel, pan = -1:  contains only the constant 3.
+PASS   Stereo: Right channel, pan = -1: contains only the constant 0.
+PASS   Stereo: Left channel, pan = 1:  equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":6.1233e-17,"relativeThreshold":0}.
+PASS   Stereo: Right channel, pan = 1: contains only the constant 3.
+PASS < [test stereo input] All assertions passed. (total 4 assertions)
+PASS > [test mono input setValue] Test StereoPanner with mono input value setter vs setValueAtTime
+PASS   Mono Left .value setter output is identical to the array [expected array].
+PASS   Mono Left .value setter output matches setValueAtTime output is true.
+PASS   Mono Right .value setter output is identical to the array [expected array].
+PASS   Mono Right .value setter output matches setValueAtTime output is true.
+PASS < [test mono input setValue] All assertions passed. (total 4 assertions)
+PASS > [test stereo input setValue] Test StereoPanner with mono input value setter  vs setValueAtTime
+PASS   Stereo Left .value setter output is identical to the array [expected array].
+PASS   Stereo Left .value setter output matches setValueAtTime output is true.
+PASS   Stereo Right .value setter output is identical to the array [expected array].
+PASS   Stereo Right .value setter output matches setValueAtTime output is true.
+PASS < [test stereo input setValue] All assertions passed. (total 4 assertions)
+PASS > [test mono input automation] Test StereoPanner with mono input and automation
+PASS   Modulated Stereo Left .value setter output is identical to the array [expected array].
+PASS   Modulated Stereo Left .value setter output matches setValueAtTime output is true.
+PASS   Modulated Stereo Right .value setter output is identical to the array [expected array].
+PASS   Modulated Stereo Right .value setter output matches setValueAtTime output is true.
+PASS < [test mono input automation] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

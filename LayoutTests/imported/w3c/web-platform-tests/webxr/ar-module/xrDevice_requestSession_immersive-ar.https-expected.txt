@@ -1,4 +1,4 @@
 
-PASS Tests requestSession accepts immersive-ar mode 
-PASS Tests requestSession rejects immersive-ar mode when unsupported 
+PASS Tests requestSession accepts immersive-ar mode
+PASS Tests requestSession rejects immersive-ar mode when unsupported
 

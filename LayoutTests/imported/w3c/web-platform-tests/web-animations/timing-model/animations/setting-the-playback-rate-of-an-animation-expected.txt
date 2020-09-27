@@ -1,10 +1,10 @@
 
-PASS The playback rate affects the rate of progress of the current time 
-PASS Setting the playback rate while play-pending preserves the current time 
-PASS Setting the playback rate while playing preserves the current time 
-PASS Setting the playback rate should clear any pending playback rate 
-PASS Setting the playback rate while paused preserves the current time and state 
-PASS Setting the playback rate while finished preserves the current time 
-PASS Reversing the playback rate while finished restarts the animation 
-PASS Setting a zero playback rate while running preserves the current time 
+PASS The playback rate affects the rate of progress of the current time
+PASS Setting the playback rate while play-pending preserves the current time
+PASS Setting the playback rate while playing preserves the current time
+PASS Setting the playback rate should clear any pending playback rate
+PASS Setting the playback rate while paused preserves the current time and state
+PASS Setting the playback rate while finished preserves the current time
+PASS Reversing the playback rate while finished restarts the animation
+PASS Setting a zero playback rate while running preserves the current time
 

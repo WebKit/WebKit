@@ -1,5 +1,5 @@
 
-PASS lone low surrogate 
-PASS lone high surrogate 
-PASS surrogates in wrong order 
+PASS lone low surrogate
+PASS lone high surrogate
+PASS surrogates in wrong order
 

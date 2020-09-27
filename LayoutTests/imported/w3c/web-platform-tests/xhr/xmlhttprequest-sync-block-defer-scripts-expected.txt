@@ -1,4 +1,4 @@
 
 
-PASS Check that a sync XHR in a defer script blocks later defer scripts from running 
+PASS Check that a sync XHR in a defer script blocks later defer scripts from running
 

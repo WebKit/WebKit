@@ -1,8 +1,8 @@
 
-PASS onfinish event is fired when the currentTime < 0 and the playbackRate < 0 
-PASS onfinish event is fired when the currentTime > 0 and the playbackRate > 0 
-PASS onfinish event is fired when animation.finish() is called 
-PASS onfinish event is not fired when paused 
-PASS onfinish event is not fired when the playbackRate is zero 
-PASS onfinish event is not fired when the animation falls out finished state immediately 
+PASS onfinish event is fired when the currentTime < 0 and the playbackRate < 0
+PASS onfinish event is fired when the currentTime > 0 and the playbackRate > 0
+PASS onfinish event is fired when animation.finish() is called
+PASS onfinish event is not fired when paused
+PASS onfinish event is not fired when the playbackRate is zero
+PASS onfinish event is not fired when the animation falls out finished state immediately
 

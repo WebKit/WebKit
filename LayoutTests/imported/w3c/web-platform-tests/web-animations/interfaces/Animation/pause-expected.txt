@@ -1,7 +1,7 @@
 
-PASS pause() a running animation 
-PASS pause() from idle 
-PASS pause() from idle with a negative playbackRate 
-PASS pause() from idle with a negative playbackRate and endless effect 
-PASS pause() on a finished animation 
+PASS pause() a running animation
+PASS pause() from idle
+PASS pause() from idle with a negative playbackRate
+PASS pause() from idle with a negative playbackRate and endless effect
+PASS pause() on a finished animation
 

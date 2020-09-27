@@ -1,6 +1,6 @@
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
 
-NOTRUN Module shared worker construction for script with syntax error should dispatch an event named error. 
-NOTRUN Static import on module shared worker for script with syntax error should dispatch an event named error. 
+NOTRUN Module shared worker construction for script with syntax error should dispatch an event named error.
+NOTRUN Static import on module shared worker for script with syntax error should dispatch an event named error.
 

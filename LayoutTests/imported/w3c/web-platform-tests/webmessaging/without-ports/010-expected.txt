@@ -1,17 +1,17 @@
 
-PASS undefined 
-PASS null 
-PASS false 
-PASS true 
-PASS 1 
-PASS NaN 
-PASS Infinity 
-PASS string 
-PASS date 
-PASS regex 
-PASS self 
-PASS array 
-PASS object 
-PASS error 
-PASS unreached 
+PASS undefined
+PASS null
+PASS false
+PASS true
+PASS 1
+PASS NaN
+PASS Infinity
+PASS string
+PASS date
+PASS regex
+PASS self
+PASS array
+PASS object
+PASS error
+PASS unreached
 

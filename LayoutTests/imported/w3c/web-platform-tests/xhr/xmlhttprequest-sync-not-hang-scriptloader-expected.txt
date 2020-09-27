@@ -1,5 +1,5 @@
 
 
 PASS Ensure that an async script added during a defer script that then does a
-  sync XHR still runs 
+  sync XHR still runs
 

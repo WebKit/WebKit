@@ -1,9 +1,9 @@
 
-PASS Test toString propagation exception. 
-PASS Test recursive Worker creation. 
-PASS Test worker creation with no arguments 
+PASS Test toString propagation exception.
+PASS Test recursive Worker creation.
+PASS Test worker creation with no arguments
 FAIL Test Worker creation with empty script URL. The string did not match the expected pattern.
-PASS Test invalid script URL. 
-PASS Test not existent script URL. 
-PASS Test the Worker object defines postMessage() and addEventListener(). 
+PASS Test invalid script URL.
+PASS Test not existent script URL.
+PASS Test the Worker object defines postMessage() and addEventListener().
 

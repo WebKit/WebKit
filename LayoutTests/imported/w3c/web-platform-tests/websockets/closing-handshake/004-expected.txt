@@ -1,3 +1,3 @@
 
-PASS WebSockets: data after closing handshake 
+PASS WebSockets: data after closing handshake
 

@@ -1,30 +1,30 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "FFT scaling tests" 
-PASS Audit report 
-PASS > [FFT scaling tests] Test Scaling of FFT in AnalyserNode 
-PASS   32-point FFT peak position is equal to 1. 
-PASS   32-point FFT peak value in dBFS is greater than or equal to -14.43. 
-PASS   64-point FFT peak position is equal to 2. 
-PASS   64-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   128-point FFT peak position is equal to 4. 
-PASS   128-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   256-point FFT peak position is equal to 8. 
-PASS   256-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   512-point FFT peak position is equal to 16. 
-PASS   512-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   1024-point FFT peak position is equal to 32. 
-PASS   1024-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   2048-point FFT peak position is equal to 64. 
-PASS   2048-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   4096-point FFT peak position is equal to 128. 
-PASS   4096-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   8192-point FFT peak position is equal to 256. 
-PASS   8192-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   16384-point FFT peak position is equal to 512. 
-PASS   16384-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS   32768-point FFT peak position is equal to 1024. 
-PASS   32768-point FFT peak value in dBFS is greater than or equal to -13.56. 
-PASS < [FFT scaling tests] All assertions passed. (total 22 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "FFT scaling tests"
+PASS Audit report
+PASS > [FFT scaling tests] Test Scaling of FFT in AnalyserNode
+PASS   32-point FFT peak position is equal to 1.
+PASS   32-point FFT peak value in dBFS is greater than or equal to -14.43.
+PASS   64-point FFT peak position is equal to 2.
+PASS   64-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   128-point FFT peak position is equal to 4.
+PASS   128-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   256-point FFT peak position is equal to 8.
+PASS   256-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   512-point FFT peak position is equal to 16.
+PASS   512-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   1024-point FFT peak position is equal to 32.
+PASS   1024-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   2048-point FFT peak position is equal to 64.
+PASS   2048-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   4096-point FFT peak position is equal to 128.
+PASS   4096-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   8192-point FFT peak position is equal to 256.
+PASS   8192-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   16384-point FFT peak position is equal to 512.
+PASS   16384-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS   32768-point FFT peak position is equal to 1024.
+PASS   32768-point FFT peak value in dBFS is greater than or equal to -13.56.
+PASS < [FFT scaling tests] All assertions passed. (total 22 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

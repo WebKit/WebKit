@@ -1,4 +1,4 @@
 
-PASS Same-origin request with non-safelisted content type succeeds 
-PASS CORS request with non-safelisted content type sends preflight and fails 
+PASS Same-origin request with non-safelisted content type succeeds
+PASS CORS request with non-safelisted content type sends preflight and fails
 

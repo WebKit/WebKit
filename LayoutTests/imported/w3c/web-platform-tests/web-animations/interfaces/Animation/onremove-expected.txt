@@ -1,4 +1,4 @@
 
-PASS onremove event is fired when replaced animation is removed. 
-PASS onremove events are fired in the correct order 
+PASS onremove event is fired when replaced animation is removed.
+PASS onremove events are fired in the correct order
 

@@ -1,9 +1,9 @@
 
-PASS Request is redirected without CORS headers to a response with Access-Control-Allow-Origin=* 
-PASS Request is redirected to a response with Access-Control-Allow-Origin=* 
-PASS Request with user info is redirected to a response with Access-Control-Allow-Origin=* 
-PASS Request is redirect to a bad URL 
-PASS Preflighted request is redirected to a response with Access-Control-Allow-Origin=* 
-PASS Preflighted request is redirected to a response with Access-Control-Allow-Origin=* and header allowed 
-PASS Request is redirected to a same-origin resource file 
+PASS Request is redirected without CORS headers to a response with Access-Control-Allow-Origin=*
+PASS Request is redirected to a response with Access-Control-Allow-Origin=*
+PASS Request with user info is redirected to a response with Access-Control-Allow-Origin=*
+PASS Request is redirect to a bad URL
+PASS Preflighted request is redirected to a response with Access-Control-Allow-Origin=*
+PASS Preflighted request is redirected to a response with Access-Control-Allow-Origin=* and header allowed
+PASS Request is redirected to a same-origin resource file
 

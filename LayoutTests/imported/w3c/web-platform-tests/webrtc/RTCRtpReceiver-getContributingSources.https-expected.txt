@@ -1,4 +1,4 @@
 
-PASS [audio] getContributingSources() returns an empty list in loopback call 
-PASS [video] getContributingSources() returns an empty list in loopback call 
+PASS [audio] getContributingSources() returns an empty list in loopback call
+PASS [video] getContributingSources() returns an empty list in loopback call
 

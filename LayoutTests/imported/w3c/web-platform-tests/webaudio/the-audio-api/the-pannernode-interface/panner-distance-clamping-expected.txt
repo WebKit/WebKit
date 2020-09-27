@@ -1,53 +1,53 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "ref-distance-error" 
-PASS Executing "max-distance-error" 
-PASS Executing "min-distance" 
-PASS Executing "max-distance" 
-PASS Audit report 
-PASS > [ref-distance-error]  
-PASS   new PannerNode(c, {refDistance: -1}) threw RangeError: "refDistance cannot be set to a negative value". 
-PASS   new PannerNode(c, {refDistance: 0}) did not throw an exception. 
-PASS   new PannerNode(c, {refDistance: 5e-324}) did not throw an exception. 
-PASS   panner.refDistance = -1 threw RangeError: "refDistance cannot be set to a negative value". 
-PASS   panner.refDistance = 0 did not throw an exception. 
-PASS   panner.refDistance = 5e-324 did not throw an exception. 
-PASS < [ref-distance-error] All assertions passed. (total 6 assertions) 
-PASS > [max-distance-error]  
-PASS   new PannerNode(c, {maxDistance: -1}) threw RangeError: "maxDistance cannot be set to a non-positive value". 
-PASS   new PannerNode(c, {maxDistance: 0}) threw RangeError: "maxDistance cannot be set to a non-positive value". 
-PASS   new PannerNode(c, {maxDistance: 5e-324}) did not throw an exception. 
-PASS   panner.maxDistance = -1 threw RangeError: "maxDistance cannot be set to a non-positive value". 
-PASS   panner.maxDistance = 0 threw RangeError: "maxDistance cannot be set to a non-positive value". 
-PASS   panner.maxDistance = 5e-324 did not throw an exception. 
-PASS < [max-distance-error] All assertions passed. (total 6 assertions) 
-PASS > [min-distance]  
-PASS   Model: linear: Distance (0.01) is outside the range [1, 10000] is equal to true. 
-PASS   Test panner output {"distance":0.01,"distanceModel":"linear"} is identical to the array [expected array]. 
-PASS   Model: exponential: Distance (0.01) is outside the range [1, 10000] is equal to true. 
-PASS   Test panner output {"distance":0.01,"distanceModel":"exponential"} is identical to the array [expected array]. 
-PASS   Model: inverse: Distance (0.01) is outside the range [1, 10000] is equal to true. 
-PASS   Test panner output {"distance":0.01,"distanceModel":"inverse"} is identical to the array [expected array]. 
-PASS   Model: linear: Distance (2) is outside the range [10, 1000] is equal to true. 
-PASS   Test panner output {"distance":2,"distanceModel":"linear","maxDistance":1000,"refDistance":10} is identical to the array [expected array]. 
-PASS   Model: exponential: Distance (2) is outside the range [10, 1000] is equal to true. 
-PASS   Test panner output {"distance":2,"distanceModel":"exponential","maxDistance":1000,"refDistance":10} is identical to the array [expected array]. 
-PASS   Model: inverse: Distance (2) is outside the range [10, 1000] is equal to true. 
-PASS   Test panner output {"distance":2,"distanceModel":"inverse","maxDistance":1000,"refDistance":10} is identical to the array [expected array]. 
-PASS < [min-distance] All assertions passed. (total 12 assertions) 
-PASS > [max-distance]  
-PASS   Model: linear: Distance (20000) is outside the range [1, 10000] is equal to true. 
-PASS   Test panner output {"distance":20000,"distanceModel":"linear"} is identical to the array [expected array]. 
-PASS   Model: exponential: Distance (21000) is outside the range [1, 10000] is equal to true. 
-PASS   Test panner output {"distance":21000,"distanceModel":"exponential"} is identical to the array [expected array]. 
-PASS   Model: inverse: Distance (23000) is outside the range [1, 10000] is equal to true. 
-PASS   Test panner output {"distance":23000,"distanceModel":"inverse"} is identical to the array [expected array]. 
-PASS   Model: linear: Distance (5000) is outside the range [10, 1000] is equal to true. 
-PASS   Test panner output {"distance":5000,"distanceModel":"linear","maxDistance":1000,"refDistance":10} is identical to the array [expected array]. 
-PASS   Model: exponential: Distance (5000) is outside the range [10, 1000] is equal to true. 
-PASS   Test panner output {"distance":5000,"distanceModel":"exponential","maxDistance":1000,"refDistance":10} is identical to the array [expected array]. 
-PASS   Model: inverse: Distance (5000) is outside the range [10, 1000] is equal to true. 
-PASS   Test panner output {"distance":5000,"distanceModel":"inverse","maxDistance":1000,"refDistance":10} is identical to the array [expected array]. 
-PASS < [max-distance] All assertions passed. (total 12 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "ref-distance-error"
+PASS Executing "max-distance-error"
+PASS Executing "min-distance"
+PASS Executing "max-distance"
+PASS Audit report
+PASS > [ref-distance-error]
+PASS   new PannerNode(c, {refDistance: -1}) threw RangeError: "refDistance cannot be set to a negative value".
+PASS   new PannerNode(c, {refDistance: 0}) did not throw an exception.
+PASS   new PannerNode(c, {refDistance: 5e-324}) did not throw an exception.
+PASS   panner.refDistance = -1 threw RangeError: "refDistance cannot be set to a negative value".
+PASS   panner.refDistance = 0 did not throw an exception.
+PASS   panner.refDistance = 5e-324 did not throw an exception.
+PASS < [ref-distance-error] All assertions passed. (total 6 assertions)
+PASS > [max-distance-error]
+PASS   new PannerNode(c, {maxDistance: -1}) threw RangeError: "maxDistance cannot be set to a non-positive value".
+PASS   new PannerNode(c, {maxDistance: 0}) threw RangeError: "maxDistance cannot be set to a non-positive value".
+PASS   new PannerNode(c, {maxDistance: 5e-324}) did not throw an exception.
+PASS   panner.maxDistance = -1 threw RangeError: "maxDistance cannot be set to a non-positive value".
+PASS   panner.maxDistance = 0 threw RangeError: "maxDistance cannot be set to a non-positive value".
+PASS   panner.maxDistance = 5e-324 did not throw an exception.
+PASS < [max-distance-error] All assertions passed. (total 6 assertions)
+PASS > [min-distance]
+PASS   Model: linear: Distance (0.01) is outside the range [1, 10000] is equal to true.
+PASS   Test panner output {"distance":0.01,"distanceModel":"linear"} is identical to the array [expected array].
+PASS   Model: exponential: Distance (0.01) is outside the range [1, 10000] is equal to true.
+PASS   Test panner output {"distance":0.01,"distanceModel":"exponential"} is identical to the array [expected array].
+PASS   Model: inverse: Distance (0.01) is outside the range [1, 10000] is equal to true.
+PASS   Test panner output {"distance":0.01,"distanceModel":"inverse"} is identical to the array [expected array].
+PASS   Model: linear: Distance (2) is outside the range [10, 1000] is equal to true.
+PASS   Test panner output {"distance":2,"distanceModel":"linear","maxDistance":1000,"refDistance":10} is identical to the array [expected array].
+PASS   Model: exponential: Distance (2) is outside the range [10, 1000] is equal to true.
+PASS   Test panner output {"distance":2,"distanceModel":"exponential","maxDistance":1000,"refDistance":10} is identical to the array [expected array].
+PASS   Model: inverse: Distance (2) is outside the range [10, 1000] is equal to true.
+PASS   Test panner output {"distance":2,"distanceModel":"inverse","maxDistance":1000,"refDistance":10} is identical to the array [expected array].
+PASS < [min-distance] All assertions passed. (total 12 assertions)
+PASS > [max-distance]
+PASS   Model: linear: Distance (20000) is outside the range [1, 10000] is equal to true.
+PASS   Test panner output {"distance":20000,"distanceModel":"linear"} is identical to the array [expected array].
+PASS   Model: exponential: Distance (21000) is outside the range [1, 10000] is equal to true.
+PASS   Test panner output {"distance":21000,"distanceModel":"exponential"} is identical to the array [expected array].
+PASS   Model: inverse: Distance (23000) is outside the range [1, 10000] is equal to true.
+PASS   Test panner output {"distance":23000,"distanceModel":"inverse"} is identical to the array [expected array].
+PASS   Model: linear: Distance (5000) is outside the range [10, 1000] is equal to true.
+PASS   Test panner output {"distance":5000,"distanceModel":"linear","maxDistance":1000,"refDistance":10} is identical to the array [expected array].
+PASS   Model: exponential: Distance (5000) is outside the range [10, 1000] is equal to true.
+PASS   Test panner output {"distance":5000,"distanceModel":"exponential","maxDistance":1000,"refDistance":10} is identical to the array [expected array].
+PASS   Model: inverse: Distance (5000) is outside the range [10, 1000] is equal to true.
+PASS   Test panner output {"distance":5000,"distanceModel":"inverse","maxDistance":1000,"refDistance":10} is identical to the array [expected array].
+PASS < [max-distance] All assertions passed. (total 12 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

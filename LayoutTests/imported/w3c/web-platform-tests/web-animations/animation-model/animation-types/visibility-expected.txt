@@ -1,4 +1,4 @@
 
-PASS Visibility clamping behavior 
-PASS Visibility clamping behavior with an easing that has a negative component 
+PASS Visibility clamping behavior
+PASS Visibility clamping behavior with an easing that has a negative component
 

@@ -1,12 +1,12 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "getoutputtimestamp-initial-values" 
-PASS Audit report 
-PASS > [getoutputtimestamp-initial-values]  
-PASS   timestamp.contextTime does exist. 
-PASS   timestamp.performanceTime does exist. 
-PASS   timestamp.contextTime is greater than or equal to 0. 
-PASS   timestamp.performanceTime is greater than or equal to 0. 
-PASS < [getoutputtimestamp-initial-values] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "getoutputtimestamp-initial-values"
+PASS Audit report
+PASS > [getoutputtimestamp-initial-values]
+PASS   timestamp.contextTime does exist.
+PASS   timestamp.performanceTime does exist.
+PASS   timestamp.contextTime is greater than or equal to 0.
+PASS   timestamp.performanceTime is greater than or equal to 0.
+PASS < [getoutputtimestamp-initial-values] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

@@ -1,9 +1,9 @@
 
-PASS new RTCTrackEvent() with valid receiver, track, transceiver should succeed 
-PASS new RTCTrackEvent() with valid receiver, track, streams, transceiver should succeed 
-PASS new RTCTrackEvent() with valid receiver, track, multiple streams, transceiver should succeed 
-PASS new RTCTrackEvent() with unrelated receiver, track, streams, transceiver should succeed 
-PASS new RTCTrackEvent() with no transceiver should throw TypeError 
-PASS new RTCTrackEvent() with no track should throw TypeError 
-PASS new RTCTrackEvent() with no receiver should throw TypeError 
+PASS new RTCTrackEvent() with valid receiver, track, transceiver should succeed
+PASS new RTCTrackEvent() with valid receiver, track, streams, transceiver should succeed
+PASS new RTCTrackEvent() with valid receiver, track, multiple streams, transceiver should succeed
+PASS new RTCTrackEvent() with unrelated receiver, track, streams, transceiver should succeed
+PASS new RTCTrackEvent() with no transceiver should throw TypeError
+PASS new RTCTrackEvent() with no track should throw TypeError
+PASS new RTCTrackEvent() with no receiver should throw TypeError
 

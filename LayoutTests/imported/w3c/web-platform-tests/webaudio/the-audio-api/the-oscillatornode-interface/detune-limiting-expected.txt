@@ -1,18 +1,18 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "detune limits" 
-PASS Executing "detune automation" 
-PASS Audit report 
-PASS > [detune limits] Oscillator with detune and frequency at Nyquist or above 
-PASS   Context sample rate is equal to 44100. 
-PASS   Reference oscillator frequency is greater than or equal to 22050. 
-PASS   Osc(freq: 44100.00390625) output contains only the constant 0. 
-PASS   Osc(freq: 1, detune: 18514.189453125) output equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [detune limits] All assertions passed. (total 4 assertions) 
-PASS > [detune automation] Oscillator output with detune automation should be zero above Nyquist 
-PASS   Frame where detuned oscillator reaches Nyquist is equal to 5. 
-PASS   osc[0:4] is not constantly 0 (contains 4 different values). 
-PASS   osc[5:] contains only the constant 0. 
-PASS < [detune automation] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "detune limits"
+PASS Executing "detune automation"
+PASS Audit report
+PASS > [detune limits] Oscillator with detune and frequency at Nyquist or above
+PASS   Context sample rate is equal to 44100.
+PASS   Reference oscillator frequency is greater than or equal to 22050.
+PASS   Osc(freq: 44100.00390625) output contains only the constant 0.
+PASS   Osc(freq: 1, detune: 18514.189453125) output equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [detune limits] All assertions passed. (total 4 assertions)
+PASS > [detune automation] Oscillator output with detune automation should be zero above Nyquist
+PASS   Frame where detuned oscillator reaches Nyquist is equal to 5.
+PASS   osc[0:4] is not constantly 0 (contains 4 different values).
+PASS   osc[5:] contains only the constant 0.
+PASS < [detune automation] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

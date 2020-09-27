@@ -1,15 +1,15 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Basic AnalyserNode test" 
-PASS Audit report 
-PASS > [Basic AnalyserNode test]  
-PASS   Number of inputs for AnalyserNode is equal to 1. 
-PASS   Number of outputs for AnalyserNode is equal to 1. 
-PASS   Default minDecibels value is equal to -100. 
-PASS   Default maxDecibels value is equal to -30. 
-PASS   Default smoothingTimeConstant value is equal to 0.8. 
-PASS   node.minDecibels = -50.333333333333336 is equal to -50.333333333333336. 
-PASS   node.maxDecibels = -40.333333333333336 is equal to -40.333333333333336. 
-PASS < [Basic AnalyserNode test] All assertions passed. (total 7 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Basic AnalyserNode test"
+PASS Audit report
+PASS > [Basic AnalyserNode test]
+PASS   Number of inputs for AnalyserNode is equal to 1.
+PASS   Number of outputs for AnalyserNode is equal to 1.
+PASS   Default minDecibels value is equal to -100.
+PASS   Default maxDecibels value is equal to -30.
+PASS   Default smoothingTimeConstant value is equal to 0.8.
+PASS   node.minDecibels = -50.333333333333336 is equal to -50.333333333333336.
+PASS   node.maxDecibels = -40.333333333333336 is equal to -40.333333333333336.
+PASS < [Basic AnalyserNode test] All assertions passed. (total 7 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

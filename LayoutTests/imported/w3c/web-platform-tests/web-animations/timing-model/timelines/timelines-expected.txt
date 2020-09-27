@@ -1,6 +1,6 @@
 
-PASS Timeline time increases once per animation frame 
-PASS Timeline time increases once per animation frame in an iframe 
-PASS Timeline time should be the same for all RAF callbacks in an animation frame 
-PASS Performs a microtask checkpoint after updating timelins 
+PASS Timeline time increases once per animation frame
+PASS Timeline time increases once per animation frame in an iframe
+PASS Timeline time should be the same for all RAF callbacks in an animation frame
+PASS Performs a microtask checkpoint after updating timelins
 

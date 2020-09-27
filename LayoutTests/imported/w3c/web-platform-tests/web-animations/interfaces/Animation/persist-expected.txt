@@ -1,4 +1,4 @@
 
-PASS Allows an animation to be persisted after being removed 
-PASS Allows an animation to be persisted before being removed 
+PASS Allows an animation to be persisted after being removed
+PASS Allows an animation to be persisted before being removed
 

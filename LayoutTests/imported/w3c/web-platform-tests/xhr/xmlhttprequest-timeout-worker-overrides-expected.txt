@@ -3,7 +3,7 @@ Description
 This test validates that the XHR2 timeout property behaves as expected in in a worker context.
 
 
-PASS Timeout test: timeout disabled after initially set, original timeout at 5000, reset at 2000 to 0 
-PASS Timeout test: timeout overrides load after a delay, original timeout at 5000, reset at 1000 to 2000 
-PASS Timeout test: timeout enabled after initially disabled, original timeout at 0, reset at 2000 to 50000 
+PASS Timeout test: timeout disabled after initially set, original timeout at 5000, reset at 2000 to 0
+PASS Timeout test: timeout overrides load after a delay, original timeout at 5000, reset at 1000 to 2000
+PASS Timeout test: timeout enabled after initially disabled, original timeout at 0, reset at 2000 to 50000
 

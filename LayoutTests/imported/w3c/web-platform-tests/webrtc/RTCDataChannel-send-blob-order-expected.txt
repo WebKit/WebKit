@@ -1,4 +1,4 @@
 
-PASS Datachannel should send data following the order of the send call 
-PASS Negotiated datachannel should send data following the order of the send call 
+PASS Datachannel should send data following the order of the send call
+PASS Negotiated datachannel should send data following the order of the send call
 

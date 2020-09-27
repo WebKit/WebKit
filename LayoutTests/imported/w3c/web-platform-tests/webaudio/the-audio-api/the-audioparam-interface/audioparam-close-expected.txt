@@ -1,23 +1,23 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "no-nan" 
-PASS Executing "interpolation" 
-PASS Audit report 
-PASS > [no-nan] NaN does not occur 
-PASS   src0 = new ConstantSourceNode(context, {offset: 0}) is equal to ConstantSourceNode. 
-PASS   src0.offset.setValueAtTime(10, 0) is equal to AudioParam. 
-PASS   src0.offset.linearRampToValueAtTime(3.4028234663852886e+38, 1.401298464324817e-45) is equal to AudioParam. 
-PASS   output[0] is equal to 10. 
-PASS   output[1] contains only the constant 3.4028234663852886e+38. 
-PASS < [no-nan] All assertions passed. (total 5 assertions) 
-PASS > [interpolation] Interpolation of linear ramp 
-PASS   src1 = new ConstantSourceNode(context, {offset: 0}) is equal to ConstantSourceNode. 
-PASS   src1.offset.setValueAtTime(1000000000000000, 0.000015258789062499998) is equal to AudioParam. 
-PASS   src1.offset.linearRampToValueAtTime(3.4028234663852886e+38, 0.000015258789062500003) is equal to AudioParam. 
-PASS   Event time difference is not equal to 0. 
-PASS   output[0] is equal to 0. 
-PASS   output[1] is 1.1342744887950962e+38 within an error of 0. 
-PASS   output[2:] contains only the constant 3.4028234663852886e+38. 
-PASS < [interpolation] All assertions passed. (total 7 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "no-nan"
+PASS Executing "interpolation"
+PASS Audit report
+PASS > [no-nan] NaN does not occur
+PASS   src0 = new ConstantSourceNode(context, {offset: 0}) is equal to ConstantSourceNode.
+PASS   src0.offset.setValueAtTime(10, 0) is equal to AudioParam.
+PASS   src0.offset.linearRampToValueAtTime(3.4028234663852886e+38, 1.401298464324817e-45) is equal to AudioParam.
+PASS   output[0] is equal to 10.
+PASS   output[1] contains only the constant 3.4028234663852886e+38.
+PASS < [no-nan] All assertions passed. (total 5 assertions)
+PASS > [interpolation] Interpolation of linear ramp
+PASS   src1 = new ConstantSourceNode(context, {offset: 0}) is equal to ConstantSourceNode.
+PASS   src1.offset.setValueAtTime(1000000000000000, 0.000015258789062499998) is equal to AudioParam.
+PASS   src1.offset.linearRampToValueAtTime(3.4028234663852886e+38, 0.000015258789062500003) is equal to AudioParam.
+PASS   Event time difference is not equal to 0.
+PASS   output[0] is equal to 0.
+PASS   output[1] is 1.1342744887950962e+38 within an error of 0.
+PASS   output[2:] contains only the constant 3.4028234663852886e+38.
+PASS < [interpolation] All assertions passed. (total 7 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

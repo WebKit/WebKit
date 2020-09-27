@@ -1,4 +1,4 @@
 
-PASS XMLHttpRequest: responseXML basic test 
-PASS responseXML on empty response documents 
+PASS XMLHttpRequest: responseXML basic test
+PASS responseXML on empty response documents
 

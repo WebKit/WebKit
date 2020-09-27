@@ -1,10 +1,10 @@
 
-PASS IIRFilterNode coefficients are checked properly 
-PASS feedforward coefficients can not be empty 
-PASS feedback coefficients can not be empty 
-PASS more than 20 feedforward coefficients can not be used 
-PASS more than 20 feedback coefficients can not be used 
-PASS at least one feedforward coefficient must be non-zero 
-PASS the first feedback coefficient must be non-zero 
-PASS IIRFilterNode getFrequencyResponse handles invalid frequencies properly 
+PASS IIRFilterNode coefficients are checked properly
+PASS feedforward coefficients can not be empty
+PASS feedback coefficients can not be empty
+PASS more than 20 feedforward coefficients can not be used
+PASS more than 20 feedback coefficients can not be used
+PASS at least one feedforward coefficient must be non-zero
+PASS the first feedback coefficient must be non-zero
+PASS IIRFilterNode getFrequencyResponse handles invalid frequencies properly
 

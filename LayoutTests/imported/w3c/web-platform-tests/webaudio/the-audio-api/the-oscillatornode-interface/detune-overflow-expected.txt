@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "detune overflow" 
-PASS Audit report 
-PASS > [detune overflow]  
-PASS   Osc freq and detune outside nominal range contains only the constant 0. 
-PASS < [detune overflow] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "detune overflow"
+PASS Audit report
+PASS > [detune overflow]
+PASS   Osc freq and detune outside nominal range contains only the constant 0.
+PASS < [detune overflow] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

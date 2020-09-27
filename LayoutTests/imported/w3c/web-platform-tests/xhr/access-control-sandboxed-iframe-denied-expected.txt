@@ -1,5 +1,5 @@
 
 
-PASS Check that path exists and is accessible via local XHR request 
-PASS Sandboxed iframe is denied access to path 
+PASS Check that path exists and is accessible via local XHR request
+PASS Sandboxed iframe is denied access to path
 

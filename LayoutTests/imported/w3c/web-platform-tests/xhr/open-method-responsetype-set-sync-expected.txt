@@ -1,7 +1,7 @@
 
-PASS XMLHttpRequest: open() sync request not allowed if responseType is set (arraybuffer) 
-PASS XMLHttpRequest: open() sync request not allowed if responseType is set (blob) 
-PASS XMLHttpRequest: open() sync request not allowed if responseType is set (json) 
-PASS XMLHttpRequest: open() sync request not allowed if responseType is set (text) 
-PASS XMLHttpRequest: open() sync request not allowed if responseType is set (document) 
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (arraybuffer)
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (blob)
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (json)
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (text)
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (document)
 

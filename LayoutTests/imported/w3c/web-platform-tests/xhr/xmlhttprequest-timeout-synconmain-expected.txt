@@ -3,6 +3,6 @@ Description
 This test validates that the XHR2 timeout property behaves as expected in async cases in document (i.e. non-worker) context.
 
 
-PASS Timeout test: Synchronous XHR must not allow a timeout to be set - setting timeout must throw 
-PASS Timeout test: Synchronous XHR must not allow a timeout to be set - calling open() after timeout is set must throw 
+PASS Timeout test: Synchronous XHR must not allow a timeout to be set - setting timeout must throw
+PASS Timeout test: Synchronous XHR must not allow a timeout to be set - calling open() after timeout is set must throw
 

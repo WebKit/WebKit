@@ -1,3 +1,3 @@
 
-PASS Create WebSocket - Pass a URL with a non ws/wss scheme - SYNTAX_ERR is thrown 
+PASS Create WebSocket - Pass a URL with a non ws/wss scheme - SYNTAX_ERR is thrown
 

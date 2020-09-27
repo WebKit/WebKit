@@ -1,3 +1,3 @@
 
-PASS WebSockets: invalid handshake 
+PASS WebSockets: invalid handshake
 

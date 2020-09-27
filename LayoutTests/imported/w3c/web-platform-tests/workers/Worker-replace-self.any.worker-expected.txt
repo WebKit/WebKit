@@ -1,3 +1,3 @@
 
-PASS Test that self is not replaceable. 
+PASS Test that self is not replaceable.
 

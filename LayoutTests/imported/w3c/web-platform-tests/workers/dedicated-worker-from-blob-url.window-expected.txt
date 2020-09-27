@@ -1,4 +1,4 @@
 
-PASS Creating a dedicated worker from a blob URL works. 
-PASS Creating a dedicated worker from a blob URL works immediately before revoking. 
+PASS Creating a dedicated worker from a blob URL works.
+PASS Creating a dedicated worker from a blob URL works immediately before revoking.
 

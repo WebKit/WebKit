@@ -1,13 +1,13 @@
 
-PASS Phase calculation for a simple animation effect 
-PASS Phase calculation for an animation effect with a positive start delay 
-PASS Phase calculation for an animation effect with a negative start delay 
-PASS Phase calculation for an animation effect with a positive end delay 
-PASS Phase calculation for an animation effect with a negative end delay lesser in magnitude than the active duration 
-PASS Phase calculation for an animation effect with a negative end delay equal in magnitude to the active duration 
-PASS Phase calculation for an animation effect with a negative end delay greater in magnitude than the active duration 
-PASS Phase calculation for an animation effect with a positive start delay and a negative end delay lesser in magnitude than the active duration 
-PASS Phase calculation for an animation effect with a negative start delay and a negative end delay equal in magnitude to the active duration 
-PASS Phase calculation for an animation effect with a negative start delay and a negative end delay equal greater in magnitude than the active duration 
-PASS Phase calculation for a simple animation effect with negative playback rate 
+PASS Phase calculation for a simple animation effect
+PASS Phase calculation for an animation effect with a positive start delay
+PASS Phase calculation for an animation effect with a negative start delay
+PASS Phase calculation for an animation effect with a positive end delay
+PASS Phase calculation for an animation effect with a negative end delay lesser in magnitude than the active duration
+PASS Phase calculation for an animation effect with a negative end delay equal in magnitude to the active duration
+PASS Phase calculation for an animation effect with a negative end delay greater in magnitude than the active duration
+PASS Phase calculation for an animation effect with a positive start delay and a negative end delay lesser in magnitude than the active duration
+PASS Phase calculation for an animation effect with a negative start delay and a negative end delay equal in magnitude to the active duration
+PASS Phase calculation for an animation effect with a negative start delay and a negative end delay equal greater in magnitude than the active duration
+PASS Phase calculation for a simple animation effect with negative playback rate
 

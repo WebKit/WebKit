@@ -1,6 +1,6 @@
 
-PASS Setting onmessage to 1 
-PASS Setting onmessage to an object 
-PASS Setting onmessage to a function 
-PASS Setting onmessage to 1 (again) 
+PASS Setting onmessage to 1
+PASS Setting onmessage to an object
+PASS Setting onmessage to a function
+PASS Setting onmessage to 1 (again)
 

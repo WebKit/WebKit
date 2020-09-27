@@ -1,22 +1,22 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "1-pole IIR" 
-PASS Executing "compare IIR and biquad" 
-PASS Executing "getFrequencyResponse" 
-PASS Audit report 
-PASS > [1-pole IIR]  
-PASS   1-pole IIR Magnitude Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000028611,"relativeThreshold":0}. 
-PASS   1-pole IIR Phase Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.7882e-7,"relativeThreshold":0}. 
-PASS < [1-pole IIR] All assertions passed. (total 2 assertions) 
-PASS > [compare IIR and biquad]  
-PASS   IIR Magnitude Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027419,"relativeThreshold":0}. 
-PASS   IIR Phase Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027657,"relativeThreshold":0}. 
-PASS < [compare IIR and biquad] All assertions passed. (total 2 assertions) 
-PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
-PASS   Magnitude response at frequency -1 is NaN. 
-PASS   Magnitude response at frequency 24001 is NaN. 
-PASS   Phase response at frequency -1 is NaN. 
-PASS   Phase response at frequency 24001 is NaN. 
-PASS < [getFrequencyResponse] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "1-pole IIR"
+PASS Executing "compare IIR and biquad"
+PASS Executing "getFrequencyResponse"
+PASS Audit report
+PASS > [1-pole IIR]
+PASS   1-pole IIR Magnitude Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000028611,"relativeThreshold":0}.
+PASS   1-pole IIR Phase Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.7882e-7,"relativeThreshold":0}.
+PASS < [1-pole IIR] All assertions passed. (total 2 assertions)
+PASS > [compare IIR and biquad]
+PASS   IIR Magnitude Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027419,"relativeThreshold":0}.
+PASS   IIR Phase Response equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027657,"relativeThreshold":0}.
+PASS < [compare IIR and biquad] All assertions passed. (total 2 assertions)
+PASS > [getFrequencyResponse] Test out-of-bounds frequency values
+PASS   Magnitude response at frequency -1 is NaN.
+PASS   Magnitude response at frequency 24001 is NaN.
+PASS   Phase response at frequency -1 is NaN.
+PASS   Phase response at frequency 24001 is NaN.
+PASS < [getFrequencyResponse] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

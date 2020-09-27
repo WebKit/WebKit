@@ -1,5 +1,5 @@
 
-PASS XMLHttpRequest: template element parsing 
-PASS XMLHttpRequest: template element parsing 1 
-PASS XMLHttpRequest: template element parsing 2 
+PASS XMLHttpRequest: template element parsing
+PASS XMLHttpRequest: template element parsing 1
+PASS XMLHttpRequest: template element parsing 2
 

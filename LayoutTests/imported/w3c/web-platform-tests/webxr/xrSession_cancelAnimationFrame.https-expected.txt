@@ -1,4 +1,4 @@
 
-PASS XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for immersive sessions 
-PASS XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for non-immersive sessions 
+PASS XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for immersive sessions
+PASS XRSession requestAnimationFrame callbacks can be unregistered with cancelAnimationFrame for non-immersive sessions
 

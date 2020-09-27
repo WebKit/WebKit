@@ -1,4 +1,4 @@
 
 FAIL Worker exposure assert_not_equals: got disallowed value undefined
-PASS SharedWorker exposure 
+PASS SharedWorker exposure
 

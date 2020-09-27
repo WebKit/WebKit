@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Error: Error Message
 
-PASS  WorkerGlobalScope onerror event handler argument: col  
+PASS  WorkerGlobalScope onerror event handler argument: col
 

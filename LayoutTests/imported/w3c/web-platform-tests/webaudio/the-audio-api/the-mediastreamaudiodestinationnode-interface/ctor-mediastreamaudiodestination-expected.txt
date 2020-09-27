@@ -1,48 +1,48 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "invalid constructor" 
-PASS Executing "default constructor" 
-PASS Executing "test AudioNodeOptions" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   context = new AudioContext() did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [invalid constructor]  
-PASS   new MediaStreamAudioDestinationNode() threw TypeError: "Not enough arguments". 
-PASS   new MediaStreamAudioDestinationNode(1) threw TypeError: "Argument 1 ('context') to the MediaStreamAudioDestinationNode constructor must be an instance of AudioContext". 
-PASS   new MediaStreamAudioDestinationNode(context, 42) threw TypeError: "Type error". 
-PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
-PASS > [default constructor]  
-PASS   node0 = new MediaStreamAudioDestinationNode(context) did not throw an exception. 
-PASS   node0 instanceof MediaStreamAudioDestinationNode is equal to true. 
-PASS   node0.numberOfInputs is equal to 1. 
-PASS   node0.numberOfOutputs is equal to 0. 
-PASS   node0.channelCount is equal to 2. 
-PASS   node0.channelCountMode is equal to explicit. 
-PASS   node0.channelInterpretation is equal to speakers. 
-PASS < [default constructor] All assertions passed. (total 7 assertions) 
-PASS > [test AudioNodeOptions]  
-PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 7}) did not throw an exception. 
-PASS   node.channelCount is equal to 7. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0". 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit". 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "max"} did not throw an exception. 
-PASS   node.channelCountMode is equal to max. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "max"}) did not throw an exception. 
-PASS   node.channelCountMode after valid setter is equal to max. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "clamped-max"}) did not throw an exception. 
-PASS   node.channelCountMode after valid setter is equal to clamped-max. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "explicit"}) did not throw an exception. 
-PASS   node.channelCountMode after valid setter is equal to explicit. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error". 
-PASS   node.channelCountMode after invalid setter is equal to explicit. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to speakers. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to discrete. 
-PASS   new MediaStreamAudioDestinationNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
-PASS   node.channelInterpretation after invalid setter is equal to discrete. 
-PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "invalid constructor"
+PASS Executing "default constructor"
+PASS Executing "test AudioNodeOptions"
+PASS Audit report
+PASS > [initialize]
+PASS   context = new AudioContext() did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [invalid constructor]
+PASS   new MediaStreamAudioDestinationNode() threw TypeError: "Not enough arguments".
+PASS   new MediaStreamAudioDestinationNode(1) threw TypeError: "Argument 1 ('context') to the MediaStreamAudioDestinationNode constructor must be an instance of AudioContext".
+PASS   new MediaStreamAudioDestinationNode(context, 42) threw TypeError: "Type error".
+PASS < [invalid constructor] All assertions passed. (total 3 assertions)
+PASS > [default constructor]
+PASS   node0 = new MediaStreamAudioDestinationNode(context) did not throw an exception.
+PASS   node0 instanceof MediaStreamAudioDestinationNode is equal to true.
+PASS   node0.numberOfInputs is equal to 1.
+PASS   node0.numberOfOutputs is equal to 0.
+PASS   node0.channelCount is equal to 2.
+PASS   node0.channelCountMode is equal to explicit.
+PASS   node0.channelInterpretation is equal to speakers.
+PASS < [default constructor] All assertions passed. (total 7 assertions)
+PASS > [test AudioNodeOptions]
+PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 7}) did not throw an exception.
+PASS   node.channelCount is equal to 7.
+PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0".
+PASS   new MediaStreamAudioDestinationNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit".
+PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "max"} did not throw an exception.
+PASS   node.channelCountMode is equal to max.
+PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "max"}) did not throw an exception.
+PASS   node.channelCountMode after valid setter is equal to max.
+PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "clamped-max"}) did not throw an exception.
+PASS   node.channelCountMode after valid setter is equal to clamped-max.
+PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "explicit"}) did not throw an exception.
+PASS   node.channelCountMode after valid setter is equal to explicit.
+PASS   new MediaStreamAudioDestinationNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error".
+PASS   node.channelCountMode after invalid setter is equal to explicit.
+PASS   new MediaStreamAudioDestinationNode(c, {channelInterpretation: "speakers"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to speakers.
+PASS   new MediaStreamAudioDestinationNode(c, {channelInterpretation: "discrete"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to discrete.
+PASS   new MediaStreamAudioDestinationNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error".
+PASS   node.channelInterpretation after invalid setter is equal to discrete.
+PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

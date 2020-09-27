@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] DelayNode delayTime parameter can be scheduled at a given time 
-PASS   Delaying test signal by 0.5 sec was done correctly 
-PASS < [test] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] DelayNode delayTime parameter can be scheduled at a given time
+PASS   Delaying test signal by 0.5 sec was done correctly
+PASS < [test] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

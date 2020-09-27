@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
+PASS # AUDIT TASK RUNNER STARTED.
 FAIL Executing "Setup graph" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-PASS Executing "verify count change" 
-PASS Audit report 
-PASS > [Setup graph]  
-PASS > [verify count change]  
+PASS Executing "verify count change"
+PASS Audit report
+PASS > [Setup graph]
+PASS > [verify count change]
 FAIL X Number of channels changed is not true. Got false. assert_true: expected true got false
-PASS   Index where input channel count changed is less than or equal to 1280. 
-FAIL X Number of channels in input[0:-2]: Expected 7 for all values but found 1279 unexpected values: 
+PASS   Index where input channel count changed is less than or equal to 1280.
+FAIL X Number of channels in input[0:-2]: Expected 7 for all values but found 1279 unexpected values:
 	Index	Actual
 	[0]	0
 	[1]	0
 	[2]	0
 	[3]	0
 	...and 1275 more errors. assert_true: expected true got false
-FAIL X Number of channels in input[-1:]: Expected 1 for all values but found 1 unexpected values: 
+FAIL X Number of channels in input[-1:]: Expected 1 for all values but found 1 unexpected values:
 	Index	Actual
 	[0]	0 assert_true: expected true got false
 FAIL < [verify count change] 3 out of 4 assertions were failed. assert_true: expected true got false

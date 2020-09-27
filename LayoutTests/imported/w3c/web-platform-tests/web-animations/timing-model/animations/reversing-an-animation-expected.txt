@@ -1,20 +1,20 @@
 
-PASS Reversing an animation inverts the playback rate 
-PASS Reversing an animation plays a pausing animation 
-PASS Reversing an animation maintains the same current time 
-PASS Reversing an animation does not cause it to leave the pending state 
-PASS Reversing an animation does not cause it to resolve the ready promise 
-PASS Reversing an animation when playbackRate > 0 and currentTime > effect end should make it play from the end 
-PASS Reversing an animation when playbackRate > 0 and currentTime < 0 should make it play from the end 
-PASS Reversing an animation when playbackRate < 0 and currentTime < 0 should make it play from the start 
-PASS Reversing an animation when playbackRate < 0 and currentTime > effect end should make it play from the start 
-PASS Reversing an animation when playbackRate > 0 and currentTime < 0 and the target effect end is positive infinity should throw an exception 
-PASS When reversing throws an exception, the playback rate remains unchanged 
-PASS Reversing animation when playbackRate = 0 and currentTime < 0 and the target effect end is positive infinity should NOT throw an exception 
-PASS Reversing an animation when playbackRate < 0 and currentTime < 0 and the target effect end is positive infinity should make it play from the start 
-PASS Reversing when when playbackRate == 0 should preserve the current time and playback rate 
-PASS Reversing an idle animation from starts playing the animation 
-PASS Reversing an animation without an active timeline throws an InvalidStateError 
-PASS Reversing should use the negative pending playback rate 
-PASS When reversing fails, it should restore any previous pending playback rate 
+PASS Reversing an animation inverts the playback rate
+PASS Reversing an animation plays a pausing animation
+PASS Reversing an animation maintains the same current time
+PASS Reversing an animation does not cause it to leave the pending state
+PASS Reversing an animation does not cause it to resolve the ready promise
+PASS Reversing an animation when playbackRate > 0 and currentTime > effect end should make it play from the end
+PASS Reversing an animation when playbackRate > 0 and currentTime < 0 should make it play from the end
+PASS Reversing an animation when playbackRate < 0 and currentTime < 0 should make it play from the start
+PASS Reversing an animation when playbackRate < 0 and currentTime > effect end should make it play from the start
+PASS Reversing an animation when playbackRate > 0 and currentTime < 0 and the target effect end is positive infinity should throw an exception
+PASS When reversing throws an exception, the playback rate remains unchanged
+PASS Reversing animation when playbackRate = 0 and currentTime < 0 and the target effect end is positive infinity should NOT throw an exception
+PASS Reversing an animation when playbackRate < 0 and currentTime < 0 and the target effect end is positive infinity should make it play from the start
+PASS Reversing when when playbackRate == 0 should preserve the current time and playback rate
+PASS Reversing an idle animation from starts playing the animation
+PASS Reversing an animation without an active timeline throws an InvalidStateError
+PASS Reversing should use the negative pending playback rate
+PASS When reversing fails, it should restore any previous pending playback rate
 

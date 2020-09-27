@@ -1,9 +1,9 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS Same-origin top-level module script loading with "no-referrer" referrer policy 
-PASS Same-origin top-level module script loading with "origin" referrer policy 
-PASS Same-origin top-level module script loading with "same-origin" referrer policy 
+PASS Same-origin top-level module script loading with "no-referrer" referrer policy
+PASS Same-origin top-level module script loading with "origin" referrer policy
+PASS Same-origin top-level module script loading with "same-origin" referrer policy
 FAIL Same-origin static import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Same-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Same-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
@@ -11,9 +11,9 @@ FAIL Cross-origin static import with "no-referrer" referrer policy. promise_test
 FAIL Cross-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Cross-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
 TIMEOUT Same-origin dynamic import with "no-referrer" referrer policy. Test timed out
-NOTRUN Same-origin dynamic import with "origin" referrer policy. 
-NOTRUN Same-origin dynamic import with "same-origin" referrer policy. 
-NOTRUN Cross-origin dynamic import with "no-referrer" referrer policy. 
-NOTRUN Cross-origin dynamic import with "origin" referrer policy. 
-NOTRUN Cross-origin dynamic import with "same-origin" referrer policy. 
+NOTRUN Same-origin dynamic import with "origin" referrer policy.
+NOTRUN Same-origin dynamic import with "same-origin" referrer policy.
+NOTRUN Cross-origin dynamic import with "no-referrer" referrer policy.
+NOTRUN Cross-origin dynamic import with "origin" referrer policy.
+NOTRUN Cross-origin dynamic import with "same-origin" referrer policy.
 

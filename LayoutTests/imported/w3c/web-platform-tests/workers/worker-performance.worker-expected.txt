@@ -1,16 +1,16 @@
 
-PASS Can use performance.now in workers 
-PASS Can use performance.mark in workers 
-PASS Can use performance.measure in workers 
-PASS Can use performance.getEntriesByName in workers 
-PASS Can use performance.getEntriesByType in workers 
-PASS Performance marks and measures seem to be working correctly in workers 
-PASS Can use clearMarks and clearMeasures in workers 
-PASS Resource timing seems to work in workers 
-PASS performance.clearResourceTimings in workers 
-PASS performance.setResourceTimingBufferSize in workers 
-PASS performance.timing is not available in workers 
-PASS performance.navigation is not available in workers 
-PASS performance.toJSON is available in workers 
-PASS There are no navigation type performance entries in workers 
+PASS Can use performance.now in workers
+PASS Can use performance.mark in workers
+PASS Can use performance.measure in workers
+PASS Can use performance.getEntriesByName in workers
+PASS Can use performance.getEntriesByType in workers
+PASS Performance marks and measures seem to be working correctly in workers
+PASS Can use clearMarks and clearMeasures in workers
+PASS Resource timing seems to work in workers
+PASS performance.clearResourceTimings in workers
+PASS performance.setResourceTimingBufferSize in workers
+PASS performance.timing is not available in workers
+PASS performance.navigation is not available in workers
+PASS performance.toJSON is available in workers
+PASS There are no navigation type performance entries in workers
 

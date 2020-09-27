@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected string literal './non-existent-script.js'. import call expects exactly one argument.
 
 FAIL importScripts() on module worker should throw an exception. assert_equals: expected "TypeError" but got "LOADED"
-PASS Worker construction for non-existent script should dispatch an ErrorEvent. 
-PASS Static import for non-existent script should dispatch an ErrorEvent. 
+PASS Worker construction for non-existent script should dispatch an ErrorEvent.
+PASS Static import for non-existent script should dispatch an ErrorEvent.
 FAIL Dynamic import for non-existent script should throw an exception. assert_equals: expected "TypeError" but got "Error"
-PASS Worker construction for an invalid URL should throw an exception. 
-PASS Worker construction for a file URL should throw an exception. 
+PASS Worker construction for an invalid URL should throw an exception.
+PASS Worker construction for a file URL should throw an exception.
 

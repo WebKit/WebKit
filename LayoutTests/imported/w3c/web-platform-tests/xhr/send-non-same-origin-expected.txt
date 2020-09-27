@@ -1,9 +1,9 @@
 
-PASS XMLHttpRequest: send() - non same-origin (mailto:test@example.org) 
-PASS XMLHttpRequest: send() - non same-origin (tel:+31600000000) 
-PASS XMLHttpRequest: send() - non same-origin (http://127.0.0.1:8800) 
-PASS XMLHttpRequest: send() - non same-origin (javascript:alert('FAIL')) 
-PASS XMLHttpRequest: send() - non same-origin (folder.txt) 
-PASS XMLHttpRequest: send() - non same-origin (about:blank) 
-PASS XMLHttpRequest: send() - non same-origin (blob:bogusidentifier) 
+PASS XMLHttpRequest: send() - non same-origin (mailto:test@example.org)
+PASS XMLHttpRequest: send() - non same-origin (tel:+31600000000)
+PASS XMLHttpRequest: send() - non same-origin (http://127.0.0.1:8800)
+PASS XMLHttpRequest: send() - non same-origin (javascript:alert('FAIL'))
+PASS XMLHttpRequest: send() - non same-origin (folder.txt)
+PASS XMLHttpRequest: send() - non same-origin (about:blank)
+PASS XMLHttpRequest: send() - non same-origin (blob:bogusidentifier)
 

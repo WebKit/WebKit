@@ -1,6 +1,6 @@
 
-PASS WebSockets: removeEventListener 
-PASS WebSockets: removeEventListener 1 
-PASS WebSockets: removeEventListener 2 
-PASS WebSockets: removeEventListener 3 
+PASS WebSockets: removeEventListener
+PASS WebSockets: removeEventListener 1
+PASS WebSockets: removeEventListener 2
+PASS WebSockets: removeEventListener 3
 

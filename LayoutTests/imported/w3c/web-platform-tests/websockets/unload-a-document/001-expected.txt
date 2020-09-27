@@ -3,5 +3,5 @@ Test requires popup blocker disabled
 
 Harness Error (FAIL), message = Test named 'WebSockets: navigating top-level browsing context' specified 2 'cleanup' functions, and 1 failed.
 
-PASS WebSockets: navigating top-level browsing context 
+PASS WebSockets: navigating top-level browsing context
 

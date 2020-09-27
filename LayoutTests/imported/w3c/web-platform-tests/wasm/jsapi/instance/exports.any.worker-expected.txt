@@ -1,6 +1,6 @@
 
-PASS Branding 
-PASS Stray argument 
-PASS Setting (sloppy mode) 
-PASS Setting (strict mode) 
+PASS Branding
+PASS Stray argument
+PASS Setting (sloppy mode)
+PASS Setting (strict mode)
 

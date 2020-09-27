@@ -1,6 +1,6 @@
 
-PASS XMLHttpRequest: open() resolving URLs - fragment identifier 
-PASS make sure fragment is removed from URL before request 
-PASS make sure fragment is removed from URL before request (with query string) 
-PASS make sure escaped # is not removed 
+PASS XMLHttpRequest: open() resolving URLs - fragment identifier
+PASS make sure fragment is removed from URL before request
+PASS make sure fragment is removed from URL before request (with query string)
+PASS make sure escaped # is not removed
 

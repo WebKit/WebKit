@@ -1,5 +1,5 @@
 
-PASS Can set up a basic WebRTC call with only data using promises. 
+PASS Can set up a basic WebRTC call with only data using promises.
 iceConnectionState info
 
 First: completed

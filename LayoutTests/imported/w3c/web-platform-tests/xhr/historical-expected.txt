@@ -1,5 +1,5 @@
 
-PASS Support for responseType = moz-blob 
-PASS Support for responseType = moz-chunked-text 
-PASS Support for responseType = moz-chunked-arraybuffer 
+PASS Support for responseType = moz-blob
+PASS Support for responseType = moz-chunked-text
+PASS Support for responseType = moz-chunked-arraybuffer
 

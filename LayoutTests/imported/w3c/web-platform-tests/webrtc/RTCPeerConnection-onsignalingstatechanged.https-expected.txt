@@ -1,4 +1,4 @@
 
-PASS Negotiation methods fire signalingstatechange events 
+PASS Negotiation methods fire signalingstatechange events
 FAIL Closing a PeerConnection should not fire signalingstatechange event assert_unreached: Reached unreachable code
 

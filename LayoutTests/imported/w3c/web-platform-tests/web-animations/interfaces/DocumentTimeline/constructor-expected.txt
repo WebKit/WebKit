@@ -1,6 +1,6 @@
 
-PASS An origin time of zero is used when none is supplied 
-PASS A zero origin time produces a document timeline with a current time identical to the default document timeline 
-PASS A positive origin time makes the document timeline's current time lag behind the default document timeline 
-PASS A negative origin time makes the document timeline's current time run ahead of the default document timeline 
+PASS An origin time of zero is used when none is supplied
+PASS A zero origin time produces a document timeline with a current time identical to the default document timeline
+PASS A positive origin time makes the document timeline's current time lag behind the default document timeline
+PASS A negative origin time makes the document timeline's current time run ahead of the default document timeline
 

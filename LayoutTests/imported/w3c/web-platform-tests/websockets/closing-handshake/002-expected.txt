@@ -1,3 +1,3 @@
 
-PASS WebSockets: server sends closing handshake 
+PASS WebSockets: server sends closing handshake
 

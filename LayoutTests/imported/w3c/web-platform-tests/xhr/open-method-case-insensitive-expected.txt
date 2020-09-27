@@ -1,8 +1,8 @@
 
-PASS XMLHttpRequest: open() - case-insensitive methods test (DELETE) 
-PASS XMLHttpRequest: open() - case-insensitive methods test (GET) 
-PASS XMLHttpRequest: open() - case-insensitive methods test (HEAD) 
-PASS XMLHttpRequest: open() - case-insensitive methods test (OPTIONS) 
-PASS XMLHttpRequest: open() - case-insensitive methods test (POST) 
-PASS XMLHttpRequest: open() - case-insensitive methods test (PUT) 
+PASS XMLHttpRequest: open() - case-insensitive methods test (DELETE)
+PASS XMLHttpRequest: open() - case-insensitive methods test (GET)
+PASS XMLHttpRequest: open() - case-insensitive methods test (HEAD)
+PASS XMLHttpRequest: open() - case-insensitive methods test (OPTIONS)
+PASS XMLHttpRequest: open() - case-insensitive methods test (POST)
+PASS XMLHttpRequest: open() - case-insensitive methods test (PUT)
 

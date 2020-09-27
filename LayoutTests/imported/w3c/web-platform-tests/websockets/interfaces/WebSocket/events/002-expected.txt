@@ -1,6 +1,6 @@
 
-PASS WebSockets: setting on* 
-PASS WebSockets: setting on* 1 
-PASS WebSockets: setting on* 2 
-PASS WebSockets: setting on* 3 
+PASS WebSockets: setting on*
+PASS WebSockets: setting on* 1
+PASS WebSockets: setting on* 2
+PASS WebSockets: setting on* 3
 

@@ -1,3 +1,3 @@
 
-PASS Setting XMLHttpRequest responseType to 'document' in a worker should have no effect. 
+PASS Setting XMLHttpRequest responseType to 'document' in a worker should have no effect.
 

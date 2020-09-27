@@ -1,6 +1,6 @@
 
-PASS XMLHttpRequest: send() - Redirects (no Location header) (301) 
-PASS XMLHttpRequest: send() - Redirects (no Location header) (302) 
-PASS XMLHttpRequest: send() - Redirects (no Location header) (303) 
-PASS XMLHttpRequest: send() - Redirects (no Location header) (307) 
+PASS XMLHttpRequest: send() - Redirects (no Location header) (301)
+PASS XMLHttpRequest: send() - Redirects (no Location header) (302)
+PASS XMLHttpRequest: send() - Redirects (no Location header) (303)
+PASS XMLHttpRequest: send() - Redirects (no Location header) (307)
 

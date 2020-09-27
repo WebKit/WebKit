@@ -1,4 +1,4 @@
 
-PASS Test that should pass 
-PASS Worker top-level script is a generated script. 
+PASS Test that should pass
+PASS Worker top-level script is a generated script.
 

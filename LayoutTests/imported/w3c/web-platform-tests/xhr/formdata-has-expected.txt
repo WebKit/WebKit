@@ -1,8 +1,8 @@
 
-PASS testFormDataHas 
-PASS testFormDataHasFromForm 
-PASS testFormDataHasFromFormNull 
-PASS testFormDataHasFromEmptyForm 
-PASS testFormDataHasEmpty1 
-PASS testFormDataHasEmpty2 
+PASS testFormDataHas
+PASS testFormDataHasFromForm
+PASS testFormDataHasFromFormNull
+PASS testFormDataHasFromEmptyForm
+PASS testFormDataHasEmpty1
+PASS testFormDataHasEmpty2
 

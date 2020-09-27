@@ -1,6 +1,6 @@
 
-PASS addIceCandidate is not resolved first if 2x setLocalDescription operations are pending 
-PASS addIceCandidate and setLocalDescription are resolved in the correct order, as defined by the operations chain specification 
-PASS onicecandidate fires after resolving setLocalDescription in offerer 
-PASS onicecandidate fires after resolving setLocalDescription in answerer 
+PASS addIceCandidate is not resolved first if 2x setLocalDescription operations are pending
+PASS addIceCandidate and setLocalDescription are resolved in the correct order, as defined by the operations chain specification
+PASS onicecandidate fires after resolving setLocalDescription in offerer
+PASS onicecandidate fires after resolving setLocalDescription in answerer
 

@@ -1,194 +1,194 @@
 
-PASS Setup 
-PASS background-color (type: color) has testAccumulation function 
+PASS Setup
+PASS background-color (type: color) has testAccumulation function
 FAIL background-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL background-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL background-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL background-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL background-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL background-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS background-image (type: discrete) has testAccumulation function 
-PASS background-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
-PASS background-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
-PASS border-bottom-color (type: color) has testAccumulation function 
+PASS background-image (type: discrete) has testAccumulation function
+PASS background-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
+PASS background-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
+PASS border-bottom-color (type: color) has testAccumulation function
 FAIL border-bottom-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-bottom-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-bottom-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-bottom-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-bottom-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-bottom-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS border-bottom-width (type: length) has testAccumulation function 
+PASS border-bottom-width (type: length) has testAccumulation function
 FAIL border-bottom-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL border-bottom-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS border-image-source (type: discrete) has testAccumulation function 
-PASS border-image-source: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
-PASS border-image-source: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
-PASS border-left-color (type: color) has testAccumulation function 
+PASS border-image-source (type: discrete) has testAccumulation function
+PASS border-image-source: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
+PASS border-image-source: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
+PASS border-left-color (type: color) has testAccumulation function
 FAIL border-left-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-left-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-left-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-left-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-left-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-left-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS border-left-width (type: length) has testAccumulation function 
+PASS border-left-width (type: length) has testAccumulation function
 FAIL border-left-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL border-left-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS border-right-color (type: color) has testAccumulation function 
+PASS border-right-color (type: color) has testAccumulation function
 FAIL border-right-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-right-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-right-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-right-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-right-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-right-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS border-right-width (type: length) has testAccumulation function 
+PASS border-right-width (type: length) has testAccumulation function
 FAIL border-right-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL border-right-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS border-spacing (type: lengthPair) has testAccumulation function 
+PASS border-spacing (type: lengthPair) has testAccumulation function
 FAIL border-spacing: length pair assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "10px 10px"
 FAIL border-spacing: length pair of rem assert_equals: The value should be 20px 20px at 0ms expected "20px 20px" but got "10px 10px"
-PASS border-top-color (type: color) has testAccumulation function 
+PASS border-top-color (type: color) has testAccumulation function
 FAIL border-top-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-top-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-top-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-top-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-top-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL border-top-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS border-top-width (type: length) has testAccumulation function 
+PASS border-top-width (type: length) has testAccumulation function
 FAIL border-top-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL border-top-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS box-shadow (type: boxShadowList) has testAccumulation function 
+PASS box-shadow (type: boxShadowList) has testAccumulation function
 FAIL box-shadow: shadow assert_equals: The value should be rgb(240, 240, 240) 20px 20px 20px 20px at 0ms expected "rgb(240, 240, 240) 20px 20px 20px 20px" but got "rgb(120, 120, 120) 10px 10px 10px 10px"
-PASS caret-color (type: color) has testAccumulation function 
+PASS caret-color (type: color) has testAccumulation function
 FAIL caret-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL caret-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL caret-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL caret-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL caret-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL caret-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS clip (type: rect) has testAccumulation function 
+PASS clip (type: rect) has testAccumulation function
 FAIL clip: rect assert_equals: The value should be rect(110px, 110px, 110px, 110px) at 0ms expected "rect(110px, 110px, 110px, 110px)" but got "rect(10px, 10px, 10px, 10px)"
-PASS clip (type: discrete) has testAccumulation function 
-PASS clip: "auto" onto "rect(10px, 10px, 10px, 10px)" 
+PASS clip (type: discrete) has testAccumulation function
+PASS clip: "auto" onto "rect(10px, 10px, 10px, 10px)"
 FAIL clip: "rect(10px, 10px, 10px, 10px)" onto "auto" assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
 FAIL clip: "rect(10px, 10px, 10px, auto)" onto "rect(10px, 10px, 10px, 10px)" assert_equals: The value should be rect(10px, 10px, 10px, auto) at 0ms expected "rect(10px, 10px, 10px, auto)" but got "auto"
 FAIL clip: "rect(10px, 10px, 10px, 10px)" onto "rect(10px, 10px, 10px, auto)" assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
-PASS color (type: color) has testAccumulation function 
+PASS color (type: color) has testAccumulation function
 FAIL color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS column-count (type: positiveInteger) has testAccumulation function 
+PASS column-count (type: positiveInteger) has testAccumulation function
 FAIL column-count: positive integer assert_equals: The value should be 3 at 0ms expected "3" but got "2"
-PASS column-count (type: discrete) has testAccumulation function 
-PASS column-count: "10" onto "auto" 
+PASS column-count (type: discrete) has testAccumulation function
+PASS column-count: "10" onto "auto"
 FAIL column-count: "auto" onto "10" assert_equals: The value should be auto at 0ms expected "auto" but got "0"
-PASS column-gap (type: length) has testAccumulation function 
+PASS column-gap (type: length) has testAccumulation function
 FAIL column-gap: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL column-gap: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS column-gap (type: discrete) has testAccumulation function 
-PASS column-gap: "200px" onto "normal" 
-PASS column-gap: "normal" onto "200px" 
-PASS column-rule-color (type: color) has testAccumulation function 
+PASS column-gap (type: discrete) has testAccumulation function
+PASS column-gap: "200px" onto "normal"
+PASS column-gap: "normal" onto "200px"
+PASS column-rule-color (type: color) has testAccumulation function
 FAIL column-rule-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL column-rule-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL column-rule-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL column-rule-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL column-rule-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL column-rule-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS column-rule-width (type: length) has testAccumulation function 
+PASS column-rule-width (type: length) has testAccumulation function
 FAIL column-rule-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL column-rule-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS column-width (type: length) has testAccumulation function 
+PASS column-width (type: length) has testAccumulation function
 FAIL column-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL column-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS column-width (type: discrete) has testAccumulation function 
-PASS column-width: "1px" onto "auto" 
+PASS column-width (type: discrete) has testAccumulation function
+PASS column-width: "1px" onto "auto"
 FAIL column-width: "auto" onto "1px" assert_equals: The value should be auto at 0ms expected "auto" but got "0px"
-PASS fill-opacity (type: opacity) has testAccumulation function 
+PASS fill-opacity (type: opacity) has testAccumulation function
 FAIL fill-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
 FAIL fill-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
-PASS filter (type: filterList) has testAccumulation function 
+PASS filter (type: filterList) has testAccumulation function
 FAIL filter: same ordered filter functions assert_equals: The value should be blur(30px) brightness(0) at 0ms expected "blur(30px) brightness(0)" but got "blur(20px) brightness(0.1)"
-PASS filter: mismatched ordered filter functions 
-PASS flood-color (type: color) has testAccumulation function 
+PASS filter: mismatched ordered filter functions
+PASS flood-color (type: color) has testAccumulation function
 FAIL flood-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL flood-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL flood-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL flood-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL flood-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL flood-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS flood-opacity (type: opacity) has testAccumulation function 
+PASS flood-opacity (type: opacity) has testAccumulation function
 FAIL flood-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
 FAIL flood-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
-PASS font-stretch (type: percentage) has testAccumulation function 
+PASS font-stretch (type: percentage) has testAccumulation function
 FAIL font-stretch: percentage assert_equals: The value should be 130% at 0ms expected "130%" but got "70%"
-PASS font-style (type: discrete) has testAccumulation function 
-PASS font-style: "oblique" onto "italic" 
-PASS font-style: "italic" onto "oblique" 
-PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function 
+PASS font-style (type: discrete) has testAccumulation function
+PASS font-style: "oblique" onto "italic"
+PASS font-style: "italic" onto "oblique"
+PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function
 FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 1.2"
-PASS font-variation-settings (type: discrete) has testAccumulation function 
-PASS font-variation-settings: ""wdth" 5" onto ""wght" 1.1, "wdth" 1" 
-PASS font-variation-settings: ""wght" 1.1, "wdth" 1" onto ""wdth" 5" 
-PASS font-variation-settings: "normal" onto ""wdth" 5" 
-PASS font-variation-settings: ""wdth" 5" onto "normal" 
-PASS letter-spacing (type: length) has testAccumulation function 
+PASS font-variation-settings (type: discrete) has testAccumulation function
+PASS font-variation-settings: ""wdth" 5" onto ""wght" 1.1, "wdth" 1"
+PASS font-variation-settings: ""wght" 1.1, "wdth" 1" onto ""wdth" 5"
+PASS font-variation-settings: "normal" onto ""wdth" 5"
+PASS font-variation-settings: ""wdth" 5" onto "normal"
+PASS letter-spacing (type: length) has testAccumulation function
 FAIL letter-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL letter-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS lighting-color (type: color) has testAccumulation function 
+PASS lighting-color (type: color) has testAccumulation function
 FAIL lighting-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL lighting-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL lighting-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL lighting-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL lighting-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL lighting-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS list-style-image (type: discrete) has testAccumulation function 
-PASS list-style-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
-PASS list-style-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
-PASS outline-color (type: color) has testAccumulation function 
+PASS list-style-image (type: discrete) has testAccumulation function
+PASS list-style-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
+PASS list-style-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
+PASS outline-color (type: color) has testAccumulation function
 FAIL outline-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL outline-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL outline-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL outline-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL outline-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL outline-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS outline-offset (type: length) has testAccumulation function 
+PASS outline-offset (type: length) has testAccumulation function
 FAIL outline-offset: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL outline-offset: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS outline-width (type: length) has testAccumulation function 
+PASS outline-width (type: length) has testAccumulation function
 FAIL outline-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL outline-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS perspective (type: length) has testAccumulation function 
+PASS perspective (type: length) has testAccumulation function
 FAIL perspective: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL perspective: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
-PASS shape-outside (type: discrete) has testAccumulation function 
-PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" 
-PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" 
-PASS stop-color (type: color) has testAccumulation function 
+PASS shape-outside (type: discrete) has testAccumulation function
+PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
+PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
+PASS stop-color (type: color) has testAccumulation function
 FAIL stop-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL stop-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL stop-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL stop-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL stop-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL stop-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-PASS stop-opacity (type: opacity) has testAccumulation function 
+PASS stop-opacity (type: opacity) has testAccumulation function
 FAIL stop-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
 FAIL stop-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
-PASS stroke-dasharray (type: dasharray) has testAccumulation function 
-PASS stroke-dasharray: dasharray 
-PASS stroke-dasharray (type: discrete) has testAccumulation function 
-PASS stroke-dasharray: "10px, 20px" onto "none" 
-PASS stroke-dasharray: "none" onto "10px, 20px" 
-PASS stroke-miterlimit (type: positiveNumber) has testAccumulation function 
+PASS stroke-dasharray (type: dasharray) has testAccumulation function
+PASS stroke-dasharray: dasharray
+PASS stroke-dasharray (type: discrete) has testAccumulation function
+PASS stroke-dasharray: "10px, 20px" onto "none"
+PASS stroke-dasharray: "none" onto "10px, 20px"
+PASS stroke-miterlimit (type: positiveNumber) has testAccumulation function
 FAIL stroke-miterlimit: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "1.100000023841858"
-PASS stroke-opacity (type: opacity) has testAccumulation function 
+PASS stroke-opacity (type: opacity) has testAccumulation function
 FAIL stroke-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.30000001192092896"
 FAIL stroke-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "0.30000001192092896"
-PASS text-shadow (type: textShadowList) has testAccumulation function 
+PASS text-shadow (type: textShadowList) has testAccumulation function
 FAIL text-shadow: shadow assert_equals: The value should be rgb(240, 240, 240) 20px 20px 20px at 0ms expected "rgb(240, 240, 240) 20px 20px 20px" but got "rgb(120, 120, 120) 10px 10px 10px"
-PASS transform (type: transformList) has testAccumulation function 
+PASS transform (type: transformList) has testAccumulation function
 FAIL transform: translate assert_approx_equals: expected matrix(1, 0, 0, 1, -100, 0) but got matrix(1, 0, 0, 1, -200, 0): The value should be matrix(1, 0, 0, 1, -100, 0) at 0ms but got matrix(1, 0, 0, 1, -200, 0) expected -100 +/- 0.0001 but got -200
 FAIL transform: rotate assert_approx_equals: expected matrix(0.707107, -0.707107, 0.707107, 0.707107, 0, 0) but got matrix(0, -1, 1, 0, 0, 0): The value should be matrix(0.707107, -0.707107, 0.707107, 0.707107, 0, 0) at 0ms but got matrix(0, -1, 1, 0, 0, 0) expected 0.707107 +/- 0.0001 but got 0
 FAIL transform: scale assert_approx_equals: expected matrix(-2, 0, 0, -2, 0, 0) but got matrix(-3, 0, 0, -3, 0, 0): The value should be matrix(-2, 0, 0, -2, 0, 0) at 0ms but got matrix(-3, 0, 0, -3, 0, 0) expected -2 +/- 0.0001 but got -3
@@ -202,15 +202,15 @@ FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.853553, 0.146
 FAIL transform: matrix3d assert_approx_equals: expected matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1): The value should be matrix3d(0.853553, 0.146447, 0.5, 0, 0.146447, 0.853553, -0.5, 0, -0.5, 0.5, 0.707107, 0, 0, 0, 0, 1) at 0ms but got matrix3d(0.5, 0.5, 0.707107, 0, 0.5, 0.5, -0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 0, 0, 1) expected 0.853553 +/- 0.0001 but got 0.5
 FAIL transform: none assert_equals: dimension of the matrix: The value should be matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1) at 0ms but got matrix(1, 0, 0, 1, 0, 0) expected 16 but got 6
 FAIL transform: non-invertible matrices (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 0, 0, 0, 100) but got matrix(1, 1, 0, 0, 50, 50): The value should be matrix(1, 1, 0, 0, 0, 100) at 0ms but got matrix(1, 1, 0, 0, 50, 50) expected 0 +/- 0.0001 but got 50
-PASS transform: non-invertible matrices (invertible onto non-invertible) 
+PASS transform: non-invertible matrices (invertible onto non-invertible)
 FAIL transform: non-invertible matrices in matched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(-1, -1, 0, 0, 100, 100) but got matrix(-1, -1, 0, 0, 150, 50): The value should be matrix(-1, -1, 0, 0, 100, 100) at 0ms but got matrix(-1, -1, 0, 0, 150, 50) expected 100 +/- 0.0001 but got 150
-PASS transform: non-invertible matrices in matched transform lists (invertible onto non-invertible) 
+PASS transform: non-invertible matrices in matched transform lists (invertible onto non-invertible)
 FAIL transform: non-invertible matrices in mismatched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 1, 1, 100, 100) but got matrix(1, 1, 1, 1, 150, 50): The value should be matrix(1, 1, 1, 1, 100, 100) at 0ms but got matrix(1, 1, 1, 1, 150, 50) expected 100 +/- 0.0001 but got 150
-PASS transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible) 
-PASS visibility (type: visibility) has testAccumulation function 
-PASS visibility: onto "visible" 
-PASS visibility: onto "hidden" 
-PASS word-spacing (type: lengthPercentageOrCalc) has testAccumulation function 
+PASS transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible)
+PASS visibility (type: visibility) has testAccumulation function
+PASS visibility: onto "visible"
+PASS visibility: onto "hidden"
+PASS word-spacing (type: lengthPercentageOrCalc) has testAccumulation function
 FAIL word-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL word-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL word-spacing: percentage assert_equals: The value should be 130% at 0ms expected "130%" but got "1.75px"

@@ -1,7 +1,7 @@
 
-PASS updateRenderState handles appropriately ended sessions 
-PASS updateRenderState handles appropriately baseLayers created with different sessions 
-PASS updateRenderState handles appropriately immersive sessions with specified inlineVerticalFieldOfView 
-PASS updateRenderState handles appropriately XRRenderStateInit with no params 
-PASS updateRenderState handles appropriately XRRenderStateInit params 
+PASS updateRenderState handles appropriately ended sessions
+PASS updateRenderState handles appropriately baseLayers created with different sessions
+PASS updateRenderState handles appropriately immersive sessions with specified inlineVerticalFieldOfView
+PASS updateRenderState handles appropriately XRRenderStateInit with no params
+PASS updateRenderState handles appropriately XRRenderStateInit params
 

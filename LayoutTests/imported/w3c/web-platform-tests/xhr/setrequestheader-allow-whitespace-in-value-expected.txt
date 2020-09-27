@@ -1,6 +1,6 @@
 
-PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( ) 
-PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( t) 
-PASS XMLHttpRequest: setRequestHeader() - header value with whitespace (t ) 
-PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( t ) 
+PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( )
+PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( t)
+PASS XMLHttpRequest: setRequestHeader() - header value with whitespace (t )
+PASS XMLHttpRequest: setRequestHeader() - header value with whitespace ( t )
 

@@ -1,6 +1,6 @@
 
-PASS Readonly constants CONNECTING 
-PASS Readonly constants OPEN 
-PASS Readonly constants CLOSING 
-PASS Readonly constants CLOSED 
+PASS Readonly constants CONNECTING
+PASS Readonly constants OPEN
+PASS Readonly constants CLOSING
+PASS Readonly constants CLOSED
 

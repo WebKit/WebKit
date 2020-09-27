@@ -1,13 +1,13 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "buffersource: huge stop time" 
-PASS Executing "oscillator: huge stop time" 
-PASS Audit report 
-PASS > [buffersource: huge stop time]  
-PASS   Output from AudioBufferSource.stop(1e+300) contains only the constant 1. 
-PASS < [buffersource: huge stop time] All assertions passed. (total 1 assertions) 
-PASS > [oscillator: huge stop time]  
-PASS   Peak amplitude from oscillator.stop(1e+300) is greater than 0. 
-PASS < [oscillator: huge stop time] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "buffersource: huge stop time"
+PASS Executing "oscillator: huge stop time"
+PASS Audit report
+PASS > [buffersource: huge stop time]
+PASS   Output from AudioBufferSource.stop(1e+300) contains only the constant 1.
+PASS < [buffersource: huge stop time] All assertions passed. (total 1 assertions)
+PASS > [oscillator: huge stop time]
+PASS   Peak amplitude from oscillator.stop(1e+300) is greater than 0.
+PASS < [oscillator: huge stop time] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

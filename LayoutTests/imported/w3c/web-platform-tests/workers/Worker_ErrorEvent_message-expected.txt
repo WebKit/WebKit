@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Error: Error Message
 
-PASS  AbstractWorker ErrorEvent.message  
+PASS  AbstractWorker ErrorEvent.message
 

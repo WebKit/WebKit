@@ -1,6 +1,6 @@
 
-PASS MediaStreamAudioSourceNode created with factory method and MediaStream with no tracks 
-PASS MediaStreamAudioSourceNode created with constructor and MediaStream with no tracks 
-PASS MediaStreamAudioSourceNode created with the factory method and MediaStream with only a video track 
-PASS MediaStreamAudioSourceNode created with constructor and MediaStream with only a video track 
+PASS MediaStreamAudioSourceNode created with factory method and MediaStream with no tracks
+PASS MediaStreamAudioSourceNode created with constructor and MediaStream with no tracks
+PASS MediaStreamAudioSourceNode created with the factory method and MediaStream with only a video track
+PASS MediaStreamAudioSourceNode created with constructor and MediaStream with only a video track
 

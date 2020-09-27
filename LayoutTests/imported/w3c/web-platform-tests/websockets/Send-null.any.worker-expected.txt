@@ -1,5 +1,5 @@
 
-PASS Send null data on a WebSocket - Connection should be opened 
-PASS Send null data on a WebSocket - Message should be received 
-PASS Send null data on a WebSocket - Connection should be closed 
+PASS Send null data on a WebSocket - Connection should be opened
+PASS Send null data on a WebSocket - Message should be received
+PASS Send null data on a WebSocket - Connection should be closed
 

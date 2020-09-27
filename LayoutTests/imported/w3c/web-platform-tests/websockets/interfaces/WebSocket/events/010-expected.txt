@@ -1,6 +1,6 @@
 
-PASS WebSockets: setting event handlers to undefined 
-PASS WebSockets: setting event handlers to undefined 1 
-PASS WebSockets: setting event handlers to undefined 2 
-PASS WebSockets: setting event handlers to undefined 3 
+PASS WebSockets: setting event handlers to undefined
+PASS WebSockets: setting event handlers to undefined 1
+PASS WebSockets: setting event handlers to undefined 2
+PASS WebSockets: setting event handlers to undefined 3
 

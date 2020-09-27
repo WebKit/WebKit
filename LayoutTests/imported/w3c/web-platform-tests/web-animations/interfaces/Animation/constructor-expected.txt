@@ -1,10 +1,10 @@
 
-PASS Animation can be constructed with null effect and null timeline 
-PASS Animation can be constructed with null effect and non-null timeline 
-PASS Animation can be constructed with null effect and no timeline parameter 
-PASS Animation can be constructed with non-null effect and null timeline 
-PASS Animation can be constructed with non-null effect and non-null timeline 
-PASS Animation can be constructed with non-null effect and no timeline parameter 
-PASS Animation constructed by an effect with null target runs normally 
-PASS Animation constructed with a keyframe that target element is in iframe 
+PASS Animation can be constructed with null effect and null timeline
+PASS Animation can be constructed with null effect and non-null timeline
+PASS Animation can be constructed with null effect and no timeline parameter
+PASS Animation can be constructed with non-null effect and null timeline
+PASS Animation can be constructed with non-null effect and non-null timeline
+PASS Animation can be constructed with non-null effect and no timeline parameter
+PASS Animation constructed by an effect with null target runs normally
+PASS Animation constructed with a keyframe that target element is in iframe
 

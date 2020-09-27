@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: ReferenceError: Can't find variable: y
 
-PASS onerror, "not handled" with an error in the onerror function 
+PASS onerror, "not handled" with an error in the onerror function
 

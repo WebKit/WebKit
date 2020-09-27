@@ -1,10 +1,10 @@
 
-PASS WebSocket.prototype.CONNECTING 
-PASS ws.CONNECTING 
-PASS WebSocket.prototype.OPEN 
-PASS ws.OPEN 
-PASS WebSocket.prototype.CLOSING 
-PASS ws.CLOSING 
-PASS WebSocket.prototype.CLOSED 
-PASS ws.CLOSED 
+PASS WebSocket.prototype.CONNECTING
+PASS ws.CONNECTING
+PASS WebSocket.prototype.OPEN
+PASS ws.OPEN
+PASS WebSocket.prototype.CLOSING
+PASS ws.CLOSING
+PASS WebSocket.prototype.CLOSED
+PASS ws.CLOSED
 

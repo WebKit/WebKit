@@ -1,6 +1,6 @@
 
-PASS Initial connectionState should be new 
-PASS Closing the connection should set connectionState to closed 
-PASS connection with one data channel should eventually have connected connection state 
+PASS Initial connectionState should be new
+PASS Closing the connection should set connectionState to closed
+PASS connection with one data channel should eventually have connected connection state
 FAIL connection with one data channel should eventually have transports in connected state undefined is not an object (evaluating 'sctpTransport.transport')
 

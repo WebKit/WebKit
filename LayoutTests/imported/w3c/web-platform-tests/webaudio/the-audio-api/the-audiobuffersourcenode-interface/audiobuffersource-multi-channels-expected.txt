@@ -1,19 +1,19 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   Creating context for testing did not throw an exception. 
-PASS   Fetching expected audio resolved correctly. 
-PASS < [initialize] All assertions passed. (total 2 assertions) 
-PASS > [test] AudioBufferSource with 5.1 buffer 
-PASS   Rendered audio for channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 2 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 3 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 4 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS   Rendered audio for channel 5 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}. 
-PASS < [test] All assertions passed. (total 6 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "test"
+PASS Audit report
+PASS > [initialize]
+PASS   Creating context for testing did not throw an exception.
+PASS   Fetching expected audio resolved correctly.
+PASS < [initialize] All assertions passed. (total 2 assertions)
+PASS > [test] AudioBufferSource with 5.1 buffer
+PASS   Rendered audio for channel 0 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   Rendered audio for channel 1 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   Rendered audio for channel 2 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   Rendered audio for channel 3 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   Rendered audio for channel 4 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS   Rendered audio for channel 5 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000030517578125,"relativeThreshold":0}.
+PASS < [test] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

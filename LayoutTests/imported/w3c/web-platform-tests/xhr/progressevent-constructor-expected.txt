@@ -1,7 +1,7 @@
 
-PASS Default event values. 
-PASS There must not be a initProgressEvent(). 
-PASS Basic test. 
-PASS ECMAScript value conversion test. 
-PASS ProgressEventInit members must be matched case-sensitively. 
+PASS Default event values.
+PASS There must not be a initProgressEvent().
+PASS Basic test.
+PASS ECMAScript value conversion test.
+PASS ProgressEventInit members must be matched case-sensitively.
 

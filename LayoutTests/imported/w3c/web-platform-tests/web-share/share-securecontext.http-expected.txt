@@ -1,3 +1,3 @@
 
-PASS navigator.share must be undefined in non-secure context 
+PASS navigator.share must be undefined in non-secure context
 

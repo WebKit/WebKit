@@ -1,4 +1,4 @@
 
-PASS XMLHttpRequest: progress events grow response body size, unknown content-length 
-PASS XMLHttpRequest: progress events grow response body size, known content-length 
+PASS XMLHttpRequest: progress events grow response body size, unknown content-length
+PASS XMLHttpRequest: progress events grow response body size, known content-length
 

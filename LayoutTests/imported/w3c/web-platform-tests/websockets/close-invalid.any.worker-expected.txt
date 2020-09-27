@@ -1,14 +1,14 @@
 
-PASS 0 on a secure websocket 
-PASS 0 on a insecure websocket 
-PASS 500 on a secure websocket 
-PASS 500 on a insecure websocket 
-PASS NaN on a secure websocket 
-PASS NaN on a insecure websocket 
-PASS String on a secure websocket 
-PASS String on a insecure websocket 
-PASS null on a secure websocket 
-PASS null on a insecure websocket 
-PASS 2**16+1000 on a secure websocket 
-PASS 2**16+1000 on a insecure websocket 
+PASS 0 on a secure websocket
+PASS 0 on a insecure websocket
+PASS 500 on a secure websocket
+PASS 500 on a insecure websocket
+PASS NaN on a secure websocket
+PASS NaN on a insecure websocket
+PASS String on a secure websocket
+PASS String on a insecure websocket
+PASS null on a secure websocket
+PASS null on a insecure websocket
+PASS 2**16+1000 on a secure websocket
+PASS 2**16+1000 on a insecure websocket
 

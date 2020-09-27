@@ -1,35 +1,35 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test 0" 
-PASS Executing "Test 1" 
-PASS Executing "Test 2" 
-PASS Executing "Test 3" 
-PASS Executing "Test 4" 
-PASS Executing "Test 5" 
-PASS Audit report 
-PASS > [Test 0] Sine wave: 100 Hz 
-PASS   Sine: 100 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000018045,"relativeThreshold":0}. 
-PASS   Sine: SNR (db) is greater than or equal to 118.91. 
-PASS < [Test 0] All assertions passed. (total 2 assertions) 
-PASS > [Test 1] Sine wave: -100 Hz 
-PASS   Sine: -100 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.7684e-7,"relativeThreshold":0}. 
-PASS   Sine: SNR (db) is greater than or equal to 130.95. 
-PASS < [Test 1] All assertions passed. (total 2 assertions) 
-PASS > [Test 2] Sine wave: 2 Hz 
-PASS   Sine: 2 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.4516e-7,"relativeThreshold":0}. 
-PASS   Sine: SNR (db) is greater than or equal to 119.93. 
-PASS < [Test 2] All assertions passed. (total 2 assertions) 
-PASS > [Test 3] Sine wave: 1 Hz 
-PASS   Sine: 1 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.4157e-7,"relativeThreshold":0}. 
-PASS   Sine: SNR (db) is greater than or equal to 112.22. 
-PASS < [Test 3] All assertions passed. (total 2 assertions) 
-PASS > [Test 4] Custom wave: 100 Hz 
-PASS   Custom: 100 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000018478,"relativeThreshold":0}. 
-PASS   Custom: SNR (db) is greater than or equal to 122.43. 
-PASS < [Test 4] All assertions passed. (total 2 assertions) 
-PASS > [Test 5] Custom wave: 1 Hz 
-PASS   Custom: 1 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.7684e-7,"relativeThreshold":0}. 
-PASS   Custom: SNR (db) is greater than or equal to 138.76. 
-PASS < [Test 5] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test 0"
+PASS Executing "Test 1"
+PASS Executing "Test 2"
+PASS Executing "Test 3"
+PASS Executing "Test 4"
+PASS Executing "Test 5"
+PASS Audit report
+PASS > [Test 0] Sine wave: 100 Hz
+PASS   Sine: 100 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000018045,"relativeThreshold":0}.
+PASS   Sine: SNR (db) is greater than or equal to 118.91.
+PASS < [Test 0] All assertions passed. (total 2 assertions)
+PASS > [Test 1] Sine wave: -100 Hz
+PASS   Sine: -100 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.7684e-7,"relativeThreshold":0}.
+PASS   Sine: SNR (db) is greater than or equal to 130.95.
+PASS < [Test 1] All assertions passed. (total 2 assertions)
+PASS > [Test 2] Sine wave: 2 Hz
+PASS   Sine: 2 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.4516e-7,"relativeThreshold":0}.
+PASS   Sine: SNR (db) is greater than or equal to 119.93.
+PASS < [Test 2] All assertions passed. (total 2 assertions)
+PASS > [Test 3] Sine wave: 1 Hz
+PASS   Sine: 1 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":1.4157e-7,"relativeThreshold":0}.
+PASS   Sine: SNR (db) is greater than or equal to 112.22.
+PASS < [Test 3] All assertions passed. (total 2 assertions)
+PASS > [Test 4] Custom wave: 100 Hz
+PASS   Custom: 100 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000018478,"relativeThreshold":0}.
+PASS   Custom: SNR (db) is greater than or equal to 122.43.
+PASS < [Test 4] All assertions passed. (total 2 assertions)
+PASS > [Test 5] Custom wave: 1 Hz
+PASS   Custom: 1 Hz equals [expected array] with an element-wise tolerance of {"absoluteThreshold":4.7684e-7,"relativeThreshold":0}.
+PASS   Custom: SNR (db) is greater than or equal to 138.76.
+PASS < [Test 5] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

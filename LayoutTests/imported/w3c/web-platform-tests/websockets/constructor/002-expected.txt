@@ -1,12 +1,12 @@
 
-PASS WebSockets: new WebSocket(invalid url) 
-PASS WebSockets: new WebSocket(invalid url) 1 
-PASS WebSockets: new WebSocket(invalid url) 2 
-PASS WebSockets: new WebSocket(invalid url) 3 
-PASS WebSockets: new WebSocket(invalid url) 4 
-PASS WebSockets: new WebSocket(invalid url) 5 
-PASS WebSockets: new WebSocket(invalid url) 6 
-PASS WebSockets: new WebSocket(invalid url) 7 
-PASS WebSockets: new WebSocket(invalid url) 8 
-PASS WebSockets: new WebSocket(invalid url) 9 
+PASS WebSockets: new WebSocket(invalid url)
+PASS WebSockets: new WebSocket(invalid url) 1
+PASS WebSockets: new WebSocket(invalid url) 2
+PASS WebSockets: new WebSocket(invalid url) 3
+PASS WebSockets: new WebSocket(invalid url) 4
+PASS WebSockets: new WebSocket(invalid url) 5
+PASS WebSockets: new WebSocket(invalid url) 6
+PASS WebSockets: new WebSocket(invalid url) 7
+PASS WebSockets: new WebSocket(invalid url) 8
+PASS WebSockets: new WebSocket(invalid url) 9
 

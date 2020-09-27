@@ -1,37 +1,37 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "silent-channel" 
-PASS Executing "stereo-down-mixing" 
-PASS Executing "undefined-channel-layout" 
-PASS Executing "merging-to-stereo" 
-PASS Audit report 
-PASS > [silent-channel]  
-PASS   1-channel source: Channel #0 contains only the constant 0. 
-PASS   1-channel source: Channel #1 contains only the constant 0. 
-PASS   1-channel source: Channel #2 contains only the constant 0. 
-PASS   1-channel source: Channel #3 contains only the constant 1. 
-PASS   1-channel source: Channel #4 contains only the constant 0. 
-PASS   1-channel source: Channel #5 contains only the constant 0. 
-PASS < [silent-channel] All assertions passed. (total 6 assertions) 
-PASS > [stereo-down-mixing]  
-PASS   2-channel source: Channel #0 contains only the constant 1.5. 
-PASS   2-channel source: Channel #1 contains only the constant 0. 
-PASS   2-channel source: Channel #2 contains only the constant 0. 
-PASS   2-channel source: Channel #3 contains only the constant 0. 
-PASS   2-channel source: Channel #4 contains only the constant 0. 
-PASS   2-channel source: Channel #5 contains only the constant 0. 
-PASS < [stereo-down-mixing] All assertions passed. (total 6 assertions) 
-PASS > [undefined-channel-layout]  
-PASS   3-channel source: Channel #0 contains only the constant 1. 
-PASS   3-channel source: Channel #1 contains only the constant 0. 
-PASS   3-channel source: Channel #2 contains only the constant 0. 
-PASS   3-channel source: Channel #3 contains only the constant 0. 
-PASS   3-channel source: Channel #4 contains only the constant 0. 
-PASS   3-channel source: Channel #5 contains only the constant 0. 
-PASS < [undefined-channel-layout] All assertions passed. (total 6 assertions) 
-PASS > [merging-to-stereo]  
-PASS   Channel #0 contains only the constant 1. 
-PASS   Channel #1 contains only the constant -1. 
-PASS < [merging-to-stereo] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "silent-channel"
+PASS Executing "stereo-down-mixing"
+PASS Executing "undefined-channel-layout"
+PASS Executing "merging-to-stereo"
+PASS Audit report
+PASS > [silent-channel]
+PASS   1-channel source: Channel #0 contains only the constant 0.
+PASS   1-channel source: Channel #1 contains only the constant 0.
+PASS   1-channel source: Channel #2 contains only the constant 0.
+PASS   1-channel source: Channel #3 contains only the constant 1.
+PASS   1-channel source: Channel #4 contains only the constant 0.
+PASS   1-channel source: Channel #5 contains only the constant 0.
+PASS < [silent-channel] All assertions passed. (total 6 assertions)
+PASS > [stereo-down-mixing]
+PASS   2-channel source: Channel #0 contains only the constant 1.5.
+PASS   2-channel source: Channel #1 contains only the constant 0.
+PASS   2-channel source: Channel #2 contains only the constant 0.
+PASS   2-channel source: Channel #3 contains only the constant 0.
+PASS   2-channel source: Channel #4 contains only the constant 0.
+PASS   2-channel source: Channel #5 contains only the constant 0.
+PASS < [stereo-down-mixing] All assertions passed. (total 6 assertions)
+PASS > [undefined-channel-layout]
+PASS   3-channel source: Channel #0 contains only the constant 1.
+PASS   3-channel source: Channel #1 contains only the constant 0.
+PASS   3-channel source: Channel #2 contains only the constant 0.
+PASS   3-channel source: Channel #3 contains only the constant 0.
+PASS   3-channel source: Channel #4 contains only the constant 0.
+PASS   3-channel source: Channel #5 contains only the constant 0.
+PASS < [undefined-channel-layout] All assertions passed. (total 6 assertions)
+PASS > [merging-to-stereo]
+PASS   Channel #0 contains only the constant 1.
+PASS   Channel #1 contains only the constant -1.
+PASS < [merging-to-stereo] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully.
 

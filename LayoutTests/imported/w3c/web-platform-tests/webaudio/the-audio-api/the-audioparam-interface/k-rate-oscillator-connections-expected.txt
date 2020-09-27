@@ -1,75 +1,75 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test 1" 
-PASS Executing "Test 2" 
-PASS Executing "Test 3" 
-PASS Executing "Test 4" 
-PASS Executing "Test 5" 
-PASS Audit report 
-PASS > [Test 1] k-rate frequency input 
-PASS   Test 1: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 1: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 1: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 1: srcTest.frequency.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 1: modFreq.offset.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 1: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 1: modFreq.connect(srcTest.frequency) did not throw an exception. 
-PASS   k-rate frequency with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Test 1] All assertions passed. (total 8 assertions) 
-PASS > [Test 2] k-rate detune input 
-PASS   Test 2: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 2: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 2: srcRef.detune.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 2: srcTest.detune.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 2: modDetune.offset.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 2: modDetune.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 2: modDetune.connect(srcTest.detune) did not throw an exception. 
-PASS   k-rate detune with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Test 2] All assertions passed. (total 8 assertions) 
-PASS > [Test 3] k-rate frequency input with a-rate detune 
-PASS   Test 3: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 3: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 3: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 3: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 3: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
-PASS   Test 3: srcTest.frequency.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 3: srcTest.detune.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 3: srcTest.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
-PASS   Test 3: modFreq.offset.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 3: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 3: modFreq.connect(srcTest.frequency) did not throw an exception. 
-PASS   k-rate frequency input with a-rate detune equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Test 3] All assertions passed. (total 12 assertions) 
-PASS > [Test 4] a-rate frequency with k-rate detune input 
-PASS   Test 4: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 4: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 4: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 4: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 4: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
-PASS   Test 4: srcTest.detune.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 4: srcTest.frequency.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 4: srcTest.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 4: modDetune.offset.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 4: modDetune.offset.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
-PASS   Test 4: modDetune.connect(srcTest.detune) did not throw an exception. 
-PASS   k-rate detune input with a-rate frequency equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Test 4] All assertions passed. (total 12 assertions) 
-PASS > [Test 5] k-rate inputs for frequency and detune 
-PASS   Test 5: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 5: srcRef.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 5: srcRef;.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 5: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 5: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 5: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
-PASS   Test 5: srcTest.frequency.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 5: srcTest.detune.automationRate = 'k-rate' did not throw an exception. 
-PASS   Test 5: modFreq.offset.setValueAtTime(100, 0) did not throw an exception. 
-PASS   Test 5: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
-PASS   Test 5: modDetune.offset.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Test 5: modDetune.offset.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
-PASS   Test 5: modFreq.connect(srcTest.frequency) did not throw an exception. 
-PASS   Test 5: modDetune.connect(srcTest.detune) did not throw an exception. 
-PASS   k-rate inputs for both frequency and detune equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Test 5] All assertions passed. (total 15 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test 1"
+PASS Executing "Test 2"
+PASS Executing "Test 3"
+PASS Executing "Test 4"
+PASS Executing "Test 5"
+PASS Audit report
+PASS > [Test 1] k-rate frequency input
+PASS   Test 1: srcRef.frequency.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 1: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 1: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 1: srcTest.frequency.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 1: modFreq.offset.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 1: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 1: modFreq.connect(srcTest.frequency) did not throw an exception.
+PASS   k-rate frequency with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Test 1] All assertions passed. (total 8 assertions)
+PASS > [Test 2] k-rate detune input
+PASS   Test 2: srcRef.detune.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 2: srcRef.detune.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 2: srcRef.detune.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 2: srcTest.detune.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 2: modDetune.offset.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 2: modDetune.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 2: modDetune.connect(srcTest.detune) did not throw an exception.
+PASS   k-rate detune with input equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Test 2] All assertions passed. (total 8 assertions)
+PASS > [Test 3] k-rate frequency input with a-rate detune
+PASS   Test 3: srcRef.frequency.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 3: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 3: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 3: srcRef.detune.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 3: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception.
+PASS   Test 3: srcTest.frequency.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 3: srcTest.detune.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 3: srcTest.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception.
+PASS   Test 3: modFreq.offset.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 3: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 3: modFreq.connect(srcTest.frequency) did not throw an exception.
+PASS   k-rate frequency input with a-rate detune equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Test 3] All assertions passed. (total 12 assertions)
+PASS > [Test 4] a-rate frequency with k-rate detune input
+PASS   Test 4: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 4: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 4: srcRef.detune.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 4: srcRef.detune.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 4: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception.
+PASS   Test 4: srcTest.detune.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 4: srcTest.frequency.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 4: srcTest.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 4: modDetune.offset.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 4: modDetune.offset.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception.
+PASS   Test 4: modDetune.connect(srcTest.detune) did not throw an exception.
+PASS   k-rate detune input with a-rate frequency equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Test 4] All assertions passed. (total 12 assertions)
+PASS > [Test 5] k-rate inputs for frequency and detune
+PASS   Test 5: srcRef.frequency.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 5: srcRef.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 5: srcRef;.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 5: srcRef.detune.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 5: srcRef.detune.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 5: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception.
+PASS   Test 5: srcTest.frequency.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 5: srcTest.detune.automationRate = 'k-rate' did not throw an exception.
+PASS   Test 5: modFreq.offset.setValueAtTime(100, 0) did not throw an exception.
+PASS   Test 5: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception.
+PASS   Test 5: modDetune.offset.setValueAtTime(0, 0) did not throw an exception.
+PASS   Test 5: modDetune.offset.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception.
+PASS   Test 5: modFreq.connect(srcTest.frequency) did not throw an exception.
+PASS   Test 5: modDetune.connect(srcTest.detune) did not throw an exception.
+PASS   k-rate inputs for both frequency and detune equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Test 5] All assertions passed. (total 15 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

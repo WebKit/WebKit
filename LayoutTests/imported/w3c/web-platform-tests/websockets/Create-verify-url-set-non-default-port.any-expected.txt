@@ -1,3 +1,3 @@
 
-PASS Create WebSocket - wsocket.url should be set correctly 
+PASS Create WebSocket - wsocket.url should be set correctly
 

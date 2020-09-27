@@ -1,4 +1,4 @@
 Blocked access to external URL http://www1.localhost:8800/xhr/resources/auth1/corsenabled.py
 
-PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure) 
+PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure)
 

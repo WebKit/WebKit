@@ -1,24 +1,24 @@
 
-PASS Test pausing then playing does not change the finished promise 
-PASS Test restarting a finished animation 
-PASS Test restarting a reversed finished animation 
-PASS Test redundant finishing of animation 
-PASS Finished promise does not resolve when paused 
-PASS Finished promise does not resolve when pause-pending 
-PASS The finished promise is fulfilled with its Animation 
-PASS finished promise is rejected when an animation is canceled by calling cancel() 
-PASS canceling an already-finished animation replaces the finished promise 
-PASS Test finished promise changes for animation duration changes 
-PASS Test finished promise changes when playbackRate == 0 
-PASS Test finished promise resolves when reaching to the natural boundary. 
-PASS Test finished promise changes when a prior finished promise resolved and the animation falls out finished state 
-PASS Test no new finished promise generated when finished state is checked asynchronously 
-PASS Test new finished promise generated when finished state is checked synchronously 
-PASS Test synchronous finished promise resolved even if finished state is changed soon 
-PASS Test synchronous finished promise resolved even if asynchronous finished promise happens just before synchronous promise 
-PASS Test finished promise is not resolved when the animation falls out finished state immediately 
-PASS Test finished promise is not resolved once the animation falls out finished state even though the current finished promise is generated soon after animation state became finished 
-PASS Finished promise should be resolved after the ready promise is resolved 
-PASS Finished promise should be rejected after the ready promise is rejected 
-PASS Finished promise does not report an unhandledrejection when rejected 
+PASS Test pausing then playing does not change the finished promise
+PASS Test restarting a finished animation
+PASS Test restarting a reversed finished animation
+PASS Test redundant finishing of animation
+PASS Finished promise does not resolve when paused
+PASS Finished promise does not resolve when pause-pending
+PASS The finished promise is fulfilled with its Animation
+PASS finished promise is rejected when an animation is canceled by calling cancel()
+PASS canceling an already-finished animation replaces the finished promise
+PASS Test finished promise changes for animation duration changes
+PASS Test finished promise changes when playbackRate == 0
+PASS Test finished promise resolves when reaching to the natural boundary.
+PASS Test finished promise changes when a prior finished promise resolved and the animation falls out finished state
+PASS Test no new finished promise generated when finished state is checked asynchronously
+PASS Test new finished promise generated when finished state is checked synchronously
+PASS Test synchronous finished promise resolved even if finished state is changed soon
+PASS Test synchronous finished promise resolved even if asynchronous finished promise happens just before synchronous promise
+PASS Test finished promise is not resolved when the animation falls out finished state immediately
+PASS Test finished promise is not resolved once the animation falls out finished state even though the current finished promise is generated soon after animation state became finished
+PASS Finished promise should be resolved after the ready promise is resolved
+PASS Finished promise should be rejected after the ready promise is rejected
+PASS Finished promise does not report an unhandledrejection when rejected
 

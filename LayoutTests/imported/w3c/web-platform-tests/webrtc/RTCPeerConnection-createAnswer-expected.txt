@@ -1,5 +1,5 @@
 
-PASS createAnswer() with null remoteDescription should reject with InvalidStateError 
-PASS createAnswer() after setting remote description should succeed 
-PASS createAnswer() when connection is closed reject with InvalidStateError 
+PASS createAnswer() with null remoteDescription should reject with InvalidStateError
+PASS createAnswer() after setting remote description should succeed
+PASS createAnswer() when connection is closed reject with InvalidStateError
 

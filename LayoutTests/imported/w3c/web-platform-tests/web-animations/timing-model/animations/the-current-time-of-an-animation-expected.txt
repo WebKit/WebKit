@@ -1,7 +1,7 @@
 
-PASS The current time returns the hold time when set 
-PASS The current time is unresolved when there is no associated timeline (and no hold time is set) 
-PASS The current time is unresolved when the start time is unresolved (and no hold time is set) 
-PASS The current time is calculated from the timeline time, start time and playback rate 
-PASS The current time does not progress if playback rate is 0 
+PASS The current time returns the hold time when set
+PASS The current time is unresolved when there is no associated timeline (and no hold time is set)
+PASS The current time is unresolved when the start time is unresolved (and no hold time is set)
+PASS The current time is calculated from the timeline time, start time and playback rate
+PASS The current time does not progress if playback rate is 0
 

@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: open() resolving URLs (multi-Window; 1) 
+PASS XMLHttpRequest: open() resolving URLs (multi-Window; 1)
 

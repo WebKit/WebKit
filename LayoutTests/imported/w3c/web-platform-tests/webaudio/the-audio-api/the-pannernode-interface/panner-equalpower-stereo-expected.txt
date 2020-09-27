@@ -1,12 +1,12 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Equal-power panner model of AudioPannerNode with stereo source 
-PASS   Number of impulses found is equal to 100. 
-PASS   Offsets of impulses at the wrong position is identical to the array []. 
-PASS   Error in left channel gain values is less than or equal to 0.0000011597. 
-PASS   Error in right channel gain values is less than or equal to 0.0000011597. 
-PASS < [test] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Equal-power panner model of AudioPannerNode with stereo source
+PASS   Number of impulses found is equal to 100.
+PASS   Offsets of impulses at the wrong position is identical to the array [].
+PASS   Error in left channel gain values is less than or equal to 0.0000011597.
+PASS   Error in right channel gain values is less than or equal to 0.0000011597.
+PASS < [test] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

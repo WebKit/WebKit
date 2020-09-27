@@ -1,4 +1,4 @@
 
 
-PASS origin of the script that invoked the method, about:blank 
+PASS origin of the script that invoked the method, about:blank
 

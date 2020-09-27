@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: The send() method: Fire an event named load (no response entity body and the synchronous flag is set) 
+PASS XMLHttpRequest: The send() method: Fire an event named load (no response entity body and the synchronous flag is set)
 

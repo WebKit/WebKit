@@ -1,5 +1,5 @@
 
-PASS Send binary data on a WebSocket - Blob - Connection should be opened 
-PASS Send binary data on a WebSocket - Blob - Message should be received 
-PASS Send binary data on a WebSocket - Blob - Connection should be closed 
+PASS Send binary data on a WebSocket - Blob - Connection should be opened
+PASS Send binary data on a WebSocket - Blob - Message should be received
+PASS Send binary data on a WebSocket - Blob - Connection should be closed
 

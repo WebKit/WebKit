@@ -1,29 +1,29 @@
 
-PASS name 
-PASS length 
-PASS No arguments 
-PASS Calling 
-PASS Empty descriptor 
-PASS Invalid descriptor argument 
-PASS Undefined initial value in descriptor 
-PASS Undefined element value in descriptor 
-PASS Out-of-range initial value in descriptor: NaN 
-PASS Out-of-range maximum value in descriptor: NaN 
-PASS Out-of-range initial value in descriptor: Infinity 
-PASS Out-of-range maximum value in descriptor: Infinity 
-PASS Out-of-range initial value in descriptor: -Infinity 
-PASS Out-of-range maximum value in descriptor: -Infinity 
-PASS Out-of-range initial value in descriptor: -1 
-PASS Out-of-range maximum value in descriptor: -1 
-PASS Out-of-range initial value in descriptor: 4294967296 
-PASS Out-of-range maximum value in descriptor: 4294967296 
-PASS Out-of-range initial value in descriptor: 68719476736 
-PASS Out-of-range maximum value in descriptor: 68719476736 
-PASS Initial value exceeds maximum 
-PASS Basic (zero) 
-PASS Basic (non-zero) 
-PASS Stray argument 
-PASS Proxy descriptor 
-PASS Type conversion for descriptor.element 
-PASS Order of evaluation for descriptor 
+PASS name
+PASS length
+PASS No arguments
+PASS Calling
+PASS Empty descriptor
+PASS Invalid descriptor argument
+PASS Undefined initial value in descriptor
+PASS Undefined element value in descriptor
+PASS Out-of-range initial value in descriptor: NaN
+PASS Out-of-range maximum value in descriptor: NaN
+PASS Out-of-range initial value in descriptor: Infinity
+PASS Out-of-range maximum value in descriptor: Infinity
+PASS Out-of-range initial value in descriptor: -Infinity
+PASS Out-of-range maximum value in descriptor: -Infinity
+PASS Out-of-range initial value in descriptor: -1
+PASS Out-of-range maximum value in descriptor: -1
+PASS Out-of-range initial value in descriptor: 4294967296
+PASS Out-of-range maximum value in descriptor: 4294967296
+PASS Out-of-range initial value in descriptor: 68719476736
+PASS Out-of-range maximum value in descriptor: 68719476736
+PASS Initial value exceeds maximum
+PASS Basic (zero)
+PASS Basic (non-zero)
+PASS Stray argument
+PASS Proxy descriptor
+PASS Type conversion for descriptor.element
+PASS Order of evaluation for descriptor
 

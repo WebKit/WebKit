@@ -1,5 +1,5 @@
 
-PASS Bogus MIME type does not override encoding 
-PASS Bogus MIME type does not override encoding, 2 
-PASS Bogus MIME type does override MIME type 
+PASS Bogus MIME type does not override encoding
+PASS Bogus MIME type does not override encoding, 2
+PASS Bogus MIME type does override MIME type
 

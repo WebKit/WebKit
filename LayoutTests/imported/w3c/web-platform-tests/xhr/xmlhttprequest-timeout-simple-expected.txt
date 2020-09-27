@@ -3,7 +3,7 @@ Description
 This test validates that the XHR2 timeout property behaves as expected in async cases in document (i.e. non-worker) context.
 
 
-PASS Timeout test: no time out scheduled, load fires normally, timeout scheduled at 0 
-PASS Timeout test: load fires normally, timeout scheduled at 5000 
-PASS Timeout test: timeout hit before load, timeout scheduled at 2000 
+PASS Timeout test: no time out scheduled, load fires normally, timeout scheduled at 0
+PASS Timeout test: load fires normally, timeout scheduled at 5000
+PASS Timeout test: timeout hit before load, timeout scheduled at 2000
 

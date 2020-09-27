@@ -1,6 +1,6 @@
 
-PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (301) 
-PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (302) 
-PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (303) 
-PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (307) 
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (301)
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (302)
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (303)
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (307)
 

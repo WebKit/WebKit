@@ -1,6 +1,6 @@
 
-PASS WebSockets: new WebSocket(url with not blocked port) 
-PASS WebSockets: new WebSocket(url with not blocked port) 1 
-PASS WebSockets: new WebSocket(url with not blocked port) 2 
-PASS WebSockets: new WebSocket(url with not blocked port) 3 
+PASS WebSockets: new WebSocket(url with not blocked port)
+PASS WebSockets: new WebSocket(url with not blocked port) 1
+PASS WebSockets: new WebSocket(url with not blocked port) 2
+PASS WebSockets: new WebSocket(url with not blocked port) 3
 

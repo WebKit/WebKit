@@ -1,4 +1,4 @@
 
-PASS effect is set correctly. 
-PASS Clearing and setting Animation.effect should update the computed style of the target element 
+PASS effect is set correctly.
+PASS Clearing and setting Animation.effect should update the computed style of the target element
 

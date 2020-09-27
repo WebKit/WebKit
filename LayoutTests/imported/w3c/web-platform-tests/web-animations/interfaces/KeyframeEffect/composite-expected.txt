@@ -1,6 +1,6 @@
 
-PASS Default value 
-PASS Change composite value 
-PASS Unspecified keyframe composite value when setting effect composite 
-PASS Specified keyframe composite value when setting effect composite 
+PASS Default value
+PASS Change composite value
+PASS Unspecified keyframe composite value when setting effect composite
+PASS Specified keyframe composite value when setting effect composite
 

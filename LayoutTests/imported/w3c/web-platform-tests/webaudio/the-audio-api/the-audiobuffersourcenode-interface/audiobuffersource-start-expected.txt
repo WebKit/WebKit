@@ -1,26 +1,26 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Tests AudioBufferSourceNode start()" 
-PASS Audit report 
-PASS > [Tests AudioBufferSourceNode start()]  
-PASS   Case 0: start(when): implicitly play whole buffer from beginning to end is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...]. 
-PASS   Case 0: start(when): implicitly play whole buffer from beginning to end: tail contains only the constant 0. 
-PASS   Case 1: start(when, 0): play whole buffer from beginning to end explicitly giving offset of 0 is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...]. 
-PASS   Case 1: start(when, 0): play whole buffer from beginning to end explicitly giving offset of 0: tail contains only the constant 0. 
-PASS   Case 2: start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...]. 
-PASS   Case 2: start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames: tail contains only the constant 0. 
-PASS   Case 3: start(when, 4_frames): play with explicit non-zero offset is identical to the array [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 3: start(when, 4_frames): play with explicit non-zero offset: tail contains only the constant 0. 
-PASS   Case 4: start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration is identical to the array [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 4: start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration: tail contains only the constant 0. 
-PASS   Case 5: start(when, 7_frames): play with explicit non-zero offset near end of buffer is identical to the array [7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 5: start(when, 7_frames): play with explicit non-zero offset near end of buffer: tail contains only the constant 0. 
-PASS   Case 6: start(when, 8_frames): play with explicit offset at end of buffer is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 6: start(when, 8_frames): play with explicit offset at end of buffer: tail contains only the constant 0. 
-PASS   Case 7: start(when, 9_frames): play with explicit offset past end of buffer is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   Case 7: start(when, 9_frames): play with explicit offset past end of buffer: tail contains only the constant 0. 
-PASS   Case 8: start(when, 0, 15_frames): play with whole buffer, with long duration (clipped) is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...]. 
-PASS   Case 8: start(when, 0, 15_frames): play with whole buffer, with long duration (clipped): tail contains only the constant 0. 
-PASS < [Tests AudioBufferSourceNode start()] All assertions passed. (total 18 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Tests AudioBufferSourceNode start()"
+PASS Audit report
+PASS > [Tests AudioBufferSourceNode start()]
+PASS   Case 0: start(when): implicitly play whole buffer from beginning to end is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...].
+PASS   Case 0: start(when): implicitly play whole buffer from beginning to end: tail contains only the constant 0.
+PASS   Case 1: start(when, 0): play whole buffer from beginning to end explicitly giving offset of 0 is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...].
+PASS   Case 1: start(when, 0): play whole buffer from beginning to end explicitly giving offset of 0: tail contains only the constant 0.
+PASS   Case 2: start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...].
+PASS   Case 2: start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames: tail contains only the constant 0.
+PASS   Case 3: start(when, 4_frames): play with explicit non-zero offset is identical to the array [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 3: start(when, 4_frames): play with explicit non-zero offset: tail contains only the constant 0.
+PASS   Case 4: start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration is identical to the array [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 4: start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration: tail contains only the constant 0.
+PASS   Case 5: start(when, 7_frames): play with explicit non-zero offset near end of buffer is identical to the array [7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 5: start(when, 7_frames): play with explicit non-zero offset near end of buffer: tail contains only the constant 0.
+PASS   Case 6: start(when, 8_frames): play with explicit offset at end of buffer is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 6: start(when, 8_frames): play with explicit offset at end of buffer: tail contains only the constant 0.
+PASS   Case 7: start(when, 9_frames): play with explicit offset past end of buffer is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   Case 7: start(when, 9_frames): play with explicit offset past end of buffer: tail contains only the constant 0.
+PASS   Case 8: start(when, 0, 15_frames): play with whole buffer, with long duration (clipped) is identical to the array [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0...].
+PASS   Case 8: start(when, 0, 15_frames): play with whole buffer, with long duration (clipped): tail contains only the constant 0.
+PASS < [Tests AudioBufferSourceNode start()] All assertions passed. (total 18 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

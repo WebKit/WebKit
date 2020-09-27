@@ -1,10 +1,10 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "interpolate" 
-PASS Audit report 
-PASS > [interpolate] Interpolation of AudioBuffers to context sample rate 
-PASS   Interpolated sine wave equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.090348,"relativeThreshold":0}. 
-PASS   SNR (37.18 dB) is greater than or equal to 37.17. 
-PASS < [interpolate] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "interpolate"
+PASS Audit report
+PASS > [interpolate] Interpolation of AudioBuffers to context sample rate
+PASS   Interpolated sine wave equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.090348,"relativeThreshold":0}.
+PASS   SNR (37.18 dB) is greater than or equal to 37.17.
+PASS < [interpolate] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

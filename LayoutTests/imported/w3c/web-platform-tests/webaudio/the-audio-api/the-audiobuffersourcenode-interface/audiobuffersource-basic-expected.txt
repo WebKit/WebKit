@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "start/stop exceptions" 
-PASS Audit report 
-PASS > [start/stop exceptions]  
-PASS   start(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   start(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   start(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   Calling stop() before start() threw InvalidStateError: "cannot call stop without calling start first.". 
-PASS   start(-1) threw RangeError: "when value should be positive". 
-PASS   start(0,-1) threw RangeError: "offset value should be positive". 
-PASS   start(0,0,-1) threw RangeError: "duration value should be positive". 
-PASS   Calling start() twice threw InvalidStateError: "Cannot call start more than once.". 
-PASS   stop(-1) threw RangeError: "when value should be positive". 
-PASS   stop(NaN) threw TypeError: "The provided value is non-finite". 
-PASS   stop(Infinity) threw TypeError: "The provided value is non-finite". 
-PASS   stop(-Infinity) threw TypeError: "The provided value is non-finite". 
-PASS < [start/stop exceptions] All assertions passed. (total 12 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "start/stop exceptions"
+PASS Audit report
+PASS > [start/stop exceptions]
+PASS   start(NaN) threw TypeError: "The provided value is non-finite".
+PASS   start(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   start(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS   Calling stop() before start() threw InvalidStateError: "cannot call stop without calling start first.".
+PASS   start(-1) threw RangeError: "when value should be positive".
+PASS   start(0,-1) threw RangeError: "offset value should be positive".
+PASS   start(0,0,-1) threw RangeError: "duration value should be positive".
+PASS   Calling start() twice threw InvalidStateError: "Cannot call start more than once.".
+PASS   stop(-1) threw RangeError: "when value should be positive".
+PASS   stop(NaN) threw TypeError: "The provided value is non-finite".
+PASS   stop(Infinity) threw TypeError: "The provided value is non-finite".
+PASS   stop(-Infinity) threw TypeError: "The provided value is non-finite".
+PASS < [start/stop exceptions] All assertions passed. (total 12 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

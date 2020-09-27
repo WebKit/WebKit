@@ -1,4 +1,4 @@
 
 PASS When transferring a port,
-    outgoing messages sent at each transfer step are received in order by the entangled port. 
+    outgoing messages sent at each transfer step are received in order by the entangled port.
 

@@ -1,3 +1,3 @@
 
-PASS  WorkerLocation URL decomposition IDL attribute: port  
+PASS  WorkerLocation URL decomposition IDL attribute: port
 

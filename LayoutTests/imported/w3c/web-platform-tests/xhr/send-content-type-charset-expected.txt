@@ -1,21 +1,21 @@
 
-PASS header with invalid MIME type is not changed 
-PASS header with invalid MIME type (empty string) is not changed 
-PASS known charset but bogus header - missing MIME type 
-PASS bogus charset and bogus header - missing MIME type 
-PASS If charset= param is UTF-8 (case-insensitive), it should not be changed 
-PASS If no charset= param is given, implementation should not add one - unknown MIME 
-PASS If no charset= param is given, implementation should not add one - known MIME 
-PASS If no charset= param is given, implementation should not add one - known MIME, unknown param, two spaces 
-PASS charset given but wrong, fix it (unknown MIME, bogus charset) 
-PASS If charset= param is UTF-8 (case-insensitive), it should not be changed (bogus charset) 
-PASS charset given but wrong, fix it (known MIME, actual charset) 
-PASS Multiple non-UTF-8 charset parameters deduplicate, bogus parameter dropped 
-PASS No content type set, give MIME and charset 
-PASS charset with leading space that is UTF-8 does change 
-PASS charset with trailing space that is UTF-8 does not change 
-PASS charset in double quotes that is UTF-8 does not change 
-PASS charset in double quotes with space 
-PASS charset in double quotes with backslashes that is UTF-8 does not change 
-PASS unknown parameters need to be preserved 
+PASS header with invalid MIME type is not changed
+PASS header with invalid MIME type (empty string) is not changed
+PASS known charset but bogus header - missing MIME type
+PASS bogus charset and bogus header - missing MIME type
+PASS If charset= param is UTF-8 (case-insensitive), it should not be changed
+PASS If no charset= param is given, implementation should not add one - unknown MIME
+PASS If no charset= param is given, implementation should not add one - known MIME
+PASS If no charset= param is given, implementation should not add one - known MIME, unknown param, two spaces
+PASS charset given but wrong, fix it (unknown MIME, bogus charset)
+PASS If charset= param is UTF-8 (case-insensitive), it should not be changed (bogus charset)
+PASS charset given but wrong, fix it (known MIME, actual charset)
+PASS Multiple non-UTF-8 charset parameters deduplicate, bogus parameter dropped
+PASS No content type set, give MIME and charset
+PASS charset with leading space that is UTF-8 does change
+PASS charset with trailing space that is UTF-8 does not change
+PASS charset in double quotes that is UTF-8 does not change
+PASS charset in double quotes with space
+PASS charset in double quotes with backslashes that is UTF-8 does not change
+PASS unknown parameters need to be preserved
 

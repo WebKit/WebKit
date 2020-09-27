@@ -2,5 +2,5 @@ Blocked access to external URL http://www1.localhost:8800/xhr/resources/auth7/co
 Blocked access to external URL http://www1.localhost:8800/xhr/resources/auth8/corsenabled-no-authorize.py
 
 FAIL CORS request with setRequestHeader auth to URL accepting Authorization header assert_true: responseText should contain the right user and password expected true got false
-PASS CORS request with setRequestHeader auth to URL NOT accepting Authorization header 
+PASS CORS request with setRequestHeader auth to URL NOT accepting Authorization header
 

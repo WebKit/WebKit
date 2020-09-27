@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Test setValueAtTime with startTime in the past 
-PASS   Test[0:127] contains only the constant 1. 
-PASS   Reference[0:127] contains only the constant 1. 
-PASS   Test[128:] is identical to the array [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15...]. 
-PASS < [test] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Test setValueAtTime with startTime in the past
+PASS   Test[0:127] contains only the constant 1.
+PASS   Reference[0:127] contains only the constant 1.
+PASS   Test[128:] is identical to the array [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15...].
+PASS < [test] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

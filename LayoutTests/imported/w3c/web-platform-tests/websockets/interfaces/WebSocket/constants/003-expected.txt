@@ -1,6 +1,6 @@
 
-PASS WebSockets: deleting constants 
-PASS WebSockets: deleting constants 1 
-PASS WebSockets: deleting constants 2 
-PASS WebSockets: deleting constants 3 
+PASS WebSockets: deleting constants
+PASS WebSockets: deleting constants 1
+PASS WebSockets: deleting constants 2
+PASS WebSockets: deleting constants 3
 

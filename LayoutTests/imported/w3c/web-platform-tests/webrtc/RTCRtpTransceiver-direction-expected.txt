@@ -1,5 +1,5 @@
 
-PASS setting direction should change transceiver.direction 
-PASS setting direction with same direction should have no effect 
-PASS setting direction should change transceiver.direction independent of transceiver.currentDirection 
+PASS setting direction should change transceiver.direction
+PASS setting direction with same direction should have no effect
+PASS setting direction should change transceiver.direction independent of transceiver.currentDirection
 

@@ -1,23 +1,23 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "disconnect(AudioParam)" 
-PASS Executing "disconnect(AudioParam, output)" 
-PASS Executing "exceptions" 
-PASS Audit report 
-PASS > [disconnect(AudioParam)]  
-PASS   Channel #0 contains all the expected values in the correct order: [2.25,1.5]. 
-PASS   The index of value change is equal to 11136. 
-PASS < [disconnect(AudioParam)] All assertions passed. (total 2 assertions) 
-PASS > [disconnect(AudioParam, output)]  
-PASS   Channel #0 contains all the expected values in the correct order: [3,1.5]. 
-PASS   The index of value change in channel #0 is equal to 11136. 
-PASS   Channel #1 contains all the expected values in the correct order: [6,3]. 
-PASS   The index of value change in channel #1 is equal to 11136. 
-PASS < [disconnect(AudioParam, output)] All assertions passed. (total 4 assertions) 
-PASS > [exceptions]  
-PASS   gain1.disconnect(gain3.gain) threw InvalidAccessError: "The given destination is not connected". 
-PASS   splitter.disconnect(gain1.gain, 1) threw InvalidAccessError: "The given destination is not connected". 
-PASS   splitter.disconnect(gain1.gain, 2) threw IndexSizeError: "output index is out of bounds". 
-PASS < [exceptions] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "disconnect(AudioParam)"
+PASS Executing "disconnect(AudioParam, output)"
+PASS Executing "exceptions"
+PASS Audit report
+PASS > [disconnect(AudioParam)]
+PASS   Channel #0 contains all the expected values in the correct order: [2.25,1.5].
+PASS   The index of value change is equal to 11136.
+PASS < [disconnect(AudioParam)] All assertions passed. (total 2 assertions)
+PASS > [disconnect(AudioParam, output)]
+PASS   Channel #0 contains all the expected values in the correct order: [3,1.5].
+PASS   The index of value change in channel #0 is equal to 11136.
+PASS   Channel #1 contains all the expected values in the correct order: [6,3].
+PASS   The index of value change in channel #1 is equal to 11136.
+PASS < [disconnect(AudioParam, output)] All assertions passed. (total 4 assertions)
+PASS > [exceptions]
+PASS   gain1.disconnect(gain3.gain) threw InvalidAccessError: "The given destination is not connected".
+PASS   splitter.disconnect(gain1.gain, 1) threw InvalidAccessError: "The given destination is not connected".
+PASS   splitter.disconnect(gain1.gain, 2) threw IndexSizeError: "output index is out of bounds".
+PASS < [exceptions] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

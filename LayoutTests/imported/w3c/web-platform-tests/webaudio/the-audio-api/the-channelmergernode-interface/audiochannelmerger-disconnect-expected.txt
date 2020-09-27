@@ -1,11 +1,11 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "silent-disconnect" 
-PASS Audit report 
-PASS > [silent-disconnect]  
-PASS   Channel #0 contains only the constant 1. 
-PASS   Channel #1 contains all the expected values in the correct order: [1,0]. 
-PASS   The index of first zero in the channel #1 is equal to 11136. 
-PASS < [silent-disconnect] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "silent-disconnect"
+PASS Audit report
+PASS > [silent-disconnect]
+PASS   Channel #0 contains only the constant 1.
+PASS   Channel #1 contains all the expected values in the correct order: [1,0].
+PASS   The index of first zero in the channel #1 is equal to 11136.
+PASS < [silent-disconnect] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

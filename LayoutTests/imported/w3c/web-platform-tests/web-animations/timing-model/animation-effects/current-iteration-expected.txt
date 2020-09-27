@@ -1,53 +1,53 @@
 
-PASS Test currentIteration during before and after phase when fill is none 
-PASS Test zero iterations: iterations:0 iterationStart:0 duration:0 delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:0 duration:100 delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:0 duration:Infinity delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:2.5 duration:0 delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:2.5 duration:100 delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:2.5 duration:Infinity delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:3 duration:0 delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:3 duration:100 delay:1 fill:both 
-PASS Test zero iterations: iterations:0 iterationStart:3 duration:Infinity delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:0 duration:0 delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:0 duration:100 delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:0 duration:Infinity delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:2.5 duration:0 delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:2.5 duration:100 delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:2.5 duration:Infinity delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:3 duration:0 delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:3 duration:100 delay:1 fill:both 
-PASS Test integer iterations: iterations:3 iterationStart:3 duration:Infinity delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:0 duration:0 delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:0 duration:100 delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:0 duration:Infinity delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:0 delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:100 delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:Infinity delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:3 duration:0 delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:3 duration:100 delay:1 fill:both 
-PASS Test fractional iterations: iterations:3.5 iterationStart:3 duration:Infinity delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:0 duration:0 delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:0 duration:100 delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:0 duration:Infinity delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:0 delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:100 delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:Infinity delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:3 duration:0 delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:3 duration:100 delay:1 fill:both 
-PASS Test infinity iterations: iterations:Infinity iterationStart:3 duration:Infinity delay:1 fill:both 
-PASS Test end delay: duration:100 delay:1 fill:both endDelay:50 
-PASS Test end delay: duration:100 delay:1 fill:both endDelay:-50 
-PASS Test end delay: duration:100 delay:1 fill:both endDelay:-100 
-PASS Test end delay: duration:100 delay:1 fill:both endDelay:-200 
-PASS Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:50 
-PASS Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-50 
-PASS Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-100 
-PASS Test end delay: iterations:2 duration:100 delay:1 fill:both endDelay:-100 
-PASS Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-50 
-PASS Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-100 
-PASS Test negative playback rate: duration:1 delay:1 fill:both playbackRate:-1 
-PASS Test negative playback rate: duration:1 delay:1 iterations:2 fill:both playbackRate:-1 
-PASS Test negative playback rate: duration:0 delay:1 fill:both playbackRate:-1 
-PASS Test negative playback rate: duration:0 iterations:0 delay:1 fill:both playbackRate:-1 
+PASS Test currentIteration during before and after phase when fill is none
+PASS Test zero iterations: iterations:0 iterationStart:0 duration:0 delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:0 duration:100 delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:0 duration:Infinity delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:2.5 duration:0 delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:2.5 duration:100 delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:2.5 duration:Infinity delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:3 duration:0 delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:3 duration:100 delay:1 fill:both
+PASS Test zero iterations: iterations:0 iterationStart:3 duration:Infinity delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:0 duration:0 delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:0 duration:100 delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:0 duration:Infinity delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:2.5 duration:0 delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:2.5 duration:100 delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:2.5 duration:Infinity delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:3 duration:0 delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:3 duration:100 delay:1 fill:both
+PASS Test integer iterations: iterations:3 iterationStart:3 duration:Infinity delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:0 duration:0 delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:0 duration:100 delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:0 duration:Infinity delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:0 delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:100 delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:Infinity delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:3 duration:0 delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:3 duration:100 delay:1 fill:both
+PASS Test fractional iterations: iterations:3.5 iterationStart:3 duration:Infinity delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:0 duration:0 delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:0 duration:100 delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:0 duration:Infinity delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:0 delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:100 delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:Infinity delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:3 duration:0 delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:3 duration:100 delay:1 fill:both
+PASS Test infinity iterations: iterations:Infinity iterationStart:3 duration:Infinity delay:1 fill:both
+PASS Test end delay: duration:100 delay:1 fill:both endDelay:50
+PASS Test end delay: duration:100 delay:1 fill:both endDelay:-50
+PASS Test end delay: duration:100 delay:1 fill:both endDelay:-100
+PASS Test end delay: duration:100 delay:1 fill:both endDelay:-200
+PASS Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:50
+PASS Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-50
+PASS Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-100
+PASS Test end delay: iterations:2 duration:100 delay:1 fill:both endDelay:-100
+PASS Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-50
+PASS Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-100
+PASS Test negative playback rate: duration:1 delay:1 fill:both playbackRate:-1
+PASS Test negative playback rate: duration:1 delay:1 iterations:2 fill:both playbackRate:-1
+PASS Test negative playback rate: duration:0 delay:1 fill:both playbackRate:-1
+PASS Test negative playback rate: duration:0 iterations:0 delay:1 fill:both playbackRate:-1
 

@@ -3,7 +3,7 @@ Description
 This test validates that the XHR2 timeout property behaves as expected in in a worker context.
 
 
-PASS Timeout test: timeout set to expiring value after load fires, original timeout at 5000, reset at 4000 to 1000 
-PASS Timeout test: timeout set to expired value before load fires, original timeout at 5000, reset at 2000 to 1100 
-PASS Timeout test: timeout set to non-expiring value after timeout fires, original timeout at 1000, reset at 2000 to 500 
+PASS Timeout test: timeout set to expiring value after load fires, original timeout at 5000, reset at 4000 to 1000
+PASS Timeout test: timeout set to expired value before load fires, original timeout at 5000, reset at 2000 to 1100
+PASS Timeout test: timeout set to non-expiring value after timeout fires, original timeout at 1000, reset at 2000 to 500
 

@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Basic tests for AudioNode API. 
-PASS   AudioBufferSource.numberOfInputs is equal to 0. 
-PASS   AudioBufferSource.numberOfOutputs is equal to 1. 
-PASS   AudioContext.destination.numberOfInputs is equal to 1. 
-PASS   AudioContext.destination.numberOfOutputs is equal to 0. 
-PASS   audioNode.connect(0, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode". 
-PASS   audioNode.connect(null, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode". 
-PASS   audioNode.connect(context.destination, 5, 0) threw IndexSizeError: "Output index exceeds number of outputs". 
-PASS   audioNode.connect(context.destination, 0, 5) threw IndexSizeError: "Input index exceeds number of inputs". 
-PASS   audioNode.connect(context.destination, 0, 0) did not throw an exception. 
-PASS   Connecting a node to a different context threw SyntaxError: "Source and destination nodes belong to different audio contexts". 
-PASS   context3 = new AudioContext(1, 44100, 44100) threw TypeError: "Type error". 
-PASS   AudioNode is an EventTarget is true. 
-PASS < [test] All assertions passed. (total 12 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Basic tests for AudioNode API.
+PASS   AudioBufferSource.numberOfInputs is equal to 0.
+PASS   AudioBufferSource.numberOfOutputs is equal to 1.
+PASS   AudioContext.destination.numberOfInputs is equal to 1.
+PASS   AudioContext.destination.numberOfOutputs is equal to 0.
+PASS   audioNode.connect(0, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode".
+PASS   audioNode.connect(null, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode".
+PASS   audioNode.connect(context.destination, 5, 0) threw IndexSizeError: "Output index exceeds number of outputs".
+PASS   audioNode.connect(context.destination, 0, 5) threw IndexSizeError: "Input index exceeds number of inputs".
+PASS   audioNode.connect(context.destination, 0, 0) did not throw an exception.
+PASS   Connecting a node to a different context threw SyntaxError: "Source and destination nodes belong to different audio contexts".
+PASS   context3 = new AudioContext(1, 44100, 44100) threw TypeError: "Type error".
+PASS   AudioNode is an EventTarget is true.
+PASS < [test] All assertions passed. (total 12 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

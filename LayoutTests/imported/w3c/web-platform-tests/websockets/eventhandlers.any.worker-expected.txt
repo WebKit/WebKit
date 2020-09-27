@@ -1,6 +1,6 @@
 
-PASS Event handler for open should have [TreatNonCallableAsNull] 
-PASS Event handler for error should have [TreatNonCallableAsNull] 
-PASS Event handler for close should have [TreatNonCallableAsNull] 
-PASS Event handler for message should have [TreatNonCallableAsNull] 
+PASS Event handler for open should have [TreatNonCallableAsNull]
+PASS Event handler for error should have [TreatNonCallableAsNull]
+PASS Event handler for close should have [TreatNonCallableAsNull]
+PASS Event handler for message should have [TreatNonCallableAsNull]
 

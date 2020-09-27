@@ -1,10 +1,10 @@
 
-PASS RTCPeerConnectionIceEvent with no arguments throws TypeError 
-PASS RTCPeerConnectionIceEvent with no eventInitDict (default) 
-PASS RTCPeerConnectionIceEvent with empty object as eventInitDict (default) 
-PASS RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: null } 
-PASS RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: undefined } 
-PASS RTCPeerConnectionIceEvent with RTCIceCandidate 
-PASS RTCPeerConnectionIceEvent with non RTCIceCandidate object throws 
-PASS RTCPeerConnectionIceEvent bubbles and cancelable 
+PASS RTCPeerConnectionIceEvent with no arguments throws TypeError
+PASS RTCPeerConnectionIceEvent with no eventInitDict (default)
+PASS RTCPeerConnectionIceEvent with empty object as eventInitDict (default)
+PASS RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: null }
+PASS RTCPeerConnectionIceEvent.candidate is null when constructed with { candidate: undefined }
+PASS RTCPeerConnectionIceEvent with RTCIceCandidate
+PASS RTCPeerConnectionIceEvent with non RTCIceCandidate object throws
+PASS RTCPeerConnectionIceEvent bubbles and cancelable
 

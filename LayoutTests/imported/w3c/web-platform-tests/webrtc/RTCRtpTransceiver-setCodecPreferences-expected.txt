@@ -1,19 +1,19 @@
 
-PASS setCodecPreferences() on audio transceiver with codecs returned from RTCRtpSender.getCapabilities('audio') should succeed 
-PASS setCodecPreferences() on video transceiver with codecs returned from RTCRtpReceiver.getCapabilities('video') should succeed 
-PASS setCodecPreferences() with both sender receiver codecs combined should succeed 
-PASS setCodecPreferences([]) should succeed 
-PASS setCodecPreferences() with reordered codecs should succeed 
-PASS setCodecPreferences() with only VP8 should succeed 
-PASS setCodecPreferences() with only H264 should succeed 
-PASS setCodecPreferences() should allow setting H264 as first codec 
-PASS setCodecPreferences() should allow setting VP8 as first codec 
-PASS setCodecPreferences() on audio transceiver with codecs returned from getCapabilities('video') should throw InvalidModificationError 
-PASS setCodecPreferences() with user defined codec with invalid mimeType should throw InvalidModificationError 
-PASS setCodecPreferences() with user defined codec should throw InvalidModificationError 
-PASS setCodecPreferences() with user defined codec together with codecs returned from getCapabilities() should throw InvalidModificationError 
-PASS setCodecPreferences() with modified codec clock rate should throw InvalidModificationError 
-PASS setCodecPreferences() with modified codec channel count should throw InvalidModificationError 
-PASS setCodecPreferences() with modified codec parameters should throw InvalidModificationError 
-PASS setCodecPreferences() with modified codecs returned from getCapabilities() should throw InvalidModificationError 
+PASS setCodecPreferences() on audio transceiver with codecs returned from RTCRtpSender.getCapabilities('audio') should succeed
+PASS setCodecPreferences() on video transceiver with codecs returned from RTCRtpReceiver.getCapabilities('video') should succeed
+PASS setCodecPreferences() with both sender receiver codecs combined should succeed
+PASS setCodecPreferences([]) should succeed
+PASS setCodecPreferences() with reordered codecs should succeed
+PASS setCodecPreferences() with only VP8 should succeed
+PASS setCodecPreferences() with only H264 should succeed
+PASS setCodecPreferences() should allow setting H264 as first codec
+PASS setCodecPreferences() should allow setting VP8 as first codec
+PASS setCodecPreferences() on audio transceiver with codecs returned from getCapabilities('video') should throw InvalidModificationError
+PASS setCodecPreferences() with user defined codec with invalid mimeType should throw InvalidModificationError
+PASS setCodecPreferences() with user defined codec should throw InvalidModificationError
+PASS setCodecPreferences() with user defined codec together with codecs returned from getCapabilities() should throw InvalidModificationError
+PASS setCodecPreferences() with modified codec clock rate should throw InvalidModificationError
+PASS setCodecPreferences() with modified codec channel count should throw InvalidModificationError
+PASS setCodecPreferences() with modified codec parameters should throw InvalidModificationError
+PASS setCodecPreferences() with modified codecs returned from getCapabilities() should throw InvalidModificationError
 

@@ -1,15 +1,15 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface XRSession: original interface defined 
-PASS Partial interface XRSession: member names are unique 
-PASS Partial interface XRSession[2]: original interface defined 
-PASS Partial interface XRSession[2]: member names are unique 
-PASS Partial interface XRView: original interface defined 
-PASS Partial interface XRView: member names are unique 
-PASS XRSession interface: attribute environmentBlendMode 
-PASS XRSession interface: attribute interactionMode 
-PASS XRSession interface: xrSession must inherit property "environmentBlendMode" with the proper type 
-PASS XRSession interface: xrSession must inherit property "interactionMode" with the proper type 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface XRSession: original interface defined
+PASS Partial interface XRSession: member names are unique
+PASS Partial interface XRSession[2]: original interface defined
+PASS Partial interface XRSession[2]: member names are unique
+PASS Partial interface XRView: original interface defined
+PASS Partial interface XRView: member names are unique
+PASS XRSession interface: attribute environmentBlendMode
+PASS XRSession interface: attribute interactionMode
+PASS XRSession interface: xrSession must inherit property "environmentBlendMode" with the proper type
+PASS XRSession interface: xrSession must inherit property "interactionMode" with the proper type
 FAIL XRView interface: attribute isFirstPersonObserver assert_true: The prototype object must have a property "isFirstPersonObserver" expected true got false
 

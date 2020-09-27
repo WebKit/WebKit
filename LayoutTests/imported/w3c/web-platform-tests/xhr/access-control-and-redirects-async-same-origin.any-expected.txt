@@ -1,8 +1,8 @@
 
-PASS Request without credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=* (with star) 
-PASS Request with credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=* (with star) 
-PASS Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin 
-PASS Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin 
-PASS Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin (no credentials) 
-PASS Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin (no credentials) 
+PASS Request without credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=* (with star)
+PASS Request with credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=* (with star)
+PASS Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin
+PASS Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin
+PASS Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin (no credentials)
+PASS Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin (no credentials)
 

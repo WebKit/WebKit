@@ -1,9 +1,9 @@
 
-PASS WaveShaperNode - Testing that -1, 0 and +1 map correctly to curve (with 1:1 correlation) 
-PASS WaveShaperNode - Testing interpolation (where inputs don't correlate directly to curve elements) 
-PASS WaveShaperNode - Testing out-of-range inputs (should be mapped to the first/last elements of the curve) 
-PASS WaveShaperNode - Testing a 2-element curve (does not have a middle element) 
-PASS WaveShaperNode - Testing a 4-element curve (does not have a middle element) 
-PASS WaveShaperNode - Testing a huge curve 
-PASS WaveShaperNode - Testing null curve (should return input values) 
+PASS WaveShaperNode - Testing that -1, 0 and +1 map correctly to curve (with 1:1 correlation)
+PASS WaveShaperNode - Testing interpolation (where inputs don't correlate directly to curve elements)
+PASS WaveShaperNode - Testing out-of-range inputs (should be mapped to the first/last elements of the curve)
+PASS WaveShaperNode - Testing a 2-element curve (does not have a middle element)
+PASS WaveShaperNode - Testing a 4-element curve (does not have a middle element)
+PASS WaveShaperNode - Testing a huge curve
+PASS WaveShaperNode - Testing null curve (should return input values)
 

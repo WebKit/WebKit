@@ -1,31 +1,31 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] WaveShaperNode including values outside the range of [-1,1] 
-PASS   Max error mapping -1.100000 to 0.000000 is less than or equal to 0.000001. 
-PASS   Max error mapping -1.000000 to 0.000000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.900000 to 0.100000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.800000 to 0.200000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.700000 to 0.300000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.600000 to 0.400000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.500000 to 0.500000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.400000 to 0.600000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.300000 to 0.700000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.200000 to 0.800000 is less than or equal to 0.000001. 
-PASS   Max error mapping -0.100000 to 0.900000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.000000 to 1.000000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.100000 to 0.900000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.200000 to 0.800000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.300000 to 0.700000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.400000 to 0.600000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.500000 to 0.500000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.600000 to 0.400000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.700000 to 0.300000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.800000 to 0.200000 is less than or equal to 0.000001. 
-PASS   Max error mapping 0.900000 to 0.100000 is less than or equal to 0.000001. 
-PASS   Max error mapping 1.000000 to 0.000000 is less than or equal to 0.000001. 
-PASS   Max error mapping 1.100000 to 0.000000 is less than or equal to 0.000001. 
-PASS < [test] All assertions passed. (total 23 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] WaveShaperNode including values outside the range of [-1,1]
+PASS   Max error mapping -1.100000 to 0.000000 is less than or equal to 0.000001.
+PASS   Max error mapping -1.000000 to 0.000000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.900000 to 0.100000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.800000 to 0.200000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.700000 to 0.300000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.600000 to 0.400000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.500000 to 0.500000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.400000 to 0.600000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.300000 to 0.700000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.200000 to 0.800000 is less than or equal to 0.000001.
+PASS   Max error mapping -0.100000 to 0.900000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.000000 to 1.000000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.100000 to 0.900000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.200000 to 0.800000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.300000 to 0.700000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.400000 to 0.600000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.500000 to 0.500000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.600000 to 0.400000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.700000 to 0.300000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.800000 to 0.200000 is less than or equal to 0.000001.
+PASS   Max error mapping 0.900000 to 0.100000 is less than or equal to 0.000001.
+PASS   Max error mapping 1.000000 to 0.000000 is less than or equal to 0.000001.
+PASS   Max error mapping 1.100000 to 0.000000 is less than or equal to 0.000001.
+PASS < [test] All assertions passed. (total 23 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

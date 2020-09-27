@@ -1,4 +1,4 @@
 Blocked access to external URL http://nonexistent.localhost:8800/
 
-PASS XMLHttpRequest Test: event - error 
+PASS XMLHttpRequest Test: event - error
 

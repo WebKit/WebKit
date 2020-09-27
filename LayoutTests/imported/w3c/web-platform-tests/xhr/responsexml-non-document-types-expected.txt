@@ -1,7 +1,7 @@
 
-PASS XMLHttpRequest: responseXML/responseText on other responseType (arraybuffer) 
-PASS XMLHttpRequest: responseXML/responseText on other responseType (blob) 
-PASS XMLHttpRequest: responseXML/responseText on other responseType (json) 
-PASS XMLHttpRequest: responseXML/responseText on other responseType (text) 
-PASS XMLHttpRequest: responseXML/responseText on other responseType (document) 
+PASS XMLHttpRequest: responseXML/responseText on other responseType (arraybuffer)
+PASS XMLHttpRequest: responseXML/responseText on other responseType (blob)
+PASS XMLHttpRequest: responseXML/responseText on other responseType (json)
+PASS XMLHttpRequest: responseXML/responseText on other responseType (text)
+PASS XMLHttpRequest: responseXML/responseText on other responseType (document)
 

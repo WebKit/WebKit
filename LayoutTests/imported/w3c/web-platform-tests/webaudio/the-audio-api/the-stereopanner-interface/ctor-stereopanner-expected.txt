@@ -1,53 +1,53 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "invalid constructor" 
-PASS Executing "default constructor" 
-PASS Executing "test AudioNodeOptions" 
-PASS Executing "constructor with options" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   context = new OfflineAudioContext(...) did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [invalid constructor]  
-PASS   new StereoPannerNode() threw TypeError: "Not enough arguments". 
-PASS   new StereoPannerNode(1) threw TypeError: "Argument 1 ('context') to the StereoPannerNode constructor must be an instance of BaseAudioContext". 
-PASS   new StereoPannerNode(context, 42) threw TypeError: "Type error". 
-PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
-PASS > [default constructor]  
-PASS   node0 = new StereoPannerNode(context) did not throw an exception. 
-PASS   node0 instanceof StereoPannerNode is equal to true. 
-PASS   node0.numberOfInputs is equal to 1. 
-PASS   node0.numberOfOutputs is equal to 1. 
-PASS   node0.channelCount is equal to 2. 
-PASS   node0.channelCountMode is equal to clamped-max. 
-PASS   node0.channelInterpretation is equal to speakers. 
-PASS   node0.pan.value is equal to 0. 
-PASS < [default constructor] All assertions passed. (total 8 assertions) 
-PASS > [test AudioNodeOptions]  
-PASS   new StereoPannerNode(c, {"channelCount":1}) did not throw an exception. 
-PASS   node.channelCount is equal to 1. 
-PASS   new StereoPannerNode(c, {"channelCount":2}) did not throw an exception. 
-PASS   node.channelCount is equal to 2. 
-PASS   new StereoPannerNode(c, {"channelCount":0}) threw NotSupportedError: "Channel count cannot be 0". 
-PASS   new StereoPannerNode(c, {"channelCount":3}) threw NotSupportedError: "StereoPannerNode's channelCount cannot be greater than 2.". 
-PASS   new StereoPannerNode(c, {"channelCount":99}) threw NotSupportedError: "StereoPannerNode's channelCount cannot be greater than 2.". 
-PASS   new StereoPannerNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception. 
-PASS   node.channelCountMode is equal to clamped-max. 
-PASS   new StereoPannerNode(c, {"channelCountMode":"explicit"}) did not throw an exception. 
-PASS   node.channelCountMode is equal to explicit. 
-PASS   new StereoPannerNode(c, {"channelCountMode":"max"}) threw NotSupportedError: "StereoPannerNode's channelCountMode cannot be max.". 
-PASS   new StereoPannerNode(c, {"channelCountMode":"foobar"}) threw TypeError: "Type error". 
-PASS   new StereoPannerNode(c, {"channelInterpretation":"speakers"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to speakers. 
-PASS   new StereoPannerNode(c, {"channelInterpretation":"discrete"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to discrete. 
-PASS   new StereoPannerNode(c, {"channelInterpretation":"foobar"}) threw TypeError: "Type error". 
-PASS < [test AudioNodeOptions] All assertions passed. (total 18 assertions) 
-PASS > [constructor with options]  
-PASS   node1 = new StereoPannerNode(, {"pan":0.75}) did not throw an exception. 
-PASS   node1 instanceof StereoPannerNode is equal to true. 
-PASS   node1.pan.value is equal to 0.75. 
-PASS < [constructor with options] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "invalid constructor"
+PASS Executing "default constructor"
+PASS Executing "test AudioNodeOptions"
+PASS Executing "constructor with options"
+PASS Audit report
+PASS > [initialize]
+PASS   context = new OfflineAudioContext(...) did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [invalid constructor]
+PASS   new StereoPannerNode() threw TypeError: "Not enough arguments".
+PASS   new StereoPannerNode(1) threw TypeError: "Argument 1 ('context') to the StereoPannerNode constructor must be an instance of BaseAudioContext".
+PASS   new StereoPannerNode(context, 42) threw TypeError: "Type error".
+PASS < [invalid constructor] All assertions passed. (total 3 assertions)
+PASS > [default constructor]
+PASS   node0 = new StereoPannerNode(context) did not throw an exception.
+PASS   node0 instanceof StereoPannerNode is equal to true.
+PASS   node0.numberOfInputs is equal to 1.
+PASS   node0.numberOfOutputs is equal to 1.
+PASS   node0.channelCount is equal to 2.
+PASS   node0.channelCountMode is equal to clamped-max.
+PASS   node0.channelInterpretation is equal to speakers.
+PASS   node0.pan.value is equal to 0.
+PASS < [default constructor] All assertions passed. (total 8 assertions)
+PASS > [test AudioNodeOptions]
+PASS   new StereoPannerNode(c, {"channelCount":1}) did not throw an exception.
+PASS   node.channelCount is equal to 1.
+PASS   new StereoPannerNode(c, {"channelCount":2}) did not throw an exception.
+PASS   node.channelCount is equal to 2.
+PASS   new StereoPannerNode(c, {"channelCount":0}) threw NotSupportedError: "Channel count cannot be 0".
+PASS   new StereoPannerNode(c, {"channelCount":3}) threw NotSupportedError: "StereoPannerNode's channelCount cannot be greater than 2.".
+PASS   new StereoPannerNode(c, {"channelCount":99}) threw NotSupportedError: "StereoPannerNode's channelCount cannot be greater than 2.".
+PASS   new StereoPannerNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception.
+PASS   node.channelCountMode is equal to clamped-max.
+PASS   new StereoPannerNode(c, {"channelCountMode":"explicit"}) did not throw an exception.
+PASS   node.channelCountMode is equal to explicit.
+PASS   new StereoPannerNode(c, {"channelCountMode":"max"}) threw NotSupportedError: "StereoPannerNode's channelCountMode cannot be max.".
+PASS   new StereoPannerNode(c, {"channelCountMode":"foobar"}) threw TypeError: "Type error".
+PASS   new StereoPannerNode(c, {"channelInterpretation":"speakers"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to speakers.
+PASS   new StereoPannerNode(c, {"channelInterpretation":"discrete"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to discrete.
+PASS   new StereoPannerNode(c, {"channelInterpretation":"foobar"}) threw TypeError: "Type error".
+PASS < [test AudioNodeOptions] All assertions passed. (total 18 assertions)
+PASS > [constructor with options]
+PASS   node1 = new StereoPannerNode(, {"pan":0.75}) did not throw an exception.
+PASS   node1 instanceof StereoPannerNode is equal to true.
+PASS   node1.pan.value is equal to 0.75.
+PASS < [constructor with options] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

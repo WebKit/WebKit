@@ -1,113 +1,113 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test timing of noteGrainOn" 
-PASS Audit report 
-PASS > [Test timing of noteGrainOn]  
-PASS   Found all grain starts and ends is true. 
-PASS   Number of start frames is equal to 100. 
-PASS   Number of end frames is equal to 100. 
-PASS   Pulse 0 boundary is identical to the array [0,327]. 
-PASS   Pulse 1 boundary is identical to the array [490,817]. 
-PASS   Pulse 2 boundary is identical to the array [980,1307]. 
-PASS   Pulse 3 boundary is identical to the array [1470,1797]. 
-PASS   Pulse 4 boundary is identical to the array [1960,2287]. 
-PASS   Pulse 5 boundary is identical to the array [2450,2777]. 
-PASS   Pulse 6 boundary is identical to the array [2940,3267]. 
-PASS   Pulse 7 boundary is identical to the array [3430,3757]. 
-PASS   Pulse 8 boundary is identical to the array [3920,4247]. 
-PASS   Pulse 9 boundary is identical to the array [4410,4737]. 
-PASS   Pulse 10 boundary is identical to the array [4900,5227]. 
-PASS   Pulse 11 boundary is identical to the array [5390,5717]. 
-PASS   Pulse 12 boundary is identical to the array [5880,6207]. 
-PASS   Pulse 13 boundary is identical to the array [6370,6697]. 
-PASS   Pulse 14 boundary is identical to the array [6860,7187]. 
-PASS   Pulse 15 boundary is identical to the array [7350,7677]. 
-PASS   Pulse 16 boundary is identical to the array [7840,8167]. 
-PASS   Pulse 17 boundary is identical to the array [8330,8657]. 
-PASS   Pulse 18 boundary is identical to the array [8820,9147]. 
-PASS   Pulse 19 boundary is identical to the array [9310,9637]. 
-PASS   Pulse 20 boundary is identical to the array [9800,10127]. 
-PASS   Pulse 21 boundary is identical to the array [10290,10617]. 
-PASS   Pulse 22 boundary is identical to the array [10780,11107]. 
-PASS   Pulse 23 boundary is identical to the array [11270,11597]. 
-PASS   Pulse 24 boundary is identical to the array [11760,12087]. 
-PASS   Pulse 25 boundary is identical to the array [12250,12577]. 
-PASS   Pulse 26 boundary is identical to the array [12740,13067]. 
-PASS   Pulse 27 boundary is identical to the array [13230,13557]. 
-PASS   Pulse 28 boundary is identical to the array [13720,14047]. 
-PASS   Pulse 29 boundary is identical to the array [14210,14537]. 
-PASS   Pulse 30 boundary is identical to the array [14700,15027]. 
-PASS   Pulse 31 boundary is identical to the array [15190,15517]. 
-PASS   Pulse 32 boundary is identical to the array [15680,16007]. 
-PASS   Pulse 33 boundary is identical to the array [16170,16497]. 
-PASS   Pulse 34 boundary is identical to the array [16660,16987]. 
-PASS   Pulse 35 boundary is identical to the array [17150,17477]. 
-PASS   Pulse 36 boundary is identical to the array [17640,17967]. 
-PASS   Pulse 37 boundary is identical to the array [18130,18457]. 
-PASS   Pulse 38 boundary is identical to the array [18620,18947]. 
-PASS   Pulse 39 boundary is identical to the array [19110,19437]. 
-PASS   Pulse 40 boundary is identical to the array [19600,19927]. 
-PASS   Pulse 41 boundary is identical to the array [20090,20417]. 
-PASS   Pulse 42 boundary is identical to the array [20580,20907]. 
-PASS   Pulse 43 boundary is identical to the array [21070,21397]. 
-PASS   Pulse 44 boundary is identical to the array [21560,21887]. 
-PASS   Pulse 45 boundary is identical to the array [22050,22377]. 
-PASS   Pulse 46 boundary is identical to the array [22540,22867]. 
-PASS   Pulse 47 boundary is identical to the array [23030,23357]. 
-PASS   Pulse 48 boundary is identical to the array [23520,23847]. 
-PASS   Pulse 49 boundary is identical to the array [24010,24337]. 
-PASS   Pulse 50 boundary is identical to the array [24500,24827]. 
-PASS   Pulse 51 boundary is identical to the array [24990,25317]. 
-PASS   Pulse 52 boundary is identical to the array [25480,25807]. 
-PASS   Pulse 53 boundary is identical to the array [25970,26297]. 
-PASS   Pulse 54 boundary is identical to the array [26460,26787]. 
-PASS   Pulse 55 boundary is identical to the array [26950,27277]. 
-PASS   Pulse 56 boundary is identical to the array [27440,27767]. 
-PASS   Pulse 57 boundary is identical to the array [27930,28257]. 
-PASS   Pulse 58 boundary is identical to the array [28420,28747]. 
-PASS   Pulse 59 boundary is identical to the array [28910,29237]. 
-PASS   Pulse 60 boundary is identical to the array [29400,29727]. 
-PASS   Pulse 61 boundary is identical to the array [29890,30217]. 
-PASS   Pulse 62 boundary is identical to the array [30380,30707]. 
-PASS   Pulse 63 boundary is identical to the array [30870,31197]. 
-PASS   Pulse 64 boundary is identical to the array [31360,31687]. 
-PASS   Pulse 65 boundary is identical to the array [31850,32177]. 
-PASS   Pulse 66 boundary is identical to the array [32340,32667]. 
-PASS   Pulse 67 boundary is identical to the array [32830,33157]. 
-PASS   Pulse 68 boundary is identical to the array [33320,33647]. 
-PASS   Pulse 69 boundary is identical to the array [33810,34137]. 
-PASS   Pulse 70 boundary is identical to the array [34300,34627]. 
-PASS   Pulse 71 boundary is identical to the array [34790,35117]. 
-PASS   Pulse 72 boundary is identical to the array [35280,35607]. 
-PASS   Pulse 73 boundary is identical to the array [35770,36097]. 
-PASS   Pulse 74 boundary is identical to the array [36260,36587]. 
-PASS   Pulse 75 boundary is identical to the array [36750,37077]. 
-PASS   Pulse 76 boundary is identical to the array [37240,37567]. 
-PASS   Pulse 77 boundary is identical to the array [37730,38057]. 
-PASS   Pulse 78 boundary is identical to the array [38220,38547]. 
-PASS   Pulse 79 boundary is identical to the array [38710,39037]. 
-PASS   Pulse 80 boundary is identical to the array [39200,39527]. 
-PASS   Pulse 81 boundary is identical to the array [39690,40017]. 
-PASS   Pulse 82 boundary is identical to the array [40180,40507]. 
-PASS   Pulse 83 boundary is identical to the array [40670,40997]. 
-PASS   Pulse 84 boundary is identical to the array [41160,41487]. 
-PASS   Pulse 85 boundary is identical to the array [41650,41977]. 
-PASS   Pulse 86 boundary is identical to the array [42140,42467]. 
-PASS   Pulse 87 boundary is identical to the array [42630,42957]. 
-PASS   Pulse 88 boundary is identical to the array [43120,43447]. 
-PASS   Pulse 89 boundary is identical to the array [43610,43937]. 
-PASS   Pulse 90 boundary is identical to the array [44100,44427]. 
-PASS   Pulse 91 boundary is identical to the array [44590,44917]. 
-PASS   Pulse 92 boundary is identical to the array [45080,45407]. 
-PASS   Pulse 93 boundary is identical to the array [45570,45897]. 
-PASS   Pulse 94 boundary is identical to the array [46060,46387]. 
-PASS   Pulse 95 boundary is identical to the array [46550,46877]. 
-PASS   Pulse 96 boundary is identical to the array [47040,47367]. 
-PASS   Pulse 97 boundary is identical to the array [47530,47857]. 
-PASS   Pulse 98 boundary is identical to the array [48020,48347]. 
-PASS   Pulse 99 boundary is identical to the array [48510,48837]. 
-PASS   Number of grains that started at the correct time is equal to 100. 
-PASS   Number of grains that ended at the correct time is equal to 100. 
-PASS < [Test timing of noteGrainOn] All assertions passed. (total 105 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test timing of noteGrainOn"
+PASS Audit report
+PASS > [Test timing of noteGrainOn]
+PASS   Found all grain starts and ends is true.
+PASS   Number of start frames is equal to 100.
+PASS   Number of end frames is equal to 100.
+PASS   Pulse 0 boundary is identical to the array [0,327].
+PASS   Pulse 1 boundary is identical to the array [490,817].
+PASS   Pulse 2 boundary is identical to the array [980,1307].
+PASS   Pulse 3 boundary is identical to the array [1470,1797].
+PASS   Pulse 4 boundary is identical to the array [1960,2287].
+PASS   Pulse 5 boundary is identical to the array [2450,2777].
+PASS   Pulse 6 boundary is identical to the array [2940,3267].
+PASS   Pulse 7 boundary is identical to the array [3430,3757].
+PASS   Pulse 8 boundary is identical to the array [3920,4247].
+PASS   Pulse 9 boundary is identical to the array [4410,4737].
+PASS   Pulse 10 boundary is identical to the array [4900,5227].
+PASS   Pulse 11 boundary is identical to the array [5390,5717].
+PASS   Pulse 12 boundary is identical to the array [5880,6207].
+PASS   Pulse 13 boundary is identical to the array [6370,6697].
+PASS   Pulse 14 boundary is identical to the array [6860,7187].
+PASS   Pulse 15 boundary is identical to the array [7350,7677].
+PASS   Pulse 16 boundary is identical to the array [7840,8167].
+PASS   Pulse 17 boundary is identical to the array [8330,8657].
+PASS   Pulse 18 boundary is identical to the array [8820,9147].
+PASS   Pulse 19 boundary is identical to the array [9310,9637].
+PASS   Pulse 20 boundary is identical to the array [9800,10127].
+PASS   Pulse 21 boundary is identical to the array [10290,10617].
+PASS   Pulse 22 boundary is identical to the array [10780,11107].
+PASS   Pulse 23 boundary is identical to the array [11270,11597].
+PASS   Pulse 24 boundary is identical to the array [11760,12087].
+PASS   Pulse 25 boundary is identical to the array [12250,12577].
+PASS   Pulse 26 boundary is identical to the array [12740,13067].
+PASS   Pulse 27 boundary is identical to the array [13230,13557].
+PASS   Pulse 28 boundary is identical to the array [13720,14047].
+PASS   Pulse 29 boundary is identical to the array [14210,14537].
+PASS   Pulse 30 boundary is identical to the array [14700,15027].
+PASS   Pulse 31 boundary is identical to the array [15190,15517].
+PASS   Pulse 32 boundary is identical to the array [15680,16007].
+PASS   Pulse 33 boundary is identical to the array [16170,16497].
+PASS   Pulse 34 boundary is identical to the array [16660,16987].
+PASS   Pulse 35 boundary is identical to the array [17150,17477].
+PASS   Pulse 36 boundary is identical to the array [17640,17967].
+PASS   Pulse 37 boundary is identical to the array [18130,18457].
+PASS   Pulse 38 boundary is identical to the array [18620,18947].
+PASS   Pulse 39 boundary is identical to the array [19110,19437].
+PASS   Pulse 40 boundary is identical to the array [19600,19927].
+PASS   Pulse 41 boundary is identical to the array [20090,20417].
+PASS   Pulse 42 boundary is identical to the array [20580,20907].
+PASS   Pulse 43 boundary is identical to the array [21070,21397].
+PASS   Pulse 44 boundary is identical to the array [21560,21887].
+PASS   Pulse 45 boundary is identical to the array [22050,22377].
+PASS   Pulse 46 boundary is identical to the array [22540,22867].
+PASS   Pulse 47 boundary is identical to the array [23030,23357].
+PASS   Pulse 48 boundary is identical to the array [23520,23847].
+PASS   Pulse 49 boundary is identical to the array [24010,24337].
+PASS   Pulse 50 boundary is identical to the array [24500,24827].
+PASS   Pulse 51 boundary is identical to the array [24990,25317].
+PASS   Pulse 52 boundary is identical to the array [25480,25807].
+PASS   Pulse 53 boundary is identical to the array [25970,26297].
+PASS   Pulse 54 boundary is identical to the array [26460,26787].
+PASS   Pulse 55 boundary is identical to the array [26950,27277].
+PASS   Pulse 56 boundary is identical to the array [27440,27767].
+PASS   Pulse 57 boundary is identical to the array [27930,28257].
+PASS   Pulse 58 boundary is identical to the array [28420,28747].
+PASS   Pulse 59 boundary is identical to the array [28910,29237].
+PASS   Pulse 60 boundary is identical to the array [29400,29727].
+PASS   Pulse 61 boundary is identical to the array [29890,30217].
+PASS   Pulse 62 boundary is identical to the array [30380,30707].
+PASS   Pulse 63 boundary is identical to the array [30870,31197].
+PASS   Pulse 64 boundary is identical to the array [31360,31687].
+PASS   Pulse 65 boundary is identical to the array [31850,32177].
+PASS   Pulse 66 boundary is identical to the array [32340,32667].
+PASS   Pulse 67 boundary is identical to the array [32830,33157].
+PASS   Pulse 68 boundary is identical to the array [33320,33647].
+PASS   Pulse 69 boundary is identical to the array [33810,34137].
+PASS   Pulse 70 boundary is identical to the array [34300,34627].
+PASS   Pulse 71 boundary is identical to the array [34790,35117].
+PASS   Pulse 72 boundary is identical to the array [35280,35607].
+PASS   Pulse 73 boundary is identical to the array [35770,36097].
+PASS   Pulse 74 boundary is identical to the array [36260,36587].
+PASS   Pulse 75 boundary is identical to the array [36750,37077].
+PASS   Pulse 76 boundary is identical to the array [37240,37567].
+PASS   Pulse 77 boundary is identical to the array [37730,38057].
+PASS   Pulse 78 boundary is identical to the array [38220,38547].
+PASS   Pulse 79 boundary is identical to the array [38710,39037].
+PASS   Pulse 80 boundary is identical to the array [39200,39527].
+PASS   Pulse 81 boundary is identical to the array [39690,40017].
+PASS   Pulse 82 boundary is identical to the array [40180,40507].
+PASS   Pulse 83 boundary is identical to the array [40670,40997].
+PASS   Pulse 84 boundary is identical to the array [41160,41487].
+PASS   Pulse 85 boundary is identical to the array [41650,41977].
+PASS   Pulse 86 boundary is identical to the array [42140,42467].
+PASS   Pulse 87 boundary is identical to the array [42630,42957].
+PASS   Pulse 88 boundary is identical to the array [43120,43447].
+PASS   Pulse 89 boundary is identical to the array [43610,43937].
+PASS   Pulse 90 boundary is identical to the array [44100,44427].
+PASS   Pulse 91 boundary is identical to the array [44590,44917].
+PASS   Pulse 92 boundary is identical to the array [45080,45407].
+PASS   Pulse 93 boundary is identical to the array [45570,45897].
+PASS   Pulse 94 boundary is identical to the array [46060,46387].
+PASS   Pulse 95 boundary is identical to the array [46550,46877].
+PASS   Pulse 96 boundary is identical to the array [47040,47367].
+PASS   Pulse 97 boundary is identical to the array [47530,47857].
+PASS   Pulse 98 boundary is identical to the array [48020,48347].
+PASS   Pulse 99 boundary is identical to the array [48510,48837].
+PASS   Number of grains that started at the correct time is equal to 100.
+PASS   Number of grains that ended at the correct time is equal to 100.
+PASS < [Test timing of noteGrainOn] All assertions passed. (total 105 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

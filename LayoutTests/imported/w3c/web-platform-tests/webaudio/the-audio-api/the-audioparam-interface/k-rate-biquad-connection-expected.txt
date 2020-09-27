@@ -1,102 +1,102 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Frequency AudioParam" 
-PASS Executing "Q AudioParam" 
-PASS Executing "Gain AudioParam" 
-PASS Executing "Detune AudioParam" 
-PASS Executing "All k-rate inputs" 
-PASS Audit report 
-PASS > [Frequency AudioParam] k-rate input works 
-PASS   frequency: new OscillatorNode(context, {frequency: 440}) did not throw an exception. 
-PASS   Reference BiquadFilterNode(c, {"type":"lowpass","frequency":0}) did not throw an exception. 
-PASS   refNode.frequency.setValueAtTime(880,0) did not throw an exception. 
-PASS   refNode.frequency.linearRampToValueAtTime.(0,0.125) did not throw an exception. 
-PASS   Test BiquadFilterNode(context, {"type":"lowpass","frequency":0}) did not throw an exception. 
-PASS   frequency: mod.offset.setValueAtTime(880,0) did not throw an exception. 
-PASS   frequency: mod.offset.linearRampToValueAtTime(0,0.125) did not throw an exception. 
-PASS   Expected k-rate frequency with automation output[0:2047] is not constantly 0 (contains 1023 different values). 
-PASS   Expected k-rate frequency with automation output[2048:] contains only the constant 0. 
-PASS   k-rate frequency with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   k-rate frequency with input: output[2048:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Frequency AudioParam] All assertions passed. (total 11 assertions) 
-PASS > [Q AudioParam] k-rate input works 
-PASS   Q: new OscillatorNode(context, {frequency: 1760}) did not throw an exception. 
-PASS   Reference BiquadFilterNode(c, {"type":"bandpass","frequency":440,"Q":0}) did not throw an exception. 
-PASS   refNode.Q.setValueAtTime(0,0) did not throw an exception. 
-PASS   refNode.Q.linearRampToValueAtTime.(100,0.125) did not throw an exception. 
-PASS   Test BiquadFilterNode(context, {"type":"bandpass","frequency":440,"Q":0}) did not throw an exception. 
-PASS   Q: mod.offset.setValueAtTime(0,0) did not throw an exception. 
-PASS   Q: mod.offset.linearRampToValueAtTime(100,0.125) did not throw an exception. 
-PASS   k-rate Q with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   k-rate Q with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Q AudioParam] All assertions passed. (total 9 assertions) 
-PASS > [Gain AudioParam] k-rate input works 
-PASS   gain: new OscillatorNode(context, {frequency: 1760}) did not throw an exception. 
-PASS   Reference BiquadFilterNode(c, {"type":"peaking","frequency":1760,"Q":100,"gain":0}) did not throw an exception. 
-PASS   refNode.gain.setValueAtTime(0,0) did not throw an exception. 
-PASS   refNode.gain.linearRampToValueAtTime.(-100,0.125) did not throw an exception. 
-PASS   Test BiquadFilterNode(context, {"type":"peaking","frequency":1760,"Q":100,"gain":0}) did not throw an exception. 
-PASS   gain: mod.offset.setValueAtTime(0,0) did not throw an exception. 
-PASS   gain: mod.offset.linearRampToValueAtTime(-100,0.125) did not throw an exception. 
-PASS   k-rate gain with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   k-rate gain with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Gain AudioParam] All assertions passed. (total 9 assertions) 
-PASS > [Detune AudioParam] k-rate input works 
-PASS   detune: new OscillatorNode(context, {frequency: 440}) did not throw an exception. 
-PASS   Reference BiquadFilterNode(c, {"type":"lowpass","frequency":2200,"detune":0,"gain":0}) did not throw an exception. 
-PASS   refNode.detune.setValueAtTime(0,0) did not throw an exception. 
-PASS   refNode.detune.linearRampToValueAtTime.(-13323.945370094427,0.125) did not throw an exception. 
-PASS   Test BiquadFilterNode(context, {"type":"lowpass","frequency":2200,"detune":0,"gain":0}) did not throw an exception. 
-PASS   detune: mod.offset.setValueAtTime(0,0) did not throw an exception. 
-PASS   detune: mod.offset.linearRampToValueAtTime(-13323.945370094427,0.125) did not throw an exception. 
-PASS   k-rate detune with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   k-rate detune with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Detune AudioParam] All assertions passed. (total 9 assertions) 
-PASS > [All k-rate inputs]  
-PASS   Create: refNode = new BiquadFilterNode(context, {"type":"peaking","frequency":0,"detune":0,"gain":0,"Q":0}) did not throw an exception. 
-PASS   Create: tstNode = new BiquadFilterNode(context, {"type":"peaking","frequency":0,"detune":0,"gain":0,"Q":0}) did not throw an exception. 
-PASS   Set rate: refNode[frequency].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: tstNode[frequency].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: refNode[Q].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: tstNode[Q].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: refNode[gain].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: tstNode[gain].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: refNode[detune].automationRate = 'k-rate' did not throw an exception. 
-PASS   Set rate: tstNode[detune].automationRate = 'k-rate' did not throw an exception. 
-PASS   Create: mod[frequency] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception. 
-PASS   Set rate: mod[frequency].offset.automationRate = 'a-rate' did not throw an exception. 
-PASS   Create: mod[Q] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception. 
-PASS   Set rate: mod[Q].offset.automationRate = 'a-rate' did not throw an exception. 
-PASS   Create: mod[gain] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception. 
-PASS   Set rate: mod[gain].offset.automationRate = 'a-rate' did not throw an exception. 
-PASS   Create: mod[detune] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception. 
-PASS   Set rate: mod[detune].offset.automationRate = 'a-rate' did not throw an exception. 
-PASS   Automate 0: refNode.frequency.setValueAtTime(1760, 0) did not throw an exception. 
-PASS   Automate 0: mod[frequency].offset.setValueAtTime(1760, 0) did not throw an exception. 
-PASS   Automate 0: refNode.Q.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Automate 0: mod[Q].offset.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Automate 0: refNode.gain.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Automate 0: mod[gain].offset.setValueAtTime(0, 0) did not throw an exception. 
-PASS   Automate 0: refNode.detune.setValueAtTime(4800, 0) did not throw an exception. 
-PASS   Automate 0: mod[detune].offset.setValueAtTime(4800, 0) did not throw an exception. 
-PASS   Automate 1: refNode[frequency].linearRampToValueAtTime(440, 0.125) did not throw an exception. 
-PASS   Automate 1: mod[frequency].offset.linearRampToValueAtTime(440, 0.125) did not throw an exception. 
-PASS   Automate 1: refNode[Q].linearRampToValueAtTime(40, 0.125) did not throw an exception. 
-PASS   Automate 1: mod[Q].offset.linearRampToValueAtTime(40, 0.125) did not throw an exception. 
-PASS   Automate 1: refNode[gain].linearRampToValueAtTime(-100, 0.125) did not throw an exception. 
-PASS   Automate 1: mod[gain].offset.linearRampToValueAtTime(-100, 0.125) did not throw an exception. 
-PASS   Automate 1: refNode[detune].linearRampToValueAtTime(0, 0.125) did not throw an exception. 
-PASS   Automate 1: mod[detune].offset.linearRampToValueAtTime(0, 0.125) did not throw an exception. 
-PASS   Connect: mod[frequency].connect(tstNode.frequency) did not throw an exception. 
-PASS   Connect: mod[Q].connect(tstNode.Q) did not throw an exception. 
-PASS   Connect: mod[gain].connect(tstNode.gain) did not throw an exception. 
-PASS   Connect: mod[detune].connect(tstNode.detune) did not throw an exception. 
-PASS   Start: mod[frequency].start() did not throw an exception. 
-PASS   Start: mod[Q].start() did not throw an exception. 
-PASS   Start: mod[gain].start() did not throw an exception. 
-PASS   Start: mod[detune].start() did not throw an exception. 
-PASS   All k-rate AudioParams is not constantly 0 (contains 4094 different values). 
-PASS   All k-rate AudioParams equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [All k-rate inputs] All assertions passed. (total 44 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Frequency AudioParam"
+PASS Executing "Q AudioParam"
+PASS Executing "Gain AudioParam"
+PASS Executing "Detune AudioParam"
+PASS Executing "All k-rate inputs"
+PASS Audit report
+PASS > [Frequency AudioParam] k-rate input works
+PASS   frequency: new OscillatorNode(context, {frequency: 440}) did not throw an exception.
+PASS   Reference BiquadFilterNode(c, {"type":"lowpass","frequency":0}) did not throw an exception.
+PASS   refNode.frequency.setValueAtTime(880,0) did not throw an exception.
+PASS   refNode.frequency.linearRampToValueAtTime.(0,0.125) did not throw an exception.
+PASS   Test BiquadFilterNode(context, {"type":"lowpass","frequency":0}) did not throw an exception.
+PASS   frequency: mod.offset.setValueAtTime(880,0) did not throw an exception.
+PASS   frequency: mod.offset.linearRampToValueAtTime(0,0.125) did not throw an exception.
+PASS   Expected k-rate frequency with automation output[0:2047] is not constantly 0 (contains 1023 different values).
+PASS   Expected k-rate frequency with automation output[2048:] contains only the constant 0.
+PASS   k-rate frequency with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   k-rate frequency with input: output[2048:] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Frequency AudioParam] All assertions passed. (total 11 assertions)
+PASS > [Q AudioParam] k-rate input works
+PASS   Q: new OscillatorNode(context, {frequency: 1760}) did not throw an exception.
+PASS   Reference BiquadFilterNode(c, {"type":"bandpass","frequency":440,"Q":0}) did not throw an exception.
+PASS   refNode.Q.setValueAtTime(0,0) did not throw an exception.
+PASS   refNode.Q.linearRampToValueAtTime.(100,0.125) did not throw an exception.
+PASS   Test BiquadFilterNode(context, {"type":"bandpass","frequency":440,"Q":0}) did not throw an exception.
+PASS   Q: mod.offset.setValueAtTime(0,0) did not throw an exception.
+PASS   Q: mod.offset.linearRampToValueAtTime(100,0.125) did not throw an exception.
+PASS   k-rate Q with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   k-rate Q with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Q AudioParam] All assertions passed. (total 9 assertions)
+PASS > [Gain AudioParam] k-rate input works
+PASS   gain: new OscillatorNode(context, {frequency: 1760}) did not throw an exception.
+PASS   Reference BiquadFilterNode(c, {"type":"peaking","frequency":1760,"Q":100,"gain":0}) did not throw an exception.
+PASS   refNode.gain.setValueAtTime(0,0) did not throw an exception.
+PASS   refNode.gain.linearRampToValueAtTime.(-100,0.125) did not throw an exception.
+PASS   Test BiquadFilterNode(context, {"type":"peaking","frequency":1760,"Q":100,"gain":0}) did not throw an exception.
+PASS   gain: mod.offset.setValueAtTime(0,0) did not throw an exception.
+PASS   gain: mod.offset.linearRampToValueAtTime(-100,0.125) did not throw an exception.
+PASS   k-rate gain with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   k-rate gain with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Gain AudioParam] All assertions passed. (total 9 assertions)
+PASS > [Detune AudioParam] k-rate input works
+PASS   detune: new OscillatorNode(context, {frequency: 440}) did not throw an exception.
+PASS   Reference BiquadFilterNode(c, {"type":"lowpass","frequency":2200,"detune":0,"gain":0}) did not throw an exception.
+PASS   refNode.detune.setValueAtTime(0,0) did not throw an exception.
+PASS   refNode.detune.linearRampToValueAtTime.(-13323.945370094427,0.125) did not throw an exception.
+PASS   Test BiquadFilterNode(context, {"type":"lowpass","frequency":2200,"detune":0,"gain":0}) did not throw an exception.
+PASS   detune: mod.offset.setValueAtTime(0,0) did not throw an exception.
+PASS   detune: mod.offset.linearRampToValueAtTime(-13323.945370094427,0.125) did not throw an exception.
+PASS   k-rate detune with input: output[0,2048] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   k-rate detune with input: output[2048:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Detune AudioParam] All assertions passed. (total 9 assertions)
+PASS > [All k-rate inputs]
+PASS   Create: refNode = new BiquadFilterNode(context, {"type":"peaking","frequency":0,"detune":0,"gain":0,"Q":0}) did not throw an exception.
+PASS   Create: tstNode = new BiquadFilterNode(context, {"type":"peaking","frequency":0,"detune":0,"gain":0,"Q":0}) did not throw an exception.
+PASS   Set rate: refNode[frequency].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: tstNode[frequency].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: refNode[Q].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: tstNode[Q].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: refNode[gain].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: tstNode[gain].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: refNode[detune].automationRate = 'k-rate' did not throw an exception.
+PASS   Set rate: tstNode[detune].automationRate = 'k-rate' did not throw an exception.
+PASS   Create: mod[frequency] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception.
+PASS   Set rate: mod[frequency].offset.automationRate = 'a-rate' did not throw an exception.
+PASS   Create: mod[Q] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception.
+PASS   Set rate: mod[Q].offset.automationRate = 'a-rate' did not throw an exception.
+PASS   Create: mod[gain] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception.
+PASS   Set rate: mod[gain].offset.automationRate = 'a-rate' did not throw an exception.
+PASS   Create: mod[detune] = new ConstantSourceNode(context, {offset: 0}) did not throw an exception.
+PASS   Set rate: mod[detune].offset.automationRate = 'a-rate' did not throw an exception.
+PASS   Automate 0: refNode.frequency.setValueAtTime(1760, 0) did not throw an exception.
+PASS   Automate 0: mod[frequency].offset.setValueAtTime(1760, 0) did not throw an exception.
+PASS   Automate 0: refNode.Q.setValueAtTime(0, 0) did not throw an exception.
+PASS   Automate 0: mod[Q].offset.setValueAtTime(0, 0) did not throw an exception.
+PASS   Automate 0: refNode.gain.setValueAtTime(0, 0) did not throw an exception.
+PASS   Automate 0: mod[gain].offset.setValueAtTime(0, 0) did not throw an exception.
+PASS   Automate 0: refNode.detune.setValueAtTime(4800, 0) did not throw an exception.
+PASS   Automate 0: mod[detune].offset.setValueAtTime(4800, 0) did not throw an exception.
+PASS   Automate 1: refNode[frequency].linearRampToValueAtTime(440, 0.125) did not throw an exception.
+PASS   Automate 1: mod[frequency].offset.linearRampToValueAtTime(440, 0.125) did not throw an exception.
+PASS   Automate 1: refNode[Q].linearRampToValueAtTime(40, 0.125) did not throw an exception.
+PASS   Automate 1: mod[Q].offset.linearRampToValueAtTime(40, 0.125) did not throw an exception.
+PASS   Automate 1: refNode[gain].linearRampToValueAtTime(-100, 0.125) did not throw an exception.
+PASS   Automate 1: mod[gain].offset.linearRampToValueAtTime(-100, 0.125) did not throw an exception.
+PASS   Automate 1: refNode[detune].linearRampToValueAtTime(0, 0.125) did not throw an exception.
+PASS   Automate 1: mod[detune].offset.linearRampToValueAtTime(0, 0.125) did not throw an exception.
+PASS   Connect: mod[frequency].connect(tstNode.frequency) did not throw an exception.
+PASS   Connect: mod[Q].connect(tstNode.Q) did not throw an exception.
+PASS   Connect: mod[gain].connect(tstNode.gain) did not throw an exception.
+PASS   Connect: mod[detune].connect(tstNode.detune) did not throw an exception.
+PASS   Start: mod[frequency].start() did not throw an exception.
+PASS   Start: mod[Q].start() did not throw an exception.
+PASS   Start: mod[gain].start() did not throw an exception.
+PASS   Start: mod[detune].start() did not throw an exception.
+PASS   All k-rate AudioParams is not constantly 0 (contains 4094 different values).
+PASS   All k-rate AudioParams equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [All k-rate inputs] All assertions passed. (total 44 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

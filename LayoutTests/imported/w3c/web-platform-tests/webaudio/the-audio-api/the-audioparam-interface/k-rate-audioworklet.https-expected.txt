@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
+PASS # AUDIT TASK RUNNER STARTED.
 FAIL Executing "Create Test Worklet" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
 FAIL Executing "AudioWorklet k-rate AudioParam" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
-PASS Audit report 
-PASS > [Create Test Worklet]  
-PASS > [AudioWorklet k-rate AudioParam]  
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS Audit report
+PASS > [Create Test Worklet]
+PASS > [AudioWorklet k-rate AudioParam]
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

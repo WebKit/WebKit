@@ -1,26 +1,26 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Set Listener.positionX.value" 
-PASS Executing "Listener.positionX.setValue" 
-PASS Executing "Listener.setPosition" 
-PASS Audit report 
-PASS > [Set Listener.positionX.value]  
-PASS   listenr.positionX.value: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
-PASS   listenr.positionX.value: output1[0:511] is not constantly 0 (contains 511 different values). 
-PASS   listenr.positionX.value: output0[512:] is not constantly 0 (contains 1535 different values). 
-PASS   listenr.positionX.value: output1[512:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Set Listener.positionX.value] All assertions passed. (total 4 assertions) 
-PASS > [Listener.positionX.setValue]  
-PASS   listener.positionX.setValueATTime: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
-PASS   listener.positionX.setValueATTime: output1[0:511] is not constantly 0 (contains 511 different values). 
-PASS   listener.positionX.setValueATTime: output0[512:] is not constantly 0 (contains 1535 different values). 
-PASS   listener.positionX.setValueATTime: output1[512:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Listener.positionX.setValue] All assertions passed. (total 4 assertions) 
-PASS > [Listener.setPosition]  
-PASS   listener.setPostion: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
-PASS   listener.setPostion: output1[0:511] is not constantly 0 (contains 511 different values). 
-PASS   listener.setPostion: output0[512:] is not constantly 0 (contains 1535 different values). 
-PASS   listener.setPostion: output1[512:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [Listener.setPosition] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Set Listener.positionX.value"
+PASS Executing "Listener.positionX.setValue"
+PASS Executing "Listener.setPosition"
+PASS Audit report
+PASS > [Set Listener.positionX.value]
+PASS   listenr.positionX.value: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}.
+PASS   listenr.positionX.value: output1[0:511] is not constantly 0 (contains 511 different values).
+PASS   listenr.positionX.value: output0[512:] is not constantly 0 (contains 1535 different values).
+PASS   listenr.positionX.value: output1[512:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Set Listener.positionX.value] All assertions passed. (total 4 assertions)
+PASS > [Listener.positionX.setValue]
+PASS   listener.positionX.setValueATTime: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}.
+PASS   listener.positionX.setValueATTime: output1[0:511] is not constantly 0 (contains 511 different values).
+PASS   listener.positionX.setValueATTime: output0[512:] is not constantly 0 (contains 1535 different values).
+PASS   listener.positionX.setValueATTime: output1[512:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Listener.positionX.setValue] All assertions passed. (total 4 assertions)
+PASS > [Listener.setPosition]
+PASS   listener.setPostion: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}.
+PASS   listener.setPostion: output1[0:511] is not constantly 0 (contains 511 different values).
+PASS   listener.setPostion: output0[512:] is not constantly 0 (contains 1535 different values).
+PASS   listener.setPostion: output1[512:] equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [Listener.setPosition] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

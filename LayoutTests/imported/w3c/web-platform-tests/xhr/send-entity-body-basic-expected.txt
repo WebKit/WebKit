@@ -1,8 +1,8 @@
 
-PASS XMLHttpRequest: send() - data argument (1) 
-PASS XMLHttpRequest: send() - data argument (10000000) 
-PASS XMLHttpRequest: send() - data argument (2,2) 
-PASS XMLHttpRequest: send() - data argument (false) 
-PASS XMLHttpRequest: send() - data argument (A\0A) 
-PASS XMLHttpRequest: send() - data argument (1=2&3=4) 
+PASS XMLHttpRequest: send() - data argument (1)
+PASS XMLHttpRequest: send() - data argument (10000000)
+PASS XMLHttpRequest: send() - data argument (2,2)
+PASS XMLHttpRequest: send() - data argument (false)
+PASS XMLHttpRequest: send() - data argument (A\0A)
+PASS XMLHttpRequest: send() - data argument (1=2&3=4)
 

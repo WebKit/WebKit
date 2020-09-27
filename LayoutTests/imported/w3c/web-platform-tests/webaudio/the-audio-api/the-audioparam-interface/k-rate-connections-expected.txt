@@ -1,27 +1,27 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Gain" 
-PASS Executing "StereoPanner" 
-PASS Audit report 
-PASS > [Gain] k-rate GainNode.gain 
-PASS   gain[0:128] contains only the constant 2. 
-PASS   gain[128:256] contains only the constant 129.875. 
-PASS   gain[256:384] contains only the constant 257.75. 
-PASS   gain[384:512] contains only the constant 385.625. 
-PASS   gain[512:640] contains only the constant 513.5. 
-PASS   gain[640:768] contains only the constant 641.375. 
-PASS   gain[768:896] contains only the constant 769.25. 
-PASS   gain[896:1024] contains only the constant 897.125. 
-PASS < [Gain] All assertions passed. (total 8 assertions) 
-PASS > [StereoPanner] k-rate StereoPannerNode.pan 
-PASS   pan[0:128] contains only the constant 0.5. 
-PASS   pan[128:256] contains only the constant 0.5879377722740173. 
-PASS   pan[256:384] contains only the constant 0.6532814502716064. 
-PASS   pan[384:512] contains only the constant 0.6935199499130249. 
-PASS   pan[512:640] contains only the constant 0.7071067690849304. 
-PASS   pan[640:768] contains only the constant 0.6935199499130249. 
-PASS   pan[768:896] contains only the constant 0.6532814502716064. 
-PASS   pan[896:1024] contains only the constant 0.5879377722740173. 
-PASS < [StereoPanner] All assertions passed. (total 8 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Gain"
+PASS Executing "StereoPanner"
+PASS Audit report
+PASS > [Gain] k-rate GainNode.gain
+PASS   gain[0:128] contains only the constant 2.
+PASS   gain[128:256] contains only the constant 129.875.
+PASS   gain[256:384] contains only the constant 257.75.
+PASS   gain[384:512] contains only the constant 385.625.
+PASS   gain[512:640] contains only the constant 513.5.
+PASS   gain[640:768] contains only the constant 641.375.
+PASS   gain[768:896] contains only the constant 769.25.
+PASS   gain[896:1024] contains only the constant 897.125.
+PASS < [Gain] All assertions passed. (total 8 assertions)
+PASS > [StereoPanner] k-rate StereoPannerNode.pan
+PASS   pan[0:128] contains only the constant 0.5.
+PASS   pan[128:256] contains only the constant 0.5879377722740173.
+PASS   pan[256:384] contains only the constant 0.6532814502716064.
+PASS   pan[384:512] contains only the constant 0.6935199499130249.
+PASS   pan[512:640] contains only the constant 0.7071067690849304.
+PASS   pan[640:768] contains only the constant 0.6935199499130249.
+PASS   pan[768:896] contains only the constant 0.6532814502716064.
+PASS   pan[896:1024] contains only the constant 0.5879377722740173.
+PASS < [StereoPanner] All assertions passed. (total 8 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

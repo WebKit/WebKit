@@ -1,11 +1,11 @@
 
-PASS Missing argument 
-PASS Invalid arguments 
-PASS Branding 
-PASS Promise type 
-PASS Empty buffer 
-PASS Invalid code 
-PASS Result type 
-PASS Stray argument 
-PASS Changing the buffer 
+PASS Missing argument
+PASS Invalid arguments
+PASS Branding
+PASS Promise type
+PASS Empty buffer
+PASS Invalid code
+PASS Result type
+PASS Stray argument
+PASS Changing the buffer
 

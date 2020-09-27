@@ -1,4 +1,4 @@
 
-PASS DocumentTimeline.currentTime does NOT trigger a style change event 
-PASS DocumentTimeline constructor does NOT trigger a style change event 
+PASS DocumentTimeline.currentTime does NOT trigger a style change event
+PASS DocumentTimeline constructor does NOT trigger a style change event
 

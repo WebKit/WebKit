@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Unable to post message to http://example.org. Recipient has origin http://localhost:8800.
 
 
-PASS different origin 
+PASS different origin
 

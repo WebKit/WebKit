@@ -1,29 +1,29 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "automate-freq" 
-PASS Executing "automate-q" 
-PASS Executing "automate-gain" 
-PASS Executing "automate-detune" 
-PASS Executing "automate-all" 
-PASS Executing "modulation" 
-PASS Audit report 
-PASS > [automate-freq]  
-PASS   Output of bandpass filter with frequency automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000046455,"relativeThreshold":0}. 
-PASS < [automate-freq] All assertions passed. (total 1 assertions) 
-PASS > [automate-q]  
-PASS   Output of bandpass filter with Q automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":9.8348e-7,"relativeThreshold":0}. 
-PASS < [automate-q] All assertions passed. (total 1 assertions) 
-PASS > [automate-gain]  
-PASS   Output of lowshelf filter with gain automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027657,"relativeThreshold":0}. 
-PASS < [automate-gain] All assertions passed. (total 1 assertions) 
-PASS > [automate-detune]  
-PASS   Output of bandpass filter with detune automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000031471,"relativeThreshold":0}. 
-PASS < [automate-detune] All assertions passed. (total 1 assertions) 
-PASS > [automate-all]  
-PASS   Output of peaking filter with automation of all parameters equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00062907,"relativeThreshold":0}. 
-PASS < [automate-all] All assertions passed. (total 1 assertions) 
-PASS > [modulation]  
-PASS   Output of bandpass filter with sinusoidal modulation of bandpass center frequency equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000039787,"relativeThreshold":0}. 
-PASS < [modulation] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "automate-freq"
+PASS Executing "automate-q"
+PASS Executing "automate-gain"
+PASS Executing "automate-detune"
+PASS Executing "automate-all"
+PASS Executing "modulation"
+PASS Audit report
+PASS > [automate-freq]
+PASS   Output of bandpass filter with frequency automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000046455,"relativeThreshold":0}.
+PASS < [automate-freq] All assertions passed. (total 1 assertions)
+PASS > [automate-q]
+PASS   Output of bandpass filter with Q automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":9.8348e-7,"relativeThreshold":0}.
+PASS < [automate-q] All assertions passed. (total 1 assertions)
+PASS > [automate-gain]
+PASS   Output of lowshelf filter with gain automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000027657,"relativeThreshold":0}.
+PASS < [automate-gain] All assertions passed. (total 1 assertions)
+PASS > [automate-detune]
+PASS   Output of bandpass filter with detune automation equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000031471,"relativeThreshold":0}.
+PASS < [automate-detune] All assertions passed. (total 1 assertions)
+PASS > [automate-all]
+PASS   Output of peaking filter with automation of all parameters equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.00062907,"relativeThreshold":0}.
+PASS < [automate-all] All assertions passed. (total 1 assertions)
+PASS > [modulation]
+PASS   Output of bandpass filter with sinusoidal modulation of bandpass center frequency equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000039787,"relativeThreshold":0}.
+PASS < [modulation] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

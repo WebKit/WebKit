@@ -2,5 +2,5 @@ Blocked access to external URL http://www2.localhost:8800/xhr/resources/inspect-
 
 FAIL Referer header assert_equals: expected "Referer: http://localhost:8800/xhr/resources/workerxhr-origin-referrer.js\n" but got "Referer: http://localhost:8800/xhr/resources/redirect.py?location=workerxhr-origin-referrer.js\n"
 FAIL Origin header assert_equals: expected "Origin: http://localhost:8800\n" but got ""
-PASS Request URL test 
+PASS Request URL test
 

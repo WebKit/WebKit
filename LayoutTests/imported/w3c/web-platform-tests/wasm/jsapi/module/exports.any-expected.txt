@@ -1,9 +1,9 @@
 
-PASS Missing arguments 
-PASS Non-Module arguments 
-PASS Branding 
-PASS Empty module 
-PASS Empty module: array caching 
-PASS exports 
-PASS Stray argument 
+PASS Missing arguments
+PASS Non-Module arguments
+PASS Branding
+PASS Empty module
+PASS Empty module: array caching
+PASS exports
+PASS Stray argument
 

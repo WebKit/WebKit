@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: prototype and members 
+PASS XMLHttpRequest: prototype and members
 

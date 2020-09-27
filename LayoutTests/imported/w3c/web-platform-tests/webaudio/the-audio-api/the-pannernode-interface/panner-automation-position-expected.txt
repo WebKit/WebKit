@@ -1,45 +1,45 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "0: 1-channel inverse rolloff: 1" 
-PASS Executing "0: 2-channel inverse rolloff: 1" 
-PASS Executing "1: 1-channel inverse rolloff: 1" 
-PASS Executing "1: 2-channel inverse rolloff: 1" 
-PASS Executing "2: 1-channel exponential rolloff: 1.5" 
-PASS Executing "2: 2-channel exponential rolloff: 1.5" 
-PASS Executing "3: 1-channel linear rolloff: 1" 
-PASS Executing "3: 2-channel linear rolloff: 1" 
-PASS Audit report 
-PASS > [0: 1-channel inverse rolloff: 1]  
-PASS   1-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   1-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [0: 1-channel inverse rolloff: 1] All assertions passed. (total 2 assertions) 
-PASS > [0: 2-channel inverse rolloff: 1]  
-PASS   2-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   2-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [0: 2-channel inverse rolloff: 1] All assertions passed. (total 2 assertions) 
-PASS > [1: 1-channel inverse rolloff: 1]  
-PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.8124e-7},"relativeThreshold":0}. 
-PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.8124e-7},"relativeThreshold":0}. 
-PASS < [1: 1-channel inverse rolloff: 1] All assertions passed. (total 2 assertions) 
-PASS > [1: 2-channel inverse rolloff: 1]  
-PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.3267e-7},"relativeThreshold":0}. 
-PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.3267e-7},"relativeThreshold":0}. 
-PASS < [1: 2-channel inverse rolloff: 1] All assertions passed. (total 2 assertions) 
-PASS > [2: 1-channel exponential rolloff: 1.5]  
-PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.0783e-7},"relativeThreshold":0}. 
-PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.0783e-7},"relativeThreshold":0}. 
-PASS < [2: 1-channel exponential rolloff: 1.5] All assertions passed. (total 2 assertions) 
-PASS > [2: 2-channel exponential rolloff: 1.5]  
-PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.218e-7},"relativeThreshold":0}. 
-PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.218e-7},"relativeThreshold":0}. 
-PASS < [2: 2-channel exponential rolloff: 1.5] All assertions passed. (total 2 assertions) 
-PASS > [3: 1-channel linear rolloff: 1]  
-PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065324},"relativeThreshold":0}. 
-PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065324},"relativeThreshold":0}. 
-PASS < [3: 1-channel linear rolloff: 1] All assertions passed. (total 2 assertions) 
-PASS > [3: 2-channel linear rolloff: 1]  
-PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065756},"relativeThreshold":0}. 
-PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065756},"relativeThreshold":0}. 
-PASS < [3: 2-channel linear rolloff: 1] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 8 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "0: 1-channel inverse rolloff: 1"
+PASS Executing "0: 2-channel inverse rolloff: 1"
+PASS Executing "1: 1-channel inverse rolloff: 1"
+PASS Executing "1: 2-channel inverse rolloff: 1"
+PASS Executing "2: 1-channel exponential rolloff: 1.5"
+PASS Executing "2: 2-channel exponential rolloff: 1.5"
+PASS Executing "3: 1-channel linear rolloff: 1"
+PASS Executing "3: 2-channel linear rolloff: 1"
+PASS Audit report
+PASS > [0: 1-channel inverse rolloff: 1]
+PASS   1-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   1-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [0: 1-channel inverse rolloff: 1] All assertions passed. (total 2 assertions)
+PASS > [0: 2-channel inverse rolloff: 1]
+PASS   2-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   2-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [0: 2-channel inverse rolloff: 1] All assertions passed. (total 2 assertions)
+PASS > [1: 1-channel inverse rolloff: 1]
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.8124e-7},"relativeThreshold":0}.
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.8124e-7},"relativeThreshold":0}.
+PASS < [1: 1-channel inverse rolloff: 1] All assertions passed. (total 2 assertions)
+PASS > [1: 2-channel inverse rolloff: 1]
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.3267e-7},"relativeThreshold":0}.
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.3267e-7},"relativeThreshold":0}.
+PASS < [1: 2-channel inverse rolloff: 1] All assertions passed. (total 2 assertions)
+PASS > [2: 1-channel exponential rolloff: 1.5]
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.0783e-7},"relativeThreshold":0}.
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.0783e-7},"relativeThreshold":0}.
+PASS < [2: 1-channel exponential rolloff: 1.5] All assertions passed. (total 2 assertions)
+PASS > [2: 2-channel exponential rolloff: 1.5]
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.218e-7},"relativeThreshold":0}.
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.218e-7},"relativeThreshold":0}.
+PASS < [2: 2-channel exponential rolloff: 1.5] All assertions passed. (total 2 assertions)
+PASS > [3: 1-channel linear rolloff: 1]
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065324},"relativeThreshold":0}.
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065324},"relativeThreshold":0}.
+PASS < [3: 1-channel linear rolloff: 1] All assertions passed. (total 2 assertions)
+PASS > [3: 2-channel linear rolloff: 1]
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, left channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065756},"relativeThreshold":0}.
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, right channel equals [expected array] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065756},"relativeThreshold":0}.
+PASS < [3: 2-channel linear rolloff: 1] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 8 tasks ran successfully.
 

@@ -2,6 +2,6 @@ CONSOLE MESSAGE: SyntaxError: Unexpected token '*'. import call expects exactly 
 
 Harness Error (FAIL), message = Error: assert_implements: Static import must be supported on module dedicated worker to run this test. undefined
 
-NOTRUN Module worker construction for script with syntax error should dispatch an event named error. 
-NOTRUN Static import on module worker for script with syntax error should dispatch an event named error. 
+NOTRUN Module worker construction for script with syntax error should dispatch an event named error.
+NOTRUN Static import on module worker for script with syntax error should dispatch an event named error.
 

@@ -1,13 +1,13 @@
 
-PASS Document.getAnimations() returns an empty sequence for non-animated content 
-PASS Document.getAnimations() returns script-generated animations 
-PASS Document.getAnimations() returns script-generated animations in the order they were created 
-PASS Document.getAnimations() does not return a disconnected node 
-PASS Document.getAnimations() does not return an animation with a null target 
-PASS Document.getAnimations() returns animations on elements inside same-origin iframes 
-PASS iframe.contentDocument.getAnimations() returns animations on elements inside same-origin Document 
-PASS ShadowRoot.getAnimations() return all animations in the shadow tree 
-PASS Document.getAnimations() does NOT return animations in shadow trees 
-PASS ShadowRoot.getAnimations() does NOT return animations in parent document 
-PASS Document.getAnimations() triggers a style change event 
+PASS Document.getAnimations() returns an empty sequence for non-animated content
+PASS Document.getAnimations() returns script-generated animations
+PASS Document.getAnimations() returns script-generated animations in the order they were created
+PASS Document.getAnimations() does not return a disconnected node
+PASS Document.getAnimations() does not return an animation with a null target
+PASS Document.getAnimations() returns animations on elements inside same-origin iframes
+PASS iframe.contentDocument.getAnimations() returns animations on elements inside same-origin Document
+PASS ShadowRoot.getAnimations() return all animations in the shadow tree
+PASS Document.getAnimations() does NOT return animations in shadow trees
+PASS ShadowRoot.getAnimations() does NOT return animations in parent document
+PASS Document.getAnimations() triggers a style change event
 

@@ -1,5 +1,5 @@
 
-PASS WebSockets: navigating nested browsing context with a websocket in top-level 
+PASS WebSockets: navigating nested browsing context with a websocket in top-level
 Test requires popup blocker disabled
 
 

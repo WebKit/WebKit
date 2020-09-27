@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: ReferenceError: Can't find variable: nonExistentFunction
 
-PASS Test type of close function. 
-PASS Test sending a message after closing. 
-PASS Test errors are delivered after close. 
-PASS Test workers do not deliver pending events. 
-PASS Test terminating a worker after close. 
+PASS Test type of close function.
+PASS Test sending a message after closing.
+PASS Test errors are delivered after close.
+PASS Test workers do not deliver pending events.
+PASS Test terminating a worker after close.
 

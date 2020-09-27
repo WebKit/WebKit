@@ -1,42 +1,42 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "ConstantSource k-rate offset" 
-PASS Executing "ConstantSourceNode.offset k-rate automation" 
-PASS Executing "ConstantSource.offset" 
-PASS Audit report 
-PASS > [ConstantSource k-rate offset]  
-PASS   k-rate offset: Setting offset.automationRate to "k-rate" is equal to k-rate. 
-PASS   k-rate offset: k-rate node: offset.setValueAtTime(0,0) did not throw an exception. 
-PASS   k-rate offset: k-rate node: offset.linearRampToValueAtTime(10,0.064) did not throw an exception. 
-PASS   k-rate offset: a-rate node:offset.setValueAtTime(0,0) did not throw an exception. 
-PASS   k-rate offset: a-rate node:offset.linearRampToValueAtTime(10,0.064) did not throw an exception. 
-PASS   k-rate offset: Output of k-rate ConstantSourceNode is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...]. 
-PASS   k-rate offset: Output of a-rate ConstantSourceNode is identical to the array [expected array]. 
-PASS   k-rate offset: Difference between a-rate and k-rate ConstantSourceNode is not constantly 0 (contains 508 different values). 
-PASS   k-rate offset k-rate output [0: 127] contains only the constant 0. 
-PASS   k-rate offset k-rate output [128: 255] contains only the constant 2.5. 
-PASS   k-rate offset k-rate output [256: 383] contains only the constant 5. 
-PASS   k-rate offset k-rate output [384: 511] contains only the constant 7.5. 
-PASS < [ConstantSource k-rate offset] All assertions passed. (total 12 assertions) 
-PASS > [ConstantSourceNode.offset k-rate automation] Explicitly test ConstantSourceNode.offset k-rate automation is k-rate 
-PASS   k-rate ConstantSource.offset:  output[0:128] contains only the constant 0. 
-PASS   k-rate ConstantSource.offset:  output[128:256] contains only the constant 128. 
-PASS   k-rate ConstantSource.offset:  output[256:384] contains only the constant 256. 
-PASS   k-rate ConstantSource.offset:  output[384:512] contains only the constant 384. 
-PASS   k-rate ConstantSource.offset:  output[512:640] contains only the constant 512. 
-PASS   k-rate ConstantSource.offset:  output[640:768] contains only the constant 640. 
-PASS   k-rate ConstantSource.offset:  output[768:896] contains only the constant 768. 
-PASS   k-rate ConstantSource.offset:  output[896:1024] contains only the constant 896. 
-PASS < [ConstantSourceNode.offset k-rate automation] All assertions passed. (total 8 assertions) 
-PASS > [ConstantSource.offset] Verify k-rate automation matches k-rate input 
-PASS   ConstantSource.offset k-rate input: output[0:128] contains only the constant 2. 
-PASS   ConstantSource.offset k-rate input: output[128:256] contains only the constant 129.875. 
-PASS   ConstantSource.offset k-rate input: output[256:384] contains only the constant 257.75. 
-PASS   ConstantSource.offset k-rate input: output[384:512] contains only the constant 385.625. 
-PASS   ConstantSource.offset k-rate input: output[512:640] contains only the constant 513.5. 
-PASS   ConstantSource.offset k-rate input: output[640:768] contains only the constant 641.375. 
-PASS   ConstantSource.offset k-rate input: output[768:896] contains only the constant 769.25. 
-PASS   ConstantSource.offset k-rate input: output[896:1024] contains only the constant 897.125. 
-PASS < [ConstantSource.offset] All assertions passed. (total 8 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "ConstantSource k-rate offset"
+PASS Executing "ConstantSourceNode.offset k-rate automation"
+PASS Executing "ConstantSource.offset"
+PASS Audit report
+PASS > [ConstantSource k-rate offset]
+PASS   k-rate offset: Setting offset.automationRate to "k-rate" is equal to k-rate.
+PASS   k-rate offset: k-rate node: offset.setValueAtTime(0,0) did not throw an exception.
+PASS   k-rate offset: k-rate node: offset.linearRampToValueAtTime(10,0.064) did not throw an exception.
+PASS   k-rate offset: a-rate node:offset.setValueAtTime(0,0) did not throw an exception.
+PASS   k-rate offset: a-rate node:offset.linearRampToValueAtTime(10,0.064) did not throw an exception.
+PASS   k-rate offset: Output of k-rate ConstantSourceNode is identical to the array [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...].
+PASS   k-rate offset: Output of a-rate ConstantSourceNode is identical to the array [expected array].
+PASS   k-rate offset: Difference between a-rate and k-rate ConstantSourceNode is not constantly 0 (contains 508 different values).
+PASS   k-rate offset k-rate output [0: 127] contains only the constant 0.
+PASS   k-rate offset k-rate output [128: 255] contains only the constant 2.5.
+PASS   k-rate offset k-rate output [256: 383] contains only the constant 5.
+PASS   k-rate offset k-rate output [384: 511] contains only the constant 7.5.
+PASS < [ConstantSource k-rate offset] All assertions passed. (total 12 assertions)
+PASS > [ConstantSourceNode.offset k-rate automation] Explicitly test ConstantSourceNode.offset k-rate automation is k-rate
+PASS   k-rate ConstantSource.offset:  output[0:128] contains only the constant 0.
+PASS   k-rate ConstantSource.offset:  output[128:256] contains only the constant 128.
+PASS   k-rate ConstantSource.offset:  output[256:384] contains only the constant 256.
+PASS   k-rate ConstantSource.offset:  output[384:512] contains only the constant 384.
+PASS   k-rate ConstantSource.offset:  output[512:640] contains only the constant 512.
+PASS   k-rate ConstantSource.offset:  output[640:768] contains only the constant 640.
+PASS   k-rate ConstantSource.offset:  output[768:896] contains only the constant 768.
+PASS   k-rate ConstantSource.offset:  output[896:1024] contains only the constant 896.
+PASS < [ConstantSourceNode.offset k-rate automation] All assertions passed. (total 8 assertions)
+PASS > [ConstantSource.offset] Verify k-rate automation matches k-rate input
+PASS   ConstantSource.offset k-rate input: output[0:128] contains only the constant 2.
+PASS   ConstantSource.offset k-rate input: output[128:256] contains only the constant 129.875.
+PASS   ConstantSource.offset k-rate input: output[256:384] contains only the constant 257.75.
+PASS   ConstantSource.offset k-rate input: output[384:512] contains only the constant 385.625.
+PASS   ConstantSource.offset k-rate input: output[512:640] contains only the constant 513.5.
+PASS   ConstantSource.offset k-rate input: output[640:768] contains only the constant 641.375.
+PASS   ConstantSource.offset k-rate input: output[768:896] contains only the constant 769.25.
+PASS   ConstantSource.offset k-rate input: output[896:1024] contains only the constant 897.125.
+PASS < [ConstantSource.offset] All assertions passed. (total 8 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

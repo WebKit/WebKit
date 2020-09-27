@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS unsupported_scheme 
+PASS unsupported_scheme
 FAIL data_url The operation is insecure.
 TIMEOUT about_blank Test timed out
 TIMEOUT example_invalid Test timed out

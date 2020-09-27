@@ -1,15 +1,15 @@
 
-PASS new RTCPeerConnection() should have default rtcpMuxPolicy require 
-PASS new RTCPeerConnection({ rtcpMuxPolicy: undefined }) should have default rtcpMuxPolicy require 
-PASS new RTCPeerConnection({ rtcpMuxPolicy: 'require' }) should succeed 
-PASS new RTCPeerConnection({ rtcpMuxPolicy: 'negotiate' }) may succeed or throw NotSupportedError 
-PASS new RTCPeerConnection(config) - with { rtcpMuxPolicy: null } should throw TypeError 
-PASS setConfiguration(config) - with { rtcpMuxPolicy: null } should throw TypeError 
-PASS new RTCPeerConnection(config) - with { rtcpMuxPolicy: 'invalid' } should throw TypeError 
-PASS setConfiguration(config) - with { rtcpMuxPolicy: 'invalid' } should throw TypeError 
-PASS setConfiguration({ rtcpMuxPolicy: 'negotiate' }) with initial rtcpMuxPolicy require should throw InvalidModificationError 
-PASS setConfiguration({ rtcpMuxPolicy: 'require' }) with initial rtcpMuxPolicy negotiate should throw InvalidModificationError 
-PASS setConfiguration({}) with initial rtcpMuxPolicy negotiate should throw InvalidModificationError 
-PASS setRemoteDescription throws InvalidAccessError when called with an offer without rtcp-mux and rtcpMuxPolicy is set to require 
-PASS setRemoteDescription throws InvalidAccessError when called with an answer without rtcp-mux and rtcpMuxPolicy is set to require 
+PASS new RTCPeerConnection() should have default rtcpMuxPolicy require
+PASS new RTCPeerConnection({ rtcpMuxPolicy: undefined }) should have default rtcpMuxPolicy require
+PASS new RTCPeerConnection({ rtcpMuxPolicy: 'require' }) should succeed
+PASS new RTCPeerConnection({ rtcpMuxPolicy: 'negotiate' }) may succeed or throw NotSupportedError
+PASS new RTCPeerConnection(config) - with { rtcpMuxPolicy: null } should throw TypeError
+PASS setConfiguration(config) - with { rtcpMuxPolicy: null } should throw TypeError
+PASS new RTCPeerConnection(config) - with { rtcpMuxPolicy: 'invalid' } should throw TypeError
+PASS setConfiguration(config) - with { rtcpMuxPolicy: 'invalid' } should throw TypeError
+PASS setConfiguration({ rtcpMuxPolicy: 'negotiate' }) with initial rtcpMuxPolicy require should throw InvalidModificationError
+PASS setConfiguration({ rtcpMuxPolicy: 'require' }) with initial rtcpMuxPolicy negotiate should throw InvalidModificationError
+PASS setConfiguration({}) with initial rtcpMuxPolicy negotiate should throw InvalidModificationError
+PASS setRemoteDescription throws InvalidAccessError when called with an offer without rtcp-mux and rtcpMuxPolicy is set to require
+PASS setRemoteDescription throws InvalidAccessError when called with an answer without rtcp-mux and rtcpMuxPolicy is set to require
 

@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: send() - "Basic" authenticated requests with user name and password passed to open() in first request, without in second 
+PASS XMLHttpRequest: send() - "Basic" authenticated requests with user name and password passed to open() in first request, without in second
 

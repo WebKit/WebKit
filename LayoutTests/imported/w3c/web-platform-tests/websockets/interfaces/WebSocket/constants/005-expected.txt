@@ -1,6 +1,6 @@
 
-PASS defineProperty getter CONNECTING 
-PASS defineProperty getter OPEN 
-PASS defineProperty getter CLOSING 
-PASS defineProperty getter CLOSED 
+PASS defineProperty getter CONNECTING
+PASS defineProperty getter OPEN
+PASS defineProperty getter CLOSING
+PASS defineProperty getter CLOSED
 

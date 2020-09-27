@@ -1,10 +1,10 @@
 
-PASS Synchronous blob loading with no mime type [POST] 
-PASS Asynchronous blob loading with no mime type [POST] 
-PASS Synchronous blob loading with no mime type [PUT] 
-PASS Asynchronous blob loading with no mime type [PUT] 
-PASS Synchronous blob loading with invalid mime type [POST] 
-PASS Asynchronous blob loading with invalid mime type [POST] 
-PASS Synchronous blob loading with invalid mime type [PUT] 
-PASS Asynchronous blob loading with invalid mime type [PUT] 
+PASS Synchronous blob loading with no mime type [POST]
+PASS Asynchronous blob loading with no mime type [POST]
+PASS Synchronous blob loading with no mime type [PUT]
+PASS Asynchronous blob loading with no mime type [PUT]
+PASS Synchronous blob loading with invalid mime type [POST]
+PASS Asynchronous blob loading with invalid mime type [POST]
+PASS Synchronous blob loading with invalid mime type [PUT]
+PASS Asynchronous blob loading with invalid mime type [PUT]
 

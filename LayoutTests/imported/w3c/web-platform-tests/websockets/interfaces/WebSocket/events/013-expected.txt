@@ -1,6 +1,6 @@
 
-PASS onclose 
-PASS onopen 
-PASS onerror 
-PASS onmessage 
+PASS onclose
+PASS onopen
+PASS onerror
+PASS onmessage
 

@@ -1,18 +1,18 @@
 
-PASS Passing a String object to FormData.append should work. 
-PASS testFormDataAppend1 
-PASS testFormDataAppend2 
-PASS testFormDataAppendUndefined1 
-PASS testFormDataAppendUndefined2 
-PASS testFormDataAppendNull1 
-PASS testFormDataAppendNull2 
-PASS testFormDataAppendToForm1 
-PASS testFormDataAppendToForm2 
-PASS testFormDataAppendToFormUndefined1 
-PASS testFormDataAppendToFormUndefined2 
-PASS testFormDataAppendToFormNull1 
-PASS testFormDataAppendToFormNull2 
-PASS testFormDataAppendToFormString 
-PASS testFormDataAppendToFormWrongPlatformObject 
-PASS testFormDataAppendEmptyBlob 
+PASS Passing a String object to FormData.append should work.
+PASS testFormDataAppend1
+PASS testFormDataAppend2
+PASS testFormDataAppendUndefined1
+PASS testFormDataAppendUndefined2
+PASS testFormDataAppendNull1
+PASS testFormDataAppendNull2
+PASS testFormDataAppendToForm1
+PASS testFormDataAppendToForm2
+PASS testFormDataAppendToFormUndefined1
+PASS testFormDataAppendToFormUndefined2
+PASS testFormDataAppendToFormNull1
+PASS testFormDataAppendToFormNull2
+PASS testFormDataAppendToFormString
+PASS testFormDataAppendToFormWrongPlatformObject
+PASS testFormDataAppendEmptyBlob
 

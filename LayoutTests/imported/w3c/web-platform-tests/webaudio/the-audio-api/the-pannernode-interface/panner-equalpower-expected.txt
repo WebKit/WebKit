@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Executing "mono source=listener" 
-PASS Executing "stereo source=listener" 
-PASS Audit report 
-PASS > [test] Equal-power panner model of AudioPannerNode 
-PASS   Number of impulses found is equal to 100. 
-PASS   Offsets of impulses at the wrong position is identical to the array []. 
-PASS   Error in left channel gain values is less than or equal to 0.0000011597. 
-PASS   Error in right channel gain values is less than or equal to 0.0000011597. 
-PASS < [test] All assertions passed. (total 4 assertions) 
-PASS > [mono source=listener] Source and listener at the same position 
-PASS   Mono: Left and right channels is identical to the array [expected array]. 
-PASS < [mono source=listener] All assertions passed. (total 1 assertions) 
-PASS > [stereo source=listener] Source and listener at the same position 
-PASS   Stereo: Left and right channels is identical to the array [expected array]. 
-PASS < [stereo source=listener] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Executing "mono source=listener"
+PASS Executing "stereo source=listener"
+PASS Audit report
+PASS > [test] Equal-power panner model of AudioPannerNode
+PASS   Number of impulses found is equal to 100.
+PASS   Offsets of impulses at the wrong position is identical to the array [].
+PASS   Error in left channel gain values is less than or equal to 0.0000011597.
+PASS   Error in right channel gain values is less than or equal to 0.0000011597.
+PASS < [test] All assertions passed. (total 4 assertions)
+PASS > [mono source=listener] Source and listener at the same position
+PASS   Mono: Left and right channels is identical to the array [expected array].
+PASS < [mono source=listener] All assertions passed. (total 1 assertions)
+PASS > [stereo source=listener] Source and listener at the same position
+PASS   Stereo: Left and right channels is identical to the array [expected array].
+PASS < [stereo source=listener] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

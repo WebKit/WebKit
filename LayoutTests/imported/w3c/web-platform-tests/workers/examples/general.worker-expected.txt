@@ -1,4 +1,4 @@
 
-PASS Test that should pass 
-PASS Worker top-level script is the .worker.js file itself. 
+PASS Test that should pass
+PASS Worker top-level script is the .worker.js file itself.
 

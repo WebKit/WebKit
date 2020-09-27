@@ -1,4 +1,4 @@
 
-PASS new CloseEvent() without dictionary 
-PASS new CloseEvent() with dictionary 
+PASS new CloseEvent() without dictionary
+PASS new CloseEvent() with dictionary
 

@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "linear-clamp-high" 
-PASS Audit report 
-PASS > [linear-clamp-high] rolloffFactor clamping for linear distance model 
-PASS   Panner distanceModel: "linear", rolloffFactor: 2 is identical to the array [expected array]. 
-PASS < [linear-clamp-high] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "linear-clamp-high"
+PASS Audit report
+PASS > [linear-clamp-high] rolloffFactor clamping for linear distance model
+PASS   Panner distanceModel: "linear", rolloffFactor: 2 is identical to the array [expected array].
+PASS < [linear-clamp-high] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

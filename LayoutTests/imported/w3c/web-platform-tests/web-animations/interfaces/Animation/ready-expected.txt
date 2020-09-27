@@ -1,6 +1,6 @@
 
-PASS A new ready promise is created when play()/pause() is called 
-PASS Redundant calls to play() do not generate new ready promise objects 
-PASS The ready promise is fulfilled with its Animation 
-PASS The ready promise does not report an unhandledrejection when rejected 
+PASS A new ready promise is created when play()/pause() is called
+PASS Redundant calls to play() do not generate new ready promise objects
+PASS The ready promise is fulfilled with its Animation
+PASS The ready promise does not report an unhandledrejection when rejected
 

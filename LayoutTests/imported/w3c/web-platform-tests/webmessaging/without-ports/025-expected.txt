@@ -1,5 +1,5 @@
 
-PASS MessagePort constructor properties 
-PASS Worker MessageChannel's port should be an instance of MessagePort 
-PASS Worker MessagePort should not be [[Callable]] 
+PASS MessagePort constructor properties
+PASS Worker MessageChannel's port should be an instance of MessagePort
+PASS Worker MessagePort should not be [[Callable]]
 

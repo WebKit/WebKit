@@ -1,6 +1,6 @@
 
-PASS Constants on constructors CONNECTING 
-PASS Constants on constructors OPEN 
-PASS Constants on constructors CLOSING 
-PASS Constants on constructors CLOSED 
+PASS Constants on constructors CONNECTING
+PASS Constants on constructors OPEN
+PASS Constants on constructors CLOSING
+PASS Constants on constructors CLOSED
 

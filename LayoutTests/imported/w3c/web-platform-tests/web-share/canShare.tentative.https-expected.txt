@@ -1,19 +1,19 @@
 
-PASS canShare with no arguments (same as empty dictionary) 
-PASS canShare with an empty dictionary 
-PASS canShare with a undefined argument (same as empty dictionary) 
-PASS canShare with a null argument (same as empty dictionary) 
-PASS canShare with a dictionary containing only surplus fields 
-PASS canShare with an invalid URL 
-PASS canShare with attribute undefined is equivalent to omitting the attribute 
-PASS canShare with title 
-PASS canShare with text 
-PASS canShare with URL 
-PASS canShare with null attribute 
-PASS canShare with number 
-PASS canShare with object 
-PASS canShare with unexpected field 
-PASS canShare with data URL 
-PASS canShare with empty URL 
-PASS canShare with URL having no scheme 
+PASS canShare with no arguments (same as empty dictionary)
+PASS canShare with an empty dictionary
+PASS canShare with a undefined argument (same as empty dictionary)
+PASS canShare with a null argument (same as empty dictionary)
+PASS canShare with a dictionary containing only surplus fields
+PASS canShare with an invalid URL
+PASS canShare with attribute undefined is equivalent to omitting the attribute
+PASS canShare with title
+PASS canShare with text
+PASS canShare with URL
+PASS canShare with null attribute
+PASS canShare with number
+PASS canShare with object
+PASS canShare with unexpected field
+PASS canShare with data URL
+PASS canShare with empty URL
+PASS canShare with URL having no scheme
 

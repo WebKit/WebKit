@@ -1,50 +1,50 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test 0" 
-PASS Executing "Test 1" 
-PASS Executing "Test 2" 
-PASS Executing "Test 3" 
-PASS Executing "Test 4" 
-PASS Executing "Test 5" 
-PASS Audit report 
-PASS > [Test 0] No dezippering for frequency 
-PASS   At time 0, frequency is equal to 350. 
-PASS   At time 0.015625, frequency is equal to 800. 
-PASS   At time 0.0546875, frequency is equal to 200. 
-PASS   Output from frequency setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000030399,"relativeThreshold":0}. 
-PASS   Output from frequency setter matches setValueAtTime output is true. 
-PASS < [Test 0] All assertions passed. (total 5 assertions) 
-PASS > [Test 1] No dezippering for detune 
-PASS   At time 0, detune is equal to 33. 
-PASS   At time 0.015625, detune is equal to 1000. 
-PASS   At time 0.0390625, detune is equal to -400. 
-PASS   Output from detune setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000040532,"relativeThreshold":0}. 
-PASS   Output from detune setter matches setValueAtTime output is true. 
-PASS < [Test 1] All assertions passed. (total 5 assertions) 
-PASS > [Test 2] No dezippering for Q 
-PASS   At time 0, Q is equal to 5. 
-PASS   At time 0.015625, Q is equal to 10. 
-PASS   At time 0.0625, Q is equal to -10. 
-PASS   Output from Q setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Output from Q setter matches setValueAtTime output is true. 
-PASS < [Test 2] All assertions passed. (total 5 assertions) 
-PASS > [Test 3] No dezippering for gain 
-PASS   At time 0, gain is equal to 1. 
-PASS   At time 0.015625, gain is equal to 5. 
-PASS   At time 0.046875, gain is equal to -0.3. 
-PASS   Output from gain setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000019074,"relativeThreshold":0}. 
-PASS   Output from gain setter matches setValueAtTime output is true. 
-PASS < [Test 3] All assertions passed. (total 5 assertions) 
-PASS > [Test 4] No dezippering of frequency vs JS filter 
-PASS   Output from lowpass filter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":5.9607e-7,"relativeThreshold":0}. 
-PASS   Output matches JS filter results is true. 
-PASS < [Test 4] All assertions passed. (total 2 assertions) 
-PASS > [Test 5] Test with modulation 
-PASS   Modulation: At time 0, frequency is equal to 350. 
-PASS   Modulation: At time 0.015625, frequency is equal to 10. 
-PASS   Modulation: At time 0.0625, frequency is equal to -10. 
-PASS   Modulation: Output from frequency setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   Modulation: Output from frequency setter matches setValueAtTime output is true. 
-PASS < [Test 5] All assertions passed. (total 5 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test 0"
+PASS Executing "Test 1"
+PASS Executing "Test 2"
+PASS Executing "Test 3"
+PASS Executing "Test 4"
+PASS Executing "Test 5"
+PASS Audit report
+PASS > [Test 0] No dezippering for frequency
+PASS   At time 0, frequency is equal to 350.
+PASS   At time 0.015625, frequency is equal to 800.
+PASS   At time 0.0546875, frequency is equal to 200.
+PASS   Output from frequency setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000030399,"relativeThreshold":0}.
+PASS   Output from frequency setter matches setValueAtTime output is true.
+PASS < [Test 0] All assertions passed. (total 5 assertions)
+PASS > [Test 1] No dezippering for detune
+PASS   At time 0, detune is equal to 33.
+PASS   At time 0.015625, detune is equal to 1000.
+PASS   At time 0.0390625, detune is equal to -400.
+PASS   Output from detune setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000040532,"relativeThreshold":0}.
+PASS   Output from detune setter matches setValueAtTime output is true.
+PASS < [Test 1] All assertions passed. (total 5 assertions)
+PASS > [Test 2] No dezippering for Q
+PASS   At time 0, Q is equal to 5.
+PASS   At time 0.015625, Q is equal to 10.
+PASS   At time 0.0625, Q is equal to -10.
+PASS   Output from Q setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Output from Q setter matches setValueAtTime output is true.
+PASS < [Test 2] All assertions passed. (total 5 assertions)
+PASS > [Test 3] No dezippering for gain
+PASS   At time 0, gain is equal to 1.
+PASS   At time 0.015625, gain is equal to 5.
+PASS   At time 0.046875, gain is equal to -0.3.
+PASS   Output from gain setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0000019074,"relativeThreshold":0}.
+PASS   Output from gain setter matches setValueAtTime output is true.
+PASS < [Test 3] All assertions passed. (total 5 assertions)
+PASS > [Test 4] No dezippering of frequency vs JS filter
+PASS   Output from lowpass filter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":5.9607e-7,"relativeThreshold":0}.
+PASS   Output matches JS filter results is true.
+PASS < [Test 4] All assertions passed. (total 2 assertions)
+PASS > [Test 5] Test with modulation
+PASS   Modulation: At time 0, frequency is equal to 350.
+PASS   Modulation: At time 0.015625, frequency is equal to 10.
+PASS   Modulation: At time 0.0625, frequency is equal to -10.
+PASS   Modulation: Output from frequency setter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   Modulation: Output from frequency setter matches setValueAtTime output is true.
+PASS < [Test 5] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

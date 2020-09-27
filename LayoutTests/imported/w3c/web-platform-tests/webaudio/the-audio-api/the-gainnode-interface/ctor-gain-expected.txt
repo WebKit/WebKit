@@ -1,58 +1,58 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "invalid constructor" 
-PASS Executing "default constructor" 
-PASS Executing "test AudioNodeOptions" 
-PASS Executing "constructor with options" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   context = new OfflineAudioContext(...) did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [invalid constructor]  
-PASS   new GainNode() threw TypeError: "Not enough arguments". 
-PASS   new GainNode(1) threw TypeError: "Argument 1 ('context') to the GainNode constructor must be an instance of BaseAudioContext". 
-PASS   new GainNode(context, 42) threw TypeError: "Type error". 
-PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
-PASS > [default constructor]  
-PASS   node0 = new GainNode(context) did not throw an exception. 
-PASS   node0 instanceof GainNode is equal to true. 
-PASS   node0.numberOfInputs is equal to 1. 
-PASS   node0.numberOfOutputs is equal to 1. 
-PASS   node0.channelCount is equal to 2. 
-PASS   node0.channelCountMode is equal to max. 
-PASS   node0.channelInterpretation is equal to speakers. 
-PASS   node0.gain.value is equal to 1. 
-PASS < [default constructor] All assertions passed. (total 8 assertions) 
-PASS > [test AudioNodeOptions]  
-PASS   new GainNode(c, {channelCount: 17}) did not throw an exception. 
-PASS   node.channelCount is equal to 17. 
-PASS   new GainNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0". 
-PASS   new GainNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit". 
-PASS   new GainNode(c, {channelCountMode: "max"} did not throw an exception. 
-PASS   node.channelCountMode is equal to max. 
-PASS   new GainNode(c, {channelCountMode: "max"}) did not throw an exception. 
-PASS   node.channelCountMode after valid setter is equal to max. 
-PASS   new GainNode(c, {channelCountMode: "clamped-max"}) did not throw an exception. 
-PASS   node.channelCountMode after valid setter is equal to clamped-max. 
-PASS   new GainNode(c, {channelCountMode: "explicit"}) did not throw an exception. 
-PASS   node.channelCountMode after valid setter is equal to explicit. 
-PASS   new GainNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error". 
-PASS   node.channelCountMode after invalid setter is equal to explicit. 
-PASS   new GainNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to speakers. 
-PASS   new GainNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to discrete. 
-PASS   new GainNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
-PASS   node.channelInterpretation after invalid setter is equal to discrete. 
-PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions) 
-PASS > [constructor with options]  
-PASS   node1 = new GainNode(c, {"gain":-2}) did not throw an exception. 
-PASS   node1 instanceof GainNode is equal to true. 
-PASS   node1.gain.value is equal to -2. 
-PASS   node1.channelCount is equal to 2. 
-PASS   node1.channelCountMode is equal to max. 
-PASS   node1.channelInterpretation is equal to speakers. 
-PASS < [constructor with options] All assertions passed. (total 6 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "invalid constructor"
+PASS Executing "default constructor"
+PASS Executing "test AudioNodeOptions"
+PASS Executing "constructor with options"
+PASS Audit report
+PASS > [initialize]
+PASS   context = new OfflineAudioContext(...) did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [invalid constructor]
+PASS   new GainNode() threw TypeError: "Not enough arguments".
+PASS   new GainNode(1) threw TypeError: "Argument 1 ('context') to the GainNode constructor must be an instance of BaseAudioContext".
+PASS   new GainNode(context, 42) threw TypeError: "Type error".
+PASS < [invalid constructor] All assertions passed. (total 3 assertions)
+PASS > [default constructor]
+PASS   node0 = new GainNode(context) did not throw an exception.
+PASS   node0 instanceof GainNode is equal to true.
+PASS   node0.numberOfInputs is equal to 1.
+PASS   node0.numberOfOutputs is equal to 1.
+PASS   node0.channelCount is equal to 2.
+PASS   node0.channelCountMode is equal to max.
+PASS   node0.channelInterpretation is equal to speakers.
+PASS   node0.gain.value is equal to 1.
+PASS < [default constructor] All assertions passed. (total 8 assertions)
+PASS > [test AudioNodeOptions]
+PASS   new GainNode(c, {channelCount: 17}) did not throw an exception.
+PASS   node.channelCount is equal to 17.
+PASS   new GainNode(c, {channelCount: 0}) threw NotSupportedError: "Channel count cannot be 0".
+PASS   new GainNode(c, {channelCount: 99}) threw IndexSizeError: "Channel count exceeds maximum limit".
+PASS   new GainNode(c, {channelCountMode: "max"} did not throw an exception.
+PASS   node.channelCountMode is equal to max.
+PASS   new GainNode(c, {channelCountMode: "max"}) did not throw an exception.
+PASS   node.channelCountMode after valid setter is equal to max.
+PASS   new GainNode(c, {channelCountMode: "clamped-max"}) did not throw an exception.
+PASS   node.channelCountMode after valid setter is equal to clamped-max.
+PASS   new GainNode(c, {channelCountMode: "explicit"}) did not throw an exception.
+PASS   node.channelCountMode after valid setter is equal to explicit.
+PASS   new GainNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error".
+PASS   node.channelCountMode after invalid setter is equal to explicit.
+PASS   new GainNode(c, {channelInterpretation: "speakers"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to speakers.
+PASS   new GainNode(c, {channelInterpretation: "discrete"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to discrete.
+PASS   new GainNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error".
+PASS   node.channelInterpretation after invalid setter is equal to discrete.
+PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions)
+PASS > [constructor with options]
+PASS   node1 = new GainNode(c, {"gain":-2}) did not throw an exception.
+PASS   node1 instanceof GainNode is equal to true.
+PASS   node1.gain.value is equal to -2.
+PASS   node1.channelCount is equal to 2.
+PASS   node1.channelCountMode is equal to max.
+PASS   node1.channelInterpretation is equal to speakers.
+PASS < [constructor with options] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

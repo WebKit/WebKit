@@ -1,3 +1,3 @@
 
-PASS XMLHttpRequest: open() - open() - send() 
+PASS XMLHttpRequest: open() - open() - send()
 

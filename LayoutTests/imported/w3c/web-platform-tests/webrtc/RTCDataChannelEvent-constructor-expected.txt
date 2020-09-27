@@ -1,6 +1,6 @@
 
-PASS RTCDataChannelEvent constructor without a required argument. 
-PASS RTCDataChannelEvent constructor with channel passed as null. 
-PASS RTCDataChannelEvent constructor with a channel passed as undefined. 
-PASS RTCDataChannelEvent constructor with full arguments. 
+PASS RTCDataChannelEvent constructor without a required argument.
+PASS RTCDataChannelEvent constructor with channel passed as null.
+PASS RTCDataChannelEvent constructor with a channel passed as undefined.
+PASS RTCDataChannelEvent constructor with full arguments.
 

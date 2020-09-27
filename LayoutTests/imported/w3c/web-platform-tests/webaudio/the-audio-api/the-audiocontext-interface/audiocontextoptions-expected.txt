@@ -1,39 +1,39 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test-audiocontextoptions-latencyHint-basic" 
-PASS Executing "test-audiocontextoptions-latencyHint-double" 
-PASS Executing "test-audiocontextoptions-sampleRate" 
-PASS Audit report 
-PASS > [test-audiocontextoptions-latencyHint-basic] Test creating contexts with basic latencyHint types. 
-PASS   context = new AudioContext() did not throw an exception. 
-PASS   context.sampleRate (44100 Hz) is greater than 0. 
-PASS   default baseLatency is greater than or equal to 0. 
-PASS   context = new AudioContext({'latencyHint': 'interactive'}) did not throw an exception. 
-PASS   interactive baseLatency is equal to 0.0029024943310657597. 
-PASS   context = new AudioContext({'latencyHint': 'balanced'}) did not throw an exception. 
-PASS   balanced baseLatency is greater than or equal to 0.0029024943310657597. 
-PASS   context = new AudioContext({'latencyHint': 'playback'}) did not throw an exception. 
-PASS   playback baseLatency is greater than or equal to 0.0029024943310657597. 
-PASS < [test-audiocontextoptions-latencyHint-basic] All assertions passed. (total 9 assertions) 
-PASS > [test-audiocontextoptions-latencyHint-double] Test creating contexts with explicit latencyHint values. 
-PASS   context = new AudioContext({'latencyHint': interactiveLatency/2}) did not throw an exception. 
-PASS   double-constructor baseLatency small is less than or equal to 0.0029024943310657597. 
-PASS   context = new AudioContext({'latencyHint': validLatency}) did not throw an exception. 
-PASS   double-constructor baseLatency inrange 1 is greater than or equal to 0.0029024943310657597. 
-PASS   double-constructor baseLatency inrange 2 is less than or equal to 0.0029024943310657597. 
-PASS   creating two high latency contexts did not throw an exception. 
-PASS   high latency context baseLatency is equal to 0.0029024943310657597. 
-PASS   high latency context baseLatency is greater than or equal to 0.0029024943310657597. 
-PASS   context = new AudioContext({'latencyHint': 'foo'}) threw TypeError: "Type error". 
-PASS   context = new AudioContext('latencyHint') threw TypeError: "Type error". 
-PASS < [test-audiocontextoptions-latencyHint-double] All assertions passed. (total 10 assertions) 
-PASS > [test-audiocontextoptions-sampleRate] Test creating contexts with non-default sampleRate values. 
-PASS   context = new AudioContext({sampleRate: 1}) threw SyntaxError: "sampleRate is not in range". 
-PASS   context = new AudioContext({sampleRate: 1000000}) threw SyntaxError: "sampleRate is not in range". 
-PASS   context = new AudioContext({sampleRate: -1}) threw SyntaxError: "sampleRate is not in range". 
-PASS   context = new AudioContext({sampleRate: 0}) threw SyntaxError: "sampleRate is not in range". 
-PASS   context = new AudioContext({sampleRate: 24000}) did not throw an exception. 
-PASS   sampleRate inrange is equal to 24000. 
-PASS < [test-audiocontextoptions-sampleRate] All assertions passed. (total 6 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test-audiocontextoptions-latencyHint-basic"
+PASS Executing "test-audiocontextoptions-latencyHint-double"
+PASS Executing "test-audiocontextoptions-sampleRate"
+PASS Audit report
+PASS > [test-audiocontextoptions-latencyHint-basic] Test creating contexts with basic latencyHint types.
+PASS   context = new AudioContext() did not throw an exception.
+PASS   context.sampleRate (44100 Hz) is greater than 0.
+PASS   default baseLatency is greater than or equal to 0.
+PASS   context = new AudioContext({'latencyHint': 'interactive'}) did not throw an exception.
+PASS   interactive baseLatency is equal to 0.0029024943310657597.
+PASS   context = new AudioContext({'latencyHint': 'balanced'}) did not throw an exception.
+PASS   balanced baseLatency is greater than or equal to 0.0029024943310657597.
+PASS   context = new AudioContext({'latencyHint': 'playback'}) did not throw an exception.
+PASS   playback baseLatency is greater than or equal to 0.0029024943310657597.
+PASS < [test-audiocontextoptions-latencyHint-basic] All assertions passed. (total 9 assertions)
+PASS > [test-audiocontextoptions-latencyHint-double] Test creating contexts with explicit latencyHint values.
+PASS   context = new AudioContext({'latencyHint': interactiveLatency/2}) did not throw an exception.
+PASS   double-constructor baseLatency small is less than or equal to 0.0029024943310657597.
+PASS   context = new AudioContext({'latencyHint': validLatency}) did not throw an exception.
+PASS   double-constructor baseLatency inrange 1 is greater than or equal to 0.0029024943310657597.
+PASS   double-constructor baseLatency inrange 2 is less than or equal to 0.0029024943310657597.
+PASS   creating two high latency contexts did not throw an exception.
+PASS   high latency context baseLatency is equal to 0.0029024943310657597.
+PASS   high latency context baseLatency is greater than or equal to 0.0029024943310657597.
+PASS   context = new AudioContext({'latencyHint': 'foo'}) threw TypeError: "Type error".
+PASS   context = new AudioContext('latencyHint') threw TypeError: "Type error".
+PASS < [test-audiocontextoptions-latencyHint-double] All assertions passed. (total 10 assertions)
+PASS > [test-audiocontextoptions-sampleRate] Test creating contexts with non-default sampleRate values.
+PASS   context = new AudioContext({sampleRate: 1}) threw SyntaxError: "sampleRate is not in range".
+PASS   context = new AudioContext({sampleRate: 1000000}) threw SyntaxError: "sampleRate is not in range".
+PASS   context = new AudioContext({sampleRate: -1}) threw SyntaxError: "sampleRate is not in range".
+PASS   context = new AudioContext({sampleRate: 0}) threw SyntaxError: "sampleRate is not in range".
+PASS   context = new AudioContext({sampleRate: 24000}) did not throw an exception.
+PASS   sampleRate inrange is equal to 24000.
+PASS < [test-audiocontextoptions-sampleRate] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

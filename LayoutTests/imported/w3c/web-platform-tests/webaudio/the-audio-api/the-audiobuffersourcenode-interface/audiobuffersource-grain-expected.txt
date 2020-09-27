@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test setting the source buffer after starting the grain" 
-PASS Audit report 
-PASS > [Test setting the source buffer after starting the grain]  
-PASS   Buffer was played is true. 
-PASS < [Test setting the source buffer after starting the grain] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test setting the source buffer after starting the grain"
+PASS Audit report
+PASS > [Test setting the source buffer after starting the grain]
+PASS   Buffer was played is true.
+PASS < [Test setting the source buffer after starting the grain] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

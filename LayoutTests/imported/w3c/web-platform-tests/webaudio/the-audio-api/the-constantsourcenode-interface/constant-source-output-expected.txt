@@ -1,33 +1,33 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "constant source" 
-PASS Executing "stop before start" 
-PASS Executing "stop equal to start" 
-PASS Executing "start/stop" 
-PASS Executing "basic automation" 
-PASS Executing "connected audioparam" 
-PASS Audit report 
-PASS > [constant source]  
-PASS   Basic: ConstantSourceNode({offset: 0.5}) is identical to the array [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...]. 
-PASS < [constant source] All assertions passed. (total 1 assertions) 
-PASS > [stop before start]  
-PASS   ConstantSourceNode with stop before start must output silence contains only the constant 0. 
-PASS < [stop before start] All assertions passed. (total 1 assertions) 
-PASS > [stop equal to start]  
-PASS   ConstantSourceNode with stop equal to start  must output silence contains only the constant 0. 
-PASS < [stop equal to start] All assertions passed. (total 1 assertions) 
-PASS > [start/stop]  
-PASS   start/stop: ConstantSourceNode frames [0, 10) contains only the constant 0. 
-PASS   start/stop: ConstantSourceNode frames [10, 300) contains only the constant 1. 
-PASS   start/stop: ConstantSourceNode frames [300, 6000) contains only the constant 0. 
-PASS < [start/stop] All assertions passed. (total 3 assertions) 
-PASS > [basic automation]  
-PASS   Automation: ConstantSourceNode.linearRamp(1, 0.5) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":7.161e-7}. 
-PASS   Automation: ConstantSourceNode after ramp contains only the constant 1. 
-PASS < [basic automation] All assertions passed. (total 2 assertions) 
-PASS > [connected audioparam]  
-PASS   Connected param: ConstantSourceNode frames [0, 10) contains only the constant 0. 
-PASS   Connected param: ConstantSourceNode frames [10, 6000) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS < [connected audioparam] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "constant source"
+PASS Executing "stop before start"
+PASS Executing "stop equal to start"
+PASS Executing "start/stop"
+PASS Executing "basic automation"
+PASS Executing "connected audioparam"
+PASS Audit report
+PASS > [constant source]
+PASS   Basic: ConstantSourceNode({offset: 0.5}) is identical to the array [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5...].
+PASS < [constant source] All assertions passed. (total 1 assertions)
+PASS > [stop before start]
+PASS   ConstantSourceNode with stop before start must output silence contains only the constant 0.
+PASS < [stop before start] All assertions passed. (total 1 assertions)
+PASS > [stop equal to start]
+PASS   ConstantSourceNode with stop equal to start  must output silence contains only the constant 0.
+PASS < [stop equal to start] All assertions passed. (total 1 assertions)
+PASS > [start/stop]
+PASS   start/stop: ConstantSourceNode frames [0, 10) contains only the constant 0.
+PASS   start/stop: ConstantSourceNode frames [10, 300) contains only the constant 1.
+PASS   start/stop: ConstantSourceNode frames [300, 6000) contains only the constant 0.
+PASS < [start/stop] All assertions passed. (total 3 assertions)
+PASS > [basic automation]
+PASS   Automation: ConstantSourceNode.linearRamp(1, 0.5) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":7.161e-7}.
+PASS   Automation: ConstantSourceNode after ramp contains only the constant 1.
+PASS < [basic automation] All assertions passed. (total 2 assertions)
+PASS > [connected audioparam]
+PASS   Connected param: ConstantSourceNode frames [0, 10) contains only the constant 0.
+PASS   Connected param: ConstantSourceNode frames [10, 6000) equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS < [connected audioparam] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

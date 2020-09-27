@@ -1,3 +1,3 @@
 
-PASS WebSockets: close() return value 
+PASS WebSockets: close() return value
 

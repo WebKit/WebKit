@@ -1,12 +1,12 @@
 
-PASS XHR method GET with MIME type text/plain 
-PASS XHR method GET with MIME type text/plain (base64) 
-PASS XHR method GET with MIME type text/html 
-PASS XHR method GET with MIME type text/html;charset=UTF-8 
-PASS XHR method GET with MIME type image/png 
-PASS XHR method POST with MIME type text/plain 
-PASS XHR method PUT with MIME type text/plain 
-PASS XHR method DELETE with MIME type text/plain 
-PASS XHR method HEAD with MIME type text/plain 
-PASS XHR method UNICORN with MIME type text/plain 
+PASS XHR method GET with MIME type text/plain
+PASS XHR method GET with MIME type text/plain (base64)
+PASS XHR method GET with MIME type text/html
+PASS XHR method GET with MIME type text/html;charset=UTF-8
+PASS XHR method GET with MIME type image/png
+PASS XHR method POST with MIME type text/plain
+PASS XHR method PUT with MIME type text/plain
+PASS XHR method DELETE with MIME type text/plain
+PASS XHR method HEAD with MIME type text/plain
+PASS XHR method UNICORN with MIME type text/plain
 

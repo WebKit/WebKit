@@ -1,9 +1,9 @@
 
-PASS webkitAudioContext interface should not exist 
-PASS webkitAudioPannerNode interface should not exist 
-PASS webkitOfflineAudioContext interface should not exist 
-PASS dopplerFactor member should not exist on the AudioListener. 
-PASS speedOfSound member should not exist on the AudioListener. 
-PASS setVelocity member should not exist on the AudioListener. 
-PASS setVelocity should not exist on PannerNodes. 
+PASS webkitAudioContext interface should not exist
+PASS webkitAudioPannerNode interface should not exist
+PASS webkitOfflineAudioContext interface should not exist
+PASS dopplerFactor member should not exist on the AudioListener.
+PASS speedOfSound member should not exist on the AudioListener.
+PASS setVelocity member should not exist on the AudioListener.
+PASS setVelocity should not exist on PannerNodes.
 

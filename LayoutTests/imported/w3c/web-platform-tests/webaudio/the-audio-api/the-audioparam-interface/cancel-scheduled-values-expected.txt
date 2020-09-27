@@ -1,19 +1,19 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "cancel1" 
-PASS Audit report 
-PASS > [cancel1] cancel setValueCurve 
-PASS   cancelTime is after curve start is greater than 0.25. 
-PASS   cancelTime is before curve ends is less than 0.5. 
-PASS   gain.gain.setValueAtTime(0.5, 0) did not throw an exception. 
-PASS   gain.gain.setValueAtTime(1.5, 0.25) did not throw an exception. 
-PASS   gain.gain.setValueCurveAtTime(..., 0.25, 0.25) did not throw an exception. 
-PASS   gain.gain.setValueAtTime(99, 0.5) did not throw an exception. 
-PASS   gain.gain.cancelScheduledValues(0.3) did not throw an exception. 
-PASS   gain.gain.setValueAtTime(3, 0.375) did not throw an exception. 
-PASS   output[0:1999] contains only the constant 0.5. 
-PASS   output[2000:2999] contains only the constant 1.5. 
-PASS   output[3000:] contains only the constant 3. 
-PASS < [cancel1] All assertions passed. (total 11 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "cancel1"
+PASS Audit report
+PASS > [cancel1] cancel setValueCurve
+PASS   cancelTime is after curve start is greater than 0.25.
+PASS   cancelTime is before curve ends is less than 0.5.
+PASS   gain.gain.setValueAtTime(0.5, 0) did not throw an exception.
+PASS   gain.gain.setValueAtTime(1.5, 0.25) did not throw an exception.
+PASS   gain.gain.setValueCurveAtTime(..., 0.25, 0.25) did not throw an exception.
+PASS   gain.gain.setValueAtTime(99, 0.5) did not throw an exception.
+PASS   gain.gain.cancelScheduledValues(0.3) did not throw an exception.
+PASS   gain.gain.setValueAtTime(3, 0.375) did not throw an exception.
+PASS   output[0:1999] contains only the constant 0.5.
+PASS   output[2000:2999] contains only the constant 1.5.
+PASS   output[3000:] contains only the constant 3.
+PASS < [cancel1] All assertions passed. (total 11 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

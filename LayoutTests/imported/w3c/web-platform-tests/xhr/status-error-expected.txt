@@ -1,23 +1,23 @@
 This shouldn't be tested inside a tunnel.
 
 
-PASS XMLHttpRequest: status error handling GET 200 
-PASS XMLHttpRequest: status error handling GET 400 
-PASS XMLHttpRequest: status error handling GET 401 
-PASS XMLHttpRequest: status error handling GET 404 
-PASS XMLHttpRequest: status error handling GET 410 
-PASS XMLHttpRequest: status error handling GET 500 
-PASS XMLHttpRequest: status error handling GET 699 
-PASS XMLHttpRequest: status error handling HEAD 200 
-PASS XMLHttpRequest: status error handling HEAD 404 
-PASS XMLHttpRequest: status error handling HEAD 500 
-PASS XMLHttpRequest: status error handling HEAD 699 
-PASS XMLHttpRequest: status error handling POST 200 
-PASS XMLHttpRequest: status error handling POST 404 
-PASS XMLHttpRequest: status error handling POST 500 
-PASS XMLHttpRequest: status error handling POST 699 
-PASS XMLHttpRequest: status error handling PUT 200 
-PASS XMLHttpRequest: status error handling PUT 404 
-PASS XMLHttpRequest: status error handling PUT 500 
-PASS XMLHttpRequest: status error handling PUT 699 
+PASS XMLHttpRequest: status error handling GET 200
+PASS XMLHttpRequest: status error handling GET 400
+PASS XMLHttpRequest: status error handling GET 401
+PASS XMLHttpRequest: status error handling GET 404
+PASS XMLHttpRequest: status error handling GET 410
+PASS XMLHttpRequest: status error handling GET 500
+PASS XMLHttpRequest: status error handling GET 699
+PASS XMLHttpRequest: status error handling HEAD 200
+PASS XMLHttpRequest: status error handling HEAD 404
+PASS XMLHttpRequest: status error handling HEAD 500
+PASS XMLHttpRequest: status error handling HEAD 699
+PASS XMLHttpRequest: status error handling POST 200
+PASS XMLHttpRequest: status error handling POST 404
+PASS XMLHttpRequest: status error handling POST 500
+PASS XMLHttpRequest: status error handling POST 699
+PASS XMLHttpRequest: status error handling PUT 200
+PASS XMLHttpRequest: status error handling PUT 404
+PASS XMLHttpRequest: status error handling PUT 500
+PASS XMLHttpRequest: status error handling PUT 699
 

@@ -1,3 +1,3 @@
 
-PASS WebSockets: when to process set-cookie fields in ws response 
+PASS WebSockets: when to process set-cookie fields in ws response
 

@@ -1,7 +1,7 @@
 
-PASS Url is /echo - should throw SYNTAX_ERR 
-PASS Url is a mail address - should throw SYNTAX_ERR 
-PASS Url is about:blank - should throw SYNTAX_ERR 
-PASS Url is ?test - should throw SYNTAX_ERR 
-PASS Url is #test - should throw SYNTAX_ERR 
+PASS Url is /echo - should throw SYNTAX_ERR
+PASS Url is a mail address - should throw SYNTAX_ERR
+PASS Url is about:blank - should throw SYNTAX_ERR
+PASS Url is ?test - should throw SYNTAX_ERR
+PASS Url is #test - should throw SYNTAX_ERR
 

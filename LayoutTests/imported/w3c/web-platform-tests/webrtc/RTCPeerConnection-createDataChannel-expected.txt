@@ -1,34 +1,34 @@
 
-PASS createDataChannel with no argument should throw TypeError 
-PASS createDataChannel with closed connection should throw InvalidStateError 
+PASS createDataChannel with no argument should throw TypeError
+PASS createDataChannel with closed connection should throw InvalidStateError
 FAIL createDataChannel attribute default values assert_equals: expected "blob" but got "arraybuffer"
 FAIL createDataChannel with provided parameters should initialize attributes to provided values assert_equals: expected "blob" but got "arraybuffer"
-PASS createDataChannel with label "foo" should succeed 
+PASS createDataChannel with label "foo" should succeed
 FAIL createDataChannel with label null should succeed assert_equals: expected "null" but got ""
-PASS createDataChannel with label undefined should succeed 
-PASS createDataChannel with label lone surrogate should succeed 
-PASS createDataChannel with ordered false should succeed 
-PASS createDataChannel with ordered null/undefined should succeed 
-PASS createDataChannel with maxPacketLifeTime 0 should succeed 
-PASS createDataChannel with maxRetransmits 0 should succeed 
-PASS createDataChannel with both maxPacketLifeTime and maxRetransmits undefined should succeed 
-PASS createDataChannel with both maxPacketLifeTime and maxRetransmits should throw TypeError 
-PASS createDataChannel with protocol "foo" should succeed 
-PASS createDataChannel with protocol null should succeed 
-PASS createDataChannel with protocol undefined should succeed 
-PASS createDataChannel with protocol lone surrogate should succeed 
+PASS createDataChannel with label undefined should succeed
+PASS createDataChannel with label lone surrogate should succeed
+PASS createDataChannel with ordered false should succeed
+PASS createDataChannel with ordered null/undefined should succeed
+PASS createDataChannel with maxPacketLifeTime 0 should succeed
+PASS createDataChannel with maxRetransmits 0 should succeed
+PASS createDataChannel with both maxPacketLifeTime and maxRetransmits undefined should succeed
+PASS createDataChannel with both maxPacketLifeTime and maxRetransmits should throw TypeError
+PASS createDataChannel with protocol "foo" should succeed
+PASS createDataChannel with protocol null should succeed
+PASS createDataChannel with protocol undefined should succeed
+PASS createDataChannel with protocol lone surrogate should succeed
 FAIL createDataChannel with id 0 and negotiated not set should succeed, but not set the channel's id assert_equals: expected (object) null but got (number) 0
 FAIL createDataChannel with id 1 and negotiated not set should succeed, but not set the channel's id assert_equals: expected (object) null but got (number) 1
 FAIL createDataChannel with id 65534 and negotiated not set should succeed, but not set the channel's id assert_equals: expected (object) null but got (number) 65534
 FAIL createDataChannel with id 65535 and negotiated not set should succeed, but not set the channel's id Type error
-PASS createDataChannel with id 0 and negotiated true should succeed, and set the channel's id 
-PASS createDataChannel with id 1 and negotiated true should succeed, and set the channel's id 
+PASS createDataChannel with id 0 and negotiated true should succeed, and set the channel's id
+PASS createDataChannel with id 1 and negotiated true should succeed, and set the channel's id
 FAIL createDataChannel with id 65534 and negotiated true should succeed, and set the channel's id The operation is not supported.
-PASS createDataChannel with id -1 and negotiated not set should throw TypeError 
-PASS createDataChannel with id 65536 and negotiated not set should throw TypeError 
-PASS createDataChannel with id -1 should throw TypeError 
-PASS createDataChannel with id 65535 should throw TypeError 
-PASS createDataChannel with id 65536 should throw TypeError 
+PASS createDataChannel with id -1 and negotiated not set should throw TypeError
+PASS createDataChannel with id 65536 and negotiated not set should throw TypeError
+PASS createDataChannel with id -1 should throw TypeError
+PASS createDataChannel with id 65535 should throw TypeError
+PASS createDataChannel with id 65536 should throw TypeError
 FAIL createDataChannel with too long label should throw TypeError assert_throws_js: function "() =>
     pc.createDataChannel('l'.repeat(65536), {
       negotiated: true,
@@ -36,8 +36,8 @@ FAIL createDataChannel with too long label should throw TypeError assert_throws_
     })" did not throw
 FAIL createDataChannel with too long label (2 byte unicode) should throw TypeError assert_throws_js: function "() =>
     pc.createDataChannel('\u00b5'.repeat(32768))" did not throw
-PASS createDataChannel with same label used twice should not throw 
-PASS createDataChannel with negotiated true and id should succeed 
+PASS createDataChannel with same label used twice should not throw
+PASS createDataChannel with negotiated true and id should succeed
 FAIL createDataChannel with too long protocol should throw TypeError assert_throws_js: function "() =>
     pc.createDataChannel('', {
       protocol: 'p'.repeat(65536),
@@ -48,8 +48,8 @@ FAIL createDataChannel with too long protocol (2 byte unicode) should throw Type
     pc.createDataChannel('', {
       protocol: '\u00b6'.repeat(32768)
     })" did not throw
-PASS createDataChannel with maximum length label and protocol should succeed 
-PASS createDataChannel with negotiated false should succeed 
+PASS createDataChannel with maximum length label and protocol should succeed
+PASS createDataChannel with negotiated false should succeed
 FAIL createDataChannel with negotiated false and id 42 should ignore the id assert_equals: Expect dc.id to be ignored (null) expected (object) null but got (number) 42
 FAIL createDataChannel with negotiated true and id not defined should throw TypeError assert_throws_js: function "() =>
     pc.createDataChannel('test', {
@@ -67,12 +67,12 @@ FAIL Reusing a data channel id that is in use (after setRemoteDescription) shoul
       id: 42,
     })" threw object "NotSupportedError: The operation is not supported." that is not a DOMException OperationError: property "code" is equal to 9, expected 0
 FAIL Reusing a data channel id that is in use (after setRemoteDescription, negotiated via DCEP) should throw OperationError assert_not_equals: Expect dc1.id to be assigned after remote description has been set got disallowed value null
-PASS New datachannel should be in the connecting state after creation (after connection establishment) 
-PASS addTrack, then creating datachannel, should negotiate properly 
-PASS addTrack, then creating datachannel, should negotiate properly when max-bundle is used 
+PASS New datachannel should be in the connecting state after creation (after connection establishment)
+PASS addTrack, then creating datachannel, should negotiate properly
+PASS addTrack, then creating datachannel, should negotiate properly when max-bundle is used
 FAIL Stopping the bundle-tag when there is a datachannel in the bundle should kill the DataChannel promise_test: Unhandled rejection with value: object "OperationError: Failed to set local answer sdp: Failed to apply the description for 1: Failed to setup RTCP mux."
-PASS New negotiated datachannel should be in the connecting state after creation (after connection establishment) 
-PASS addTrack, then creating negotiated datachannel, should negotiate properly 
-PASS addTrack, then creating negotiated datachannel, should negotiate properly when max-bundle is used 
+PASS New negotiated datachannel should be in the connecting state after creation (after connection establishment)
+PASS addTrack, then creating negotiated datachannel, should negotiate properly
+PASS addTrack, then creating negotiated datachannel, should negotiate properly when max-bundle is used
 FAIL Stopping the bundle-tag when there is a negotiated datachannel in the bundle should kill the DataChannel promise_test: Unhandled rejection with value: object "OperationError: Failed to set local answer sdp: Failed to apply the description for 1: Failed to setup RTCP mux."
 

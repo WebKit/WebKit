@@ -1,11 +1,11 @@
 
-PASS mozInitMessageEvent on the prototype 
-PASS mozInitMessageEvent on the instance 
-PASS msInitMessageEvent on the prototype 
-PASS msInitMessageEvent on the instance 
-PASS oInitMessageEvent on the prototype 
-PASS oInitMessageEvent on the instance 
-PASS webkitInitMessageEvent on the prototype 
-PASS webkitInitMessageEvent on the instance 
-PASS initMessageEvent with no arguments 
+PASS mozInitMessageEvent on the prototype
+PASS mozInitMessageEvent on the instance
+PASS msInitMessageEvent on the prototype
+PASS msInitMessageEvent on the instance
+PASS oInitMessageEvent on the prototype
+PASS oInitMessageEvent on the instance
+PASS webkitInitMessageEvent on the prototype
+PASS webkitInitMessageEvent on the instance
+PASS initMessageEvent with no arguments
 

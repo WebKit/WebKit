@@ -1,53 +1,53 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "invalid constructor" 
-PASS Executing "default constructor" 
-PASS Executing "test AudioNodeOptions" 
-PASS Executing "constructor options" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   context = new OfflineAudioContext(...) did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [invalid constructor]  
-PASS   new ChannelMergerNode() threw TypeError: "Not enough arguments". 
-PASS   new ChannelMergerNode(1) threw TypeError: "Argument 1 ('context') to the ChannelMergerNode constructor must be an instance of BaseAudioContext". 
-PASS   new ChannelMergerNode(context, 42) threw TypeError: "Type error". 
-PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
-PASS > [default constructor]  
-PASS   node0 = new ChannelMergerNode(context) did not throw an exception. 
-PASS   node0 instanceof ChannelMergerNode is equal to true. 
-PASS   node0.numberOfInputs is equal to 6. 
-PASS   node0.numberOfOutputs is equal to 1. 
-PASS   node0.channelCount is equal to 1. 
-PASS   node0.channelCountMode is equal to explicit. 
-PASS   node0.channelInterpretation is equal to speakers. 
-PASS < [default constructor] All assertions passed. (total 7 assertions) 
-PASS > [test AudioNodeOptions]  
-PASS   new ChannelMergerNode(c, {channelCount: 1}) did not throw an exception. 
-PASS   node.channelCount is equal to 1. 
-PASS   new ChannelMergerNode(c, {channelCount: 2}) threw InvalidStateError: "Channel count cannot be changed from 1.". 
-PASS   (new ChannelMergerNode(c, {channelCount: 1})).channelCount = 1 did not throw an exception. 
-PASS   new ChannelMergerNode(c, {channelCountMode: "explicit"} did not throw an exception. 
-PASS   node.channelCountMode is equal to explicit. 
-PASS   new ChannelMergerNode(c, {channelCountMode: "max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
-PASS   new ChannelMergerNode(c, {channelCountMode: "clamped-max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
-PASS   (new ChannelMergerNode(c, {channelCountMode: "explicit"})).channelCountMode = "explicit" did not throw an exception. 
-PASS   new ChannelMergerNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to speakers. 
-PASS   new ChannelMergerNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
-PASS   node.channelInterpretation is equal to discrete. 
-PASS   new ChannelMergerNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
-PASS   node.channelInterpretation after invalid setter is equal to discrete. 
-PASS < [test AudioNodeOptions] All assertions passed. (total 15 assertions) 
-PASS > [constructor options]  
-PASS   node1 = new ChannelMergerNode(context, {"numberOfInputs":3,"numberOfOutputs":9,"channelInterpretation":"discrete"}) did not throw an exception. 
-PASS   node1.numberOfInputs is equal to 3. 
-PASS   node1.numberOfOutputs is equal to 1. 
-PASS   node1.channelInterpretation is equal to discrete. 
-PASS   new ChannelMergerNode(c, {"numberOfInputs":99}) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
-PASS   new ChannelMergerNode(c, {"channelCount":3}) threw InvalidStateError: "Channel count cannot be changed from 1.". 
-PASS   new ChannelMergerNode(c, {"channelCountMode":"max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
-PASS < [constructor options] All assertions passed. (total 7 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "invalid constructor"
+PASS Executing "default constructor"
+PASS Executing "test AudioNodeOptions"
+PASS Executing "constructor options"
+PASS Audit report
+PASS > [initialize]
+PASS   context = new OfflineAudioContext(...) did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [invalid constructor]
+PASS   new ChannelMergerNode() threw TypeError: "Not enough arguments".
+PASS   new ChannelMergerNode(1) threw TypeError: "Argument 1 ('context') to the ChannelMergerNode constructor must be an instance of BaseAudioContext".
+PASS   new ChannelMergerNode(context, 42) threw TypeError: "Type error".
+PASS < [invalid constructor] All assertions passed. (total 3 assertions)
+PASS > [default constructor]
+PASS   node0 = new ChannelMergerNode(context) did not throw an exception.
+PASS   node0 instanceof ChannelMergerNode is equal to true.
+PASS   node0.numberOfInputs is equal to 6.
+PASS   node0.numberOfOutputs is equal to 1.
+PASS   node0.channelCount is equal to 1.
+PASS   node0.channelCountMode is equal to explicit.
+PASS   node0.channelInterpretation is equal to speakers.
+PASS < [default constructor] All assertions passed. (total 7 assertions)
+PASS > [test AudioNodeOptions]
+PASS   new ChannelMergerNode(c, {channelCount: 1}) did not throw an exception.
+PASS   node.channelCount is equal to 1.
+PASS   new ChannelMergerNode(c, {channelCount: 2}) threw InvalidStateError: "Channel count cannot be changed from 1.".
+PASS   (new ChannelMergerNode(c, {channelCount: 1})).channelCount = 1 did not throw an exception.
+PASS   new ChannelMergerNode(c, {channelCountMode: "explicit"} did not throw an exception.
+PASS   node.channelCountMode is equal to explicit.
+PASS   new ChannelMergerNode(c, {channelCountMode: "max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.".
+PASS   new ChannelMergerNode(c, {channelCountMode: "clamped-max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.".
+PASS   (new ChannelMergerNode(c, {channelCountMode: "explicit"})).channelCountMode = "explicit" did not throw an exception.
+PASS   new ChannelMergerNode(c, {channelInterpretation: "speakers"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to speakers.
+PASS   new ChannelMergerNode(c, {channelInterpretation: "discrete"}) did not throw an exception.
+PASS   node.channelInterpretation is equal to discrete.
+PASS   new ChannelMergerNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error".
+PASS   node.channelInterpretation after invalid setter is equal to discrete.
+PASS < [test AudioNodeOptions] All assertions passed. (total 15 assertions)
+PASS > [constructor options]
+PASS   node1 = new ChannelMergerNode(context, {"numberOfInputs":3,"numberOfOutputs":9,"channelInterpretation":"discrete"}) did not throw an exception.
+PASS   node1.numberOfInputs is equal to 3.
+PASS   node1.numberOfOutputs is equal to 1.
+PASS   node1.channelInterpretation is equal to discrete.
+PASS   new ChannelMergerNode(c, {"numberOfInputs":99}) threw IndexSizeError: "Number of inputs is not in the allowed range.".
+PASS   new ChannelMergerNode(c, {"channelCount":3}) threw InvalidStateError: "Channel count cannot be changed from 1.".
+PASS   new ChannelMergerNode(c, {"channelCountMode":"max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.".
+PASS < [constructor options] All assertions passed. (total 7 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

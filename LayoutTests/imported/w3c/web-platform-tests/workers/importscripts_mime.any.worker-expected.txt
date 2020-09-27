@@ -1,10 +1,10 @@
 
-PASS importScripts() requires scripty MIME types: text/javascript is allowed. 
-PASS importScripts() requires scripty MIME types: application/javascript is allowed. 
-PASS importScripts() requires scripty MIME types: text/ecmascript is allowed. 
-PASS importScripts() requires scripty MIME types: image/png is blocked. 
-PASS importScripts() requires scripty MIME types: text/csv is blocked. 
-PASS importScripts() requires scripty MIME types: video/mpeg is blocked. 
+PASS importScripts() requires scripty MIME types: text/javascript is allowed.
+PASS importScripts() requires scripty MIME types: application/javascript is allowed.
+PASS importScripts() requires scripty MIME types: text/ecmascript is allowed.
+PASS importScripts() requires scripty MIME types: image/png is blocked.
+PASS importScripts() requires scripty MIME types: text/csv is blocked.
+PASS importScripts() requires scripty MIME types: video/mpeg is blocked.
 FAIL importScripts() requires scripty MIME types: text/html is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
 FAIL importScripts() requires scripty MIME types: text/plain is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
 FAIL importScripts() requires scripty MIME types: application/xml is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
@@ -13,12 +13,12 @@ FAIL importScripts() requires scripty MIME types: text/potato is blocked. assert
 FAIL importScripts() requires scripty MIME types: potato/text is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
 FAIL importScripts() requires scripty MIME types: aaa/aaa is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
 FAIL importScripts() requires scripty MIME types: zzz/zzz is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
-PASS importScripts() requires scripty MIME types: text/javascript; charset=utf-8 is allowed. 
-PASS importScripts() requires scripty MIME types: text/javascript;charset=utf-8 is allowed. 
-PASS importScripts() requires scripty MIME types: text/javascript;bla;bla is allowed. 
-PASS importScripts() requires scripty MIME types: text/csv; charset=utf-8 is blocked. 
-PASS importScripts() requires scripty MIME types: text/csv;charset=utf-8 is blocked. 
-PASS importScripts() requires scripty MIME types: text/csv;bla;bla is blocked. 
+PASS importScripts() requires scripty MIME types: text/javascript; charset=utf-8 is allowed.
+PASS importScripts() requires scripty MIME types: text/javascript;charset=utf-8 is allowed.
+PASS importScripts() requires scripty MIME types: text/javascript;bla;bla is allowed.
+PASS importScripts() requires scripty MIME types: text/csv; charset=utf-8 is blocked.
+PASS importScripts() requires scripty MIME types: text/csv;charset=utf-8 is blocked.
+PASS importScripts() requires scripty MIME types: text/csv;bla;bla is blocked.
 FAIL importScripts() requires scripty MIME types: Text/html is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
 FAIL importScripts() requires scripty MIME types: text/Html is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw
 FAIL importScripts() requires scripty MIME types: TeXt/HtMl is blocked. assert_throws_dom: function "_ => { importScripts(import_url) }" did not throw

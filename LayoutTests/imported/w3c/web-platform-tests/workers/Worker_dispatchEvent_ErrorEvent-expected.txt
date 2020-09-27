@@ -1,4 +1,4 @@
 
-PASS  ErrorEvent and Worker.dispatchEvent()  
-PASS initErrorEvent 
+PASS  ErrorEvent and Worker.dispatchEvent()
+PASS initErrorEvent
 

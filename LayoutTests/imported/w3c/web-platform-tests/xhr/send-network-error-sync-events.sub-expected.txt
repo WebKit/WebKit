@@ -1,5 +1,5 @@
 Blocked access to external URL http://nonexistent.localhost:8800/
 
-PASS http URL 
-PASS data URL 
+PASS http URL
+PASS data URL
 

@@ -1,16 +1,16 @@
 
-PASS idl_test setup 
-PASS idl_test validation 
-PASS Partial interface Navigator: original interface defined 
-PASS Partial interface Navigator: member names are unique 
-PASS Partial interface mixin NavigatorID: member names are unique 
-PASS Navigator includes NavigatorID: member names are unique 
-PASS Navigator includes NavigatorLanguage: member names are unique 
-PASS Navigator includes NavigatorOnLine: member names are unique 
-PASS Navigator includes NavigatorContentUtils: member names are unique 
-PASS Navigator includes NavigatorCookies: member names are unique 
-PASS Navigator includes NavigatorPlugins: member names are unique 
-PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
 FAIL Navigator interface: operation share(optional ShareData) assert_own_property: interface prototype object missing non-static operation expected property "share" missing
 FAIL Navigator interface: navigator must inherit property "share(optional ShareData)" with the proper type assert_inherits: property "share" not found in prototype chain
 FAIL Navigator interface: calling share(optional ShareData) on navigator with too few arguments must throw TypeError assert_inherits: property "share" not found in prototype chain

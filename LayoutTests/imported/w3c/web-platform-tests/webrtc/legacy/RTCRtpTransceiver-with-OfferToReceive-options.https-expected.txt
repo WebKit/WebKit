@@ -1,5 +1,5 @@
 
-PASS checkAddTransceiverWithStream 
+PASS checkAddTransceiverWithStream
 FAIL checkAddTransceiverWithOfferToReceiveAudio assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false}]" but got "[]"
 FAIL checkAddTransceiverWithOfferToReceiveVideo assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"video\"}},sender:{track:null},stopped:false}]" but got "[]"
 FAIL checkAddTransceiverWithOfferToReceiveBoth assert_equals: expected "[{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"audio\"}},sender:{track:null},stopped:false},{currentDirection:null,direction:\"recvonly\",mid:null,receiver:{track:{kind:\"video\"}},sender:{track:null},stopped:false}]" but got "[]"

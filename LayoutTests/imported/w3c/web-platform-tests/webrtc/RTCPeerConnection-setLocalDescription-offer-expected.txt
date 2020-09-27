@@ -1,9 +1,9 @@
 
-PASS setLocalDescription with valid offer should succeed 
+PASS setLocalDescription with valid offer should succeed
 FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
 FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for 0: Local fingerprint does not match identity. Expected: sha-256 5D:F6:6D:28:A7:DC:C3:E4:F3:81:FD:B0:DD:0F:03:45:D7:C8:E5:70:18:11:02:4B:91:49:45:52:1F:8E:BD:FA Got: sha-256 B1:90:88:57:15:70:3A:0F:B6:FC:B9:1B:02:8A:66:84:00:0C:2E:ED:2C:54:51:29:7F:98:48:DC:1C:59:7F:87" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
 FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS Creating and setting offer multiple times should succeed 
+PASS Creating and setting offer multiple times should succeed
 FAIL Setting previously generated offer after a call to createAnswer should work promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 FAIL Negotiation works when there has been a repeated setLocalDescription(offer) assert_equals: expected 1 but got 0
 FAIL setLocalDescription(offer) should update internal state with a queued task, in the right order assert_equals: pendingRemoteDescription should never be set due to sLD expected null but got object "[object RTCSessionDescription]"

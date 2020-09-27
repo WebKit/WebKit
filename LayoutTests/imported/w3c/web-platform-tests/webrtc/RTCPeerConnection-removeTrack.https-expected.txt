@@ -1,16 +1,16 @@
 
-PASS addTransceiver - Calling removeTrack when connection is closed should throw InvalidStateError 
-PASS addTrack - Calling removeTrack when connection is closed should throw InvalidStateError 
-PASS addTransceiver - Calling removeTrack on different connection that is closed should throw InvalidStateError 
-PASS addTrack - Calling removeTrack on different connection that is closed should throw InvalidStateError 
-PASS addTransceiver - Calling removeTrack on different connection should throw InvalidAccessError 
-PASS addTrack - Calling removeTrack on different connection should throw InvalidAccessError 
-PASS addTransceiver - Calling removeTrack with valid sender should set sender.track to null 
-PASS addTrack - Calling removeTrack with valid sender should set sender.track to null 
-PASS Calling removeTrack with currentDirection sendrecv should set direction to recvonly 
-PASS Calling removeTrack with currentDirection sendonly should set direction to inactive 
-PASS Calling removeTrack with currentDirection recvonly should not change direction 
-PASS Calling removeTrack with currentDirection inactive should not change direction 
+PASS addTransceiver - Calling removeTrack when connection is closed should throw InvalidStateError
+PASS addTrack - Calling removeTrack when connection is closed should throw InvalidStateError
+PASS addTransceiver - Calling removeTrack on different connection that is closed should throw InvalidStateError
+PASS addTrack - Calling removeTrack on different connection that is closed should throw InvalidStateError
+PASS addTransceiver - Calling removeTrack on different connection should throw InvalidAccessError
+PASS addTrack - Calling removeTrack on different connection should throw InvalidAccessError
+PASS addTransceiver - Calling removeTrack with valid sender should set sender.track to null
+PASS addTrack - Calling removeTrack with valid sender should set sender.track to null
+PASS Calling removeTrack with currentDirection sendrecv should set direction to recvonly
+PASS Calling removeTrack with currentDirection sendonly should set direction to inactive
+PASS Calling removeTrack with currentDirection recvonly should not change direction
+PASS Calling removeTrack with currentDirection inactive should not change direction
 FAIL Calling removeTrack on a stopped transceiver should be a no-op assert_equals: expected object "[object MediaStreamTrack]" but got null
-PASS Calling removeTrack on a null track should have no effect 
+PASS Calling removeTrack on a null track should have no effect
 

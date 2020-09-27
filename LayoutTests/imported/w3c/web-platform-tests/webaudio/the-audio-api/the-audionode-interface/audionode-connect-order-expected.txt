@@ -1,10 +1,10 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test connections" 
-PASS Audit report 
-PASS > [Test connections] AudioNode connection order doesn't trigger assertion errors 
-PASS   Connecting nodes did not throw an exception. 
-PASS   OfflineContext startRendering() resolved correctly. 
-PASS < [Test connections] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test connections"
+PASS Audit report
+PASS > [Test connections] AudioNode connection order doesn't trigger assertion errors
+PASS   Connecting nodes did not throw an exception.
+PASS   OfflineContext startRendering() resolved correctly.
+PASS < [Test connections] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

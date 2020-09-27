@@ -1,16 +1,16 @@
 
-PASS Active time in before phase 
-PASS Active time in active phase and no start delay is the local time 
-PASS Active time in active phase and positive start delay is the local time minus the start delay 
-PASS Active time in active phase and negative start delay is the local time minus the start delay 
-PASS Active time in after phase with no fill is unresolved 
-PASS Active time in after phase with backwards-only fill is unresolved 
-PASS Active time in after phase with forwards fill is the active duration 
-PASS Active time in after phase with forwards fill, zero-duration, and  infinite iteration count is the active duration 
-PASS Active time in after phase with forwards fill and positive end delay is the active duration 
-PASS Active time in after phase with forwards fill and negative end delay is the active duration + end delay 
-PASS Active time in after phase with forwards fill and negative end delay greater in magnitude than the active duration is zero 
-PASS Active time in after phase with forwards fill and negative end delay greater in magnitude than the sum of the active duration and start delay is zero 
-PASS Active time in after phase with 'both' fill is the active duration 
-PASS Active time when the local time is unresolved, is unresolved 
+PASS Active time in before phase
+PASS Active time in active phase and no start delay is the local time
+PASS Active time in active phase and positive start delay is the local time minus the start delay
+PASS Active time in active phase and negative start delay is the local time minus the start delay
+PASS Active time in after phase with no fill is unresolved
+PASS Active time in after phase with backwards-only fill is unresolved
+PASS Active time in after phase with forwards fill is the active duration
+PASS Active time in after phase with forwards fill, zero-duration, and  infinite iteration count is the active duration
+PASS Active time in after phase with forwards fill and positive end delay is the active duration
+PASS Active time in after phase with forwards fill and negative end delay is the active duration + end delay
+PASS Active time in after phase with forwards fill and negative end delay greater in magnitude than the active duration is zero
+PASS Active time in after phase with forwards fill and negative end delay greater in magnitude than the sum of the active duration and start delay is zero
+PASS Active time in after phase with 'both' fill is the active duration
+PASS Active time when the local time is unresolved, is unresolved
 

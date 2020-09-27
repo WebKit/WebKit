@@ -1,9 +1,9 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "cascade-mono" 
-PASS Audit report 
-PASS > [cascade-mono] Cascaded mono convolvers 
-PASS   Output of cascaded mono convolvers is not constantly 0 (contains 1996 different values). 
-PASS < [cascade-mono] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "cascade-mono"
+PASS Audit report
+PASS > [cascade-mono] Cascaded mono convolvers
+PASS   Output of cascaded mono convolvers is not constantly 0 (contains 1996 different values).
+PASS < [cascade-mono] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

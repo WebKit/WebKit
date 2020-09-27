@@ -1,42 +1,42 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "disconnect()" 
-PASS Executing "disconnect(output)" 
-PASS Executing "disconnect(AudioNode)" 
-PASS Executing "disconnect(AudioNode, output)" 
-PASS Executing "disconnect(AudioNode, output, input)" 
-PASS Executing "exceptions" 
-PASS Executing "disabled-outputs" 
-PASS Audit report 
-PASS > [disconnect()]  
-PASS   Channel #0 contains only the constant 0. 
-PASS < [disconnect()] All assertions passed. (total 1 assertions) 
-PASS > [disconnect(output)]  
-PASS   Channel #0 contains only the constant 4. 
-PASS < [disconnect(output)] All assertions passed. (total 1 assertions) 
-PASS > [disconnect(AudioNode)]  
-PASS   Channel #0 contains only the constant 2. 
-PASS < [disconnect(AudioNode)] All assertions passed. (total 1 assertions) 
-PASS > [disconnect(AudioNode, output)]  
-PASS   Channel #0 contains only the constant 3. 
-PASS < [disconnect(AudioNode, output)] All assertions passed. (total 1 assertions) 
-PASS > [disconnect(AudioNode, output, input)]  
-PASS   Channel #0 contains only the constant 1. 
-PASS   Channel #1 contains only the constant 2. 
-PASS   Channel #2 contains only the constant 0. 
-PASS < [disconnect(AudioNode, output, input)] All assertions passed. (total 3 assertions) 
-PASS > [exceptions]  
-PASS   splitter.disconnect(2) threw IndexSizeError: "output index is out of bounds". 
-PASS   Disconnecting a connection twice did not throw an exception. 
-PASS   gain1.disconnect(gain2) threw InvalidAccessError: "The given destination is not connected". 
-PASS   gain1.disconnect(gain3) threw InvalidAccessError: "The given destination is not connected". 
-PASS   splitter.disconnect(gain2, 2) threw IndexSizeError: "output index is out of bounds". 
-PASS   splitter.disconnect(gain1, 0) threw InvalidAccessError: "The given destination is not connected". 
-PASS   splitter.disconnect(gain3, 0, 0) threw InvalidAccessError: "The given destination is not connected". 
-PASS   splitter.disconnect(merger, 3, 0) threw IndexSizeError: "output index is out of bounds". 
-PASS < [exceptions] All assertions passed. (total 8 assertions) 
-PASS > [disabled-outputs]  
-PASS   Disabled outputs handled correctly 
-PASS < [disabled-outputs] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "disconnect()"
+PASS Executing "disconnect(output)"
+PASS Executing "disconnect(AudioNode)"
+PASS Executing "disconnect(AudioNode, output)"
+PASS Executing "disconnect(AudioNode, output, input)"
+PASS Executing "exceptions"
+PASS Executing "disabled-outputs"
+PASS Audit report
+PASS > [disconnect()]
+PASS   Channel #0 contains only the constant 0.
+PASS < [disconnect()] All assertions passed. (total 1 assertions)
+PASS > [disconnect(output)]
+PASS   Channel #0 contains only the constant 4.
+PASS < [disconnect(output)] All assertions passed. (total 1 assertions)
+PASS > [disconnect(AudioNode)]
+PASS   Channel #0 contains only the constant 2.
+PASS < [disconnect(AudioNode)] All assertions passed. (total 1 assertions)
+PASS > [disconnect(AudioNode, output)]
+PASS   Channel #0 contains only the constant 3.
+PASS < [disconnect(AudioNode, output)] All assertions passed. (total 1 assertions)
+PASS > [disconnect(AudioNode, output, input)]
+PASS   Channel #0 contains only the constant 1.
+PASS   Channel #1 contains only the constant 2.
+PASS   Channel #2 contains only the constant 0.
+PASS < [disconnect(AudioNode, output, input)] All assertions passed. (total 3 assertions)
+PASS > [exceptions]
+PASS   splitter.disconnect(2) threw IndexSizeError: "output index is out of bounds".
+PASS   Disconnecting a connection twice did not throw an exception.
+PASS   gain1.disconnect(gain2) threw InvalidAccessError: "The given destination is not connected".
+PASS   gain1.disconnect(gain3) threw InvalidAccessError: "The given destination is not connected".
+PASS   splitter.disconnect(gain2, 2) threw IndexSizeError: "output index is out of bounds".
+PASS   splitter.disconnect(gain1, 0) threw InvalidAccessError: "The given destination is not connected".
+PASS   splitter.disconnect(gain3, 0, 0) threw InvalidAccessError: "The given destination is not connected".
+PASS   splitter.disconnect(merger, 3, 0) threw IndexSizeError: "output index is out of bounds".
+PASS < [exceptions] All assertions passed. (total 8 assertions)
+PASS > [disabled-outputs]
+PASS   Disabled outputs handled correctly
+PASS < [disabled-outputs] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully.
 

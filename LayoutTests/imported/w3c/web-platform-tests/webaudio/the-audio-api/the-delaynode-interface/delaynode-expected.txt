@@ -1,14 +1,14 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] Tests attribute and basic functionality of DelayNode 
-PASS   delay.numberOfInputs is equal to 1. 
-PASS   delay.numberOfOutputs is equal to 1. 
-PASS   delay.delayTime.defaultValue is equal to 0. 
-PASS   delay.delayTime.value is equal to 0. 
-PASS   delay.delayTime.value = 0.5 is equal to 0.5. 
-PASS   Delaying test signal by 0.5 sec was done correctly 
-PASS < [test] All assertions passed. (total 6 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Tests attribute and basic functionality of DelayNode
+PASS   delay.numberOfInputs is equal to 1.
+PASS   delay.numberOfOutputs is equal to 1.
+PASS   delay.delayTime.defaultValue is equal to 0.
+PASS   delay.delayTime.value is equal to 0.
+PASS   delay.delayTime.value = 0.5 is equal to 0.5.
+PASS   Delaying test signal by 0.5 sec was done correctly
+PASS < [test] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

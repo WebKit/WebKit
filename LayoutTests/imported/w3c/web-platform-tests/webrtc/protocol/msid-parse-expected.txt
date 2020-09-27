@@ -1,6 +1,6 @@
 
-PASS Description with no msid produces a track with a stream 
-PASS Description with msid:- appid produces a track with no stream 
-PASS Description with msid:foo bar produces a stream with id foo 
-PASS Description with two msid produces two streams 
+PASS Description with no msid produces a track with a stream
+PASS Description with msid:- appid produces a track with no stream
+PASS Description with msid:foo bar produces a stream with id foo
+PASS Description with two msid produces two streams
 

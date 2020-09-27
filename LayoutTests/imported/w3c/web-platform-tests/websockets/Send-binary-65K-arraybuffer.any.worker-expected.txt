@@ -1,5 +1,5 @@
 
 FAIL Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be opened assert_equals: expected 0 but got 65000
-PASS Send 65K binary data on a WebSocket - ArrayBuffer - Message should be received 
+PASS Send 65K binary data on a WebSocket - ArrayBuffer - Message should be received
 FAIL Send 65K binary data on a WebSocket - ArrayBuffer - Connection should be closed assert_true: WebSocket connection should be open expected true got false
 

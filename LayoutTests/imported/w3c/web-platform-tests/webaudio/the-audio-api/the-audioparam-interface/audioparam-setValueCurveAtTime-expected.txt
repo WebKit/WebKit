@@ -1,30 +1,30 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test" 
-PASS Audit report 
-PASS > [test] AudioParam setValueCurveAtTime() functionality. 
-PASS   Number of tests started and ended at the correct time is equal to 20. 
-PASS   Max error for test 0 at offset 903 is less than or equal to 0.0000037194. 
-PASS   Max error for test 1 at offset 2226 is less than or equal to 0.0000037194. 
-PASS   Max error for test 2 at offset 3549 is less than or equal to 0.0000037194. 
-PASS   Max error for test 3 at offset 4872 is less than or equal to 0.0000037194. 
-PASS   Max error for test 4 at offset 6195 is less than or equal to 0.0000037194. 
-PASS   Max error for test 5 at offset 7518 is less than or equal to 0.0000037194. 
-PASS   Max error for test 6 at offset 8841 is less than or equal to 0.0000037194. 
-PASS   Max error for test 7 at offset 10164 is less than or equal to 0.0000037194. 
-PASS   Max error for test 8 at offset 11487 is less than or equal to 0.0000037194. 
-PASS   Max error for test 9 at offset 12810 is less than or equal to 0.0000037194. 
-PASS   Max error for test 10 at offset 14133 is less than or equal to 0.0000037194. 
-PASS   Max error for test 11 at offset 15456 is less than or equal to 0.0000037194. 
-PASS   Max error for test 12 at offset 16779 is less than or equal to 0.0000037194. 
-PASS   Max error for test 13 at offset 18102 is less than or equal to 0.0000037194. 
-PASS   Max error for test 14 at offset 19425 is less than or equal to 0.0000037194. 
-PASS   Max error for test 15 at offset 20748 is less than or equal to 0.0000037194. 
-PASS   Max error for test 16 at offset 22071 is less than or equal to 0.0000037194. 
-PASS   Max error for test 17 at offset 23394 is less than or equal to 0.0000037194. 
-PASS   Max error for test 18 at offset 24717 is less than or equal to 0.0000037194. 
-PASS   Max error for test 19 at offset 26040 is less than or equal to 0.0000037194. 
-PASS   Number of failed tests with an acceptable relative tolerance of 0.0000037194 is equal to 0. 
-PASS < [test] All assertions passed. (total 22 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] AudioParam setValueCurveAtTime() functionality.
+PASS   Number of tests started and ended at the correct time is equal to 20.
+PASS   Max error for test 0 at offset 903 is less than or equal to 0.0000037194.
+PASS   Max error for test 1 at offset 2226 is less than or equal to 0.0000037194.
+PASS   Max error for test 2 at offset 3549 is less than or equal to 0.0000037194.
+PASS   Max error for test 3 at offset 4872 is less than or equal to 0.0000037194.
+PASS   Max error for test 4 at offset 6195 is less than or equal to 0.0000037194.
+PASS   Max error for test 5 at offset 7518 is less than or equal to 0.0000037194.
+PASS   Max error for test 6 at offset 8841 is less than or equal to 0.0000037194.
+PASS   Max error for test 7 at offset 10164 is less than or equal to 0.0000037194.
+PASS   Max error for test 8 at offset 11487 is less than or equal to 0.0000037194.
+PASS   Max error for test 9 at offset 12810 is less than or equal to 0.0000037194.
+PASS   Max error for test 10 at offset 14133 is less than or equal to 0.0000037194.
+PASS   Max error for test 11 at offset 15456 is less than or equal to 0.0000037194.
+PASS   Max error for test 12 at offset 16779 is less than or equal to 0.0000037194.
+PASS   Max error for test 13 at offset 18102 is less than or equal to 0.0000037194.
+PASS   Max error for test 14 at offset 19425 is less than or equal to 0.0000037194.
+PASS   Max error for test 15 at offset 20748 is less than or equal to 0.0000037194.
+PASS   Max error for test 16 at offset 22071 is less than or equal to 0.0000037194.
+PASS   Max error for test 17 at offset 23394 is less than or equal to 0.0000037194.
+PASS   Max error for test 18 at offset 24717 is less than or equal to 0.0000037194.
+PASS   Max error for test 19 at offset 26040 is less than or equal to 0.0000037194.
+PASS   Number of failed tests with an acceptable relative tolerance of 0.0000037194 is equal to 0.
+PASS < [test] All assertions passed. (total 22 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

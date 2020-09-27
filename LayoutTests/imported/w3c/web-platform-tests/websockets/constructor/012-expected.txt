@@ -1,3 +1,3 @@
 
-PASS WebSockets: no protocol in response 
+PASS WebSockets: no protocol in response
 

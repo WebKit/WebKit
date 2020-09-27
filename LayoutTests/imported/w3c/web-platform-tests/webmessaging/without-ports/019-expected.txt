@@ -1,4 +1,4 @@
 
 
-PASS origin of the script that invoked the method, scheme/host/port 
+PASS origin of the script that invoked the method, scheme/host/port
 

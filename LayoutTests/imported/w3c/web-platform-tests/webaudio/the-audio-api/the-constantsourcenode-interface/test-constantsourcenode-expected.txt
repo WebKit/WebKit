@@ -1,8 +1,8 @@
 
-PASS ConstantSourceNode can be constructed 
-PASS ConstantSourceNode stop and start 
-PASS ConstantSourceNode onended event 
-PASS ConstantSourceNode start and stop when work 
-PASS ConstantSourceNode with no automation 
-PASS ConstantSourceNode with automation 
+PASS ConstantSourceNode can be constructed
+PASS ConstantSourceNode stop and start
+PASS ConstantSourceNode onended event
+PASS ConstantSourceNode start and stop when work
+PASS ConstantSourceNode with no automation
+PASS ConstantSourceNode with automation
 

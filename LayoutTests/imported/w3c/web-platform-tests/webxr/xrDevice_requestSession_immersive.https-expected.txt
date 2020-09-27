@@ -1,5 +1,5 @@
 
-PASS Tests requestSession resolves when supported 
-PASS Tests requestSession accepts XRSessionInit dictionary 
-PASS Tests requestSession ignores unknown optionalFeatures 
+PASS Tests requestSession resolves when supported
+PASS Tests requestSession accepts XRSessionInit dictionary
+PASS Tests requestSession ignores unknown optionalFeatures
 

@@ -1,4 +1,4 @@
 
 
-PASS Tests that sandboxed iframe has CORS XHR access to a server that accepts null domain 
+PASS Tests that sandboxed iframe has CORS XHR access to a server that accepts null domain
 

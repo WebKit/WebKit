@@ -1,14 +1,14 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "synthesize-verify" 
-PASS Executing "subsample start with playback rate 0" 
-PASS Audit report 
-PASS > [synthesize-verify]  
-PASS   The zero playbackRate held the sample value correctly 
-PASS < [synthesize-verify] All assertions passed. (total 1 assertions) 
-PASS > [subsample start with playback rate 0]  
-PASS   output[0:27] contains only the constant 0. 
-PASS   output[28:] contains only the constant 5. 
-PASS < [subsample start with playback rate 0] All assertions passed. (total 2 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "synthesize-verify"
+PASS Executing "subsample start with playback rate 0"
+PASS Audit report
+PASS > [synthesize-verify]
+PASS   The zero playbackRate held the sample value correctly
+PASS < [synthesize-verify] All assertions passed. (total 1 assertions)
+PASS > [subsample start with playback rate 0]
+PASS   output[0:27] contains only the constant 0.
+PASS   output[28:] contains only the constant 5.
+PASS < [subsample start with playback rate 0] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

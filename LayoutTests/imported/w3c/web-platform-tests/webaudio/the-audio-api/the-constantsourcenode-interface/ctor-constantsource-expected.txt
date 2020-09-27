@@ -1,26 +1,26 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "invalid constructor" 
-PASS Executing "default constructor" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   context = new OfflineAudioContext(...) did not throw an exception. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [invalid constructor]  
-PASS   new ConstantSourceNode() threw TypeError: "Not enough arguments". 
-PASS   new ConstantSourceNode(1) threw TypeError: "Argument 1 ('context') to the ConstantSourceNode constructor must be an instance of BaseAudioContext". 
-PASS   new ConstantSourceNode(context, 42) threw TypeError: "Type error". 
-PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
-PASS > [default constructor]  
-PASS   node0 = new ConstantSourceNode(context) did not throw an exception. 
-PASS   node0 instanceof ConstantSourceNode is equal to true. 
-PASS   node0.numberOfInputs is equal to 0. 
-PASS   node0.numberOfOutputs is equal to 1. 
-PASS   node0.channelCount is equal to 2. 
-PASS   node0.channelCountMode is equal to max. 
-PASS   node0.channelInterpretation is equal to speakers. 
-PASS   node0.offset.value is equal to 1. 
-PASS < [default constructor] All assertions passed. (total 8 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "invalid constructor"
+PASS Executing "default constructor"
+PASS Audit report
+PASS > [initialize]
+PASS   context = new OfflineAudioContext(...) did not throw an exception.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [invalid constructor]
+PASS   new ConstantSourceNode() threw TypeError: "Not enough arguments".
+PASS   new ConstantSourceNode(1) threw TypeError: "Argument 1 ('context') to the ConstantSourceNode constructor must be an instance of BaseAudioContext".
+PASS   new ConstantSourceNode(context, 42) threw TypeError: "Type error".
+PASS < [invalid constructor] All assertions passed. (total 3 assertions)
+PASS > [default constructor]
+PASS   node0 = new ConstantSourceNode(context) did not throw an exception.
+PASS   node0 instanceof ConstantSourceNode is equal to true.
+PASS   node0.numberOfInputs is equal to 0.
+PASS   node0.numberOfOutputs is equal to 1.
+PASS   node0.channelCount is equal to 2.
+PASS   node0.channelCountMode is equal to max.
+PASS   node0.channelInterpretation is equal to speakers.
+PASS   node0.offset.value is equal to 1.
+PASS < [default constructor] All assertions passed. (total 8 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

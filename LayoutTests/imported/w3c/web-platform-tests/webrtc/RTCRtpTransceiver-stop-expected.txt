@@ -1,6 +1,6 @@
 
-PASS A transceiver added and stopped before the initial offer generation should not trigger an offer m-section generation 
-PASS During renegotiation, adding and stopping a transceiver should not trigger a renegotiated offer m-section generation 
-PASS A stopped sendonly transceiver should generate a sendonly m-section in the offer 
-PASS A stopped inactive transceiver should generate an inactive m-section in the offer 
+PASS A transceiver added and stopped before the initial offer generation should not trigger an offer m-section generation
+PASS During renegotiation, adding and stopping a transceiver should not trigger a renegotiated offer m-section generation
+PASS A stopped sendonly transceiver should generate a sendonly m-section in the offer
+PASS A stopped inactive transceiver should generate an inactive m-section in the offer
 

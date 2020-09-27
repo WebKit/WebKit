@@ -1,5 +1,5 @@
 
-PASS XMLHttpRequest: setRequestHeader() - empty header () 
-PASS XMLHttpRequest: setRequestHeader() - empty header (null) 
-PASS XMLHttpRequest: setRequestHeader() - empty header (undefined) 
+PASS XMLHttpRequest: setRequestHeader() - empty header ()
+PASS XMLHttpRequest: setRequestHeader() - empty header (null)
+PASS XMLHttpRequest: setRequestHeader() - empty header (undefined)
 

@@ -1,5 +1,5 @@
 
-PASS H.264 and VP8 should be supported in initial offer 
-PASS H.264 and VP8 should be negotiated after handshake 
-PASS All H.264 codecs MUST include profile-level-id 
+PASS H.264 and VP8 should be supported in initial offer
+PASS H.264 and VP8 should be negotiated after handshake
+PASS All H.264 codecs MUST include profile-level-id
 

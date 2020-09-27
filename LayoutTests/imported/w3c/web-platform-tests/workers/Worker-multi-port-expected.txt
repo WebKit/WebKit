@@ -1,11 +1,11 @@
 
-PASS Test postMessage with no port. 
-PASS Test postMessage with no arguments. 
-PASS Test postMessage with no ports and empty array. 
-PASS Test postMessage with two ports. 
-PASS Test empty postMessage throws exception. 
-PASS Test postMessage with null ports throws exception. 
-PASS Test postMessage with incorrect ports throws exception 
-PASS Test postMessage without sequence throws exception 
-PASS Test postMessage on channel with previous failed postMessage calls. 
+PASS Test postMessage with no port.
+PASS Test postMessage with no arguments.
+PASS Test postMessage with no ports and empty array.
+PASS Test postMessage with two ports.
+PASS Test empty postMessage throws exception.
+PASS Test postMessage with null ports throws exception.
+PASS Test postMessage with incorrect ports throws exception
+PASS Test postMessage without sequence throws exception
+PASS Test postMessage on channel with previous failed postMessage calls.
 

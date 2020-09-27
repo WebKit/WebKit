@@ -1,21 +1,21 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "linearRamp" 
-PASS Executing "expoRamp" 
-PASS Audit report 
-PASS > [linearRamp] Insert linearRamp after running for some time 
-PASS   linearRamp: setValueAtTime(1, 0.0078125) did not throw an exception. 
-PASS   linearRamp: At time 0.0625 scheduling linearRampToValueAtTime(2, 0.1328125) did not throw an exception. 
-PASS   linearRamp: output[0:511] contains only the constant 1. 
-PASS   linearRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   linearRamp: output[1088:] contains only the constant 2. 
-PASS < [linearRamp] All assertions passed. (total 5 assertions) 
-PASS > [expoRamp] Insert expoRamp after running for some time 
-PASS   expoRamp: setValueAtTime(1, 0.0078125) did not throw an exception. 
-PASS   expoRamp: At time 0.0625 scheduling exponentialRampToValueAtTime(2, 0.1328125) did not throw an exception. 
-PASS   expoRamp: output[0:511] contains only the constant 1. 
-PASS   expoRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
-PASS   expoRamp: output[1088:] contains only the constant 2. 
-PASS < [expoRamp] All assertions passed. (total 5 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "linearRamp"
+PASS Executing "expoRamp"
+PASS Audit report
+PASS > [linearRamp] Insert linearRamp after running for some time
+PASS   linearRamp: setValueAtTime(1, 0.0078125) did not throw an exception.
+PASS   linearRamp: At time 0.0625 scheduling linearRampToValueAtTime(2, 0.1328125) did not throw an exception.
+PASS   linearRamp: output[0:511] contains only the constant 1.
+PASS   linearRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   linearRamp: output[1088:] contains only the constant 2.
+PASS < [linearRamp] All assertions passed. (total 5 assertions)
+PASS > [expoRamp] Insert expoRamp after running for some time
+PASS   expoRamp: setValueAtTime(1, 0.0078125) did not throw an exception.
+PASS   expoRamp: At time 0.0625 scheduling exponentialRampToValueAtTime(2, 0.1328125) did not throw an exception.
+PASS   expoRamp: output[0:511] contains only the constant 1.
+PASS   expoRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+PASS   expoRamp: output[1088:] contains only the constant 2.
+PASS < [expoRamp] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

@@ -1,3 +1,3 @@
 
-PASS performance.now() exists in dedicated workers and reports reasonable times 
+PASS performance.now() exists in dedicated workers and reports reasonable times
 

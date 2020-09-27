@@ -1,6 +1,6 @@
 
-PASS WebSockets: getting on* 
-PASS WebSockets: getting on* 1 
-PASS WebSockets: getting on* 2 
-PASS WebSockets: getting on* 3 
+PASS WebSockets: getting on*
+PASS WebSockets: getting on* 1
+PASS WebSockets: getting on* 2
+PASS WebSockets: getting on* 3
 

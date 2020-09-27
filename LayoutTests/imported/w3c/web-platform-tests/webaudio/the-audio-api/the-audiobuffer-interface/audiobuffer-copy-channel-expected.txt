@@ -1,64 +1,64 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "initialize" 
-PASS Executing "copyFrom-exceptions" 
-PASS Executing "copyTo-exceptions" 
-PASS Executing "copyFrom-validate" 
-PASS Executing "copyTo-validate" 
-PASS Audit report 
-PASS > [initialize]  
-PASS   Initialized values contains only the constant -1. 
-PASS < [initialize] All assertions passed. (total 1 assertions) 
-PASS > [copyFrom-exceptions]  
-PASS   AudioBuffer.prototype.copyFromChannel does exist. 
-PASS   0: buffer = context.createBuffer(3, 16, context.sampleRate) did not throw an exception. 
-PASS   1: buffer.copyFromChannel(null, 0) threw TypeError: "Argument 1 ('destination') to AudioBuffer.copyFromChannel must be an instance of Float32Array". 
-PASS   2: buffer.copyFromChannel(context, 0) threw TypeError: "Argument 1 ('destination') to AudioBuffer.copyFromChannel must be an instance of Float32Array". 
-PASS   3: buffer.copyFromChannel(x, -1) threw IndexSizeError: "Not a valid channelNumber.". 
-PASS   4: buffer.copyFromChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.". 
-PASS   5: buffer.copyFromChannel(x, 0, -1) did not throw an exception. 
-PASS   6: buffer.copyFromChannel(x, 0, 16) did not throw an exception. 
-PASS   7: buffer.copyFromChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.". 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "initialize"
+PASS Executing "copyFrom-exceptions"
+PASS Executing "copyTo-exceptions"
+PASS Executing "copyFrom-validate"
+PASS Executing "copyTo-validate"
+PASS Audit report
+PASS > [initialize]
+PASS   Initialized values contains only the constant -1.
+PASS < [initialize] All assertions passed. (total 1 assertions)
+PASS > [copyFrom-exceptions]
+PASS   AudioBuffer.prototype.copyFromChannel does exist.
+PASS   0: buffer = context.createBuffer(3, 16, context.sampleRate) did not throw an exception.
+PASS   1: buffer.copyFromChannel(null, 0) threw TypeError: "Argument 1 ('destination') to AudioBuffer.copyFromChannel must be an instance of Float32Array".
+PASS   2: buffer.copyFromChannel(context, 0) threw TypeError: "Argument 1 ('destination') to AudioBuffer.copyFromChannel must be an instance of Float32Array".
+PASS   3: buffer.copyFromChannel(x, -1) threw IndexSizeError: "Not a valid channelNumber.".
+PASS   4: buffer.copyFromChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.".
+PASS   5: buffer.copyFromChannel(x, 0, -1) did not throw an exception.
+PASS   6: buffer.copyFromChannel(x, 0, 16) did not throw an exception.
+PASS   7: buffer.copyFromChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.".
 FAIL X 8: buffer.copyFromChannel(SharedArrayBuffer view, 0) did not throw an exception. assert_true: expected true got false
 FAIL X 9: buffer.copyFromChannel(SharedArrayBuffer view, 0, 0) did not throw an exception. assert_true: expected true got false
 FAIL < [copyFrom-exceptions] 2 out of 11 assertions were failed. assert_true: expected true got false
-PASS > [copyTo-exceptions]  
-PASS   AudioBuffer.prototype.copyToChannel does exist. 
-PASS   0: buffer.copyToChannel(null, 0) threw TypeError: "Argument 1 ('source') to AudioBuffer.copyToChannel must be an instance of Float32Array". 
-PASS   1: buffer.copyToChannel(context, 0) threw TypeError: "Argument 1 ('source') to AudioBuffer.copyToChannel must be an instance of Float32Array". 
-PASS   2: buffer.copyToChannel(x, -1) threw IndexSizeError: "Not a valid channelNumber.". 
-PASS   3: buffer.copyToChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.". 
-PASS   4: buffer.copyToChannel(x, 0, -1) did not throw an exception. 
-PASS   5: buffer.copyToChannel(x, 0, 16) did not throw an exception. 
-PASS   6: buffer.copyToChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.". 
+PASS > [copyTo-exceptions]
+PASS   AudioBuffer.prototype.copyToChannel does exist.
+PASS   0: buffer.copyToChannel(null, 0) threw TypeError: "Argument 1 ('source') to AudioBuffer.copyToChannel must be an instance of Float32Array".
+PASS   1: buffer.copyToChannel(context, 0) threw TypeError: "Argument 1 ('source') to AudioBuffer.copyToChannel must be an instance of Float32Array".
+PASS   2: buffer.copyToChannel(x, -1) threw IndexSizeError: "Not a valid channelNumber.".
+PASS   3: buffer.copyToChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.".
+PASS   4: buffer.copyToChannel(x, 0, -1) did not throw an exception.
+PASS   5: buffer.copyToChannel(x, 0, 16) did not throw an exception.
+PASS   6: buffer.copyToChannel(x, 3) threw IndexSizeError: "Not a valid channelNumber.".
 FAIL X 7: buffer.copyToChannel(SharedArrayBuffer view, 0) did not throw an exception. assert_true: expected true got false
 FAIL X 8: buffer.copyToChannel(SharedArrayBuffer view, 0, 0) did not throw an exception. assert_true: expected true got false
 FAIL < [copyTo-exceptions] 2 out of 10 assertions were failed. assert_true: expected true got false
-PASS > [copyFrom-validate]  
-PASS   buffer.copyFromChannel(dst8, 0) is identical to the array [1,2,3,4,5,6,7,8]. 
-PASS   buffer.copyFromChannel(dst8, 1) is identical to the array [2,3,4,5,6,7,8,9]. 
-PASS   buffer.copyFromChannel(dst8, 2) is identical to the array [3,4,5,6,7,8,9,10]. 
-PASS   buffer.copyFromChannel(dst8, 0, 1) is identical to the array [2,3,4,5,6,7,8,9]. 
-PASS   buffer.copyFromChannel(dst8, 1, 1) is identical to the array [3,4,5,6,7,8,9,10]. 
-PASS   buffer.copyFromChannel(dst8, 2, 1) is identical to the array [4,5,6,7,8,9,10,11]. 
-PASS   buffer.copyFromChannel(dst8, 0, 11) is identical to the array [12,13,14,15,16,-1,-1,-1]. 
-PASS   buffer.copyFromChannel(dst8, 1, 11) is identical to the array [13,14,15,16,17,-1,-1,-1]. 
-PASS   buffer.copyFromChannel(dst8, 2, 11) is identical to the array [14,15,16,17,18,-1,-1,-1]. 
-PASS   buffer.copyFromChannel(dst26, 0) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
-PASS   buffer.copyFromChannel(dst26, 1) is identical to the array [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17...]. 
-PASS   buffer.copyFromChannel(dst26, 2) is identical to the array [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18...]. 
-PASS < [copyFrom-validate] All assertions passed. (total 12 assertions) 
-PASS > [copyTo-validate]  
-PASS   buffer = createConstantBuffer(context, 16, [-1,-1,-1]) did not throw an exception. 
-PASS   buffer.copyToChannel(src, 0) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
-PASS   buffer.copyToChannel(src, 1) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
-PASS   buffer.copyToChannel(src, 2) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
-PASS   buffer.copyToChannel(src10, 0) is identical to the array [1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1...]. 
-PASS   buffer.copyToChannel(src10, 1) is identical to the array [1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1...]. 
-PASS   buffer.copyToChannel(src10, 2) is identical to the array [1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1...]. 
-PASS   buffer.copyToChannel(src10, 0, 5) is identical to the array [-1,-1,-1,-1,-1,1,2,3,4,5,6,7,8,9,10,-1...]. 
-PASS   buffer.copyToChannel(src10, 1, 5) is identical to the array [-1,-1,-1,-1,-1,1,2,3,4,5,6,7,8,9,10,-1...]. 
-PASS   buffer.copyToChannel(src10, 2, 5) is identical to the array [-1,-1,-1,-1,-1,1,2,3,4,5,6,7,8,9,10,-1...]. 
-PASS < [copyTo-validate] All assertions passed. (total 10 assertions) 
+PASS > [copyFrom-validate]
+PASS   buffer.copyFromChannel(dst8, 0) is identical to the array [1,2,3,4,5,6,7,8].
+PASS   buffer.copyFromChannel(dst8, 1) is identical to the array [2,3,4,5,6,7,8,9].
+PASS   buffer.copyFromChannel(dst8, 2) is identical to the array [3,4,5,6,7,8,9,10].
+PASS   buffer.copyFromChannel(dst8, 0, 1) is identical to the array [2,3,4,5,6,7,8,9].
+PASS   buffer.copyFromChannel(dst8, 1, 1) is identical to the array [3,4,5,6,7,8,9,10].
+PASS   buffer.copyFromChannel(dst8, 2, 1) is identical to the array [4,5,6,7,8,9,10,11].
+PASS   buffer.copyFromChannel(dst8, 0, 11) is identical to the array [12,13,14,15,16,-1,-1,-1].
+PASS   buffer.copyFromChannel(dst8, 1, 11) is identical to the array [13,14,15,16,17,-1,-1,-1].
+PASS   buffer.copyFromChannel(dst8, 2, 11) is identical to the array [14,15,16,17,18,-1,-1,-1].
+PASS   buffer.copyFromChannel(dst26, 0) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...].
+PASS   buffer.copyFromChannel(dst26, 1) is identical to the array [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17...].
+PASS   buffer.copyFromChannel(dst26, 2) is identical to the array [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18...].
+PASS < [copyFrom-validate] All assertions passed. (total 12 assertions)
+PASS > [copyTo-validate]
+PASS   buffer = createConstantBuffer(context, 16, [-1,-1,-1]) did not throw an exception.
+PASS   buffer.copyToChannel(src, 0) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...].
+PASS   buffer.copyToChannel(src, 1) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...].
+PASS   buffer.copyToChannel(src, 2) is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...].
+PASS   buffer.copyToChannel(src10, 0) is identical to the array [1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1...].
+PASS   buffer.copyToChannel(src10, 1) is identical to the array [1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1...].
+PASS   buffer.copyToChannel(src10, 2) is identical to the array [1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1...].
+PASS   buffer.copyToChannel(src10, 0, 5) is identical to the array [-1,-1,-1,-1,-1,1,2,3,4,5,6,7,8,9,10,-1...].
+PASS   buffer.copyToChannel(src10, 1, 5) is identical to the array [-1,-1,-1,-1,-1,1,2,3,4,5,6,7,8,9,10,-1...].
+PASS   buffer.copyToChannel(src10, 2, 5) is identical to the array [-1,-1,-1,-1,-1,1,2,3,4,5,6,7,8,9,10,-1...].
+PASS < [copyTo-validate] All assertions passed. (total 10 assertions)
 FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 5 tasks were failed. assert_true: expected true got false
 

@@ -1,16 +1,16 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Test k-rate DelayNode" 
-PASS Audit report 
-PASS > [Test k-rate DelayNode]  
-PASS   DelayNode: Setting delayTime.automationRate to "k-rate" is equal to k-rate. 
-PASS   DelayNode: k-rate node: delayTime.setValueAtTime(0,0) did not throw an exception. 
-PASS   DelayNode: k-rate node: delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
-PASS   DelayNode: a-rate node:delayTime.setValueAtTime(0,0) did not throw an exception. 
-PASS   DelayNode: a-rate node:delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
-PASS   DelayNode: Output of k-rate DelayNode is identical to the array [expected array]. 
-PASS   DelayNode: Output of a-rate DelayNode is identical to the array [expected array]. 
-PASS   DelayNode: Difference between a-rate and k-rate DelayNode is not constantly 0 (contains 7937 different values). 
-PASS < [Test k-rate DelayNode] All assertions passed. (total 8 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test k-rate DelayNode"
+PASS Audit report
+PASS > [Test k-rate DelayNode]
+PASS   DelayNode: Setting delayTime.automationRate to "k-rate" is equal to k-rate.
+PASS   DelayNode: k-rate node: delayTime.setValueAtTime(0,0) did not throw an exception.
+PASS   DelayNode: k-rate node: delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception.
+PASS   DelayNode: a-rate node:delayTime.setValueAtTime(0,0) did not throw an exception.
+PASS   DelayNode: a-rate node:delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception.
+PASS   DelayNode: Output of k-rate DelayNode is identical to the array [expected array].
+PASS   DelayNode: Output of a-rate DelayNode is identical to the array [expected array].
+PASS   DelayNode: Difference between a-rate and k-rate DelayNode is not constantly 0 (contains 7937 different values).
+PASS < [Test k-rate DelayNode] All assertions passed. (total 8 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

@@ -1,6 +1,6 @@
 
-PASS Setting event handlers to null onclose 
-PASS Setting event handlers to null onopen 
-PASS Setting event handlers to null onerror 
-PASS Setting event handlers to null onmessage 
+PASS Setting event handlers to null onclose
+PASS Setting event handlers to null onopen
+PASS Setting event handlers to null onerror
+PASS Setting event handlers to null onmessage
 

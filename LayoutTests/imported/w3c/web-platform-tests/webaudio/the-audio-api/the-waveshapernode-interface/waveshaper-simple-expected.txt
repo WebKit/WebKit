@@ -1,20 +1,20 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "simple" 
-PASS Audit report 
-PASS > [simple]  
-PASS   Initial WaveShaper.curve is equal to null. 
-PASS   Initial WaveShaper.oversample is equal to none. 
-PASS   Setting oversample to "2x" did not throw an exception. 
-PASS   Waveshaper.oversample = "2x" is equal to 2x. 
-PASS   Setting oversample to "4x" did not throw an exception. 
-PASS   Waveshaper.oversample = "4x" is equal to 4x. 
-PASS   Setting oversample to "invalid" did not throw an exception. 
-PASS   Waveshaper.oversample = "invalid" is equal to 4x. 
-PASS   Setting curve to [-1,0.25,0.75] did not throw an exception. 
-PASS   WaveShaper.curve is identical to the array [-1,0.25,0.75]. 
-PASS   Setting curve back to null did not throw an exception. 
-PASS   Waveshaper.curve = null is equal to null. 
-PASS < [simple] All assertions passed. (total 12 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "simple"
+PASS Audit report
+PASS > [simple]
+PASS   Initial WaveShaper.curve is equal to null.
+PASS   Initial WaveShaper.oversample is equal to none.
+PASS   Setting oversample to "2x" did not throw an exception.
+PASS   Waveshaper.oversample = "2x" is equal to 2x.
+PASS   Setting oversample to "4x" did not throw an exception.
+PASS   Waveshaper.oversample = "4x" is equal to 4x.
+PASS   Setting oversample to "invalid" did not throw an exception.
+PASS   Waveshaper.oversample = "invalid" is equal to 4x.
+PASS   Setting curve to [-1,0.25,0.75] did not throw an exception.
+PASS   WaveShaper.curve is identical to the array [-1,0.25,0.75].
+PASS   Setting curve back to null did not throw an exception.
+PASS   Waveshaper.curve = null is equal to null.
+PASS < [simple] All assertions passed. (total 12 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

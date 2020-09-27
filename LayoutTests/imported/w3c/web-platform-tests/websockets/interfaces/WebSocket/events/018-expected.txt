@@ -1,6 +1,6 @@
 
-PASS open event 
-PASS message event 
-PASS error event 
-PASS close event 
+PASS open event
+PASS message event
+PASS error event
+PASS close event
 

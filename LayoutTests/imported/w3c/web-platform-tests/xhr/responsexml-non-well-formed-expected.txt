@@ -1,9 +1,9 @@
 
-PASS XMLHttpRequest: responseXML non well-formed tests 
-PASS XMLHttpRequest: responseXML non well-formed tests 1 
-PASS XMLHttpRequest: responseXML non well-formed tests 2 
-PASS XMLHttpRequest: responseXML non well-formed tests 3 
-PASS XMLHttpRequest: responseXML non well-formed tests 4 
-PASS XMLHttpRequest: responseXML non well-formed tests 5 
-PASS XMLHttpRequest: responseXML non well-formed tests 6 
+PASS XMLHttpRequest: responseXML non well-formed tests
+PASS XMLHttpRequest: responseXML non well-formed tests 1
+PASS XMLHttpRequest: responseXML non well-formed tests 2
+PASS XMLHttpRequest: responseXML non well-formed tests 3
+PASS XMLHttpRequest: responseXML non well-formed tests 4
+PASS XMLHttpRequest: responseXML non well-formed tests 5
+PASS XMLHttpRequest: responseXML non well-formed tests 6
 

@@ -1,33 +1,33 @@
 
-PASS Transformed progress for step-start function 
-PASS Transformed progress for steps(1, start) function 
-PASS Transformed progress for steps(2, start) function 
-PASS Transformed progress for step-end function 
-PASS Transformed progress for steps(1) function 
-PASS Transformed progress for steps(1, end) function 
-PASS Transformed progress for steps(2, end) function 
-PASS Transformed progress for linear function 
-PASS Transformed progress for ease function 
-PASS Transformed progress for ease-in function 
-PASS Transformed progress for ease-in-out function 
-PASS Transformed progress for ease-out function 
-PASS Transformed progress for easing function which produces values greater than 1 
-PASS Transformed progress for easing function which produces values less than 1 
-PASS Test bounds point of step-start easing 
-PASS Test bounds point of step-start easing with reverse direction 
-PASS Test bounds point of step-start easing with iterationStart not at a transition point 
-PASS Test bounds point of step-start easing with iterationStart and delay 
-PASS Test bounds point of step-start easing with iterationStart and reverse direction 
-PASS Test bounds point of step(4, start) easing with iterationStart 0.75 and delay 
-PASS Test bounds point of step-start easing with alternate direction 
-PASS Test bounds point of step-start easing with alternate-reverse direction 
-PASS Test bounds point of step-end easing 
-PASS Test bounds point of step-end easing with iterationStart and delay 
-PASS Test bounds point of step-end easing with iterationStart not at a transition point 
-PASS Test bounds point of steps(jump-both) easing 
-PASS Test bounds point of steps(jump-both) easing with iterationStart and delay 
-PASS Test bounds point of steps(jump-both) easing with iterationStart not at a transition point 
-PASS Test bounds point of steps(jump-none) easing 
-PASS Test bounds point of steps(jump-none) easing with iterationStart and delay 
-PASS Test bounds point of steps(jump-none) easing with iterationStart not at a transition point 
+PASS Transformed progress for step-start function
+PASS Transformed progress for steps(1, start) function
+PASS Transformed progress for steps(2, start) function
+PASS Transformed progress for step-end function
+PASS Transformed progress for steps(1) function
+PASS Transformed progress for steps(1, end) function
+PASS Transformed progress for steps(2, end) function
+PASS Transformed progress for linear function
+PASS Transformed progress for ease function
+PASS Transformed progress for ease-in function
+PASS Transformed progress for ease-in-out function
+PASS Transformed progress for ease-out function
+PASS Transformed progress for easing function which produces values greater than 1
+PASS Transformed progress for easing function which produces values less than 1
+PASS Test bounds point of step-start easing
+PASS Test bounds point of step-start easing with reverse direction
+PASS Test bounds point of step-start easing with iterationStart not at a transition point
+PASS Test bounds point of step-start easing with iterationStart and delay
+PASS Test bounds point of step-start easing with iterationStart and reverse direction
+PASS Test bounds point of step(4, start) easing with iterationStart 0.75 and delay
+PASS Test bounds point of step-start easing with alternate direction
+PASS Test bounds point of step-start easing with alternate-reverse direction
+PASS Test bounds point of step-end easing
+PASS Test bounds point of step-end easing with iterationStart and delay
+PASS Test bounds point of step-end easing with iterationStart not at a transition point
+PASS Test bounds point of steps(jump-both) easing
+PASS Test bounds point of steps(jump-both) easing with iterationStart and delay
+PASS Test bounds point of steps(jump-both) easing with iterationStart not at a transition point
+PASS Test bounds point of steps(jump-none) easing
+PASS Test bounds point of steps(jump-none) easing with iterationStart and delay
+PASS Test bounds point of steps(jump-none) easing with iterationStart not at a transition point
 

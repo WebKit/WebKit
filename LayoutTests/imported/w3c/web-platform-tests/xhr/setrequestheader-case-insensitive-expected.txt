@@ -1,4 +1,4 @@
 
-PASS XMLHttpRequest: setRequestHeader() - headers that differ in case 
+PASS XMLHttpRequest: setRequestHeader() - headers that differ in case
 FAIL XMLHttpRequest: setRequestHeader() - headers that differ in case 1 assert_regexp_match: expected object "/content-TYPE/" but got "Host: localhost:8800\r\nContent-Type: x/x\r\nConnection: keep-alive\r\nTHIS-IS-A-TEST: 1, 2\r\nAccept: */*\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14) AppleWebKit/605.1.15 (KHTML, like Gecko)\r\nReferer: http://localhost:8800/xhr/setrequestheader-case-insensitive.htm\r\nAccept-Language: en-us\r\nAccept-Encoding: gzip, deflate\r\n"
 

@@ -1,7 +1,7 @@
 
-PASS Test animating discrete values 
-PASS Test discrete animation is used when interpolation fails 
-PASS Test discrete animation is used only for pairs of values that cannot be interpolated 
-PASS Test the 50% switch point for discrete animation is based on the effect easing 
-PASS Test the 50% switch point for discrete animation is based on the keyframe easing 
+PASS Test animating discrete values
+PASS Test discrete animation is used when interpolation fails
+PASS Test discrete animation is used only for pairs of values that cannot be interpolated
+PASS Test the 50% switch point for discrete animation is based on the effect easing
+PASS Test the 50% switch point for discrete animation is based on the keyframe easing
 

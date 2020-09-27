@@ -1,17 +1,17 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "buffer-stitching-1" 
-PASS Executing "buffer-stitching-2" 
-PASS Audit report 
-PASS > [buffer-stitching-1] Subsample buffer stitching, same rates 
-PASS   Test 1: context.sampleRate is equal to 44100. 
-PASS   Stitched sine-wave buffers at sample rate 44100 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000090957,"relativeThreshold":0}. 
-PASS   SNR (85.58656138880359 dB) is greater than or equal to 85.58. 
-PASS < [buffer-stitching-1] All assertions passed. (total 3 assertions) 
-PASS > [buffer-stitching-2] Subsample buffer stitching, different rates 
-PASS   Test 2: context.sampleRate is equal to 44100. 
-PASS   Stitched sine-wave buffers at sample rate 43800 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0038986,"relativeThreshold":0}. 
-PASS   SNR (65.73793928980352 dB) is greater than or equal to 65.737. 
-PASS < [buffer-stitching-2] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "buffer-stitching-1"
+PASS Executing "buffer-stitching-2"
+PASS Audit report
+PASS > [buffer-stitching-1] Subsample buffer stitching, same rates
+PASS   Test 1: context.sampleRate is equal to 44100.
+PASS   Stitched sine-wave buffers at sample rate 44100 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.000090957,"relativeThreshold":0}.
+PASS   SNR (85.58656138880359 dB) is greater than or equal to 85.58.
+PASS < [buffer-stitching-1] All assertions passed. (total 3 assertions)
+PASS > [buffer-stitching-2] Subsample buffer stitching, different rates
+PASS   Test 2: context.sampleRate is equal to 44100.
+PASS   Stitched sine-wave buffers at sample rate 43800 equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0.0038986,"relativeThreshold":0}.
+PASS   SNR (65.73793928980352 dB) is greater than or equal to 65.737.
+PASS < [buffer-stitching-2] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

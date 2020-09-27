@@ -1,19 +1,19 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Basic tests for AudioBuffer" 
-PASS Audit report 
-PASS > [Basic tests for AudioBuffer]  
-PASS   buffer = context.createBuffer(4, 88200, 44100) is true. 
-PASS   buffer.sampleRate is equal to 44100. 
-PASS   buffer.length is equal to 88200. 
-PASS   buffer.duration is equal to 2. 
-PASS   buffer.numberOfChannels is equal to 4. 
-PASS   buffer.getChannelData(0) instanceof window.Float32Array is true. 
-PASS   buffer.getChannelData(1) instanceof window.Float32Array is true. 
-PASS   buffer.getChannelData(2) instanceof window.Float32Array is true. 
-PASS   buffer.getChannelData(3) instanceof window.Float32Array is true. 
-PASS   buffer.getChannelData(4) threw IndexSizeError: "Index must be less than number of channels.". 
-PASS   context.createBuffer(1, 1000, 24576).duration is equal to 0.040690104166666664. 
-PASS < [Basic tests for AudioBuffer] All assertions passed. (total 11 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Basic tests for AudioBuffer"
+PASS Audit report
+PASS > [Basic tests for AudioBuffer]
+PASS   buffer = context.createBuffer(4, 88200, 44100) is true.
+PASS   buffer.sampleRate is equal to 44100.
+PASS   buffer.length is equal to 88200.
+PASS   buffer.duration is equal to 2.
+PASS   buffer.numberOfChannels is equal to 4.
+PASS   buffer.getChannelData(0) instanceof window.Float32Array is true.
+PASS   buffer.getChannelData(1) instanceof window.Float32Array is true.
+PASS   buffer.getChannelData(2) instanceof window.Float32Array is true.
+PASS   buffer.getChannelData(3) instanceof window.Float32Array is true.
+PASS   buffer.getChannelData(4) threw IndexSizeError: "Index must be less than number of channels.".
+PASS   context.createBuffer(1, 1000, 24576).duration is equal to 0.040690104166666664.
+PASS < [Basic tests for AudioBuffer] All assertions passed. (total 11 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

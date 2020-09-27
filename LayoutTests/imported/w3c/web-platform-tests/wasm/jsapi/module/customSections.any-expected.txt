@@ -1,11 +1,11 @@
 
-PASS Missing arguments 
-PASS Non-Module arguments 
-PASS Branding 
-PASS Empty module 
-PASS Empty module: array caching 
-PASS Custom sections 
-PASS Custom sections with surrogate pairs 
-PASS Custom sections with U+FFFD 
-PASS Stray argument 
+PASS Missing arguments
+PASS Non-Module arguments
+PASS Branding
+PASS Empty module
+PASS Empty module: array caching
+PASS Custom sections
+PASS Custom sections with surrogate pairs
+PASS Custom sections with U+FFFD
+PASS Stray argument
 

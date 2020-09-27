@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: SharedWorker
 
 FAIL Test the name property of shared and dedicated workers via the name constructor option Can't find variable: SharedWorker
-PASS Declaring name as an accidental global must not cause a harness error for DedicatedWorkerGlobalScope 
-PASS name property value for DedicatedWorkerGlobalScope 
-PASS name property is replaceable for DedicatedWorkerGlobalScope 
+PASS Declaring name as an accidental global must not cause a harness error for DedicatedWorkerGlobalScope
+PASS name property value for DedicatedWorkerGlobalScope
+PASS name property is replaceable for DedicatedWorkerGlobalScope
 

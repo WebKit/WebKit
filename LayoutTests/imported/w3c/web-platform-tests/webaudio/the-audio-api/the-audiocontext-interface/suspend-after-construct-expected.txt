@@ -1,7 +1,7 @@
 
-PASS State change counting 
-PASS Iteration 1 
-PASS Iteration 2 
-PASS Iteration 3 
-PASS Stop waiting 
+PASS State change counting
+PASS Iteration 1
+PASS Iteration 2
+PASS Iteration 3
+PASS Stop waiting
 

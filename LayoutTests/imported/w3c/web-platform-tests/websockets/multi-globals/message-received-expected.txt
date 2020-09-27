@@ -1,5 +1,5 @@
 
 
-PASS ArrayBuffer should be created in the relevant realm of the WebSocket 
-PASS Blob should be created in the relevant realm of the WebSocket 
+PASS ArrayBuffer should be created in the relevant realm of the WebSocket
+PASS Blob should be created in the relevant realm of the WebSocket
 

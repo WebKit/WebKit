@@ -1,7 +1,7 @@
 
-PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (arrayBuffer) 
-PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (JSON) 
-PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (glob) 
-PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (txt) 
-PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (text/html) 
+PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (arrayBuffer)
+PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (JSON)
+PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (glob)
+PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (txt)
+PASS XMLHttpRequest: response is plain text if responseType is set to an invalid string (text/html)
 

@@ -1,11 +1,11 @@
 
-PASS XMLHttpRequest: open() - bogus methods () 
-PASS XMLHttpRequest: open() - bogus methods (>) 
-PASS XMLHttpRequest: open() - bogus methods ( GET) 
-PASS XMLHttpRequest: open() - bogus methods (G T) 
-PASS XMLHttpRequest: open() - bogus methods (@GET) 
-PASS XMLHttpRequest: open() - bogus methods (G:ET) 
-PASS XMLHttpRequest: open() - bogus methods (GET?) 
+PASS XMLHttpRequest: open() - bogus methods ()
+PASS XMLHttpRequest: open() - bogus methods (>)
+PASS XMLHttpRequest: open() - bogus methods ( GET)
+PASS XMLHttpRequest: open() - bogus methods (G T)
+PASS XMLHttpRequest: open() - bogus methods (@GET)
+PASS XMLHttpRequest: open() - bogus methods (G:ET)
+PASS XMLHttpRequest: open() - bogus methods (GET?)
 PASS XMLHttpRequest: open() - bogus methods (GET
-) 
+)
 

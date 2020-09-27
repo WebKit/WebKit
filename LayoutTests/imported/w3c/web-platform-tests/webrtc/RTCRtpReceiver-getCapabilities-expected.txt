@@ -1,5 +1,5 @@
 
-PASS RTCRtpSender.getCapabilities('audio') should return RTCRtpCapabilities dictionary 
-PASS RTCRtpSender.getCapabilities('video') should return RTCRtpCapabilities dictionary 
-PASS RTCRtpSender.getCapabilities('dummy') should return null 
+PASS RTCRtpSender.getCapabilities('audio') should return RTCRtpCapabilities dictionary
+PASS RTCRtpSender.getCapabilities('video') should return RTCRtpCapabilities dictionary
+PASS RTCRtpSender.getCapabilities('dummy') should return null
 

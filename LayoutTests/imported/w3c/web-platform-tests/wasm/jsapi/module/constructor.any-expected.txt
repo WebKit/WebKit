@@ -1,12 +1,12 @@
 
-PASS name 
-PASS length 
-PASS No arguments 
-PASS Calling 
-PASS Invalid arguments 
-PASS Empty buffer 
-PASS Invalid code 
-PASS Prototype 
-PASS Extensibility 
-PASS Stray argument 
+PASS name
+PASS length
+PASS No arguments
+PASS Calling
+PASS Invalid arguments
+PASS Empty buffer
+PASS Invalid code
+PASS Prototype
+PASS Extensibility
+PASS Stray argument
 

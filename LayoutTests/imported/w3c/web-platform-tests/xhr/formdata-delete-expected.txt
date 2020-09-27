@@ -1,9 +1,9 @@
 
-PASS testFormDataDelete 
-PASS testFormDataDeleteFromForm 
-PASS testFormDataDeleteFromFormNonExistentKey 
-PASS testFormDataDeleteFromFormOtherKey 
-PASS testFormDataDeleteFromEmptyForm 
-PASS testFormDataDeleteNonExistentKey 
-PASS testFormDataDeleteOtherKey 
+PASS testFormDataDelete
+PASS testFormDataDeleteFromForm
+PASS testFormDataDeleteFromFormNonExistentKey
+PASS testFormDataDeleteFromFormOtherKey
+PASS testFormDataDeleteFromEmptyForm
+PASS testFormDataDeleteNonExistentKey
+PASS testFormDataDeleteOtherKey
 

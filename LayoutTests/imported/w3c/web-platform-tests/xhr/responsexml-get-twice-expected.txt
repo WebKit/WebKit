@@ -1,6 +1,6 @@
 
-PASS Getting response, then response 
-PASS Getting responseXML, then responseXML 
-PASS Getting responseXML, then response 
-PASS Getting response, then responseXML 
+PASS Getting response, then response
+PASS Getting responseXML, then responseXML
+PASS Getting responseXML, then response
+PASS Getting response, then responseXML
 

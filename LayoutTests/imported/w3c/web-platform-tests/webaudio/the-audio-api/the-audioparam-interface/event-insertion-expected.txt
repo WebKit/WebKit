@@ -1,69 +1,69 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "Insert same event at same time" 
-PASS Executing "Linear + Expo" 
-PASS Executing "Expo + Linear" 
-PASS Executing "Linear + SetTarget" 
-PASS Executing "Multiple linear ramps at the same time" 
-PASS Executing "Multiple exponential ramps at the same time" 
-PASS Audit report 
-PASS > [Insert same event at same time]  
-PASS   setValueAtTime(99, 0.0078125) did not throw an exception. 
-PASS   setValueAtTime(1, 0.0078125) did not throw an exception. 
-PASS   linearRampToValueAtTime(99, 0.015625) did not throw an exception. 
-PASS   linearRampToValueAtTime(2, 0.015625) did not throw an exception. 
-PASS   exponentialRampToValueAtTime(99, 0.0234375) did not throw an exception. 
-PASS   exponentialRampToValueAtTime(3, 0.0234375) did not throw an exception. 
-PASS   setValueCurveAtTime([3,4], 0.0234375, 0.0078125) did not throw an exception. 
-PASS   setValueAtTime(99, 0.03900146484375) did not throw an exception. 
-PASS   setValueAtTime(1, 0.03900146484375) did not throw an exception. 
-PASS   setValueAtTime(5, 0.03900146484375) did not throw an exception. 
-PASS   Output at frame 128 (time 0.0078125) is equal to 1. 
-PASS   Output at frame 256 (time 0.015625) is equal to 2. 
-PASS   Output at frame 384 (time 0.0234375) is equal to 3. 
-PASS   Output at frame 512 (time 0.03125) is equal to 4. 
-PASS   Output at frame 640 (time 0.0390625) is equal to 5. 
-PASS < [Insert same event at same time] All assertions passed. (total 15 assertions) 
-PASS > [Linear + Expo] Different events at same time 
-PASS   Linear+Expo: Context length is long enough for the test is true. 
-PASS   Linear+Expo: linearRampToValueAtTime(2, 0.015625) did not throw an exception. 
-PASS   Linear+Expo: setValueAtTime(99, 0.015625) did not throw an exception. 
-PASS   Linear+Expo: exponentialRampToValueAtTime(3, 0.015625) did not throw an exception. 
-PASS   Linear+Expo: At time 0.01556396484375 (frame 255) output is 1.99609375 within an error of 0. 
-PASS   Linear+Expo: At time 0.015625 (frame 256) and later, output contains only the constant 3. 
-PASS < [Linear + Expo] All assertions passed. (total 6 assertions) 
-PASS > [Expo + Linear] Different events at same time 
-PASS   Expo+Linear: Context length is long enough for the test is true. 
-PASS   Expo+Linear: exponentialRampToValueAtTime(3, 0.015625) did not throw an exception. 
-PASS   Expo+Linear: setValueAtTime(99, 0.015625) did not throw an exception. 
-PASS   Expo+Linear: linearRampToValueAtTime(2, 0.015625) did not throw an exception. 
-PASS   Expo+Linear: At time 0.01556396484375 (frame 255) output is 2.9871532226369792 within an error of 0.0000042533. 
-PASS   Expo+Linear: At time 0.015625 (frame 256) and later, output contains only the constant 2. 
-PASS < [Expo + Linear] All assertions passed. (total 6 assertions) 
-PASS > [Linear + SetTarget] Different events at same time 
-PASS   Linear+SetTarget: Context length is long enough for the test is true. 
-PASS   Linear+SetTarget: linearRampToValueAtTime(3, 0.015625) did not throw an exception. 
-PASS   Linear+SetTarget: setValueAtTime(100, 0.015625) did not throw an exception. 
-PASS   Linear+SetTarget: setTargetAtTime(0, 0.015625, 0.1) did not throw an exception. 
-PASS   Linear+SetTarget: At time 0.01556396484375 (frame 255) output is 2.9921875 within an error of 0. 
-PASS   Linear+SetTarget: At time 0.015625 (frame 256) output is equal to 100. 
-PASS   Linear+SetTarget: At time 0.015625 (frame 256) and later equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.7807e-7}. 
-PASS < [Linear + SetTarget] All assertions passed. (total 7 assertions) 
-PASS > [Multiple linear ramps at the same time] Verify output 
-PASS   Multiple linear ramps: setValueAtTime(1, 0) did not throw an exception. 
-PASS   Multiple linear ramps: linearRampToValueAtTime(2, 0.00390625) did not throw an exception. 
-PASS   Multiple linear ramps: linearRampToValueAtTime(7, 0.00390625) did not throw an exception. 
-PASS   Multiple linear ramps: linearRampToValueAtTime(10, 0.00390625) did not throw an exception. 
-PASS   Multiple linear ramps: Output at frame 63 is 1.984375 within an error of 0. 
-PASS   Multiple linear ramps: Output at frame 64 (0.00390625 sec) is equal to 10. 
-PASS < [Multiple linear ramps at the same time] All assertions passed. (total 6 assertions) 
-PASS > [Multiple exponential ramps at the same time] Verify output 
-PASS   Multiple exponential ramps: setValueAtTime(1, 0) did not throw an exception. 
-PASS   Multiple exponential ramps: exponentialRampToValueAtTime(2, 0.00390625) did not throw an exception. 
-PASS   Multiple exponential ramps: exponentialRampToValueAtTime(7, 0.00390625) did not throw an exception. 
-PASS   Multiple exponential ramps: exponentialRampToValueAtTime(10, 0.00390625) did not throw an exception. 
-PASS   Multiple exponential ramps: Output at frame 63 is 1.978456026387951 within an error of 5.3924e-7. 
-PASS   Multiple exponential ramps: Output at frame 64 (0.00390625 sec) is equal to 10. 
-PASS < [Multiple exponential ramps at the same time] All assertions passed. (total 6 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Insert same event at same time"
+PASS Executing "Linear + Expo"
+PASS Executing "Expo + Linear"
+PASS Executing "Linear + SetTarget"
+PASS Executing "Multiple linear ramps at the same time"
+PASS Executing "Multiple exponential ramps at the same time"
+PASS Audit report
+PASS > [Insert same event at same time]
+PASS   setValueAtTime(99, 0.0078125) did not throw an exception.
+PASS   setValueAtTime(1, 0.0078125) did not throw an exception.
+PASS   linearRampToValueAtTime(99, 0.015625) did not throw an exception.
+PASS   linearRampToValueAtTime(2, 0.015625) did not throw an exception.
+PASS   exponentialRampToValueAtTime(99, 0.0234375) did not throw an exception.
+PASS   exponentialRampToValueAtTime(3, 0.0234375) did not throw an exception.
+PASS   setValueCurveAtTime([3,4], 0.0234375, 0.0078125) did not throw an exception.
+PASS   setValueAtTime(99, 0.03900146484375) did not throw an exception.
+PASS   setValueAtTime(1, 0.03900146484375) did not throw an exception.
+PASS   setValueAtTime(5, 0.03900146484375) did not throw an exception.
+PASS   Output at frame 128 (time 0.0078125) is equal to 1.
+PASS   Output at frame 256 (time 0.015625) is equal to 2.
+PASS   Output at frame 384 (time 0.0234375) is equal to 3.
+PASS   Output at frame 512 (time 0.03125) is equal to 4.
+PASS   Output at frame 640 (time 0.0390625) is equal to 5.
+PASS < [Insert same event at same time] All assertions passed. (total 15 assertions)
+PASS > [Linear + Expo] Different events at same time
+PASS   Linear+Expo: Context length is long enough for the test is true.
+PASS   Linear+Expo: linearRampToValueAtTime(2, 0.015625) did not throw an exception.
+PASS   Linear+Expo: setValueAtTime(99, 0.015625) did not throw an exception.
+PASS   Linear+Expo: exponentialRampToValueAtTime(3, 0.015625) did not throw an exception.
+PASS   Linear+Expo: At time 0.01556396484375 (frame 255) output is 1.99609375 within an error of 0.
+PASS   Linear+Expo: At time 0.015625 (frame 256) and later, output contains only the constant 3.
+PASS < [Linear + Expo] All assertions passed. (total 6 assertions)
+PASS > [Expo + Linear] Different events at same time
+PASS   Expo+Linear: Context length is long enough for the test is true.
+PASS   Expo+Linear: exponentialRampToValueAtTime(3, 0.015625) did not throw an exception.
+PASS   Expo+Linear: setValueAtTime(99, 0.015625) did not throw an exception.
+PASS   Expo+Linear: linearRampToValueAtTime(2, 0.015625) did not throw an exception.
+PASS   Expo+Linear: At time 0.01556396484375 (frame 255) output is 2.9871532226369792 within an error of 0.0000042533.
+PASS   Expo+Linear: At time 0.015625 (frame 256) and later, output contains only the constant 2.
+PASS < [Expo + Linear] All assertions passed. (total 6 assertions)
+PASS > [Linear + SetTarget] Different events at same time
+PASS   Linear+SetTarget: Context length is long enough for the test is true.
+PASS   Linear+SetTarget: linearRampToValueAtTime(3, 0.015625) did not throw an exception.
+PASS   Linear+SetTarget: setValueAtTime(100, 0.015625) did not throw an exception.
+PASS   Linear+SetTarget: setTargetAtTime(0, 0.015625, 0.1) did not throw an exception.
+PASS   Linear+SetTarget: At time 0.01556396484375 (frame 255) output is 2.9921875 within an error of 0.
+PASS   Linear+SetTarget: At time 0.015625 (frame 256) output is equal to 100.
+PASS   Linear+SetTarget: At time 0.015625 (frame 256) and later equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.7807e-7}.
+PASS < [Linear + SetTarget] All assertions passed. (total 7 assertions)
+PASS > [Multiple linear ramps at the same time] Verify output
+PASS   Multiple linear ramps: setValueAtTime(1, 0) did not throw an exception.
+PASS   Multiple linear ramps: linearRampToValueAtTime(2, 0.00390625) did not throw an exception.
+PASS   Multiple linear ramps: linearRampToValueAtTime(7, 0.00390625) did not throw an exception.
+PASS   Multiple linear ramps: linearRampToValueAtTime(10, 0.00390625) did not throw an exception.
+PASS   Multiple linear ramps: Output at frame 63 is 1.984375 within an error of 0.
+PASS   Multiple linear ramps: Output at frame 64 (0.00390625 sec) is equal to 10.
+PASS < [Multiple linear ramps at the same time] All assertions passed. (total 6 assertions)
+PASS > [Multiple exponential ramps at the same time] Verify output
+PASS   Multiple exponential ramps: setValueAtTime(1, 0) did not throw an exception.
+PASS   Multiple exponential ramps: exponentialRampToValueAtTime(2, 0.00390625) did not throw an exception.
+PASS   Multiple exponential ramps: exponentialRampToValueAtTime(7, 0.00390625) did not throw an exception.
+PASS   Multiple exponential ramps: exponentialRampToValueAtTime(10, 0.00390625) did not throw an exception.
+PASS   Multiple exponential ramps: Output at frame 63 is 1.978456026387951 within an error of 5.3924e-7.
+PASS   Multiple exponential ramps: Output at frame 64 (0.00390625 sec) is equal to 10.
+PASS < [Multiple exponential ramps at the same time] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully.
 

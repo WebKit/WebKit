@@ -1,12 +1,12 @@
 
-PASS sending a plain empty object 
-PASS sending the ES Math object 
-PASS sending a new XHR instance 
-PASS sending object that stringifies to undefined 
-PASS sending object that stringifies to null 
-PASS object that stringifies to query string 
-PASS object that stringifies to JSON string 
-PASS object whose valueOf() returns a document - ignore valueOf(), stringify 
-PASS object whose toString() returns a document, expected to throw 
-PASS object whose toString() throws, expected to throw 
+PASS sending a plain empty object
+PASS sending the ES Math object
+PASS sending a new XHR instance
+PASS sending object that stringifies to undefined
+PASS sending object that stringifies to null
+PASS object that stringifies to query string
+PASS object that stringifies to JSON string
+PASS object whose valueOf() returns a document - ignore valueOf(), stringify
+PASS object whose toString() returns a document, expected to throw
+PASS object whose toString() throws, expected to throw
 

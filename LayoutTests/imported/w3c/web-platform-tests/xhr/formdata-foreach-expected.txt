@@ -1,6 +1,6 @@
 
-PASS Iterator should return duplicate keys and non-deleted values 
-PASS Entries iterator should return duplicate keys and non-deleted values 
-PASS Keys iterator should return duplicates 
-PASS Values iterator should return non-deleted values 
+PASS Iterator should return duplicate keys and non-deleted values
+PASS Entries iterator should return duplicate keys and non-deleted values
+PASS Keys iterator should return duplicates
+PASS Values iterator should return non-deleted values
 

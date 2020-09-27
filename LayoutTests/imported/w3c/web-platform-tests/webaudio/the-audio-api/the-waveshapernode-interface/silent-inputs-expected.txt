@@ -1,17 +1,17 @@
 
-PASS # AUDIT TASK RUNNER STARTED. 
-PASS Executing "test-0" 
-PASS Executing "test-1" 
-PASS Executing "test-2" 
-PASS Audit report 
-PASS > [test-0] curve output is non-zero for silent inputs 
-PASS   WaveShaper with silent inputs and curve {"0":0.5,"1":0.5,"2":0.5} contains only the constant 0.5. 
-PASS < [test-0] All assertions passed. (total 1 assertions) 
-PASS > [test-1] 2x curve output is non-zero for silent inputs 
-PASS   WaveShaper with 2x oversample, silent inputs, and curve {"0":0.5,"1":0.5,"2":0.5} contains only the constant 0.5. 
-PASS < [test-1] All assertions passed. (total 1 assertions) 
-PASS > [test-2] curve output is non-zero for no inputs 
-PASS   WaveShaper with no inputs and curve {"0":0.5,"1":0.5,"2":0.5} contains only the constant 0.5. 
-PASS < [test-2] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test-0"
+PASS Executing "test-1"
+PASS Executing "test-2"
+PASS Audit report
+PASS > [test-0] curve output is non-zero for silent inputs
+PASS   WaveShaper with silent inputs and curve {"0":0.5,"1":0.5,"2":0.5} contains only the constant 0.5.
+PASS < [test-0] All assertions passed. (total 1 assertions)
+PASS > [test-1] 2x curve output is non-zero for silent inputs
+PASS   WaveShaper with 2x oversample, silent inputs, and curve {"0":0.5,"1":0.5,"2":0.5} contains only the constant 0.5.
+PASS < [test-1] All assertions passed. (total 1 assertions)
+PASS > [test-2] curve output is non-zero for no inputs
+PASS   WaveShaper with no inputs and curve {"0":0.5,"1":0.5,"2":0.5} contains only the constant 0.5.
+PASS < [test-2] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully.
 

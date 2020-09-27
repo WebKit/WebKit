@@ -1,9 +1,9 @@
 
-PASS XMLHttpRequest: getAllResponseHeaders() 
-PASS XMLHttpRequest: getAllResponseHeaders() 1 
-PASS XMLHttpRequest: getAllResponseHeaders() 2 
-PASS XMLHttpRequest: getAllResponseHeaders() 3 
-PASS XMLHttpRequest: getAllResponseHeaders() 4 
-PASS XMLHttpRequest: getAllResponseHeaders() 5 
-PASS XMLHttpRequest: getAllResponseHeaders() 6 
+PASS XMLHttpRequest: getAllResponseHeaders()
+PASS XMLHttpRequest: getAllResponseHeaders() 1
+PASS XMLHttpRequest: getAllResponseHeaders() 2
+PASS XMLHttpRequest: getAllResponseHeaders() 3
+PASS XMLHttpRequest: getAllResponseHeaders() 4
+PASS XMLHttpRequest: getAllResponseHeaders() 5
+PASS XMLHttpRequest: getAllResponseHeaders() 6
 

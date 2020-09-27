@@ -1,3 +1,3 @@
 
-PASS WebSockets: sending HttpOnly cookies in ws request 
+PASS WebSockets: sending HttpOnly cookies in ws request
 
