@@ -109,10 +109,17 @@ bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 
 String MediaPlaybackTargetCocoa::deviceName() const
 {
-    if (m_outputContext)
-        return m_outputContext.get().deviceName;
+    if (!m_outputContext)
+        return emptyString();
 
-    return emptyString();
+    if (![m_outputContext supportsMultipleOutputDevices])
+        return [m_outputContext deviceName];
+
+    auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
+    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices])
+        [outputDeviceNames addObject:[outputDevice deviceName]];
+
+    return [outputDeviceNames componentsJoinedByString:@" + "];
 }
 
 MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget* rep)
