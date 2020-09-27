@@ -81,30 +81,6 @@ function trySettingRGBA(r, g, b, a, expected) {
     shouldBe("trySettingShadowRGBA(" + r + ", " + g + ", " + b + ", " + a + ")", expected);
 }
 
-function trySettingFillColorCMYKA(c, m, y, k, a) {
-    ctx.fillStyle = '#666';
-    ctx.setFillColor(c, m, y, k, a);
-    return ctx.fillStyle;
-}
-
-function trySettingStrokeColorCMYKA(c, m, y, k, a) {
-    ctx.strokeStyle = '#666';
-    ctx.setStrokeColor(c, m, y, k, a);
-    return ctx.strokeStyle;
-}
-
-function trySettingShadowCMYKA(c, m, y, k, a) {
-    ctx.strokeStyle = '#666';
-    ctx.setStrokeColor(c, m, y, k, a);
-    return ctx.strokeStyle;
-}
-
-function trySettingCMYKA(c, m, y, k, a, expected) {
-    shouldBe("trySettingFillColorCMYKA(" + c + ", " + m + ", " + y + ", " + k + ", " + a + ")", expected);
-    shouldBe("trySettingStrokeColorCMYKA(" + c + ", " + m + ", " + y + ", " + k + ", " + a + ")", expected);
-    shouldBe("trySettingShadowCMYKA(" + c + ", " + m + ", " + y + ", " + k + ", " + a + ")", expected);
-}
-
 function trySettingFillColorWithOverrideAlpha(color, alpha) {
     ctx.fillStyle = '#666';
     ctx.setFillColor(color, alpha);
@@ -198,13 +174,6 @@ trySettingRGBA(0, 0, 0, 0.0, "'rgba(0, 0, 0, 0)'");
 trySettingRGBA(255, 255, 255, 1.0, "'#ffffff'");
 trySettingRGBA(255, 0, 0, 0.0, "'rgba(255, 0, 0, 0)'");
 trySettingRGBA(255, 0, 0, 0.4, "'rgba(255, 0, 0, 0.4)'");
-
-trySettingCMYKA(0, 0, 0, 0, 0.0, "'rgba(255, 255, 255, 0)'");
-trySettingCMYKA(0, 0, 0, 0, 1.0, "'#ffffff'");
-trySettingCMYKA(0, 1, 0, 0, 0.0, "'rgba(255, 0, 255, 0)'");
-trySettingCMYKA(0, 1, 0, 0, 1.0, "'#ff00ff'");
-trySettingCMYKA(0, 0, 0, 1, 0.0, "'rgba(0, 0, 0, 0)'");
-trySettingCMYKA(0, 0, 0, 1, 1.0, "'#000000'");
 
 trySettingGrayLevel(0.0, "'#000000'");
 trySettingGrayLevel(0.5, "'#808080'");

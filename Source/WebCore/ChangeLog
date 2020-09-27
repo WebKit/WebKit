@@ -1,3 +1,33 @@
+2020-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove support for setting CMYKA fill and stroke colors in 2D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=217002
+
+        Reviewed by Darin Adler.
+
+        Remove support for `setFillColor(c, m, y, k, a)` and `setStrokeColor(c, m, y, k, a)` on
+        `CanvasRenderingContext2D`, which was initially introduced in 2004 with <https://trac.webkit.org/r6730>.
+        Setting colors from CMYKA components is non-standard and unsupported in both Firefox and Chrome;
+        importantly, this is implemented in `CanvasStyle::applyStrokeColor` by calling directly into CoreGraphics
+        API using the platform `CGContextRef`, which is null when using the GPU Process; this subsequently causes
+        the web process to crash.
+
+        In lieu of adding new DisplayList items to support setting fill and stroke colors with CMYKA components,
+        we can take this opportunity to just drop support for this canvas API entirely. Fixes the following tests
+        when using the GPU Process to render canvas:
+        - fast/canvas/canvas-color-serialization.html
+        - fast/canvas/canvas-overloads-setFillColor.html
+        - fast/canvas/canvas-overloads-setStrokeColor.html
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::isEquivalentColor const):
+        (WebCore::CanvasStyle::applyStrokeColor const):
+        (WebCore::CanvasStyle::applyFillColor const):
+        * html/canvas/CanvasStyle.h:
+        (WebCore::CanvasStyle::color const):
+
 2020-09-26  Chris Dumez  <cdumez@apple.com>
 
         Constructing an AudioNode for a closed context should not throw an exception

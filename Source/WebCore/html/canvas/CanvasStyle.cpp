@@ -99,11 +99,6 @@ CanvasStyle::CanvasStyle(const SRGBA<float>& colorComponents)
 {
 }
 
-CanvasStyle::CanvasStyle(const CMYKA<float>& colorComponents)
-    : m_style(CMYKAColor { convertToComponentBytes(toSRGBA(colorComponents)), colorComponents })
-{
-}
-
 CanvasStyle::CanvasStyle(CanvasGradient& gradient)
     : m_style(makeRefPtr(gradient))
 {
@@ -148,9 +143,6 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
     if (WTF::holds_alternative<Color>(m_style) && WTF::holds_alternative<Color>(other.m_style))
         return WTF::get<Color>(m_style) == WTF::get<Color>(other.m_style);
 
-    if (WTF::holds_alternative<CMYKAColor>(m_style) && WTF::holds_alternative<CMYKAColor>(other.m_style))
-        return WTF::get<CMYKAColor>(m_style).components == WTF::get<CMYKAColor>(other.m_style).components;
-
     return false;
 }
 
@@ -159,25 +151,11 @@ bool CanvasStyle::isEquivalent(const SRGBA<float>& components) const
     return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == convertToComponentBytes(components);
 }
 
-bool CanvasStyle::isEquivalent(const CMYKA<float>& components) const
-{
-    return WTF::holds_alternative<CMYKAColor>(m_style) && WTF::get<CMYKAColor>(m_style).components == components;
-}
-
 void CanvasStyle::applyStrokeColor(GraphicsContext& context) const
 {
     WTF::switchOn(m_style,
         [&context] (const Color& color) {
             context.setStrokeColor(color);
-        },
-        [&context] (const CMYKAColor& color) {
-            // FIXME: Do this through platform-independent GraphicsContext API.
-            // We'll need a fancier Color abstraction to support CMYKA correctly
-#if USE(CG)
-            CGContextSetCMYKStrokeColor(context.platformContext(), color.components.cyan, color.components.magenta, color.components.yellow, color.components.black, color.components.alpha);
-#else
-            context.setStrokeColor(color.colorConvertedToSRGBA);
-#endif
         },
         [&context] (const RefPtr<CanvasGradient>& gradient) {
             context.setStrokeGradient(gradient->gradient());
@@ -199,15 +177,6 @@ void CanvasStyle::applyFillColor(GraphicsContext& context) const
     WTF::switchOn(m_style,
         [&context] (const Color& color) {
             context.setFillColor(color);
-        },
-        [&context] (const CMYKAColor& color) {
-            // FIXME: Do this through platform-independent GraphicsContext API.
-            // We'll need a fancier Color abstraction to support CMYKA correctly
-#if USE(CG)
-            CGContextSetCMYKFillColor(context.platformContext(), color.components.cyan, color.components.magenta, color.components.yellow, color.components.black, color.components.alpha);
-#else
-            context.setFillColor(color.colorConvertedToSRGBA);
-#endif
         },
         [&context] (const RefPtr<CanvasGradient>& gradient) {
             context.setFillGradient(gradient->gradient());

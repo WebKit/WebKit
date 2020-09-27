@@ -1,3 +1,22 @@
+2020-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove support for setting CMYKA fill and stroke colors in 2D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=217002
+
+        Reviewed by Darin Adler.
+
+        Remove calls to `CanvasRenderingContext2D.setFillColor(c, m, y, k, a)` and
+        `CanvasRenderingContext2D.setStrokeColor(c, m, y, k, a)` in these layout tests.
+
+        * fast/canvas/canvas-color-serialization-expected.txt:
+        * fast/canvas/canvas-color-serialization.html:
+        * fast/canvas/set-colors-expected.txt:
+        * fast/canvas/set-colors.html:
+        * inspector/canvas/recording-2d-full-expected.txt:
+        * inspector/canvas/resources/recording-2d.js:
+        * platform/ios/fast/canvas/set-colors-expected.txt:
+        * platform/mac/fast/canvas/set-colors-expected.txt:
+
 2020-09-26  Darin Adler  <darin@apple.com>
 
         Remove trailing spaces from expected.txt files (excluding WPT for now since that contains too many)

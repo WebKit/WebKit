@@ -46,11 +46,9 @@
     undefined setStrokeColor(DOMString color, optional unrestricted float alpha);
     undefined setStrokeColor(unrestricted float grayLevel, optional float alpha = 1);
     undefined setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    undefined setStrokeColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
     undefined setFillColor(DOMString color, optional unrestricted float alpha);
     undefined setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
     undefined setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    undefined setFillColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
 
     // Non-standard functionality (CanvasImageData).
     readonly attribute float webkitBackingStorePixelRatio; // Always returns 1.

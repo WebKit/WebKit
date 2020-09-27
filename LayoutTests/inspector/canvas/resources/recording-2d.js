@@ -273,7 +273,6 @@ function performActions() {
             ctx.setFillColor(2);
             ctx.setFillColor(3, 4);
             ctx.setFillColor(5, 6, 7, 8);
-            ctx.setFillColor(9, 10, 11, 12, 13);
         },
         () => {
             ctx.setLineCap();
@@ -308,7 +307,6 @@ function performActions() {
             ctx.setStrokeColor(2);
             ctx.setStrokeColor(3, 4);
             ctx.setStrokeColor(5, 6, 7, 8);
-            ctx.setStrokeColor(9, 10, 11, 12, 13);
         },
         () => {
             ctx.setTransform(1, 2, 3, 4, 5, 6);

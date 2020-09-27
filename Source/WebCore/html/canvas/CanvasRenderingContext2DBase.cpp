@@ -931,14 +931,6 @@ void CanvasRenderingContext2DBase::setStrokeColor(float r, float g, float b, flo
     setStrokeStyle(CanvasStyle(color));
 }
 
-void CanvasRenderingContext2DBase::setStrokeColor(float c, float m, float y, float k, float a)
-{
-    auto color = CMYKA { c, m, y, k, a };
-    if (state().strokeStyle.isEquivalent(color))
-        return;
-    setStrokeStyle(CanvasStyle(color));
-}
-
 void CanvasRenderingContext2DBase::setFillColor(const String& color, Optional<float> alpha)
 {
     if (alpha) {
@@ -965,14 +957,6 @@ void CanvasRenderingContext2DBase::setFillColor(float grayLevel, float alpha)
 void CanvasRenderingContext2DBase::setFillColor(float r, float g, float b, float a)
 {
     auto color = SRGBA { r, g, b, a };
-    if (state().fillStyle.isEquivalent(color))
-        return;
-    setFillStyle(CanvasStyle(color));
-}
-
-void CanvasRenderingContext2DBase::setFillColor(float c, float m, float y, float k, float a)
-{
-    auto color = CMYKA { c, m, y, k, a };
     if (state().fillStyle.isEquivalent(color))
         return;
     setFillStyle(CanvasStyle(color));
