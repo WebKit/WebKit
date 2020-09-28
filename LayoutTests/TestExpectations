@@ -4516,3 +4516,4 @@ http/tests/media/hls/hls-hdr-switch.html [ Skip ]
 editing/selection/expando.html [ Failure ]
 
 fast/layoutformattingcontext/ [ ImageOnlyFailure ]
+webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
