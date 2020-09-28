@@ -1,3 +1,21 @@
+2020-09-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Out-of-band TextTracks
+        https://bugs.webkit.org/show_bug.cgi?id=217062
+        <rdar://problem/68739969>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::outOfBandTrackSources):
+        * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h:
+        (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+        * Scripts/webkit/messages.py:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+
 2020-09-28  Devin Rousso  <drousso@apple.com>
 
         [iOS] unable to airplay directly loaded fullscreen video

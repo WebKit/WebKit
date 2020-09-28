@@ -1,3 +1,43 @@
+2020-09-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Out-of-band TextTracks
+        https://bugs.webkit.org/show_bug.cgi?id=217062
+        <rdar://problem/68739969>
+
+        Reviewed by Jer Noble.
+        
+        Add support for passing out-of-band TextTracks to a media engine running in the GPU process.
+
+        No new tests, this can only be tested with a specific hardware setup.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::toPlatform):
+        * platform/graphics/PlatformTextTrack.h: Put instance variables into a struct so
+        state can be encoded and decoded.
+        (WebCore::PlatformTextTrackData::PlatformTextTrackData):
+        (WebCore::PlatformTextTrackData::decode):
+        (WebCore::PlatformTextTrackData::encode const):
+        (WebCore::PlatformTextTrackClient::privateTrack):
+        (WebCore::PlatformTextTrack::create):
+        (WebCore::PlatformTextTrack::createOutOfBand):
+        (WebCore::PlatformTextTrack::type const):
+        (WebCore::PlatformTextTrack::kind const):
+        (WebCore::PlatformTextTrack::mode const):
+        (WebCore::PlatformTextTrack::label const):
+        (WebCore::PlatformTextTrack::language const):
+        (WebCore::PlatformTextTrack::url const):
+        (WebCore::PlatformTextTrack::uniqueId const):
+        (WebCore::PlatformTextTrack::isDefault const):
+        (WebCore::PlatformTextTrack::client const):
+        (WebCore::PlatformTextTrack::data const):
+        (WebCore::PlatformTextTrack::PlatformTextTrack):
+        (WebCore::PlatformTextTrack::captionMenuOffItem): Deleted.
+        (WebCore::PlatformTextTrack::captionMenuAutomaticItem): Deleted.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::mediaDescriptionForKind):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState):
+
 2020-09-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Enable a depth buffer for preserve-3d

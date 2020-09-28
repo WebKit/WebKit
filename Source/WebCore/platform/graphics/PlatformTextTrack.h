@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformTextTrack_h
-#define PlatformTextTrack_h
+#pragma once
 
 #if ENABLE(AVF_CAPTIONS)
 
@@ -36,17 +35,8 @@ namespace WebCore {
 class TextTrack;
 class InbandTextTrackPrivate;
 
-class PlatformTextTrackClient {
-public:
-    virtual ~PlatformTextTrackClient() = default;
-    
-    virtual TextTrack* publicTrack() = 0;
-    virtual InbandTextTrackPrivate* privateTrack() { return 0; }
-};
-
-class PlatformTextTrack : public RefCounted<PlatformTextTrack> {
-public:
-    enum TrackKind {
+struct PlatformTextTrackData {
+    enum class TrackKind : uint8_t {
         Subtitle = 0,
         Caption = 1,
         Description = 2,
@@ -54,60 +44,25 @@ public:
         MetaData = 4,
         Forced = 5,
     };
-    enum TrackType {
+    enum class TrackType : uint8_t {
         InBand = 0,
         OutOfBand = 1,
         Script = 2
     };
-    enum TrackMode {
+    enum class TrackMode : uint8_t {
         Disabled,
         Hidden,
         Showing
     };
-    
-    static Ref<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, TrackMode mode, TrackKind kind, TrackType type, int uniqueId)
-    {
-        return adoptRef(*new PlatformTextTrack(client, label, language, String(), mode, kind, type, uniqueId, false));
-    }
 
-    static Ref<PlatformTextTrack> createOutOfBand(const String& label, const String& language, const String& url, TrackMode mode, TrackKind kind, int uniqueId, bool isDefault)
-    {
-        return adoptRef(*new PlatformTextTrack(nullptr, label, language, url, mode, kind, OutOfBand, uniqueId, isDefault));
-    }
-
-    virtual ~PlatformTextTrack() = default;
-    
-    TrackType type() const { return m_type; }
-    TrackKind kind() const { return m_kind; }
-    TrackMode mode() const { return m_mode; }
-    const String& label() const { return m_label; }
-    const String& language() const { return m_language; }
-    const String& url() const { return m_url; }
-    PlatformTextTrackClient* client() const { return m_client; }
-    int uniqueId() const { return m_uniqueId; }
-    bool isDefault() const { return m_isDefault; }
-
-    static PlatformTextTrack& captionMenuOffItem()
-    {
-        static PlatformTextTrack& off = PlatformTextTrack::create(nullptr, "off menu item", "", Showing, Subtitle, InBand, 0).leakRef();
-        return off;
-    }
-
-    static PlatformTextTrack& captionMenuAutomaticItem()
-    {
-        static PlatformTextTrack& automatic = PlatformTextTrack::create(nullptr, "automatic menu item", "", Showing, Subtitle, InBand, 0).leakRef();
-        return automatic;
-    }
-
-protected:
-    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, const String& url, TrackMode mode, TrackKind kind, TrackType type, int uniqueId, bool isDefault)
+    PlatformTextTrackData() = default;
+    PlatformTextTrackData(const String& label, const String& language, const String& url, TrackMode mode, TrackKind kind, TrackType type, int uniqueId, bool isDefault)
         : m_label(label)
         , m_language(language)
         , m_url(url)
         , m_mode(mode)
         , m_kind(kind)
         , m_type(type)
-        , m_client(client)
         , m_uniqueId(uniqueId)
         , m_isDefault(isDefault)
     {
@@ -119,13 +74,183 @@ protected:
     TrackMode m_mode;
     TrackKind m_kind;
     TrackType m_type;
-    PlatformTextTrackClient* m_client;
     int m_uniqueId;
     bool m_isDefault;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<PlatformTextTrackData> decode(Decoder&);
 };
 
+template <class Decoder>
+Optional<PlatformTextTrackData> PlatformTextTrackData::decode(Decoder& decoder)
+{
+    Optional<String> label;
+    decoder >> label;
+    if (!label)
+        return WTF::nullopt;
+
+    Optional<String> language;
+    decoder >> language;
+    if (!language)
+        return WTF::nullopt;
+
+    Optional<String> url;
+    decoder >> url;
+    if (!url)
+        return WTF::nullopt;
+
+    Optional<TrackMode> mode;
+    decoder >> mode;
+    if (!mode)
+        return WTF::nullopt;
+
+    Optional<TrackKind> kind;
+    decoder >> kind;
+    if (!kind)
+        return WTF::nullopt;
+
+    Optional<TrackType> type;
+    decoder >> type;
+    if (!type)
+        return WTF::nullopt;
+
+    Optional<int> uniqueId;
+    decoder >> uniqueId;
+    if (!uniqueId)
+        return WTF::nullopt;
+
+    Optional<bool> isDefault;
+    decoder >> isDefault;
+    if (!isDefault)
+        return WTF::nullopt;
+
+    PlatformTextTrackData data = {
+        WTFMove(*label),
+        WTFMove(*language),
+        WTFMove(*url),
+        WTFMove(*mode),
+        WTFMove(*kind),
+        WTFMove(*type),
+        WTFMove(*uniqueId),
+        WTFMove(*isDefault),
+    };
+
+    return data;
 }
 
-#endif
+template<class Encoder>
+void PlatformTextTrackData::encode(Encoder& encoder) const
+{
+    encoder << m_label;
+    encoder << m_language;
+    encoder << m_url;
+    encoder << m_mode;
+    encoder << m_kind;
+    encoder << m_type;
+    encoder << m_uniqueId;
+    encoder << m_isDefault;
+}
 
-#endif // PlatformTextTrack_h
+class PlatformTextTrackClient {
+public:
+    virtual ~PlatformTextTrackClient() = default;
+    
+    virtual TextTrack* publicTrack() = 0;
+    virtual InbandTextTrackPrivate* privateTrack() { return 0; }
+};
+
+class PlatformTextTrack : public RefCounted<PlatformTextTrack> {
+public:
+    static Ref<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, PlatformTextTrackData::TrackType type, int uniqueId)
+    {
+        return adoptRef(*new PlatformTextTrack(client, label, language, String(), mode, kind, type, uniqueId, false));
+    }
+
+    static Ref<PlatformTextTrack> createOutOfBand(const String& label, const String& language, const String& url, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, int uniqueId, bool isDefault)
+    {
+        return adoptRef(*new PlatformTextTrack(nullptr, label, language, url, mode, kind, PlatformTextTrackData::TrackType::OutOfBand, uniqueId, isDefault));
+    }
+    
+    static Ref<PlatformTextTrack> create(PlatformTextTrackData&& data)
+    {
+        return adoptRef(*new PlatformTextTrack(WTFMove(data)));
+    }
+
+    virtual ~PlatformTextTrack() = default;
+    
+    PlatformTextTrackData::TrackType type() const { return m_trackData.m_type; }
+    PlatformTextTrackData::TrackKind kind() const { return m_trackData.m_kind; }
+    PlatformTextTrackData::TrackMode mode() const { return m_trackData.m_mode; }
+    const String& label() const { return m_trackData.m_label; }
+    const String& language() const { return m_trackData.m_language; }
+    const String& url() const { return m_trackData.m_url; }
+    int uniqueId() const { return m_trackData.m_uniqueId; }
+    bool isDefault() const { return m_trackData.m_isDefault; }
+    PlatformTextTrackClient* client() const { return m_client; }
+    
+    PlatformTextTrackData data() const { return m_trackData; }
+
+protected:
+    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, const String& url, PlatformTextTrackData::TrackMode mode, PlatformTextTrackData::TrackKind kind, PlatformTextTrackData::TrackType type, int uniqueId, bool isDefault)
+        : m_client(client)
+    {
+        m_trackData = {
+            label,
+            language,
+            url,
+            mode,
+            kind,
+            type,
+            uniqueId,
+            isDefault,
+        };
+    }
+    
+    PlatformTextTrack(PlatformTextTrackData&& data)
+        : m_trackData(WTFMove(data))
+    {
+    }
+
+    PlatformTextTrackData m_trackData;
+    PlatformTextTrackClient* m_client;
+};
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlatformTextTrackData::TrackKind> {
+    using values = EnumValues<
+        WebCore::PlatformTextTrackData::TrackKind,
+        WebCore::PlatformTextTrackData::TrackKind::Subtitle,
+        WebCore::PlatformTextTrackData::TrackKind::Caption,
+        WebCore::PlatformTextTrackData::TrackKind::Description,
+        WebCore::PlatformTextTrackData::TrackKind::Chapter,
+        WebCore::PlatformTextTrackData::TrackKind::MetaData,
+        WebCore::PlatformTextTrackData::TrackKind::Forced
+    >;
+};
+
+template<> struct EnumTraits<WebCore::PlatformTextTrackData::TrackType> {
+    using values = EnumValues<
+        WebCore::PlatformTextTrackData::TrackType,
+        WebCore::PlatformTextTrackData::TrackType::InBand,
+        WebCore::PlatformTextTrackData::TrackType::OutOfBand,
+        WebCore::PlatformTextTrackData::TrackType::Script
+    >;
+};
+
+template<> struct EnumTraits<WebCore::PlatformTextTrackData::TrackMode> {
+    using values = EnumValues<
+        WebCore::PlatformTextTrackData::TrackMode,
+        WebCore::PlatformTextTrackData::TrackMode::Disabled,
+        WebCore::PlatformTextTrackData::TrackMode::Hidden,
+        WebCore::PlatformTextTrackData::TrackMode::Showing
+    >;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(AVF_CAPTIONS)
+
+

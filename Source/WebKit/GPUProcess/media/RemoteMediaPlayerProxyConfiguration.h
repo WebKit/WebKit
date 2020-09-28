@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/ContentType.h>
+#include <WebCore/PlatformTextTrack.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,6 +41,9 @@ struct RemoteMediaPlayerProxyConfiguration {
     String networkInterfaceName;
     Vector<WebCore::ContentType> mediaContentTypesRequiringHardwareSupport;
     Vector<String> preferredAudioCharacteristics;
+#if ENABLE(AVF_CAPTIONS)
+    Vector<WebCore::PlatformTextTrackData> outOfBandTrackData;
+#endif
     WebCore::SecurityOriginData documentSecurityOrigin;
     uint64_t logIdentifier { 0 };
     bool shouldUsePersistentCache { false };
@@ -54,6 +58,9 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << networkInterfaceName;
         encoder << mediaContentTypesRequiringHardwareSupport;
         encoder << preferredAudioCharacteristics;
+#if ENABLE(AVF_CAPTIONS)
+        encoder << outOfBandTrackData;
+#endif
         encoder << documentSecurityOrigin;
         encoder << logIdentifier;
         encoder << shouldUsePersistentCache;
@@ -93,6 +100,13 @@ struct RemoteMediaPlayerProxyConfiguration {
         if (!preferredAudioCharacteristics)
             return WTF::nullopt;
 
+#if ENABLE(AVF_CAPTIONS)
+        Optional<Vector<WebCore::PlatformTextTrackData>> outOfBandTrackData;
+        decoder >> outOfBandTrackData;
+        if (!outOfBandTrackData)
+            return WTF::nullopt;
+#endif
+
         Optional<WebCore::SecurityOriginData> documentSecurityOrigin;
         decoder >> documentSecurityOrigin;
         if (!documentSecurityOrigin)
@@ -120,6 +134,9 @@ struct RemoteMediaPlayerProxyConfiguration {
             WTFMove(*networkInterfaceName),
             WTFMove(*mediaContentTypesRequiringHardwareSupport),
             WTFMove(*preferredAudioCharacteristics),
+#if ENABLE(AVF_CAPTIONS)
+            WTFMove(*outOfBandTrackData),
+#endif
             WTFMove(*documentSecurityOrigin),
             *logIdentifier,
             *shouldUsePersistentCache,

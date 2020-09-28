@@ -6854,38 +6854,38 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
 
 #if ENABLE(AVF_CAPTIONS)
 
-static inline PlatformTextTrack::TrackKind toPlatform(TextTrack::Kind kind)
+static inline PlatformTextTrackData::TrackKind toPlatform(TextTrack::Kind kind)
 {
     switch (kind) {
     case TextTrack::Kind::Captions:
-        return PlatformTextTrack::Caption;
+        return PlatformTextTrackData::TrackKind::Caption;
     case TextTrack::Kind::Chapters:
-        return PlatformTextTrack::Chapter;
+        return PlatformTextTrackData::TrackKind::Chapter;
     case TextTrack::Kind::Descriptions:
-        return PlatformTextTrack::Description;
+        return PlatformTextTrackData::TrackKind::Description;
     case TextTrack::Kind::Forced:
-        return PlatformTextTrack::Forced;
+        return PlatformTextTrackData::TrackKind::Forced;
     case TextTrack::Kind::Metadata:
-        return PlatformTextTrack::MetaData;
+        return PlatformTextTrackData::TrackKind::MetaData;
     case TextTrack::Kind::Subtitles:
-        return PlatformTextTrack::Subtitle;
+        return PlatformTextTrackData::TrackKind::Subtitle;
     }
     ASSERT_NOT_REACHED();
-    return PlatformTextTrack::Caption;
+    return PlatformTextTrackData::TrackKind::Caption;
 }
 
-static inline PlatformTextTrack::TrackMode toPlatform(TextTrack::Mode mode)
+static inline PlatformTextTrackData::TrackMode toPlatform(TextTrack::Mode mode)
 {
     switch (mode) {
     case TextTrack::Mode::Disabled:
-        return PlatformTextTrack::Disabled;
+        return PlatformTextTrackData::TrackMode::Disabled;
     case TextTrack::Mode::Hidden:
-        return PlatformTextTrack::Hidden;
+        return PlatformTextTrackData::TrackMode::Hidden;
     case TextTrack::Mode::Showing:
-        return PlatformTextTrack::Showing;
+        return PlatformTextTrackData::TrackMode::Showing;
     }
     ASSERT_NOT_REACHED();
-    return PlatformTextTrack::Disabled;
+    return PlatformTextTrackData::TrackMode::Disabled;
 }
 
 Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()

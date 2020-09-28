@@ -142,7 +142,6 @@ void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters& pa
 
 std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlayer(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier)
 {
-
     RemoteMediaPlayerProxyConfiguration proxyConfiguration;
     proxyConfiguration.referrer = player->referrer();
     proxyConfiguration.userAgent = player->userAgent();
@@ -157,6 +156,11 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
 #endif
     proxyConfiguration.shouldUsePersistentCache = player->shouldUsePersistentCache();
     proxyConfiguration.isVideo = player->isVideoPlayer();
+
+#if ENABLE(AVF_CAPTIONS)
+    for (const auto& track : player->outOfBandTrackSources())
+        proxyConfiguration.outOfBandTrackData.append(track->data());
+#endif
 
     auto documentSecurityOrigin = player->documentSecurityOrigin();
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;

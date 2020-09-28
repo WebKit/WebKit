@@ -669,23 +669,23 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 
 #if ENABLE(AVF_CAPTIONS)
 
-static const NSArray *mediaDescriptionForKind(PlatformTextTrack::TrackKind kind)
+static const NSArray *mediaDescriptionForKind(PlatformTextTrackData::TrackKind kind)
 {
     static bool manualSelectionMode = MTEnableCaption2015BehaviorPtr() && MTEnableCaption2015BehaviorPtr()();
     if (manualSelectionMode)
         return @[ AVMediaCharacteristicIsAuxiliaryContent ];
 
     // FIXME: Match these to correct types:
-    if (kind == PlatformTextTrack::Caption)
+    if (kind == PlatformTextTrackData::TrackKind::Caption)
         return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility ];
 
-    if (kind == PlatformTextTrack::Subtitle)
+    if (kind == PlatformTextTrackData::TrackKind::Subtitle)
         return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility ];
 
-    if (kind == PlatformTextTrack::Description)
+    if (kind == PlatformTextTrackData::TrackKind::Description)
         return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility ];
 
-    if (kind == PlatformTextTrack::Forced)
+    if (kind == PlatformTextTrackData::TrackKind::Forced)
         return @[ AVMediaCharacteristicContainsOnlyForcedSubtitles ];
 
     return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility ];
@@ -698,7 +698,7 @@ void MediaPlayerPrivateAVFoundationObjC::notifyTrackModeChanged()
     
 void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
 {
-    const Vector<RefPtr<PlatformTextTrack>>& outOfBandTrackSources = player()->outOfBandTrackSources();
+    const auto& outOfBandTrackSources = player()->outOfBandTrackSources();
     
     for (auto& textTrack : m_textTracks) {
         if (textTrack->textTrackCategory() != InbandTextTrackPrivateAVF::OutOfBand)
@@ -714,12 +714,17 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
                 continue;
             
             InbandTextTrackPrivate::Mode mode = InbandTextTrackPrivate::Mode::Hidden;
-            if (track->mode() == PlatformTextTrack::Hidden)
+            switch (track->mode()) {
+            case PlatformTextTrackData::TrackMode::Hidden:
                 mode = InbandTextTrackPrivate::Mode::Hidden;
-            else if (track->mode() == PlatformTextTrack::Disabled)
+                break;
+            case PlatformTextTrackData::TrackMode::Disabled:
                 mode = InbandTextTrackPrivate::Mode::Disabled;
-            else if (track->mode() == PlatformTextTrack::Showing)
+                break;
+            case PlatformTextTrackData::TrackMode::Showing:
                 mode = InbandTextTrackPrivate::Mode::Showing;
+                break;
+            }
             
             textTrack->setMode(mode);
             break;

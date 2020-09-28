@@ -657,8 +657,11 @@ bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) c
 #if ENABLE(AVF_CAPTIONS)
 Vector<RefPtr<PlatformTextTrack>> RemoteMediaPlayerProxy::outOfBandTrackSources()
 {
-    notImplemented();
-    return { };
+    Vector<RefPtr<PlatformTextTrack>> sources;
+    for (auto& data : m_configuration.outOfBandTrackData)
+        sources.append(PlatformTextTrack::create(WTFMove(data)));
+    
+    return sources;
 }
 
 #endif

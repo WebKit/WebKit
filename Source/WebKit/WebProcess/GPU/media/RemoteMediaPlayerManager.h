@@ -48,6 +48,7 @@ namespace WebKit {
 class MediaPlayerPrivateRemote;
 class RemoteMediaPlayerMIMETypeCache;
 class WebProcess;
+struct PlatformTextTrackData;
 struct TrackPrivateRemoteConfiguration;
 
 class RemoteMediaPlayerManager
