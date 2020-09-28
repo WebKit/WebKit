@@ -1,3 +1,15 @@
+2020-09-28  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Move GeneratePreferences.rb and yaml configuration files to WTF to be shared
+        https://bugs.webkit.org/show_bug.cgi?id=217056
+
+        Reviewed by Darin Adler.
+
+        Move GeneratePreferences.rb and WebPreferences*.yaml files from WebKitLegacy to WTF, and install them into the existing
+        $SDKROOT/usr/local/install/wtf/Scripts for use by down stack projects.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2020-09-26  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Generate Debug and Internal preferences for WebKitLegacy

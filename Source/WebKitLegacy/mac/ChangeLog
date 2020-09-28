@@ -1,3 +1,26 @@
+2020-09-28  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Move GeneratePreferences.rb and yaml configuration files to WTF to be shared
+        https://bugs.webkit.org/show_bug.cgi?id=217056
+
+        Reviewed by Darin Adler.
+
+        Move GeneratePreferences.rb and WebPreferences*.yaml files from WebKitLegacy to WTF, and install them into the existing
+        $SDKROOT/usr/local/install/wtf/Scripts for use by down stack projects.
+
+        Also adds new script, generate-preferences.sh, to make editing / reviewing the invocation a bit easier as you don't
+        have to use the tiny editor in the Run Scripts phase pane.
+
+        Adds new build variable, WTF_BUILD_SCRIPTS_DIR, to easily specify the new location of the moved files.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * Scripts/GeneratePreferences.rb: Removed.
+        * Scripts/generate-preferences.sh: Added.
+        * WebView/WebPreferences.yaml: Removed.
+        * WebView/WebPreferencesDebug.yaml: Removed.
+        * WebView/WebPreferencesExperimental.yaml: Removed.
+        * WebView/WebPreferencesInternal.yaml: Removed.
+
 2020-09-28  Devin Rousso  <drousso@apple.com>
 
         [iOS] unable to airplay directly loaded fullscreen video

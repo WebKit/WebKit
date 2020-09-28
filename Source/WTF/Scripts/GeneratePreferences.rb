@@ -34,6 +34,7 @@ options = {
   :debugPreferences => nil,
   :experimentalPreferences => nil,
   :internalPreferences => nil,
+  :templateDirectory => nil,
   :outputDirectory => nil,
   :templates => []
 }
@@ -47,13 +48,14 @@ optparse = OptionParser.new do |opts|
   opts.on("--debug input", "file to generate debug preferences from") { |debugPreferences| options[:debugPreferences] = debugPreferences }
   opts.on("--experimental input", "file to generate experimental preferences from") { |experimentalPreferences| options[:experimentalPreferences] = experimentalPreferences }
   opts.on("--internal input", "file to generate internal preferences from") { |internalPreferences| options[:internalPreferences] = internalPreferences }
-  opts.on("--template input", "template to use for generation (may be specified multiple times") { |template| options[:templates] << template }
-  opts.on("--outputDir output", "directory to generate file in") { |output| options[:outputDirectory] = output }
+  opts.on("--template input", "template to use for generation (may be specified multiple times)") { |template| options[:templates] << template }
+  opts.on("--templateDir input", "directory to look for templates in") { |templateDir| options[:templateDirectory] = templateDir }
+  opts.on("--outputDir output", "directory to generate file in") { |outputDir| options[:outputDirectory] = outputDir }
 end
 
 optparse.parse!
 
-if !options[:frontend] || !options[:basePreferences] || !options[:debugPreferences] || !options[:experimentalPreferences] || !options[:internalPreferences]
+if !options[:frontend] || !options[:basePreferences] || !options[:debugPreferences] || !options[:experimentalPreferences] || !options[:internalPreferences] || !options[:templateDirectory]
   puts optparse
   exit -1
 end
@@ -175,8 +177,7 @@ end
 class Preferences
   attr_accessor :preferences
 
-  def initialize(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, outputDirectory, frontend)
-    @outputDirectory = outputDirectory
+  def initialize(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, frontend)
     @frontend = frontend
 
     @preferences = []
@@ -212,18 +213,18 @@ class Preferences
     result
   end
 
-  def renderTemplate(template)
-    templateFile = File.join(File.dirname(__FILE__), "PreferencesTemplates", template + ".erb")
+  def renderTemplate(templateDirectory, template, outputDirectory)
+    templateFile = File.join(templateDirectory, template + ".erb")
 
     output = ERB.new(File.read(templateFile), 0, "-").result(binding)
-    File.open(File.join(@outputDirectory, template), "w+") do |f|
+    File.open(File.join(outputDirectory, template), "w+") do |f|
       f.write(output)
     end
   end
 end
 
-preferences = Preferences.new(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, options[:outputDirectory], options[:frontend])
+preferences = Preferences.new(parsedBasePreferences, parsedDebugPreferences, parsedExperimentalPreferences, parsedInternalPreferences, options[:frontend])
 
 options[:templates].each do |template|
-  preferences.renderTemplate(template)
+  preferences.renderTemplate(options[:templateDirectory], template, options[:outputDirectory])
 end

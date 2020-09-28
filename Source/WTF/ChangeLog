@@ -1,3 +1,21 @@
+2020-09-28  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Move GeneratePreferences.rb and yaml configuration files to WTF to be shared
+        https://bugs.webkit.org/show_bug.cgi?id=217056
+
+        Reviewed by Darin Adler.
+
+        Move GeneratePreferences.rb and WebPreferences*.yaml files from WebKitLegacy to WTF, and install them into the existing
+        $SDKROOT/usr/local/install/wtf/Scripts for use by down stack projects.
+
+        * Scripts/GeneratePreferences.rb: Copied from Source/WebKitLegacy/mac/Scripts/GeneratePreferences.rb.
+        * Scripts/Preferences: Added.
+        * Scripts/Preferences/WebPreferences.yaml: Copied from Source/WebKitLegacy/mac/WebView/WebPreferences.yaml.
+        * Scripts/Preferences/WebPreferencesDebug.yaml: Copied from Source/WebKitLegacy/mac/WebView/WebPreferencesDebug.yaml.
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Copied from Source/WebKitLegacy/mac/WebView/WebPreferencesExperimental.yaml.
+        * Scripts/Preferences/WebPreferencesInternal.yaml: Copied from Source/WebKitLegacy/mac/WebView/WebPreferencesInternal.yaml.
+        * WTF.xcodeproj/project.pbxproj:
+
 2020-09-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSC_DECLARE_HOST_FUNCTION / JSC_DEFINE_HOST_FUNCTION to make host function definition easy-to-scanned for JIT-caging
