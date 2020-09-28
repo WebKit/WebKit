@@ -1,3 +1,26 @@
+2020-09-28  Aakash Jain  <aakash_jain@apple.com>
+
+        Notify igalia team about pre-existing test failures and build failures for WPE and GTK queues
+        https://bugs.webkit.org/show_bug.cgi?id=217052
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/send_email.py:
+        (send_email_to_bot_watchers): Moved the logic here to determine whether to email igalia folks.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_preexisting_build_failure): Passed builder_name parameter.
+        (AnalyzeJSCTestsResults.send_email_for_flaky_failure):
+        (AnalyzeJSCTestsResults.send_email_for_pre_existing_failure):
+        (ReRunWebKitTests.send_email_for_flaky_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_flaky_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_pre_existing_failure):
+        (AnalyzeAPITestsResults.send_email_for_flaky_failure):
+        (AnalyzeAPITestsResults.send_email_for_pre_existing_failure):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeJSCTestsResults.configureStep): Drive-by fix to improve unit-test.
+        * BuildSlaveSupport/ews-build/emails.json: Added IGALIA_GTK_WPE_EMAILS. Renamed BOT_WATCHERS_EMAILS to APPLE_BOT_WATCHERS_EMAILS.
+        * BuildSlaveSupport/ews-build/email_unittest.py: Updated unit-test.
+
 2020-09-28  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed dashboard fix.

@@ -3,11 +3,14 @@
       "aakash_jain@apple.com", 
       "webkit-ews-bot-watchers@group.apple.com"
   ],
-  "BOT_WATCHERS_EMAILS": [
+  "APPLE_BOT_WATCHERS_EMAILS": [
       "webkit-ews-bot-watchers@group.apple.com"
   ],
   "IGALIA_JSC_TEAM_EMAILS": [
       "jsc32@igalia.com"
+  ],
+  "IGALIA_GTK_WPE_EMAILS": [
+      "webkit-bot-admin@igalia.com"
   ],
   "EMAIL_IDS_TO_UNSUBSCRIBE": ["pnormand@igalia.com"]
 }

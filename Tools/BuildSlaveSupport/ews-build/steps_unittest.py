@@ -52,9 +52,6 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
 
-import send_email
-send_email.BOT_WATCHERS_EMAILS = []
-
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
@@ -1453,6 +1450,8 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('jsc_rerun_binary_failures', [])
         self.setProperty('jsc_clean_tree_stress_test_failures', [])
         self.setProperty('jsc_clean_tree_binary_failures', [])
+        AnalyzeJSCTestsResults.send_email_for_flaky_failure = lambda self, test: None
+        AnalyzeJSCTestsResults.send_email_for_pre_existing_failure = lambda self, test: None
 
     def test_single_new_stress_failure(self):
         self.configureStep()
