@@ -3110,7 +3110,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setRubberBandingForSubScrollableRegionsEnabled(false);
 #endif
 
-    // FIXME: Is this relevent to WebKitLegacy? If not, we should rmeove it.
+    // FIXME: Is this relevent to WebKitLegacy? If not, we should remove it.
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.

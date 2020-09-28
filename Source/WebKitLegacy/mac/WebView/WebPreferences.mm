@@ -395,7 +395,7 @@ public:
         @NO, WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
 
-        // FIXME: Are these relevent to WebKitLegacy? If not, we should rmeove them.
+        // FIXME: Are these relevent to WebKitLegacy? If not, we should remove them.
         @NO, WebKitResourceLoadStatisticsEnabledPreferenceKey,
         @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
 
