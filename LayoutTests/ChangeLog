@@ -1,3 +1,12 @@
+2020-09-28  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ iOS wk2 ] ( safari-610-branch ) fast/events/touch/ios/pointer-events-with-modifiers.html is a constant crash
+        rdar://69722963
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-09-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r267369. rdar://problem/69594300
