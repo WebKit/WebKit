@@ -76,7 +76,7 @@ private:
     };
 #endif
 
-    class UIClient : public API::UIClient {
+    class UIClient : public API::UIClient, public CanMakeWeakPtr<UIClient> {
     public:
         explicit UIClient(UIDelegate&);
         ~UIClient();
