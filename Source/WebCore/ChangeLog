@@ -1,3 +1,16 @@
+2020-09-28  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r267329): Crash due to null-dereference of frame pointer in DOMSelection::rangeCount
+        https://bugs.webkit.org/show_bug.cgi?id=217053
+
+        Reviewed by Sam Weinig.
+
+        Later as a follow-up it would be nice to add a test case, but not obvious how to
+        make a simple one quickly.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::rangeCount const): Fixed the null check.
+
 2020-09-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update the appearance of editable date/time controls to match the system
