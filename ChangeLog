@@ -1,3 +1,17 @@
+2020-09-28  Keith Rollin  <krollin@apple.com>
+
+        Print message saying what project is being built
+        https://bugs.webkit.org/show_bug.cgi?id=216865
+        <rdar://problem/69408135>
+
+        Reviewed by Andy Estes.
+
+        XCBuild removes the progress messages saying which project/target is
+        being built. We can't show the target, but update the Makefiles to at
+        least show which project is being built.
+
+        * Makefile.shared:
+
 2020-09-27  Philippe Normand  <pnormand@igalia.com>
 
         Add .ccls config file

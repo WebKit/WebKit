@@ -99,6 +99,9 @@ endef
 define invoke_xcode
 	( \
 		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
+		echo; \
+		echo "===== BUILDING $$(basename $(PATH_FROM_ROOT)) ====="; \
+		echo; \
 		$1 xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) $2 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
