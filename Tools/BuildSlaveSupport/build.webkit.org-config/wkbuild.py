@@ -46,12 +46,12 @@ def _should_file_trigger_build(target_platform, file):
         "mac-catalina",
         "mac-bigsur",
         "win",
-        "ios-13",
-        "ios-simulator-13",
-        "tvos-13",
-        "tvos-simulator-13",
-        "watchos-6",
-        "watchos-simulator-6",
+        "ios-14",
+        "ios-simulator-14",
+        "tvos-14",
+        "tvos-simulator-14",
+        "watchos-7",
+        "watchos-simulator-7",
     ))
 
     directories = [
