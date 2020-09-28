@@ -60,6 +60,9 @@ void DateTimeFieldElement::initialize(const AtomString& pseudo)
 
 void DateTimeFieldElement::defaultEventHandler(Event& event)
 {
+    if (event.type() == eventNames().blurEvent)
+        handleBlurEvent(event);
+
     if (is<KeyboardEvent>(event)) {
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
         if (!isFieldOwnerDisabled() && !isFieldOwnerReadOnly()) {
@@ -138,18 +141,10 @@ bool DateTimeFieldElement::isFocusable() const
     return HTMLElement::isFocusable();
 }
 
-void DateTimeFieldElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
+void DateTimeFieldElement::handleBlurEvent(Event& event)
 {
     if (m_fieldOwner)
-        m_fieldOwner->blurFromField(WTFMove(newFocusedElement));
-    else
-        HTMLElement::dispatchBlurEvent(WTFMove(newFocusedElement));
-
-    didBlur();
-}
-
-void DateTimeFieldElement::didBlur()
-{
+        m_fieldOwner->didBlurFromField(event);
 }
 
 Locale& DateTimeFieldElement::localeForOwner() const

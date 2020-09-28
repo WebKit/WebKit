@@ -394,7 +394,8 @@ void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 
 void BaseDateAndTimeInputType::elementDidBlur()
 {
-    closeDateTimeChooser();
+    if (!m_dateTimeEditElement)
+        closeDateTimeChooser();
 }
 
 void BaseDateAndTimeInputType::detach()

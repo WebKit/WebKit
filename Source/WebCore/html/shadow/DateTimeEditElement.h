@@ -96,7 +96,7 @@ private:
     bool focusOnNextFocusableField(size_t startIndex);
 
     // DateTimeFieldElement::FieldOwner functions:
-    void blurFromField(RefPtr<Element>&& newFocusedElement) final;
+    void didBlurFromField(Event&) final;
     void fieldValueChanged() final;
     bool focusOnNextField(const DateTimeFieldElement&) final;
     bool focusOnPreviousField(const DateTimeFieldElement&) final;

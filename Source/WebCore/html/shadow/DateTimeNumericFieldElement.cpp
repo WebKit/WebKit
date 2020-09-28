@@ -163,9 +163,10 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEve
     keyboardEvent.setDefaultHandled();
 }
 
-void DateTimeNumericFieldElement::didBlur()
+void DateTimeNumericFieldElement::handleBlurEvent(Event& event)
 {
     m_typeAheadBuffer.clear();
+    DateTimeFieldElement::handleBlurEvent(event);
 }
 
 } // namespace WebCore

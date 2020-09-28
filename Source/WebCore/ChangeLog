@@ -1,3 +1,51 @@
+2020-09-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        Crash under DateTimeEditElement::blurFromField
+        https://bugs.webkit.org/show_bug.cgi?id=216930
+        <rdar://problem/69308322>
+
+        Reviewed by Ryosuke Niwa.
+
+        DateTimeEditElement::blurFromField incorrectly invoked
+        HTMLElement::dispatchBlurEvent, as it was not the element being blurred.
+        Accessing member variables after this call is unsafe, as there is
+        nothing protecting the DateTimeEditElement.
+
+        To fix, the problematic methods were removed entirely, and replaced
+        with a new approach to responding to blur events within a DateTimeEditElement.
+
+        The blur event's relatedTarget is now compared to the fields within the
+        DateTimeEditElement, in order to determine when to close the calendar.
+        This approach is safe, since the relatedTarget is protected by
+        Document::setFocusedElement.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::elementDidBlur): Remove unnecessary call.
+
+        If the input has editable fields, closing the calendar is handled by the
+        new codepath. Running this code unconditionally will result in a flash of the
+        calendar when clicking on a part of the input type that doesn't contain
+        an editable field.
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::didBlurFromField):
+
+        Check if the event's relatedTarget is another field within the same
+        DateTimeEditElement. If yes, the calendar should remain open.
+
+        * html/shadow/DateTimeEditElement.h:
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultEventHandler):
+
+        Call handleBlurEvent() if a blur event occurs. This was previously done by
+        the now-removed dispatchBlurEvent override.
+
+        (WebCore::DateTimeFieldElement::handleBlurEvent):
+        * html/shadow/DateTimeFieldElement.h:
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::handleBlurEvent):
+        * html/shadow/DateTimeNumericFieldElement.h:
+
 2020-09-28  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Move run iterator to LayoutIntegration namespace

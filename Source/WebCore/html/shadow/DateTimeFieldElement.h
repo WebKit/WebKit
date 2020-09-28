@@ -45,7 +45,7 @@ public:
     class FieldOwner : public CanMakeWeakPtr<FieldOwner> {
     public:
         virtual ~FieldOwner();
-        virtual void blurFromField(RefPtr<Element>&& newFocusedElement) = 0;
+        virtual void didBlurFromField(Event&) = 0;
         virtual void fieldValueChanged() = 0;
         virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
         virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
@@ -55,7 +55,6 @@ public:
     };
 
     void defaultEventHandler(Event&) override;
-    void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
     bool isFocusable() const final;
 
     virtual bool hasValue() const = 0;
@@ -76,8 +75,7 @@ protected:
     void updateVisibleValue(EventBehavior);
     virtual int valueAsInteger() const = 0;
     virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
-
-    virtual void didBlur();
+    virtual void handleBlurEvent(Event&);
 
 private:
     bool supportsFocus() const override;

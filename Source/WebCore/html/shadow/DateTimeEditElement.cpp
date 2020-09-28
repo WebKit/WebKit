@@ -271,16 +271,21 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
     }
 }
 
-void DateTimeEditElement::blurFromField(RefPtr<Element>&& newFocusedElement)
+void DateTimeEditElement::didBlurFromField(Event& event)
 {
-    bool notifyOwner = notFound == m_fields.findMatching([&] (auto& field) {
-        return field.ptr() == newFocusedElement.get();
-    });
+    if (!m_editControlOwner)
+        return;
 
-    HTMLElement::dispatchBlurEvent(WTFMove(newFocusedElement));
+    if (auto* newFocusedElement = event.relatedTarget()) {
+        bool didFocusSiblingField = notFound != m_fields.findMatching([&] (auto& field) {
+            return field.ptr() == newFocusedElement;
+        });
 
-    if (m_editControlOwner && notifyOwner)
-        m_editControlOwner->didBlurFromControl();
+        if (didFocusSiblingField)
+            return;
+    }
+
+    m_editControlOwner->didBlurFromControl();
 }
 
 void DateTimeEditElement::fieldValueChanged()

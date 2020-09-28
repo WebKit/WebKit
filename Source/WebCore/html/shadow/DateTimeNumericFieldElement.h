@@ -66,7 +66,7 @@ private:
     // DateTimeFieldElement functions:
     String value() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
-    void didBlur() final;
+    void handleBlurEvent(Event&) final;
 
     String formatValue(int) const;
     void setValueAsIntegerByStepping(int);
