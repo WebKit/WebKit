@@ -27,7 +27,7 @@
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
 #include "InlineElementBox.h"
-#include "LineLayoutTraversal.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
@@ -170,7 +170,7 @@ LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, unsigned caretO
 
 IntRect RenderLineBreak::linesBoundingBox() const
 {
-    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    auto box = LayoutIntegration::elementRunFor(*this);
     if (!box)
         return { };
 
@@ -179,7 +179,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
 
 IntRect RenderLineBreak::boundingBoxForRenderTreeDump() const
 {
-    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    auto box = LayoutIntegration::elementRunFor(*this);
     if (!box)
         return { };
 
@@ -201,7 +201,7 @@ IntRect RenderLineBreak::boundingBoxForRenderTreeDump() const
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    auto box = LayoutIntegration::elementRunFor(*this);
     if (!box)
         return;
 
@@ -211,7 +211,7 @@ void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& a
 
 void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    auto box = LayoutIntegration::elementRunFor(*this);
     if (!box)
         return;
 

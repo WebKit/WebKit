@@ -714,6 +714,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/inlineformatting/InlineRect.h
 
+    layout/integration/LayoutIntegrationRunIterator.h
+    layout/integration/LayoutIntegrationRunIteratorLegacyPath.h
+    layout/integration/LayoutIntegrationRunIteratorModernPath.h
+
     layout/layouttree/LayoutBox.h
 
     loader/AdClickAttribution.h
@@ -1427,9 +1431,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RootInlineBox.h
     rendering/ScrollAlignment.h
 
-    rendering/line/LineLayoutTraversal.h
-    rendering/line/LineLayoutTraversalComplexPath.h
-    rendering/line/LineLayoutTraversalDisplayRunPath.h
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h
 

@@ -1468,6 +1468,7 @@ layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
 layout/integration/LayoutIntegrationLineLayout.cpp
 layout/integration/LayoutIntegrationPagination.cpp
+layout/integration/LayoutIntegrationRunIterator.cpp
 layout/invalidation/InvalidationContext.cpp
 layout/invalidation/InvalidationState.cpp
 layout/layouttree/LayoutBox.cpp
@@ -2216,7 +2217,6 @@ rendering/TextPainter.cpp
 rendering/TrailingFloatsRootInlineBox.cpp
 rendering/line/LineBreaker.cpp
 rendering/line/LineInfo.cpp
-rendering/line/LineLayoutTraversal.cpp
 rendering/line/LineWidth.cpp
 rendering/line/TrailingObjects.cpp
 rendering/mathml/MathMLStyle.cpp

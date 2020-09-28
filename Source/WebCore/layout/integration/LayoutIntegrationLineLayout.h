@@ -28,9 +28,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
-#include "LineLayoutTraversal.h"
 #include "RenderObjectEnums.h"
 
 namespace WebCore {
@@ -77,8 +77,8 @@ public:
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    LineLayoutTraversal::TextBoxIterator textBoxesFor(const RenderText&) const;
-    LineLayoutTraversal::ElementBoxIterator elementBoxFor(const RenderLineBreak&) const;
+    TextRunIterator textRunsFor(const RenderText&) const;
+    ElementRunIterator elementRunFor(const RenderLineBreak&) const;
 
     static void releaseCaches(RenderView&);
 

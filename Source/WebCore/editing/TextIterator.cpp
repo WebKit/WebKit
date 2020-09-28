@@ -437,15 +437,15 @@ void TextIterator::advance()
         return;
     }
 
-    if (!m_textBox && m_remainingTextBox) {
-        m_textBox = m_remainingTextBox;
-        m_remainingTextBox = { };
+    if (!m_textRun && m_remainingTextRun) {
+        m_textRun = m_remainingTextRun;
+        m_remainingTextRun = { };
         m_firstLetterText = { };
         m_offset = 0;
     }
     // handle remembered text box
-    if (m_textBox) {
-        handleTextBox();
+    if (m_textRun) {
+        handleTextRun();
         if (m_positionNode)
             return;
     }
@@ -563,7 +563,7 @@ bool TextIterator::handleTextNode()
                 String firstLetter = m_firstLetterText->text();
                 emitText(textNode, *m_firstLetterText, m_offset, m_offset + firstLetter.length());
                 m_firstLetterText = nullptr;
-                m_textBox = { };
+                m_textRun = { };
                 return false;
             }
         }
@@ -580,44 +580,44 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    m_textBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(renderer);
+    m_textRun = LayoutIntegration::firstTextRunInTextOrderFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
         handleTextNodeFirstLetter(downcast<RenderTextFragment>(renderer));
 
-    if (!m_textBox && rendererText.length() && !shouldHandleFirstLetter) {
+    if (!m_textRun && rendererText.length() && !shouldHandleFirstLetter) {
         if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
         return true;
     }
 
-    handleTextBox();
+    handleTextRun();
     return true;
 }
 
-void TextIterator::handleTextBox()
+void TextIterator::handleTextRun()
 {    
     Text& textNode = downcast<Text>(*m_node);
 
     auto& renderer = m_firstLetterText ? *m_firstLetterText : *textNode.renderer();
     if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility)) {
-        m_textBox = { };
+        m_textRun = { };
         return;
     }
 
-    auto firstTextBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(renderer);
+    auto firstTextRun = LayoutIntegration::firstTextRunInTextOrderFor(renderer);
 
     String rendererText = renderer.text();
     unsigned start = m_offset;
     unsigned end = (&textNode == m_endContainer) ? static_cast<unsigned>(m_endOffset) : UINT_MAX;
-    while (m_textBox) {
-        unsigned textBoxStart = m_textBox->localStartOffset();
-        unsigned runStart = std::max(textBoxStart, start);
+    while (m_textRun) {
+        unsigned textRunStart = m_textRun->localStartOffset();
+        unsigned runStart = std::max(textRunStart, start);
 
         // Check for collapsed space at the start of this run.
-        bool needSpace = m_lastTextNodeEndedWithCollapsedSpace || (m_textBox == firstTextBox && textBoxStart == runStart && runStart);
+        bool needSpace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
         if (needSpace && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter) && m_lastCharacter) {
             if (m_lastTextNode == &textNode && runStart && rendererText[runStart - 1] == ' ') {
                 unsigned spaceRunStart = runStart - 1;
@@ -628,12 +628,12 @@ void TextIterator::handleTextBox()
                 emitCharacter(' ', textNode, nullptr, runStart, runStart);
             return;
         }
-        unsigned textBoxEnd = textBoxStart + m_textBox->length();
-        unsigned runEnd = std::min(textBoxEnd, end);
+        unsigned textRunEnd = textRunStart + m_textRun->length();
+        unsigned runEnd = std::min(textRunEnd, end);
         
-        // Determine what the next text box will be, but don't advance yet
-        auto nextTextBox = m_textBox;
-        nextTextBox.traverseNextInTextOrder();
+        // Determine what the next text run will be, but don't advance yet
+        auto nextTextRun = m_textRun;
+        nextTextRun.traverseNextInTextOrder();
 
         if (runStart < runEnd) {
             auto isNewlineOrTab = [&](UChar character) {
@@ -652,8 +652,8 @@ void TextIterator::handleTextBox()
                         break;
                 }
                 if (subrunEnd == runEnd && (m_behavior & TextIteratorBehavesAsIfNodesFollowing)) {
-                    bool lastSpaceCollapsedByNextNonTextBox = !nextTextBox && rendererText.length() > subrunEnd && rendererText[subrunEnd] == ' ';
-                    if (lastSpaceCollapsedByNextNonTextBox)
+                    bool lastSpaceCollapsedByNextNonTextRun = !nextTextRun && rendererText.length() > subrunEnd && rendererText[subrunEnd] == ' ';
+                    if (lastSpaceCollapsedByNextNonTextRun)
                         ++subrunEnd; // runEnd stopped before last space. Increment by one to restore the space.
                 }
                 m_offset = subrunEnd;
@@ -662,25 +662,25 @@ void TextIterator::handleTextBox()
 
             // If we are doing a subrun that doesn't go to the end of the text box,
             // come back again to finish handling this text box; don't advance to the next one.
-            if (static_cast<unsigned>(m_positionEndOffset) < textBoxEnd)
+            if (static_cast<unsigned>(m_positionEndOffset) < textRunEnd)
                 return;
 
             // Advance and return
-            unsigned nextRunStart = nextTextBox ? nextTextBox->localStartOffset() : rendererText.length();
+            unsigned nextRunStart = nextTextRun ? nextTextRun->localStartOffset() : rendererText.length();
             if (nextRunStart > runEnd)
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
-            m_textBox = nextTextBox;
+            m_textRun = nextTextRun;
             return;
         }
         // Advance and continue
-        m_textBox = nextTextBox;
+        m_textRun = nextTextRun;
     }
-    if (!m_textBox && m_remainingTextBox) {
-        m_textBox = m_remainingTextBox;
-        m_remainingTextBox = { };
+    if (!m_textRun && m_remainingTextRun) {
+        m_textRun = m_remainingTextRun;
+        m_remainingTextRun = { };
         m_firstLetterText = { };
         m_offset = 0;
-        handleTextBox();
+        handleTextRun();
     }
 }
 
@@ -700,8 +700,8 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
             return;
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
-            m_remainingTextBox = m_textBox;
-            m_textBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(*firstLetterText);
+            m_remainingTextRun = m_textRun;
+            m_textRun = LayoutIntegration::firstTextRunInTextOrderFor(*firstLetterText);
             m_firstLetterText = firstLetterText;
         }
     }

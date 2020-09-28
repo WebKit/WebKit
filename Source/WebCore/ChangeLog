@@ -1,3 +1,101 @@
+2020-09-28  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Move run iterator to LayoutIntegration namespace
+        https://bugs.webkit.org/show_bug.cgi?id=217046
+
+        Reviewed by Zalan Bujtas.
+
+        Also use name 'Modern' for LFC and 'Legacy' for the old inline tree path.
+
+        Also rename box->run for more consistent terminology.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextRun):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        (WebCore::TextIterator::handleTextBox): Deleted.
+        * editing/TextIterator.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::textRunsFor const):
+        (WebCore::LayoutIntegration::LineLayout::elementRunFor const):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::textBoxesFor const): Deleted.
+        (WebCore::LayoutIntegration::LineLayout::elementBoxFor const): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp: Renamed from Source/WebCore/rendering/line/LineLayoutTraversal.cpp.
+        (WebCore::LayoutIntegration::TextRunIterator::TextRunIterator):
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextInVisualOrder):
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextInTextOrder):
+        (WebCore::LayoutIntegration::TextRunIterator::operator== const):
+        (WebCore::LayoutIntegration::TextRunIterator::atEnd const):
+        (WebCore::LayoutIntegration::firstTextRunFor):
+        (WebCore::LayoutIntegration::firstTextRunInTextOrderFor):
+        (WebCore::LayoutIntegration::textRunsFor):
+        (WebCore::LayoutIntegration::ElementRunIterator::ElementRunIterator):
+        (WebCore::LayoutIntegration::ElementRunIterator::atEnd const):
+        (WebCore::LayoutIntegration::elementRunFor):
+        * layout/integration/LayoutIntegrationRunIterator.h: Renamed from Source/WebCore/rendering/line/LineLayoutTraversal.h.
+        (WebCore::LayoutIntegration::TextRunIterator::TextRunIterator):
+        (WebCore::LayoutIntegration::TextRunIterator::operator++):
+        (WebCore::LayoutIntegration::TextRunIterator::operator!= const):
+        (WebCore::LayoutIntegration::TextRunIterator::operator* const):
+        (WebCore::LayoutIntegration::TextRunIterator::operator-> const):
+        (WebCore::LayoutIntegration::ElementRunIterator::ElementRunIterator):
+        (WebCore::LayoutIntegration::ElementRunIterator::operator* const):
+        (WebCore::LayoutIntegration::ElementRunIterator::operator-> const):
+        (WebCore::LayoutIntegration::TextRunRange::TextRunRange):
+        (WebCore::LayoutIntegration::TextRunRange::begin const):
+        (WebCore::LayoutIntegration::Run::Run):
+        (WebCore::LayoutIntegration::Run::rect const):
+        (WebCore::LayoutIntegration::Run::baseline const):
+        (WebCore::LayoutIntegration::Run::isLeftToRightDirection const):
+        (WebCore::LayoutIntegration::Run::isHorizontal const):
+        (WebCore::LayoutIntegration::Run::dirOverride const):
+        (WebCore::LayoutIntegration::Run::isLineBreak const):
+        (WebCore::LayoutIntegration::Run::useLineBreakBoxRenderTreeDumpQuirk const):
+        (WebCore::LayoutIntegration::TextRun::hasHyphen const):
+        (WebCore::LayoutIntegration::TextRun::TextRun):
+        (WebCore::LayoutIntegration::TextRun::text const):
+        (WebCore::LayoutIntegration::TextRun::localStartOffset const):
+        (WebCore::LayoutIntegration::TextRun::localEndOffset const):
+        (WebCore::LayoutIntegration::TextRun::length const):
+        (WebCore::LayoutIntegration::TextRun::isLastOnLine const):
+        (WebCore::LayoutIntegration::TextRun::isLast const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h: Renamed from Source/WebCore/rendering/line/LineLayoutTraversalComplexPath.h.
+        (WebCore::LayoutIntegration::LegacyPath::LegacyPath):
+        (WebCore::LayoutIntegration::LegacyPath::operator== const):
+        (WebCore::LayoutIntegration::LegacyPath::nextInlineTextBoxInTextOrder const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h: Renamed from Source/WebCore/rendering/line/LineLayoutTraversalDisplayRunPath.h.
+        (WebCore::LayoutIntegration::ModernPath::ModernPath):
+        (WebCore::LayoutIntegration::ModernPath::operator== const):
+        (WebCore::LayoutIntegration::ModernPath::rect const):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::linesBoundingBox const):
+        (WebCore::RenderLineBreak::boundingBoxForRenderTreeDump const):
+        (WebCore::RenderLineBreak::absoluteRects const):
+        (WebCore::RenderLineBreak::absoluteQuads const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects const):
+        (WebCore::collectAbsoluteQuadsForNonComplexPaths):
+        (WebCore::RenderText::firstRunLocation const):
+        (WebCore::RenderText::linesBoundingBox const):
+        (WebCore::RenderText::caretMinOffset const):
+        (WebCore::RenderText::caretMaxOffset const):
+        (WebCore::RenderText::countRenderedCharacterOffsetsUntil const):
+        (WebCore::containsOffset):
+        (WebCore::RenderText::hasRenderedText const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeTextRun):
+        (WebCore::write):
+        (WebCore::writeTextBox): Deleted.
+
 2020-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitLegacy should call Page::finalizeRenderingUpdate()

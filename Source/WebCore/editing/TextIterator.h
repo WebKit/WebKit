@@ -27,7 +27,7 @@
 
 #include "CharacterRange.h"
 #include "FindOptions.h"
-#include "LineLayoutTraversal.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
@@ -116,7 +116,7 @@ private:
     bool handleTextNode();
     bool handleReplacedElement();
     bool handleNonTextNode();
-    void handleTextBox();
+    void handleTextRun();
     void handleTextNodeFirstLetter(RenderTextFragment&);
     void emitCharacter(UChar, Node& characterNode, Node* offsetBaseNode, int textStartOffset, int textEndOffset);
     void emitText(Text& textNode, RenderText&, int textStartOffset, int textEndOffset);
@@ -149,10 +149,10 @@ private:
 
     // Used when there is still some pending text from the current node; when these are false and null, we go back to normal iterating.
     Node* m_nodeForAdditionalNewline { nullptr };
-    LineLayoutTraversal::TextBoxIterator m_textBox;
+    LayoutIntegration::TextRunIterator m_textRun;
 
     // Used when iterating over :first-letter text to save pointer to remaining text box.
-    LineLayoutTraversal::TextBoxIterator m_remainingTextBox;
+    LayoutIntegration::TextRunIterator m_remainingTextRun;
 
     // Used to point to RenderText object for :first-letter.
     RenderText* m_firstLetterText { nullptr };

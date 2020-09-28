@@ -38,7 +38,7 @@
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
-#include "LineLayoutTraversal.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
@@ -728,8 +728,8 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(textRenderer);
-            if (!firstTextBox)
+            auto firstTextRun = LayoutIntegration::firstTextRunInTextOrderFor(textRenderer);
+            if (!firstTextRun)
                 continue;
 
             if (&currentNode != startNode) {
@@ -742,14 +742,14 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
-            for (auto box = firstTextBox; box; box.traverseNextInTextOrder()) {
-                if (textOffset <= box->localEndOffset()) {
-                    if (textOffset > box->localStartOffset())
+            for (auto run = firstTextRun; run; run.traverseNextInTextOrder()) {
+                if (textOffset <= run->localEndOffset()) {
+                    if (textOffset > run->localStartOffset())
                         return currentPosition;
                     continue;
                 }
 
-                if (textOffset == box->localEndOffset() + 1 && box->isLastOnLine() && !box->isLast())
+                if (textOffset == run->localEndOffset() + 1 && run->isLastOnLine() && !run->isLast())
                     return currentPosition;
             }
         }
@@ -835,8 +835,8 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(textRenderer);
-            if (!firstTextBox)
+            auto firstTextRun = LayoutIntegration::firstTextRunInTextOrderFor(textRenderer);
+            if (!firstTextRun)
                 continue;
 
             if (&currentNode != startNode) {
@@ -845,17 +845,17 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
-            for (auto box = firstTextBox; box; box.traverseNextInTextOrder()) {
-                if (!box->length() && textOffset == box->localStartOffset())
+            for (auto run = firstTextRun; run; run.traverseNextInTextOrder()) {
+                if (!run->length() && textOffset == run->localStartOffset())
                     return currentPosition;
 
-                if (textOffset < box->localEndOffset()) {
-                    if (textOffset >= box->localStartOffset())
+                if (textOffset < run->localEndOffset()) {
+                    if (textOffset >= run->localStartOffset())
                         return currentPosition;
                     continue;
                 }
 
-                if (textOffset == box->localEndOffset() && box->isLastOnLine() && !box->isLast())
+                if (textOffset == run->localEndOffset() && run->isLastOnLine() && !run->isLast())
                     return currentPosition;
             }
         }

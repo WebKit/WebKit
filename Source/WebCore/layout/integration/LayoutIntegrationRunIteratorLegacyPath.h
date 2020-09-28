@@ -30,11 +30,11 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-namespace LineLayoutTraversal {
+namespace LayoutIntegration {
 
-class ComplexPath {
+class LegacyPath {
 public:
-    ComplexPath(const InlineBox* inlineBox, Vector<const InlineTextBox*>&& sortedInlineTextBoxes = { }, size_t sortedInlineTextBoxIndex = 0)
+    LegacyPath(const InlineBox* inlineBox, Vector<const InlineTextBox*>&& sortedInlineTextBoxes = { }, size_t sortedInlineTextBoxIndex = 0)
         : m_inlineBox(inlineBox)
         , m_sortedInlineTextBoxes(WTFMove(sortedInlineTextBoxes))
         , m_sortedInlineTextBoxIndex(sortedInlineTextBoxIndex)
@@ -66,15 +66,15 @@ public:
     }
     inline bool isLast() const { return !nextInlineTextBoxInTextOrder(); };
 
-    void traverseNextTextBoxInVisualOrder() { m_inlineBox = inlineTextBox()->nextTextBox(); }
-    void traverseNextTextBoxInTextOrder()
+    void traverseNextTextRunInVisualOrder() { m_inlineBox = inlineTextBox()->nextTextBox(); }
+    void traverseNextTextRunInTextOrder()
     {
         m_inlineBox = nextInlineTextBoxInTextOrder();
         if (!m_sortedInlineTextBoxes.isEmpty())
             ++m_sortedInlineTextBoxIndex;
     }
 
-    bool operator==(const ComplexPath& other) const { return m_inlineBox == other.m_inlineBox; }
+    bool operator==(const LegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
     bool atEnd() const { return !m_inlineBox; }
 
 private:
@@ -86,7 +86,7 @@ private:
     size_t m_sortedInlineTextBoxIndex { 0 };
 };
 
-inline const InlineTextBox* ComplexPath::nextInlineTextBoxInTextOrder() const
+inline const InlineTextBox* LegacyPath::nextInlineTextBoxInTextOrder() const
 {
     if (!m_sortedInlineTextBoxes.isEmpty()) {
         if (m_sortedInlineTextBoxIndex + 1 < m_sortedInlineTextBoxes.size())

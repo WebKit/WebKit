@@ -31,24 +31,24 @@
 
 namespace WebCore {
 
-namespace LineLayoutTraversal {
+namespace LayoutIntegration {
 
 static FloatPoint linePosition(float left, float top)
 {
     return FloatPoint(left, roundf(top));
 }
 
-class DisplayRunPath {
+class ModernPath {
 public:
-    DisplayRunPath(const Display::InlineContent& inlineContent, size_t startIndex, size_t endIndex)
+    ModernPath(const Display::InlineContent& inlineContent, size_t startIndex, size_t endIndex)
         : m_inlineContent(&inlineContent)
         , m_endIndex(endIndex)
         , m_runIndex(startIndex)
     { }
-    DisplayRunPath(DisplayRunPath&&) = default;
-    DisplayRunPath(const DisplayRunPath&) = default;
-    DisplayRunPath& operator=(const DisplayRunPath&) = default;
-    DisplayRunPath& operator=(DisplayRunPath&&) = default;
+    ModernPath(ModernPath&&) = default;
+    ModernPath(const ModernPath&) = default;
+    ModernPath& operator=(const ModernPath&) = default;
+    ModernPath& operator=(ModernPath&&) = default;
 
     FloatRect rect() const;
 
@@ -85,14 +85,14 @@ public:
         return m_runIndex + 1 == m_endIndex;
     };
 
-    void traverseNextTextBoxInVisualOrder()
+    void traverseNextTextRunInVisualOrder()
     {
         ASSERT(!atEnd());
         ++m_runIndex;
     }
-    void traverseNextTextBoxInTextOrder() {  traverseNextTextBoxInVisualOrder(); }
+    void traverseNextTextRunInTextOrder() {  traverseNextTextRunInVisualOrder(); }
 
-    bool operator==(const DisplayRunPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
+    bool operator==(const ModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
     bool atEnd() const { return m_runIndex == m_endIndex; }
 
 private:
@@ -105,7 +105,7 @@ private:
     size_t m_runIndex { 0 };
 };
 
-inline FloatRect DisplayRunPath::rect() const
+inline FloatRect ModernPath::rect() const
 {
     auto rect = run().rect();
     auto position = linePosition(rect.x(), rect.y());

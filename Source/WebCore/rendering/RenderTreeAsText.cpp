@@ -36,7 +36,7 @@
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
 #include "InlineTextBox.h"
-#include "LineLayoutTraversal.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -203,7 +203,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // many test results.
         const RenderText& text = downcast<RenderText>(o);
         r = IntRect(text.firstRunLocation(), text.linesBoundingBox().size());
-        if (!LineLayoutTraversal::firstTextBoxFor(text))
+        if (!LayoutIntegration::firstTextRunFor(text))
             adjustForTableCells = false;
     } else if (o.isBR()) {
         const RenderLineBreak& br = downcast<RenderLineBreak>(o);
@@ -478,26 +478,26 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     }
 }
 
-static void writeTextBox(TextStream& ts, const RenderText& o, const LineLayoutTraversal::TextBox& textBox)
+static void writeTextRun(TextStream& ts, const RenderText& o, const LayoutIntegration::TextRun& textRun)
 {
-    auto rect = textBox.rect();
+    auto rect = textRun.rect();
     int x = rect.x();
     int y = rect.y();
     // FIXME: Use non-logical width. webkit.org/b/206809.
-    int logicalWidth = ceilf(rect.x() + (textBox.isHorizontal() ? rect.width() : rect.height())) - x;
+    int logicalWidth = ceilf(rect.x() + (textRun.isHorizontal() ? rect.width() : rect.height())) - x;
     // FIXME: Table cell adjustment is temporary until results can be updated.
     if (is<RenderTableCell>(*o.containingBlock()))
         y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
         
     ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
-    if (!textBox.isLeftToRightDirection() || textBox.dirOverride()) {
-        ts << (!textBox.isLeftToRightDirection() ? " RTL" : " LTR");
-        if (textBox.dirOverride())
+    if (!textRun.isLeftToRightDirection() || textRun.dirOverride()) {
+        ts << (!textRun.isLeftToRightDirection() ? " RTL" : " LTR");
+        if (textRun.dirOverride())
             ts << " override";
     }
     ts << ": "
-        << quoteAndEscapeNonPrintables(textBox.text());
-    if (textBox.hasHyphen())
+        << quoteAndEscapeNonPrintables(textRun.text());
+    if (textRun.hasHyphen())
         ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style().hyphenString().string());
     ts << "\n";
 }
@@ -546,9 +546,9 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 
     if (is<RenderText>(o)) {
         auto& text = downcast<RenderText>(o);
-        for (auto& textBox : LineLayoutTraversal::textBoxesFor(text)) {
+        for (auto& run : LayoutIntegration::textRunsFor(text)) {
             ts << indent;
-            writeTextBox(ts, text, textBox);
+            writeTextRun(ts, text, run);
         }
     } else {
         for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(o))) {

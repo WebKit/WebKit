@@ -294,7 +294,7 @@ Display::InlineContent& LineLayout::ensureDisplayInlineContent()
     return *m_displayInlineContent;
 }
 
-LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& renderText) const
+LayoutIntegration::TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
 {
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
@@ -316,10 +316,10 @@ LineLayoutTraversal::TextBoxIterator LineLayout::textBoxesFor(const RenderText& 
     if (!firstIndex)
         return { };
 
-    return { LineLayoutTraversal::DisplayRunPath(*inlineContent, *firstIndex, lastIndex + 1) };
+    return { LayoutIntegration::ModernPath(*inlineContent, *firstIndex, lastIndex + 1) };
 }
 
-LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLineBreak& renderLineBreak) const
+LayoutIntegration::ElementRunIterator LineLayout::elementRunFor(const RenderLineBreak& renderLineBreak) const
 {
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
@@ -330,7 +330,7 @@ LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLi
     for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
         auto& run =  inlineContent->runs[i];
         if (&run.layoutBox() == layoutBox)
-            return { LineLayoutTraversal::DisplayRunPath(*inlineContent, i, i + 1) };
+            return { LayoutIntegration::ModernPath(*inlineContent, i, i + 1) };
     }
 
     return { };
@@ -393,7 +393,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
         auto xPos = rect.x() - (line.rect().x() + line.horizontalAlignmentOffset());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), xPos, expansion.horizontalExpansion, expansion.behavior };
+        WebCore::TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 

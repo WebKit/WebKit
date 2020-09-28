@@ -37,7 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
 #include "InlineTextBox.h"
-#include "LineLayoutTraversal.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
@@ -303,8 +303,8 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    for (auto& box : LineLayoutTraversal::textBoxesFor(*this)) {
-        auto rect = box.rect();
+    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+        auto rect = run.rect();
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
     }
 }
@@ -408,8 +408,8 @@ static Vector<FloatQuad> collectAbsoluteQuadsForNonComplexPaths(const RenderText
     ASSERT(!textRenderer.usesComplexLineLayoutPath());
 
     Vector<FloatQuad> quads;
-    for (auto& box : LineLayoutTraversal::textBoxesFor(textRenderer))
-        quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(box.rect()), UseTransforms, wasFixed));
+    for (auto& run : LayoutIntegration::textRunsFor(textRenderer))
+        quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(run.rect()), UseTransforms, wasFixed));
     return quads;
 }
 
@@ -1035,7 +1035,7 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
 
 IntPoint RenderText::firstRunLocation() const
 {
-    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    auto first = LayoutIntegration::firstTextRunFor(*this);
     if (!first)
         return { };
     return IntPoint(first->rect().location());
@@ -1355,7 +1355,7 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
 
 IntRect RenderText::linesBoundingBox() const
 {
-    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    auto first = LayoutIntegration::firstTextRunFor(*this);
     if (!first)
         return { };
 
@@ -1444,7 +1444,7 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
-    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    auto first = LayoutIntegration::firstTextRunFor(*this);
     if (!first)
         return 0;
 
@@ -1457,7 +1457,7 @@ int RenderText::caretMinOffset() const
 
 int RenderText::caretMaxOffset() const
 {
-    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    auto first = LayoutIntegration::firstTextRunFor(*this);
     if (!first)
         return text().length();
 
@@ -1471,9 +1471,9 @@ int RenderText::caretMaxOffset() const
 unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 {
     unsigned result = 0;
-    for (auto& box : LineLayoutTraversal::textBoxesFor(*this)) {
-        auto start = box.localStartOffset();
-        auto length = box.length();
+    for (auto& run : LayoutIntegration::textRunsFor(*this)) {
+        auto start = run.localStartOffset();
+        auto length = run.length();
         if (offset < start)
             return result;
         if (offset <= start + length) {
@@ -1488,7 +1488,7 @@ unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 enum class OffsetType { Character, Caret };
 static bool containsOffset(const RenderText& text, unsigned offset, OffsetType type)
 {
-    for (auto box = LineLayoutTraversal::firstTextBoxInTextOrderFor(text); box; box.traverseNextInTextOrder()) {
+    for (auto box = LayoutIntegration::firstTextRunInTextOrderFor(text); box; box.traverseNextInTextOrder()) {
         auto start = box->localStartOffset();
         if (offset < start)
             return false;
@@ -1517,7 +1517,7 @@ bool RenderText::containsCaretOffset(unsigned offset) const
 
 bool RenderText::hasRenderedText() const
 {
-    for (auto& box : LineLayoutTraversal::textBoxesFor(*this)) {
+    for (auto& box : LayoutIntegration::textRunsFor(*this)) {
         if (box.length())
             return true;
     }
