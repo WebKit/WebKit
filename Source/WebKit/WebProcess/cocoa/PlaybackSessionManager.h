@@ -104,6 +104,7 @@ public:
 
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&);
     void clearPlaybackControlsManager();
+    void mediaEngineChanged();
     PlaybackSessionContextIdentifier contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
     WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;

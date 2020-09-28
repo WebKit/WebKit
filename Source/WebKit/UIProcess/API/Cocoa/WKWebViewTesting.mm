@@ -27,6 +27,7 @@
 #import "WKWebViewPrivateForTesting.h"
 
 #import "AudioSessionRoutingArbitratorProxy.h"
+#import "PlaybackSessionManagerProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
 #import "WKWebViewIOS.h"
@@ -234,6 +235,15 @@
 - (void)_setMediaCaptureReportingDelayForTesting:(double)captureReportingDelay
 {
     _page->setMediaCaptureReportingDelay(Seconds(captureReportingDelay));
+}
+
+- (BOOL)_wirelessVideoPlaybackDisabled
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (auto* playbackSessionManager = _page->playbackSessionManager())
+        return playbackSessionManager->wirelessVideoPlaybackDisabled();
+#endif
+    return false;
 }
 
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action

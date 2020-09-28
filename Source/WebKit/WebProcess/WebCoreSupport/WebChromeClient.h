@@ -272,6 +272,7 @@ private:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) final;
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) final;
     void clearPlaybackControlsManager() final;
+    void playbackControlsMediaEngineChanged() final;
 #endif
 
 #if ENABLE(MEDIA_USAGE)

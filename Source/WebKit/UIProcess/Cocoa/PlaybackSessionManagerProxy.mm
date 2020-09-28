@@ -580,6 +580,15 @@ void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(PlaybackSessionContex
         m_page->send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value));
 }
 
+bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
+{
+    auto it = m_contextMap.find(m_controlsManagerContextId);
+    if (it == m_contextMap.end())
+        return true;
+
+    return std::get<0>(it->value)->wirelessVideoPlaybackDisabled();
+}
+
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
     if (m_controlsManagerContextId)

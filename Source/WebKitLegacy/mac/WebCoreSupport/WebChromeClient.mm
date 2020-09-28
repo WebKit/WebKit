@@ -1029,6 +1029,11 @@ void WebChromeClient::clearPlaybackControlsManager()
     [m_webView _clearPlaybackControlsManager];
 }
 
+void WebChromeClient::playbackControlsMediaEngineChanged()
+{
+    [m_webView _playbackControlsMediaEngineChanged];
+}
+
 #endif
 
 #if ENABLE(FULLSCREEN_API)

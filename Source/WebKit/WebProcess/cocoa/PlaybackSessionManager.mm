@@ -285,6 +285,18 @@ void PlaybackSessionManager::clearPlaybackControlsManager()
     m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager());
 }
 
+void PlaybackSessionManager::mediaEngineChanged()
+{
+    if (!m_controlsManagerContextId)
+        return;
+
+    auto it = m_contextMap.find(m_controlsManagerContextId);
+    if (it == m_contextMap.end())
+        return;
+
+    std::get<0>(it->value)->mediaEngineChanged();
+}
+
 PlaybackSessionContextIdentifier PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
 {
     auto addResult = m_mediaElements.ensure(&mediaElement, [&] {

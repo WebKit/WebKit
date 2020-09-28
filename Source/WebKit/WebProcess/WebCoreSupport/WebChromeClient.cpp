@@ -995,6 +995,11 @@ void WebChromeClient::clearPlaybackControlsManager()
     m_page.playbackSessionManager().clearPlaybackControlsManager();
 }
 
+void WebChromeClient::playbackControlsMediaEngineChanged()
+{
+    m_page.playbackSessionManager().mediaEngineChanged();
+}
+
 #endif
 
 #if ENABLE(MEDIA_USAGE)

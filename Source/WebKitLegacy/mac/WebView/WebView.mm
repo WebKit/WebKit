@@ -9148,6 +9148,14 @@ bool LayerFlushController::flushLayers()
     [self updateTouchBar];
 }
 
+- (void)_playbackControlsMediaEngineChanged
+{
+    if (!_private->playbackSessionModel)
+        return;
+
+    _private->playbackSessionModel->mediaEngineChanged();
+}
+
 #endif // PLATFORM(MAC)
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

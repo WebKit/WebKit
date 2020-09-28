@@ -2009,6 +2009,11 @@ void Page::playbackControlsManagerUpdateTimerFired()
 
 #endif
 
+void Page::playbackControlsMediaEngineChanged()
+{
+    chrome().client().playbackControlsMediaEngineChanged();
+}
+
 void Page::setMuted(MediaProducer::MutedStateFlags muted)
 {
     m_mutedState = muted;

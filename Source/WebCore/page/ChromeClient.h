@@ -368,6 +368,7 @@ public:
     virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode, bool standby) { UNUSED_PARAM(standby); }
     virtual void setUpPlaybackControlsManager(HTMLMediaElement&) { }
     virtual void clearPlaybackControlsManager() { }
+    virtual void playbackControlsMediaEngineChanged() { }
 #endif
 
 #if ENABLE(MEDIA_USAGE)

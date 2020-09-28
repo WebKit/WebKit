@@ -5050,11 +5050,11 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!m_player)
-        return;
-    m_player->setVideoFullscreenFrame(m_videoFullscreenFrame);
-    m_player->setVideoFullscreenGravity(m_videoFullscreenGravity);
-    m_player->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
+    if (m_player) {
+        m_player->setVideoFullscreenFrame(m_videoFullscreenFrame);
+        m_player->setVideoFullscreenGravity(m_videoFullscreenGravity);
+        m_player->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
+    }
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -5064,6 +5064,9 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     updateShouldContinueAfterNeedKey();
 #endif
+
+    if (auto* page = document().page())
+        page->playbackControlsMediaEngineChanged();
 }
 
 void HTMLMediaElement::mediaPlayerEngineUpdated()

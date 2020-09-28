@@ -89,6 +89,8 @@ public:
     void pictureInPictureSupportedChanged(bool);
     void pictureInPictureActiveChanged(bool);
 
+    bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
+
 private:
     friend class VideoFullscreenModelContext;
 
@@ -135,7 +137,6 @@ private:
     bool externalPlaybackEnabled() const final { return m_externalPlaybackEnabled; }
     PlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
     String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
-    bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     bool isMuted() const final { return m_muted; }
     double volume() const final { return m_volume; }
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
@@ -179,6 +180,9 @@ public:
 
     PlatformPlaybackSessionInterface* controlsManagerInterface();
     void requestControlledElementID();
+
+    // For testing.
+    bool wirelessVideoPlaybackDisabled();
 
 private:
     friend class PlaybackSessionModelContext;

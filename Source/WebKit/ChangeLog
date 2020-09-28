@@ -1,3 +1,39 @@
+2020-09-28  Devin Rousso  <drousso@apple.com>
+
+        [iOS] unable to airplay directly loaded fullscreen video
+        https://bugs.webkit.org/show_bug.cgi?id=216858
+        <rdar://problem/68746321>
+
+        Reviewed by Eric Carlson.
+
+        It's possible that `MediaPlayerPrivate::wirelessVideoPlaybackDisabled` is queried before a
+        "real" `MediaPlayerPrivate` (i.e. not `NullMediaPlayerPrivate`) is initialized through one
+        of the registered `MediaPlayerFactory` "engine"s. It's further possible that the value
+        returned by `MediaPlayerPrivate::wirelessVideoPlaybackDisabled` will change as the new
+        "real" `MediaPlayerPrivate` may have different logic. In this case, the `MediaPlayer`
+        doesn't update its client (and therefore nothing "up" the tree, including the client's
+        clients) with the new `MediaPlayerPrivate::wirelessVideoPlaybackDisabled` value, meaning
+        that the old value will still be used.
+
+        Add piping such that when the `MediaPlayerFactory` "engine" changes, the `MediaPlayer`
+        notifies its client (which is further piped "up" the tree to the client's clients) which
+        eventually causes `MediaPlayerPrivate::wirelessVideoPlaybackDisabled` to be re-evaluated.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::playbackControlsMediaEngineChanged): Added.
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::mediaEngineChanged): Added.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _wirelessVideoPlaybackDisabled]): Added.
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled): Added.
+        Create additional functions for piping data to tests.
+
 2020-09-28  Youenn Fablet  <youenn@apple.com>
 
         Make sure our calls to AVCaptureDevice requestAccessForMediaType do processing on the main thread

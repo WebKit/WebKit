@@ -291,6 +291,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (BOOL)_hasActiveVideoForControlsInterface;
 - (void)_setUpPlaybackControlsManagerForMediaElement:(NakedRef<WebCore::HTMLMediaElement>)mediaElement;
 - (void)_clearPlaybackControlsManager;
+- (void)_playbackControlsMediaEngineChanged;
 #endif
 #endif
 #endif
