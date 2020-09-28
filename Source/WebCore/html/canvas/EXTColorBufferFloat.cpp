@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(EXTColorBufferFloat);
+
 EXTColorBufferFloat::EXTColorBufferFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {

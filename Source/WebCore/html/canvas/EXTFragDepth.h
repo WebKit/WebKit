@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class EXTFragDepth final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(EXTFragDepth);
 public:
     explicit EXTFragDepth(WebGLRenderingContextBase&);
     virtual ~EXTFragDepth();
