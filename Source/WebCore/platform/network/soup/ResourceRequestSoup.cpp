@@ -112,12 +112,13 @@ void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
         soup_message_set_first_party(soupMessage, firstParty.get());
 
 #if SOUP_CHECK_VERSION(2, 69, 90)
-    if (m_sameSiteDisposition == ResourceRequest::SameSiteDisposition::SameSite) {
-        GUniquePtr<SoupURI> siteForCookies = urlToSoupURI(m_url);
-        soup_message_set_site_for_cookies(soupMessage, siteForCookies.get());
+    if (!isSameSiteUnspecified()) {
+        if (isSameSite()) {
+            GUniquePtr<SoupURI> siteForCookies = urlToSoupURI(m_url);
+            soup_message_set_site_for_cookies(soupMessage, siteForCookies.get());
+        }
+        soup_message_set_is_top_level_navigation(soupMessage, isTopSite());
     }
-
-    soup_message_set_is_top_level_navigation(soupMessage, isTopSite());
 #endif
 
     soup_message_set_flags(soupMessage, m_soupFlags);
