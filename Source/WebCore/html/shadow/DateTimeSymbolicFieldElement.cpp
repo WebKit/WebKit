@@ -29,6 +29,10 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "FontCascade.h"
+#include "RenderBlock.h"
+#include "RenderStyle.h"
+#include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -52,6 +56,22 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, F
     , m_typeAhead(this)
 {
     ASSERT(!m_symbols.isEmpty());
+}
+
+Optional<Style::ElementStyle> DateTimeSymbolicFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+{
+    auto elementStyle = resolveStyle(&parentStyle);
+    if (!elementStyle.renderStyle)
+        return WTF::nullopt;
+
+    auto& font = elementStyle.renderStyle->fontCascade();
+
+    float width = 0;
+    for (auto& symbol : m_symbols)
+        width = std::max(width, font.width(RenderBlock::constructTextRun(symbol, *elementStyle.renderStyle)));
+
+    elementStyle.renderStyle->setMinWidth({ width, Fixed });
+    return elementStyle;
 }
 
 bool DateTimeSymbolicFieldElement::hasValue() const

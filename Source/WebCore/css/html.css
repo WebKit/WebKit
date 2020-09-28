@@ -479,6 +479,25 @@ input[type="search"]::-webkit-search-results-button {
     flex: none;
 }
 
+#if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES
+input:matches([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
+    -webkit-appearance: textfield;
+    align-items: center;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    -webkit-appearance: menulist-button;
+#else
+    -webkit-appearance: textfield;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+    /* FIXME: Font features should be defined in a @font-feature-values rule, so that the feature setting is only applied to the system font. */
+    /* "ss03" enables the raised colon separator on the system font. */
+    font-feature-settings: "ss03";
+#endif
+}
+#endif
+
 input::-webkit-date-and-time-value {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     margin-right: 18px;
@@ -493,6 +512,7 @@ input::-webkit-date-and-time-value {
 input::-webkit-datetime-edit {
     display: inline-block;
     overflow: hidden;
+    padding: 1px;
 }
 
 input::-webkit-datetime-edit-fields-wrapper {
@@ -508,8 +528,10 @@ input::-webkit-datetime-edit-minute-field,
 input::-webkit-datetime-edit-second-field,
 input::-webkit-datetime-edit-millisecond-field,
 input::-webkit-datetime-edit-meridiem-field {
-    display: inline;
+    display: inline-block;
+    font: inherit !important;
     padding: 1px;
+    text-align: center;
 }
 
 input::-webkit-datetime-edit-year-field:focus,
@@ -522,6 +544,7 @@ input::-webkit-datetime-edit-millisecond-field:focus,
 input::-webkit-datetime-edit-meridiem-field:focus {
 #if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
     background-color: -apple-system-control-accent;
+    border-radius: 3px;
     color: white;
 #else
     background-color: highlight;

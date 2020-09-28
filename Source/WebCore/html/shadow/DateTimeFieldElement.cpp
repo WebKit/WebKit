@@ -51,6 +51,7 @@ DateTimeFieldElement::DateTimeFieldElement(Document& document, FieldOwner& field
     : HTMLDivElement(divTag, document)
     , m_fieldOwner(makeWeakPtr(fieldOwner))
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 void DateTimeFieldElement::initialize(const AtomString& pseudo)

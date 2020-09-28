@@ -47,12 +47,12 @@ FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: au
 FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
-PASS <input type="week" value="2020-W01" style="overflow: visible; appearance: auto;">
-PASS <input type="week" value="2020-W01" style="overflow: hidden; appearance: auto;">
-FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 71
-PASS <input type="week" value="2020-W01" style="overflow: visible; appearance: none;">
-PASS <input type="week" value="2020-W01" style="overflow: hidden; appearance: none;">
-FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 71
+FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
+FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
+FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19
 FAIL <input type="time" value="00:00" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 27
 FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 33 +/- 3 but got 19

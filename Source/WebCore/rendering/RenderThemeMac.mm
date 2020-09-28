@@ -356,51 +356,6 @@ String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String&
     return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 }
 
-#if ENABLE(INPUT_TYPE_DATE)
-
-String RenderThemeMac::dateInputStyleSheet() const
-{
-    return "input[type=\"date\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 10em; outline: none; } "_s;
-}
-
-#endif
-
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-
-String RenderThemeMac::dateTimeLocalInputStyleSheet() const
-{
-    return "input[type=\"datetime-local\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 18em; outline: none; } "_s;
-}
-
-#endif
-
-#if ENABLE(INPUT_TYPE_MONTH)
-
-String RenderThemeMac::monthInputStyleSheet() const
-{
-    return "input[type=\"month\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 10em; outline: none; } "_s;
-}
-
-#endif
-
-#if ENABLE(INPUT_TYPE_TIME)
-
-String RenderThemeMac::timeInputStyleSheet() const
-{
-    return "input[type=\"time\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 10em; outline: none; } "_s;
-}
-
-#endif
-
-#if ENABLE(INPUT_TYPE_WEEK)
-
-String RenderThemeMac::weekInputStyleSheet() const
-{
-    return "input[type=\"week\"] { -webkit-appearance: textfield; align-items: center; display: -webkit-inline-flex; overflow: hidden; width: 10em; outline: none; } "_s;
-}
-
-#endif
-
 #if ENABLE(SERVICE_CONTROLS)
 
 String RenderThemeMac::imageControlsStyleSheet() const

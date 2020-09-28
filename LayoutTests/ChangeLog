@@ -1,3 +1,37 @@
+2020-09-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update the appearance of editable date/time controls to match the system
+        https://bugs.webkit.org/show_bug.cgi?id=216616
+        <rdar://problem/69004603>
+
+        Reviewed by Devin Rousso.
+
+        Updated stylesheets so that font properties are not set on inner elements
+        of the control and rebaselined existing tests.
+
+        * fast/forms/date/date-editable-components/date-editable-components-focus-and-blur-events.html:
+        * fast/forms/date/date-editable-components/date-editable-components-mouse-events.html:
+        * fast/forms/date/date-pseudo-elements.html:
+        * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-focus-and-blur-events.html:
+        * fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-mouse-events.html:
+        * fast/forms/time/time-editable-components/time-editable-components-focus-and-blur-events.html:
+        * fast/forms/time/time-editable-components/time-editable-components-mouse-events.html:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative-expected.txt:
+
+        The newly failing tests for <input type=week> are a false negative.
+        Previously, the style for this input type was empty, causing some
+        tests to incorrectly pass. The new failures are consistent with the
+        other date/time inputs, see the rest of the expectations for specifics.
+
+        * platform/mac-catalina/fast/forms/date/date-input-rendering-basic-expected.txt:
+        * platform/mac-catalina/fast/forms/time/time-input-rendering-basic-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/date/date-input-rendering-basic-expected.txt:
+        * platform/mac-mojave/fast/forms/time/time-input-rendering-basic-expected.txt: Added.
+        * platform/mac-wk2/fast/forms/date/date-input-rendering-basic-expected.txt:
+        * platform/mac-wk2/fast/forms/date/date-pseudo-elements-expected.txt:
+        * platform/mac-wk2/fast/forms/time/time-input-rendering-basic-expected.txt:
+
 2020-09-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Add support for clear on float box

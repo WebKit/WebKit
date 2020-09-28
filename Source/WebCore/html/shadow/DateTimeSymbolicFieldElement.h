@@ -47,6 +47,8 @@ protected:
 private:
     static constexpr int invalidIndex = -1;
 
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+
     String visibleEmptyValue() const;
 
     // DateTimeFieldElement functions:

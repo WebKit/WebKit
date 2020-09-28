@@ -155,7 +155,7 @@ void DateTimeMeridiemFieldElement::setValueAsDate(const DateComponents& date)
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
 
 DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document& document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 999), "--"_s)
+    : DateTimeNumericFieldElement(document, fieldOwner, Range(0, 999), "---"_s)
 {
 }
 

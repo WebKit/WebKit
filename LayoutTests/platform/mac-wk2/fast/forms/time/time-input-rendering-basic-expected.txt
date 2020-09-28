@@ -3,46 +3,46 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (110,2) size 4x18
-        text run at (110,2) width 4: " "
+      RenderText {#text} at (69,4) size 5x18
+        text run at (69,4) width 5: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,10) size 110x19 clip at (10,12) size 106x15
-  RenderFlexibleBox {INPUT} at (0,2) size 110x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-layer at (11,13) size 56x13 scrollHeight 14
-  RenderBlock {DIV} at (3,3) size 56x13
-    RenderBlock {DIV} at (0,0) size 56x13
-      RenderInline {DIV} at (0,0) size 17x15
-        RenderText {#text} at (1,0) size 15x13
-          text run at (1,0) width 15: "09"
+layer at (10,10) size 66x23 clip at (12,12) size 62x19
+  RenderFlexibleBox {INPUT} at (2,2) size 66x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (13,13) size 60x17
+  RenderBlock {DIV} at (3,3) size 60x17
+    RenderBlock {DIV} at (1,1) size 58x15
+      RenderBlock {DIV} at (0,0) size 16x15
+        RenderText {#text} at (1,1) size 14x13
+          text run at (1,1) width 14: "09"
       RenderInline {DIV} at (0,0) size 4x13
-        RenderText {#text} at (16,0) size 4x13
-          text run at (16,0) width 4: ":"
-      RenderInline {DIV} at (0,0) size 15x15
-        RenderText {#text} at (20,0) size 13x13
-          text run at (20,0) width 13: "41"
+        RenderText {#text} at (16,1) size 4x13
+          text run at (16,1) width 4: ":"
+      RenderBlock {DIV} at (19,0) size 17x15
+        RenderText {#text} at (1,1) size 14x13
+          text run at (1,1) width 14: "41"
       RenderInline {DIV} at (0,0) size 4x13
-        RenderText {#text} at (33,0) size 4x13
-          text run at (33,0) width 4: " "
-      RenderInline {DIV} at (0,0) size 20x15
-        RenderText {#text} at (37,0) size 18x13
-          text run at (37,0) width 18: "AM"
-layer at (122,10) size 110x19 clip at (124,12) size 106x15
-  RenderFlexibleBox {INPUT} at (114,2) size 110x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-layer at (173,13) size 56x13 scrollHeight 14
-  RenderBlock {DIV} at (51,3) size 56x13
-    RenderBlock {DIV} at (0,0) size 56x13
-      RenderInline {DIV} at (0,0) size 17x15
-        RenderText {#text} at (23,0) size 15x13
-          text run at (23,0) width 15: "09"
+        RenderText {#text} at (35,1) size 4x13
+          text run at (35,1) width 4: " "
+      RenderBlock {DIV} at (38,0) size 20x15
+        RenderText {#text} at (1,1) size 18x13
+          text run at (1,1) width 18: "AM"
+layer at (84,10) size 65x23 clip at (86,12) size 61x19
+  RenderFlexibleBox {INPUT} at (75,2) size 67x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (87,13) size 60x17 backgroundClip at (87,13) size 59x17 clip at (87,13) size 59x17
+  RenderBlock {DIV} at (3,3) size 60x17
+    RenderBlock {DIV} at (1,1) size 58x15
+      RenderBlock {DIV} at (41,0) size 17x15
+        RenderText {#text} at (1,1) size 14x13
+          text run at (1,1) width 14: "09"
       RenderInline {DIV} at (0,0) size 4x13
-        RenderText {#text} at (38,0) size 4x13
-          text run at (38,0) width 4: ":"
-      RenderInline {DIV} at (0,0) size 15x15
-        RenderText {#text} at (42,0) size 13x13
-          text run at (42,0) width 13: "41"
+        RenderText {#text} at (38,1) size 4x13
+          text run at (38,1) width 4 RTL: ":"
+      RenderBlock {DIV} at (22,0) size 17x15
+        RenderText {#text} at (1,1) size 14x13
+          text run at (1,1) width 14: "41"
       RenderInline {DIV} at (0,0) size 4x13
-        RenderText {#text} at (19,0) size 4x13
-          text run at (19,0) width 4 RTL: " "
-      RenderInline {DIV} at (0,0) size 20x15
-        RenderText {#text} at (1,0) size 18x13
-          text run at (1,0) width 18: "AM"
+        RenderText {#text} at (19,1) size 4x13
+          text run at (19,1) width 4 RTL: " "
+      RenderBlock {DIV} at (0,0) size 20x15
+        RenderText {#text} at (1,1) size 18x13
+          text run at (1,1) width 18: "AM"

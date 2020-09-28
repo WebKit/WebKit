@@ -63,6 +63,8 @@ protected:
     String visibleValue() const final;
 
 private:
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+
     // DateTimeFieldElement functions:
     String value() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;

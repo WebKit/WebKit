@@ -30,8 +30,12 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "EventNames.h"
+#include "FontCascade.h"
 #include "KeyboardEvent.h"
 #include "PlatformLocale.h"
+#include "RenderBlock.h"
+#include "RenderStyle.h"
+#include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -55,6 +59,32 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
     , m_range(range)
     , m_placeholder(placeholder)
 {
+}
+
+Optional<Style::ElementStyle> DateTimeNumericFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+{
+    auto elementStyle = resolveStyle(&parentStyle);
+    if (!elementStyle.renderStyle)
+        return WTF::nullopt;
+
+    auto& font = elementStyle.renderStyle->fontCascade();
+
+    unsigned length = 2;
+    if (m_range.maximum > 999)
+        length = 4;
+    else if (m_range.maximum > 99)
+        length = 3;
+
+    auto& locale = localeForOwner();
+
+    float width = 0;
+    for (char c = '0'; c <= '9'; ++c) {
+        auto numberString = locale.convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
+        width = std::max(width, font.width(RenderBlock::constructTextRun(numberString, *elementStyle.renderStyle)));
+    }
+
+    elementStyle.renderStyle->setMinWidth({ width, Fixed });
+    return elementStyle;
 }
 
 int DateTimeNumericFieldElement::maximum() const

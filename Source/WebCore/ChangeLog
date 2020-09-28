@@ -1,3 +1,78 @@
+2020-09-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update the appearance of editable date/time controls to match the system
+        https://bugs.webkit.org/show_bug.cgi?id=216616
+        <rdar://problem/69004603>
+
+        Reviewed by Devin Rousso.
+
+        The default appearance of editable components within the date/time
+        control should closely match NSDatePicker.
+
+        1. Focused components should have rounded corners
+
+        This is achieved by adding the border-radius property to the
+        datetime-edit fields.
+
+        2. Use a raised colon separator for time inputs
+
+        The colon should be raised as it is surrounded two numbers. However,
+        since the colon is rendered in its own <div>, it remains lowered. To
+        raise the colon, the "ss03" font-feature-setting is enabled. Note that
+        this can cause issues with fonts that use "ss03" for a different purpose.
+        However, since we do not have support for the @font-feature-values rule
+        in CSS, there is currently no way to workaround this problem. Instead,
+        the issue should be fixed once we gain CSS support.
+
+        3. Components should have a fixed width, and the width of the control should match the content
+
+        Since the control is not guaranteed to use a monospace font, the current
+        design results in editable components being resized each time the value
+        changes. To fix this issue, the display type was changed to inline-block
+        and the min-width of a component is computed at runtime. See below for
+        more details.
+
+        * css/html.css:
+
+        Added UA stylesheet code that was removed from RenderTheme.
+
+        (input::-webkit-datetime-edit):
+        (input::-webkit-datetime-edit-year-field,):
+
+        Display inline-block allows us to set a fixed width for individual
+        components. The text is center-aligned so that changes are not
+        jarring. Finally, the font property is now "inherit !important",
+        as it does not make sense for the font used in a component to
+        differ from the control's font.
+
+        (input::-webkit-datetime-edit-year-field:focus,): Add rounded corners on focus.
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::DateTimeFieldElement):
+        * html/shadow/DateTimeFieldElements.cpp: Call setHasCustomStyleResolveCallbacks() to compute min-width.
+        (WebCore::DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement): Drive-by fix - milliseconds component has 3 digits.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::resolveCustomStyle):
+
+        The min-width of a numeric field should be the largest possible width
+        depending on the font, the largest digit character in the font and the
+        length of the field. Ten possible values are tested (0-9).
+
+        * html/shadow/DateTimeNumericFieldElement.h:
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::resolveCustomStyle):
+
+        The min-width of a symbolic field should be the largest symbol given
+        a font. Two (meridiem) to twelve (month) values may be tested.
+
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h: Moved code to html.css.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm: Moved code to html.css.
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::ensureDefaultStyleSheetsForElement): Moved code to html.css.
+        * style/UserAgentStyle.h:
+
 2020-09-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Add support for clear on float box
