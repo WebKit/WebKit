@@ -1,5 +1,4 @@
+CONSOLE MESSAGE: Error: assert_equals: maxDifference: 1.5293363332748413, first bad index: 0 with test-data offset 0 and expected-data offset 0; corresponding values 0.9855409860610962 and 0 --- differences expected 0 but got 2042
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN AnalyserNode output
+FAIL AnalyserNode output Error: assert_equals: maxDifference: 1.5293363332748413, first bad index: 0 with test-data offset 0 and expected-data offset 0; corresponding values 0.9855409860610962 and 0 --- differences expected 0 but got 2042
 

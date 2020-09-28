@@ -1,3 +1,11 @@
+2020-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html as flaky instead of skipping it entirely.
+
+        This test is no longer timing out.
+
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output-expected.txt:
+
 2020-09-27  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/html/semantics/the-iframe-element from upstream

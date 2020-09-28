@@ -1,3 +1,11 @@
+2020-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html as flaky instead of skipping it entirely.
+
+        This test is no longer timing out.
+
+        * TestExpectations:
+
 2020-09-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Update the appearance of editable date/time controls to match the system
