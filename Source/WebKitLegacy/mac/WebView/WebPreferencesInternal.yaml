@@ -38,16 +38,13 @@ AllowViewportShrinkToFitContent:
     WebKit:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 AlwaysZoomOnDoubleTap:
   type: bool
   humanReadableName: "DTTZ always"
   humanReadableDescription: "Double taps zoom, even if we dispatched a click anywhere"
-  webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: false
 
@@ -127,56 +124,47 @@ CSSOMViewScrollingAPIEnabled:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultCSSOMViewScrollingAPIEnabled()
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 CaptureAudioInGPUProcessEnabled:
   type: bool
   humanReadableName: "GPU Process: Audio Capture"
   humanReadableDescription: "Enable audio capture in GPU Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: WebKit::defaultCaptureAudioInGPUProcessEnabled()
 
-
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 CaptureAudioInUIProcessEnabled:
   type: bool
   humanReadableName: "Capture audio in UI Process"
   humanReadableDescription: "Enable audio capture in UI Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: WebKit::defaultCaptureAudioInUIProcessEnabled()
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 CaptureVideoInGPUProcessEnabled:
   type: bool
   humanReadableName: "GPU Process: Video Capture"
   humanReadableDescription: "Enable video capture in GPU Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 CaptureVideoInUIProcessEnabled:
   type: bool
   humanReadableName: "Capture video in UI Process"
   humanReadableDescription: "Enable video capture in UI Process"
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: WebKit::defaultCaptureVideoInUIProcessEnabled()
 
@@ -242,28 +230,25 @@ ExperimentalPlugInSandboxProfilesEnabled:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 FasterClicksEnabled:
   type: bool
   humanReadableName: "Fast clicks"
   humanReadableDescription: "Support faster clicks on zoomable pages"
   webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: true
 
-# FIXME: This is works differently in WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+# FIXME: This should be reconciled with 'FrameFlattening' in WebPreferences.yaml .
 FrameFlatteningEnabled:
   type: bool
   humanReadableName: "Frame flattening"
   humanReadableDescription: "Enable frame flattening, which adjusts the height of an iframe to fit its contents"
   webcoreBinding: custom
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
       default: false
@@ -398,6 +383,7 @@ IsITPDatabaseEnabled:
 
 KeygenElementEnabled:
   type: bool
+  webKitLegacyPreferenceKey: WebKitKeygenElementEnabledPreferenceKey
   webcoreBinding: RuntimeEnabledFeatures
   humanReadableName: "HTMLKeygenElement"
   humanReadableDescription: "Enables the deprecated and disabled-by-default HTML keygen element."
@@ -513,16 +499,14 @@ OffscreenCanvasEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 PreferFasterClickOverDoubleTap:
   type: bool
   humanReadableName: "Fast clicks beat DTTZ"
   humanReadableDescription: "Prefer a faster click over a double tap"
   webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)": true
       default: false
@@ -633,54 +617,46 @@ UndoManagerAPIEnabled:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 UseGPUProcessForCanvasRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: Canvas Rendering"
   humanReadableDescription: "Enable canvas rendering in GPU Process"
   webcoreBinding: none
   condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: defaultUseGPUProcessForCanvasRenderingEnabled()
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 UseGPUProcessForDOMRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: DOM Rendering"
   humanReadableDescription: "Enable DOM rendering in GPU Process"
   webcoreBinding: none
   condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 UseGPUProcessForMediaEnabled:
   type: bool
   humanReadableName: "GPU Process: Media"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: defaultUseGPUProcessForMediaEnabled()
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 UseGPUProcessForWebGLEnabled:
   type: bool
   humanReadableName: "GPU Process: WebGL"
   humanReadableDescription: "Enable WebGL in GPU Process"
   webcoreBinding: none
   condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: defaultUseGPUProcessForWebGLEnabled()
 
@@ -747,15 +723,13 @@ WebRTCMDNSICECandidatesEnabled:
     WebKit:
       default: true
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ZoomOnDoubleTapWhenRoot:
   type: bool
   condition: PLATFORM(IOS_FAMILY)
   humanReadableName: "DTTZ also when root"
   humanReadableDescription: "Double taps zoom, even if we dispatched a click on the root nodes"
   webcoreBinding: none
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: false

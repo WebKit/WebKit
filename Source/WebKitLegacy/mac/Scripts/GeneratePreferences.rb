@@ -92,16 +92,18 @@ parsedInternalPreferences = load(options[:internalPreferences])
 
 class Preference
   attr_accessor :name
+  attr_accessor :opts
   attr_accessor :type
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
   attr_accessor :webcoreBinding
   attr_accessor :condition
   attr_accessor :hidden
-  attr_accessor :frontendSpecificDefaultValues
+  attr_accessor :defaultValues
 
   def initialize(name, opts, frontend)
     @name = name
+    @opts = opts
     @type = opts["type"]
     @humanReadableName = '"' + (opts["humanReadableName"] || "") + '"'
     @humanReadableDescription = '"' + (opts["humanReadableDescription"] || "") + '"'
@@ -110,7 +112,7 @@ class Preference
     @webcoreName = opts["webcoreName"]
     @condition = opts["condition"]
     @hidden = opts["hidden"] || false
-    @frontendSpecificDefaultValues = opts["defaultValue"][frontend]
+    @defaultValues = opts["defaultValue"][frontend]
   end
 
   def nameLower
@@ -142,15 +144,31 @@ class Preference
       @type.capitalize
     end
   end
-end
 
-class Conditional
-  attr_accessor :condition
-  attr_accessor :preferences
 
-  def initialize(condition, settings)
-    @condition = condition
-    @preferences = preferences
+  # WebKitLegacy specific helpers.
+
+  def preferenceKey
+    if @opts["webKitLegacyPreferenceKey"]
+      @opts["webKitLegacyPreferenceKey"]
+    else
+      "WebKit#{@name}"
+    end
+  end
+  
+  def preferenceAccessor
+    case @type
+    when "bool"
+      "_boolValueForKey"
+    when "uint32_t"
+      "_integerValueForKey"
+    when "double"
+     "_floatValueForKey"
+    when "String"
+      "_stringValueForKey"
+    else
+      raise "Unknown type: #{@type}"
+    end
   end
 end
 
@@ -162,39 +180,10 @@ class Preferences
     @frontend = frontend
 
     @preferences = []
-    @preferencesNotDebug = []
-    @preferencesDebug = []
-    @experimentalFeatures = []
-    @internalFeatures = []
-
-    if parsedBasePreferences
-      parsedBasePreferences.each do |name, options|
-        preference = Preference.new(name, options, @frontend)
-        @preferences << preference
-        @preferencesNotDebug << preference
-      end
-    end
-    if parsedDebugPreferences
-      parsedDebugPreferences.each do |name, options|
-        preference = Preference.new(name, options, @frontend)
-        @preferences << preference
-        @preferencesDebug << preference
-      end
-    end
-    if parsedExperimentalPreferences
-      parsedExperimentalPreferences.each do |name, options|
-        preference = Preference.new(name, options, @frontend)
-        @preferences << preference
-        @experimentalFeatures << preference
-      end
-    end
-    if parsedInternalPreferences
-      parsedInternalPreferences.each do |name, options|
-        preference = Preference.new(name, options, @frontend)
-        @preferences << preference
-        @internalFeatures << preference
-      end
-    end
+    @preferencesNotDebug = initializeParsedPreferences(parsedBasePreferences)
+    @preferencesDebug = initializeParsedPreferences(parsedDebugPreferences)
+    @experimentalFeatures = initializeParsedPreferences(parsedExperimentalPreferences)
+    @internalFeatures = initializeParsedPreferences(parsedInternalPreferences)
 
     @preferences.sort! { |x, y| x.name <=> y.name }
     @preferencesNotDebug.sort! { |x, y| x.name <=> y.name }
@@ -207,6 +196,20 @@ class Preferences
     @preferencesBoundToRuntimeEnabledFeatures = @preferences.select { |p| p.webcoreBinding == "RuntimeEnabledFeatures" }
 
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
+  end
+
+  def initializeParsedPreferences(parsedPreferences)
+    result = []
+    if parsedPreferences
+      parsedPreferences.each do |name, options|
+        if !options["exposed"] or options["exposed"].include?(@frontend)
+          preference = Preference.new(name, options, @frontend)
+          @preferences << preference
+          result << preference
+        end
+      end
+    end
+    result
   end
 
   def renderTemplate(template)

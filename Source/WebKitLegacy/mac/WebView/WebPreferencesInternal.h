@@ -36,4 +36,6 @@
 - (long long)_longLongValueForKey:(NSString *)key;
 - (void)_setUnsignedLongLongValue:(unsigned long long)value forKey:(NSString *)key;
 - (unsigned long long)_unsignedLongLongValueForKey:(NSString *)key;
+- (NSString *)_stringValueForKey:(NSString *)key;
+- (void)_setStringValue:(NSString *)value forKey:(NSString *)key;
 @end

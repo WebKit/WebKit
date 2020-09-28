@@ -373,259 +373,60 @@ public:
 // if we ever have more than one WebPreferences object, this would move to init
 + (void)initialize
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     JSC::initialize();
     WTF::initializeMainThread();
-    bool attachmentElementEnabled = MacApplication::isAppleMail();
-    bool webSQLEnabled = false;
-#else
-    bool allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
-    bool allowsInlineMediaPlaybackAfterFullscreen = WebCore::deviceClass() != MGDeviceClassiPad;
-    bool requiresPlaysInlineAttribute = !allowsInlineMediaPlayback;
-    bool attachmentElementEnabled = IOSApplication::isMobileMail();
-
-    // For backward compatibility, keep WebSQL working until apps are rebuilt with the iOS 14 SDK.
-    bool webSQLEnabled = applicationSDKVersion() < DYLD_IOS_VERSION_14_0;
 #endif
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         INITIALIZE_DEFAULT_PREFERENCES_DICTIONARY_FROM_GENERATED_PREFERENCES
 
-        @"Times", WebKitStandardFontPreferenceKey,
-        @"Courier", WebKitFixedFontPreferenceKey,
-        @"Times", WebKitSerifFontPreferenceKey,
-        @"Helvetica", WebKitSansSerifFontPreferenceKey,
-#if !PLATFORM(IOS_FAMILY)
-        @"Apple Chancery", WebKitCursiveFontPreferenceKey,
-#else
-        @"Snell Roundhand", WebKitCursiveFontPreferenceKey,
-#endif
-        @"Papyrus", WebKitFantasyFontPreferenceKey,
-#if PLATFORM(IOS_FAMILY)
-        @"AppleColorEmoji", WebKitPictographFontPreferenceKey,
-#else
-        @"Apple Color Emoji", WebKitPictographFontPreferenceKey,
-#endif
-        @"0", WebKitMinimumFontSizePreferenceKey,
-        @"9", WebKitMinimumLogicalFontSizePreferenceKey,
-        @"16", WebKitDefaultFontSizePreferenceKey,
-        @"13", WebKitDefaultFixedFontSizePreferenceKey,
-        @"ISO-8859-1", WebKitDefaultTextEncodingNamePreferenceKey,
-        @NO, WebKitUsesEncodingDetectorPreferenceKey,
         @NO, WebKitUserStyleSheetEnabledPreferenceKey,
         @"", WebKitUserStyleSheetLocationPreferenceKey,
-#if !PLATFORM(IOS_FAMILY)
-        @NO, WebKitShouldPrintBackgroundsPreferenceKey,
-        @NO, WebKitTextAreasAreResizablePreferenceKey,
-#endif
         @NO, WebKitShrinksStandaloneImagesToFitPreferenceKey,
-#if !PLATFORM(IOS_FAMILY)
-        @YES, WebKitJavaEnabledPreferenceKey,
-#endif
-        @YES, WebKitJavaScriptEnabledPreferenceKey,
-        @YES, WebKitJavaScriptMarkupEnabledPreferenceKey,
-        @YES, WebKitWebSecurityEnabledPreferenceKey,
-        @YES, WebKitAllowUniversalAccessFromFileURLsPreferenceKey,
-        @YES, WebKitAllowFileAccessFromFileURLsPreferenceKey,
-        @YES, WebKitAllowTopNavigationToDataURLsPreferenceKey,
-#if PLATFORM(IOS_FAMILY)
-        @NO, WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
-#else
-        @YES, WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
-#endif
-        @YES, WebKitPluginsEnabledPreferenceKey,
-        @YES, WebKitDatabasesEnabledPreferenceKey,
-        @YES, WebKitHTTPEquivEnabledPreferenceKey,
-
-#if PLATFORM(IOS_FAMILY)
-        @NO, WebKitStorageTrackerEnabledPreferenceKey,
-#endif
-        @YES, WebKitLocalStorageEnabledPreferenceKey,
         @NO, WebKitExperimentalNotificationsEnabledPreferenceKey,
         @YES, WebKitAllowAnimatedImagesPreferenceKey,
         @YES, WebKitAllowAnimatedImageLoopingPreferenceKey,
-        @YES, WebKitDisplayImagesKey,
-        @NO, WebKitLoadSiteIconsKey,
         @"1800", WebKitBackForwardCacheExpirationIntervalKey,
-#if !PLATFORM(IOS_FAMILY)
-        @NO, WebKitTabToLinksPreferenceKey,
-#endif
         @NO, WebKitPrivateBrowsingEnabledPreferenceKey,
-#if !PLATFORM(IOS_FAMILY)
+        @(cacheModelForMainBundle()), WebKitCacheModelPreferenceKey,
+        @YES, WebKitZoomsTextOnlyPreferenceKey,
+        @YES, WebKitForceWebGLUsesLowPowerPreferenceKey,
+        @NO, WebKitUsePreHTML5ParserQuirksKey,
+        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
+
+        // FIXME: Are these relevent to WebKitLegacy? If not, we should rmeove them.
+        @NO, WebKitResourceLoadStatisticsEnabledPreferenceKey,
+        @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+        @"~/Library/WebKit/MediaKeys", WebKitMediaKeysStorageDirectoryKey,
+#endif
+
+#if PLATFORM(MAC)
         @NO, WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
-        @NO, WebKitShowsURLsInToolTipsPreferenceKey,
-        @NO, WebKitShowsToolTipOverTruncatedTextPreferenceKey,
         @"1", WebKitPDFDisplayModePreferenceKey,
         @"0", WebKitPDFScaleFactorPreferenceKey,
-#endif
-        @"0", WebKitUseSiteSpecificSpoofingPreferenceKey,
-        @(WebKitEditableLinkDefaultBehavior), WebKitEditableLinkBehaviorPreferenceKey,
-#if !PLATFORM(IOS_FAMILY)
         @(WebTextDirectionSubmenuAutomaticallyIncluded), WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey,
-        @NO, WebKitDOMPasteAllowedPreferenceKey,
+        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
 #endif
-        @YES, WebKitUsesPageCachePreferenceKey,
-        @(cacheModelForMainBundle()), WebKitCacheModelPreferenceKey,
-        @YES, WebKitPageCacheSupportsPluginsPreferenceKey,
-        @(0), WebKitJavaScriptRuntimeFlagsPreferenceKey,
-        @YES, WebKitAuthorAndUserStylesEnabledPreferenceKey,
-        @YES, WebKitDOMTimersThrottlingEnabledPreferenceKey,
-        @NO, WebKitWebArchiveDebugModeEnabledPreferenceKey,
-        @NO, WebKitLocalFileContentSniffingEnabledPreferenceKey,
-        @NO, WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
-        @YES, WebKitZoomsTextOnlyPreferenceKey,
-        @NO, WebKitJavaScriptCanAccessClipboardPreferenceKey,
-        @YES, WebKitXSSAuditorEnabledPreferenceKey,
-        @YES, WebKitAcceleratedCompositingEnabledPreferenceKey,
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-        @YES, WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
-#else
-        @NO, WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
-#endif
-        @YES, WebKitWebGLEnabledPreferenceKey,
-        @YES, WebKitForceWebGLUsesLowPowerPreferenceKey,
-        @NO, WebKitAccelerated2dCanvasEnabledPreferenceKey,
-        @NO, WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
-        @NO, WebKitResourceLoadStatisticsEnabledPreferenceKey,
-        @YES, WebKitLargeImageAsyncDecodingEnabledPreferenceKey,
-        @YES, WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey,
+
 #if PLATFORM(IOS_FAMILY)
-        @(static_cast<uint32_t>(FrameFlattening::FullyEnabled)), WebKitFrameFlatteningPreferenceKey,
-#else
-        @(static_cast<uint32_t>(FrameFlattening::Disabled)), WebKitFrameFlatteningPreferenceKey,
-#endif
-        @NO, WebKitSpatialNavigationEnabledPreferenceKey,
-        @NO, WebKitDNSPrefetchingEnabledPreferenceKey,
-        @NO, WebKitAsynchronousSpellCheckingEnabledPreferenceKey,
-        @YES, WebKitHyperlinkAuditingEnabledPreferenceKey,
-        @NO, WebKitUsePreHTML5ParserQuirksKey,
-        @YES, WebKitAVFoundationEnabledKey,
-        @YES, WebKitAVFoundationNSURLSessionEnabledKey,
-        @NO, WebKitSuppressesIncrementalRenderingKey,
-        [NSNumber numberWithBool:attachmentElementEnabled], WebKitAttachmentElementEnabledPreferenceKey,
-#if !PLATFORM(IOS_FAMILY)
-        @YES, WebKitAllowsInlineMediaPlaybackPreferenceKey,
-        @NO, WebKitAllowsInlineMediaPlaybackAfterFullscreenPreferenceKey,
-        @NO, WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
-        @YES, WebKitMediaControlsScaleWithPageZoomPreferenceKey,
-        @NO, WebKitWebAudioEnabledPreferenceKey,
-        @YES, WebKitBackspaceKeyNavigationEnabledKey,
-        @NO, WebKitShouldDisplaySubtitlesPreferenceKey,
-        @NO, WebKitShouldDisplayCaptionsPreferenceKey,
-        @NO, WebKitShouldDisplayTextDescriptionsPreferenceKey,
-        @YES, WebKitNotificationsEnabledKey,
-        @NO, WebKitShouldRespectImageOrientationKey,
-        @YES, WebKitMediaDataLoadsAutomaticallyPreferenceKey,
-#else
-        [NSNumber numberWithBool:allowsInlineMediaPlayback], WebKitAllowsInlineMediaPlaybackPreferenceKey,
-        [NSNumber numberWithBool:allowsInlineMediaPlaybackAfterFullscreen], WebKitAllowsInlineMediaPlaybackAfterFullscreenPreferenceKey,
-        [NSNumber numberWithBool:requiresPlaysInlineAttribute], WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey,
-        @NO, WebKitMediaControlsScaleWithPageZoomPreferenceKey,
+        @NO, WebKitStorageTrackerEnabledPreferenceKey,
         @(AudioSession::None), WebKitAudioSessionCategoryOverride,
-        @NO, WebKitMediaDataLoadsAutomaticallyPreferenceKey,
-#if HAVE(AVKIT)
-        @YES, WebKitAVKitEnabled,
-#endif
-        @YES, WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
-        @NO, WebKitRequiresUserGestureForVideoPlaybackPreferenceKey,
-        @NO, WebKitRequiresUserGestureForAudioPlaybackPreferenceKey,
-        [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
 
         // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
         // the quota for that origin can be increased. See also webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded in WebUI/WebUIDelegate.m.
         [NSNumber numberWithLongLong:(25 * 1024 * 1024)], WebKitApplicationCacheDefaultOriginQuota,
 
-        // Enable WebAudio by default in all iOS UIWebViews
-        @YES, WebKitWebAudioEnabledPreferenceKey,
-
-        @YES, WebKitShouldRespectImageOrientationKey,
-#endif // PLATFORM(IOS_FAMILY)
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        @YES, WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
-#endif
-        @YES, WebKitAllowsPictureInPictureMediaPlaybackPreferenceKey,
-        @YES, WebKitRequestAnimationFrameEnabledPreferenceKey,
-        @NO, WebKitWantsBalancedSetDefersLoadingBehaviorKey,
-        @NO, WebKitDiagnosticLoggingEnabledKey,
-        @(WebAllowAllStorage), WebKitStorageBlockingPolicyKey,
-        @NO, WebKitPlugInSnapshottingEnabledPreferenceKey,
-
-#if PLATFORM(IOS_FAMILY)
-        @YES, WebKitContentChangeObserverEnabledPreferenceKey,
-        @NO, WebKitTelephoneParsingEnabledPreferenceKey,
-        [NSNumber numberWithFloat:-1.0f], WebKitMaxParseDurationPreferenceKey,
-        @NO, WebKitAllowMultiElementImplicitFormSubmissionPreferenceKey,
         @NO, WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
         @(static_cast<int>(InterpolationQuality::Low)), WebKitInterpolationQualityPreferenceKey,
-        @YES, WebKitPasswordEchoEnabledPreferenceKey,
-        [NSNumber numberWithFloat:2.0f], WebKitPasswordEchoDurationPreferenceKey,
         @NO, WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
         @"", WebKitNetworkInterfaceNamePreferenceKey,
+#if HAVE(AVKIT)
+        @YES, WebKitAVKitEnabled,
 #endif
-#if ENABLE(TEXT_AUTOSIZING)
-        [NSNumber numberWithFloat:Settings::defaultMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
-        [NSNumber numberWithBool:Settings::defaultTextAutosizingEnabled()], WebKitTextAutosizingEnabledPreferenceKey,
 #endif
-        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
-        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
-        @NO, WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
-        @YES, WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
-        @NO, WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
-
-        @NO, WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
-#if ENABLE(MEDIA_SOURCE)
-        @YES, WebKitMediaSourceEnabledPreferenceKey,
-        @YES, WebKitSourceBufferChangeTypeEnabledPreferenceKey,
-#endif
-#if ENABLE(SERVICE_CONTROLS)
-        @NO, WebKitImageControlsEnabledPreferenceKey,
-        @NO, WebKitServiceControlsEnabledPreferenceKey,
-#endif
-        @NO, WebKitEnableInheritURIQueryComponentPreferenceKey,
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-        @"~/Library/WebKit/MediaKeys", WebKitMediaKeysStorageDirectoryKey,
-#endif
-
-#if ENABLE(PICTURE_IN_PICTURE_API)
-        @NO, WebKitPictureInPictureAPIEnabledKey,
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-        @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
-#endif
-        @YES, WebKitDataTransferItemsEnabledPreferenceKey,
-        @NO, WebKitCustomPasteboardDataEnabledPreferenceKey,
-        @YES, WebKitModernMediaControlsEnabledPreferenceKey,
-
-        @NO, WebKitCacheAPIEnabledPreferenceKey,
-
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-        @NO, WebKitDownloadAttributeEnabledPreferenceKey,
-#endif
-        @NO, WebKitDirectoryUploadEnabledPreferenceKey,
-
-        @YES, WebKitNeedsStorageAccessFromFileURLsQuirkKey,
-        @NO, WebKitAllowCrossOriginSubresourcesToAskForCredentialsKey,
-#if ENABLE(MEDIA_STREAM)
-        @NO, WebKitMediaDevicesEnabledPreferenceKey,
-        @YES, WebKitMediaStreamEnabledPreferenceKey,
-#endif
-#if ENABLE(WEB_RTC)
-        @YES, WebKitPeerConnectionEnabledPreferenceKey,
-#endif
-        @NO, WebKitMediaUserGestureInheritsFromDocument,
-        @YES, WebKitLegacyEncryptedMediaAPIEnabledKey,
-        @NO, WebKitEncryptedMediaAPIEnabledKey,
-        @YES, WebKitViewportFitEnabledPreferenceKey,
-        @YES, WebKitConstantPropertiesEnabledPreferenceKey,
-        @NO, WebKitColorFilterEnabledPreferenceKey,
-        @NO, WebKitPunchOutWhiteBackgroundsInDarkModePreferenceKey,
-        @YES, WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey,
-        @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
-        (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
-        @NO, WebKitMediaCapabilitiesEnabledPreferenceKey,
-        @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
-        @(webSQLEnabled), WebKitWebSQLEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)

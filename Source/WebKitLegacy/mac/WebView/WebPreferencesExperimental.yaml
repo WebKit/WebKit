@@ -175,6 +175,7 @@ DialogElementEnabled:
   type: bool
   humanReadableName: "Dialog Element"
   humanReadableDescription: "Enable the Dialog Element"
+  webKitLegacyPreferenceKey: WebKitDialogElementEnabledPreferenceKey
   webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebKitLegacy:
@@ -264,16 +265,13 @@ HDRMediaCapabilitiesEnabled:
     WebKit:
       default: true
 
-# FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 HTTP3Enabled:
   type: bool
   humanReadableName: "HTTP/3"
   humanReadableDescription: "Enable HTTP/3"
-  webcoreBinding: none
   condition: HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: false
 
@@ -528,15 +526,13 @@ PerElementSpeakerSelectionEnabled:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
   humanReadableName: "Swap Processes on Cross-Site Navigation"
   humanReadableDescription: "Swap WebContent Processes on cross-site navigations"
   webcoreBinding: none
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       "PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
@@ -860,6 +856,28 @@ WebRTCVP9CodecEnabled:
     WebKit:
       default: false
 
+WebSQLDisabled:
+  type: bool
+  humanReadableName: "Disable WebSQL"
+  humanReadableDescription: "Disable WebSQL"
+  webcoreBinding: RuntimeEnabledFeatures
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
+# FIXME: WebKitLegacy has an existing preference called 'WebSQLEnabled'. We should reconcile it with WebSQLDisabled.
+WebSQLEnabled:
+  type: bool
+  humanReadableName: "Enable WebSQL"
+  humanReadableDescription: "Enable WebSQL"
+  webcoreBinding: custom
+  exposed: [ WebKitLegacy ]
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultWebSQLEnabled()
+      default: true
+
 WebShareFileAPIEnabled:
   type: bool
   humanReadableName: "Web Share API Level 2"
@@ -869,20 +887,6 @@ WebShareFileAPIEnabled:
       default: false
     WebKit:
       default: false
-
-# WebKitLegacy has a preference called WebSQLEnabled, but there is currently no easy
-# way to map this, WebSQLDisabled, to it.
-#WebSQLDisabled:
-#  type: bool
-#  defaultValue: WebKit::defaultWebSQLDisabled()
-#  humanReadableName: "Disable Web SQL"
-#  humanReadableDescription: "Disable Web SQL"
-#  webcoreBinding: RuntimeEnabledFeatures
-#  defaultValue:
-#    WebKitLegacy:
-#      default: WebKit::defaultWebSQLDisabled()
-#    WebKit:
-#      default: true
 
 WebXREnabled:
   type: bool

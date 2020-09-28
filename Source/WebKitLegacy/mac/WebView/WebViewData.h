@@ -225,7 +225,6 @@ private:
     BOOL userAgentOverridden;
     
     WebPreferences *preferences;
-    BOOL useSiteSpecificSpoofing;
 #if PLATFORM(IOS_FAMILY)
     NSURL *userStyleSheetLocation;
 #endif

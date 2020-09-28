@@ -27,12 +27,6 @@
 
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC)
-#define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED true
-#else
-#define DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED false
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #define EXPERIMENTAL_FULLSCREEN_API_HIDDEN false
 #else
@@ -56,5 +50,19 @@ bool defaultIncrementalPDFEnabled();
 #if ENABLE(WEBXR)
 bool defaultWebXREnabled();
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+bool defaultAllowsInlineMediaPlayback();
+bool defaultAllowsInlineMediaPlaybackAfterFullscreen();
+bool defaultAllowsPictureInPictureMediaPlayback();
+bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute();
+bool defaultJavaScriptCanOpenWindowsAutomatically();
+bool defaultPassiveTouchListenersAsDefaultOnDocument();
+bool defaultRequiresUserGestureToLoadVideo();
+bool defaultWebSQLEnabled();
+#endif
+
+bool defaultAttachmentElementEnabled();
+bool defaultShouldRestrictBaseURLSchemes();
 
 } // namespace WebKit

@@ -25,14 +25,18 @@
 
 #import "WebPreferencesDefaultValues.h"
 
+#import "WebKitVersionChecks.h"
 #import <Foundation/NSBundle.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <mach-o/dyld.h>
-#import <mutex>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/WTFString.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <WebCore/Device.h>
+#endif
 
 namespace WebKit {
 
@@ -92,5 +96,69 @@ bool defaultWebXREnabled()
 }
 
 #endif // ENABLE(WEBXR)
+
+#if PLATFORM(IOS_FAMILY)
+
+bool defaultAllowsInlineMediaPlayback()
+{
+    return WebCore::deviceClass() == MGDeviceClassiPad;
+}
+
+bool defaultAllowsInlineMediaPlaybackAfterFullscreen()
+{
+    return WebCore::deviceClass() != MGDeviceClassiPad;
+}
+
+bool defaultAllowsPictureInPictureMediaPlayback()
+{
+    static bool shouldAllowPictureInPictureMediaPlayback = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_9_0;
+    return shouldAllowPictureInPictureMediaPlayback;
+}
+
+bool defaultJavaScriptCanOpenWindowsAutomatically()
+{
+    static bool shouldAllowWindowOpenWithoutUserGesture = WebCore::IOSApplication::isTheSecretSocietyHiddenMystery() && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_10_0;
+    return shouldAllowWindowOpenWithoutUserGesture;
+}
+
+bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute()
+{
+    return WebCore::deviceClass() != MGDeviceClassiPad;
+}
+
+bool defaultPassiveTouchListenersAsDefaultOnDocument()
+{
+    return linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+}
+
+bool defaultRequiresUserGestureToLoadVideo()
+{
+    static bool shouldRequireUserGestureToLoadVideo = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
+    return shouldRequireUserGestureToLoadVideo;
+}
+
+bool defaultWebSQLEnabled()
+{
+    // For backward compatibility, keep WebSQL working until apps are rebuilt with the iOS 14 SDK.
+    static bool webSQLEnabled = dyld_get_program_sdk_version() < DYLD_IOS_VERSION_14_0;
+    return webSQLEnabled;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+bool defaultAttachmentElementEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    return WebCore::IOSApplication::isMobileMail();
+#else
+    return WebCore::MacApplication::isAppleMail();
+#endif
+}
+
+bool defaultShouldRestrictBaseURLSchemes()
+{
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(SDKVersion::FirstThatRestrictsBaseURLSchemes);
+    return shouldRestrictBaseURLSchemes;
+}
 
 } // namespace WebKit

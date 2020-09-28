@@ -44,7 +44,7 @@
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-    settings.set<%= @pref.webcoreNameUpper %>([preferences _boolValueForKey:@"WebKit<%= @pref.name %>"]);
+    settings.set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
@@ -54,7 +54,7 @@
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-    WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>([preferences _boolValueForKey:@"WebKit<%= @pref.name %>"]);
+    WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
@@ -64,7 +64,7 @@
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>([preferences _boolValueForKey:@"WebKit<%= @pref.name %>"]);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

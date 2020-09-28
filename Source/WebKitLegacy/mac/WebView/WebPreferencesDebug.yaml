@@ -32,6 +32,7 @@ AcceleratedDrawingEnabled:
 
 DeveloperExtrasEnabled:
   type: bool
+  webKitLegacyPreferenceKey: WebKitDeveloperExtrasEnabledPreferenceKey
   defaultValue:
     WebKitLegacy:
       default: false
@@ -57,14 +58,12 @@ DisplayListDrawingEnabled:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ForceAlwaysUserScalable:
   type: bool
   webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
       default: false
 

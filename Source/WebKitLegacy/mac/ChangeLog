@@ -1,3 +1,71 @@
+2020-09-27  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Generate base preferences for WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=217042
+
+        Reviewed by Tim Horton.
+
+        Imports (and sorts) WebPreferences.yaml from WebKit, and starts generation for
+        for WebKitLegacy. To support this, a few tweaks to generation were required:
+        
+        - A new 'exposed' key was added to the configuration files which allows restricting
+          which frontends a preference is exposed to. By default, preferences are exposed to
+          all frontends. This is intended to be used for preferences that don't have a binding
+          to WebCore (e.g. process model related preferences for Webkit). We will require a
+          seperate concept for features that WebCore knows about, but are not supported by
+          a frontend, but that will be added in future revisions.
+          
+          'exposed' is used in a few places that have 'custom' bindings to WebCore where 
+          WebKitLegacy and WebKit don't use the same type or meaning for a preference, such
+          as WebKitLegacy's FrameFlattening enum vs. WebKit's FrameFlatteningEnabled bool,
+          or WebKitLegacy's WebSQLEnabled vs. WebKit's WebSQLDisabled. Eventually, it would
+          be nice to make these match, but it is not required.
+        
+        - A new 'webKitLegacyPreferenceKey' key was added to the configuration files allowing
+          for existing keys that don't match the default pattern of "WebKit" + keyName. This is
+          to avoid changing the value of the preference key strings in WebPreferenceKeysPrivate.h,
+          as I am not confident that changing them is kosher. I also went back and reverted the
+          few I had already changed, just to be on the safe side.
+
+        - Support was added in WebViewPreferencesChangedGenerated.mm.erb for non bool values.
+
+        - Preferences that are conditionally compiled out (using the conditional key) no longer
+          generate a default when they are compiled out, which required a little macro magic
+          in WebPreferencesDefinitions.h.erb in the form of the new INITIALIZE_DEFAULT_PREFERENCES_FOR_
+          macros.
+
+        * Scripts/GeneratePreferences.rb:
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        * Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.mm.erb:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferences.yaml:
+        * WebView/WebPreferencesDebug.yaml:
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultAllowsInlineMediaPlayback):
+        (WebKit::defaultAllowsInlineMediaPlaybackAfterFullscreen):
+        (WebKit::defaultAllowsPictureInPictureMediaPlayback):
+        (WebKit::defaultJavaScriptCanOpenWindowsAutomatically):
+        (WebKit::defaultInlineMediaPlaybackRequiresPlaysInlineAttribute):
+        (WebKit::defaultPassiveTouchListenersAsDefaultOnDocument):
+        (WebKit::defaultRequiresUserGestureToLoadVideo):
+        (WebKit::defaultWebSQLEnabled):
+        (WebKit::defaultAttachmentElementEnabled):
+        (WebKit::defaultShouldRestrictBaseURLSchemes):
+        * WebView/WebPreferencesExperimental.yaml:
+        * WebView/WebPreferencesInternal.h:
+        * WebView/WebPreferencesInternal.yaml:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _preferencesChanged:]):
+        (shouldAllowPictureInPictureMediaPlayback): Deleted.
+        (shouldAllowWindowOpenWithoutUserGesture): Deleted.
+        (shouldRequireUserGestureToLoadVideo): Deleted.
+        (shouldRestrictBaseURLSchemes): Deleted.
+        * WebView/WebViewData.h:
+
 2020-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitLegacy should call Page::finalizeRenderingUpdate()
