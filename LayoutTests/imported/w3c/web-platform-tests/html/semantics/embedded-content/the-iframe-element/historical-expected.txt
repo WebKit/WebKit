@@ -1,3 +1,4 @@
 
 PASS iframe.seamless should not be supported
+PASS iframe.allowPaymentRequest should not be supported
 

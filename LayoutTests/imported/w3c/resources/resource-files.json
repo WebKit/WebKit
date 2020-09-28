@@ -2410,6 +2410,7 @@
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper-3.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_child.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_grandchild.html",
+        "web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-toggle-in-inactive-document-crash.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/document-with-embedded-svg.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-checks-contentDocument.html",

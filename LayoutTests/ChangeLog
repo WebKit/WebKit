@@ -1,3 +1,15 @@
+2020-09-27  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/html/semantics/the-iframe-element from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=217033
+
+        Reviewed by Sam Weinig.
+
+        Adjust for tentative extension removal.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.sub.tentative-expected.txt:
+
 2020-09-26  Darin Adler  <darin@apple.com>
 
         Remove trailing spaces from all expected.txt files outside the web-platform-tests directory

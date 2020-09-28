@@ -2,4 +2,5 @@ CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document
 
 
 FAIL Navigation resulted download in sandbox is blocked. Sandbox access violation: Blocked a frame at "http://localhost:8800" from accessing a cross-origin frame.  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+PASS Navigation resulted download in sandbox from <object> is blocked.
 

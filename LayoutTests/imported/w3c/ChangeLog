@@ -1,3 +1,45 @@
+2020-09-27  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/html/semantics/the-iframe-element from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=217033
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/html/semantics/the-iframe-element from upstream a520598adb3957def27f1b63c6bff62e891ccbda.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/historical-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/historical.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-eager-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-eager.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-eager.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-eager.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-load-event.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-multiple-times.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-referrerpolicy-change.sub.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-to-eager.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy.tentative-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.sub.tentative.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-toggle-in-inactive-document-crash.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/download_stash.py:
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+
 2020-09-27  Darin Adler  <darin@apple.com>
 
         Remove trailing spaces from the last few expected.txt files that have them
