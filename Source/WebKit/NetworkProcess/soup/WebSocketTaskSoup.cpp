@@ -80,9 +80,11 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, SoupSession* session
                 task->didFail(String::fromUTF8(error->message));
         }, this);
 
-    WebCore::ResourceRequest request;
-    request.updateFromSoupMessage(msg);
-    m_channel.didSendHandshakeRequest(WTFMove(request));
+    g_signal_connect(msg, "starting", G_CALLBACK(+[](SoupMessage* msg, WebSocketTask* task) {
+        WebCore::ResourceRequest request;
+        request.updateFromSoupMessage(msg);
+        task->m_channel.didSendHandshakeRequest(WTFMove(request));
+    }), this);
 }
 
 WebSocketTask::~WebSocketTask()

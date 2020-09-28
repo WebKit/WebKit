@@ -1,3 +1,17 @@
+2020-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] WebSocket: cookies set in request don't appear in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=217012
+
+        Reviewed by Michael Catanzaro.
+
+        Cookies are set by libsoup and we are notifying about the handshake being sent before the cookie header is added
+        to the request.
+
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::WebSocketTask): Connect to SoupMessage::starting to notify the web process the handshake
+        request has been sent.
+
 2020-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Do not set site for cookies twice in case of redirection
