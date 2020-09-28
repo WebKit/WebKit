@@ -1,3 +1,15 @@
+2020-09-28  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Fix test failures inadventently introduced in r267644
+        https://bugs.webkit.org/show_bug.cgi?id=217049
+
+        Reviewed by Adrian Perez de Castro.
+
+        r267644 strips trailing whitespace in two LayoutTests/js/*expected.txt files
+        but doesn't update the corresponding js string literals to not produce such.
+        * js/script-tests/parser-syntax-check.js:
+        * js/script-tests/regexp-sticky.js:
+
 2020-09-27  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/html/semantics/the-iframe-element from upstream

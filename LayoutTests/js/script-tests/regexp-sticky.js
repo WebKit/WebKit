@@ -73,7 +73,7 @@ testStickyExec("Repeating Pattern", new RegExp("abc", "y"), "abcabcabc", 0, ["ab
 testStickyExec("Test lastIndex resets", /\d/y, "12345", 0, ["1", "2", "3", "4", "5", null, "1", "2", "3", "4", "5", null]);
 testStickyExec("Ignore Case", new RegExp("test", "iy"), "TESTtestTest", 0, ["TEST", "test", "Test", null]);
 testStickyExec("Alternates, differing lengths long to short", new RegExp("bb|a", "y"), "a", 0, ["a", null]);
-testStickyExec("Alternates, differing lengths long to short with mutliple matches ", new RegExp("abc|ab|a", "y"), "aababcaabcab", 0, ["a", "ab", "abc", "a", "abc", "ab", null]);
+testStickyExec("Alternates, differing lengths long to short with mutliple matches", new RegExp("abc|ab|a", "y"), "aababcaabcab", 0, ["a", "ab", "abc", "a", "abc", "ab", null]);
 testStickyExec("Alternates, differing lengths, short to long", new RegExp("Dog |Cat |Mouse ", "y"), "Mouse Dog Cat ", 0, ["Mouse ", "Dog ", "Cat ", null]);
 testStickyExec("BOL Anchored, starting at 0", /^X/y, "XXX", 0, ["X", null]);
 testStickyExec("BOL Anchored, starting at 1", /^X/y, "XXX", 1, [null, "X", null]);
