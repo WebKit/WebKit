@@ -1,3 +1,15 @@
+2020-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Document.p.contains returns true for nodes in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=189164
+
+        Reviewed by Darin Adler.
+
+        Added a regression after r267220 had fixed this bug.
+
+        * fast/shadow-dom/document-contains-returns-false-for-node-inside-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/document-contains-returns-false-for-node-inside-shadow-tree.html: Added.
+
 2020-09-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TextureMapper] Enable a depth buffer for preserve-3d

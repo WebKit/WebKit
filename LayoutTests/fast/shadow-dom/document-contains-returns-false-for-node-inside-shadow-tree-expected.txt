@@ -1,0 +1,21 @@
+Tests for document.contains. It should return false on connected nodes within a shadow root
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowHost.isConnected is false
+PASS shadowRoot.isConnected is false
+PASS shadowRootChild.isConnected is false
+PASS document.contains(shadowHost) is false
+PASS document.contains(shadowRoot) is false
+PASS document.contains(shadowRootChild) is false
+PASS document.body.appendChild(shadowHost); shadowHost.isConnected is true
+PASS shadowRoot.isConnected is true
+PASS shadowRootChild.isConnected is true
+PASS document.contains(shadowHost) is true
+PASS document.contains(shadowRoot) is false
+PASS document.contains(shadowRootChild) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
