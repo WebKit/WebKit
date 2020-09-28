@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.float {
+  width: 20px;
+  height: 20px;
+  background-color: blue;
+  position: relative;
+}
+</style>
+<div style="position: absolute; top: 8px; left: 8px; background-color: green; width: 40px; height: 240px"></div>
+<div class=float></div>
+<div class=float></div>
+<div class=float style="left: 20px;"></div>
+<div class=float style="left: 20px;"></div>
+<div class=float style="left: 20px;"></div>
+<div class=float></div>
+<div class=float></div>
+<div class=float style="left: 20px;"></div>
+<div class=float></div>
+<div class=float style="top: -20px; left: 20px;"></div>
+<div class=float></div>
+<div class=float style="top: -20px; left: 20px;"></div>

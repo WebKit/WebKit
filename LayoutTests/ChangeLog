@@ -1,3 +1,13 @@
+2020-09-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Add support for clear on float box
+        https://bugs.webkit.org/show_bug.cgi?id=217045
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-with-clear-simple-expected.html: Added.
+        * fast/layoutformattingcontext/float-with-clear-simple.html: Added.
+
 2020-09-28  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Fix test failures inadventently introduced in r267644

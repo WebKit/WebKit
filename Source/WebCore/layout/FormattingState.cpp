@@ -52,7 +52,7 @@ BoxGeometry& FormattingState::boxGeometry(const Box& layoutBox)
 {
     // Should never need to mutate a display box outside of the formatting context.
     ASSERT(&layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this);
-    // Anonymous text wrappers do not need display boxes.
+    // Anonymous text wrappers do not need to compute box geometry. They initiate inline runs.
     ASSERT(!layoutBox.isInlineTextBox());
     return layoutState().ensureGeometryForBox(layoutBox);
 }
