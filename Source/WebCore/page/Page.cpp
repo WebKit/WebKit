@@ -1441,13 +1441,15 @@ unsigned Page::renderingUpdateCount() const
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {
-    // This function is not reentrant, e.g. a rAF callback may force repaint.
-    if (m_inUpdateRendering) {
+    m_updateRenderingPhaseStack.append(RenderingUpdatePhase::InUpdateRendering);
+
+    // This function is not reentrant, e.g. a rAF callback may trigger a forces repaint in testing.
+    // This is why we track updateRenderingPhase as a stack.
+    if (m_updateRenderingPhaseStack.size() > 1) {
         layoutIfNeeded();
         return;
     }
 
-    SetForScope<bool> inUpdateRendering(m_inUpdateRendering, true);
     m_lastRenderingUpdateTimestamp = MonotonicTime::now();
 
     bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
@@ -1509,9 +1511,11 @@ void Page::updateRendering()
     forEachDocument([] (Document& document) {
         for (auto& image : document.cachedResourceLoader().allCachedSVGImages()) {
             if (auto* page = image->internalPage())
-                page->updateRendering();
+                page->isolatedUpdateRendering();
         }
     });
+
+    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
 
     for (auto& document : initialDocuments) {
         if (document && document->domWindow())
@@ -1529,10 +1533,20 @@ void Page::updateRendering()
 
     if (!isSVGImagePage)
         tracePoint(RenderingUpdateEnd);
+
+    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
+}
+
+void Page::isolatedUpdateRendering()
+{
+    updateRendering();
+    m_updateRenderingPhaseStack.removeLast();
 }
 
 void Page::doAfterUpdateRendering()
 {
+    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
+
     // Code here should do once-per-frame work that needs to be done before painting, and requires
     // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
 
@@ -1586,10 +1600,14 @@ void Page::doAfterUpdateRendering()
         ASSERT(!frameView || !frameView->needsLayout());
     }
 #endif
+
+    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
+    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
+
     auto* view = mainFrame().view();
     if (!view)
         return;
@@ -1597,7 +1615,11 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
     if (flags.contains(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes))
         view->invalidateImagesWithAsyncDecodes();
 
+    m_updateRenderingPhaseStack.last() = RenderingUpdatePhase::LayerFlushing;
+
     view->flushCompositingStateIncludingSubframes();
+
+    m_updateRenderingPhaseStack.last() = RenderingUpdatePhase::PostLayerFlush;
 
 #if ENABLE(ASYNC_SCROLLING)
     if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
@@ -1608,6 +1630,8 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
         scrollingCoordinator->didCompleteRenderingUpdate();
     }
 #endif
+
+    m_updateRenderingPhaseStack.removeLast();
 }
 
 void Page::suspendScriptedAnimations()

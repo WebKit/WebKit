@@ -297,7 +297,7 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
     if (!enabled())
         return;
 
-    core(&m_webView)->updateRendering();
+    core(&m_webView)->isolatedUpdateRendering();
 
     if (!enabled())
         return;

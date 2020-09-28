@@ -1,3 +1,16 @@
+2020-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitLegacy should call Page::finalizeRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=216958
+
+        Reviewed by Tim Horton.
+        
+        dynamicViewportSizeUpdate() needs to call isolatedUpdateRendering() because it isn't followed
+        by a finalizeRenderingUpdate().
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2020-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSocket: cookies set in request don't appear in the inspector

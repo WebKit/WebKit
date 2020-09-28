@@ -1,3 +1,25 @@
+2020-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitLegacy should call Page::finalizeRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=216958
+
+        Reviewed by Tim Horton.
+
+        Convert Page::m_inUpdateRendering to an enum which tracks the phase, which will be
+        used in a later patch to prevent extra update scheduling (webkit.org/b/216726).
+        Page has to track RenderingUpdatePhase as a stack to handle the re-entrancy when layout tests
+        call notifyDone() inside of the JS callbacks; the stack only has one entry outside of testing.
+
+        Add isolatedUpdateRendering(), which is for callers who aren't going to call finalizeRenderingUpdate(),
+        and use it for SVGImage updates.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        (WebCore::Page::isolatedUpdateRendering):
+        (WebCore::Page::doAfterUpdateRendering):
+        (WebCore::Page::finalizeRenderingUpdate):
+        * page/Page.h:
+
 2020-09-27  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed. Call showLayoutTree only when trees are mismatching.

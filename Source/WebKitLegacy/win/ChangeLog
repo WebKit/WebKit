@@ -1,3 +1,19 @@
+2020-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitLegacy should call Page::finalizeRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=216958
+
+        Reviewed by Tim Horton.
+
+        Windows doesn't call finalizeRenderingUpdate() so needs to use isolatedUpdateRendering().
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::flushAndRenderLayers):
+        * WebView.cpp:
+        (WebView::paint):
+        (WebView::flushPendingGraphicsLayerChangesSoon):
+        (WebView::flushPendingGraphicsLayerChanges):
+
 2020-09-25  Antoine Quint  <graouts@webkit.org>
 
         Add an experimental feature flag for CSS individual transform properties

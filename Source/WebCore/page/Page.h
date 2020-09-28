@@ -488,7 +488,8 @@ public:
 
     WEBCORE_EXPORT void layoutIfNeeded();
     WEBCORE_EXPORT void updateRendering();
-    
+    // A call to updateRendering() that is not followed by a call to finalizeRenderingUpdate().
+    WEBCORE_EXPORT void isolatedUpdateRendering();
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
 
     // Do immediate or timed update as dictated by the ChromeClient.
@@ -780,6 +781,13 @@ public:
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
 private:
+    enum class RenderingUpdatePhase : uint8_t {
+        Outside,
+        InUpdateRendering,
+        LayerFlushing,
+        PostLayerFlush
+    };
+
     struct Navigation {
         RegistrableDomain domain;
         FrameLoadType type;
@@ -1017,13 +1025,14 @@ private:
     bool m_shouldEnableICECandidateFilteringByDefault { true };
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaBufferingIsSuspended { false };
-    bool m_inUpdateRendering { false };
     bool m_hasResourceLoadClient { false };
     bool m_delegatesScaling { false };
 
 #if ENABLE(EDITABLE_REGION)
     bool m_isEditableRegionEnabled { false };
 #endif
+
+    Vector<RenderingUpdatePhase, 2> m_updateRenderingPhaseStack;
 
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     

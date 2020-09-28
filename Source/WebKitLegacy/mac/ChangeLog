@@ -1,3 +1,31 @@
+2020-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitLegacy should call Page::finalizeRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=216958
+
+        Reviewed by Tim Horton.
+
+        This is a precursor to fixing webkit.org/b/216726. Page needs to track the phase
+        of updateRendering that we are in, and to ease this tracking, WebKitLegacy needs to call
+        Page::finalizeRenderingUpdate() so the state is tracked.
+        
+        Rename -_viewWillDrawInternal to -_updateRendering, and have it call updateRendering()
+        and finalizeRenderingUpdate(). We can also move in the call to -_synchronizeCustomFixedPositionLayoutRect
+        which both call sites do.
+        
+        Since updateRendering() is guaranteed to update layout, we know -_flushCompositingChanges would have
+        never returned NO here, so we can remove the condition in LayerFlushController::flushLayers().
+        
+        -[WebHTMLView viewWillDraw] also does a similar -_web_updateLayoutAndStyleIfNeededRecursive
+        then -_flushCompositingChanges but this is called from AppKit with a timing that we don't control;
+        it may be redundant with -[WebView _updateRendering] but I leave that behavior unchanged.
+
+        * WebView/WebView.mm:
+        (-[WebView _updateRendering]):
+        (-[WebView _forceRepaintForTesting]):
+        (LayerFlushController::flushLayers):
+        (-[WebView _viewWillDrawInternal]): Deleted.
+
 2020-09-26  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Generate Debug and Internal preferences for WebKitLegacy
