@@ -196,7 +196,7 @@ void LayerTreeHost::flushAndRenderLayers()
     if (!enabled())
         return;
 
-    m_webPage.corePage()->updateRendering();
+    m_webPage.corePage()->isolatedUpdateRendering();
 
     if (!flushPendingLayerChanges())
         return;

@@ -414,6 +414,7 @@ void DrawingAreaCoordinatedGraphics::updateBackingStoreState(uint64_t stateID, b
         m_webPage.setDeviceScaleFactor(deviceScaleFactor);
         m_webPage.setSize(size);
         m_webPage.updateRendering();
+        m_webPage.finalizeRenderingUpdate({ });
         m_webPage.flushPendingEditorStateUpdate();
         m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
@@ -751,6 +752,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     ASSERT(!m_webPage.size().isEmpty());
 
     m_webPage.updateRendering();
+    m_webPage.finalizeRenderingUpdate({ });
     m_webPage.flushPendingEditorStateUpdate();
 
     // The layout may have put the page into accelerated compositing mode. If the LayerTreeHost is

@@ -1,3 +1,23 @@
+2020-09-27  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r267688) [GTK] Many compositing timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=217044
+
+        Reviewed by Darin Adler.
+
+        Especulative fix by adding missing finalize step to
+        updateRendering (or calling isolatedUpdateRendering).
+
+        Covered by existing tests.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::updateBackingStoreState):
+        Call finalizeUpdateRendering.
+        (WebKit::DrawingAreaCoordinatedGraphics::display): Ditto.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::flushAndRenderLayers): Call
+        isolatedUpdateRendering instead of updateRendering on the corePage().
+
 2020-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitLegacy should call Page::finalizeRenderingUpdate()
