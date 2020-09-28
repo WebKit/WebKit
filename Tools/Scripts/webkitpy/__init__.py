@@ -34,6 +34,7 @@ AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('mozprocess', Version(1, 2, 0)))
 AutoInstall.register(Package('mozlog', Version(6, 1)))
 AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
+AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
 AutoInstall.register(Package('toml', Version(0, 10, 1)))
 

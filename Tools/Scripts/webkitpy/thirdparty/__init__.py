@@ -95,8 +95,6 @@ class AutoinstallImportHook(object):
         # order for autoinstall_everything(), below, to work properly.
         if '.mechanize' in fullname:
             self._install_mechanize()
-        elif '.pycodestyle' in fullname:
-            self._install_pycodestyle()
         elif '.pylint' in fullname:
             self._install_pylint()
         elif '.buildbot' in fullname:
