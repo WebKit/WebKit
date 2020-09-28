@@ -29,8 +29,11 @@
 #include "EXTColorBufferHalfFloat.h"
 
 #include "ExtensionsGL.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(EXTColorBufferHalfFloat);
 
 EXTColorBufferHalfFloat::EXTColorBufferHalfFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

@@ -32,6 +32,7 @@ namespace WebCore {
 class WebGLRenderingContextBase;
 
 class ANGLEInstancedArrays final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(ANGLEInstancedArrays);
 public:
     explicit ANGLEInstancedArrays(WebGLRenderingContextBase&);
     virtual ~ANGLEInstancedArrays();

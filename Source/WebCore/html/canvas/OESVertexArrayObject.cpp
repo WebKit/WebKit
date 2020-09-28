@@ -30,10 +30,13 @@
 
 #include "ExtensionsGL.h"
 #include "WebGLRenderingContext.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
 
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContextBase& context)
     : WebGLExtension(context)

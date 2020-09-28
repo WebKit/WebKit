@@ -34,6 +34,7 @@ namespace WebCore {
 class WebGLShader;
 
 class WebGLDebugShaders final : public WebGLExtension {
+    WTF_MAKE_ISO_ALLOCATED(WebGLDebugShaders);
 public:
     explicit WebGLDebugShaders(WebGLRenderingContextBase&);
     virtual ~WebGLDebugShaders();
