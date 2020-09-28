@@ -201,9 +201,9 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
     data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
     glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
     glEnable(GL_SCISSOR_TEST);
     data().didModifyStencil = false;
-    glDepthMask(0);
     glGetIntegerv(GL_VIEWPORT, data().viewport);
     glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor);
     m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), flags & PaintingMirrored ? ClipStack::YAxisMode::Default : ClipStack::YAxisMode::Inverted);
@@ -824,8 +824,8 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored)
 {
-    const float nearValue = 9999999;
-    const float farValue = -99999;
+    const float nearValue = -99999;
+    const float farValue = 9999999;
 
     return TransformationMatrix(2.0 / float(size.width()), 0, 0, 0,
                                 0, (mirrored ? 2.0 : -2.0) / float(size.height()), 0, 0,
@@ -947,6 +947,17 @@ void TextureMapperGL::endClip()
 IntRect TextureMapperGL::clipBounds()
 {
     return clipStack().current().scissorBox;
+}
+
+void TextureMapperGL::beginPreserves3D()
+{
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void TextureMapperGL::endPreserves3D()
+{
+    glDisable(GL_DEPTH_TEST);
 }
 
 Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)

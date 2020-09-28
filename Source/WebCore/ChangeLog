@@ -1,3 +1,28 @@
+2020-09-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] Enable a depth buffer for preserve-3d
+        https://bugs.webkit.org/show_bug.cgi?id=90078
+
+        Reviewed by Don Olmstead.
+
+        Test: transforms/3d/general/preserve-3d.html
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::getEGLConfig):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::beginPreserves3D): Added a new virtual method.
+        (WebCore::TextureMapper::endPreserves3D): Ditto.
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::createProjectionMatrix): Swapped nearValue and farValue
+        so that the depth buffer works as expected.
+        (WebCore::TextureMapperGL::beginPreserves3D): Added.
+        (WebCore::TextureMapperGL::endPreserves3D): Ditto.
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildren): Call
+        beginPreserves3D() and endPreserves3D() if m_state.preserves3D.
+
 2020-09-28  Devin Rousso  <drousso@apple.com>
 
         [iOS] unable to airplay directly loaded fullscreen video

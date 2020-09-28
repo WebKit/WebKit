@@ -222,6 +222,9 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
     if (m_state.backdropLayer && m_state.backdropLayer == options.backdropLayer)
         return;
 
+    if (m_state.preserves3D)
+        options.textureMapper.beginPreserves3D();
+
     if (m_state.backdropLayer && !options.backdropLayer) {
         TransformationMatrix clipTransform;
         clipTransform.translate(options.offset.width(), options.offset.height());
@@ -234,8 +237,11 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
 
     paintSelf(options);
 
-    if (m_children.isEmpty())
+    if (m_children.isEmpty()) {
+        if (m_state.preserves3D)
+            options.textureMapper.endPreserves3D();
         return;
+    }
 
     bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
     if (shouldClip) {
@@ -259,6 +265,8 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
 
     if (shouldClip)
         options.textureMapper.endClip();
+    if (m_state.preserves3D)
+        options.textureMapper.endPreserves3D();
 }
 
 bool TextureMapperLayer::shouldBlend() const
