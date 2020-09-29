@@ -146,7 +146,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     auto lineLogicalTop = constraints.vertical.logicalTop;
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
-        Optional<unsigned> overflowContentLength;
+        Optional<size_t> overflowContentLength;
     };
     Optional<PreviousLine> previousLine;
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };

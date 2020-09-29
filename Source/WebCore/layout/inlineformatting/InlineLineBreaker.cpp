@@ -83,12 +83,6 @@ private:
     const LineBreaker::CandidateContent& m_candidateContent;
 };
 
-struct WrappedTextContent {
-    size_t trailingRunIndex { 0 };
-    bool contentOverflows { false };
-    Optional<LineBreaker::PartialRun> partialTrailingRun;
-};
-
 bool LineBreaker::isContentWrappingAllowed(const ContinuousContent& continuousContent) const
 {
     // Use the last inline item with content (where we would be wrapping) to decide if content wrapping is allowed.
@@ -107,9 +101,9 @@ bool LineBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continu
     return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
 }
 
-LineBreaker::Result LineBreaker::shouldWrapInlineContent(const CandidateContent& candidateContent, const LineStatus& lineStatus)
+LineBreaker::Result LineBreaker::processInlineContent(const CandidateContent& candidateContent, const LineStatus& lineStatus)
 {
-    auto inlineContentWrapping = [&] {
+    auto processCandidateContent = [&] {
         if (candidateContent.logicalWidth <= lineStatus.availableWidth)
             return Result { Result::Action::Keep };
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
@@ -117,10 +111,10 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const CandidateContent&
         if (WTF::areEssentiallyEqual(candidateContent.logicalWidth, lineStatus.availableWidth))
             return Result { Result::Action::Keep };
 #endif
-        return tryWrappingInlineContent(candidateContent, lineStatus);
+        return processOverflowingContent(candidateContent, lineStatus);
     };
 
-    auto result = inlineContentWrapping();
+    auto result = processCandidateContent();
     if (result.action == Result::Action::Keep) {
         // If this is not the end of the line, hold on to the last eligible line wrap opportunity so that we could revert back
         // to this position if no other line breaking opportunity exists in this content.
@@ -141,9 +135,15 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const CandidateContent&
     return result;
 }
 
-LineBreaker::Result LineBreaker::tryWrappingInlineContent(const CandidateContent& candidateContent, const LineStatus& lineStatus) const
+struct TrailingTextContent {
+    size_t runIndex { 0 };
+    bool hasOverflow { false }; // Trailing content still overflows the line.
+    Optional<LineBreaker::PartialRun> partialRun;
+};
+
+LineBreaker::Result LineBreaker::processOverflowingContent(const CandidateContent& overflowContent, const LineStatus& lineStatus) const
 {
-    auto continuousContent = ContinuousContent { candidateContent };
+    auto continuousContent = ContinuousContent { overflowContent };
     ASSERT(!continuousContent.isEmpty());
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
@@ -171,9 +171,9 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const CandidateContent
     }
 
     if (continuousContent.hasTextContentOnly()) {
-        if (auto wrappedTextContent = wrapTextContent(continuousContent, lineStatus)) {
-            if (!wrappedTextContent->trailingRunIndex && wrappedTextContent->contentOverflows) {
-                // We tried to split the content but the available space can't even accommodate the first character.
+        if (auto trailingContent = processOverflowingTextContent(continuousContent, lineStatus)) {
+            if (!trailingContent->runIndex && trailingContent->hasOverflow) {
+                // We tried to break the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
                 if (!lineStatus.lineIsEmpty)
@@ -185,10 +185,10 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const CandidateContent
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
-                return { Result::Action::Split, IsEndOfLine::Yes, Result::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
+                return { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
             }
-            auto splitContent = Result::PartialTrailingContent { wrappedTextContent->trailingRunIndex, wrappedTextContent->partialTrailingRun };
-            return { Result::Action::Split, IsEndOfLine::Yes, splitContent };
+            auto trailingPartialContent = Result::PartialTrailingContent { trailingContent->runIndex, trailingContent->partialRun };
+            return { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };
         }
     }
     // If we are not allowed to break this overflowing content, we still need to decide whether keep it or push it to the next line.
@@ -204,7 +204,7 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const CandidateContent
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-Optional<WrappedTextContent> LineBreaker::wrapTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
+Optional<TrailingTextContent> LineBreaker::processOverflowingTextContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
     auto isBreakableRun = [] (auto& run) {
         ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
@@ -231,14 +231,14 @@ Optional<WrappedTextContent> LineBreaker::wrapTextContent(const ContinuousConten
             // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
             auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
             if (auto partialRun = tryBreakingTextRun(run, continuousContent.logicalLeft() + accumulatedRunWidth, adjustedAvailableWidth)) {
-                 if (partialRun->length)
-                     return WrappedTextContent { index, false, partialRun };
-                 // When the content is wrapped at the run boundary, the trailing run is the previous run.
-                 if (index)
-                     return WrappedTextContent { index - 1, false, { } };
-                 // Sometimes we can't accommodate even the very first character.
-                 return WrappedTextContent { 0, true, { } };
-             }
+                if (partialRun->length)
+                    return TrailingTextContent { index, false, partialRun };
+                // When the content is wrapped at the run boundary, the trailing run is the previous run.
+                if (index)
+                    return TrailingTextContent { index - 1, false, { } };
+                // Sometimes we can't accommodate even the very first character.
+                return TrailingTextContent { 0, true, { } };
+            }
             // If this run is not breakable, we need to check if any previous run is breakable.
             break;
         }
@@ -253,9 +253,9 @@ Optional<WrappedTextContent> LineBreaker::wrapTextContent(const ContinuousConten
         if (isBreakableRun(run)) {
             ASSERT(run.inlineItem.isText());
             if (auto partialRun = tryBreakingTextRun(run, continuousContent.logicalLeft() + accumulatedRunWidth, maxInlineLayoutUnit())) {
-                 // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
-                 ASSERT(partialRun->length);
-                 return WrappedTextContent { index, false, partialRun };
+                // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
+                ASSERT(partialRun->length);
+                return TrailingTextContent { index, false, partialRun };
             }
         }
     }
@@ -289,10 +289,10 @@ LineBreaker::WordBreakRule LineBreaker::wordBreakBehavior(const RenderStyle& sty
     return WordBreakRule::NoBreak;
 }
 
-Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const
+Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& overflowingRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const
 {
-    ASSERT(overflowRun.inlineItem.isText());
-    auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
+    ASSERT(overflowingRun.inlineItem.isText());
+    auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
     auto& style = inlineTextItem.style();
     auto findLastBreakablePosition = availableWidth == maxInlineLayoutUnit();
 
@@ -305,7 +305,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end() - 1, logicalLeft);
             return PartialRun { inlineTextItem.length() - 1, trailingPartialRunWidth, false };
         }
-        auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, logicalLeft);
+        auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowingRun.logicalWidth, availableWidth, logicalLeft);
         return PartialRun { splitData.length, splitData.logicalWidth, false };
     }
 
@@ -328,7 +328,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
             if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                 return { };
-            leftSideLength = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
+            leftSideLength = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), runLength, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
         }
         if (leftSideLength < limitBefore)
             return { };

@@ -50,7 +50,7 @@ public:
     struct LineContent {
         struct PartialContent {
             bool trailingContentHasHyphen { false };
-            unsigned overflowContentLength { 0 };
+            size_t overflowContentLength { 0 };
         };
         Optional<PartialContent> partialContent;
         InlineItemRange inlineItemRange;
@@ -68,7 +68,7 @@ public:
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, Optional<unsigned> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialLineConstraints, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, Optional<size_t> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialLineConstraints, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -77,7 +77,7 @@ public:
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
 
 private:
-    void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange& needsLayoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, Optional<size_t> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
     struct Result {
         LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         struct CommittedContentCount {
@@ -103,7 +103,7 @@ private:
         size_t inlineItemCount { 0 };
         Optional <LineContent::PartialContent> partialTrailingContent;
     };
-    CommittedContent placeInlineContent(const InlineItemRange&, Optional<unsigned> partialLeadingContentLength);
+    CommittedContent placeInlineContent(const InlineItemRange&, Optional<size_t> partialLeadingContentLength);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;

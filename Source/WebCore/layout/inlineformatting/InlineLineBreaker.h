@@ -38,12 +38,12 @@ namespace Layout {
 class InlineItem;
 class InlineTextItem;
 struct ContinuousContent;
-struct WrappedTextContent;
+struct TrailingTextContent;
 
 class LineBreaker {
 public:
     struct PartialRun {
-        unsigned length { 0 };
+        size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
         bool needsHyphen { false };
     };
@@ -51,7 +51,7 @@ public:
     struct Result {
         enum class Action {
             Keep, // Keep content on the current line.
-            Split, // Partial content is on the current line.
+            Break, // Partial content is on the current line.
             Push, // Content is pushed to the next line.
             RevertToLastWrapOpportunity // The current content overflows and can't get wrapped. The line needs to be reverted back to the last line wrapping opportunity.
         };
@@ -76,10 +76,11 @@ public:
     };
     using RunList = Vector<Run, 3>;
 
-    // This struct represents the amount of content committed to line breaking at a time e.g.
+    // This struct represents the amount of continuous content committed to line breaking at a time (no in-between wrap opportunities).
+    // e.g.
     // <div>text content <span>span1</span>between<span>span2</span></div>
     // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
-    // candidate content at a time:
+    // continuous candidate content at a time:
     // 1. [text]
     // 2. [ ]
     // 3. [content]
@@ -98,13 +99,13 @@ public:
         bool lineHasFullyCollapsibleTrailingRun { false };
         bool lineIsEmpty { true };
     };
-    Result shouldWrapInlineContent(const CandidateContent&, const LineStatus&);
+    Result processInlineContent(const CandidateContent&, const LineStatus&);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
 private:
-    Optional<WrappedTextContent> wrapTextContent(const ContinuousContent&, const LineStatus&) const;
-    Result tryWrappingInlineContent(const CandidateContent&, const LineStatus&) const;
+    Result processOverflowingContent(const CandidateContent&, const LineStatus&) const;
+    Optional<TrailingTextContent> processOverflowingTextContent(const ContinuousContent&, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Run& overflowRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const;
 
     enum class WordBreakRule {

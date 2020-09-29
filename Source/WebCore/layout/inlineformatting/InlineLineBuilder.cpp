@@ -327,7 +327,7 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, Optional<unsigned> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialConstraints, bool isFirstLine)
+LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, Optional<size_t> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialConstraints, bool isFirstLine)
 {
     auto usedConstraints = constraintsForLine(initialConstraints, isFirstLine);
     initialize(usedConstraints);
@@ -364,7 +364,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 }
 
-LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, Optional<unsigned> partialLeadingContentLength)
+LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange, Optional<size_t> partialLeadingContentLength)
 {
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
     auto lineBreaker = LineBreaker { };
@@ -492,7 +492,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
     return UsedConstraints { lineLogicalLeft, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat };
 }
 
-void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, unsigned currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
+void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<size_t> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(currentInlineItemIndex < layoutRange.end);
     lineCandidate.reset();
@@ -504,7 +504,7 @@ void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, unsigned curr
     ASSERT(softWrapOpportunityIndex <= layoutRange.end);
 
     if (partialLeadingContentLength) {
-        // Handle leading partial content first (split text from the previous line).
+        // Handle leading partial content first (overflowing text from the previous line).
         // Construct a partial leading inline item.
         m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[currentInlineItemIndex]).right(*partialLeadingContentLength);
         auto itemWidth = inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
@@ -589,7 +589,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = LineBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto contentLogicalLeft = m_line.contentLogicalWidth();
-    auto result = lineBreaker.shouldWrapInlineContent({ candidateRuns, contentLogicalLeft, candidateInlineContent.logicalWidth(), candidateInlineContent.collapsibleTrailingWidth() }, lineStatus);
+    auto result = lineBreaker.processInlineContent({ candidateRuns, contentLogicalLeft, candidateInlineContent.logicalWidth(), candidateInlineContent.collapsibleTrailingWidth() }, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
     if (result.action == LineBreaker::Result::Action::Keep) {
@@ -610,13 +610,13 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
         ASSERT(m_lastWrapOpportunityItem);
         return { LineBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange), true } };
     }
-    if (result.action == LineBreaker::Result::Action::Split) {
+    if (result.action == LineBreaker::Result::Action::Break) {
         ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
         // Commit the combination of full and partial content on the current line.
         commitFloats(lineCandidate, CommitIntrusiveFloatsOnly::Yes);
         ASSERT(result.partialTrailingContent);
         commitPartialContent(candidateRuns, *result.partialTrailingContent);
-        // When splitting multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up splitting them at run boundary.
+        // When breaking multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up breaking them at run boundary.
         // It simply means we don't really have a partial run. Partial content yes, but not partial run.
         auto trailingRunIndex = result.partialTrailingContent->trailingRunIndex;
         auto committedInlineItemCount = trailingRunIndex + 1;

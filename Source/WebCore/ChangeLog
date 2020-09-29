@@ -1,3 +1,37 @@
+2020-09-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBreaker renames
+        https://bugs.webkit.org/show_bug.cgi?id=217067
+
+        Reviewed by Antti Koivisto.
+
+        The following functions and structures have evolved over time. Let's sync up their names.
+
+        LineBreaker::shouldWrapInlineContent -> processInlineContent -> it's not just a "should wrap now" function anymore.
+        LineBreaker::tryWrappingInlineContent -> processOverflowingContent -> It does both wrapping and breaking.
+        LineBreaker::wrapTextContent -> processOverflowingTextContent ^^ same as above
+        struct WrappedTextContent -> TrailingTextContent -> it holds information about the trailing content after wrapping/breaking.
+        LineBreaker::Result::Action::Split -> Break -> closer to spec term.
+        (This patch also changes some unsigned to size_t.)
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::processInlineContent):
+        (WebCore::Layout::LineBreaker::processOverflowingContent const):
+        (WebCore::Layout::LineBreaker::processOverflowingTextContent const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::LineBreaker::shouldWrapInlineContent): Deleted.
+        (WebCore::Layout::LineBreaker::tryWrappingInlineContent const): Deleted.
+        (WebCore::Layout::LineBreaker::wrapTextContent const): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+        (WebCore::Layout::LineBuilder::nextContentForLine):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-09-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Data URL image is not rendered if there is whitespace between the mime type and and "base64" string
