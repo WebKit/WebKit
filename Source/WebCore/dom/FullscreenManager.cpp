@@ -482,6 +482,7 @@ void FullscreenManager::dispatchFullscreenChangeEvents()
 
 void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, const AtomString& eventName, bool shouldNotifyMediaElement)
 {
+    // Step 3 of https://fullscreen.spec.whatwg.org/#run-the-fullscreen-steps
     while (!queue.isEmpty()) {
         RefPtr<Node> node = queue.takeFirst();
         if (!node)
@@ -501,7 +502,7 @@ void FullscreenManager::dispatchFullscreenChangeOrErrorEvent(Deque<RefPtr<Node>>
 #else
         UNUSED_PARAM(shouldNotifyMediaElement);
 #endif
-        node->dispatchEvent(Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::No));
+        node->dispatchEvent(Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
     }
 }
 

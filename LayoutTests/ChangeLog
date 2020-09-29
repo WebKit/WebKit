@@ -1,3 +1,19 @@
+2020-09-28  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        webkitfullscreenchange does not fire for shadow DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=216607
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a regression test for making an element inside a shadow tree full screen,
+        and listening to `webkitfullscreenchange` outside the shadow tree.
+
+        * fast/shadow-dom/fullscreen-in-shadow-event-should-propagate-expected.txt: Added.
+        * fast/shadow-dom/fullscreen-in-shadow-event-should-propagate.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        Other testcases related to fullscreen API in fast/shadow-dom/ are also
+        disabled for ios-wk2.
+
 2020-09-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add checkbox to local override popover to allow it to skip the network

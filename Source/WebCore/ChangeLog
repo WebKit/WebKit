@@ -1,3 +1,22 @@
+2020-09-28  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        webkitfullscreenchange does not fire for shadow DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=216607
+
+        Reviewed by Ryosuke Niwa.
+
+        This bug was caused by the `webkitfullscreenchange` event being fired
+        but without _composed_ flag set.
+
+        This patch fixed the bug by making it composed as defined as
+        the step 3-2 of https://fullscreen.spec.whatwg.org/#run-the-fullscreen-steps.
+        so that event listeners outside shadow tree could observe it.
+
+        Test: fast/shadow-dom/fullscreen-in-shadow-event-should-propagate.html
+
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::dispatchFullscreenChangeOrErrorEvent):
+
 2020-09-28  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] Out-of-band TextTracks
