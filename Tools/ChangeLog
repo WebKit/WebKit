@@ -1,5 +1,16 @@
 2020-09-29  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Refactor NUM_API_FAILURES_TO_DISPLAY
+        https://bugs.webkit.org/show_bug.cgi?id=217086
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults):
+        (AnalyzeAPITestsResults.analyzeResults):
+
+2020-09-29  Aakash Jain  <aakash_jain@apple.com>
+
         Limit maximum number of webkitpy failures to display
         https://bugs.webkit.org/show_bug.cgi?id=217087
 

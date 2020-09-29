@@ -2548,7 +2548,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
     name = 'analyze-api-tests-results'
     description = ['analyze-api-test-results']
     descriptionDone = ['analyze-api-tests-results']
-    NUM_API_FAILURES_TO_DISPLAY = 10
+    NUM_FAILURES_TO_DISPLAY = 10
 
     def start(self):
         self.results = {}
@@ -2585,15 +2585,15 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         first_run_failures = getAPITestFailures(first_run_results)
         second_run_failures = getAPITestFailures(second_run_results)
         clean_tree_failures = getAPITestFailures(clean_tree_results)
-        clean_tree_failures_to_display = list(clean_tree_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
+        clean_tree_failures_to_display = list(clean_tree_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         clean_tree_failures_string = ', '.join(clean_tree_failures_to_display)
 
         failures_with_patch = first_run_failures.intersection(second_run_failures)
         flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
-        flaky_failures = list(flaky_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
+        flaky_failures = list(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
         new_failures = failures_with_patch - clean_tree_failures
-        new_failures_to_display = list(new_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
+        new_failures_to_display = list(new_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         new_failures_string = ', '.join(new_failures_to_display)
 
         self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
@@ -2607,7 +2607,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.build.results = FAILURE
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             message = 'Found {} new API test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
-            if len(new_failures) > self.NUM_API_FAILURES_TO_DISPLAY:
+            if len(new_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
             self.descriptionDone = message
             self.build.buildFinished([message], FAILURE)
@@ -2622,7 +2622,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
                 message = 'Found {} pre-existing API test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
                 for clean_tree_failure in clean_tree_failures_to_display:
                     self.send_email_for_pre_existing_failure(clean_tree_failure)
-            if len(clean_tree_failures) > self.NUM_API_FAILURES_TO_DISPLAY:
+            if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
             if flaky_failures:
                 message += ' Found flaky tests: {}'.format(flaky_failures_string)
