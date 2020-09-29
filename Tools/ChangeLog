@@ -1,3 +1,19 @@
+2020-09-29  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB Index Corruption after upgrade from iOS 13 to iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=216962
+        <rdar://problem/69587004>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        (runMultipleIndicesTestWithDatabase):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2WithMultipleIndices.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexUpgradeWithMultipleIndices.sqlite3: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexUpgradeWithMultipleIndicesHaveSameID.sqlite3: Added.
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage

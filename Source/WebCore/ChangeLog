@@ -1,3 +1,42 @@
+2020-09-29  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB Index Corruption after upgrade from iOS 13 to iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=216962
+        <rdar://problem/69587004>
+
+        Reviewed by Brady Eidson.
+
+        There is an implementation error in r255318, which updated index ID in database IndexInfo and IndexRecords 
+        tables: it made changes to original table while iterating records of it. This means modified records can
+        be modified again, which leads to that two indices have the same index ID. As index ID is supposed to be unique,
+        some indices and index records cannot be populated and clients will find some indices are missing.
+
+        To fix this, we need to change the implementation of ID update and deal with already corrupted tables. For index
+        ID update, now we create a temporary table for storing the updated records, and replace the original table with 
+        temporary table at the end of iteration. For the corruption issue, we check if IndexInfo table has duplicate 
+        index IDs. If it has, we try recovering IndexInfo and IndexRecords table by removing records with duplicate 
+        index IDs, assigning new IDs to duplicate indices, and adding records with updated index IDs.
+
+        API tests: IndexedDB.IndexUpgradeToV2WithMultipleIndices
+                   IndexedDB.IndexUpgradeToV2WithMultipleIndicesHaveSameID
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::indexInfoTableSchema):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::removeExistingIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addExistingIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::handleDuplicateIndexIDs):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        (WebCore::IDBIndexInfo::setIdentifier):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::addExistingIndex):
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage
