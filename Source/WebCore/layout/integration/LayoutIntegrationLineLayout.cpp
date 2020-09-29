@@ -294,7 +294,7 @@ Display::InlineContent& LineLayout::ensureDisplayInlineContent()
     return *m_displayInlineContent;
 }
 
-LayoutIntegration::TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
+TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
 {
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
@@ -319,12 +319,12 @@ LayoutIntegration::TextRunIterator LineLayout::textRunsFor(const RenderText& ren
     return { LayoutIntegration::ModernPath(*inlineContent, *firstIndex, lastIndex + 1) };
 }
 
-LayoutIntegration::ElementRunIterator LineLayout::elementRunFor(const RenderLineBreak& renderLineBreak) const
+RunIterator LineLayout::runFor(const RenderElement& renderElement) const
 {
     auto* inlineContent = displayInlineContent();
     if (!inlineContent)
         return { };
-    auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderLineBreak);
+    auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderElement);
     ASSERT(layoutBox);
 
     for (size_t i = 0; i < inlineContent->runs.size(); ++i) {

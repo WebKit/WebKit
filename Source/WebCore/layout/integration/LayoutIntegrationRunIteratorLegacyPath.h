@@ -40,6 +40,8 @@ public:
         , m_sortedInlineTextBoxIndex(sortedInlineTextBoxIndex)
     { }
 
+    bool isText() const { return m_inlineBox->isInlineTextBox(); }
+
     FloatRect rect() const { return m_inlineBox->frameRect(); }
 
     bool isLeftToRightDirection() const { return m_inlineBox->isLeftToRightDirection(); }
@@ -47,6 +49,9 @@ public:
     bool dirOverride() const { return m_inlineBox->dirOverride(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
     float baseline() const { return m_inlineBox->baselinePosition(AlphabeticBaseline); }
+
+    unsigned minimumCaretOffset() const { return m_inlineBox->caretMinOffset(); }
+    unsigned maximumCaretOffset() const { return m_inlineBox->caretMaxOffset(); }
 
     bool useLineBreakBoxRenderTreeDumpQuirk() const
     {
@@ -59,12 +64,12 @@ public:
     unsigned localEndOffset() const { return inlineTextBox()->end(); }
     unsigned length() const { return inlineTextBox()->len(); }
 
-    inline bool isLastOnLine() const
+    inline bool isLastTextRunOnLine() const
     {
         auto* next = nextInlineTextBoxInTextOrder();
         return !next || &inlineTextBox()->root() != &next->root();
     }
-    inline bool isLast() const { return !nextInlineTextBoxInTextOrder(); };
+    inline bool isLastTextRun() const { return !nextInlineTextBoxInTextOrder(); };
 
     void traverseNextTextRunInVisualOrder() { m_inlineBox = inlineTextBox()->nextTextBox(); }
     void traverseNextTextRunInTextOrder()

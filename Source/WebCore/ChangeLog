@@ -1,3 +1,88 @@
+2020-09-29  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Generalize run iterator for non-text runs
+        https://bugs.webkit.org/show_bug.cgi?id=217083
+
+        Reviewed by Zalan Bujtas.
+
+        Add RunIterator base for TextRunIterator.
+        Add type traits.
+        Naming improvements.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextRun):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::textRunsFor const):
+        (WebCore::LayoutIntegration::LineLayout::runFor const):
+        (WebCore::LayoutIntegration::LineLayout::elementRunFor const): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::RunIterator):
+        (WebCore::LayoutIntegration::RunIterator::traverseNextTextRunInVisualOrder):
+        (WebCore::LayoutIntegration::RunIterator::traverseNextTextRunInTextOrder):
+        (WebCore::LayoutIntegration::RunIterator::operator== const):
+        (WebCore::LayoutIntegration::RunIterator::atEnd const):
+        (WebCore::LayoutIntegration::TextRunIterator::TextRunIterator):
+        (WebCore::LayoutIntegration::runFor):
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextInVisualOrder): Deleted.
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextInTextOrder): Deleted.
+        (WebCore::LayoutIntegration::TextRunIterator::operator== const): Deleted.
+        (WebCore::LayoutIntegration::TextRunIterator::atEnd const): Deleted.
+        (WebCore::LayoutIntegration::ElementRunIterator::ElementRunIterator): Deleted.
+        (WebCore::LayoutIntegration::ElementRunIterator::atEnd const): Deleted.
+        (WebCore::LayoutIntegration::elementRunFor): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::RunIterator::RunIterator):
+        (WebCore::LayoutIntegration::RunIterator::operator!= const):
+        (WebCore::LayoutIntegration::RunIterator::operator* const):
+        (WebCore::LayoutIntegration::RunIterator::operator-> const):
+        (WebCore::LayoutIntegration::TextRunIterator::TextRunIterator):
+        (WebCore::LayoutIntegration::TextRunIterator::operator++):
+        (WebCore::LayoutIntegration::TextRunIterator::operator* const):
+        (WebCore::LayoutIntegration::TextRunIterator::operator-> const):
+        (WebCore::LayoutIntegration::TextRunIterator::get const):
+        (WebCore::LayoutIntegration::Run::isText const):
+        (WebCore::LayoutIntegration::Run::minimumCaretOffset const):
+        (WebCore::LayoutIntegration::Run::maximumCaretOffset const):
+        (WebCore::LayoutIntegration::TextRun::isLastTextRunOnLine const):
+        (WebCore::LayoutIntegration::TextRun::isLastTextRun const):
+        (isType):
+        (WebCore::LayoutIntegration::TextRunIterator::operator bool const): Deleted.
+        (WebCore::LayoutIntegration::TextRunIterator::operator!= const): Deleted.
+        (WebCore::LayoutIntegration::TextRunIterator::operator== const): Deleted.
+        (WebCore::LayoutIntegration::ElementRunIterator::ElementRunIterator): Deleted.
+        (WebCore::LayoutIntegration::ElementRunIterator::operator bool const): Deleted.
+        (WebCore::LayoutIntegration::ElementRunIterator::operator* const): Deleted.
+        (WebCore::LayoutIntegration::ElementRunIterator::operator-> const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::isLastOnLine const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::isLast const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::isText const):
+        (WebCore::LayoutIntegration::LegacyPath::minimumCaretOffset const):
+        (WebCore::LayoutIntegration::LegacyPath::maximumCaretOffset const):
+        (WebCore::LayoutIntegration::LegacyPath::isLastTextRunOnLine const):
+        (WebCore::LayoutIntegration::LegacyPath::isLastTextRun const):
+        (WebCore::LayoutIntegration::LegacyPath::isLastOnLine const): Deleted.
+        (WebCore::LayoutIntegration::LegacyPath::isLast const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::isText const):
+        (WebCore::LayoutIntegration::ModernPath::minimumCaretOffset const):
+        (WebCore::LayoutIntegration::ModernPath::maximumCaretOffset const):
+        (WebCore::LayoutIntegration::ModernPath::isLastTextRunOnLine const):
+        (WebCore::LayoutIntegration::ModernPath::isLastTextRun const):
+        (WebCore::LayoutIntegration::ModernPath::isLastOnLine const): Deleted.
+        (WebCore::LayoutIntegration::ModernPath::isLast const): Deleted.
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::linesBoundingBox const):
+        (WebCore::RenderLineBreak::boundingBoxForRenderTreeDump const):
+        (WebCore::RenderLineBreak::absoluteRects const):
+        (WebCore::RenderLineBreak::absoluteQuads const):
+        * rendering/RenderText.cpp:
+        (WebCore::containsOffset):
+
 2020-09-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBreaker renames

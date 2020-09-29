@@ -78,7 +78,7 @@ public:
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     TextRunIterator textRunsFor(const RenderText&) const;
-    ElementRunIterator elementRunFor(const RenderLineBreak&) const;
+    RunIterator runFor(const RenderElement&) const;
 
     static void releaseCaches(RenderView&);
 

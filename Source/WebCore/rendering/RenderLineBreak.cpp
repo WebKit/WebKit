@@ -170,7 +170,7 @@ LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, unsigned caretO
 
 IntRect RenderLineBreak::linesBoundingBox() const
 {
-    auto box = LayoutIntegration::elementRunFor(*this);
+    auto box = LayoutIntegration::runFor(*this);
     if (!box)
         return { };
 
@@ -179,7 +179,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
 
 IntRect RenderLineBreak::boundingBoxForRenderTreeDump() const
 {
-    auto box = LayoutIntegration::elementRunFor(*this);
+    auto box = LayoutIntegration::runFor(*this);
     if (!box)
         return { };
 
@@ -201,7 +201,7 @@ IntRect RenderLineBreak::boundingBoxForRenderTreeDump() const
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto box = LayoutIntegration::elementRunFor(*this);
+    auto box = LayoutIntegration::runFor(*this);
     if (!box)
         return;
 
@@ -211,7 +211,7 @@ void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& a
 
 void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    auto box = LayoutIntegration::elementRunFor(*this);
+    auto box = LayoutIntegration::runFor(*this);
     if (!box)
         return;
 

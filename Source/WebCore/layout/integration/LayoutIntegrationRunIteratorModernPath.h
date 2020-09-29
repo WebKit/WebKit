@@ -50,6 +50,8 @@ public:
     ModernPath& operator=(const ModernPath&) = default;
     ModernPath& operator=(ModernPath&&) = default;
 
+    bool isText() const { return !!run().textContent(); }
+
     FloatRect rect() const;
 
     float baseline() const { return line().baseline(); }
@@ -58,6 +60,9 @@ public:
     bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return run().isLineBreak(); }
+
+    unsigned minimumCaretOffset() const { return isText() ? localStartOffset() : 0; }
+    unsigned maximumCaretOffset() const { return isText() ? localStartOffset() : 1; }
 
     bool useLineBreakBoxRenderTreeDumpQuirk() const
     {
@@ -73,14 +78,14 @@ public:
     unsigned localEndOffset() const { return run().textContent()->end(); }
     unsigned length() const { return run().textContent()->length(); }
 
-    bool isLastOnLine() const
+    bool isLastTextRunOnLine() const
     {
-        if (isLast())
+        if (isLastTextRun())
             return true;
         auto& next = runs()[m_runIndex + 1];
         return run().lineIndex() != next.lineIndex();
     }
-    bool isLast() const
+    bool isLastTextRun() const
     {
         return m_runIndex + 1 == m_endIndex;
     };

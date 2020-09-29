@@ -53,6 +53,8 @@ public:
 
     Run(PathVariant&&);
 
+    bool isText() const;
+
     FloatRect rect() const;
 
     float baseline() const;
@@ -63,8 +65,11 @@ public:
     bool isLineBreak() const;
     bool useLineBreakBoxRenderTreeDumpQuirk() const;
 
+    unsigned minimumCaretOffset() const;
+    unsigned maximumCaretOffset() const;
+
 protected:
-    friend class ElementRunIterator;
+    friend class RunIterator;
     friend class TextRunIterator;
 
     PathVariant m_pathVariant;
@@ -82,50 +87,47 @@ public:
     unsigned localEndOffset() const;
     unsigned length() const;
 
-    bool isLastOnLine() const;
-    bool isLast() const;
+    bool isLastTextRunOnLine() const;
+    bool isLastTextRun() const;
 };
 
-class TextRunIterator {
+class RunIterator {
 public:
-    TextRunIterator() : m_textRun(LegacyPath { nullptr, { } }) { };
-    TextRunIterator(Run::PathVariant&&);
+    RunIterator() : m_run(LegacyPath { nullptr, { } }) { };
+    RunIterator(Run::PathVariant&&);
 
-    TextRunIterator& operator++() { return traverseNextInVisualOrder(); }
-    TextRunIterator& traverseNextInVisualOrder();
-    TextRunIterator& traverseNextInTextOrder();
+    TextRunIterator& traverseNextTextRunInVisualOrder();
+    TextRunIterator& traverseNextTextRunInTextOrder();
 
     explicit operator bool() const { return !atEnd(); }
 
-    bool operator==(const TextRunIterator&) const;
-    bool operator!=(const TextRunIterator& other) const { return !(*this == other); }
+    bool operator==(const RunIterator&) const;
+    bool operator!=(const RunIterator& other) const { return !(*this == other); }
 
     bool operator==(EndIterator) const { return atEnd(); }
     bool operator!=(EndIterator) const { return !atEnd(); }
-
-    const TextRun& operator*() const { return m_textRun; }
-    const TextRun* operator->() const { return &m_textRun; }
-
-    bool atEnd() const;
-
-private:
-    TextRun m_textRun;
-};
-
-class ElementRunIterator {
-public:
-    ElementRunIterator() : m_run(LegacyPath { nullptr, { } }) { };
-    ElementRunIterator(Run::PathVariant&&);
-
-    explicit operator bool() const { return !atEnd(); }
 
     const Run& operator*() const { return m_run; }
     const Run* operator->() const { return &m_run; }
 
     bool atEnd() const;
 
-private:
+protected:
     Run m_run;
+};
+
+class TextRunIterator : public RunIterator {
+public:
+    TextRunIterator() { }
+    TextRunIterator(Run::PathVariant&&);
+
+    TextRunIterator& operator++() { return traverseNextTextRunInVisualOrder(); }
+
+    const TextRun& operator*() const { return get(); }
+    const TextRun* operator->() const { return &get(); }
+
+private:
+    const TextRun& get() const { return downcast<TextRun>(m_run); }
 };
 
 class TextRunRange {
@@ -145,13 +147,20 @@ private:
 TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunRange textRunsFor(const RenderText&);
-ElementRunIterator elementRunFor(const RenderLineBreak&);
+RunIterator runFor(const RenderLineBreak&);
 
 // -----------------------------------------------
 
 inline Run::Run(PathVariant&& path)
     : m_pathVariant(WTFMove(path))
 {
+}
+
+inline bool Run::isText() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.isText();
+    });
 }
 
 inline FloatRect Run::rect() const
@@ -203,6 +212,20 @@ inline bool Run::useLineBreakBoxRenderTreeDumpQuirk() const
     });
 }
 
+inline unsigned Run::minimumCaretOffset() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.minimumCaretOffset();
+    });
+}
+
+inline unsigned Run::maximumCaretOffset() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.maximumCaretOffset();
+    });
+}
+
 inline bool TextRun::hasHyphen() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
@@ -243,20 +266,27 @@ inline unsigned TextRun::length() const
     });
 }
 
-inline bool TextRun::isLastOnLine() const
+inline bool TextRun::isLastTextRunOnLine() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isLastOnLine();
+        return path.isLastTextRunOnLine();
     });
 }
 
-inline bool TextRun::isLast() const
+inline bool TextRun::isLastTextRun() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isLast();
+        return path.isLastTextRun();
     });
 }
 
+}
+}
 
-}
-}
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LayoutIntegration::TextRun)
+static bool isType(const WebCore::LayoutIntegration::Run& run) { return run.isText(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LayoutIntegration::TextRunIterator)
+static bool isType(const WebCore::LayoutIntegration::RunIterator& runIterator) { return !runIterator || runIterator->isText(); }
+SPECIALIZE_TYPE_TRAITS_END()

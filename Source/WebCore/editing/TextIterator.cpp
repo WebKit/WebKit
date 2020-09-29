@@ -633,7 +633,7 @@ void TextIterator::handleTextRun()
         
         // Determine what the next text run will be, but don't advance yet
         auto nextTextRun = m_textRun;
-        nextTextRun.traverseNextInTextOrder();
+        nextTextRun.traverseNextTextRunInTextOrder();
 
         if (runStart < runEnd) {
             auto isNewlineOrTab = [&](UChar character) {

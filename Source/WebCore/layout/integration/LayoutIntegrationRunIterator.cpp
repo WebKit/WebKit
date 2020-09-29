@@ -33,42 +33,47 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-TextRunIterator::TextRunIterator(Run::PathVariant&& pathVariant)
-    : m_textRun(WTFMove(pathVariant))
+RunIterator::RunIterator(Run::PathVariant&& pathVariant)
+    : m_run(WTFMove(pathVariant))
 {
 }
 
-TextRunIterator& TextRunIterator::traverseNextInVisualOrder()
+TextRunIterator& RunIterator::traverseNextTextRunInVisualOrder()
 {
-    WTF::switchOn(m_textRun.m_pathVariant, [](auto& path) {
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextTextRunInVisualOrder();
     });
-    return *this;
+    return downcast<TextRunIterator>(*this);
 }
 
-TextRunIterator& TextRunIterator::traverseNextInTextOrder()
+TextRunIterator& RunIterator::traverseNextTextRunInTextOrder()
 {
-    WTF::switchOn(m_textRun.m_pathVariant, [](auto& path) {
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextTextRunInTextOrder();
     });
-    return *this;
+    return downcast<TextRunIterator>(*this);
 }
 
-bool TextRunIterator::operator==(const TextRunIterator& other) const
+bool RunIterator::operator==(const RunIterator& other) const
 {
-    if (m_textRun.m_pathVariant.index() != other.m_textRun.m_pathVariant.index())
+    if (m_run.m_pathVariant.index() != other.m_run.m_pathVariant.index())
         return false;
 
-    return WTF::switchOn(m_textRun.m_pathVariant, [&](const auto& path) {
-        return path == WTF::get<std::decay_t<decltype(path)>>(other.m_textRun.m_pathVariant);
+    return WTF::switchOn(m_run.m_pathVariant, [&](const auto& path) {
+        return path == WTF::get<std::decay_t<decltype(path)>>(other.m_run.m_pathVariant);
     });
 }
 
-bool TextRunIterator::atEnd() const
+bool RunIterator::atEnd() const
 {
-    return WTF::switchOn(m_textRun.m_pathVariant, [](auto& path) {
+    return WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         return path.atEnd();
     });
+}
+
+TextRunIterator::TextRunIterator(Run::PathVariant&& pathVariant)
+    : RunIterator(WTFMove(pathVariant))
+{
 }
 
 static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject& renderer)
@@ -110,24 +115,12 @@ TextRunRange textRunsFor(const RenderText& text)
     return { firstTextRunFor(text) };
 }
 
-ElementRunIterator::ElementRunIterator(Run::PathVariant&& pathVariant)
-    : m_run(WTFMove(pathVariant))
-{
-}
-
-bool ElementRunIterator::atEnd() const
-{
-    return WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
-        return path.atEnd();
-    });
-}
-
-ElementRunIterator elementRunFor(const RenderLineBreak& renderElement)
+RunIterator runFor(const RenderLineBreak& renderElement)
 {
     if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
-            return layoutFormattingContextLineLayout->elementRunFor(renderElement);
+            return layoutFormattingContextLineLayout->runFor(renderElement);
 #endif
     }
 
