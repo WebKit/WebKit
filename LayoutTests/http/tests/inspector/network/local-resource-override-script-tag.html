@@ -12,7 +12,7 @@ function test()
         name: "LocalResourceOverride.Script.Tag",
         description: "<script> load uses override content on next page load",
         async test() {
-            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create({
+            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
                 url: "http://127.0.0.1:8000/inspector/network/resources/override.js",
                 mimeType: "text/javascript",
                 content: `alert("OVERRIDDEN override.js TEXT"); TestPage.dispatchEventToFrontend("OverrideContentDidLoad");`,

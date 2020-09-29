@@ -87,7 +87,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             this._draggingInternalImageElement = false;
         });
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides() && !this._disableDropZone) {
+        if (WI.NetworkManager.supportsOverridingResponses() && !this._disableDropZone) {
             let dropZoneView = new WI.DropZoneView(this);
             dropZoneView.targetElement = imageContainer;
             this.addSubview(dropZoneView);

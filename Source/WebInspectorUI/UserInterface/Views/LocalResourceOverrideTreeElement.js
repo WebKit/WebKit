@@ -131,7 +131,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         if (!serializedData)
             return;
 
-        let {url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
+        let {type, url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
 
         // Do not conflict with an existing override unless we are modifying ourselves.
         let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
@@ -143,7 +143,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         let wasSelected = this.selected;
 
         let revision = this._localResourceOverride.localResource.currentRevision;
-        let newLocalResourceOverride = WI.LocalResourceOverride.create({
+        let newLocalResourceOverride = WI.LocalResourceOverride.create(type, {
             url,
             isCaseSensitive,
             isRegex,

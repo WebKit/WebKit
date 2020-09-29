@@ -42,7 +42,7 @@ function test()
         responseSource: WI.Resource.ResponseSource.InspectorOverride,
         statusCode: 987,
         async setup() {
-            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create({
+            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
                 url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
                 mimeType: "text/plain",
                 content: "Overridden Text",

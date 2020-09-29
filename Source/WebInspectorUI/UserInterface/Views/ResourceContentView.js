@@ -60,7 +60,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
         this._showingLocalResourceOverride = false;
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.NetworkManager.supportsOverridingResponses()) {
             if (resource.isLocalResourceOverride) {
                 this._showingLocalResourceOverride = true;
 
@@ -191,7 +191,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     {
         super.closed();
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides())
+        if (WI.NetworkManager.supportsOverridingResponses())
             WI.networkManager.removeEventListener(null, null, this);
 
         if (!this.managesOwnIssues)

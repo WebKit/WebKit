@@ -1,3 +1,71 @@
+2020-09-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add checkbox to local override popover to allow it to skip the network
+        https://bugs.webkit.org/show_bug.cgi?id=217031
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/LocalResourceOverride.js:
+        (WI.LocalResourceOverride):
+        (WI.LocalResourceOverride.create):
+        (WI.LocalResourceOverride.fromJSON):
+        (WI.LocalResourceOverride.prototype.toJSON):
+        (WI.LocalResourceOverride.prototype.get type): Added.
+        (WI.LocalResourceOverride.prototype.saveIdentityToCookie):
+        Introduce a `WI.LocalResourceOverride.Type` that is used when handling request/response
+        interceptions to determined the `Network` command for continuing.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.supportsOverridingRequestsWithResponses): Added.
+        (WI.NetworkManager.supportsOverridingResponses): Added.
+        (WI.NetworkManager.prototype.initializeTarget):
+        (WI.NetworkManager.prototype.addLocalResourceOverride):
+        (WI.NetworkManager.prototype.removeLocalResourceOverride):
+        (WI.NetworkManager.prototype.requestIntercepted):
+        (WI.NetworkManager.prototype.responseIntercepted):
+        (WI.NetworkManager.prototype._commandArgumentsForInterception):
+        (WI.NetworkManager.prototype._addInterception): Added.
+        (WI.NetworkManager.prototype._removeInterception): Added.
+        (WI.NetworkManager.prototype._handleResourceOverrideDisabledChanged):
+        (WI.NetworkManager.supportsLocalResourceOverrides): Deleted.
+        Add logic for `Network.interceptRequestWithResponse` in `Network.requestIntercepted`.
+        Drive-by: refactor common logic into member functions.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.get serializedData):
+        (WI.LocalResourceOverridePopover.prototype.show):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content .add-header + .reference-page-link-container): Added.
+        (.popover .local-resource-override-popover-content .options td): Added.
+        (.popover .local-resource-override-popover-content .reference-page-link-container): Deleted.
+        Add an "Options" row containing a "[ ] Skip Network" checkbox for controlling whether
+        `Network.interceptWithResponse` or `Network.interceptRequestWithResponse` is used.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.async createLocalResourceOverride):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView.prototype.contentAvailable):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement.prototype.willDismissPopover):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addLocalResourceOverrides):
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype.closed):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._willDismissLocalOverridePopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._addLocalOverride):
+        (WI.SourcesNavigationSidebarPanel.prototype._removeResourceOverride):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateResourceContextMenu):
+        Rename `supportsLocalResourceOverrides` to `supportsOverridingResponses` for clarity.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-09-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Uncaught Exception: TypeError: null is not an object (evaluating 'this.listItemElement.classList')

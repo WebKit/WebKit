@@ -65,7 +65,7 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
 
         this._updatePreviewElement();
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.NetworkManager.supportsOverridingResponses()) {
             let dropZoneView = new WI.DropZoneView(this);
             dropZoneView.targetElement = this._previewContainer;
             this.addSubview(dropZoneView);

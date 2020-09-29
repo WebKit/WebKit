@@ -25,17 +25,19 @@
 
 WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 {
-    constructor(localResource, {isCaseSensitive, isRegex, disabled} = {})
+    constructor(type, localResource, {isCaseSensitive, isRegex, disabled} = {})
     {
-        console.assert(localResource instanceof WI.LocalResource);
-        console.assert(localResource.isLocalResourceOverride);
-        console.assert(localResource.url);
-        console.assert(isCaseSensitive === undefined || typeof isCaseSensitive === "boolean");
-        console.assert(isRegex === undefined || typeof isRegex === "boolean");
-        console.assert(disabled === undefined || typeof disabled === "boolean");
+        console.assert(Object.values(WI.LocalResourceOverride.InterceptType).includes(type), type);
+        console.assert(localResource instanceof WI.LocalResource, localResource);
+        console.assert(localResource.isLocalResourceOverride, localResource);
+        console.assert(localResource.url, localResource);
+        console.assert(isCaseSensitive === undefined || typeof isCaseSensitive === "boolean", isCaseSensitive);
+        console.assert(isRegex === undefined || typeof isRegex === "boolean", isRegex);
+        console.assert(disabled === undefined || typeof disabled === "boolean", disabled);
 
         super();
 
+        this._type = type;
         this._localResource = localResource;
         this._isCaseSensitive = isCaseSensitive !== undefined ? isCaseSensitive : true;
         this._isRegex = isRegex !== undefined ? isRegex : false;
@@ -44,7 +46,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     // Static
 
-    static create({url, mimeType, content, base64Encoded, statusCode, statusText, headers, isCaseSensitive, isRegex, disabled})
+    static create(type, {url, mimeType, content, base64Encoded, statusCode, statusText, headers, isCaseSensitive, isRegex, disabled})
     {
         let localResource = new WI.LocalResource({
             request: {
@@ -61,20 +63,25 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             isLocalResourceOverride: true,
         });
 
-        return new WI.LocalResourceOverride(localResource, {isCaseSensitive, isRegex, disabled});
+        return new WI.LocalResourceOverride(type, localResource, {isCaseSensitive, isRegex, disabled});
     }
 
     // Import / Export
 
     static fromJSON(json)
     {
-        let {localResource, isCaseSensitive, isRegex, disabled} = json;
-        return new WI.LocalResourceOverride(WI.LocalResource.fromJSON(localResource), {isCaseSensitive, isRegex, disabled});
+        let {type, localResource, isCaseSensitive, isRegex, disabled} = json;
+
+        // COMPATIBILITY (iOS 13.4): Network.interceptWithRequest/Network.interceptRequestWithResponse did not exist yet.
+        type ??= WI.LocalResourceOverride.InterceptType.Response;
+
+        return new WI.LocalResourceOverride(type, WI.LocalResource.fromJSON(localResource), {isCaseSensitive, isRegex, disabled});
     }
 
     toJSON(key)
     {
         let json = {
+            type: this._type,
             localResource: this._localResource.toJSON(key),
             isCaseSensitive: this._isCaseSensitive,
             isRegex: this._isRegex,
@@ -89,6 +96,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     // Public
 
+    get type() { return this._type; }
     get url() { return this._localResource.url; }
     get localResource() { return this._localResource; }
     get isCaseSensitive() { return this._isCaseSensitive; }
@@ -126,6 +134,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     saveIdentityToCookie(cookie)
     {
+        cookie["local-resource-override-type"] = this._type;
         cookie["local-resource-override-url"] = this._localResource.url;
         cookie["local-resource-override-is-case-sensitive"] = this._isCaseSensitive;
         cookie["local-resource-override-is-regex"] = this._isRegex;
@@ -134,6 +143,11 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 };
 
 WI.LocalResourceOverride.TypeIdentifier = "local-resource-override";
+
+WI.LocalResourceOverride.InterceptType = {
+    Response: "response",
+    ResponseSkippingNetwork: "response-skipping-network",
+};
 
 WI.LocalResourceOverride.Event = {
     DisabledChanged: "local-resource-override-disabled-state-did-change",

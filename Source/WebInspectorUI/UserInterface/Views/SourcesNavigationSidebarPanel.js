@@ -260,7 +260,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides() || WI.NetworkManager.supportsBootstrapScript() || WI.CSSManager.supportsInspectorStyleSheet()) {
+        if (WI.NetworkManager.supportsOverridingResponses() || WI.NetworkManager.supportsBootstrapScript() || WI.CSSManager.supportsInspectorStyleSheet()) {
             let createResourceNavigationBar = new WI.NavigationBar;
 
             let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
@@ -300,7 +300,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             WI.networkManager.addEventListener(WI.NetworkManager.Event.BootstrapScriptDestroyed, this._handleBootstrapScriptDestroyed, this);
         }
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.NetworkManager.supportsOverridingResponses()) {
             WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideAdded, this);
             WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideRemoved, this._handleLocalResourceOverrideRemoved, this);
         }
@@ -383,7 +383,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 this._addLocalOverride(bootstrapScript);
         }
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.NetworkManager.supportsOverridingResponses()) {
             for (let localResourceOverride of WI.networkManager.localResourceOverrides)
                 this._addLocalOverride(localResourceOverride);
         }
@@ -798,7 +798,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
-        let {url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
+        let {type, url, isCaseSensitive, isRegex, mimeType, statusCode, statusText, headers} = serializedData;
 
         // Do not conflict with an existing override.
         let existingOverride = WI.networkManager.localResourceOverrideForURL(url);
@@ -807,7 +807,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
-        let localResourceOverride = WI.LocalResourceOverride.create({
+        let localResourceOverride = WI.LocalResourceOverride.create(type, {
             url,
             isCaseSensitive,
             isRegex,
@@ -1422,7 +1422,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _addLocalOverride(localOverride)
     {
-        console.assert(WI.NetworkManager.supportsBootstrapScript() || WI.NetworkManager.supportsLocalResourceOverrides());
+        console.assert(WI.NetworkManager.supportsBootstrapScript() || WI.NetworkManager.supportsOverridingResponses());
 
         if (this._localOverridesTreeOutline.findTreeElement(localOverride))
             return;
@@ -1446,7 +1446,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _removeResourceOverride(localOverride)
     {
-        console.assert(WI.NetworkManager.supportsBootstrapScript() || WI.NetworkManager.supportsLocalResourceOverrides());
+        console.assert(WI.NetworkManager.supportsBootstrapScript() || WI.NetworkManager.supportsOverridingResponses());
 
         let resourceTreeElement = this._localOverridesTreeOutline.findTreeElement(localOverride);
         if (!resourceTreeElement)
@@ -2033,7 +2033,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _populateCreateResourceContextMenu(contextMenu)
     {
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+        if (WI.NetworkManager.supportsOverridingResponses()) {
             contextMenu.appendItem(WI.UIString("Local Override\u2026"), () => {
                 if (!this._localOverridesTreeOutline.children.length)
                     this._localOverridesRow.showEmptyMessage();

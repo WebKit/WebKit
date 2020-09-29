@@ -45,7 +45,7 @@ function test()
                 let localResourceOverrides = [];
                 for (let override of overrides) {
                     InspectorTest.log("Creating Local Resource Override for: " + override.url);
-                    let localResourceOverride = WI.LocalResourceOverride.create(override);
+                    let localResourceOverride = WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, override);
                     WI.networkManager.addLocalResourceOverride(localResourceOverride);
                     localResourceOverrides.push(localResourceOverride);
                 }
@@ -282,7 +282,7 @@ function test()
         name: "LocalResourceOverride.URL.Fragment",
         description: "LocalResourceOverride creation strips a fragment",
         async test() {
-            let localResourceOverride = WI.LocalResourceOverride.create({
+            let localResourceOverride = WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
                 url: "http://127.0.0.1:8000/inspector/network/resources/override.txt#test",
                 mimeType: "text/plain",
                 content: "OVERRIDDEN TEXT",

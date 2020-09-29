@@ -73,7 +73,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     if (contextMenu.__domBreakpointItemsAdded)
         return;
 
-    if (!contextMenu.__localOverrideItemsAdded && WI.NetworkManager.supportsLocalResourceOverrides()) {
+    if (!contextMenu.__localOverrideItemsAdded && WI.NetworkManager.supportsOverridingResponses()) {
         contextMenu.__localOverrideItemsAdded = true;
 
         if (WI.networkManager.canBeOverridden(sourceCode)) {

@@ -98,8 +98,12 @@
     margin-top: 8px;
 }
 
-.popover .local-resource-override-popover-content .reference-page-link-container {
+.popover .local-resource-override-popover-content .add-header + .reference-page-link-container {
     margin-top: 6px;
+}
+
+.popover .local-resource-override-popover-content .options td {
+    vertical-align: bottom;
 }
 
 body[dir=ltr] .popover .local-resource-override-popover-content .reference-page-link-container {

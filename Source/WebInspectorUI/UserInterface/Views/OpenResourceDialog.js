@@ -390,7 +390,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
     _addLocalResourceOverrides()
     {
-        if (!WI.NetworkManager.supportsLocalResourceOverrides())
+        if (!WI.NetworkManager.supportsOverridingResponses())
             return;
 
         const suppressFilterUpdate = true;

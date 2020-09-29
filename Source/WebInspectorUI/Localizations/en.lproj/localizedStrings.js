@@ -1206,6 +1206,8 @@ localizedStrings["Site-specific Hacks"] = "Site-specific Hacks";
 localizedStrings["Size"] = "Size";
 localizedStrings["Size of current object plus all objects it keeps alive"] = "Size of current object plus all objects it keeps alive";
 localizedStrings["Sizes"] = "Sizes";
+/* Label for checkbox that controls whether the local override will actually perform a network request or skip it to immediately serve the response. */
+localizedStrings["Skip Network @ Local Override Popover Options"] = "Skip Network";
 localizedStrings["Snapshot %d"] = "Snapshot %d";
 localizedStrings["Snapshot %d \u2014 %s"] = "Snapshot %d \u2014 %s";
 localizedStrings["Snapshot Comparison (%d and %d)"] = "Snapshot Comparison (%d and %d)";

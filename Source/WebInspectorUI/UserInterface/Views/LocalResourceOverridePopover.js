@@ -91,6 +91,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         }
 
         let data = {
+            type: this._skipNetworkCheckbox?.checked ? WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork : WI.LocalResourceOverride.InterceptType.Response,
             url,
             mimeType,
             statusCode,
@@ -291,7 +292,29 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             this._headersDataGrid.startEditingNode(newNode);
         });
 
-        headersData.appendChild(WI.createReferencePageLink("local-overrides", "configuring-local-overrides"));
+        if (WI.NetworkManager.supportsOverridingRequestsWithResponses()) {
+            let optionsRow = table.appendChild(document.createElement("tr"));
+            optionsRow.className = "options";
+
+            let optionsHeader = optionsRow.appendChild(document.createElement("th"));
+
+            let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
+            optionsLabel.textContent = WI.UIString("Options");
+
+            let optionsData = optionsRow.appendChild(document.createElement("td"));
+
+            let skipNetworkLabel = optionsData.appendChild(document.createElement("label"));
+            skipNetworkLabel.className = "skip-network";
+
+            this._skipNetworkCheckbox = skipNetworkLabel.appendChild(document.createElement("input"));
+            this._skipNetworkCheckbox.type = "checkbox";
+            this._skipNetworkCheckbox.checked = localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork;
+
+            skipNetworkLabel.appendChild(document.createTextNode(WI.UIString("Skip Network", "Skip Network @ Local Override Popover Options", "Label for checkbox that controls whether the local override will actually perform a network request or skip it to immediately serve the response.")));
+
+            optionsData.appendChild(WI.createReferencePageLink("local-overrides", "configuring-local-overrides"));
+        } else
+            headersData.appendChild(WI.createReferencePageLink("local-overrides", "configuring-local-overrides"));
 
         let incrementStatusCode = () => {
             let x = parseInt(this._statusCodeCodeMirror.getValue());

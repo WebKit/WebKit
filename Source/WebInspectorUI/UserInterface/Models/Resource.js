@@ -1065,11 +1065,11 @@ WI.Resource = class Resource extends WI.SourceCode
     async createLocalResourceOverride({initialMIMEType, initialBase64Encoded, initialContent} = {})
     {
         console.assert(!this.isLocalResourceOverride);
-        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+        console.assert(WI.NetworkManager.supportsOverridingResponses());
 
         let {rawContent, rawBase64Encoded} = await this.requestContent();
 
-        return WI.LocalResourceOverride.create({
+        return WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
             url: this.url,
             mimeType: initialMIMEType !== undefined ? initialMIMEType : this.mimeType,
             content: initialContent !== undefined ? initialContent : rawContent,
