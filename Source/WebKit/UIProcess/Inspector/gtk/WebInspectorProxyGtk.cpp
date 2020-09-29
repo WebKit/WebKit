@@ -42,6 +42,7 @@
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
@@ -137,6 +138,26 @@ static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef propose
     *newMenuRef = menuItems;
 }
 
+static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
+{
+    static const char* versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION_STRING G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S;
+    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), versionedDirectory);
+    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), versionedDirectory);
+
+    auto configuration = WebsiteDataStoreConfiguration::create(IsPersistent::Yes, WillCopyPathsFromExistingConfiguration::Yes);
+    configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "WebKitCache"));
+    configuration->setApplicationCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "applications"));
+    configuration->setHSTSStorageDirectory(String(baseCacheDirectory));
+    configuration->setCacheStorageDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "CacheStorage"));
+    configuration->setLocalStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "localstorage"));
+    configuration->setIndexedDBDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "indexeddb"));
+    configuration->setWebSQLDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "databases"));
+    configuration->setResourceLoadStatisticsDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "itp"));
+    configuration->setServiceWorkerRegistrationDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "serviceworkers"));
+    configuration->setDeviceIdHashSaltsStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "deviceidhashsalts"));
+    return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
+}
+
 WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
@@ -152,11 +173,15 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     preferences->setJavaScriptRuntimeFlags({
     });
     auto pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
+    auto websiteDataStore = inspectorWebsiteDataStore();
+    auto& processPool = inspectorProcessPool(inspectionLevel());
+    processPool.setPrimaryDataStore(websiteDataStore.get());
 
     auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(&inspectorProcessPool(inspectionLevel()));
+    pageConfiguration->setProcessPool(&processPool);
     pageConfiguration->setPreferences(preferences.ptr());
     pageConfiguration->setPageGroup(pageGroup.ptr());
+    pageConfiguration->setWebsiteDataStore(websiteDataStore.ptr());
     m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr()));
     g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
     g_signal_connect(m_inspectorView, "destroy", G_CALLBACK(inspectorViewDestroyed), this);
