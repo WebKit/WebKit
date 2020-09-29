@@ -269,12 +269,7 @@ void NetworkProcess::didClose(IPC::Connection&)
         stopRunLoop();
     });
 
-    // Make sure we flush all cookies and resource load statistics to disk before exiting.
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    forEachNetworkSession([&] (auto& networkSession) {
-        networkSession.flushAndDestroyPersistentStore([callbackAggregator] { });
-    });
-#endif
+    // Make sure we flush all cookies to disk before exiting.
     forEachNetworkSession([&] (auto& networkSession) {
         platformFlushCookies(networkSession.sessionID(), [callbackAggregator] { });
     });
@@ -340,10 +335,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     }
 
     setCacheModel(parameters.cacheModel);
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    m_isITPDatabaseEnabled = parameters.shouldEnableITPDatabase;
-#endif
 
     setAdClickAttributionDebugMode(parameters.enableAdClickAttributionDebugMode);
 
@@ -675,20 +666,6 @@ void NetworkProcess::setGrandfathered(PAL::SessionID sessionID, const Registrabl
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setGrandfathered(domain, isGrandfathered, WTFMove(completionHandler));
         else
-            completionHandler();
-    } else {
-        ASSERT_NOT_REACHED();
-        completionHandler();
-    }
-}
-
-void NetworkProcess::setUseITPDatabase(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    if (auto* networkSession = this->networkSession(sessionID)) {
-        if (m_isITPDatabaseEnabled != value) {
-            m_isITPDatabaseEnabled = value;
-            networkSession->recreateResourceLoadStatisticStore(WTFMove(completionHandler));
-        } else
             completionHandler();
     } else {
         ASSERT_NOT_REACHED();

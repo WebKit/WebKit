@@ -87,7 +87,6 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool shouldDisableServiceWorkerProcessTerminationDelay { false };
 #endif
-    bool shouldEnableITPDatabase { false };
     bool enableAdClickAttributionDebugMode { false };
 };
 

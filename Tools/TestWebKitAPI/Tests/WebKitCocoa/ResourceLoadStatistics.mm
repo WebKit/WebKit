@@ -69,118 +69,13 @@ static bool finishedNavigation = false;
 
 @end
 
-bool isITPDatabaseEnabled()
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto defaultDatabaseEnabled = [configuration preferences]._isITPDatabaseEnabled;
-
-    NSNumber *databaseEnabledValue = [defaults objectForKey:@"InternalDebugIsITPDatabaseEnabled"];
-    if (databaseEnabledValue)
-        return databaseEnabledValue.boolValue;
-
-    return defaultDatabaseEnabled;
-}
-
 static void ensureITPFileIsCreated()
 {
-    static bool doneFlag;
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
     [dataStore _setResourceLoadStatisticsEnabled:NO];
-}
-
-TEST(ResourceLoadStatistics, GrandfatherCallback)
-{
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *fileURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
-    [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:statisticsDirectoryURL error:nil];
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:statisticsDirectoryURL.path]);
-
-    static bool doneFlag;
-    static bool grandfatheredFlag;
-
-    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        // Only if the database store is not default-enabled do we need to check that this first message is correct.
-        if (!isITPDatabaseEnabled())
-            ASSERT_TRUE([message isEqualToString:@"Grandfathered"]);
-        grandfatheredFlag = true;
-    }];
-
-    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-
-    if (isITPDatabaseEnabled()) {
-        TestWebKitAPI::Util::run(&grandfatheredFlag);
-
-        // Since the database store is enabled, we need to disable it to test this functionality with the plist.
-        // We already have a NetworkProcess up and running with ITP enabled. We now make another call initializing
-        // the memory store and testing grandfathering.
-        grandfatheredFlag = false;
-        [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-            ASSERT_TRUE([message isEqualToString:@"Grandfathered"]);
-            grandfatheredFlag = true;
-        }];
-
-        [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
-            doneFlag = true;
-        }];
-
-        TestWebKitAPI::Util::run(&doneFlag);
-    }
-
-    TestWebKitAPI::Util::run(&grandfatheredFlag);
-
-    // Spin the runloop until the resource load statistics file has written to disk.
-    // If the test enters a spin loop here, it has failed.
-    while (true) {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:fileURL.path])
-            break;
-        TestWebKitAPI::Util::spinRunLoop(1);
-    }
-
-    grandfatheredFlag = false;
-    doneFlag = false;
-    [dataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]  modifiedSince:[NSDate distantPast] completionHandler:^ {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-    TestWebKitAPI::Util::spinRunLoop(10);
-
-    // The website data store remove should have completed, but since we removed all of the data types that are monitored by resource load statistics,
-    // no grandfathering call should have been made.
-    EXPECT_FALSE(grandfatheredFlag);
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileURL.path]);
-
-    doneFlag = false;
-    [dataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, _WKWebsiteDataTypeResourceLoadStatistics, nil] modifiedSince:[NSDate distantPast] completionHandler:^ {
-        doneFlag = true;
-    }];
-
-    // Since we did not remove every data type covered by resource load statistics, we do expect that grandfathering took place again.
-    // If the test hangs waiting on either of these conditions, it has failed.
-    TestWebKitAPI::Util::run(&grandfatheredFlag);
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    // Spin the runloop until the resource load statistics file has written to disk.
-    // If the test enters a spin loop here, it has failed.
-    while (true) {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:fileURL.path])
-            break;
-        TestWebKitAPI::Util::spinRunLoop(1);
-    }
 }
 
 TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
@@ -197,34 +92,13 @@ TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
     static bool doneFlag;
 
     [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        // Only if the database store is default-enabled do we need to check that this first message is correct.
-        if (isITPDatabaseEnabled())
-            ASSERT_TRUE([message isEqualToString:@"Grandfathered"]);
+        ASSERT_TRUE([message isEqualToString:@"Grandfathered"]);
         grandfatheredFlag = true;
     }];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-
-    if (!isITPDatabaseEnabled()) {
-        TestWebKitAPI::Util::run(&grandfatheredFlag);
-
-        // Since the database store is not enabled, we need to update the store to use a database instead of a plist for this test.
-        // We already have a NetworkProcess up and running with ITP enabled. We now make another call initializing
-        // the database store and testing grandfathering.
-        grandfatheredFlag = false;
-        [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-            ASSERT_TRUE([message isEqualToString:@"Grandfathered"]);
-            grandfatheredFlag = true;
-        }];
-
-        [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-            doneFlag = true;
-        }];
-
-        TestWebKitAPI::Util::run(&doneFlag);
-    }
 
     TestWebKitAPI::Util::run(&grandfatheredFlag);
 
@@ -260,74 +134,16 @@ TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
-TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
-{
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
-    NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
-
-    [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
-
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
-
-    static bool callbackFlag;
-    static bool doneFlag;
-
-    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        // Only if the database store is not default-enabled do we need to check that this first message is correct.
-        if (!isITPDatabaseEnabled())
-            ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
-        callbackFlag = true;
-    }];
-
-    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-
-    if (isITPDatabaseEnabled()) {
-        TestWebKitAPI::Util::run(&callbackFlag);
-
-        // Since the database store is enabled, we need to disable it to test this functionality with the plist.
-        // We already have a NetworkProcess up and running with ITP enabled. We now make another call initializing
-        // the memory store and testing grandfathering.
-        callbackFlag = false;
-        [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-            ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
-            callbackFlag = true;
-        }];
-
-        // Since the ITP Database is enabled, the plist file has been deleted. We need to create it again.
-        [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-        [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
-        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
-
-        [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
-            doneFlag = true;
-        }];
-
-        TestWebKitAPI::Util::run(&doneFlag);
-    }
-
-    TestWebKitAPI::Util::run(&callbackFlag);
-}
-
 TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
     ensureITPFileIsCreated();
 
-    static bool callbackFlag;
-    static bool doneFlag;
+    __block bool callbackFlag = false;
 
     [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        // Only if the database store is default-enabled do we need to check that this first message is correct.
-        if (isITPDatabaseEnabled())
-            ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
+        ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
         callbackFlag = true;
     }];
 
@@ -336,93 +152,7 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
-    if (!isITPDatabaseEnabled()) {
-        TestWebKitAPI::Util::run(&callbackFlag);
-
-        // Since the database store is not enabled, we need to update the store to use a database instead of a plist for this test.
-        // We already have a NetworkProcess up and running with ITP enabled. We now make another call initializing
-        // the database store and testing grandfathering.
-        callbackFlag = false;
-        [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-            ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
-            callbackFlag = true;
-        }];
-
-        ensureITPFileIsCreated();
-
-        [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-            doneFlag = true;
-        }];
-
-        TestWebKitAPI::Util::run(&doneFlag);
-    }
-
     TestWebKitAPI::Util::run(&callbackFlag);
-}
-
-TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
-{
-    // Ensure the shared process pool exists so the data store operations we're about to do work with it.
-    WKProcessPool *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-
-    EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
-
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
-    NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
-
-    [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
-    
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
-
-    static bool callbackFlag;
-    static bool doneFlag;
-    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        // Only if the database store is not default-enabled do we need to check that this first message is correct.
-        if (!isITPDatabaseEnabled())
-            EXPECT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
-        callbackFlag = true;
-    }];
-
-    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-
-    if (isITPDatabaseEnabled()) {
-        TestWebKitAPI::Util::run(&callbackFlag);
-
-        // Since the database store is enabled, we need to disable it to test this functionality with the plist.
-        // We already have a NetworkProcess up and running with ITP enabled. We now make another call initializing
-        // the memory store and testing grandfathering.
-        callbackFlag = false;
-        [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-            ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
-            callbackFlag = true;
-        }];
-
-        // Since the ITP Database is enabled, the plist file has been deleted. We need to create it again.
-        [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-        [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
-        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
-
-        [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
-            doneFlag = true;
-        }];
-
-        TestWebKitAPI::Util::run(&doneFlag);
-    }
-
-    TestWebKitAPI::Util::run(&callbackFlag);
-
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
-
-    webView.clear();
-
-    EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
 }
 
 TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
@@ -439,13 +169,11 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
 
     ensureITPFileIsCreated();
 
-    static bool callbackFlag;
-    static bool doneFlag;
+    __block bool callbackFlag = false;
 
     [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
         // Only if the database store is default-enabled do we need to check that this first message is correct.
-        if (isITPDatabaseEnabled())
-            EXPECT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
+        EXPECT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
         callbackFlag = true;
     }];
 
@@ -453,27 +181,6 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-
-    if (!isITPDatabaseEnabled()) {
-        TestWebKitAPI::Util::run(&callbackFlag);
-
-        // Since the database store is not enabled, we need to update the store to use a database instead of a plist for this test.
-        // We already have a NetworkProcess up and running with ITP enabled. We now make another call initializing
-        // the database store and testing grandfathering.
-        callbackFlag = false;
-        [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-            ASSERT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
-            callbackFlag = true;
-        }];
-
-        ensureITPFileIsCreated();
-
-        [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-            doneFlag = true;
-        }];
-
-        TestWebKitAPI::Util::run(&doneFlag);
-    }
 
     TestWebKitAPI::Util::run(&callbackFlag);
 
@@ -969,14 +676,7 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
 
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
-    static bool doneFlag = false;
-    [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    doneFlag = false;
+    __block bool doneFlag = false;
     [dataStore _clearResourceLoadStatistics:^(void) {
         doneFlag = true;
     }];
@@ -1179,14 +879,7 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
 
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
-    static bool doneFlag = false;
-    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-    
-    doneFlag = false;
+    __block bool doneFlag = false;
     [dataStore _setThirdPartyCookieBlockingMode:true onlyOnSitesWithoutUserInteraction:false completionHandler: ^(void) {
         doneFlag = true;
     }];
@@ -1440,15 +1133,8 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
-    static bool doneFlag;
-    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    
-    TestWebKitAPI::Util::run(&doneFlag);
-    
+    __block bool doneFlag = false;
     // Check that the pre-seeded data is in the new database after migrating.
-    doneFlag = false;
     [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] completionHandler: ^(BOOL isRegistered) {
         EXPECT_TRUE(isRegistered);
         doneFlag = true;
@@ -1529,16 +1215,9 @@ TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSit
     [dataStore _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
-    static bool doneFlag;
-    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-
+    __block bool doneFlag = false;
     // Since the database should not be deleted, the pre-seeded data should
     // still be there after initializing ITP.
-    doneFlag = false;
     [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] completionHandler: ^(BOOL isRegistered) {
         EXPECT_TRUE(isRegistered);
         doneFlag = true;
@@ -1603,18 +1282,6 @@ TEST(ResourceLoadStatistics, StoreSuspension)
     [dataStore1 _setResourceLoadStatisticsEnabled:YES];
     [dataStore2 _setResourceLoadStatisticsEnabled:YES];
 
-    static bool doneFlag = false;
-    [dataStore1 _setUseITPDatabase:true completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    doneFlag = false;
-    [dataStore2 _setUseITPDatabase:true completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
     auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration1 setProcessPool: sharedProcessPool];
     configuration1.get().websiteDataStore = dataStore1;
@@ -1632,7 +1299,7 @@ TEST(ResourceLoadStatistics, StoreSuspension)
     [webView2 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit2.org"]];
     [webView2 _test_waitForDidFinishNavigation];
 
-    doneFlag = false;
+    __block bool doneFlag = false;
     [sharedProcessPool _sendNetworkProcessPrepareToSuspend:^{
         doneFlag = true;
     }];

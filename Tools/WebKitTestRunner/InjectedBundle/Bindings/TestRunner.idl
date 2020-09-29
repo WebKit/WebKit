@@ -317,7 +317,6 @@ interface TestRunner {
     boolean isStatisticsOnlyInDatabaseOnce(DOMString subHost, DOMString topHost);
     undefined setStatisticsGrandfathered(DOMString hostName, boolean value);
     boolean isStatisticsGrandfathered(DOMString hostName);
-    undefined setUseITPDatabase(boolean value);
     undefined setStatisticsSubframeUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
     undefined setStatisticsSubresourceUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
     undefined setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);

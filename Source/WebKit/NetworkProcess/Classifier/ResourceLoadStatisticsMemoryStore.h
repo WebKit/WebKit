@@ -44,14 +44,10 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
-class ResourceLoadStatisticsPersistentStorage;
-
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsMemoryStore final : public ResourceLoadStatisticsStore {
 public:
     ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
-
-    void setPersistentStorage(ResourceLoadStatisticsPersistentStorage&);
 
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
@@ -68,8 +64,6 @@ public:
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
 
     void classifyPrevalentResources() override;
-    void syncStorageIfNeeded() override;
-    void syncStorageImmediately() override;
 
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier, OpenerDomain&&) override;
 
@@ -146,7 +140,6 @@ private:
     bool isMemoryStore() const final { return true; }
     Optional<WallTime> mostRecentUserInteractionTime(const ResourceLoadStatistics&);
 
-    WeakPtr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
     HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
     Vector<OperatingDate> m_operatingDates;
 };

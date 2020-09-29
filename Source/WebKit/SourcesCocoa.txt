@@ -447,7 +447,6 @@ UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/InputViewUpdateDeferrer.mm
 UIProcess/ios/PageClientImplIOS.mm
 UIProcess/ios/ProcessAssertionIOS.mm
-UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm
 UIProcess/ios/SmartMagnificationController.mm
 UIProcess/ios/TextCheckerIOS.mm
 UIProcess/ios/ViewGestureControllerIOS.mm

@@ -1246,7 +1246,6 @@
 		7AF236211E79A40800438A05 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF2361F1E79A3D800438A05 /* WebErrors.h */; };
 		7AFBD36321E50F39005DBACB /* WebResourceLoadStatisticsStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */; };
 		7AFBD36721E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36521E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h */; };
-		7AFBD36A21E542F1005DBACB /* ResourceLoadStatisticsPersistentStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36821E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.h */; };
 		7AFBD36F21E546F8005DBACB /* PersistencyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */; };
 		7C065F2C1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C065F2A1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h */; };
 		7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3812,7 +3811,6 @@
 		51E351C8180F2CCC00E53BE9 /* IDBUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBUtilities.cpp; sourceTree = "<group>"; };
 		51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBUtilities.h; sourceTree = "<group>"; };
 		51E399051D6F54C5009C8831 /* UIGamepadProviderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderCocoa.mm; sourceTree = "<group>"; };
-		51E6C15F1F29355100FD3437 /* ResourceLoadStatisticsPersistentStorageIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ResourceLoadStatisticsPersistentStorageIOS.mm; path = ios/ResourceLoadStatisticsPersistentStorageIOS.mm; sourceTree = "<group>"; };
 		51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLSchemeTask.cpp; sourceTree = "<group>"; };
 		51E949961D761CC700EC9EB9 /* UIGamepadProviderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderIOS.mm; sourceTree = "<group>"; };
 		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoaderMessageReceiver.cpp; path = DerivedSources/WebKit2/WebResourceLoaderMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4194,8 +4192,6 @@
 		7AFBD36221E50F39005DBACB /* WebResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadStatisticsStore.h; path = Classifier/WebResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
 		7AFBD36421E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoadStatisticsMemoryStore.cpp; path = Classifier/ResourceLoadStatisticsMemoryStore.cpp; sourceTree = "<group>"; };
 		7AFBD36521E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsMemoryStore.h; path = Classifier/ResourceLoadStatisticsMemoryStore.h; sourceTree = "<group>"; };
-		7AFBD36821E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsPersistentStorage.h; path = Classifier/ResourceLoadStatisticsPersistentStorage.h; sourceTree = "<group>"; };
-		7AFBD36921E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoadStatisticsPersistentStorage.cpp; path = Classifier/ResourceLoadStatisticsPersistentStorage.cpp; sourceTree = "<group>"; };
 		7AFBD36B21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadStatisticsTelemetry.h; path = Classifier/WebResourceLoadStatisticsTelemetry.h; sourceTree = "<group>"; };
 		7AFBD36C21E54544005DBACB /* WebResourceLoadStatisticsTelemetry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoadStatisticsTelemetry.cpp; path = Classifier/WebResourceLoadStatisticsTelemetry.cpp; sourceTree = "<group>"; };
 		7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersistencyUtils.h; sourceTree = "<group>"; };
@@ -6389,8 +6385,6 @@
 				1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */,
 				7A78FF2E224191750096483E /* WKStorageAccessAlert.h */,
 				7A78FF2F224191760096483E /* WKStorageAccessAlert.mm */,
-				4147DC682519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.h */,
-				4147DC672519E29D00214EE7 /* WKUserMediaCaptureAccessAlert.mm */,
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
@@ -7013,7 +7007,6 @@
 				0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */,
 				0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */,
 				86F9536218FF550B001DB2EF /* ProcessAssertionIOS.mm */,
-				51E6C15F1F29355100FD3437 /* ResourceLoadStatisticsPersistentStorageIOS.mm */,
 				2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */,
 				2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */,
 				2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */,
@@ -8371,8 +8364,6 @@
 				7A0D7861220791EC00EBCF54 /* ResourceLoadStatisticsDatabaseStore.h */,
 				7AFBD36421E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.cpp */,
 				7AFBD36521E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h */,
-				7AFBD36921E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.cpp */,
-				7AFBD36821E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.h */,
 				7ACE82E8221CAE07000DA94C /* ResourceLoadStatisticsStore.cpp */,
 				7ACE82E7221CAE06000DA94C /* ResourceLoadStatisticsStore.h */,
 				7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */,
@@ -11125,7 +11116,6 @@
 				6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */,
 				6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */,
 				7AFBD36721E51BAB005DBACB /* ResourceLoadStatisticsMemoryStore.h in Headers */,
-				7AFBD36A21E542F1005DBACB /* ResourceLoadStatisticsPersistentStorage.h in Headers */,
 				1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */,
 				410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */,
 				46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */,
@@ -13128,7 +13118,6 @@
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
 				CE212160240EE571006ED443 /* WKTextPlaceholder.mm in Sources */,
-				4147DC692519EC3300214EE7 /* WKUserMediaCaptureAccessAlert.mm in Sources */,
 				C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */,
 				C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */,
 			);

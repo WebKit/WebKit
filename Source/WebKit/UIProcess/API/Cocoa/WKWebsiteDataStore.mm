@@ -304,17 +304,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
 }
 
-- (void)_setUseITPDatabase:(BOOL)enabled completionHandler:(void (^)(void))completionHandler
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->setUseITPDatabase(enabled, [completionHandler = makeBlockPtr(completionHandler)]() {
-        completionHandler();
-    });
-#else
-    completionHandler();
-#endif
-}
-
 - (BOOL)_resourceLoadStatisticsDebugMode
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

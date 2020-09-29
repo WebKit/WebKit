@@ -173,7 +173,6 @@ public:
     void submitTelemetry();
     void setGrandfathered(const URL&, bool, CompletionHandler<void()>&&);
     void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
-    void setUseITPDatabase(bool, CompletionHandler<void()>&&);
     void setGrandfatheringTime(Seconds, CompletionHandler<void()>&&);
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
     void domainIDExistsInDatabase(int domainID, CompletionHandler<void(bool)>&&);

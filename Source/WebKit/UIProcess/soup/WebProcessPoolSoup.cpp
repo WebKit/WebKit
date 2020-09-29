@@ -47,7 +47,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.languages = userPreferredLanguages();
-    parameters.shouldEnableITPDatabase = true;
 }
 
 } // namespace WebKit

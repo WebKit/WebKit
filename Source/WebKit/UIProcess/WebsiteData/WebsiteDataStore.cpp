@@ -1815,18 +1815,6 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
     }
 }
 
-void WebsiteDataStore::setUseITPDatabase(bool value, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    
-    for (auto& processPool : processPools()) {
-        if (auto* process = processPool->networkProcess())
-            process->setUseITPDatabase(m_sessionID, value, [callbackAggregator] { });
-    }
-}
-
 void WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

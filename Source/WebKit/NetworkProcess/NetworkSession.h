@@ -111,7 +111,6 @@ public:
     Optional<WebCore::RegistrableDomain> thirdPartyCNAMEDomainForTesting() const { return m_thirdPartyCNAMEDomainForTesting; }
     void resetCNAMEDomainData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
-    void flushAndDestroyPersistentStore(CompletionHandler<void()>&&);
 #endif
     
 #if ENABLE(APP_BOUND_DOMAINS)

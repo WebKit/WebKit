@@ -220,7 +220,6 @@ public:
     void isRegisteredAsSubFrameUnder(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(PAL::SessionID, const SubResourceDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
     void setGrandfathered(PAL::SessionID, const RegistrableDomain&, bool isGrandfathered, CompletionHandler<void()>&&);
-    void setUseITPDatabase(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setMaxStatisticsEntries(PAL::SessionID, uint64_t maximumEntryCount, CompletionHandler<void()>&&);
     void setPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
     void setPrevalentResourceForDebugMode(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
@@ -269,7 +268,6 @@ public:
 #if ENABLE(APP_BOUND_DOMAINS)
     void setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID, HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
 #endif
-    bool isITPDatabaseEnabled() const { return m_isITPDatabaseEnabled; }
     void setShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
     void setThirdPartyCookieBlockingMode(PAL::SessionID, WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
     void setShouldEnbleSameSiteStrictEnforcementForTesting(PAL::SessionID, WebCore::SameSiteStrictEnforcementEnabled, CompletionHandler<void()>&&);
@@ -581,10 +579,6 @@ private:
 
 #if PLATFORM(COCOA)
     std::unique_ptr<NetworkHTTPSUpgradeChecker> m_networkHTTPSUpgradeChecker;
-#endif
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool m_isITPDatabaseEnabled { false };
 #endif
     
     Lock m_sessionStorageQuotaManagersLock;

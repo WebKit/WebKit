@@ -99,9 +99,6 @@ public:
     void setItpDebugModeEnabled(bool isEnabled) { m_itpDebugMode = isEnabled; }
     bool itpDebugModeEnabled() const { return m_itpDebugMode; }
 
-    void setIsITPDatabaseEnabled(bool isEnabled) { m_isITPDatabaseEnabled = isEnabled; }
-    bool isITPDatabaseEnabled() const { return m_isITPDatabaseEnabled; }
-
     void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
     bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
 
@@ -376,8 +373,6 @@ private:
     bool m_mouseEventsSimulationEnabled { false };
     Optional<bool> m_touchEventsEnabled;
 #endif
-
-    bool m_isITPDatabaseEnabled { true };
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
     bool m_isNSURLSessionWebSocketEnabled { false };

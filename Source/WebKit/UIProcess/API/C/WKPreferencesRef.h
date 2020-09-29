@@ -80,10 +80,6 @@ WK_EXPORT void WKPreferencesSetLoadsSiteIconsIgnoringImageLoadingPreference(WKPr
 WK_EXPORT bool WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesRef preferences);
 
 // Defaults to true.
-WK_EXPORT void WKPreferencesSetIsITPDatabaseEnabled(WKPreferencesRef preferences, bool isITPDatabaseEnabled);
-WK_EXPORT bool WKPreferencesGetIsITPDatabaseEnabled(WKPreferencesRef preferences);
-
-// Defaults to true.
 WK_EXPORT void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferences, bool offlineWebApplicationCacheEnabled);
 WK_EXPORT bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferences);
 

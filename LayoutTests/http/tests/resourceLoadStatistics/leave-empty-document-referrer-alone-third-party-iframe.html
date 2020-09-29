@@ -24,7 +24,6 @@
 
     function runTest() {
         if (testRunner) {
-            testRunner.setUseITPDatabase(true);
             setEnableFeature(true, function() {
                 let iframeElement = document.createElement("iframe");
                 iframeElement.referrerPolicy = "no-referrer";

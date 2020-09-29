@@ -153,13 +153,6 @@ ExperimentalPlugInSandboxProfilesEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: experimentalPlugInSandboxProfilesEnabled
 
-IsITPDatabaseEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "ITP Database Backend"
-  humanReadableDescription: "Enable Intelligent Tracking Prevention Database Backend"
-  webcoreBinding: RuntimeEnabledFeatures
-
 ServiceWorkersEnabled:
   type: bool
   defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED

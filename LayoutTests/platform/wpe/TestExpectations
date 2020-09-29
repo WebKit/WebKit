@@ -642,7 +642,6 @@ media/media-usage-state.html [ Skip ]
 media/media-usage-state-private-browsing.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
 
-webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php [ Failure ]
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Failure ]
 
 # Failing in test bots. Started failing since r260615.

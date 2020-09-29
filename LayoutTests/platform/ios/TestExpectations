@@ -1005,7 +1005,6 @@ fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Skip ]
 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]
-http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
 media/picture-in-picture/picture-in-picture-interruption.html [ Skip ]
@@ -2716,9 +2715,6 @@ fast/canvas/webgl/readPixels-float.html [ Skip ]
 webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Skip ]
-webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-database.html [ Skip ]
-http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html [ Skip ]
-http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal-database.html [ Skip ]
 # Skipped in WK2 expectations because cookie partitioning is only available in macOS High Sierra and iOS 11.
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
 http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
@@ -2734,7 +2730,6 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-reque
 # The SameSite cookie API is only available in macOS Catalina and above, and thus skipped for WK2 in general.
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
-http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html [ Pass ]
 
 http/tests/storageAccess/deny-storage-access-under-opener.html [ Pass ]
 http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html [ Pass ]
@@ -2742,15 +2737,9 @@ http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html 
 http/tests/storageAccess/has-storage-access-false-by-default.html [ Pass ]
 http/tests/storageAccess/has-storage-access-false-by-default-ephemeral.html [ Pass ]
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html [ Pass Timeout ]
-http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database.html [ Pass Timeout ]
-http/tests/storageAccess/deny-storage-access-under-opener-database.html [ Pass ]
-http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-database.html [ Pass ]
-http/tests/storageAccess/has-storage-access-false-by-default-database.html [ Pass ]
-http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database.html [ Pass ]
 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Skip ]
-http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html [ Skip ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass ]
@@ -2895,7 +2884,6 @@ webkit.org/b/177445 fast/loader/form-submission-after-beforeunload-cancel.html [
 webkit.org/b/177397 compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/177617 http/tests/storageAccess/request-storage-access-top-frame.html [ Pass Timeout ]
-http/tests/storageAccess/request-storage-access-top-frame-database.html [ Pass Timeout ]
 
 webkit.org/b/177547 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Pass Failure ]
 

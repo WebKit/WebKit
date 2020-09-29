@@ -6,25 +6,21 @@ Registrable domain: 127.0.0.1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    topFrameUniqueRedirectsTo:
+    TopFrameUniqueRedirectsTo:
         localhost
-    gotLinkDecorationFromPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: localhost
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    topFrameUniqueRedirectsFrom:
+    TopFrameUniqueRedirectsFrom:
         127.0.0.1
-    topFrameLinkDecorationsFrom:
+    TopFrameLinkDecorationsFrom:
         127.0.0.1
-    gotLinkDecorationFromPrevalentResource: Yes
+    IsScheduledForAllButCookieDataRemoval: Yes
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-

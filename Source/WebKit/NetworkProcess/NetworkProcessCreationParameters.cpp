@@ -69,7 +69,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
-    encoder << shouldEnableITPDatabase;
     encoder << enableAdClickAttributionDebugMode;
 }
 
@@ -149,9 +148,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.shouldDisableServiceWorkerProcessTerminationDelay))
         return false;
 #endif
-
-    if (!decoder.decode(result.shouldEnableITPDatabase))
-        return false;
 
     if (!decoder.decode(result.enableAdClickAttributionDebugMode))
         return false;

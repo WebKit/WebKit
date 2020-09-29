@@ -1,5 +1,0 @@
-Test that querying storage access API on a detached frame doesn't crash.
-
-[object HTMLDocument]
-SUCCESS: Did not crash.
-

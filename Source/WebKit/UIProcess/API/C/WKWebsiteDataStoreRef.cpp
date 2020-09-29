@@ -374,17 +374,6 @@ void WKWebsiteDataStoreIsStatisticsGrandfathered(WKWebsiteDataStoreRef dataStore
 #endif
 }
 
-void WKWebsiteDataStoreSetUseITPDatabase(WKWebsiteDataStoreRef dataStoreRef, bool value, void* context, WKWebsiteDataStoreSetUseITPDatabaseFunction completionHandler)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->setUseITPDatabase(value, [context, completionHandler] {
-        completionHandler(context);
-    });
-#else
-    completionHandler(context);
-#endif
-}
-
 void WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameHost)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -725,7 +714,6 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
     store.setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(false, [callbackAggregator] { });
     store.resetParametersToDefaultValues([callbackAggregator] { });
     store.scheduleClearInMemoryAndPersistent(WebKit::ShouldGrandfatherStatistics::No, [callbackAggregator] { });
-    store.setUseITPDatabase(false, [callbackAggregator] { });
 #else
     UNUSED_PARAM(dataStoreRef);
     completionHandler(context);

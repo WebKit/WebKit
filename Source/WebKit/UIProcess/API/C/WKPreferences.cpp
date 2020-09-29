@@ -125,16 +125,6 @@ bool WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesR
     return toImpl(preferencesRef)->loadsSiteIconsIgnoringImageLoadingPreference();
 }
 
-void WKPreferencesSetIsITPDatabaseEnabled(WKPreferencesRef preferencesRef, bool isITPDatabaseEnabled)
-{
-    toImpl(preferencesRef)->setIsITPDatabaseEnabled(isITPDatabaseEnabled);
-}
-
-bool WKPreferencesGetIsITPDatabaseEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->isITPDatabaseEnabled();
-}
-
 void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef, bool offlineWebApplicationCacheEnabled)
 {
     toImpl(preferencesRef)->setOfflineWebApplicationCacheEnabled(offlineWebApplicationCacheEnabled);

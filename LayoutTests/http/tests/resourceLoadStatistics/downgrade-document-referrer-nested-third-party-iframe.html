@@ -24,7 +24,6 @@
 
     function runTest() {
         if (testRunner) {
-            testRunner.setUseITPDatabase(true);
             setEnableFeature(true, function() {
                 let iframeElement = document.createElement("iframe");
                 iframeElement.src = "http://127.0.0.1:8000/resourceLoadStatistics/resources/nest-iframe-report-document-referrer.html";

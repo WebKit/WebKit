@@ -117,7 +117,6 @@ messages -> NetworkProcess LegacyReceiver {
     SubmitTelemetry(PAL::SessionID sessionID) -> () Async
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, bool isGrandfathered) -> () Async
-    SetUseITPDatabase(PAL::SessionID sessionID, bool value) -> () Async
     GetResourceLoadStatisticsDataSummary(PAL::SessionID sessionID) -> (Vector<WebKit::WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyData) Async
     SetGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> () Async

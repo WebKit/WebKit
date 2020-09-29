@@ -1918,14 +1918,6 @@ void TestRunner::setStatisticsGrandfathered(JSStringRef hostName, bool value)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::setUseITPDatabase(bool value)
-{
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetUseITPDatabase"));
-    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
-    
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-}
-
 bool TestRunner::isStatisticsGrandfathered(JSStringRef hostName)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("IsStatisticsGrandfathered"));

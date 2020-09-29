@@ -1,3 +1,286 @@
+2020-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage
+        https://bugs.webkit.org/show_bug.cgi?id=217063
+
+        Reviewed by John Wilander.
+
+        * http/tests/resourceLoadStatistics/add-blocking-to-redirect-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/add-blocking-to-redirect-database.html: Removed.
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-database.html: Removed.
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-expected.txt:
+        * http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import-database.html: Removed.
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-database.html: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site-database.html: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to-database.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics-database.html: Removed.
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-database.html: Removed.
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html: Removed.
+        * http/tests/resourceLoadStatistics/cookie-deletion-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/cookie-deletion-database.html: Removed.
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database.html: Removed.
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database.html: Removed.
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-expected.txt:
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies-database.html: Removed.
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect-database.html: Removed.
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-database.html: Removed.
+        * http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect-database.html: Removed.
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction-database.php: Removed.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database.html: Removed.
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-expected.txt:
+        * http/tests/resourceLoadStatistics/downgrade-document-referrer-nested-third-party-iframe.html:
+        * http/tests/resourceLoadStatistics/downgrade-document-referrer-third-party-iframe.html:
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/enable-debug-mode-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/enable-debug-mode-database.html: Removed.
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html: Removed.
+        * http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html:
+        * http/tests/resourceLoadStatistics/grandfathering-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/grandfathering-database.html: Removed.
+        * http/tests/resourceLoadStatistics/leave-empty-document-referrer-alone-third-party-iframe.html:
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-database.html: Removed.
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-expected.txt:
+        * http/tests/resourceLoadStatistics/log-delayed-client-side-redirects-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/log-delayed-client-side-redirects-database.html: Removed.
+        * http/tests/resourceLoadStatistics/log-delayed-client-side-redirects-expected.txt:
+        * http/tests/resourceLoadStatistics/many-inserts-only-insert-once.html:
+        * http/tests/resourceLoadStatistics/merge-statistic-does-not-overwrite-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-not-overwrite-database.html: Removed.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-overwrite-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-overwrite-database.html: Removed.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-partially-overwrite-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-partially-overwrite-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html: Removed.
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-expected.txt:
+        * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed-database.html: Removed.
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prune-statistics-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prune-statistics-database.html: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-database.html: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-expected.txt:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries-database.html: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-database.html: Removed.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-expected.txt:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html: Removed.
+        * http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode-database.html: Removed.
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html: Removed.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects-database.html: Removed.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests-database.html: Removed.
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php: Removed.
+        * http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html: Removed.
+        * http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html: Removed.
+        * http/tests/resourceLoadStatistics/telemetry-generation-expected.txt:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-database.html: Removed.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database.html: Removed.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-database.html: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal-database.html: Removed.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database.html: Removed.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-expected.txt:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database.html: Removed.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-database.html: Removed.
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-database-expected.txt: Removed.
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-database.html: Removed.
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-expected.txt:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-database-expected.txt: Removed.
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-database.html: Removed.
+        * http/tests/storageAccess/deny-storage-access-under-opener-database-expected.txt: Removed.
+        * http/tests/storageAccess/deny-storage-access-under-opener-database.html: Removed.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-database-expected.txt: Removed.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-database.html: Removed.
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database-expected.txt: Removed.
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html: Removed.
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture-database-expected.txt: Removed.
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture-database.html: Removed.
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-database-expected.txt: Removed.
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-database.html: Removed.
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture-database-expected.txt: Removed.
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture-database.html: Removed.
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-database-expected.txt: Removed.
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-crash-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-crash-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-false-by-default-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-false-by-default-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-database.html: Removed.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie-database-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie-database.html: Removed.
+        * http/tests/storageAccess/remove-requesting-iframe-database-expected.txt: Removed.
+        * http/tests/storageAccess/remove-requesting-iframe-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-crash-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-crash-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-database.html: Removed.
+        * http/tests/storageAccess/request-storage-access-top-frame-database-expected.txt: Removed.
+        * http/tests/storageAccess/request-storage-access-top-frame-database.html: Removed.
+        * http/tests/webAPIStatistics/canvas-read-and-write-data-collection-expected.txt:
+        * http/tests/webAPIStatistics/font-load-data-collection-expected.txt:
+        * http/tests/webAPIStatistics/navigator-functions-accessed-data-collection-expected.txt:
+        * http/tests/webAPIStatistics/screen-functions-accessed-data-collection-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add stubs for AudioWorklet

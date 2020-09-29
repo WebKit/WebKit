@@ -1405,8 +1405,6 @@ webkit.org/b/208601 fast/backgrounds/hidpi-bitmap-background-on-subpixel-positio
 
 webkit.org/b/208739 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html [ Pass Timeout ]
 
-webkit.org/b/208739 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database.html [ Pass Timeout ]
-
 webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Pass Failure ]
 
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
@@ -1761,7 +1759,7 @@ webkit.org/b/209189 http/tests/IndexedDB/storage-limit.https.html [ Pass Failure
 
 webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
 
-webkit.org/b/211928 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Pass Timeout ]
+webkit.org/b/211928 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Pass Timeout ]
 
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
 

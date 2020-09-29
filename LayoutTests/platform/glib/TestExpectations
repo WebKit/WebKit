@@ -1001,8 +1001,6 @@ fast/scrolling/rtl-scrollbars.html [ Pass ]
 
 http/tests/storageAccess/ [ Pass ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
-http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html [ Skip ]
-webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html [ Failure ]
 webkit.org/b/208400 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Failure ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]

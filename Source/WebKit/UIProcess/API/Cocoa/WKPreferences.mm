@@ -918,11 +918,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setRemotePlaybackEnabled(enabled);
 }
 
-- (BOOL)_isITPDatabaseEnabled
-{
-    return _preferences->isITPDatabaseEnabled();
-}
-
 - (BOOL)_serviceWorkerEntitlementDisabledForTesting
 {
     return _preferences->serviceWorkerEntitlementDisabledForTesting();

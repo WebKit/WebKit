@@ -51,8 +51,6 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
-class ResourceLoadStatisticsPersistentStorage;
-
 class OperatingDate {
 public:
     OperatingDate() = default;
@@ -117,8 +115,6 @@ public:
     void processStatisticsAndDataRecords();
 
     virtual void classifyPrevalentResources() = 0;
-    virtual void syncStorageIfNeeded() = 0;
-    virtual void syncStorageImmediately() = 0;
     virtual void mergeStatistics(Vector<ResourceLoadStatistics>&&) = 0;
 
     virtual void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&) = 0;

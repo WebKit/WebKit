@@ -33,7 +33,6 @@
 #include "NetworkSession.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
-#include "ResourceLoadStatisticsPersistentStorage.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
@@ -248,7 +247,6 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
             return;
 
         pruneStatisticsIfNeeded();
-        syncStorageIfNeeded();
 
         logTestingEvent("Storage Synced"_s);
 
@@ -275,7 +273,6 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
 
                 weakThis->grandfatherDataForDomains(domainsWithWebsiteData);
                 weakThis->m_endOfGrandfatheringTimestamp = WallTime::now() + weakThis->m_parameters.grandfatheringTime;
-                weakThis->syncStorageImmediately();
                 callback();
                 weakThis->logTestingEvent("Grandfathered"_s);
             });

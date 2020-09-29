@@ -639,17 +639,14 @@ webkit.org/b/187649 editing/selection/update-selection-by-style-change.html [ Pa
 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
 http/tests/storageAccess/ [ Pass ]
-http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html [ Pass Timeout ]
+http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
 http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
-http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html [ Skip ]
 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
-http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html [ Skip ]
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Skip ]
 
 # As of https://trac.webkit.org/changeset/227762 the timestampResolution is just 5 seconds which makes this test flaky
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
-http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html [ Skip ]
 
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timeout ]
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]
@@ -710,7 +707,6 @@ http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html 
 # The SameSite cookie API is only available in macOS Catalina and above.
 [ Catalina+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
 [ Catalina+ ] http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
-[ Catalina+ ] http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html [ Pass ]
 
 # The CNAME and cookie transform SPIs are only available in macOS Big Sur and above.
 [ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html [ Pass ]
@@ -849,7 +845,7 @@ webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
 
-http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-database.html [ Pass Timeout ]
+http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass Timeout ]
 
 webkit.org/b/197068 [ Debug ] fast/selectors/is-backtracking.html [ Pass Timeout ]
 webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
@@ -1060,8 +1056,6 @@ webkit.org/b/213212 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_
 webkit.org/b/213292 [ Catalina Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
 
 webkit.org/b/213461 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
-
-webkit.org/b/213553 http/tests/resourceLoadStatistics/grandfathering-database.html [ Pass Timeout ]
 
 webkit.org/b/213621 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html [ Pass Failure ]
 

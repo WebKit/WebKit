@@ -32,7 +32,6 @@
 #include "NetworkSession.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
-#include "ResourceLoadStatisticsPersistentStorage.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
@@ -89,13 +88,6 @@ bool ResourceLoadStatisticsMemoryStore::isEmpty() const
     RELEASE_ASSERT(!RunLoop::isMain());
 
     return m_resourceStatisticsMap.isEmpty();
-}
-
-void ResourceLoadStatisticsMemoryStore::setPersistentStorage(ResourceLoadStatisticsPersistentStorage& persistentStorage)
-{
-    ASSERT(!RunLoop::isMain());
-
-    m_persistentStorage = makeWeakPtr(persistentStorage);
 }
 
 void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry(NotifyPagesForTesting shouldNotifyPagesForTesting) const
@@ -237,22 +229,6 @@ void ResourceLoadStatisticsMemoryStore::classifyPrevalentResources()
                 setPrevalentResource(resourceStatistic, newPrevalence);
         }
     }
-}
-
-void ResourceLoadStatisticsMemoryStore::syncStorageIfNeeded()
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (m_persistentStorage)
-        m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
-}
-
-void ResourceLoadStatisticsMemoryStore::syncStorageImmediately()
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (m_persistentStorage)
-        m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
 }
 
 bool ResourceLoadStatisticsMemoryStore::areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain& topFrameDomain)

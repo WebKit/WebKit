@@ -369,18 +369,6 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
     WebKit:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-IsITPDatabaseEnabled:
-  type: bool
-  humanReadableName: "ITP Database Backend"
-  humanReadableDescription: "Enable Intelligent Tracking Prevention Database Backend"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-
 KeygenElementEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitKeygenElementEnabledPreferenceKey

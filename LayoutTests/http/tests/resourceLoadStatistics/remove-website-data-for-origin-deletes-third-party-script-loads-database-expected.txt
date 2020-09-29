@@ -1,5 +1,0 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
-PASS Domain ID was successfully deleted from the database.
-

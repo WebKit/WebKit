@@ -4,14 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS Hosts classified as prevalent resources.
-PASS testResult.totalPrevalentResources is 0
-PASS testResult.totalPrevalentResourcesWithUserInteraction is 0
-PASS testResult.top3SubframeUnderTopFrameOrigins is 0
+FAIL testResult.totalPrevalentResources should be 0 (of type number). Was undefined (of type undefined).
+FAIL testResult.totalPrevalentResourcesWithUserInteraction should be 0 (of type number). Was undefined (of type undefined).
+FAIL testResult.top3SubframeUnderTopFrameOrigins should be 0 (of type number). Was undefined (of type undefined).
 PASS Hosts classified as prevalent resources.
-PASS testResult.totalPrevalentResources is 4
-PASS testResult.totalPrevalentResourcesWithUserInteraction is 1
-PASS testResult.top3SubframeUnderTopFrameOrigins is 4
+FAIL testResult.totalPrevalentResources should be 4 (of type number). Was undefined (of type undefined).
+FAIL testResult.totalPrevalentResourcesWithUserInteraction should be 1 (of type number). Was undefined (of type undefined).
+FAIL testResult.top3SubframeUnderTopFrameOrigins should be 4 (of type number). Was undefined (of type undefined).
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

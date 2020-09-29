@@ -1,3 +1,73 @@
+2020-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage
+        https://bugs.webkit.org/show_bug.cgi?id=217063
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPersistentStorage): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::syncStorageIfNeeded): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::syncStorageImmediately): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp: Removed.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.h: Removed.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::didDestroyNetworkSession):
+        (WebKit::WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setUseITPDatabase): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::isITPDatabaseEnabled const): Deleted.
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::destroyResourceLoadStatistics):
+        (WebKit::NetworkSession::flushAndDestroyPersistentStore): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * Shared/WebPreferencesInternal.yaml:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIsITPDatabaseEnabled): Deleted.
+        (WKPreferencesGetIsITPDatabaseEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        (WKWebsiteDataStoreSetUseITPDatabase): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _isITPDatabaseEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setUseITPDatabase:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setUseITPDatabase): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setUseITPDatabase): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add stubs for AudioWorklet

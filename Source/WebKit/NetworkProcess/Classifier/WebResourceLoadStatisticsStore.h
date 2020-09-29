@@ -63,7 +63,6 @@ namespace WebKit {
 
 class NetworkSession;
 class ResourceLoadStatisticsStore;
-class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
 class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
@@ -302,7 +301,6 @@ struct ThirdPartyData {
     
     bool isEphemeral() const { return m_isEphemeral == WebCore::ResourceLoadStatistics::IsEphemeral::Yes; };
     void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
-    void flushAndDestroyPersistentStore(CompletionHandler<void()>&&);
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral);
@@ -328,7 +326,6 @@ private:
     WeakPtr<NetworkSession> m_networkSession;
     Ref<WTF::WorkQueue> m_statisticsQueue;
     std::unique_ptr<ResourceLoadStatisticsStore> m_statisticsStore;
-    std::unique_ptr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
 
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;
 

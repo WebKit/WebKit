@@ -852,13 +852,6 @@ void NetworkProcessProxy::setGrandfathered(PAL::SessionID sessionID, const Regis
     sendWithAsyncReply(Messages::NetworkProcess::SetGrandfathered(sessionID, resourceDomain, isGrandfathered), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::setUseITPDatabase(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::SetUseITPDatabase(sessionID, value), [completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler();
-    });
-}
-
 void NetworkProcessProxy::requestStorageAccessConfirm(WebPageProxyIdentifier pageID, FrameIdentifier frameID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* page = WebProcessProxy::webPage(pageID);

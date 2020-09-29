@@ -236,7 +236,6 @@ public:
     bool isStatisticsOnlyInDatabaseOnce(WKStringRef subHost, WKStringRef topHost);
     void setStatisticsGrandfathered(WKStringRef hostName, bool value);
     bool isStatisticsGrandfathered(WKStringRef hostName);
-    void setUseITPDatabase(bool value);
     void setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
     void setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
     void setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);

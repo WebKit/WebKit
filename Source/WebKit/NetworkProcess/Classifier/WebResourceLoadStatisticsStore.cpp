@@ -35,7 +35,6 @@
 #include "NetworkSession.h"
 #include "ResourceLoadStatisticsDatabaseStore.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
-#include "ResourceLoadStatisticsPersistentStorage.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebFrameProxy.h"
@@ -178,23 +177,15 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
         return;
 
     if (!resourceLoadStatisticsDirectory.isEmpty()) {
-        postTask([this, databaseEnabled = networkSession.networkProcess().isITPDatabaseEnabled(), resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
-            if (databaseEnabled) {
-                m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
+        postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
+            m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
 
-                auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
-                downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore.get()).populateFromMemoryStore(*memoryStore);
+            auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
+            downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore.get()).populateFromMemoryStore(*memoryStore);
 
-                auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist");
-                if (FileSystem::fileExists(legacyPlistFilePath))
-                    FileSystem::deleteFile(legacyPlistFilePath);
-
-            } else {
-                m_statisticsStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
-                m_persistentStorage = makeUnique<ResourceLoadStatisticsPersistentStorage>(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore), m_statisticsQueue, resourceLoadStatisticsDirectory);
-
-                SQLiteFileSystem::deleteDatabaseFile(FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db"));
-            }
+            auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist");
+            if (FileSystem::fileExists(legacyPlistFilePath))
+                FileSystem::deleteFile(legacyPlistFilePath);
 
             m_statisticsStore->didCreateNetworkProcess();
         });
@@ -207,7 +198,6 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
     RELEASE_ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(!m_statisticsStore);
-    RELEASE_ASSERT(!m_persistentStorage);
 }
 
 void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<void()>&& completionHandler)
@@ -219,7 +209,6 @@ void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<
     });
 
     m_networkSession = nullptr;
-    flushAndDestroyPersistentStore([callbackAggregator] { });
     destroyResourceLoadStatisticsStore([callbackAggregator] { });
 }
 
@@ -255,28 +244,12 @@ void WebResourceLoadStatisticsStore::destroyResourceLoadStatisticsStore(Completi
     });
 }
 
-void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore(CompletionHandler<void()>&& completionHandler)
-{
-    RELEASE_ASSERT(RunLoop::isMain());
-
-    // Make sure we destroy the persistent store on the background queue and stay alive until it
-    // is destroyed because it has a C++ reference to us.
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
-        m_persistentStorage = nullptr;
-        RunLoop::main().dispatch(WTFMove(completionHandler));
-    });
-}
-
 void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_persistentStorage)
-            m_persistentStorage->populateMemoryStoreFromDisk([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
-                postTaskReply(WTFMove(completionHandler));
-            });
-        else if (m_statisticsStore && is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+        if (m_statisticsStore && is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
             auto& databaseStore = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore);
             if (databaseStore.isNewResourceLoadStatisticsDatabaseFile()) {
                 m_statisticsStore->grandfatherExistingWebsiteData([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -1168,9 +1141,6 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
 
     ASSERT(RunLoop::isMain());
     postTask([this, protectedThis = makeRef(*this), shouldGrandfather, completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_persistentStorage)
-            m_persistentStorage->clear();
-
         if (!m_statisticsStore) {
             if (shouldGrandfather == ShouldGrandfatherStatistics::Yes)
                 RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent Before being cleared, m_statisticsStore is null when trying to grandfather data.");

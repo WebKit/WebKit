@@ -14,35 +14,31 @@ Registrable domain: 127.0.0.1
     hadUserInteraction: Yes
     mostRecentUserInteraction: within 24 hours
     grandfathered: No
-    topFrameUniqueRedirectsTo:
+    TopFrameUniqueRedirectsTo:
         localhost
-    topFrameUniqueRedirectsFrom:
+    TopFrameUniqueRedirectsFrom:
         localhost
-    gotLinkDecorationFromPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: localhost
     hadUserInteraction: Yes
     mostRecentUserInteraction: within 24 hours
     grandfathered: No
-    storageAccessUnderTopFrameDomains:
+    StorageAccessUnderTopFrameDomains:
         127.0.0.1
-    topFrameUniqueRedirectsTo:
+    TopFrameUniqueRedirectsTo:
         127.0.0.1
-    topFrameUniqueRedirectsFrom:
+    TopFrameUniqueRedirectsFrom:
         127.0.0.1
-    gotLinkDecorationFromPrevalentResource: No
-    subframeUnderTopFrameDomains:
+    IsScheduledForAllButCookieDataRemoval: No
+    SubframeUnderTopFrameDomains:
         127.0.0.1
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 
 ITP Data:
 Third Party Registrable Domain: localhost
-    {{ Has been granted storage access under 127.0.0.1: 1; Has been seen under 127.0.0.1 in the last 24 hours: 0 },}
+    {{ Has been granted storage access under 127.0.0.1: 1; Has been seen under 127.0.0.1 in the last 24 hours: 1 },}

@@ -8,90 +8,76 @@ Registrable domain: subframe1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
-    subframeUnderTopFrameDomains:
+    IsScheduledForAllButCookieDataRemoval: No
+    SubframeUnderTopFrameDomains:
         topframe1
-    subresourceUniqueRedirectsTo:
+    SubresourceUniqueRedirectsTo:
         topframe2
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: subframe2
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
-    subframeUnderTopFrameDomains:
+    IsScheduledForAllButCookieDataRemoval: No
+    SubframeUnderTopFrameDomains:
         topframe1
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: subframe3
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
-    subframeUnderTopFrameDomains:
+    IsScheduledForAllButCookieDataRemoval: No
+    SubframeUnderTopFrameDomains:
         topframe1
         topframe4
-    subresourceUnderTopFrameDomains:
+    SubresourceUnderTopFrameDomains:
         topframe3
-    subresourceUniqueRedirectsTo:
+    SubresourceUniqueRedirectsTo:
         topframe2
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: topframe1
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: topframe2
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: topframe3
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 Registrable domain: topframe4
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    gotLinkDecorationFromPrevalentResource: No
+    IsScheduledForAllButCookieDataRemoval: No
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-    canvasReadData: No
-
 
 ITP Data:
 Third Party Registrable Domain: subframe3
-    {{ Has been granted storage access under topframe1: 0; Has been seen under topframe1 in the last 24 hours: 0 },{ Has been granted storage access under topframe4: 0; Has been seen under topframe4 in the last 24 hours: 0 },{ Has been granted storage access under topframe3: 0; Has been seen under topframe3 in the last 24 hours: 0 },{ Has been granted storage access under topframe2: 0; Has been seen under topframe2 in the last 24 hours: 0 },}
+    {{ Has been granted storage access under topframe1: 0; Has been seen under topframe1 in the last 24 hours: 1 },{ Has been granted storage access under topframe4: 0; Has been seen under topframe4 in the last 24 hours: 1 },{ Has been granted storage access under topframe3: 0; Has been seen under topframe3 in the last 24 hours: 1 },{ Has been granted storage access under topframe2: 0; Has been seen under topframe2 in the last 24 hours: 1 },}
 Third Party Registrable Domain: subframe1
-    {{ Has been granted storage access under topframe1: 0; Has been seen under topframe1 in the last 24 hours: 0 },{ Has been granted storage access under topframe2: 0; Has been seen under topframe2 in the last 24 hours: 0 },}
+    {{ Has been granted storage access under topframe1: 0; Has been seen under topframe1 in the last 24 hours: 1 },{ Has been granted storage access under topframe2: 0; Has been seen under topframe2 in the last 24 hours: 1 },}
 Third Party Registrable Domain: subframe2
-    {{ Has been granted storage access under topframe1: 0; Has been seen under topframe1 in the last 24 hours: 0 },}
+    {{ Has been granted storage access under topframe1: 0; Has been seen under topframe1 in the last 24 hours: 1 },}

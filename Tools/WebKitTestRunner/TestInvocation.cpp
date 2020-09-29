@@ -1475,14 +1475,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(isGrandfathered));
         return result;
     }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SetUseITPDatabase")) {
-        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-
-        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
-        TestController::singleton().setUseITPDatabase(WKBooleanGetValue(value));
-        return nullptr;
-    }
     
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsSubframeUnderTopFrameOrigin")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
