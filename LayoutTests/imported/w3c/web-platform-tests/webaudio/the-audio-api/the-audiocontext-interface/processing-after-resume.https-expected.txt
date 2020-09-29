@@ -1,3 +1,5 @@
 
-FAIL Test consistency of processing after resume() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'realtime.audioWorklet.addModule')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test consistency of processing after resume() Test timed out
 

@@ -327,10 +327,14 @@ $(PROJECT_DIR)/Modules/webaudio/AudioListener.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioNodeOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioParam.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioParamMap.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEventInit.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioScheduledSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioTimestamp.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioWorklet.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioWorkletNode.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioWorkletNodeOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/BaseAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterOptions.idl
@@ -1276,6 +1280,7 @@ $(PROJECT_DIR)/workers/service/ServiceWorkerWindowClient.idl
 $(PROJECT_DIR)/worklets/PaintWorkletGlobalScope.idl
 $(PROJECT_DIR)/worklets/Worklet.idl
 $(PROJECT_DIR)/worklets/WorkletGlobalScope.idl
+$(PROJECT_DIR)/worklets/WorkletOptions.idl
 $(PROJECT_DIR)/xml/CustomXPathNSResolver.idl
 $(PROJECT_DIR)/xml/DOMParser.idl
 $(PROJECT_DIR)/xml/XMLHttpRequest.idl

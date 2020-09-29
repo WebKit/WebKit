@@ -319,6 +319,28 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_acti
 # Skip WPT webaudio tests that are timing out.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-routing.html [ Skip ]
 
+# These webaudio tests are timing out due to lack for support for AudioWorklet.
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam-size.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-messageport.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-postmessage-sharedarraybuffer.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-timing-info.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-onerror.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-options.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-zero-outputs.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-getter.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-parameters.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Skip ]
+
 # This webaudio test has been timing out since its import from Blink.
 webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html [ Skip ]
 
@@ -332,6 +354,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode
 # Values in FAIL lines differ from machine to machine, we should be able to unskip them once they pass.
 webaudio/AudioBufferSource/audiobuffersource-detune-modulation.html [ Pass Failure ]
 webaudio/AudioBufferSource/audiobuffersource-playbackrate-modulation.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/simple-input-output.https.html [ Pass Failure ]
 
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 

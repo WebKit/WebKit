@@ -1,7 +1,8 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS # AUDIT TASK RUNNER STARTED.
-FAIL Executing "setup-worklet" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-PASS Audit report
+TIMEOUT Executing "setup-worklet" Test timed out
+NOTRUN Audit report
 PASS > [setup-worklet]
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

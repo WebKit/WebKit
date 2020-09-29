@@ -26,11 +26,9 @@
 #include "config.h"
 #include "Worklet.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "Document.h"
-#include "PaintWorkletGlobalScope.h"
 #include "ScriptSourceCode.h"
+#include "WorkletOptions.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -46,23 +44,11 @@ Worklet::Worklet()
 {
 }
 
-ExceptionOr<void> Worklet::addModule(Document& document, const String& moduleURL)
+void Worklet::addModule(Document&, const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
 {
-    // FIXME: We should download the source from the URL
-    // https://bugs.webkit.org/show_bug.cgi?id=191136
-    auto maybeContext = PaintWorkletGlobalScope::tryCreate(document, ScriptSourceCode(moduleURL));
-    if (UNLIKELY(!maybeContext))
-        return Exception { OutOfMemoryError };
-    auto context = maybeContext.releaseNonNull();
-    context->evaluate();
-
-    auto locker = holdLock(context->paintDefinitionLock());
-    for (auto& name : context->paintDefinitionMap().keys())
-        document.setPaintWorkletGlobalScopeForName(name, makeRef(context.get()));
-
-    return { };
+    // FIXME: Add proper implementation.
+    UNUSED_PARAM(moduleURL);
+    promise.resolve();
 }
 
 } // namespace WebCore
-
-#endif

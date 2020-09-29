@@ -80,7 +80,8 @@ public:
         NodeTypeConstant,
         NodeTypeStereoPanner,
         NodeTypeIIRFilter,
-        NodeTypeLast = NodeTypeIIRFilter
+        NodeTypeWorklet,
+        NodeTypeLast = NodeTypeWorklet
     };
 
     AudioNode(BaseAudioContext&, NodeType);

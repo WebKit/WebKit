@@ -79,6 +79,13 @@ ModernUnprefixedWebAudioEnabled:
   humanReadableName: "Modern WebAudio API"
   humanReadableDescription: "Modern and unprefixed WebAudio API"
 
+AudioWorkletEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(WEB_AUDIO)
+  humanReadableName: "WebAudio AudioWorklet API"
+  humanReadableDescription: "WebAudio AudioWorklet API"
+
 RequestIdleCallbackEnabled:
   type: bool
   defaultValue: false

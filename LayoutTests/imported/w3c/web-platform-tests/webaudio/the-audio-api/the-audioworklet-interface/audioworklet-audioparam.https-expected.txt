@@ -1,9 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED.
-FAIL Executing "Initializing AudioWorklet and Context" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL Executing "Verifying AudioParam in AudioWorkletNode" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
+PASS Executing "Initializing AudioWorklet and Context"
+FAIL Executing "Verifying AudioParam in AudioWorkletNode" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'gainWorkletParam.value')"
 PASS Audit report
 PASS > [Initializing AudioWorklet and Context]
+PASS < [Initializing AudioWorklet and Context] All assertions passed. (total 0 assertions)
 PASS > [Verifying AudioParam in AudioWorkletNode]
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

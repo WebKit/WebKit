@@ -1,9 +1,12 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS # AUDIT TASK RUNNER STARTED.
-FAIL Executing "initialize" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL Executing "test" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
-PASS Audit report
+PASS Executing "initialize"
+TIMEOUT Executing "test" Test timed out
+NOTRUN Audit report
 PASS > [initialize]
+PASS   AudioWorklet module loading resolved correctly.
+PASS < [initialize] All assertions passed. (total 1 assertions)
 PASS > [test]
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

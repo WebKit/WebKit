@@ -10,7 +10,7 @@ PASS   StereoPannerNode: a-rate node:pan.setValueAtTime(0,0) did not throw an ex
 PASS   StereoPannerNode: a-rate node:pan.linearRampToValueAtTime(0.5,1) did not throw an exception.
 PASS   StereoPannerNode: Output of k-rate StereoPannerNode is identical to the array [expected array].
 PASS   StereoPannerNode: Output of a-rate StereoPannerNode is identical to the array [expected array].
-PASS   StereoPannerNode: Difference between a-rate and k-rate StereoPannerNode is not constantly 0 (contains 7961 different values).
+PASS   StereoPannerNode: Difference between a-rate and k-rate StereoPannerNode is not constantly 0 (contains 7959 different values).
 PASS < [Test k-rate StereoPannerNode] All assertions passed. (total 8 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

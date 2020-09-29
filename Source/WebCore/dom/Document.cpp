@@ -52,6 +52,7 @@
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "CustomEvent.h"
+#include "DOMCSSPaintWorklet.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
@@ -237,7 +238,6 @@
 #include "WheelEvent.h"
 #include "WindowEventLoop.h"
 #include "WindowFeatures.h"
-#include "Worklet.h"
 #include "XMLDocument.h"
 #include "XMLDocumentParser.h"
 #include "XMLNSNames.h"
@@ -8467,10 +8467,10 @@ DeviceOrientationAndMotionAccessController& Document::deviceOrientationAndMotion
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
-Worklet& Document::ensurePaintWorklet()
+PaintWorklet& Document::ensurePaintWorklet()
 {
     if (!m_paintWorklet)
-        m_paintWorklet = Worklet::create();
+        m_paintWorklet = PaintWorklet::create();
     return *m_paintWorklet;
 }
 

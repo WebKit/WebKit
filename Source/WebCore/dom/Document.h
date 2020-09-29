@@ -183,6 +183,7 @@ class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
 class Page;
+class PaintWorklet;
 class PaintWorkletGlobalScope;
 class PlatformMouseEvent;
 class ProcessingInstruction;
@@ -225,7 +226,6 @@ class WebGL2RenderingContext;
 class WebGLRenderingContext;
 class WindowEventLoop;
 class WindowProxy;
-class Worklet;
 class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;
@@ -1535,7 +1535,7 @@ public:
     bool registerCSSProperty(CSSRegisteredCustomProperty&&);
 
 #if ENABLE(CSS_PAINTING_API)
-    Worklet& ensurePaintWorklet();
+    PaintWorklet& ensurePaintWorklet();
     PaintWorkletGlobalScope* paintWorkletGlobalScopeForName(const String& name);
     void setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&&);
 #endif
@@ -2115,7 +2115,7 @@ private:
     CSSRegisteredCustomPropertySet m_CSSRegisteredPropertySet;
 
 #if ENABLE(CSS_PAINTING_API)
-    RefPtr<Worklet> m_paintWorklet;
+    RefPtr<PaintWorklet> m_paintWorklet;
     HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
 #endif
     unsigned m_numberOfRejectedSyncXHRs { 0 };

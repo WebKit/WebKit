@@ -1,4 +1,9 @@
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+Harness Error (TIMEOUT), message = null
 
+PASS # AUDIT TASK RUNNER STARTED.
+TIMEOUT Executing "Dynamically change the channel count to if unspecified." Test timed out
+NOTRUN Executing "Givien outputChannelCount must be honored."
+NOTRUN Audit report
+PASS > [Dynamically change the channel count to if unspecified.]
 

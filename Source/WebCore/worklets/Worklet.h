@@ -26,25 +26,26 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
-#if ENABLE(CSS_PAINTING_API)
-
 namespace WebCore {
+
 class Document;
 
-class Worklet final : public RefCounted<Worklet>, public ScriptWrappable {
+struct WorkletOptions;
+
+class Worklet : public RefCounted<Worklet>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(Worklet);
 public:
     static Ref<Worklet> create();
+    virtual ~Worklet() = default;
     
-    ExceptionOr<void> addModule(Document&, const String& moduleURL);
+    virtual void addModule(Document&, const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
 
-private:
+protected:
     Worklet();
 };
 
 } // namespace WebCore
-
-#endif

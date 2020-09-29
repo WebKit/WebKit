@@ -1,6 +1,6 @@
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+Harness Error (TIMEOUT), message = null
 
-NOTRUN 3 inputs; 0 outputs
+TIMEOUT 3 inputs; 0 outputs Test timed out
 NOTRUN 0 inputs; 3 outputs
 

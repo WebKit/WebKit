@@ -259,6 +259,8 @@ prefixedWebAudioEnabled:
   initial: false
 modernUnprefixedWebAudioEnabled:
   initial: false
+audioWorkletEnabled:
+  initial: false
 paginateDuringLayoutEnabled:
   initial: false
 fullScreenEnabled:

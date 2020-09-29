@@ -405,10 +405,14 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AudioNode.idl \
     $(WebCore)/Modules/webaudio/AudioNodeOptions.idl \
     $(WebCore)/Modules/webaudio/AudioParam.idl \
+    $(WebCore)/Modules/webaudio/AudioParamMap.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEventInit.idl \
     $(WebCore)/Modules/webaudio/AudioScheduledSourceNode.idl \
     $(WebCore)/Modules/webaudio/AudioTimestamp.idl \
+    $(WebCore)/Modules/webaudio/AudioWorklet.idl \
+    $(WebCore)/Modules/webaudio/AudioWorkletNode.idl \
+    $(WebCore)/Modules/webaudio/AudioWorkletNodeOptions.idl \
     $(WebCore)/Modules/webaudio/BaseAudioContext.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterOptions.idl \
@@ -1280,6 +1284,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/worklets/PaintWorkletGlobalScope.idl \
     $(WebCore)/worklets/Worklet.idl \
     $(WebCore)/worklets/WorkletGlobalScope.idl \
+    $(WebCore)/worklets/WorkletOptions.idl \
     $(WebCore)/xml/CustomXPathNSResolver.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \

@@ -1,4 +1,11 @@
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+Harness Error (TIMEOUT), message = null
 
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "setting-up-graph"
+TIMEOUT Executing "start-playback-and-capture" Test timed out
+NOTRUN Audit report
+PASS > [setting-up-graph]
+PASS < [setting-up-graph] All assertions passed. (total 0 assertions)
+PASS > [start-playback-and-capture]
 

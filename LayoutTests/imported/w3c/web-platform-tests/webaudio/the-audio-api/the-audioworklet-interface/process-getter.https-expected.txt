@@ -1,4 +1,6 @@
 
-FAIL 'process' getter on prototype promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL 'process' getter on instance promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT 'process' getter on prototype Test timed out
+NOTRUN 'process' getter on instance
 

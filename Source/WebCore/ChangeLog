@@ -1,3 +1,71 @@
+2020-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Add stubs for AudioWorklet
+        https://bugs.webkit.org/show_bug.cgi?id=217059
+
+        Reviewed by Eric Carlson.
+
+        Add stubs for AudioWorklet, AudioWorkletNode and AudioParamMap:
+        - https://www.w3.org/TR/webaudio/#audioworklet
+        - https://www.w3.org/TR/webaudio/#audioworkletnode
+        - https://www.w3.org/TR/webaudio/#audioparammap
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::convertEnumerationToString):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioParamMap.cpp: Added.
+        (WebCore::AudioParamMap::initializeMapLike):
+        (WebCore::AudioParamMap::add):
+        * Modules/webaudio/AudioParamMap.h: Added.
+        (WebCore::AudioParamMap::create):
+        (WebCore::AudioParamMap::map const):
+        * Modules/webaudio/AudioParamMap.idl: Added.
+        * Modules/webaudio/AudioWorklet.cpp: Added.
+        (WebCore::AudioWorklet::create):
+        (WebCore::AudioWorklet::AudioWorklet):
+        * Modules/webaudio/AudioWorklet.h: Added.
+        * Modules/webaudio/AudioWorklet.idl: Added.
+        * Modules/webaudio/AudioWorkletNode.cpp: Added.
+        (WebCore::AudioWorkletNode::create):
+        (WebCore::AudioWorkletNode::AudioWorkletNode):
+        (WebCore::AudioWorkletNode::~AudioWorkletNode):
+        (WebCore::AudioWorkletNode::process):
+        * Modules/webaudio/AudioWorkletNode.h: Added.
+        (WebCore::AudioWorkletNode::parameters):
+        (WebCore::AudioWorkletNode::port):
+        * Modules/webaudio/AudioWorkletNode.idl: Added.
+        * Modules/webaudio/AudioWorkletNodeOptions.h: Added.
+        * Modules/webaudio/AudioWorkletNodeOptions.idl: Added.
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::audioWorklet):
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/DOMCSSPaintWorklet.cpp:
+        (WebCore::DOMCSSPaintWorklet::ensurePaintWorklet):
+        (WebCore::PaintWorklet::addModule):
+        * css/DOMCSSPaintWorklet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePaintWorklet):
+        * dom/Document.h:
+        * dom/EventNames.h:
+        * page/Settings.yaml:
+        * worklets/Worklet.cpp:
+        (WebCore::Worklet::addModule):
+        * worklets/Worklet.h:
+        * worklets/Worklet.idl:
+        * worklets/WorkletOptions.h: Copied from Source/WebCore/worklets/Worklet.idl.
+        * worklets/WorkletOptions.idl: Copied from Source/WebCore/worklets/Worklet.idl.
+
 2020-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Several layout tests in fast/canvas crash under GraphicsContext::clipToImageBuffer

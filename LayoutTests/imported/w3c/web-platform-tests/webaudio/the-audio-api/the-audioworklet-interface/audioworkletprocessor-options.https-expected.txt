@@ -1,9 +1,9 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS # AUDIT TASK RUNNER STARTED.
-FAIL Executing "valid-processor-data" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL Executing "empty-option" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-PASS Audit report
+TIMEOUT Executing "valid-processor-data" Test timed out
+NOTRUN Executing "empty-option"
+NOTRUN Audit report
 PASS > [valid-processor-data]
-PASS > [empty-option]
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

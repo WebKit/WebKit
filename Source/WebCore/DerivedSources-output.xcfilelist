@@ -187,6 +187,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNodeOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNodeOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParamMap.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParamMap.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEventInit.cpp
@@ -203,6 +205,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrackList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrackList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrackMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrackMediaSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorklet.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorklet.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNodeOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNodeOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientInputs.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientInputs.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientOutputs.cpp
@@ -2464,6 +2472,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorklet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorklet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkletGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkletGlobalScope.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkletOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkletOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultController.cpp

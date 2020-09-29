@@ -1,7 +1,21 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'ac.audioWorklet
-        .addModule')
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'ac.audioWorklet
-        .addModule')
-
+PASS Creating an AudioWorkletNode with a set for
+                    parameter descriptor worked
+FAIL Map match in size for set assert_equals: expected 3 but got 0
+PASS Creating an AudioWorkletNode with a array for
+                    parameter descriptor worked
+FAIL Map match in size for array assert_equals: expected 3 but got 0
+PASS Creating an AudioWorkletNode with a generator for
+                    parameter descriptor worked
+FAIL Map match in size for generator assert_equals: expected 3 but got 0
+FAIL Attempting to create an AudioWorkletNode with an non
+              iterable for parameter descriptor should not work assert_throws_dom: function "function () {
+              new AudioWorkletNode(ac, "invalid");
+            }" did not throw
+PASS Attempting to create an AudioWorkletNode from a processor
+            that does not have a parameterDescriptors getter should work
+FAIL Attempting to create an AudioWorkletNode with two parameter
+            descriptor with the same name should not work assert_throws_dom: function "function () {
+            new AudioWorkletNode(ac, "duplicate-param-name");
+          }" did not throw
 

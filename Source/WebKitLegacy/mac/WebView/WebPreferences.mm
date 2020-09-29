@@ -3053,6 +3053,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitModernUnprefixedWebAudioEnabledPreferenceKey];
 }
 
+- (BOOL)audioWorkletEnabled
+{
+    return [self _boolValueForKey:WebKitAudioWorkletEnabledPreferenceKey];
+}
+
+- (void)setAudioWorkletEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitAudioWorkletEnabledPreferenceKey];
+}
+
 - (BOOL)requestIdleCallbackEnabled
 {
     return [self _boolValueForKey:WebKitRequestIdleCallbackEnabledPreferenceKey];

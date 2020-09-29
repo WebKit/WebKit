@@ -1,4 +1,7 @@
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
-
+PASS # AUDIT TASK RUNNER STARTED.
+FAIL Executing "Query |sampleRate| upon AudioWorkletGlobalScope construction" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'frequencyParam.maxValue')"
+PASS Audit report
+PASS > [Query |sampleRate| upon AudioWorkletGlobalScope construction]
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

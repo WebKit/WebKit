@@ -1,6 +1,8 @@
 
-FAIL super() after new AudioWorkletProcessor() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL new AudioWorkletProcessor() after super() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL new AudioWorkletProcessor() after new AudioWorkletProcessor() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL Singleton AudioWorkletProcessor promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT super() after new AudioWorkletProcessor() Test timed out
+NOTRUN new AudioWorkletProcessor() after super()
+NOTRUN new AudioWorkletProcessor() after new AudioWorkletProcessor()
+NOTRUN Singleton AudioWorkletProcessor
 

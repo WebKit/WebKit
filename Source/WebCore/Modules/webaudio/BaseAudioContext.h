@@ -25,6 +25,7 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUDIO)
 #include "ActiveDOMObject.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBus.h"
@@ -61,6 +62,7 @@ class AudioBufferCallback;
 class AudioBufferSourceNode;
 class AudioListener;
 class AudioSummingJunction;
+class AudioWorklet;
 class BiquadFilterNode;
 class ChannelMergerNode;
 class ChannelSplitterNode;
@@ -146,6 +148,8 @@ public:
     using State = AudioContextState;
     State state() const { return m_state; }
     bool isClosed() const { return m_state == State::Closed; }
+
+    AudioWorklet& audioWorklet() { return m_worklet.get(); }
 
     bool wouldTaintOrigin(const URL&) const;
 
@@ -394,6 +398,8 @@ private:
     uint64_t m_nextAudioParameterIdentifier { 0 };
 #endif
 
+    Ref<AudioWorklet> m_worklet;
+
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_finishedNodes;
 
@@ -468,3 +474,5 @@ private:
 };
 
 } // WebCore
+
+#endif // ENABLE(WEB_AUDIO)

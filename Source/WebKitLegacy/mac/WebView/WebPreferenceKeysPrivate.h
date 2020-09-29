@@ -257,6 +257,7 @@
 // FIXME: If these are not used anywhere, we should remove them and only use WebFeature mechanism for the preference.
 #define WebKitUserGesturePromisePropagationEnabledPreferenceKey @"WebKitUserGesturePromisePropagationEnabled"
 #define WebKitModernUnprefixedWebAudioEnabledPreferenceKey @"WebKitModernUnprefixedWebAudioEnabled"
+#define WebKitAudioWorkletEnabledPreferenceKey @"WebKitAudioWorkletEnabled"
 #define WebKitRequestIdleCallbackEnabledPreferenceKey @"WebKitRequestIdleCallbackEnabled"
 #define WebKitHighlightAPIEnabledPreferenceKey @"WebKitHighlightAPIEnabled"
 #define WebKitAsyncClipboardAPIEnabledPreferenceKey @"WebKitAsyncClipboardAPIEnabled"

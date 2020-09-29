@@ -1,3 +1,50 @@
+2020-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Add stubs for AudioWorklet
+        https://bugs.webkit.org/show_bug.cgi?id=217059
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that AudioWorklet / AudioWorkletNode / AudioParamMap interfaces are exposed.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-addmodule-resolution.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam-iterable.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam-size.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-messageport.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-postmessage-sharedarraybuffer.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-suspend.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-timing-info.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-construction.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-constructor-options.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-disconnected-input.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-onerror.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-options.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-zero-outputs.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/baseaudiocontext-audioworklet.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/extended-audioworkletnode-with-parameters.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-getter.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/process-parameters.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processor-construction-port.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/simple-input-output.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https-expected.txt:
+
 2020-09-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Data URL image is not rendered if there is whitespace between the mime type and and "base64" string

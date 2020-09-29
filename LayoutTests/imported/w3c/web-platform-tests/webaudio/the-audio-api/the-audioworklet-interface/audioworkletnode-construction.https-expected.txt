@@ -1,11 +1,14 @@
 
 PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "construction-before-module-loading"
-FAIL Executing "construction-after-module-loading" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'realtimeContext.audioWorklet.addModule')"
+PASS Executing "construction-after-module-loading"
 PASS Audit report
 PASS > [construction-before-module-loading]
-FAIL X Creating a node before loading a module should throw. threw "ReferenceError" instead of InvalidStateError. assert_true: expected true got false
+FAIL X Creating a node before loading a module should throw. did not throw an exception. assert_true: expected true got false
 FAIL < [construction-before-module-loading] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [construction-after-module-loading]
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+PASS   "dummyWorkletNode" is an instance of AudioWorkletNode is true.
+FAIL X Unregistered name "foobar" must throw an exception. did not throw an exception. assert_true: expected true got false
+FAIL < [construction-after-module-loading] 1 out of 2 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
 

@@ -30,13 +30,12 @@
 
 #include "DOMCSSNamespace.h"
 #include "Document.h"
-#include "Worklet.h"
-
+#include "PaintWorkletGlobalScope.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Worklet& DOMCSSPaintWorklet::ensurePaintWorklet(Document& document)
+PaintWorklet& DOMCSSPaintWorklet::ensurePaintWorklet(Document& document)
 {
     return document.ensurePaintWorklet();
 }
@@ -55,6 +54,24 @@ DOMCSSPaintWorklet* DOMCSSPaintWorklet::from(DOMCSSNamespace& css)
 const char* DOMCSSPaintWorklet::supplementName()
 {
     return "DOMCSSPaintWorklet";
+}
+
+void PaintWorklet::addModule(Document& document, const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
+{
+    // FIXME: We should download the source from the URL
+    // https://bugs.webkit.org/show_bug.cgi?id=191136
+    auto maybeContext = PaintWorkletGlobalScope::tryCreate(document, ScriptSourceCode(moduleURL));
+    if (UNLIKELY(!maybeContext)) {
+        promise.reject(Exception { OutOfMemoryError });
+        return;
+    }
+    auto context = maybeContext.releaseNonNull();
+    context->evaluate();
+
+    auto locker = holdLock(context->paintDefinitionLock());
+    for (auto& name : context->paintDefinitionMap().keys())
+        document.setPaintWorkletGlobalScopeForName(name, makeRef(context.get()));
+    promise.resolve();
 }
 
 }

@@ -611,6 +611,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @interface WebPreferences (WebPrivatePreferencesConvertedToWebFeature)
 @property (nonatomic) BOOL userGesturePromisePropagationEnabled;
 @property (nonatomic) BOOL modernUnprefixedWebAudioEnabled;
+@property (nonatomic) BOOL audioWorkletEnabled;
 @property (nonatomic) BOOL requestIdleCallbackEnabled;
 @property (nonatomic) BOOL highlightAPIEnabled;
 @property (nonatomic) BOOL asyncClipboardAPIEnabled;

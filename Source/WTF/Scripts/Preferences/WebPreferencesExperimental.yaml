@@ -81,6 +81,17 @@ AsyncClipboardAPIEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+AudioWorkletEnabled:
+  type: bool
+  humanReadableName: "WebAudio AudioWorklet API"
+  humanReadableDescription: "WebAudio AudioWorklet API"
+  condition: ENABLE(WEB_AUDIO)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 BlankAnchorTargetImpliesNoOpenerEnabled:
   type: bool
   humanReadableName: "Blank anchor target implies rel=noopener"

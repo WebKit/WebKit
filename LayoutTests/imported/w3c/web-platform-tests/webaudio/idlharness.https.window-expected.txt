@@ -1,5 +1,5 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+PASS idl_test setup
 PASS idl_test validation
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
@@ -20,7 +20,7 @@ PASS BaseAudioContext interface: attribute sampleRate
 PASS BaseAudioContext interface: attribute currentTime
 PASS BaseAudioContext interface: attribute listener
 PASS BaseAudioContext interface: attribute state
-FAIL BaseAudioContext interface: attribute audioWorklet assert_true: The prototype object must have a property "audioWorklet" expected true got false
+PASS BaseAudioContext interface: attribute audioWorklet
 PASS BaseAudioContext interface: attribute onstatechange
 PASS BaseAudioContext interface: operation createAnalyser()
 PASS BaseAudioContext interface: operation createBiquadFilter()
@@ -77,7 +77,7 @@ PASS BaseAudioContext interface: context must inherit property "sampleRate" with
 PASS BaseAudioContext interface: context must inherit property "currentTime" with the proper type
 PASS BaseAudioContext interface: context must inherit property "listener" with the proper type
 PASS BaseAudioContext interface: context must inherit property "state" with the proper type
-FAIL BaseAudioContext interface: context must inherit property "audioWorklet" with the proper type assert_inherits: property "audioWorklet" not found in prototype chain
+PASS BaseAudioContext interface: context must inherit property "audioWorklet" with the proper type
 PASS BaseAudioContext interface: context must inherit property "onstatechange" with the proper type
 PASS BaseAudioContext interface: context must inherit property "createAnalyser()" with the proper type
 PASS BaseAudioContext interface: context must inherit property "createBiquadFilter()" with the proper type
@@ -130,7 +130,7 @@ PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "currentTime" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "listener" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "state" with the proper type
-FAIL BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "audioWorklet" with the proper type assert_inherits: property "audioWorklet" not found in prototype chain
+PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "audioWorklet" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "onstatechange" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createAnalyser()" with the proper type
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createBiquadFilter()" with the proper type
@@ -1078,59 +1078,59 @@ PASS AudioNode interface: new WaveShaperNode(context) must inherit property "num
 PASS AudioNode interface: new WaveShaperNode(context) must inherit property "channelCount" with the proper type
 PASS AudioNode interface: new WaveShaperNode(context) must inherit property "channelCountMode" with the proper type
 PASS AudioNode interface: new WaveShaperNode(context) must inherit property "channelInterpretation" with the proper type
-FAIL AudioWorklet interface: existence and properties of interface object assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
-FAIL AudioWorklet interface object length assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
-FAIL AudioWorklet interface object name assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
-FAIL AudioWorklet interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
-FAIL AudioWorklet interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
-FAIL AudioWorklet interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
-FAIL AudioWorklet must be primary interface of context.audioWorklet assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of context.audioWorklet assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS AudioWorklet interface: existence and properties of interface object
+PASS AudioWorklet interface object length
+PASS AudioWorklet interface object name
+PASS AudioWorklet interface: existence and properties of interface prototype object
+PASS AudioWorklet interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioWorklet interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioWorklet must be primary interface of context.audioWorklet
+PASS Stringification of context.audioWorklet
 PASS AudioWorkletGlobalScope interface: existence and properties of interface object
-FAIL AudioParamMap interface: existence and properties of interface object assert_own_property: self does not have own property "AudioParamMap" expected property "AudioParamMap" missing
-FAIL AudioParamMap interface object length assert_own_property: self does not have own property "AudioParamMap" expected property "AudioParamMap" missing
-FAIL AudioParamMap interface object name assert_own_property: self does not have own property "AudioParamMap" expected property "AudioParamMap" missing
-FAIL AudioParamMap interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioParamMap" expected property "AudioParamMap" missing
-FAIL AudioParamMap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioParamMap" expected property "AudioParamMap" missing
-FAIL AudioParamMap interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioParamMap" expected property "AudioParamMap" missing
-FAIL AudioParamMap must be primary interface of worklet_node.parameters assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL Stringification of worklet_node.parameters assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioWorkletNode interface: existence and properties of interface object assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface object length assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface object name assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface: attribute parameters assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface: attribute port assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode interface: attribute onprocessorerror assert_own_property: self does not have own property "AudioWorkletNode" expected property "AudioWorkletNode" missing
-FAIL AudioWorkletNode must be primary interface of worklet_node assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL Stringification of worklet_node assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioWorkletNode interface: worklet_node must inherit property "parameters" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioWorkletNode interface: worklet_node must inherit property "port" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioWorkletNode interface: worklet_node must inherit property "onprocessorerror" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling disconnect(unsigned long) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling disconnect(AudioNode) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling disconnect(AudioParam) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on worklet_node with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
-FAIL AudioNode interface: worklet_node must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: worklet_node"
+PASS AudioParamMap interface: existence and properties of interface object
+PASS AudioParamMap interface object length
+PASS AudioParamMap interface object name
+PASS AudioParamMap interface: existence and properties of interface prototype object
+PASS AudioParamMap interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioParamMap interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioParamMap must be primary interface of worklet_node.parameters
+PASS Stringification of worklet_node.parameters
+PASS AudioWorkletNode interface: existence and properties of interface object
+PASS AudioWorkletNode interface object length
+PASS AudioWorkletNode interface object name
+PASS AudioWorkletNode interface: existence and properties of interface prototype object
+PASS AudioWorkletNode interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioWorkletNode interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioWorkletNode interface: attribute parameters
+PASS AudioWorkletNode interface: attribute port
+PASS AudioWorkletNode interface: attribute onprocessorerror
+PASS AudioWorkletNode must be primary interface of worklet_node
+PASS Stringification of worklet_node
+PASS AudioWorkletNode interface: worklet_node must inherit property "parameters" with the proper type
+PASS AudioWorkletNode interface: worklet_node must inherit property "port" with the proper type
+PASS AudioWorkletNode interface: worklet_node must inherit property "onprocessorerror" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "connect(AudioParam, optional unsigned long)" with the proper type
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "disconnect()" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "disconnect(unsigned long)" with the proper type
+PASS AudioNode interface: calling disconnect(unsigned long) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "disconnect(AudioNode)" with the proper type
+PASS AudioNode interface: calling disconnect(AudioNode) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "disconnect(AudioNode, unsigned long)" with the proper type
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "disconnect(AudioParam)" with the proper type
+PASS AudioNode interface: calling disconnect(AudioParam) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "disconnect(AudioParam, unsigned long)" with the proper type
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on worklet_node with too few arguments must throw TypeError
+PASS AudioNode interface: worklet_node must inherit property "context" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "numberOfInputs" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "numberOfOutputs" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "channelCount" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "channelCountMode" with the proper type
+PASS AudioNode interface: worklet_node must inherit property "channelInterpretation" with the proper type
 PASS AudioWorkletProcessor interface: existence and properties of interface object
 

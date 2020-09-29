@@ -1,3 +1,14 @@
+2020-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Add stubs for AudioWorklet
+        https://bugs.webkit.org/show_bug.cgi?id=217059
+
+        Reviewed by Eric Carlson.
+
+        Add experimental feature flag for AudioWorklet API.
+
+        * Shared/WebPreferencesExperimental.yaml:
+
 2020-09-29  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny access to 'com.apple.awdd' in the WebContent sandbox

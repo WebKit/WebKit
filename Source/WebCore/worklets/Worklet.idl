@@ -24,10 +24,8 @@
 */
 
 [
-    EnabledAtRuntime=CSSPaintingAPI,
-    Conditional=CSS_PAINTING_API,
-    ImplementationLacksVTable,
     Global=Worklet,
+    SkipVTableValidation,
 ] interface Worklet {
-    [CallWith=Document, MayThrowException] undefined addModule(USVString moduleURL/*, optional WorkletOptions options*/);
+    [CallWith=Document] Promise<undefined> addModule(USVString moduleURL, optional WorkletOptions options);
 };

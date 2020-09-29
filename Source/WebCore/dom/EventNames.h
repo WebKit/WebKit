@@ -213,6 +213,7 @@ namespace WebCore {
     macro(pointerup) \
     macro(popstate) \
     macro(previoustrack) \
+    macro(processorerror) \
     macro(progress) \
     macro(ratechange) \
     macro(readystatechange) \

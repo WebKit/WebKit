@@ -1,4 +1,13 @@
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'realtimeContext.audioWorklet.addModule')
-
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "module-loading-after-realtime-context-creation"
+PASS Executing "module-loading-after-offline-context-creation"
+PASS Audit report
+PASS > [module-loading-after-realtime-context-creation]
+PASS   "dummyWorkletNode" is an instance of AudioWorkletNode from realtime context is true.
+PASS < [module-loading-after-realtime-context-creation] All assertions passed. (total 1 assertions)
+PASS > [module-loading-after-offline-context-creation]
+PASS   "dummyWorkletNode" is an instance of AudioWorkletNode from offline context is true.
+PASS < [module-loading-after-offline-context-creation] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
 

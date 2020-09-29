@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: AudioWorkletNode
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: AudioWorkletNode
-
+PASS Test AudioWorkletNode subclass with parameters
 

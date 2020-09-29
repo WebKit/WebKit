@@ -475,10 +475,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioNode.idl
     Modules/webaudio/AudioNodeOptions.idl
     Modules/webaudio/AudioParam.idl
+    Modules/webaudio/AudioParamMap.idl
     Modules/webaudio/AudioProcessingEvent.idl
     Modules/webaudio/AudioProcessingEventInit.idl
     Modules/webaudio/AudioScheduledSourceNode.idl
     Modules/webaudio/AudioTimestamp.idl
+    Modules/webaudio/AudioWorklet.idl
+    Modules/webaudio/AudioWorkletNode.idl
+    Modules/webaudio/AudioWorkletNodeOptions.idl
     Modules/webaudio/BaseAudioContext.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/BiquadFilterOptions.idl
@@ -1121,6 +1125,7 @@ set(WebCore_NON_SVG_IDL_FILES
     worklets/PaintWorkletGlobalScope.idl
     worklets/Worklet.idl
     worklets/WorkletGlobalScope.idl
+    worklets/WorkletOptions.idl
 
     xml/CustomXPathNSResolver.idl
     xml/DOMParser.idl
