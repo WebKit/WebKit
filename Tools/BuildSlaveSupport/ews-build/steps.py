@@ -1185,6 +1185,7 @@ class WebKitPyTest(shell.ShellCommand):
     language = 'python'
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
+    NUM_FAILURES_TO_DISPLAY = 10
 
     def __init__(self, **kwargs):
         super(WebKitPyTest, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
@@ -1226,8 +1227,10 @@ class WebKitPyTest(shell.ShellCommand):
         if not failures:
             return super(WebKitPyTest, self).getResultSummary()
         pluralSuffix = 's' if len(failures) > 1 else ''
-        failures_string = ', '.join([failure.get('name') for failure in failures])
+        failures_string = ', '.join([failure.get('name') for failure in failures[:self.NUM_FAILURES_TO_DISPLAY]])
         message = 'Found {} webkitpy {} test failure{}: {}'.format(len(failures), self.language, pluralSuffix, failures_string)
+        if len(failures) > self.NUM_FAILURES_TO_DISPLAY:
+            message += ' ...'
         self.setBuildSummary(message)
         return {u'step': unicode(message)}
 

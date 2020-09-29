@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import inspect
+import json
 import operator
 import os
 import shutil
@@ -506,6 +507,23 @@ FAILED (failures=1, errors=0)''')
         self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy python2 test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
         return self.runStep()
 
+    def test_lot_of_failures(self):
+        self.setupStep(RunWebKitPyPython2Tests())
+        json_with_failures = json.dumps({"failures": [{"name": 'test{}'.format(i)} for i in range(1, 31)]})
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=120,
+                        ) +
+            ExpectShell.log('json', stdout=json_with_failures) +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 30 webkitpy python2 test failures: test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ...')
+        return self.runStep()
+
 
 class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -577,6 +595,23 @@ FAILED (failures=1, errors=0)''')
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy python3 test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
+        return self.runStep()
+
+    def test_lot_of_failures(self):
+        self.setupStep(RunWebKitPyPython3Tests())
+        json_with_failures = json.dumps({"failures": [{"name": 'test{}'.format(i)} for i in range(1, 31)]})
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=120,
+                        ) +
+            ExpectShell.log('json', stdout=json_with_failures) +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 30 webkitpy python3 test failures: test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ...')
         return self.runStep()
 
 
