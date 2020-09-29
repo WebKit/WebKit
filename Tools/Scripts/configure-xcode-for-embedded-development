@@ -51,7 +51,7 @@ MISSING_HEADERS = [
 ]
 
 MISSING_FRAMEWORKS = [
-    ("AVKit.framework", False),
+    ("AVKit.framework", True),
     ("AudioToolbox.framework", True),
     ("AudioUnit.framework", False),
     ("CFNetwork.framework", True),

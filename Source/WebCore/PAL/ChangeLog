@@ -1,3 +1,13 @@
+2020-09-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [watchOS] AVKitSPI build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=217070
+        <rdar://problem/69724883>
+
+        Rubber-stamped by Eric Carlson.
+
+        * pal/spi/cocoa/AVKitSPI.h: Explicitly import AVPlayer.h and UIKit.h.
+
 2020-09-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [macCatalyst] Focus rings are not painted

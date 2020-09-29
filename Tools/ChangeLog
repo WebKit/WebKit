@@ -1,3 +1,13 @@
+2020-09-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [watchOS] AVKitSPI build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=217070
+        <rdar://problem/69724883>
+
+        Rubber-stamped by Eric Carlson.
+
+        * Scripts/configure-xcode-for-embedded-development: Copy AVKit headers for watchOS.
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Move NetworkProcessProxy ownership from WebProcessPool to WebsiteDataStore

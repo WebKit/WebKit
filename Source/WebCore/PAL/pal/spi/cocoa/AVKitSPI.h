@@ -27,8 +27,10 @@
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import <AVFoundation/AVPlayer.h>
 #import <AVKit/AVKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
 #endif
 
 #if !PLATFORM(WATCHOS) && USE(APPLE_INTERNAL_SDK)
