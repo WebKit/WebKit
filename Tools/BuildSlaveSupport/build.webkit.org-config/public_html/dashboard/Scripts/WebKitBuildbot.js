@@ -51,7 +51,7 @@ WebKitBuildbot = function()
         "Apple-iOS-14-Simulator-Release-Build": {platform: Dashboard.Platform.iOS14Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-14-Simulator-Release-WK2-Tests": {platform: Dashboard.Platform.iOS14Simulator, heading:"iOS Release", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iOS-14-Simulator-Debug-Build": {platform: Dashboard.Platform.iOS14Simulator, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-iOS-14-Simulator-Debug WK2-Tests": {platform: Dashboard.Platform.iOS14Simulator, debug: true, heading:"iOS Debug", tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-iOS-14-Simulator-Debug-WK2-Tests": {platform: Dashboard.Platform.iOS14Simulator, debug: true, heading:"iOS Debug", tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iPadOS-14-Simulator-Release-WK2-Tests": {platform: Dashboard.Platform.iOS14Simulator, heading:"iPadOS Release", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iPadOS-14-Simulator-Debug-WK2-Tests": {platform: Dashboard.Platform.iOS14Simulator, heading:"iPadOS Debug", debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-tvOS-14-Release-Build": {platform: Dashboard.Platform.tvOS14Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},

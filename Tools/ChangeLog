@@ -1,3 +1,13 @@
+2020-09-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        URL for Apple-iOS-14-Simulator-Debug-WK2-Tests is broken on the dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=217094
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Remove a space in the queue name.
+
 2020-09-29  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB Index Corruption after upgrade from iOS 13 to iOS 14
