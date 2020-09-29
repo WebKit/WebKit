@@ -126,8 +126,8 @@ void WebNotificationProvider::closeWebNotification(WKNotificationRef notificatio
 
     removeGlobalIDFromIDMap(m_localToGlobalNotificationIDMap, id);
 
-    WKRetainPtr<WKUInt64Ref> wkID = adoptWK(WKUInt64Create(id));
-    WKRetainPtr<WKMutableArrayRef> array = adoptWK(WKMutableArrayCreate());
+    auto wkID = adoptWK(WKUInt64Create(id));
+    auto array = adoptWK(WKMutableArrayCreate());
     WKArrayAppendItem(array.get(), wkID.get());
     WKNotificationManagerProviderDidCloseNotifications(notificationManager, array.get());
 }
@@ -144,7 +144,7 @@ void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef
     auto toRemove = iterator->value;
     WKRetainPtr<WKNotificationManagerRef> guard(manager);
     m_ownedNotifications.remove(iterator);
-    WKRetainPtr<WKMutableArrayRef> array = adoptWK(WKMutableArrayCreate());
+    auto array = adoptWK(WKMutableArrayCreate());
     for (uint64_t notificationID : toRemove) {
         bool success = m_owningManager.remove(notificationID);
         ASSERT_UNUSED(success, success);
@@ -173,7 +173,7 @@ void WebNotificationProvider::reset()
     for (auto& notificationPair : m_ownedNotifications) {
         if (notificationPair.value.isEmpty())
             continue;
-        WKRetainPtr<WKMutableArrayRef> array = adoptWK(WKMutableArrayCreate());
+        auto array = adoptWK(WKMutableArrayCreate());
         for (uint64_t notificationID : notificationPair.value)
             WKArrayAppendItem(array.get(), adoptWK(WKUInt64Create(notificationID)).get());
 

@@ -112,18 +112,19 @@ private:
     POINT positionInPoint() const { return { static_cast<LONG>(m_position.x), static_cast<LONG>(m_position.y) }; }
 #endif
 
-    double m_time;
-    WKPoint m_position;
-    bool m_leftMouseButtonDown;
-    int m_clickCount;
-    double m_clickTime;
-    WKPoint m_clickPosition;
-    WKEventMouseButton m_clickButton;
+    double m_time { 0 };
+    WKPoint m_position { };
+    bool m_leftMouseButtonDown { false };
+    int m_clickCount { 0 };
+    double m_clickTime { 0 };
+    WKPoint m_clickPosition { };
+    WKEventMouseButton m_clickButton { kWKEventMouseButtonNoButton };
     unsigned m_mouseButtonsCurrentlyDown { 0 };
 #if PLATFORM(COCOA)
-    int eventNumber;
-#elif PLATFORM(WPE)
-    uint32_t m_buttonState;
+    int eventNumber { 0 };
+#endif
+#if PLATFORM(WPE)
+    uint32_t m_buttonState { 0 };
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;
     HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
 #endif

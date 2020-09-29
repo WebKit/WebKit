@@ -37,14 +37,6 @@ Ref<GCController> GCController::create()
     return adoptRef(*new GCController);
 }
 
-GCController::GCController()
-{
-}
-
-GCController::~GCController()
-{
-}
-
 JSClassRef GCController::wrapperClass()
 {
     return JSGCController::gCControllerClass();
@@ -65,11 +57,9 @@ size_t GCController::getJSObjectCount()
     return WKBundleGetJavaScriptObjectsCount(InjectedBundle::singleton().bundle());
 }
 
-// Object Creation
-
-void GCController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void GCController::makeWindowObject(JSContextRef context)
 {
-    setProperty(context, windowObject, "GCController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    setGlobalObjectProperty(context, "GCController", this);
 }
 
 } // namespace WTR

@@ -30,7 +30,7 @@
 #include "config.h"
 #include "TextInputController.h"
 
-#include <JavaScriptCore/JSRetainPtr.h>
+#include "JSBasics.h"
 #include <wtf/RefPtr.h>
 
 // Static Functions
@@ -162,42 +162,32 @@ static JSValueRef selectedRangeCallback(JSContextRef context, JSObjectRef functi
 
 // Object Creation
 
-void TextInputController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void TextInputController::makeWindowObject(JSContextRef context)
 {
-    JSRetainPtr<JSStringRef>  textInputContollerStr(Adopt, JSStringCreateWithUTF8CString("textInputController"));
-
-    JSClassRef classRef = getJSClass();
-    JSValueRef textInputContollerObject = JSObjectMake(context, classRef, this);
-    JSClassRelease(classRef);
-
-    JSObjectSetProperty(context, windowObject, textInputContollerStr.get(), textInputContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    WTR::setGlobalObjectProperty(context, "textInputController", JSObjectMake(context, createJSClass().get(), this));
 }
 
-JSClassRef TextInputController::getJSClass()
+JSRetainPtr<JSClassRef> TextInputController::createJSClass()
 {
-    static JSStaticValue* staticValues = TextInputController::staticValues();
-    static JSStaticFunction* staticFunctions = TextInputController::staticFunctions();
-    static JSClassDefinition classDefinition = 
-    {
-        0, kJSClassAttributeNone, "TextInputController", 0, staticValues, staticFunctions,
+    const JSClassDefinition classDefinition = {
+        0, kJSClassAttributeNone, "TextInputController", 0, staticValues(), staticFunctions(),
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
-
-    return JSClassCreate(&classDefinition);
+    return adopt(JSClassCreate(&classDefinition));
 }
 
-JSStaticValue* TextInputController::staticValues()
+const JSStaticValue* TextInputController::staticValues()
 {
-    static JSStaticValue staticValues[] = 
+    static const JSStaticValue staticValues[] =
     {
         { 0, 0, 0, 0 }
     };
     return staticValues;
 }
 
-JSStaticFunction* TextInputController::staticFunctions()
+const JSStaticFunction* TextInputController::staticFunctions()
 {
-    static JSStaticFunction staticFunctions[] = {
+    static const JSStaticFunction staticFunctions[] = {
         { "setMarkedText", setMarkedTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "hasMarkedText", hasMarkedTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "unmarkText", unmarkTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

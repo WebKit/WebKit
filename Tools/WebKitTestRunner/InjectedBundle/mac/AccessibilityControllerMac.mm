@@ -35,6 +35,7 @@
 #import "AccessibilityNotificationHandler.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
+#import "JSBasics.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundle.h>
 #import <WebKit/WKBundlePage.h>
@@ -96,7 +97,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    auto page = InjectedBundle::singleton().page()->page();
     PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
     RetainPtr<id> result;
@@ -111,7 +112,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
-    return adopt(JSStringCreateWithUTF8CString("mac"));
+    return WTR::createJSString("mac");
 }
 
 // AXThread implementation

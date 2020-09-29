@@ -206,7 +206,7 @@ static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context,
     AccessibilityUIElement* startElement = nullptr;
     bool isDirectionNext = true;
     JSValueRef searchKey = nullptr;
-    JSRetainPtr<JSStringRef> searchText = nullptr;
+    JSRetainPtr<JSStringRef> searchText;
     bool visibleOnly = false;
     bool immediateDescendantsOnly = false;
     if (argumentCount >= 5 && argumentCount <= 6) {

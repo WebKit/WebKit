@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include <JavaScriptCore/JavaScript.h>
 #include <wtf/RefCounted.h>
+
+typedef struct OpaqueJSClass* JSClassRef;
 
 namespace WTR {
 

@@ -75,9 +75,9 @@ void AccessibilityController::updateIsolatedTreeMode()
 }
 #endif
 
-void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void AccessibilityController::makeWindowObject(JSContextRef context)
 {
-    setProperty(context, windowObject, "accessibilityController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    setGlobalObjectProperty(context, "accessibilityController", this);
 }
 
 JSClassRef AccessibilityController::wrapperClass()
@@ -96,17 +96,17 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 }
 
 #if PLATFORM(COCOA)
+
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    auto page = InjectedBundle::singleton().page()->page();
     PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
-
     return AccessibilityUIElement::create(root);
 }
 
 Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    auto page = InjectedBundle::singleton().page()->page();
     PlatformUIElement focusedElement = static_cast<PlatformUIElement>(WKAccessibilityFocusedObject(page));
     return AccessibilityUIElement::create(focusedElement);
 }

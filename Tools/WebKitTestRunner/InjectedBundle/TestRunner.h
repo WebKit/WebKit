@@ -46,7 +46,7 @@ public:
     // JSWrappable
     virtual JSClassRef wrapperClass();
 
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef);
 
     bool isIOSFamily() const
     {
@@ -253,7 +253,7 @@ public:
     void setWillSendRequestReturnsNull(bool f) { m_willSendRequestReturnsNull = f; }
     bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
     void setWillSendRequestReturnsNullOnRedirect(bool f) { m_willSendRequestReturnsNullOnRedirect = f; }
-    void setWillSendRequestAddsHTTPBody(JSStringRef body) { m_willSendRequestHTTPBody = toWTFString(toWK(body)); }
+    void setWillSendRequestAddsHTTPBody(JSStringRef body) { m_willSendRequestHTTPBody = toWTFString(body); }
     String willSendRequestHTTPBody() const { return m_willSendRequestHTTPBody; }
 
     void setTextDirection(JSStringRef);
@@ -286,7 +286,7 @@ public:
     void callFocusWebViewCallback();
     void callSetBackingScaleFactorCallback();
 
-    void overridePreference(JSStringRef preference, JSStringRef value);
+    static void overridePreference(JSStringRef preference, JSStringRef value);
 
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
@@ -304,7 +304,7 @@ public:
 
     // Geolocation.
     void setGeolocationPermission(bool);
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef altitude, JSValueRef altitudeAccuracy, JSValueRef heading, JSValueRef speed, JSValueRef floorLevel);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, Optional<double> altitude, Optional<double> altitudeAccuracy, Optional<double> heading, Optional<double> speed, Optional<double> floorLevel);
     void setMockGeolocationPositionUnavailableError(JSStringRef message);
     bool isGeolocationProviderActive();
 
@@ -335,8 +335,8 @@ public:
     bool secureEventInputIsEnabled() const;
 
     JSValueRef failNextNewCodeBlock();
-    JSValueRef numberOfDFGCompiles(JSValueRef theFunction);
-    JSValueRef neverInlineFunction(JSValueRef theFunction);
+    JSValueRef numberOfDFGCompiles(JSValueRef function);
+    JSValueRef neverInlineFunction(JSValueRef function);
 
     bool shouldDecideNavigationPolicyAfterDelay() const { return m_shouldDecideNavigationPolicyAfterDelay; }
     void setShouldDecideNavigationPolicyAfterDelay(bool);

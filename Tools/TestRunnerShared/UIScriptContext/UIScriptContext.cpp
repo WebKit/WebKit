@@ -26,9 +26,8 @@
 #include "config.h"
 #include "UIScriptContext.h"
 
+#include "JSBasics.h"
 #include "UIScriptController.h"
-#include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/FloatRect.h>
 
 using namespace WTR;
@@ -43,11 +42,7 @@ UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate, UIScriptCont
     , m_delegate(delegate)
 {
     m_controller = factory(*this);
-
-    JSObjectRef globalObject = JSContextGetGlobalObject(m_context.get());
-
-    JSValueRef exception = nullptr;
-    m_controller->makeWindowObject(m_context.get(), globalObject, &exception);
+    m_controller->makeWindowObject(m_context.get());
 }
 
 UIScriptContext::~UIScriptContext()
@@ -66,9 +61,7 @@ void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackI
     JSValueRef result = JSEvaluateScript(m_context.get(), stringRef.get(), 0, 0, 1, &exception);
     
     if (!hasOutstandingAsyncTasks()) {
-        JSValueRef stringifyException = nullptr;
-        auto stringified = adopt(JSValueToStringCopy(m_context.get(), result, &stringifyException));
-        requestUIScriptCompletion(stringified.get());
+        requestUIScriptCompletion(createJSString(m_context.get(), result).get());
         tryToCompleteUIScriptForCurrentParentCallback();
     }
 }
@@ -189,10 +182,10 @@ JSObjectRef UIScriptContext::objectFromRect(const WebCore::FloatRect& rect) cons
 {
     JSObjectRef object = JSObjectMake(m_context.get(), nullptr, nullptr);
 
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("left")).get(), JSValueMakeNumber(m_context.get(), rect.x()), kJSPropertyAttributeNone, nullptr);
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("top")).get(), JSValueMakeNumber(m_context.get(), rect.y()), kJSPropertyAttributeNone, nullptr);
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("width")).get(), JSValueMakeNumber(m_context.get(), rect.width()), kJSPropertyAttributeNone, nullptr);
-    JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("height")).get(), JSValueMakeNumber(m_context.get(), rect.height()), kJSPropertyAttributeNone, nullptr);
+    setProperty(m_context.get(), object, "left", rect.x());
+    setProperty(m_context.get(), object, "top", rect.y());
+    setProperty(m_context.get(), object, "width", rect.width());
+    setProperty(m_context.get(), object, "height", rect.height());
     
     return object;
 }

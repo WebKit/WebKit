@@ -26,19 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCController_h
-#define GCController_h
+#pragma once
 
-#include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/FastMalloc.h>
 
 class GCController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GCController();
-    ~GCController();
-
-    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef);
 
     // Controller Methods - platfrom independant implementations
     void collect() const;
@@ -46,7 +42,5 @@ public:
     size_t getJSObjectCount() const;
 
 private:
-    static JSClassRef getJSClass();
+    static JSRetainPtr<JSClassRef> createJSClass();
 };
-
-#endif // GCController_h

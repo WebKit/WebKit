@@ -32,12 +32,17 @@ OBJC_CLASS TestRunnerWKWebView;
 namespace WTR {
 
 class UIScriptControllerCocoa : public UIScriptControllerCommon {
-public:
+protected:
+    explicit UIScriptControllerCocoa(UIScriptContext&);
+    TestRunnerWKWebView *webView() const;
+
+    void doAsyncTask(JSValueRef) override;
+
+private:
     void setViewScale(double) override;
     void setMinimumEffectiveWidth(double) override;
     void becomeFirstResponder() override;
     void resignFirstResponder() override;
-    void doAsyncTask(JSValueRef) override;
     void removeViewFromWindow(JSValueRef) override;
     void addViewToWindow(JSValueRef) override;
     void overridePreference(JSStringRef, JSStringRef) override;
@@ -59,11 +64,6 @@ public:
 
     void insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback) override;
 
-protected:
-    explicit UIScriptControllerCocoa(UIScriptContext&);
-    TestRunnerWKWebView *webView() const;
-
-private:
     void completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID);
 };
 

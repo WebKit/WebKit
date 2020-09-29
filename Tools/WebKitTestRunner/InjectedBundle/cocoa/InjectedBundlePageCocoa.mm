@@ -47,13 +47,13 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
 
 String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef response)
 {
-    RetainPtr<NSURLResponse> nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
+    auto nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
     return [nsURLResponse.get() MIMEType];
 }
 
 uint64_t InjectedBundlePage::responseHeaderCount(WKURLResponseRef response)
 {
-    RetainPtr<NSURLResponse> nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
+    auto nsURLResponse = adoptNS(WKURLResponseCopyNSURLResponse(response));
     if (![nsURLResponse isKindOfClass:[NSHTTPURLResponse class]])
         return { };
 

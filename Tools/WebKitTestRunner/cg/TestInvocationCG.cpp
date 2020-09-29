@@ -52,7 +52,7 @@ static CGContextRef createCGContextFromCGImage(CGImageRef image)
     size_t rowBytes = (4 * pixelsWide + 63) & ~63;
 
     // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    auto colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(0, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     if (!context)
         return nullptr;
@@ -63,7 +63,7 @@ static CGContextRef createCGContextFromCGImage(CGImageRef image)
 
 static CGContextRef createCGContextFromImage(WKImageRef wkImage)
 {
-    RetainPtr<CGImageRef> image = adoptCF(WKImageCreateCGImage(wkImage));
+    auto image = adoptCF(WKImageCreateCGImage(wkImage));
     return createCGContextFromCGImage(image.get());
 }
 
@@ -109,9 +109,9 @@ void computeSHA1HashStringForContext(CGContextRef bitmapContext, char hashString
 
 static void dumpBitmap(CGContextRef bitmapContext, const char* checksum)
 {
-    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
-    RetainPtr<CFMutableDataRef> imageData = adoptCF(CFDataCreateMutable(0, 0));
-    RetainPtr<CGImageDestinationRef> imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
+    auto image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
+    auto imageData = adoptCF(CFDataCreateMutable(0, 0));
+    auto imageDest = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
     CGImageDestinationAddImage(imageDest.get(), image.get(), 0);
     CGImageDestinationFinalize(imageDest.get());
 

@@ -195,7 +195,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
 
 + (NSDictionary *)dictionaryForEvent:(CGEventRef)rawEvent relativeToTime:(CGEventTimestamp)referenceTimestamp
 {
-    RetainPtr<CGEventRef> plainEvent = adoptCF(CGEventCreate(NULL));
+    auto plainEvent = adoptCF(CGEventCreate(NULL));
     CGEventRef rawPlainEvent = plainEvent.get();
 
     NSMutableDictionary *dict = [[[NSMutableDictionary alloc] init] autorelease];
@@ -226,7 +226,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
 
 + (RetainPtr<CGEventRef>)createEventForDictionary:(NSDictionary *)dict inWindow:(NSWindow *)window relativeToTime:(CGEventTimestamp)referenceTimestamp
 {
-    RetainPtr<CGEventRef> event = adoptCF(CGEventCreate(NULL));
+    auto event = adoptCF(CGEventCreate(NULL));
     CGEventRef rawEvent = event.get();
 
     FOR_EACH_CGEVENT_INTEGER_FIELD(STORE_INTEGER_FIELD_TO_EVENT);
@@ -264,7 +264,7 @@ const float eventDispatchTimerRate = 1. / 120.;
 
 + (void)playStream:(NSArray<NSDictionary *> *)eventDicts window:(NSWindow *)window completionHandler:(void(^)())completionHandler
 {
-    RetainPtr<EventStreamPlayer> player = adoptNS([[EventStreamPlayer alloc] init]);
+    auto player = adoptNS([[EventStreamPlayer alloc] init]);
 
     player->_remainingEventDictionaries = adoptNS([eventDicts mutableCopy]);
     player->_window = window;
@@ -282,7 +282,7 @@ const float eventDispatchTimerRate = 1. / 120.;
     auto removeList = adoptNS([[NSMutableArray alloc] init]);
     NSEvent *nsEvent = nil;
     for (id eventDict in _remainingEventDictionaries.get()) {
-        RetainPtr<CGEventRef> event = [EventSerializer createEventForDictionary:eventDict inWindow:_window.get() relativeToTime:_startTime];
+        auto event = [EventSerializer createEventForDictionary:eventDict inWindow:_window.get() relativeToTime:_startTime];
         if (CGEventGetTimestamp(event.get()) < mach_absolute_time()) {
             nsEvent = [NSEvent eventWithCGEvent:event.get()];
             [NSApp postEvent:nsEvent atStart:NO];

@@ -355,6 +355,8 @@
 		841CC00D181185BF0042E9B6 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		841CC00E181185BF0042E9B6 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* WebKitTestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitTestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
+		9338D1BA250A79EB00E827F6 /* JSBasics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSBasics.h; path = ../TestRunnerShared/Bindings/JSBasics.h; sourceTree = "<group>"; };
+		9338D1BE250BD9DD00E827F6 /* DictionaryFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DictionaryFunctions.h; sourceTree = "<group>"; };
 		93764176210D736000A3DAAE /* WebKitTestRunnerWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerWindow.mm; sourceTree = "<group>"; };
 		93764177210D736100A3DAAE /* WebKitTestRunnerWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerWindow.h; sourceTree = "<group>"; };
 		93C7881F250C69E400C0AA24 /* ReftestFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReftestFunctions.cpp; path = ../TestRunnerShared/ReftestFunctions.cpp; sourceTree = "<group>"; };
@@ -892,6 +894,7 @@
 			isa = PBXGroup;
 			children = (
 				378D442213346D00006A777B /* config.h */,
+				9338D1BE250BD9DD00E827F6 /* DictionaryFunctions.h */,
 				BC99A4841208901A007E9F08 /* StringFunctions.h */,
 				9B36A270209453A0003E0651 /* WhatToDump.h */,
 			);

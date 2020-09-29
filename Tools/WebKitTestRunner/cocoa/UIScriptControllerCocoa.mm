@@ -135,22 +135,18 @@ void UIScriptControllerCocoa::addViewToWindow(JSValueRef callback)
 
 void UIScriptControllerCocoa::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
 {
-    WKPreferences *preferences = webView().configuration.preferences;
-
-    String preference = toWTFString(toWK(preferenceRef));
-    String value = toWTFString(toWK(valueRef));
-    if (preference == "WebKitMinimumFontSize")
-        preferences.minimumFontSize = value.toDouble();
+    if (toWTFString(preferenceRef) == "WebKitMinimumFontSize")
+        webView().configuration.preferences.minimumFontSize = toWTFString(valueRef).toDouble();
 }
 
 void UIScriptControllerCocoa::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
 {
-    [webView() _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
+    [webView() _findString:toWTFString(string) options:options maxCount:maxCount];
 }
 
 JSObjectRef UIScriptControllerCocoa::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
-    NSDictionary *contentDictionary = [webView() _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
+    NSDictionary *contentDictionary = [webView() _contentsOfUserInterfaceItem:toWTFString(interfaceItem)];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
@@ -219,12 +215,10 @@ void UIScriptControllerCocoa::paste()
 void UIScriptControllerCocoa::insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, TestController::singleton().currentTestURL()));
-    RetainPtr<NSURL> attachmentURL = [NSURL fileURLWithPath:toWTFString(toWK(filePath)) relativeToURL:(__bridge NSURL *)testURL.get()];
-
-    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:attachmentURL.get() options:0 error:nil]);
-    [webView() _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:toWTFString(toWK(contentType)) completion:^(BOOL success) {
+    auto testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, TestController::singleton().currentTestURL()));
+    auto attachmentURL = [NSURL fileURLWithPath:toWTFString(filePath) relativeToURL:(__bridge NSURL *)testURL.get()];
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:attachmentURL options:0 error:nil]);
+    [webView() _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:toWTFString(contentType) completion:^(BOOL success) {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

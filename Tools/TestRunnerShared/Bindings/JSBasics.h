@@ -32,16 +32,30 @@
 
 namespace WTR {
 
-JSValueRef JSValueMakeBooleanOrNull(JSContextRef, Optional<bool>);
-Optional<bool> JSValueToNullableBoolean(JSContextRef, JSValueRef);
+Optional<bool> toOptionalBool(JSContextRef, JSValueRef);
+Optional<double> toOptionalDouble(JSContextRef, JSValueRef);
 
-JSValueRef JSValueMakeStringOrNull(JSContextRef, JSStringRef);
+JSRetainPtr<JSStringRef> createJSString(const char* = "");
+JSRetainPtr<JSStringRef> createJSString(JSContextRef, JSValueRef);
 
-JSRetainPtr<JSStringRef> createJSString(const char*);
 JSValueRef makeValue(JSContextRef, const char*);
+JSValueRef makeValue(JSContextRef, Optional<bool>);
+JSValueRef makeValue(JSContextRef, JSStringRef);
+
+JSValueRef property(JSContextRef, JSObjectRef, const char* name);
+bool booleanProperty(JSContextRef, JSObjectRef, const char* name, bool defaultValue = false);
+double numericProperty(JSContextRef, JSObjectRef, const char* name);
+JSRetainPtr<JSStringRef> stringProperty(JSContextRef, JSObjectRef, const char* name);
+unsigned arrayLength(JSContextRef, JSObjectRef);
 JSObjectRef objectProperty(JSContextRef, JSObjectRef, const char* name);
 JSObjectRef objectProperty(JSContextRef, JSObjectRef, std::initializer_list<const char*> names);
+
 void setProperty(JSContextRef, JSObjectRef, const char* name, bool value);
+void setProperty(JSContextRef, JSObjectRef, const char* name, double value);
+
+void setGlobalObjectProperty(JSContextRef, const char* name, JSValueRef);
+void setGlobalObjectProperty(JSContextRef, const char* name, double value);
+
 JSValueRef call(JSContextRef, JSObjectRef, const char* name, std::initializer_list<JSValueRef> arguments);
 JSObjectRef callConstructor(JSGlobalContextRef, const char* name, std::initializer_list<JSValueRef> arguments);
 

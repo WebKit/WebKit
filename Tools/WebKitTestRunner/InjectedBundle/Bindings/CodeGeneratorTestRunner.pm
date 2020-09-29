@@ -261,8 +261,7 @@ ${implementationClassName}* to${implementationClassName}(JSContextRef context, J
 
 JSClassRef ${className}::${classRefGetter}()
 {
-    static JSClassRef jsClass;
-    if (!jsClass) {
+    static const JSClassRef jsClass = [] {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.className = "@{[$type->name]}";
         definition.parentClass = @{[$self->_parentClassRefGetterExpression($interface)]};
@@ -274,8 +273,8 @@ EOF
     push(@contents, "        definition.finalize = finalize;\n") unless _parentInterface($interface);
 
     push(@contents, <<EOF);
-        jsClass = JSClassCreate(&definition);
-    }
+        return JSClassCreate(&definition);
+    }();
     return jsClass;
 }
 
@@ -477,10 +476,11 @@ sub _platformTypeConstructor
 {
     my ($self, $type, $argumentName) = @_;
 
-    return "JSValueToNullableBoolean(context, $argumentName)" if $type->name eq "boolean" && $type->isNullable;
+    return "toOptionalBool(context, $argumentName)" if $type->name eq "boolean" && $type->isNullable;
     return "JSValueToBoolean(context, $argumentName)" if $type->name eq "boolean";
     return "$argumentName" if $type->name eq "object";
-    return "adopt(JSValueToStringCopy(context, $argumentName, nullptr))" if $$self{codeGenerator}->IsStringType($type);
+    return "createJSString(context, $argumentName)" if $$self{codeGenerator}->IsStringType($type);
+    return "toOptionalDouble(context, $argumentName)" if $$self{codeGenerator}->IsPrimitiveType($type) && $type->isNullable;
     return "JSValueToNumber(context, $argumentName, nullptr)" if $$self{codeGenerator}->IsPrimitiveType($type);
     return "to" . _implementationClassName($type) . "(context, $argumentName)";
 }
@@ -499,18 +499,16 @@ sub _platformTypeVariableDeclaration
         "JSValueRef" => 1,
     );
 
-    my $nullValue = "0";
+    my $nullValue = "nullptr";
     if ($platformType eq "JSValueRef") {
         $nullValue = "JSValueMakeUndefined(context)";
-    } elsif (defined $nonPointerTypes{$platformType} && $platformType ne "double") {
-        $nullValue = "$platformType()";
+    } elsif (defined $nonPointerTypes{$platformType}) {
+        $nullValue = $type->isNullable ? "WTF::nullopt" : "$platformType()";
     }
 
-    $platformType .= "*" unless defined $nonPointerTypes{$platformType};
-
-    return "$platformType $variableName = $condition && $constructor;" if $condition && $platformType eq "bool";
-    return "$platformType $variableName = $condition ? $constructor : $nullValue;" if $condition;
-    return "$platformType $variableName = $constructor;";
+    return "bool $variableName = $condition && $constructor;" if $condition && $platformType eq "bool";
+    return "auto $variableName = $condition ? $constructor : $nullValue;" if $condition;
+    return "auto $variableName = $constructor;";
 }
 
 sub _returnExpression
@@ -518,11 +516,11 @@ sub _returnExpression
     my ($self, $returnType, $expression) = @_;
 
     return "JSValueMakeUndefined(context)" if $returnType->name eq "undefined";
-    return "JSValueMakeBooleanOrNull(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
+    return "makeValue(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
     return "${expression}" if $returnType->name eq "object";
     return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsPrimitiveType($returnType);
-    return "JSValueMakeStringOrNull(context, ${expression}.get())" if $$self{codeGenerator}->IsStringType($returnType);
+    return "makeValue(context, ${expression}.get())" if $$self{codeGenerator}->IsStringType($returnType);
     return "toJS(context, WTF::getPtr(${expression}))";
 }
 

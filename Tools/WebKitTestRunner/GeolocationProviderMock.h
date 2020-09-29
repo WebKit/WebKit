@@ -37,7 +37,7 @@ public:
     GeolocationProviderMock(WKContextRef);
     ~GeolocationProviderMock();
 
-    void setPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel);
+    void setPosition(double latitude, double longitude, double accuracy, Optional<double> altitude, Optional<double> altitudeAccuracy, Optional<double> heading, Optional<double> speed, Optional<double> floorLevel);
     void setPositionUnavailableError(WKStringRef errorMessage);
 
     void startUpdating(WKGeolocationManagerRef);

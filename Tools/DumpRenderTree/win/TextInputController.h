@@ -26,20 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef TextInputController_h
-#define TextInputController_h
+#pragma once
 
-#include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/JSValueRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <vector>
 #include <wtf/FastMalloc.h>
 
 class TextInputController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef);
 
     void setMarkedText(JSStringRef text, unsigned int from, unsigned int length);
     bool hasMarkedText();
@@ -50,9 +46,7 @@ public:
     std::vector<int> selectedRange();
 
 private:    
-    static JSClassRef getJSClass();
-    static JSStaticValue* staticValues();
-    static JSStaticFunction* staticFunctions();
+    static JSRetainPtr<JSClassRef> createJSClass();
+    static const JSStaticValue* staticValues();
+    static const JSStaticFunction* staticFunctions();
 };
-
-#endif // TextInputController_h

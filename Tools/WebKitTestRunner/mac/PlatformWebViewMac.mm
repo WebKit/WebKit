@@ -64,7 +64,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     if (m_options.useRemoteLayerTree)
         [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
-    RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([configuration copy]);
+    auto copiedConfiguration = adoptNS([configuration copy]);
     WKPreferencesSetThreadedScrollingEnabled((__bridge WKPreferencesRef)[copiedConfiguration preferences], m_options.useThreadedScrolling);
 
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);

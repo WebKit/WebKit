@@ -32,6 +32,7 @@
 #import "AccessibilityCommonMac.h"
 
 #import "JSWrapper.h"
+#import "StringFunctions.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <objc/runtime.h>
 
@@ -61,26 +62,22 @@ Class webAccessibilityObjectWrapperClass()
     return cls;
 }
 
-static JSValueRef makeArrayRefForArray(JSContextRef context, NSArray *array)
+static JSObjectRef makeJSArray(JSContextRef context, NSArray *array)
 {
     NSUInteger count = array.count;
     JSValueRef arguments[count];
-
     for (NSUInteger i = 0; i < count; i++)
         arguments[i] = makeValueRefForValue(context, [array objectAtIndex:i]);
-
     return JSObjectMakeArray(context, count, arguments, nullptr);
 }
 
-static JSValueRef makeObjectRefForDictionary(JSContextRef context, NSDictionary *dictionary)
+static JSObjectRef makeJSObject(JSContextRef context, NSDictionary *dictionary)
 {
-    JSObjectRef object = JSObjectMake(context, nullptr, nullptr);
-
+    auto object = JSObjectMake(context, nullptr, nullptr);
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *) {
         if (JSValueRef propertyValue = makeValueRefForValue(context, obj))
             JSObjectSetProperty(context, object, [key createJSStringRef].get(), propertyValue, kJSPropertyAttributeNone, nullptr);
     }];
-
     return object;
 }
 
@@ -96,9 +93,9 @@ JSValueRef makeValueRefForValue(JSContextRef context, id value)
     if ([value isKindOfClass:webAccessibilityObjectWrapperClass()])
         return toJS(context, WTR::AccessibilityUIElement::create(static_cast<PlatformUIElement>(value)).ptr());
     if ([value isKindOfClass:[NSDictionary class]])
-        return makeObjectRefForDictionary(context, value);
+        return makeJSObject(context, value);
     if ([value isKindOfClass:[NSArray class]])
-        return makeArrayRefForArray(context, value);
+        return makeJSArray(context, value);
     return nullptr;
 }
 
@@ -115,28 +112,16 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
 
     if (searchKey) {
         id searchKeyParameter = nil;
-        if (JSValueIsString(context, searchKey)) {
-            auto searchKeyString = adopt(JSValueToStringCopy(context, searchKey, nullptr));
-            if (searchKeyString)
-                searchKeyParameter = [NSString stringWithJSStringRef:searchKeyString.get()];
-        } else if (JSValueIsObject(context, searchKey)) {
+        if (JSValueIsString(context, searchKey))
+            searchKeyParameter = toWTFString(context, searchKey);
+        else if (JSValueIsObject(context, searchKey)) {
             JSObjectRef searchKeyArray = JSValueToObject(context, searchKey, nullptr);
-            unsigned searchKeyArrayLength = 0;
-
-            auto lengthPropertyString = adopt(JSStringCreateWithUTF8CString("length"));
-            JSValueRef searchKeyArrayLengthValue = JSObjectGetProperty(context, searchKeyArray, lengthPropertyString.get(), nullptr);
-            if (searchKeyArrayLengthValue && JSValueIsNumber(context, searchKeyArrayLengthValue))
-                searchKeyArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchKeyArrayLengthValue, nullptr));
-
+            unsigned searchKeyArrayLength = arrayLength(context, searchKeyArray);
             for (unsigned i = 0; i < searchKeyArrayLength; ++i) {
-                JSValueRef searchKeyValue = JSObjectGetPropertyAtIndex(context, searchKeyArray, i, nullptr);
-                JSStringRef searchKeyString = JSValueToStringCopy(context, searchKeyValue, nullptr);
-                if (searchKeyString) {
-                    if (!searchKeyParameter)
-                        searchKeyParameter = [NSMutableArray array];
-                    [searchKeyParameter addObject:[NSString stringWithJSStringRef:searchKeyString]];
-                    JSStringRelease(searchKeyString);
-                }
+                auto searchKey = toWTFString(context, JSObjectGetPropertyAtIndex(context, searchKeyArray, i, nullptr));
+                if (!searchKeyParameter)
+                    searchKeyParameter = [NSMutableArray array];
+                [searchKeyParameter addObject:searchKey];
             }
         }
         if (searchKeyParameter)
@@ -144,10 +129,9 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
     }
 
     if (searchText && JSStringGetLength(searchText))
-        [parameterizedAttribute setObject:[NSString stringWithJSStringRef:searchText] forKey:@"AXSearchText"];
+        [parameterizedAttribute setObject:toWTFString(searchText) forKey:@"AXSearchText"];
 
     [parameterizedAttribute setObject:@(visibleOnly) forKey:@"AXVisibleOnly"];
-
     [parameterizedAttribute setObject:@(immediateDescendantsOnly) forKey:@"AXImmediateDescendantsOnly"];
 
     return parameterizedAttribute;

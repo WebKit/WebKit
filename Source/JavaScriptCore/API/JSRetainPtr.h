@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,16 @@
 #pragma once
 
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <algorithm>
 
-inline void JSRetain(JSStringRef string) { JSStringRetain(string); }
-inline void JSRelease(JSStringRef string) { JSStringRelease(string); }
+inline void JSRetain(JSClassRef context) { JSClassRetain(context); }
+inline void JSRelease(JSClassRef context) { JSClassRelease(context); }
 inline void JSRetain(JSGlobalContextRef context) { JSGlobalContextRetain(context); }
 inline void JSRelease(JSGlobalContextRef context) { JSGlobalContextRelease(context); }
+inline void JSRetain(JSStringRef string) { JSStringRetain(string); }
+inline void JSRelease(JSStringRef string) { JSStringRelease(string); }
 
 enum AdoptTag { Adopt };
 
@@ -74,12 +77,18 @@ private:
     T m_ptr { nullptr };
 };
 
+JSRetainPtr<JSClassRef> adopt(JSClassRef);
 JSRetainPtr<JSStringRef> adopt(JSStringRef);
 JSRetainPtr<JSGlobalContextRef> adopt(JSGlobalContextRef);
 
 template<typename T> inline JSRetainPtr<T>::JSRetainPtr(AdoptTag, T ptr)
     : m_ptr(ptr)
 {
+}
+
+inline JSRetainPtr<JSClassRef> adopt(JSClassRef o)
+{
+    return JSRetainPtr<JSClassRef>(Adopt, o);
 }
 
 inline JSRetainPtr<JSStringRef> adopt(JSStringRef o)

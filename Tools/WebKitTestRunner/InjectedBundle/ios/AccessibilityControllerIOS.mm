@@ -62,7 +62,7 @@ bool AccessibilityController::removeNotificationListener()
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
-    return adopt(JSStringCreateWithUTF8CString("ios"));
+    return WTR::createJSString("ios");
 }
 
 void AccessibilityController::resetToConsistentState()
@@ -89,7 +89,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
-    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    auto page = InjectedBundle::singleton().page()->page();
     id root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
     id result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);

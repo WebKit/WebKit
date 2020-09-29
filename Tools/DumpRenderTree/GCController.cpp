@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,72 +29,49 @@
 #include "config.h"
 #include "GCController.h"
 
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSRetainPtr.h>
-
-GCController::GCController()
-{
-}
-
-GCController::~GCController()
-{
-}
+#include "JSBasics.h"
 
 // Static Functions
 
 static JSValueRef collectCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    GCController* controller = static_cast<GCController*>(JSObjectGetPrivate(thisObject));
-    controller->collect();
+    auto& controller = *static_cast<GCController*>(JSObjectGetPrivate(thisObject));
+    controller.collect();
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef collectOnAlternateThreadCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    bool waitUntilDone = false;
-    if (argumentCount > 0)
-        waitUntilDone = JSValueToBoolean(context, arguments[0]);
-
-    GCController* controller = static_cast<GCController*>(JSObjectGetPrivate(thisObject));
-    controller->collectOnAlternateThread(waitUntilDone);
-
+    auto& controller = *static_cast<GCController*>(JSObjectGetPrivate(thisObject));
+    bool waitUntilDone = argumentCount > 0 && JSValueToBoolean(context, arguments[0]);
+    controller.collectOnAlternateThread(waitUntilDone);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef getJSObjectCountCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    GCController* controller = static_cast<GCController*>(JSObjectGetPrivate(thisObject));
-    size_t jsObjectCount = controller->getJSObjectCount();
-
-    return JSValueMakeNumber(context, jsObjectCount);
+    auto& controller = *static_cast<GCController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, controller.getJSObjectCount());
 }
 
 // Object Creation
 
-void GCController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void GCController::makeWindowObject(JSContextRef context)
 {
-    auto gcControllerStr = adopt(JSStringCreateWithUTF8CString("GCController"));
-
-    JSClassRef classRef = getJSClass();
-    JSValueRef gcControllerObject = JSObjectMake(context, classRef, this);
-    JSClassRelease(classRef);
-
-    JSObjectSetProperty(context, windowObject, gcControllerStr.get(), gcControllerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    WTR::setGlobalObjectProperty(context, "GCController", JSObjectMake(context, createJSClass().get(), this));
 }
 
-JSClassRef GCController::getJSClass()
+JSRetainPtr<JSClassRef> GCController::createJSClass()
 {
-    static JSStaticFunction staticFunctions[] = {
+    static constexpr JSStaticFunction functions[] = {
         { "collect", collectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "collectOnAlternateThread", collectOnAlternateThreadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "getJSObjectCount", getJSObjectCountCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
-
-    static JSClassDefinition classDefinition = {
-        0, kJSClassAttributeNone, "GCController", 0, 0, staticFunctions,
+    static const JSClassDefinition definition = {
+        0, kJSClassAttributeNone, "GCController", 0, 0, functions,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
-
-    return JSClassCreate(&classDefinition);
+    return adopt(JSClassCreate(&definition));
 }

@@ -142,7 +142,7 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
 
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
-    RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
+    auto copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
 
 #if PLATFORM(IOS_FAMILY)
     if (options.useDataDetection)

@@ -31,6 +31,7 @@
 #import "config.h"
 #import "AccessibilityCommonMac.h"
 
+#import "JSBasics.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 
 @implementation NSString (JSStringRefAdditions)
@@ -56,7 +57,6 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
         [parameterizedAttribute setObject:startElement->platformUIElement() forKey:@"AXStartElement"];
 
     [parameterizedAttribute setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
-
     [parameterizedAttribute setObject:@(resultsLimit) forKey:@"AXResultsLimit"];
 
     if (searchKey) {
@@ -66,14 +66,8 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
             if (searchKeyString)
                 searchKeyParameter = [NSString stringWithJSStringRef:searchKeyString.get()];
         } else if (JSValueIsObject(context, searchKey)) {
-            JSObjectRef searchKeyArray = JSValueToObject(context, searchKey, nullptr);
-            unsigned searchKeyArrayLength = 0;
-            
-            auto lengthPropertyString = adopt(JSStringCreateWithUTF8CString("length"));
-            JSValueRef searchKeyArrayLengthValue = JSObjectGetProperty(context, searchKeyArray, lengthPropertyString.get(), nullptr);
-            if (searchKeyArrayLengthValue && JSValueIsNumber(context, searchKeyArrayLengthValue))
-                searchKeyArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchKeyArrayLengthValue, nullptr));
-            
+            JSObjectRef searchKeyArray = (JSObjectRef)searchKey;
+            unsigned searchKeyArrayLength = WTR::arrayLength(context, searchKeyArray);
             for (unsigned i = 0; i < searchKeyArrayLength; ++i) {
                 JSValueRef searchKeyValue = JSObjectGetPropertyAtIndex(context, searchKeyArray, i, nullptr);
                 JSStringRef searchKeyString = JSValueToStringCopy(context, searchKeyValue, nullptr);
@@ -88,12 +82,11 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
         if (searchKeyParameter)
             [parameterizedAttribute setObject:searchKeyParameter forKey:@"AXSearchKey"];
     }
-    
+
     if (searchText && JSStringGetLength(searchText))
         [parameterizedAttribute setObject:[NSString stringWithJSStringRef:searchText] forKey:@"AXSearchText"];
-    
+
     [parameterizedAttribute setObject:@(visibleOnly) forKey:@"AXVisibleOnly"];
-    
     [parameterizedAttribute setObject:@(immediateDescendantsOnly) forKey:@"AXImmediateDescendantsOnly"];
     
     return parameterizedAttribute;

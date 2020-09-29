@@ -1,3 +1,12 @@
+2020-09-26  Darin Adler  <darin@apple.com>
+
+        Refactor test runner code to cut down on copy/paste code and long-winded repetitive idioms
+        https://bugs.webkit.org/show_bug.cgi?id=217028
+
+        Reviewed by Sam Weinig.
+
+        * API/JSRetainPtr.h: Added support for JSClassRef.
+
 2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Annotate JIT operation functions called from B3 etc.

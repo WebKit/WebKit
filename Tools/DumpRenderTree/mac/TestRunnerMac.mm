@@ -32,6 +32,7 @@
 
 #import "DefaultPolicyDelegate.h"
 #import "EditingDelegate.h"
+#import "JSBasics.h"
 #import "LayoutTestSpellChecker.h"
 #import "MockGeolocationProvider.h"
 #import "MockWebNotificationProvider.h"
@@ -670,15 +671,10 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
 {
     WebFindOptions options = 0;
 
-    auto lengthPropertyName = adopt(JSStringCreateWithUTF8CString("length"));
-    JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
-    if (!JSValueIsNumber(context, lengthValue))
-        return false;
+    auto length = WTR::arrayLength(context, optionsArray);
+    auto targetCFString = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, target));
 
-    RetainPtr<CFStringRef> targetCFString = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, target));
-
-    size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
-    for (size_t i = 0; i < length; ++i) {
+    for (unsigned i = 0; i < length; ++i) {
         JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0);
         if (!JSValueIsString(context, value))
             continue;

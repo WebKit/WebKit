@@ -54,7 +54,7 @@ public:
     
     void cleanup();
 
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef);
 
     void addDisallowedURL(JSStringRef url);
     const std::set<std::string>& allowedHosts() const { return m_allowedHosts; }
@@ -497,7 +497,7 @@ private:
     std::vector<char> m_openPanelFilesMediaIcon;
 #endif
 
-    static JSClassRef getJSClass();
-    static JSStaticValue* staticValues();
-    static JSStaticFunction* staticFunctions();
+    static JSRetainPtr<JSClassRef> createJSClass();
+    static const JSStaticValue* staticValues();
+    static const JSStaticFunction* staticFunctions();
 };

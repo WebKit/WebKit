@@ -63,7 +63,7 @@ public:
     void contextDestroyed();
     virtual void waitForOutstandingCallbacks() { /* notImplemented(); */ }
 
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef);
 
     // Transaction helpers
     

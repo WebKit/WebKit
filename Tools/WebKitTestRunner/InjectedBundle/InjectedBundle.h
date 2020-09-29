@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@ public:
 #endif
 
     InjectedBundlePage* page() const;
+    WKBundlePageRef pageRef() const;
     size_t pageCount() const { return m_pages.size(); }
     void closeOtherPages();
 
@@ -96,7 +97,7 @@ public:
 
     // Geolocation.
     void setGeolocationPermission(bool);
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, Optional<double> altitude, Optional<double> altitudeAccuracy, Optional<double> heading, Optional<double> speed, Optional<double> floorLevel);
     void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
     bool isGeolocationProviderActive() const;
 
@@ -164,13 +165,9 @@ private:
     void setUpInjectedBundleClients(WKBundlePageRef);
 
     void platformInitialize(WKTypeRef initializationUserData);
-    void resetLocalSettings();
 
     enum class BegingTestingMode { New, Resume };
     void beginTesting(WKDictionaryRef initialSettings, BegingTestingMode);
-
-    bool booleanForKey(WKDictionaryRef, const char* key);
-    String stringForKey(WKDictionaryRef, const char* key);
 
     WKBundleRef m_bundle { nullptr };
     WKBundlePageGroupRef m_pageGroup { nullptr };
@@ -209,5 +206,56 @@ private:
 
     size_t m_userScriptInjectedCount { 0 };
 };
+
+void postMessage(const char* name);
+void postMessage(const char* name, bool value);
+void postMessage(const char* name, int value);
+void postMessage(const char* name, unsigned value);
+void postMessage(const char* name, uint64_t value);
+void postMessage(const char* name, const char* value);
+void postMessage(const char* name, JSStringRef value);
+void postMessage(const char* name, const void* value) = delete;
+
+void postSynchronousMessage(const char* name);
+void postSynchronousMessage(const char* name, bool value);
+void postSynchronousMessage(const char* name, int value);
+void postSynchronousMessage(const char* name, unsigned value);
+void postSynchronousMessage(const char* name, uint64_t value);
+void postSynchronousMessage(const char* name, double value);
+void postSynchronousMessage(const char* name, const char* value);
+void postSynchronousMessage(const char* name, const void* value) = delete;
+
+void postPageMessage(const char* name);
+void postPageMessage(const char* name, bool value);
+void postPageMessage(const char* name, const char* value);
+void postPageMessage(const char* name, WKStringRef value);
+void postPageMessage(const char* name, const void* value) = delete;
+
+void postSynchronousPageMessage(const char* name);
+void postSynchronousPageMessage(const char* name, bool value);
+void postSynchronousPageMessage(const char* name, const char* value);
+void postSynchronousPageMessage(const char* name, const void* value) = delete;
+
+template<typename T> void postMessage(const char* name, const WKRetainPtr<T>& value)
+{
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), toWK(name).get(), value.get());
+}
+
+template<typename T> void postSynchronousMessage(const char* name, const WKRetainPtr<T>& value)
+{
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), toWK(name).get(), value.get(), nullptr);
+}
+
+template<typename T> void postPageMessage(const char* name, const WKRetainPtr<T>& value)
+{
+    if (auto page = InjectedBundle::singleton().pageRef())
+        WKBundlePagePostMessage(page, toWK(name).get(), value.get());
+}
+
+template<typename T> void postSynchronousPageMessage(const char* name, const WKRetainPtr<T>& value)
+{
+    if (auto page = InjectedBundle::singleton().pageRef())
+        WKBundlePagePostSynchronousMessageForTesting(page, toWK(name).get(), value.get(), nullptr);
+}
 
 } // namespace WTR

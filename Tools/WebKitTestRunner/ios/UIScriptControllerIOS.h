@@ -25,10 +25,10 @@
 
 #pragma once
 
+#if PLATFORM(IOS_FAMILY)
+
 #import "UIScriptControllerCocoa.h"
 #import <wtf/BlockPtr.h>
-
-#if PLATFORM(IOS_FAMILY)
 
 namespace WebCore {
 class FloatPoint;
@@ -37,13 +37,14 @@ class FloatRect;
 
 namespace WTR {
 
-class UIScriptControllerIOS : public UIScriptControllerCocoa {
+class UIScriptControllerIOS final : public UIScriptControllerCocoa {
 public:
     explicit UIScriptControllerIOS(UIScriptContext& context)
         : UIScriptControllerCocoa(context)
     {
     }
 
+private:
     void waitForOutstandingCallbacks() override;
     void doAfterPresentationUpdate(JSValueRef) override;
     void doAfterNextStablePresentationUpdate(JSValueRef) override;
@@ -156,7 +157,6 @@ public:
     void setDidEndScrollingCallback(JSValueRef) override;
     void clearAllCallbacks() override;
 
-private:
     void waitForModalTransitionToFinish() const;
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;

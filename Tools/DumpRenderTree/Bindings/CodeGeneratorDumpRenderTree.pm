@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -431,10 +431,10 @@ sub _platformTypeConstructor
 {
     my ($self, $type, $argumentName) = @_;
 
-    return "JSValueToNullableBoolean(context, $argumentName)" if $type->name eq "boolean" && $type->isNullable;
+    return "toOptionalBool(context, $argumentName)" if $type->name eq "boolean" && $type->isNullable;
     return "JSValueToBoolean(context, $argumentName)" if $type->name eq "boolean";
     return "$argumentName" if $type->name eq "object";
-    return "adopt(JSValueToStringCopy(context, $argumentName, nullptr))" if $$self{codeGenerator}->IsStringType($type);
+    return "createJSString(context, $argumentName)" if $$self{codeGenerator}->IsStringType($type);
     return "JSValueToNumber(context, $argumentName, nullptr)" if $$self{codeGenerator}->IsPrimitiveType($type);
     return "to" . _implementationClassName($type) . "(context, $argumentName)";
 }
@@ -472,11 +472,11 @@ sub _returnExpression
     my ($self, $returnType, $expression) = @_;
 
     return "JSValueMakeUndefined(context)" if $returnType->name eq "undefined";
-    return "JSValueMakeBooleanOrNull(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
+    return "makeValue(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
     return "${expression}" if $returnType->name eq "object";
     return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsPrimitiveType($returnType);
-    return "JSValueMakeStringOrNull(context, ${expression}.get())" if $$self{codeGenerator}->IsStringType($returnType);
+    return "makeValue(context, ${expression}.get())" if $$self{codeGenerator}->IsStringType($returnType);
     return "toJS(context, WTF::getPtr(${expression}))";
 }
 

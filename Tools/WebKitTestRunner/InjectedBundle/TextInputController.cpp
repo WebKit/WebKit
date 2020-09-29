@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextInputController.h"
 
+#include "DictionaryFunctions.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSTextInputController.h"
@@ -40,30 +41,14 @@ Ref<TextInputController> TextInputController::create()
     return adoptRef(*new TextInputController);
 }
 
-TextInputController::TextInputController()
-{
-}
-
-TextInputController::~TextInputController()
-{
-}
-
 JSClassRef TextInputController::wrapperClass()
 {
     return JSTextInputController::textInputControllerClass();
 }
 
-void TextInputController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void TextInputController::makeWindowObject(JSContextRef context)
 {
-    setProperty(context, windowObject, "textInputController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
-}
-
-static unsigned arrayLength(JSContextRef context, JSObjectRef array)
-{
-    auto lengthString = adopt(JSStringCreateWithUTF8CString("length"));
-    if (auto lengthValue = JSObjectGetProperty(context, array, lengthString.get(), nullptr))
-        return static_cast<unsigned>(JSValueToNumber(context, lengthValue, nullptr));
-    return 0;
+    setGlobalObjectProperty(context, "textInputController", this);
 }
 
 static WKArrayRef createCompositionHighlightData(JSContextRef context, JSValueRef jsHighlightsValue)
@@ -72,50 +57,19 @@ static WKArrayRef createCompositionHighlightData(JSContextRef context, JSValueRe
         return nullptr;
 
     auto result = WKMutableArrayCreate();
-    auto jsHighlightsArray = const_cast<JSObjectRef>(jsHighlightsValue);
-    unsigned length = arrayLength(context, jsHighlightsArray);
-    if (!length)
-        return result;
-
-    auto jsFromKey = adopt(JSStringCreateWithUTF8CString("from"));
-    auto jsLengthKey = adopt(JSStringCreateWithUTF8CString("length"));
-    auto jsColorKey = adopt(JSStringCreateWithUTF8CString("color"));
-
-    auto wkFromKey = adoptWK(WKStringCreateWithUTF8CString("from"));
-    auto wkLengthKey = adoptWK(WKStringCreateWithUTF8CString("length"));
-    auto wkColorKey = adoptWK(WKStringCreateWithUTF8CString("color"));
-
-    for (size_t i = 0; i < length; ++i) {
-        JSValueRef exception = nullptr;
-        auto jsObjectValue = JSObjectGetPropertyAtIndex(context, jsHighlightsArray, i, &exception);
-        if (exception || !JSValueIsObject(context, jsObjectValue))
+    auto array = const_cast<JSObjectRef>(jsHighlightsValue);
+    unsigned length = arrayLength(context, array);
+    for (unsigned i = 0; i < length; ++i) {
+        auto value = JSObjectGetPropertyAtIndex(context, array, i, nullptr);
+        if (!value || !JSValueIsObject(context, value))
             continue;
-
-        auto jsObject = const_cast<JSObjectRef>(jsObjectValue);
-        auto jsFromValue = JSObjectGetProperty(context, jsObject, jsFromKey.get(), nullptr);
-        if (!jsFromValue || !JSValueIsNumber(context, jsFromValue))
-            continue;
-
-        auto jsLengthValue = JSObjectGetProperty(context, jsObject, jsLengthKey.get(), nullptr);
-        if (!jsLengthValue || !JSValueIsNumber(context, jsLengthValue))
-            continue;
-
-        auto jsColorValue = JSObjectGetProperty(context, jsObject, jsColorKey.get(), nullptr);
-        if (!jsColorValue || !JSValueIsString(context, jsColorValue))
-            continue;
-
-        auto color = adopt(JSValueToStringCopy(context, jsColorValue, nullptr));
-        auto wkColor = adoptWK(WKStringCreateWithJSString(color.get()));
-        auto wkFrom = adoptWK(WKUInt64Create(lround(JSValueToNumber(context, jsFromValue, nullptr))));
-        auto wkLength = adoptWK(WKUInt64Create(lround(JSValueToNumber(context, jsLengthValue, nullptr))));
-
+        auto object = const_cast<JSObjectRef>(value);
         auto dictionary = adoptWK(WKMutableDictionaryCreate());
-        WKDictionarySetItem(dictionary.get(), wkFromKey.get(), wkFrom.get());
-        WKDictionarySetItem(dictionary.get(), wkLengthKey.get(), wkLength.get());
-        WKDictionarySetItem(dictionary.get(), wkColorKey.get(), wkColor.get());
+        setValue(dictionary, "from", static_cast<uint64_t>(numericProperty(context, object, "from")));
+        setValue(dictionary, "length", static_cast<uint64_t>(numericProperty(context, object, "length")));
+        setValue(dictionary, "color", toWK(stringProperty(context, object, "color")));
         WKArrayAppendItem(result, dictionary.get());
     }
-
     return result;
 }
 

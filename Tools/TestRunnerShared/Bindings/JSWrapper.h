@@ -50,4 +50,9 @@ inline void setProperty(JSContextRef context, JSObjectRef object, const char* pr
     JSObjectSetProperty(context, object, createJSString(propertyName).get(), JSWrapper::wrap(context, value), attributes, exception);
 }
 
+inline void setGlobalObjectProperty(JSContextRef context, const char* propertyName, JSWrappable* value)
+{
+    setGlobalObjectProperty(context, propertyName, JSWrapper::wrap(context, value));
+}
+
 } // namespace WTR

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "LayoutTestSpellChecker.h"
 
-#import <JavaScriptCore/JSRetainPtr.h>
+#import "JSBasics.h"
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
@@ -212,11 +212,11 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
 - (void)setResultsFromJSValue:(JSValueRef)resultsValue inContext:(JSContextRef)context
 {
     auto resultsObject = JSValueToObject(context, resultsValue, nullptr);
-    auto fromPropertyName = adopt(JSStringCreateWithUTF8CString("from"));
-    auto toPropertyName = adopt(JSStringCreateWithUTF8CString("to"));
-    auto typePropertyName = adopt(JSStringCreateWithUTF8CString("type"));
-    auto replacementPropertyName = adopt(JSStringCreateWithUTF8CString("replacement"));
-    auto detailsPropertyName = adopt(JSStringCreateWithUTF8CString("details"));
+    auto fromPropertyName = WTR::createJSString("from");
+    auto toPropertyName = WTR::createJSString("to");
+    auto typePropertyName = WTR::createJSString("type");
+    auto replacementPropertyName = WTR::createJSString("replacement");
+    auto detailsPropertyName = WTR::createJSString("details");
     auto results = adoptNS([[NSMutableDictionary alloc] init]);
 
     // FIXME: Using the Objective-C API would make this logic easier to follow.
@@ -228,15 +228,13 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
         auto resultsForWord = adoptNS([[NSMutableArray alloc] init]);
         for (size_t resultIndex = 0; resultIndex < JSPropertyNameArrayGetCount(resultsArrayPropertyNames); ++resultIndex) {
             auto resultsObject = JSValueToObject(context, JSObjectGetPropertyAtIndex(context, resultsArray, resultIndex, nullptr), nullptr);
-            long fromValue = lroundl(JSValueToNumber(context, JSObjectGetProperty(context, resultsObject, fromPropertyName.get(), nullptr), nullptr));
-            long toValue = lroundl(JSValueToNumber(context, JSObjectGetProperty(context, resultsObject, toPropertyName.get(), nullptr), nullptr));
-            auto typeValue = adopt(JSValueToStringCopy(context, JSObjectGetProperty(context, resultsObject, typePropertyName.get(), nullptr), nullptr));
+            long fromValue = JSValueToNumber(context, JSObjectGetProperty(context, resultsObject, fromPropertyName.get(), nullptr), nullptr);
+            long toValue = JSValueToNumber(context, JSObjectGetProperty(context, resultsObject, toPropertyName.get(), nullptr), nullptr);
+            auto typeValue = WTR::createJSString(context, JSObjectGetProperty(context, resultsObject, typePropertyName.get(), nullptr));
             auto replacementValue = JSObjectGetProperty(context, resultsObject, replacementPropertyName.get(), nullptr);
             RetainPtr<CFStringRef> replacementText;
-            if (!JSValueIsUndefined(context, replacementValue)) {
-                auto replacementJSString = adopt(JSValueToStringCopy(context, replacementValue, nullptr));
-                replacementText = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, replacementJSString.get()));
-            }
+            if (!JSValueIsUndefined(context, replacementValue))
+                replacementText = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, WTR::createJSString(context, replacementValue).get()));
             auto details = adoptNS([[NSMutableArray alloc] init]);
             auto detailsValue = JSObjectGetProperty(context, resultsObject, detailsPropertyName.get(), nullptr);
             if (!JSValueIsUndefined(context, detailsValue)) {

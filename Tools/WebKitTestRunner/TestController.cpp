@@ -26,10 +26,10 @@
 #include "config.h"
 #include "TestController.h"
 
+#include "DictionaryFunctions.h"
 #include "EventSenderProxy.h"
 #include "Options.h"
 #include "PlatformWebView.h"
-#include "StringFunctions.h"
 #include "TestInvocation.h"
 #include "WebCoreTestSupport.h"
 #include <JavaScriptCore/InitializeThreading.h>
@@ -494,8 +494,7 @@ void TestController::initialize(int argc, const char* argv[])
     WebCoreTestSupport::installMockGamepadProvider();
 #endif
 
-    WKRetainPtr<WKStringRef> pageGroupIdentifier = adoptWK(WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
-    m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
+    m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(toWK("WebKitTestRunnerPageGroup").get()));
 
     m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 }
@@ -507,9 +506,9 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
     WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeouts);
 
-    WKRetainPtr<WKMutableArrayRef> overrideLanguages = adoptWK(WKMutableArrayCreate());
+    auto overrideLanguages = adoptWK(WKMutableArrayCreate());
     for (auto& language : options.overrideLanguages)
-        WKArrayAppendItem(overrideLanguages.get(), adoptWK(WKStringCreateWithUTF8CString(language.utf8().data())).get());
+        WKArrayAppendItem(overrideLanguages.get(), toWK(language).get());
     WKContextConfigurationSetOverrideLanguages(configuration.get(), overrideLanguages.get());
 
     if (options.shouldEnableProcessSwapOnNavigation()) {
@@ -843,31 +842,24 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesResetAllInternalDebugFeatures(preferences);
 
     // Set internal features that have different default values for testing.
-    static WKStringRef asyncOverflowScrollingFeature = WKStringCreateWithUTF8CString("AsyncOverflowScrollingEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, asyncOverflowScrollingFeature);
 
-    static WKStringRef asyncFrameScrollingFeature = WKStringCreateWithUTF8CString("AsyncFrameScrollingEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, asyncFrameScrollingFeature);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("AsyncOverflowScrollingEnabled").get());
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, toWK("AsyncFrameScrollingEnabled").get());
 
 #if ENABLE(INPUT_TYPE_DATE)
-    static WKStringRef inputTypeDateFeature = WKStringCreateWithUTF8CString("InputTypeDateEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeDateFeature);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeDateEnabled").get());
 #endif
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    static WKStringRef inputTypeDateTimeLocalFeature = WKStringCreateWithUTF8CString("InputTypeDateTimeLocalEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeDateTimeLocalFeature);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeDateTimeLocalEnabled").get());
 #endif
 #if ENABLE(INPUT_TYPE_MONTH)
-    static WKStringRef inputTypeMonthFeature = WKStringCreateWithUTF8CString("InputTypeMonthEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeMonthFeature);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeMonthEnabled").get());
 #endif
 #if ENABLE(INPUT_TYPE_TIME)
-    static WKStringRef inputTypeTimeFeature = WKStringCreateWithUTF8CString("InputTypeTimeEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeTimeFeature);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeTimeEnabled").get());
 #endif
 #if ENABLE(INPUT_TYPE_WEEK)
-    static WKStringRef inputTypeWeekFeature = WKStringCreateWithUTF8CString("InputTypeWeekEnabled");
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, inputTypeWeekFeature);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeWeekEnabled").get());
 #endif
 
     for (const auto& internalDebugFeature : options.internalDebugFeatures)
@@ -920,25 +912,16 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode);
     WKPreferencesSetPageCacheEnabled(preferences, options.enableBackForwardCache);
 
-    static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
-    WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
-
-    static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
-    static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");
-    static WKStringRef fantasyFontFamily = WKStringCreateWithUTF8CString("Papyrus");
-    static WKStringRef fixedFontFamily = WKStringCreateWithUTF8CString("Courier");
-    static WKStringRef pictographFontFamily = WKStringCreateWithUTF8CString("Apple Color Emoji");
-    static WKStringRef sansSerifFontFamily = WKStringCreateWithUTF8CString("Helvetica");
-    static WKStringRef serifFontFamily = WKStringCreateWithUTF8CString("Times");
+    WKPreferencesSetDefaultTextEncodingName(preferences, toWK("ISO-8859-1").get());
 
     WKPreferencesSetMinimumFontSize(preferences, 0);
-    WKPreferencesSetStandardFontFamily(preferences, standardFontFamily);
-    WKPreferencesSetCursiveFontFamily(preferences, cursiveFontFamily);
-    WKPreferencesSetFantasyFontFamily(preferences, fantasyFontFamily);
-    WKPreferencesSetFixedFontFamily(preferences, fixedFontFamily);
-    WKPreferencesSetPictographFontFamily(preferences, pictographFontFamily);
-    WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
-    WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
+    WKPreferencesSetStandardFontFamily(preferences, toWK("Times").get());
+    WKPreferencesSetCursiveFontFamily(preferences, toWK("Apple Chancery").get());
+    WKPreferencesSetFantasyFontFamily(preferences, toWK("Papyrus").get());
+    WKPreferencesSetFixedFontFamily(preferences, toWK("Courier").get());
+    WKPreferencesSetPictographFontFamily(preferences, toWK("Apple Color Emoji").get());
+    WKPreferencesSetSansSerifFontFamily(preferences, toWK("Helvetica").get());
+    WKPreferencesSetSerifFontFamily(preferences, toWK("Times").get());
     WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
 #if ENABLE(MEDIA_SOURCE)
     WKPreferencesSetMediaSourceEnabled(preferences, true);
@@ -1010,38 +993,27 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageSetCustomUserAgent(m_mainWebView->page(), nullptr);
 
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
-    WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());
+    auto resetMessageBody = adoptWK(WKMutableDictionaryCreate());
 
-    WKRetainPtr<WKStringRef> shouldGCKey = adoptWK(WKStringCreateWithUTF8CString("ShouldGC"));
-    WKRetainPtr<WKBooleanRef> shouldGCValue = adoptWK(WKBooleanCreate(m_gcBetweenTests));
-    WKDictionarySetItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
+    setValue(resetMessageBody, "ShouldGC", m_gcBetweenTests);
 
-    WKRetainPtr<WKStringRef> allowedHostsKey = adoptWK(WKStringCreateWithUTF8CString("AllowedHosts"));
-    WKRetainPtr<WKMutableArrayRef> allowedHostsValue = adoptWK(WKMutableArrayCreate());
-    for (auto& host : m_allowedHosts) {
-        WKRetainPtr<WKStringRef> wkHost = adoptWK(WKStringCreateWithUTF8CString(host.c_str()));
-        WKArrayAppendItem(allowedHostsValue.get(), wkHost.get());
-    }
-    WKDictionarySetItem(resetMessageBody.get(), allowedHostsKey.get(), allowedHostsValue.get());
+    auto allowedHostsValue = adoptWK(WKMutableArrayCreate());
+    for (auto& host : m_allowedHosts)
+        WKArrayAppendItem(allowedHostsValue.get(), toWK(host.c_str()).get());
+    setValue(resetMessageBody, "AllowedHosts", allowedHostsValue);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WKRetainPtr<WKStringRef> axIsolatedModeKey = adoptWK(WKStringCreateWithUTF8CString("AccessibilityIsolatedTree"));
-    WKRetainPtr<WKBooleanRef> axIsolatedModeValue = adoptWK(WKBooleanCreate(m_accessibilityIsolatedTreeMode));
-    WKDictionarySetItem(resetMessageBody.get(), axIsolatedModeKey.get(), axIsolatedModeValue.get());
+    setValue(resetMessageBody, "AccessibilityIsolatedTree", m_accessibilityIsolatedTreeMode);
 #endif
-    
-    if (options.jscOptions.length()) {
-        WKRetainPtr<WKStringRef> jscOptionsKey = adoptWK(WKStringCreateWithUTF8CString("JSCOptions"));
-        WKRetainPtr<WKStringRef> jscOptionsValue = adoptWK(WKStringCreateWithUTF8CString(options.jscOptions.c_str()));
-        WKDictionarySetItem(resetMessageBody.get(), jscOptionsKey.get(), jscOptionsValue.get());
-    }
+
+    if (options.jscOptions.length())
+        setValue(resetMessageBody, "JSCOptions", options.jscOptions.c_str());
 
 #if PLATFORM(COCOA)
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes.c_str());
 #endif
 
-    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), resetMessageBody.get());
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
 
     WKContextSetShouldUseFontSmoothing(TestController::singleton().context(), false);
 
@@ -1203,8 +1175,7 @@ void TestController::updateLiveDocumentsAfterTest()
 
     AsyncTask([]() {
         // After each test, we update the list of live documents so that we can detect when an abandoned document first showed up.
-        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetLiveDocuments"));
-        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("GetLiveDocuments").get(), nullptr);
     }, 5_s).run();
 }
 
@@ -1215,8 +1186,7 @@ void TestController::checkForWorldLeaks()
 
     AsyncTask([]() {
         // This runs at the end of a series of tests. It clears caches, runs a GC and then fetches the list of documents.
-        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CheckForWorldLeaks"));
-        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("CheckForWorldLeaks").get(), nullptr);
     }, 20_s).run();
 }
 
@@ -1324,6 +1294,7 @@ const char* TestController::networkProcessName()
 }
 
 #if !PLATFORM(COCOA)
+
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     m_allowsAnySSLCertificate = allows;
@@ -1400,8 +1371,8 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
 
 static std::string parseStringTestHeaderValueAsRelativePath(const std::string& value, const std::string& pathOrURL)
 {
-    WKRetainPtr<WKURLRef> baseURL = adoptWK(createTestURL(pathOrURL.c_str()));
-    WKRetainPtr<WKURLRef> relativeURL = adoptWK(WKURLCreateWithBaseURL(baseURL.get(), value.c_str()));
+    auto baseURL = adoptWK(createTestURL(pathOrURL.c_str()));
+    auto relativeURL = adoptWK(WKURLCreateWithBaseURL(baseURL.get(), value.c_str()));
     return toSTD(adoptWK(WKURLCopyPath(relativeURL.get())));
 }
 
@@ -1415,8 +1386,7 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
     std::string filename = absolutePath;
     if (filename.empty()) {
         // Gross. Need to reduce conversions between all the string types and URLs.
-        WKRetainPtr<WKURLRef> wkURL = adoptWK(createTestURL(pathOrURL.c_str()));
-        filename = testPath(wkURL.get());
+        filename = testPath(adoptWK(createTestURL(pathOrURL.c_str())).get());
     }
 
     if (filename.empty())
@@ -1615,6 +1585,7 @@ void TestController::configureViewForTest(const TestInvocation& test)
 }
 
 #if ENABLE(CONTENT_EXTENSIONS) && !PLATFORM(COCOA)
+
 struct ContentExtensionStoreCallbackContext {
     explicit ContentExtensionStoreCallbackContext(TestController& controller)
         : testController(controller)
@@ -1642,15 +1613,9 @@ static std::string contentExtensionJSONPath(WKURLRef url)
     if (path.length())
         return path + ".json";
 
-    auto p = adoptWK(WKURLCopyPath(url));
-    auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(p.get()));
-    const auto length = WKStringGetUTF8CString(p.get(), buffer.data(), buffer.size());
-    return std::string("LayoutTests/http/tests") + std::string(buffer.data(), length - 1) + ".json";
+    return "LayoutTests/http/tests" + toSTD(adoptWK(WKURLCopyPath(url)).get()) + ".json";
 }
-#endif
 
-#if !PLATFORM(COCOA)
-#if ENABLE(CONTENT_EXTENSIONS)
 void TestController::configureContentExtensionForTest(const TestInvocation& test)
 {
     const char* contentExtensionsPath = libraryPathForTesting();
@@ -1670,13 +1635,13 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     }
 
     std::string jsonFileContents {std::istreambuf_iterator<char>(jsonFile), std::istreambuf_iterator<char>()};
-    auto jsonSource = adoptWK(WKStringCreateWithUTF8CString(jsonFileContents.c_str()));
+    auto jsonSource = toWK(jsonFileContents.c_str());
 
-    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath));
+    auto storePath = toWK(contentExtensionsPath);
     auto extensionStore = adoptWK(WKUserContentExtensionStoreCreate(storePath.get()));
     ASSERT(extensionStore);
 
-    auto filterIdentifier = adoptWK(WKStringCreateWithUTF8CString("TestContentExtension"));
+    auto filterIdentifier = toWK("TestContentExtension");
 
     ContentExtensionStoreCallbackContext context(*this);
     WKUserContentExtensionStoreCompile(extensionStore.get(), filterIdentifier.get(), jsonSource.get(), &context, contentExtensionStoreCallback);
@@ -1701,18 +1666,22 @@ void TestController::resetContentExtensions()
 
     WKUserContentControllerRemoveAllUserContentFilters(userContentController());
 
-    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath));
+    auto storePath = toWK(contentExtensionsPath);
     auto extensionStore = adoptWK(WKUserContentExtensionStoreCreate(storePath.get()));
     ASSERT(extensionStore);
 
-    auto filterIdentifier = adoptWK(WKStringCreateWithUTF8CString("TestContentExtension"));
+    auto filterIdentifier = toWK("TestContentExtension");
 
     ContentExtensionStoreCallbackContext context(*this);
     WKUserContentExtensionStoreRemove(extensionStore.get(), filterIdentifier.get(), &context, contentExtensionStoreCallback);
     runUntil(context.done, noTimeout);
     ASSERT(!context.filter);
 }
-#else // ENABLE(CONTENT_EXTENSIONS)
+
+#endif // ENABLE(CONTENT_EXTENSIONS) && !PLATFORM(COCOA)
+
+#if !ENABLE(CONTENT_EXTENSIONS)
+
 void TestController::configureContentExtensionForTest(const TestInvocation&)
 {
 }
@@ -1720,14 +1689,13 @@ void TestController::configureContentExtensionForTest(const TestInvocation&)
 void TestController::resetContentExtensions()
 {
 }
-#endif // ENABLE(CONTENT_EXTENSIONS)
-#endif // !PLATFORM(COCOA)
+
+#endif // !ENABLE(CONTENT_EXTENSIONS)
 
 class CommandTokenizer {
 public:
     explicit CommandTokenizer(const std::string& input)
         : m_input(input)
-        , m_posNextSeparator(0)
     {
         pump();
     }
@@ -1740,7 +1708,7 @@ private:
     static const char kSeparator = '\'';
     const std::string& m_input;
     std::string m_next;
-    size_t m_posNextSeparator;
+    size_t m_posNextSeparator { 0 };
 };
 
 void CommandTokenizer::pump()
@@ -1814,8 +1782,7 @@ bool TestController::runTest(const char* inputLine)
     
     TestOptions options = testOptionsForTest(command);
 
-    WKRetainPtr<WKURLRef> wkURL = adoptWK(createTestURL(command.pathOrURL.c_str()));
-    m_currentInvocation = makeUnique<TestInvocation>(wkURL.get(), options);
+    m_currentInvocation = makeUnique<TestInvocation>(adoptWK(createTestURL(command.pathOrURL.c_str())).get(), options);
 
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
@@ -1944,18 +1911,9 @@ void TestController::gpuProcessDidCrash(WKContextRef context, WKProcessID proces
     static_cast<TestController*>(const_cast<void*>(clientInfo))->gpuProcessDidCrash(processID);
 }
 
-void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
+void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef dictionary, bool synchronous)
 {
-    WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
-    WKStringRef key = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, keyKey.get()));
-
-    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-    WKEventModifiers modifiers = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifiersKey.get()))));
-
-    WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
-    unsigned location = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, locationKey.get()))));
-
-    m_eventSenderProxy->keyDown(key, modifiers, location);
+    m_eventSenderProxy->keyDown(stringValue(dictionary, "Key"), uint64Value(dictionary, "Modifiers"), uint64Value(dictionary, "Location"));
 }
 
 void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
@@ -1964,18 +1922,8 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
 
     HashMap<uint64_t, String> documentInfo;
     for (size_t i = 0; i < numDocuments; ++i) {
-        WKTypeRef item = WKArrayGetItemAtIndex(liveDocumentList, i);
-        if (item && WKGetTypeID(item) == WKDictionaryGetTypeID()) {
-            WKDictionaryRef liveDocumentItem = static_cast<WKDictionaryRef>(item);
-
-            WKRetainPtr<WKStringRef> idKey = adoptWK(WKStringCreateWithUTF8CString("id"));
-            WKUInt64Ref documentID = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(liveDocumentItem, idKey.get()));
-
-            WKRetainPtr<WKStringRef> urlKey = adoptWK(WKStringCreateWithUTF8CString("url"));
-            WKStringRef documentURL = static_cast<WKStringRef>(WKDictionaryGetItemForKey(liveDocumentItem, urlKey.get()));
-
-            documentInfo.add(WKUInt64GetValue(documentID), toWTFString(documentURL));
-        }
+        if (auto dictionary = dictionaryValue(WKArrayGetItemAtIndex(liveDocumentList, i)))
+            documentInfo.add(uint64Value(dictionary, "id"), toWTFString(stringValue(dictionary, "url")));
     }
 
     if (!documentInfo.size()) {
@@ -2007,60 +1955,35 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         if (m_state != RunningTest)
             return;
 
-        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
-        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        auto dictionary = dictionaryValue(messageBody);
+        auto subMessageName = stringValue(dictionary, "SubMessage");
 
-        WKRetainPtr<WKStringRef> subMessageKey = adoptWK(WKStringCreateWithUTF8CString("SubMessage"));
-        WKStringRef subMessageName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, subMessageKey.get()));
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown")) {
+            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
+            return;
+        }
 
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown") || WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
-            WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
-            unsigned button = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonKey.get()))));
-
-            WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-            WKEventModifiers modifiers = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifiersKey.get()))));
-
-            // Forward to WebProcess
-            if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown"))
-                m_eventSenderProxy->mouseDown(button, modifiers);
-            else
-                m_eventSenderProxy->mouseUp(button, modifiers);
-
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
+            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
             return;
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
-            didReceiveKeyDownMessageFromInjectedBundle(messageBodyDictionary, false);
+            didReceiveKeyDownMessageFromInjectedBundle(dictionary, false);
             return;
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseScrollBy")) {
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-            double x = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get())));
-
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-            double y = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get())));
-
-            // Forward to WebProcess
-            m_eventSenderProxy->mouseScrollBy(x, y);
+            m_eventSenderProxy->mouseScrollBy(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"));
             return;
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseScrollByWithWheelAndMomentumPhases")) {
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-            double x = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get())));
-            
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-            double y = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get())));
-            
-            WKRetainPtr<WKStringRef> phaseKey = adoptWK(WKStringCreateWithUTF8CString("Phase"));
-            int phase = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, phaseKey.get()))));
-            WKRetainPtr<WKStringRef> momentumKey = adoptWK(WKStringCreateWithUTF8CString("Momentum"));
-            int momentum = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, momentumKey.get()))));
-            
-            // Forward to WebProcess
+            auto x = doubleValue(dictionary, "X");
+            auto y = doubleValue(dictionary, "Y");
+            auto phase = uint64Value(dictionary, "Phase");
+            auto momentum = uint64Value(dictionary, "Momentum");
             m_eventSenderProxy->mouseScrollByWithWheelAndMomentumPhases(x, y, phase, momentum);
-
             return;
         }
 
@@ -2083,42 +2006,26 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         if (m_state != RunningTest)
             return completionHandler(nullptr);
 
-        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
-        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
-
-        WKRetainPtr<WKStringRef> subMessageKey = adoptWK(WKStringCreateWithUTF8CString("SubMessage"));
-        WKStringRef subMessageName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, subMessageKey.get()));
+        auto dictionary = dictionaryValue(messageBody);
+        auto subMessageName = stringValue(dictionary, "SubMessage");
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
-            didReceiveKeyDownMessageFromInjectedBundle(messageBodyDictionary, true);
-
+            didReceiveKeyDownMessageFromInjectedBundle(dictionary, true);
             return completionHandler(nullptr);
         }
 
-        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown") || WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
-            WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
-            unsigned button = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonKey.get()))));
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown")) {
+            m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
+            return completionHandler(nullptr);
+        }
 
-            WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-            WKEventModifiers modifiers = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifiersKey.get()))));
-
-            // Forward to WebProcess
-            if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown"))
-                m_eventSenderProxy->mouseDown(button, modifiers);
-            else
-                m_eventSenderProxy->mouseUp(button, modifiers);
+        if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
+            m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"));
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseMoveTo")) {
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-            double x = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get())));
-
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-            double y = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get())));
-
-            // Forward to WebProcess
-            m_eventSenderProxy->mouseMoveTo(x, y);
+            m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"));
             return completionHandler(nullptr);
         }
 
@@ -2144,81 +2051,48 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceChanged")) {
-            WKRetainPtr<WKStringRef> forceKey = adoptWK(WKStringCreateWithUTF8CString("Force"));
-            double force = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, forceKey.get())));
-
-            m_eventSenderProxy->mouseForceChanged(force);
+            m_eventSenderProxy->mouseForceChanged(doubleValue(dictionary, "Force"));
             return completionHandler(nullptr);
         }
 #endif // PLATFORM(MAC)
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "ContinuousMouseScrollBy")) {
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-            double x = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get())));
-
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-            double y = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get())));
-
-            WKRetainPtr<WKStringRef> pagedKey = adoptWK(WKStringCreateWithUTF8CString("Paged"));
-            bool paged = static_cast<bool>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, pagedKey.get()))));
-
-            // Forward to WebProcess
+            auto x = doubleValue(dictionary, "X");
+            auto y = doubleValue(dictionary, "Y");
+            auto paged = booleanValue(dictionary, "Paged");
             m_eventSenderProxy->continuousMouseScrollBy(x, y, paged);
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "LeapForward")) {
-            WKRetainPtr<WKStringRef> timeKey = adoptWK(WKStringCreateWithUTF8CString("TimeInMilliseconds"));
-            unsigned time = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, timeKey.get()))));
-
-            m_eventSenderProxy->leapForward(time);
+            m_eventSenderProxy->leapForward(uint64Value(dictionary, "TimeInMilliseconds"));
             return completionHandler(nullptr);
         }
 
 #if ENABLE(TOUCH_EVENTS)
         if (WKStringIsEqualToUTF8CString(subMessageName, "AddTouchPoint")) {
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-            int x = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get()))));
-
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-            int y = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get()))));
-
-            m_eventSenderProxy->addTouchPoint(x, y);
+            m_eventSenderProxy->addTouchPoint(uint64Value(dictionary, "X"), uint64Value(dictionary, "Y"));
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "UpdateTouchPoint")) {
-            WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
-            int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
-
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
-            int x = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get()))));
-
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
-            int y = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get()))));
-
+            auto index = uint64Value(dictionary, "Index");
+            auto x = uint64Value(dictionary, "X");
+            auto y = uint64Value(dictionary, "Y");
             m_eventSenderProxy->updateTouchPoint(index, x, y);
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "SetTouchModifier")) {
-            WKRetainPtr<WKStringRef> modifierKey = adoptWK(WKStringCreateWithUTF8CString("Modifier"));
-            WKEventModifiers modifier = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifierKey.get()))));
-
-            WKRetainPtr<WKStringRef> enableKey = adoptWK(WKStringCreateWithUTF8CString("Enable"));
-            bool enable = static_cast<bool>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, enableKey.get()))));
-
+            auto modifier = uint64Value(dictionary, "Modifier");
+            auto enable = booleanValue(dictionary, "Enable");
             m_eventSenderProxy->setTouchModifier(modifier, enable);
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "SetTouchPointRadius")) {
-            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("RadiusX"));
-            int x = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get()))));
-
-            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("RadiusY"));
-            int y = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get()))));
-
+            auto x = uint64Value(dictionary, "RadiusX");
+            auto y = uint64Value(dictionary, "RadiusY");
             m_eventSenderProxy->setTouchPointRadius(x, y);
             return completionHandler(nullptr);
         }
@@ -2249,16 +2123,12 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "ReleaseTouchPoint")) {
-            WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
-            int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
-            m_eventSenderProxy->releaseTouchPoint(index);
+            m_eventSenderProxy->releaseTouchPoint(uint64Value(dictionary, "Index"));
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "CancelTouchPoint")) {
-            WKRetainPtr<WKStringRef> indexKey = adoptWK(WKStringCreateWithUTF8CString("Index"));
-            int index = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, indexKey.get()))));
-            m_eventSenderProxy->cancelTouchPoint(index);
+            m_eventSenderProxy->cancelTouchPoint(uint64Value(dictionary, "Index"));
             return completionHandler(nullptr);
         }
 #endif
@@ -2275,14 +2145,16 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
     };
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetAlwaysAcceptCookies")) {
-        WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
-        WKHTTPCookieAcceptPolicy policy = WKBooleanGetValue(accept) ? kWKHTTPCookieAcceptPolicyAlways : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        auto policy = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody))
+            ? kWKHTTPCookieAcceptPolicyAlways
+            : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
         return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetOnlyAcceptFirstPartyCookies")) {
-        WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
-        WKHTTPCookieAcceptPolicy policy = WKBooleanGetValue(accept) ? kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+        auto policy = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody))
+            ? kWKHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain
+            : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
         return setHTTPCookieAcceptPolicy(policy, WTFMove(completionHandler));
     }
 
@@ -2403,12 +2275,8 @@ void TestController::setBlockAllPlugins(bool shouldBlock)
 
 #if PLATFORM(MAC)
     auto policy = shouldBlock ? kWKPluginLoadClientPolicyBlock : kWKPluginLoadClientPolicyAllow;
-
-    WKRetainPtr<WKStringRef> nameNetscape = adoptWK(WKStringCreateWithUTF8CString("com.apple.testnetscapeplugin"));
-    WKRetainPtr<WKStringRef> nameFlash = adoptWK(WKStringCreateWithUTF8CString("com.macromedia.Flash Player.plugin"));
-    WKRetainPtr<WKStringRef> emptyString = adoptWK(WKStringCreateWithUTF8CString(""));
-    WKContextSetPluginLoadClientPolicy(m_context.get(), policy, emptyString.get(), nameNetscape.get(), emptyString.get());
-    WKContextSetPluginLoadClientPolicy(m_context.get(), policy, emptyString.get(), nameFlash.get(), emptyString.get());
+    WKContextSetPluginLoadClientPolicy(m_context.get(), policy, toWK("").get(), toWK("com.apple.testnetscapeplugin").get(), toWK("").get());
+    WKContextSetPluginLoadClientPolicy(m_context.get(), policy, toWK("").get(), toWK("com.macromedia.Flash Player.plugin").get(), toWK("").get());
 #endif
 }
 
@@ -2423,29 +2291,24 @@ void TestController::setPluginSupportedMode(const String& mode)
         return;
     }
 
-    WKRetainPtr<WKMutableArrayRef> emptyArray = adoptWK(WKMutableArrayCreate());
-    WKRetainPtr<WKStringRef> allOrigins = adoptWK(WKStringCreateWithUTF8CString(""));
-    WKRetainPtr<WKStringRef> specificOrigin = adoptWK(WKStringCreateWithUTF8CString("localhost"));
+    auto emptyArray = adoptWK(WKMutableArrayCreate());
 
-    WKRetainPtr<WKStringRef> pdfName = adoptWK(WKStringCreateWithUTF8CString("My personal PDF"));
-    WKContextAddSupportedPlugin(m_context.get(), allOrigins.get(), pdfName.get(), emptyArray.get(), emptyArray.get());
+    WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), toWK("My personal PDF").get(), emptyArray.get(), emptyArray.get());
 
-    WKRetainPtr<WKStringRef> nameNetscape = adoptWK(WKStringCreateWithUTF8CString("com.apple.testnetscapeplugin"));
-    WKRetainPtr<WKStringRef> mimeTypeNetscape = adoptWK(WKStringCreateWithUTF8CString("application/x-webkit-test-netscape"));
-    WKRetainPtr<WKMutableArrayRef> mimeTypesNetscape = adoptWK(WKMutableArrayCreate());
-    WKArrayAppendItem(mimeTypesNetscape.get(), mimeTypeNetscape.get());
-
-    WKRetainPtr<WKStringRef> namePdf = adoptWK(WKStringCreateWithUTF8CString("WebKit built-in PDF"));
+    auto nameNetscape = toWK("com.apple.testnetscapeplugin");
+    auto mimeTypesNetscape = adoptWK(WKMutableArrayCreate());
+    WKArrayAppendItem(mimeTypesNetscape.get(), toWK("application/x-webkit-test-netscape").get());
+    auto namePdf = toWK("WebKit built-in PDF");
 
     if (m_unsupportedPluginMode == "allOrigins") {
-        WKContextAddSupportedPlugin(m_context.get(), allOrigins.get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
-        WKContextAddSupportedPlugin(m_context.get(), allOrigins.get(), namePdf.get(), emptyArray.get(), emptyArray.get());
+        WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
+        WKContextAddSupportedPlugin(m_context.get(), toWK("").get(), namePdf.get(), emptyArray.get(), emptyArray.get());
         return;
     }
 
     if (m_unsupportedPluginMode == "specificOrigin") {
-        WKContextAddSupportedPlugin(m_context.get(), specificOrigin.get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
-        WKContextAddSupportedPlugin(m_context.get(), specificOrigin.get(), namePdf.get(), emptyArray.get(), emptyArray.get());
+        WKContextAddSupportedPlugin(m_context.get(), toWK("localhost").get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
+        WKContextAddSupportedPlugin(m_context.get(), toWK("localhost").get(), namePdf.get(), emptyArray.get(), emptyArray.get());
         return;
     }
 }
@@ -2491,14 +2354,12 @@ bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKPro
 {
     if (m_shouldLogCanAuthenticateAgainstProtectionSpace)
         m_currentInvocation->outputText("canAuthenticateAgainstProtectionSpace\n");
-    WKProtectionSpaceAuthenticationScheme authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
-    
-    if (authenticationScheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
+    auto scheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
+    if (scheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        auto host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)));
         return host == "localhost" || host == "127.0.0.1" || (m_allowAnyHTTPSCertificateForAllowedHosts && m_allowedHosts.find(host) != m_allowedHosts.end());
     }
-    
-    return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest || authenticationScheme == kWKProtectionSpaceAuthenticationSchemeOAuth;
+    return scheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest || scheme == kWKProtectionSpaceAuthenticationSchemeOAuth;
 }
 
 void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigation)
@@ -2506,8 +2367,7 @@ void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigat
     if (m_state != Resetting)
         return;
 
-    WKRetainPtr<WKURLRef> wkURL = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(page)));
-    if (!WKURLIsEqual(wkURL.get(), blankURL()))
+    if (!WKURLIsEqual(adoptWK(WKFrameCopyURL(WKPageGetMainFrame(page))).get(), blankURL()))
         return;
 
     m_doneResetting = true;
@@ -2527,7 +2387,7 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
         m_serverTrustEvaluationCallbackCallsCount++;
 
         if (m_allowsAnySSLCertificate) {
-            WKRetainPtr<WKCredentialRef> credential = adoptWK(WKCredentialCreate(toWK("accept server trust").get(), toWK("").get(), kWKCredentialPersistenceNone));
+            auto credential = adoptWK(WKCredentialCreate(toWK("accept server trust").get(), toWK("").get(), kWKCredentialPersistenceNone));
             WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
             return;
         }
@@ -2541,9 +2401,9 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
         return;
     }
 
-    std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
+    auto host = toWTFString(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
     int port = WKProtectionSpaceGetPort(protectionSpace);
-    String message = makeString(host.c_str(), ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
+    String message = makeString(host, ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
     if (!m_handlesAuthenticationChallenges)
         message.append("Simulating cancelled authentication sheet\n");
     else
@@ -2554,13 +2414,11 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
         WKAuthenticationDecisionListenerUseCredential(decisionListener, 0);
         return;
     }
-    WKRetainPtr<WKStringRef> username = adoptWK(WKStringCreateWithUTF8CString(m_authenticationUsername.utf8().data()));
-    WKRetainPtr<WKStringRef> password = adoptWK(WKStringCreateWithUTF8CString(m_authenticationPassword.utf8().data()));
-    WKRetainPtr<WKCredentialRef> credential = adoptWK(WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+    auto credential = adoptWK(WKCredentialCreate(toWK(m_authenticationUsername).get(), toWK(m_authenticationPassword).get(), kWKCredentialPersistenceForSession));
     WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
 }
 
-    
+
 // WKContextDownloadClient
 
 void TestController::downloadDidStart(WKContextRef context, WKDownloadRef download, const void* clientInfo)
@@ -2704,9 +2562,9 @@ void TestController::setGeolocationPermission(bool enabled)
     decidePolicyForGeolocationPermissionRequestIfPossible();
 }
 
-void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
+void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy, Optional<double> altitude, Optional<double> altitudeAccuracy, Optional<double> heading, Optional<double> speed, Optional<double> floorLevel)
 {
-    m_geolocationProvider->setPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed, providesFloorLevel, floorLevel);
+    m_geolocationProvider->setPosition(latitude, longitude, accuracy, altitude, altitudeAccuracy, heading, speed, floorLevel);
 }
 
 void TestController::setMockGeolocationPositionUnavailableError(WKStringRef errorMessage)
@@ -2856,9 +2714,7 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame,
 {
     auto originHash = userMediaOriginHash(userMediaDocumentOrigin, topLevelDocumentOrigin);
     auto salt = saltForOrigin(frame, originHash);
-    WKRetainPtr<WKStringRef> saltString = adoptWK(WKStringCreateWithUTF8CString(salt.utf8().data()));
-
-    WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, saltString.get(), settingsForOrigin(originHash).persistentPermission());
+    WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, toWK(salt).get(), settingsForOrigin(originHash).persistentPermission());
 }
 
 bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin)
@@ -2914,8 +2770,8 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
             continue;
         }
 
-        WKRetainPtr<WKArrayRef> audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request));
-        WKRetainPtr<WKArrayRef> videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request));
+        auto audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request));
+        auto videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request));
 
         if (!WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
             WKUserMediaPermissionRequestDeny(request, kWKNoConstraints);
@@ -2926,13 +2782,13 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         if (WKArrayGetSize(videoDeviceUIDs.get()))
             videoDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(videoDeviceUIDs.get(), 0));
         else
-            videoDeviceUID = adoptWK(WKStringCreateWithUTF8CString(""));
+            videoDeviceUID = toWK("");
 
         WKRetainPtr<WKStringRef> audioDeviceUID;
         if (WKArrayGetSize(audioDeviceUIDs.get()))
             audioDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(audioDeviceUIDs.get(), 0));
         else
-            audioDeviceUID = adoptWK(WKStringCreateWithUTF8CString(""));
+            audioDeviceUID = toWK("");
 
         WKUserMediaPermissionRequestAllow(request, audioDeviceUID.get(), videoDeviceUID.get());
     }
@@ -3056,12 +2912,9 @@ void TestController::didNavigateWithNavigationData(WKNavigationDataRef navigatio
     if (!m_shouldLogHistoryClientCallbacks)
         return;
 
-    // URL
     auto url = adoptWK(WKNavigationDataCopyURL(navigationData));
     auto urlString = toWTFString(adoptWK(WKURLCopyString(url.get())));
-    // Title
     auto title = toWTFString(adoptWK(WKNavigationDataCopyTitle(navigationData)));
-    // HTTP method
     auto request = adoptWK(WKNavigationDataCopyOriginalRequest(navigationData));
     auto method = toWTFString(adoptWK(WKURLRequestCopyHTTPMethod(request.get())));
 
@@ -3206,7 +3059,7 @@ void getAllStorageAccessEntriesCallback(void* userData, WKArrayRef domainList)
 
     Vector<String> resultDomains;
     for (unsigned i = 0; i < WKArrayGetSize(domainList); i++) {
-        auto domain =  reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(domainList, i));
+        auto domain = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(domainList, i));
         auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(domain));
         auto stringLength = WKStringGetUTF8CString(domain, buffer.data(), buffer.size());
 
@@ -3971,7 +3824,7 @@ void TestController::reinitializeAppBoundDomains()
 void TestController::updateBundleIdentifierInNetworkProcess(const String& bundleIdentifier)
 {
     InAppBrowserPrivacyCallbackContext context(*this);
-    WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(TestController::websiteDataStore(), adoptWK(WKStringCreateWithUTF8CString(bundleIdentifier.utf8().data())).get(), &context, inAppBrowserPrivacyVoidResultCallback);
+    WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(TestController::websiteDataStore(), toWK(bundleIdentifier).get(), &context, inAppBrowserPrivacyVoidResultCallback);
     runUntil(context.done, noTimeout);
 }
 

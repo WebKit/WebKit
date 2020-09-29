@@ -27,6 +27,7 @@
 #include "WorkQueueManager.h"
 
 #include "PlatformWebView.h"
+#include "StringFunctions.h"
 #include "TestController.h"
 #include <WebKit/WKPage.h>
 #include <WebKit/WKPagePrivate.h>
@@ -75,7 +76,7 @@ template <WorkQueueItem::Type type>
 class ScriptItem : public WorkQueueItem {
 public:
     explicit ScriptItem(const String& script)
-        : m_script(adoptWK(WKStringCreateWithUTF8CString(script.utf8().data())))
+        : m_script(toWK(script))
     {
     }
 
@@ -161,7 +162,7 @@ void WorkQueueManager::queueLoadHTMLString(const String& content, const String& 
     class LoadHTMLStringItem : public WorkQueueItem {
     public:
         LoadHTMLStringItem(const String& content, const String& baseURL, const String& unreachableURL)
-            : m_content(adoptWK(WKStringCreateWithUTF8CString(content.utf8().data())))
+            : m_content(toWK(content))
             , m_baseURL(adoptWK(WKURLCreateWithUTF8CString(baseURL.utf8().data())))
             , m_unreachableURL(adoptWK(WKURLCreateWithUTF8CString(unreachableURL.utf8().data())))
         {

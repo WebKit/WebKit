@@ -41,4 +41,4 @@
 - (JSRetainPtr<JSStringRef>)createJSStringRef;
 @end
 
-extern NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
+NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);

@@ -184,7 +184,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     if (!test.urlContains("contentextensions/"))
         return;
 
-    RetainPtr<CFURLRef> testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
+    auto testURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, test.url()));
     NSURL *filterURL = [(__bridge NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
 
     __block NSString *contentExtensionString;
@@ -371,14 +371,14 @@ static NSSet *systemHiddenFontFamilySet()
 
 static WKRetainPtr<WKArrayRef> generateFontAllowList()
 {
-    WKRetainPtr<WKMutableArrayRef> result = adoptWK(WKMutableArrayCreate());
+    auto result = adoptWK(WKMutableArrayCreate());
     for (NSString *fontFamily in allowedFontFamilySet()) {
         NSArray *fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
-        WKRetainPtr<WKStringRef> familyInFont = adoptWK(WKStringCreateWithUTF8CString([fontFamily UTF8String]));
+        auto familyInFont = adoptWK(WKStringCreateWithUTF8CString([fontFamily UTF8String]));
         WKArrayAppendItem(result.get(), familyInFont.get());
         for (NSArray *fontInfo in fontsForFamily) {
             // Font name is the first entry in the array.
-            WKRetainPtr<WKStringRef> fontName = adoptWK(WKStringCreateWithUTF8CString([[fontInfo objectAtIndex:0] UTF8String]));
+            auto fontName = adoptWK(WKStringCreateWithUTF8CString([[fontInfo objectAtIndex:0] UTF8String]));
             WKArrayAppendItem(result.get(), fontName.get());
         }
     }
@@ -394,7 +394,7 @@ void TestController::platformInitializeContext()
     // Testing uses a private session, which is memory only. However creating one instantiates a shared NSURLCache,
     // and if we haven't created one yet, the default one will be created on disk.
     // Making the shared cache memory-only avoids touching the file system.
-    RetainPtr<NSURLCache> sharedCache =
+    auto sharedCache =
         adoptNS([[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
                                       diskCapacity:0
                                           diskPath:nil]);

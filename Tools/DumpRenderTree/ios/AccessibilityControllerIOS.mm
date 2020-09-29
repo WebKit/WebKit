@@ -24,12 +24,13 @@
  */
 
 #import "config.h"
-#import "DumpRenderTree.h"
 #import "AccessibilityController.h"
 
 #import "AccessibilityCommonMac.h"
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
+#import "DumpRenderTree.h"
+#import "JSBasics.h"
 #import <Foundation/Foundation.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -155,5 +156,5 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
-    return adopt(JSStringCreateWithUTF8CString("ios"));
+    return WTR::createJSString("ios");
 }

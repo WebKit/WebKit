@@ -214,7 +214,7 @@ void UIScriptControllerMac::completeBackSwipe(JSValueRef callback)
 
 void UIScriptControllerMac::playBackEventStream(JSStringRef eventStream, JSValueRef callback)
 {
-    RetainPtr<CFStringRef> stream = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, eventStream));
+    auto stream = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, eventStream));
     playBackEvents(webView(), m_context, (__bridge NSString *)stream.get(), callback);
 }
 

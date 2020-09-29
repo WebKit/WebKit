@@ -215,7 +215,7 @@ interface TestRunner {
 
     // Geolocation
     undefined setGeolocationPermission(boolean value);
-    undefined setMockGeolocationPosition(double latitude, double longitude, double accuracy, optional object altitude, optional object altitudeAccuracy, optional object heading, optional object speed, optional object floorLevel);
+    undefined setMockGeolocationPosition(double latitude, double longitude, double accuracy, optional double? altitude, optional double? altitudeAccuracy, optional double? heading, optional double? speed, optional double? floorLevel);
     undefined setMockGeolocationPositionUnavailableError(DOMString errorMessage);
     boolean isGeolocationProviderActive();
 

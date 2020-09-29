@@ -30,6 +30,7 @@
 #import "AccessibilityCommonMac.h"
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
+#import "JSBasics.h"
 #import <AppKit/NSColor.h>
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSStringRef.h>
@@ -158,5 +159,5 @@ bool AccessibilityController::enhancedAccessibilityEnabled()
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
-    return adopt(JSStringCreateWithUTF8CString("mac"));
+    return WTR::createJSString("mac");
 }

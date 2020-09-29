@@ -36,23 +36,13 @@ namespace WTR {
 
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
-    , m_time(0)
-    , m_position()
-    , m_leftMouseButtonDown(false)
-    , m_clickCount(0)
-    , m_clickTime(0)
-    , m_clickPosition()
-    , m_clickButton(kWKEventMouseButtonNoButton)
-    , eventNumber(0)
 {
     UNUSED_PARAM(m_testController);
     UNUSED_PARAM(m_leftMouseButtonDown);
     UNUSED_PARAM(eventNumber);
 }
 
-EventSenderProxy::~EventSenderProxy()
-{
-}
+EventSenderProxy::~EventSenderProxy() = default;
 
 void EventSenderProxy::updateClickCountForButton(int button)
 {
@@ -70,17 +60,14 @@ void EventSenderProxy::updateClickCountForButton(int button)
 
 void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers)
 {
-    // Write me.
 }
 
 void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers)
 {
-    // Write me.
 }
 
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {
-    // Write me.
 }
 
 void EventSenderProxy::leapForward(int milliseconds)
@@ -90,79 +77,66 @@ void EventSenderProxy::leapForward(int milliseconds)
 
 void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
-    // Write me.
 }
 
 void EventSenderProxy::mouseScrollBy(int x, int y)
 {
-    // Write me.
 }
 
 void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
 {
-    // Write me.
 }
 
 void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
 {
-    // Write me.
 }
 
 #if ENABLE(TOUCH_EVENTS)
+
 void EventSenderProxy::addTouchPoint(int x, int y)
 {
-    // Write me.
 }
 
 void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 {
-    // Write me.
 }
 
 void EventSenderProxy::setTouchModifier(WKEventModifiers, bool enable)
 {
-    // Write me.
 }
 
 void EventSenderProxy::setTouchPointRadius(int radiusX, int radiusY)
 {
-    // Write me.
 }
 
 void EventSenderProxy::touchStart()
 {
-    // Write me.
 }
 
 void EventSenderProxy::touchMove()
 {
-    // Write me.
 }
 
 void EventSenderProxy::touchEnd()
 {
-    // Write me.
 }
 
 void EventSenderProxy::touchCancel()
 {
-    // Write me.
 }
 
 void EventSenderProxy::clearTouchPoints()
 {
-    // Write me.
 }
 
 void EventSenderProxy::releaseTouchPoint(int index)
 {
-    // Write me.
 }
 
 void EventSenderProxy::cancelTouchPoint(int index)
 {
-    // Write me.
 }
+
 #endif
 
 } // namespace WTR

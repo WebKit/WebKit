@@ -45,7 +45,7 @@ public:
     static Ref<AccessibilityController> create();
     ~AccessibilityController();
 
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef);
     virtual JSClassRef wrapperClass();
     
     // Enhanced accessibility.

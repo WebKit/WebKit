@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,15 +24,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringFunctions_h
-#define StringFunctions_h
+#pragma once
 
-#include <JavaScriptCore/JSRetainPtr.h>
-#include <JavaScriptCore/JavaScript.h>
+#include "JSBasics.h"
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKString.h>
 #include <WebKit/WKStringPrivate.h>
-#include <WebKit/WKURL.h>
 #include <sstream>
 #include <string>
 #include <wtf/Platform.h>
@@ -44,7 +41,8 @@
 
 namespace WTR {
 
-// Conversion functions
+WKRetainPtr<WKStringRef> toWKString(JSContextRef, JSValueRef);
+WTF::String toWTFString(JSContextRef, JSValueRef);
 
 inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
 {
@@ -56,9 +54,14 @@ inline WKRetainPtr<WKStringRef> toWK(const JSRetainPtr<JSStringRef>& string)
     return toWK(string.get());
 }
 
+inline WKRetainPtr<WKStringRef> toWK(const char* string)
+{
+    return adoptWK(WKStringCreateWithUTF8CString(string));
+}
+
 inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
 {
-    return adoptWK(WKStringCreateWithUTF8CString(string.utf8().data()));
+    return toWK(string.utf8().data());
 }
 
 inline JSRetainPtr<JSStringRef> toJS(WKStringRef string)
@@ -86,6 +89,8 @@ inline std::string toSTD(const WKRetainPtr<WKStringRef>& string)
 
 inline WTF::String toWTFString(WKStringRef string)
 {
+    if (!string)
+        return nullString();
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
     auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CStringNonStrict(string, buffer.get(), bufferSize);
@@ -99,6 +104,25 @@ inline WTF::String toWTFString(const WKRetainPtr<WKStringRef>& string)
     return toWTFString(string.get());
 }
 
-} // namespace WTR
+inline WTF::String toWTFString(JSStringRef string)
+{
+    return toWTFString(toWK(string));
+}
 
-#endif // StringFunctions_h
+inline WTF::String toWTFString(const JSRetainPtr<JSStringRef>& string)
+{
+    return toWTFString(string.get());
+}
+
+inline WKRetainPtr<WKStringRef> toWKString(JSContextRef context, JSValueRef value)
+{
+    return toWK(createJSString(context, value).get());
+}
+
+inline WTF::String toWTFString(JSContextRef context, JSValueRef value)
+{
+    // FIXME: Could make this efficient by using the WTFString inside OpaqueJSString if we wanted to.
+    return toWTFString(createJSString(context, value));
+}
+
+} // namespace WTR

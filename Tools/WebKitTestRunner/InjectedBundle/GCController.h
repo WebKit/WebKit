@@ -26,26 +26,26 @@
 #pragma once
 
 #include "JSWrappable.h"
-#include <wtf/Ref.h>
+#include <wtf/Forward.h>
+
+typedef const struct OpaqueJSContext* JSContextRef;
 
 namespace WTR {
 
-class GCController : public JSWrappable {
+class GCController final : public JSWrappable {
 public:
     static Ref<GCController> create();
-    virtual ~GCController();
 
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
-
-    // JSWrappable
-    virtual JSClassRef wrapperClass();
+    void makeWindowObject(JSContextRef);
 
     void collect();
     void collectOnAlternateThread(bool waitUntilDone);
     size_t getJSObjectCount();
 
 private:
-    GCController();
+    GCController() = default;
+
+    JSClassRef wrapperClass() final;
 };
 
 } // namespace WTR

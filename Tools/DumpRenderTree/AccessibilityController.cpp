@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "AccessibilityController.h"
 
 #include "AccessibilityUIElement.h"
+#include "JSBasics.h"
 
 // Static Value Getters
 
@@ -47,15 +48,9 @@ static JSValueRef getRootElementCallback(JSContextRef context, JSObjectRef thisO
 
 // Object Creation
 
-void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void AccessibilityController::makeWindowObject(JSContextRef context)
 {
-    auto accessibilityControllerStr = adopt(JSStringCreateWithUTF8CString("accessibilityController"));
-    
-    JSClassRef classRef = getJSClass();
-    JSValueRef accessibilityControllerObject = JSObjectMake(context, classRef, this);
-    JSClassRelease(classRef);
-
-    JSObjectSetProperty(context, windowObject, accessibilityControllerStr.get(), accessibilityControllerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    WTR::setGlobalObjectProperty(context, "accessibilityController", JSObjectMake(context, createJSClass().get(), this));
 }
 
 static JSValueRef logFocusEventsCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
@@ -152,9 +147,9 @@ static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef this
     return JSValueMakeString(context, platformName.get());
 }
 
-JSClassRef AccessibilityController::getJSClass()
+JSRetainPtr<JSClassRef> AccessibilityController::createJSClass()
 {
-    static JSStaticFunction staticFunctions[] = {
+    static constexpr JSStaticFunction functions[] = {
         { "logFocusEvents", logFocusEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "logValueChangeEvents", logValueChangeEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "logScrollingStartEvents", logScrollingStartEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -166,21 +161,18 @@ JSClassRef AccessibilityController::getJSClass()
         { "enableEnhancedAccessibility", enableEnhancedAccessibilityCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
-
-    static JSStaticValue staticValues[] = {
+    static constexpr JSStaticValue values[] = {
         { "focusedElement", getFocusedElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "rootElement", getRootElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "enhancedAccessibilityEnabled", getEnhancedAccessibilityEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "platformName", getPlatformNameCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
-
-    static JSClassDefinition classDefinition = {
-        0, kJSClassAttributeNone, "AccessibilityController", 0, staticValues, staticFunctions,
+    static const JSClassDefinition definition = {
+        0, kJSClassAttributeNone, "AccessibilityController", 0, values, functions,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
-
-    return JSClassCreate(&classDefinition);
+    return adopt(JSClassCreate(&definition));
 }
 
 void AccessibilityController::resetToConsistentState()

@@ -1,3 +1,760 @@
+2020-09-26  Darin Adler  <darin@apple.com>
+
+        Refactor test runner code to cut down on copy/paste code and long-winded repetitive idioms
+        https://bugs.webkit.org/show_bug.cgi?id=217028
+
+        Reviewed by Sam Weinig.
+
+        I did a lot of simplifying, but even more is possible. For some reason, the test
+        code is a hotbed of repeated idioms, and copy and paste rather than helper functions.
+        Even after the refactoring, I have some doubts about the way this code is written with
+        so much repeated marshaling for each function.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (AccessibilityController::makeWindowObject): Use setGlobalObjectProperty.
+        (AccessibilityController::createJSClass): Replaced getJSClass with this. Return a
+        JSRetainPtr to make it clear this passes ownership to the caller.
+        * DumpRenderTree/AccessibilityController.h: Updated for the above.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementCountForSearchPredicateCallback): Removed unneeded initialization of
+        JSRetainPtr, which starts out null.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        (_platformTypeConstructor): Use toOptionalBool and createJSString.
+        (_returnExpression): Use makeValue.
+
+        * DumpRenderTree/GCController.cpp:
+        (GCController::GCController): Deleted.
+        (GCController::~GCController): Deleted.
+        (collectCallback): Use a reference and auto.
+        (collectOnAlternateThreadCallback): Ditto.
+        (getJSObjectCountCallback): Ditto.
+        (GCController::makeWindowObject): Use setGlobalObjectProperty.
+        (AccessibilityController::createJSClass): Replaced getJSClass with this. Return a
+        JSRetainPtr to make it clear this passes ownership to the caller.
+        * DumpRenderTree/GCController.h: Updated for the above.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (encodeHostNameCallback): Use createJSString.
+        (execCommandCallback): Ditto.
+        (findStringCallback): Ditto.
+        (isCommandEnabledCallback): Ditto.
+        (overridePreferenceCallback): Ditto.
+        (queueLoadCallback): Ditto.
+        (queueLoadHTMLStringCallback): Ditto.
+        (TestRunner::makeWindowObject): Use setGlobalObjectProperty.
+        (TestRunner::createJSClass): Replaced getJSClass with this. Return a
+        JSRetainPtr to make it clear this passes ownership to the caller.
+        (TestRunner::staticValues): Made return value const*.
+        (TestRunner::staticFunctions): Ditto.
+        (TestRunner::waitToDumpWatchdogTimerFired): Simplified printing.
+        (TestRunner::cacheTestRunnerCallback): Updated to use object pointers as hash
+        table values instead of values, since callbacks need to be objects.
+        (TestRunner::callTestRunnerCallback): Ditto.
+        (TestRunner::clearTestRunnerCallbacks): Ditto.
+        (TestRunner::setOpenPanelFiles): Use arrayLength.
+        * DumpRenderTree/TestRunner.h: Updated for the above.
+
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::platformName const): Use createJSString.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (createEmptyJSString): Dleted.
+        (AccessibilityUIElement::stringForTextMarkerRange): Use createJSString.
+        (AccessibilityUIElement::attributesOfLinkedUIElements): Ditto.
+        (AccessibilityUIElement::attributesOfDocumentLinks): Ditto.
+        (AccessibilityUIElement::attributesOfChildren): Ditto.
+        (AccessibilityUIElement::allAttributes): Ditto.
+        (AccessibilityUIElement::stringAttributeValue): Ditto.
+        (AccessibilityUIElement::parameterizedAttributeNames): Ditto.
+        (AccessibilityUIElement::role): Ditto.
+        (AccessibilityUIElement::subrole): Ditto.
+        (AccessibilityUIElement::roleDescription): Ditto.
+        (AccessibilityUIElement::computedRoleString): Ditto.
+        (AccessibilityUIElement::title): Ditto.
+        (AccessibilityUIElement::orientation const): Ditto.
+        (AccessibilityUIElement::language): Ditto.
+        (AccessibilityUIElement::valueDescription): Ditto.
+        (AccessibilityUIElement::ariaDropEffects const): Ditto.
+        (AccessibilityUIElement::boundsForRange): Ditto.
+        (AccessibilityUIElement::attributesOfColumnHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfRowHeaders): Ditto.
+        (AccessibilityUIElement::attributesOfColumns): Ditto.
+        (AccessibilityUIElement::attributesOfRows): Ditto.
+        (AccessibilityUIElement::attributesOfVisibleCells): Ditto.
+        (AccessibilityUIElement::attributesOfHeader): Ditto.
+        (AccessibilityUIElement::selectedTextRange): Ditto.
+        (AccessibilityUIElement::accessibilityValue const): Ditto.
+        (AccessibilityUIElement::documentEncoding): Ditto.
+        (AccessibilityUIElement::documentURI): Ditto.
+
+        * DumpRenderTree/mac/AccessibilityCommonMac.h: Removed unneeded "extern".
+
+        * DumpRenderTree/mac/AccessibilityCommonMac.mm:
+        (searchPredicateParameterizedAttributeForSearchCriteria): Use arrayLength.
+        Removed unneeded call to JSValueToObject after JSValueIsObject.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::platformName const): Use createJSString.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (createEmptyJSString): Deleted.
+        (selectTextParameterizedAttributeForCriteria): Use arrayLength.
+        Removed unneeded call to JSValueToObject after JSValueIsObject.
+        (searchTextParameterizedAttributeForCriteria): Ditto.
+        (AccessibilityUIElement::accessibilityValue const): Use createJSString.
+        (AccessibilityUIElement::documentEncoding): Ditto.
+        (AccessibilityUIElement::documentURI): Ditto.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]):
+        Use auto. Pass fewer arguments to makeWindowObject. Simplified object
+        creation code by using adoptNS instead of release.
+        (-[FrameLoadDelegate didClearWindowObjectForFrame:inIsolatedWorld:]):
+        Use createJSString.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::findString): Use arrayLength.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld):
+        Pass fewer arguments to makeWindowObject.
+
+        * DumpRenderTree/win/TextInputController.cpp:
+        (TextInputController::makeWindowObject): Use setGlobalObjectProperty.
+        (TextInputController::createJSClass): Replaced getJSClass with this. Return a
+        JSRetainPtr to make it clear this passes ownership to the caller.
+        (TextInputController::staticValues): Made return value const*.
+        (TextInputController::staticFunctions): Ditto.
+        * DumpRenderTree/win/TextInputController.h: Updated for above.
+
+        * TestRunnerShared/Bindings/JSBasics.cpp:
+        (WTR::toOptionalBool): Renamed from JSValueMakeBooleanOrNull.
+        (WTR::toOptionalDouble): Added.
+        (WTR::makeValue): Added with overloads for various types.
+        Replaced JSValueToNullableBoolean and JSValueMakeStringOrNull.
+        (WTR::createJSString): Added with overloads for various types.
+        (WTR::property): Added.
+        (WTR::stringProperty): Added.
+        (WTR::booleanProperty): Added.
+        (WTR::numericProperty): Added.
+        (WTR::objectProperty): Refactored to call property.
+        (WTR::arrayLength): Added.
+        (WTR::setGlobalObjectProperty): Added.
+        (WTR::call): Refactored to let objectProperty do more of the null checking.
+        (WTR::callConstructor): Ditto.
+        * TestRunnerShared/Bindings/JSBasics.h: Updated for the above.
+
+        * TestRunnerShared/Bindings/JSWrappable.h: Reduced includes a bit.
+
+        * TestRunnerShared/Bindings/JSWrapper.h: Added setGlobalObjectProperty.
+
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::UIScriptContext): Pass fewer arguments to makeWindowObject.
+        (UIScriptContext::runUIScript): Use createJSString.
+        (UIScriptContext::objectFromRect const): Use setProperty.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h: Updated for the above.
+
+        * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+        (WTR::toDeviceOrientation): Use createJSString and JSStringIsEqualToUTF8CString.
+        (WTR::UIScriptController::makeWindowObject): Use setGlobalObjectProperty.
+
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestSpellChecker setResultsFromJSValue:inContext:]): Use createJSString
+        and removed unneeded use of lroundl.
+
+        * WebKitTestRunner/DictionaryFunctions.h: Added. Contains convenience functions
+        for dealing with WKDictionaryRef.
+
+        * WebKitTestRunner/EventSenderProxy.h: Initialize data members.
+
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (GeolocationProviderMock::setPosition): Use Optional instead of separate bool.
+        * WebKitTestRunner/GeolocationProviderMock.h: Updated for the above.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::makeWindowObject): Use setGlobalObjectProperty.
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h: Updated for the above.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (_generateImplementationFile): Use static initialization and a lambda instead of
+        an if statement to initialize.
+        (_platformTypeConstructor): Use toOptionalBool and createJSString. Also added
+        support for nullable doubles and used auto a bit more.
+        (_returnExpression): Use makeValue.
+
+        * InjectedBundle/Bindings/TestRunner.idl: Made the optional arguments to the
+        setMockGeolocationPosition function "double?" instead of "object".
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::getMenuItemChildrenCallback): Use auto and not JSValueToObject.
+        (WTR::arrayLength): Moved to JSBasics.h/cpp.
+        (WTR::parseTouchModifier): Added. Factored out of the
+        EventSendingController::setTouchModifier function.
+        (WTR::parseModifierArray): Use createJSString and remove unneeded ignored
+        exception out argument, since that is optional. Also added overload that
+        gets the context.
+        (WTR::EventSendingController::EventSendingController): Deleted.
+        (WTR::EventSendingController::~EventSendingController): Deleted.
+        (WTR::createMouseMessageBody): Use adoptWK and setValue. Return a WKRetainPtr.
+        (WTR::EventSendingController::mouseDown): Use postSynchronousPageMessage.
+        (WTR::EventSendingController::mouseUp): Ditto.
+        (WTR::EventSendingController::mouseMoveTo): Use setValue and
+        postSynchronousPageMessages.
+        (WTR::EventSendingController::mouseForceClick): Ditto.
+        (WTR::EventSendingController::startAndCancelMouseForceClick): Ditto.
+        (WTR::EventSendingController::mouseForceDown): Ditto.
+        (WTR::EventSendingController::mouseForceUp): Ditto.
+        (WTR::EventSendingController::mouseForceChanged): Ditto.
+        (WTR::EventSendingController::leapForward): Ditto.
+        (WTR::EventSendingController::scheduleAsynchronousClick): Use postPageMessage.
+        (WTR::createKeyDownMessageBody): Use setValue.
+        (WTR::EventSendingController::keyDown): Use postSynchronousPageMessage.
+        (WTR::EventSendingController::scheduleAsynchronousKeyDown): Use postPageMessage.
+        (WTR::EventSendingController::mouseScrollBy): Use setValue and postPageMessage.
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases): Use
+        setValue and postPageMessage.
+        (WTR::EventSendingController::continuousMouseScrollBy): Use setValue and
+        postSynchronousPageMessage.
+        (WTR::EventSendingController::contextClick): Use auto and not JSValueToObject.
+        (WTR::toMonitorWheelEventsOptions): Use booleanProperty.
+        (WTR::EventSendingController::addTouchPoint): Use setValue and postSynchronousPageMessage.
+        (WTR::EventSendingController::updateTouchPoint): Ditto.
+        (WTR::EventSendingController::setTouchModifier): Ditto.
+        (WTR::EventSendingController::setTouchPointRadius): Ditto.
+        (WTR::EventSendingController::touchStart): Ditto.
+        (WTR::EventSendingController::touchMove): Ditto.
+        (WTR::EventSendingController::touchEnd): Ditto.
+        (WTR::EventSendingController::touchCancel): Ditto.
+        (WTR::EventSendingController::clearTouchPoints): Ditto.
+        (WTR::EventSendingController::releaseTouchPoint): Ditto.
+        (WTR::EventSendingController::cancelTouchPoint): Ditto.
+        (WTR::EventSendingController::makeWindowObject): Use setGlobalObjectProperty.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h: Updated for the above.
+        Deleted various unneeded functions.
+
+        * WebKitTestRunner/InjectedBundle/GCController.cpp:
+        (WTR::GCController::GCController): Deleted.
+        (WTR::GCController::~GCController): Deleted.
+        (WTR::GCController::makeWindowObject): Use setGlobalObjectProperty.
+
+        * WebKitTestRunner/InjectedBundle/GCController.h: Updated for the above.
+        Also marked the class final.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage): Use booleanValue.
+        (WTR::InjectedBundle::didReceiveMessage): Use toWK.
+        (WTR::InjectedBundle::postPageMessage): Added.
+        (WTR::InjectedBundle::reportLiveDocuments): Use postPageMessage.
+        (WTR::InjectedBundle::didReceiveMessageToPage): Use dictionaryValue,
+        booleanValue, postPageMessage, value, and more to streamline.
+        (WTR::InjectedBundle::booleanForKey): Deleted.
+        (WTR::InjectedBundle::stringForKey): Deleted.
+        (WTR::InjectedBundle::beginTesting): Use booleanValue.
+        (WTR::InjectedBundle::done): Use stringValue.
+        (WTR::InjectedBundle::closeOtherPages): Use setValue and toWK.
+        (WTR::InjectedBundle::dumpToStdErr): Use postPageMessage
+        (WTR::InjectedBundle::outputText): Use toWK.
+        (WTR::InjectedBundle::postNewBeforeUnloadReturnValue): Use postPageMessage.
+        (WTR::InjectedBundle::postAddChromeInputField): Ditto.
+        (WTR::InjectedBundle::postRemoveChromeInputField): Ditto.
+        (WTR::InjectedBundle::postFocusWebView): Ditto.
+        (WTR::InjectedBundle::postSetBackingScaleFactor): Ditto.
+        (WTR::InjectedBundle::postSetWindowIsKey): Use toWK.
+        (WTR::InjectedBundle::postSetViewSize): Use setValue and toWK.
+        (WTR::InjectedBundle::postSimulateWebNotificationClick): Use postPageMessage.
+        (WTR::InjectedBundle::postSetAddsVisitedLinks): Ditto.
+        (WTR::InjectedBundle::setGeolocationPermission): Ditto.
+        (WTR::InjectedBundle::setMockGeolocationPosition): Use setValue and postPageMessage,
+        and use Optional instead of bool/double pairs.
+        (WTR::InjectedBundle::setMockGeolocationPositionUnavailableError): Use postPageMessage.
+        (WTR::InjectedBundle::isGeolocationProviderActive const): Use toWK and booleanValue.
+        (WTR::InjectedBundle::imageCountInGeneralPasteboard const): Use toWK and uint64Value.
+        (WTR::InjectedBundle::setUserMediaPermission): Use postPageMessage.
+        (WTR::InjectedBundle::resetUserMediaPermission): Ditto.
+        (WTR::InjectedBundle::setUserMediaPersistentPermissionForOrigin): Use setValue
+        and postPageMessage.
+        (WTR::InjectedBundle::userMediaPermissionRequestCountForOrigin const): Ditto.
+        (WTR::InjectedBundle::resetUserMediaPermissionRequestCountForOrigin): Uset setValue
+        and uint64Value.
+        (WTR::InjectedBundle::setCustomPolicyDelegate): Use setValue and postPageMessage.
+        (WTR::InjectedBundle::setHidden): Ditto.
+        (WTR::InjectedBundle::setCacheModel): Ditto.
+        (WTR::InjectedBundle::shouldProcessWorkQueue const): Use toWK and booleanValue.
+        (WTR::InjectedBundle::processWorkQueue): Use postPageMessage.
+        (WTR::InjectedBundle::queueBackNavigation): Ditto.
+        (WTR::InjectedBundle::queueForwardNavigation): Ditto.
+        (WTR::InjectedBundle::queueLoad): Use setValue and postPageMessage.
+        (WTR::InjectedBundle::queueLoadHTMLString): Ditto.
+        (WTR::InjectedBundle::queueReload): Ditto.
+        (WTR::InjectedBundle::queueLoadingScript): Ditto.
+        (WTR::InjectedBundle::queueNonLoadingScript): Ditto.
+        (WTR::postMessage): Added. Overloads for many types to keep caller code streamlined.
+        (WTR::postSynchronousMessage): Ditto.
+        (WTR::postPageMessage): Ditto.
+        (WTR::postSynchronousPageMessage): Ditto.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Updated for the above.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::propertyValue): Deleted. Use functions from JSBasics.h instead.
+        (WTR::propertyValueDouble): Ditto.
+        (WTR::propertyValueInt): Ditto.
+        (WTR::numericWindowProperty): Renamed from numericWindowPropertyValue for brevity
+        and for consistency with JSBasics.h functions.
+        (WTR::dumpPath): Use stringProperty, objectProperty, and makeString.
+        (WTR::rangeToStr): Use auto, numericProperty, and makeString.
+        (WTR::NavigationTypeToString): Use toWK.
+        (WTR::string): Renamed from securityOriginToStr. Use makeString.
+        (WTR::frameToStr): Use auto.
+        (WTR::InjectedBundlePage::resetAfterTest): Removed unneeded local.
+        (WTR::dumpFrameDescriptionSuitableForTestResult): Use auto.
+        (WTR::dumpRequestDescriptionSuitableForTestResult): Ditto.
+        (WTR::dumpErrorDescriptionSuitableForTestResult): Use auto and toWK.
+        (WTR::dumpFrameScrollPosition): Update for name change.
+        (WTR::toJS): Deleted. Use functions from JSBasics.h instead.
+        (WTR::hasDocumentElement): Use objectProperty.
+        (WTR::InjectedBundlePage::didClearWindowForFrame): Use setGlobalObjectProperty,
+        and pass fewer arguments to makeWindowObject.
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction): Streamline code a bit.
+        (WTR::InjectedBundlePage::decidePolicyForResponse): Use makeString.
+        (WTR::lastFileURLPathComponent): Ditto.
+        (WTR::InjectedBundlePage::willSetStatusbarText): Ditto.
+        (WTR::InjectedBundlePage::didReachApplicationCacheOriginQuota): Ditto.
+        (WTR::InjectedBundlePage::didExceedDatabaseQuota): Ditto.
+        (WTR::InjectedBundlePage::shouldBeginEditing): Ditto.
+        (WTR::InjectedBundlePage::shouldEndEditing): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner): Use toWK.
+        (WTR::page): Added.
+        (WTR::mainFrame): Added.
+        (WTR::mainFrameJSContext): Added.
+        (WTR::TestRunner::display): Use page.
+        (WTR::TestRunner::displayAndTrackRepaints): Use page.
+        (WTR::toWK): Added overload for double.
+        (WTR::createWKDictionary): Added.
+        (WTR::postSynchronousMessageWithReturnValue): Added.
+        (WTR::postSynchronousMessageReturningBoolean): Added.
+        (WTR::postSynchronousPageMessageWithReturnValue): Added.
+        (WTR::postSynchronousPageMessageReturningBoolean): Added.
+        (WTR::postSynchronousPageMessageReturningUInt64): Added.
+        (WTR::postSynchronousMessageReturningUInt64): Added.
+        (WTR::overridePreference): Added.
+        (WTR::TestRunner::shouldDumpPixels const): Use postSynchronousMessageReturningBoolean.
+        (WTR::TestRunner::setDumpPixels): Use postSynchronousMessage.
+        (WTR::TestRunner::whatToDump const): Use postSynchronousMessageReturningUInt64.
+        (WTR::TestRunner::setWhatToDump): Use postSynchronousMessage.
+        (WTR::TestRunner::setWaitUntilDone): Use postSynchronousMessage.
+        (WTR::TestRunner::shouldWaitUntilDone const): Use postSynchronousMessageReturningBoolean.
+        (WTR::TestRunner::setShouldDumpFrameLoadCallbacks): Use postSynchronousMessage.
+        (WTR::TestRunner::shouldDumpFrameLoadCallbacks): Use postSynchronousMessageReturningBoolean.
+        (WTR::TestRunner::addUserScript): Use page.
+        (WTR::TestRunner::addUserStyleSheet): Ditto.
+        (WTR::TestRunner::execCommand): Ditto.
+        (WTR::findOptionsFromArray): Use mainFrameJSContext, arrayLength, and createJSString.
+        (WTR::TestRunner::findString): Use page.
+        (WTR::TestRunner::findStringMatchesInPage): Ditto.
+        (WTR::TestRunner::replaceFindMatchesAtIndices): Use mainFrameJSContext and arrayLength and
+        removed unneeded call to std::round.
+        (WTR::TestRunner::clearAllDatabases): Use postSynchronousMessage.
+        (WTR::TestRunner::syncLocalStorage): Ditto.
+        (WTR::TestRunner::clearAllApplicationCaches): Use page.
+        (WTR::TestRunner::clearApplicationCacheForOrigin): Ditto.
+        (WTR::TestRunner::setAppCacheMaximumSize): Ditto.
+        (WTR::TestRunner::applicationCacheDiskUsageForOrigin): Ditto.
+        (WTR::stringArrayToJS): Tweaked coding style a bit.
+        (WTR::TestRunner::originsWithApplicationCache): Use page.
+        (WTR::TestRunner::isCommandEnabled): Ditto.
+        (WTR::TestRunner::setCanOpenWindows): Use postSynchronousMessage.
+        (WTR::TestRunner::setXSSAuditorEnabled): Use overridePreference.
+        (WTR::TestRunner::setMediaDevicesEnabled): Ditto.
+        (WTR::TestRunner::setWebRTCMDNSICECandidatesEnabled): Ditto.
+        (WTR::TestRunner::setCustomUserAgent): Use postSynchronousMessage.
+        (WTR::TestRunner::setWebAPIStatisticsEnabled): Use overridePreference.
+        (WTR::TestRunner::setModernMediaControlsEnabled): Ditto.
+        (WTR::TestRunner::setWebGL2Enabled): Ditto.
+        (WTR::TestRunner::setWritableStreamAPIEnabled): Ditto.
+        (WTR::TestRunner::setTransformStreamAPIEnabled): Ditto.
+        (WTR::TestRunner::setReadableByteStreamAPIEnabled): Ditto.
+        (WTR::TestRunner::setEncryptedMediaAPIEnabled): Ditto.
+        (WTR::TestRunner::setPictureInPictureAPIEnabled): Ditto.
+        (WTR::TestRunner::setGenericCueAPIEnabled): Ditto.
+        (WTR::TestRunner::setAllowsAnySSLCertificate): Use postSynchronousPageMessage.
+        (WTR::TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation): Ditto.
+        (WTR::TestRunner::setShouldSwapToDefaultSessionOnNextNavigation): Ditto.
+        (WTR::TestRunner::setPluginsEnabled): Use overridePreference.
+        (WTR::TestRunner::isPageBoxVisible): Use mainFrame.
+        (WTR::TestRunner::setValueForUser): Removed local.
+        (WTR::TestRunner::setAudioResult): Ditto.
+        (WTR::TestRunner::clearBackForwardList): Use page.
+        (WTR::TestRunner::makeWindowObject): Use setGlobalObjectProperty.
+        (WTR::TestRunner::showWebInspector): Use page.
+        (WTR::TestRunner::closeWebInspector): Ditto.
+        (WTR::TestRunner::evaluateInWebInspector): Ditto.
+        (WTR::TestRunner::worldIDForWorld): Use range-based for loop.
+        (WTR::TestRunner::evaluateScriptInIsolatedWorld): Use mainFrame.
+        (WTR::TestRunner::setTextDirection): Use mainFrame.
+        (WTR::TestRunner::didReceiveServerRedirectForProvisionalNavigation const):
+        Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::clearDidReceiveServerRedirectForProvisionalNavigation):
+        Use postSynchronousPageMessage.
+        (WTR::cacheTestRunnerCallback): Changed map to store objects instead of values.
+        (WTR::callTestRunnerCallback): Simplify since map has objects. Use mainFrameJSContext.
+        (WTR::TestRunner::clearTestRunnerCallbacks): Ditto.
+        (WTR::TestRunner::setAlwaysAcceptCookies): Use postSynchronousMessage.
+        (WTR::TestRunner::setOnlyAcceptFirstPartyCookies): Use auto and toWK.
+        (WTR::TestRunner::setUserStyleSheetEnabled): Use toWK.
+        (WTR::TestRunner::setUserStyleSheetLocation): Use page.
+        (WTR::TestRunner::setTabKeyCyclesThroughElements): Ditto.
+        (WTR::TestRunner::grantWebNotificationPermission): Ditto.
+        (WTR::TestRunner::denyWebNotificationPermission): Ditto.
+        (WTR::TestRunner::removeAllWebNotificationPermissions): Use mainFrameJSContext.
+        (WTR::TestRunner::simulateWebNotificationClick): Ditto.
+        (WTR::TestRunner::setMockGeolocationPosition): Use Optional<double> instead of bool/double
+        pairs, letting the IDL bindings do the work for us.
+        (WTR::TestRunner::setMockGeolocationPositionUnavailableError): Removed local.
+        (WTR::TestRunner::isDoingMediaCapture const): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setUserMediaPersistentPermissionForOrigin): Removed locals.
+        (WTR::TestRunner::userMediaPermissionRequestCountForOrigin const): Ditto.
+        (WTR::TestRunner::resetUserMediaPermissionRequestCountForOrigin): DItto.
+        (WTR::TestRunner::callShouldCloseOnWebView): Use mainFrame.
+        (WTR::TestRunner::queueLoad): Ditto.
+        (WTR::TestRunner::queueLoadHTMLString): Removed a local.
+        (WTR::TestRunner::queueLoadingScript): Ditto.
+        (WTR::TestRunner::queueNonLoadingScript): Ditto.
+        (WTR::TestRunner::setRejectsProtectionSpaceAndContinueForAuthenticationChallenges):
+        Use postPageMessage.
+        (WTR::TestRunner::setHandlesAuthenticationChallenges): Ditto.
+        (WTR::TestRunner::setShouldLogCanAuthenticateAgainstProtectionSpace): Ditto.
+        (WTR::TestRunner::setShouldLogDownloadCallbacks): Ditto.
+        (WTR::TestRunner::setAuthenticationUsername): Ditto.
+        (WTR::TestRunner::setAuthenticationPassword): Ditto.
+        (WTR::TestRunner::secureEventInputIsEnabled const): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setBlockAllPlugins): Use postPageMessage.
+        (WTR::TestRunner::setPluginSupportedMode): Ditto.
+        (WTR::TestRunner::failNextNewCodeBlock): Use mainFrameJSContext.
+        (WTR::TestRunner::numberOfDFGCompiles): Ditto.
+        (WTR::TestRunner::neverInlineFunction): Ditto.
+        (WTR::TestRunner::setShouldDecideNavigationPolicyAfterDelay): Use postPageMessage.
+        (WTR::TestRunner::setShouldDecideResponsePolicyAfterDelay): Ditto.
+        (WTR::TestRunner::setNavigationGesturesEnabled): Ditto.
+        (WTR::TestRunner::setIgnoresViewportScaleLimits): Ditto.
+        (WTR::TestRunner::setShouldDownloadUndisplayableMIMETypes): Ditto.
+        (WTR::TestRunner::setShouldAllowDeviceOrientationAndMotionAccess): Ditto.
+        (WTR::TestRunner::terminateNetworkProcess): Use postSynchronousPageMessage.
+        (WTR::TestRunner::terminateServiceWorkers): Ditto.
+        (WTR::TestRunner::setUseSeparateServiceWorkerProcess): Ditto.
+        (WTR::TestRunner::runUIScript): Use postPageMessage.
+        (WTR::TestRunner::runUIScriptImmediately): Ditto.
+        (WTR::TestRunner::runUIScriptCallback): Use mainFrameJSContext.
+        (WTR::TestRunner::setAllowedMenuActions): Use mainFrameJSContext, arrayLength,
+        and postPageMessage.
+        (WTR::TestRunner::installCustomMenuAction): Use postPageMessage.
+        (WTR::TestRunner::clearStatisticsDataForDomain): Use postSynchronousMessage.
+        (WTR::TestRunner::doesStatisticsDomainIDExistInDatabase): Use
+        postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setStatisticsEnabled): Use postSynchronousMessage.
+        (WTR::TestRunner::isStatisticsEphemeral): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setStatisticsDebugMode): Use postMessage.
+        (WTR::TestRunner::setStatisticsPrevalentResourceForDebugMode): Ditto.
+        (WTR::TestRunner::setStatisticsLastSeen): Ditto.
+        (WTR::TestRunner::setStatisticsMergeStatistic): Ditto.
+        (WTR::TestRunner::setStatisticsExpiredStatistic): Ditto.
+        (WTR::TestRunner::setStatisticsPrevalentResource): Ditto.
+        (WTR::TestRunner::setStatisticsVeryPrevalentResource): Ditto.
+        (WTR::TestRunner::dumpResourceLoadStatistics): Use postSynchronousPageMessage.
+        (WTR::TestRunner::isStatisticsPrevalentResource): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::isStatisticsVeryPrevalentResource): Ditto.
+        (WTR::TestRunner::isStatisticsRegisteredAsSubresourceUnder): Ditto.
+        (WTR::TestRunner::isStatisticsRegisteredAsSubFrameUnder): Ditto.
+        (WTR::TestRunner::isStatisticsRegisteredAsRedirectingTo): Ditto.
+        (WTR::TestRunner::setStatisticsHasHadUserInteraction): Use postMessage.
+        (WTR::TestRunner::isStatisticsHasHadUserInteraction): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::isStatisticsOnlyInDatabaseOnce): Ditto.
+        (WTR::TestRunner::setStatisticsGrandfathered): Use postSynchronousMessage.
+        (WTR::TestRunner::setUseITPDatabase): Ditto.
+        (WTR::TestRunner::isStatisticsGrandfathered): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setStatisticsSubframeUnderTopFrameOrigin): Use postSynchronousMessage.
+        (WTR::TestRunner::setStatisticsSubresourceUnderTopFrameOrigin): Ditto.
+        (WTR::TestRunner::setStatisticsSubresourceUniqueRedirectTo): Ditto.
+        (WTR::TestRunner::setStatisticsSubresourceUniqueRedirectFrom): Ditto.
+        (WTR::TestRunner::setStatisticsTopFrameUniqueRedirectTo): Ditto.
+        (WTR::TestRunner::setStatisticsTopFrameUniqueRedirectFrom): Ditto.
+        (WTR::TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration): Ditto.
+        (WTR::TestRunner::setStatisticsTimeToLiveUserInteraction): Ditto.
+        (WTR::TestRunner::statisticsDidRunTelemetryCallback): Use mainFrameJSContext.
+        (WTR::TestRunner::statisticsProcessStatisticsAndDataRecords): Use postSynchronousMessage.
+        (WTR::TestRunner::statisticsUpdateCookieBlocking): Use postMessage.
+        (WTR::TestRunner::statisticsSubmitTelemetry): Use postSynchronousMessage.
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned): Ditto.
+        (WTR::TestRunner::setStatisticsIsRunningTest): Ditto.
+        (WTR::TestRunner::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval): Ditto.
+        (WTR::TestRunner::setStatisticsMinimumTimeBetweenDataRecordsRemoval): Ditto.
+        (WTR::TestRunner::setStatisticsGrandfatheringTime): Ditto.
+        (WTR::TestRunner::setStatisticsMaxStatisticsEntries): Ditto.
+        (WTR::TestRunner::setStatisticsPruneEntriesDownTo): Ditto.
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStore): Use postMessage.
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours): Ditto.
+        (WTR::TestRunner::statisticsClearThroughWebsiteDataRemoval): Ditto.
+        (WTR::TestRunner::statisticsDeleteCookiesForHost): Use postSynchronousMessage.
+        (WTR::TestRunner::isStatisticsHasLocalStorage): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setStatisticsCacheMaxAgeCap): Use postSynchronousMessage.
+        (WTR::TestRunner::hasStatisticsIsolatedSession): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::setStatisticsShouldDowngradeReferrer): Use postMessage.
+        (WTR::TestRunner::setStatisticsShouldBlockThirdPartyCookies): Ditto.
+        (WTR::TestRunner::setStatisticsFirstPartyWebsiteDataRemovalMode): Ditto.
+        (WTR::TestRunner::statisticsSetToSameSiteStrictCookies): Ditto.
+        (WTR::TestRunner::statisticsSetFirstPartyHostCNAMEDomain): Ditto.
+        (WTR::TestRunner::statisticsSetThirdPartyCNAMEDomain): Ditto.
+        (WTR::TestRunner::statisticsResetToConsistentState): Ditto.
+        (WTR::TestRunner::getAllStorageAccessEntries): Ditto.
+        (WTR::makeDomainsValue): Factored out. Use mainFrameJSContext.
+        (WTR::TestRunner::callDidReceiveAllStorageAccessEntriesCallback): Use makeDomainsValue.
+        (WTR::TestRunner::loadedSubresourceDomains): Use postMessage.
+        (WTR::TestRunner::callDidReceiveLoadedSubresourceDomainsCallback): Use makeDomainsValue.
+        (WTR::TestRunner::addMockMediaDevice): Use postSynchronousMessage.
+        (WTR::TestRunner::clearMockMediaDevices): Ditto.
+        (WTR::TestRunner::removeMockMediaDevice): Ditto.
+        (WTR::TestRunner::resetMockMediaDevices): Ditto.
+        (WTR::TestRunner::setMockCameraOrientation): Ditto.
+        (WTR::TestRunner::isMockRealtimeMediaSourceCenterEnabled): Use
+        postSynchronousMessageReturningBoolean.
+        (WTR::TestRunner::connectMockGamepad): Use postSynchronousMessage.
+        (WTR::TestRunner::disconnectMockGamepad): Ditto.
+        (WTR::TestRunner::setMockGamepadDetails): Ditto.
+        (WTR::TestRunner::setMockGamepadAxisValue): Ditto.
+        (WTR::TestRunner::setMockGamepadButtonValue): Ditto.
+        (WTR::TestRunner::setOpenPanelFiles): Use mainFrameJSContext, arrayLength, createJSString,
+        and postPageMessage.
+        (WTR::TestRunner::setOpenPanelFilesMediaIcon): Use mainFrameJSContext and postPageMessage.
+        (WTR::TestRunner::removeAllSessionCredentials): Use postMessage.
+        (WTR::TestRunner::clearDOMCache): Use postSynchronousMessage.
+        (WTR::TestRunner::clearDOMCaches): Ditto.
+        (WTR::TestRunner::hasDOMCache): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::domCacheSize): Use postSynchronousPageMessageReturningUInt64.
+        (WTR::TestRunner::setAllowStorageQuotaIncrease): Use postSynchronousPageMessage.
+        (WTR::TestRunner::getApplicationManifestThen): Use postMessage.
+        (WTR::TestRunner::injectUserScript): Use postSynchronousMessage.
+        (WTR::TestRunner::sendDisplayConfigurationChangedMessageForTesting): Ditto.
+        (WTR::TestRunner::setServiceWorkerFetchTimeout): Ditto.
+        (WTR::TestRunner::addTestKeyToKeychain): Ditto.
+        (WTR::TestRunner::cleanUpKeychain): Ditto.
+        (WTR::TestRunner::keyExistsInKeychain): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::serverTrustEvaluationCallbackCallsCount): Use
+        postSynchronousMessageReturningUInt64.
+        (WTR::TestRunner::setShouldDismissJavaScriptAlertsAsynchronously): Use
+        postSynchronousMessage.
+        (WTR::TestRunner::abortModal): Ditto.
+        (WTR::TestRunner::dumpAdClickAttribution): Use postSynchronousPageMessage.
+        (WTR::TestRunner::clearAdClickAttribution): Ditto.
+        (WTR::TestRunner::clearAdClickAttributionsThroughWebsiteDataRemoval): Ditto.
+        (WTR::TestRunner::setAdClickAttributionOverrideTimerForTesting): Ditto.
+        (WTR::TestRunner::setAdClickAttributionConversionURLForTesting): Ditto.
+        (WTR::TestRunner::markAdClickAttributionsAsExpiredForTesting): Ditto.
+        (WTR::TestRunner::setOffscreenCanvasEnabled): Use overridePreference.
+        (WTR::TestRunner::hasAppBoundSession): Use postSynchronousPageMessageReturningBoolean.
+        (WTR::TestRunner::clearAppBoundSession): Use postSynchronousMessage.
+        (WTR::TestRunner::setAppBoundDomains): Use mainFrameJSContext, arrayLength, createJSString,
+        and toWK.
+        (WTR::TestRunner::postMessage): Added.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Updated for the above. Also changed
+        overridePreference ot a static member function.
+
+        * WebKitTestRunner/InjectedBundle/TextInputController.cpp:
+        (WTR::TextInputController::TextInputController): Deleted.
+        (WTR::TextInputController::~TextInputController): Deleted.
+        (WTR::TextInputController::makeWindowObject): Use setGlobalObjectProperty.
+        (WTR::arrayLength): Deleted. Use the one from JSBasics.h now.
+        (WTR::createCompositionHighlightData): Use setValue.
+        * WebKitTestRunner/InjectedBundle/TextInputController.h: Updated for the above.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::platformName): Use createJSString.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::createEmptyJSString): Deleted. Use createJSString from JSBasics.h now.
+        (WTR::AccessibilityUIElement::attributesOfLinkedUIElements): Use createJSString.
+        (WTR::AccessibilityUIElement::attributesOfDocumentLinks): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfChildren): Ditto.
+        (WTR::AccessibilityUIElement::allAttributes): Ditto.
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue): Ditto.
+        (WTR::AccessibilityUIElement::stringAttributeValue): Ditto.
+        (WTR::AccessibilityUIElement::parameterizedAttributeNames): Ditto.
+        (WTR::AccessibilityUIElement::role): Ditto.
+        (WTR::AccessibilityUIElement::subrole): Ditto.
+        (WTR::AccessibilityUIElement::computedRoleString): Ditto.
+        (WTR::AccessibilityUIElement::title): Ditto.
+        (WTR::AccessibilityUIElement::orientation const): Ditto.
+        (WTR::AccessibilityUIElement::language): Ditto.
+        (WTR::AccessibilityUIElement::valueDescription): Ditto.
+        (WTR::AccessibilityUIElement::isFocused const): Ditto.
+        (WTR::AccessibilityUIElement::isSelectedOptionActive const): Ditto.
+        (WTR::AccessibilityUIElement::isIndeterminate const): Ditto.
+        (WTR::AccessibilityUIElement::ariaDropEffects const): Ditto.
+        (WTR::AccessibilityUIElement::boundsForRange): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfColumns): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfRows): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfHeader): Ditto.
+        (WTR::AccessibilityUIElement::clearSelectedChildren const): Ditto.
+        (WTR::AccessibilityUIElement::accessibilityValue const): Ditto.
+        (WTR::AccessibilityUIElement::documentEncoding): Ditto.
+        (WTR::AccessibilityUIElement::documentURI): Ditto.
+        (WTR::AccessibilityUIElement::isSelectable const): Ditto.
+        (WTR::AccessibilityUIElement::isMultiSelectable const): Ditto.
+        (WTR::AccessibilityUIElement::isVisible const): Ditto.
+        (WTR::AccessibilityUIElement::isOffScreen const): Ditto.
+        (WTR::AccessibilityUIElement::isCollapsed const): Ditto.
+        (WTR::AccessibilityUIElement::isSingleLine const): Ditto.
+        (WTR::AccessibilityUIElement::isMultiLine const): Ditto.
+        (WTR::AccessibilityUIElement::takeFocus): Ditto.
+        (WTR::AccessibilityUIElement::takeSelection): Ditto.
+        (WTR::AccessibilityUIElement::addSelection): Ditto.
+        (WTR::AccessibilityUIElement::removeSelection): Ditto.
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/ios/EventSenderProxyIOS.mm:
+        (WTR::EventSenderProxy::EventSenderProxy): Initialize in the class definition.
+        (WTR::EventSenderProxy::~EventSenderProxy): Deleted.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (WTR::makeJSArray): Return a JSObjectRef. Renamed from makeArrayRefForArray.
+        (WTR::makeJSObject): Return a JSObjectRef. Renamed from makeObjectRefForDictionary.
+        (WTR::makeValueRefForValue): Updated for the above.
+        (WTR::searchPredicateParameterizedAttributeForSearchCriteria): Use toWTFString
+        and arrayLength.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::platformName): Use createJSString.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::createEmptyJSString): Deleted. Use createJSString from JSBasics.h instead.
+        (WTR::convertVectorToObjectArray): Deleted.
+        (WTR::makeJSArray): Renamed from convertVectorToObjectArray.
+        (WTR::selectTextParameterizedAttributeForCriteria): Use toWTFString and arrayLength.
+        (WTR::searchTextParameterizedAttributeForCriteria): Ditto.
+        (WTR::AccessibilityUIElement::rowHeaders const): Use makeJSArray.
+        (WTR::AccessibilityUIElement::columnHeaders const): Ditto.
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue const): Ditto.
+        (WTR::AccessibilityUIElement::searchTextWithCriteria): Ditto.
+        (WTR::AccessibilityUIElement::accessibilityValue const): Use createJSString.
+        (WTR::AccessibilityUIElement::documentEncoding): Ditto.
+        (WTR::AccessibilityUIElement::documentURI): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::inspectorTestStubURL): Remove locals.
+
+        * WebKitTestRunner/StringFunctions.h: Added toWKString overload that converts from
+        a JSValueRef, JSStringRef, or JSRetainPtr<JSStringRef> and toWK overload that converts
+        from a const char*.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Use toWK.
+        (WTR::TestController::generateContextConfiguration const): Ditto.
+        (WTR::TestController::resetPreferencesToConsistentValues): Ditto.
+        (WTR::TestController::resetStateToConsistentValues): Use setValue.
+        (WTR::TestController::updateLiveDocumentsAfterTest): Ditto.
+        (WTR::TestController::checkForWorldLeaks): Use toWK.
+        (WTR::contentExtensionJSONPath): Use toSTD.
+        (WTR::TestController::configureContentExtensionForTest): Use toWK.
+        (WTR::TestController::didReceiveKeyDownMessageFromInjectedBundle): Use stringValue
+        and uint64Value.
+        (WTR::TestController::didReceiveLiveDocumentsList): Use dictionaryValue and
+        uint64Value.
+        (WTR::TestController::didReceiveMessageFromInjectedBundle): Use dictionaryValue,
+        stringValue, uint64Value, doubleValue, booleanValue.
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle): Ditto.
+        (WTR::TestController::setBlockAllPlugins): Use toWK.
+        (WTR::TestController::setPluginSupportedMode): Ditto.
+        (WTR::TestController::canAuthenticateAgainstProtectionSpace): Use auto.
+        (WTR::TestController::didFinishNavigation): Removed local.
+        (WTR::TestController::didReceiveAuthenticationChallenge): Use auto and toWTFString
+        instead of toSTD.
+        (WTR::TestController::setMockGeolocationPosition): Use Optional instead of pairs
+        of bool and double.
+        (WTR::TestController::handleCheckOfUserMediaPermissionForOrigin): Use toWK.
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible): Ditto.
+        (WTR::TestController::updateBundleIdentifierInNetworkProcess): Use toWK.
+        * WebKitTestRunner/TestController.h: Updated for the above.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::postPageMessage): Added.
+        (WTR::TestInvocation::TestIncovation): Use toWTFString.
+        (WTR::TestInvocation::createTestSettingsDictionary): Use auto and setValue.
+        (WTR::TestInvocation::invoke): Use postPageMessage and setValue.
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Use postPageMessage
+        and stringValue.
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle): Use
+        dictionaryValue, booleanValue, value, stringValue, doubleValue, and
+        optionalDoubleValue.
+        (WTR::TestInvocation::uiScriptDidComplete): Use postPageMessage and setValue.
+        (WTR::TestInvocation::didBeginSwipe): Use postPageMessage.
+        (WTR::TestInvocation::willEndSwipe): Ditto.
+        (WTR::TestInvocation::didEndSwipe): Ditto.
+        (WTR::TestInvocation::didRemoveSwipeSnapshot): Ditto.
+        (WTR::TestInvocation::notifyDownloadDone): Ditto.
+        (WTR::TestInvocation::didClearStatisticsInMemoryAndPersistentStore): Ditto.
+        (WTR::TestInvocation::didClearStatisticsThroughWebsiteDataRemoval): Ditto.
+        (WTR::TestInvocation::didSetShouldDowngradeReferrer): Ditto.
+        (WTR::TestInvocation::didSetShouldBlockThirdPartyCookies): Ditto.
+        (WTR::TestInvocation::didSetFirstPartyWebsiteDataRemovalMode): Ditto.
+        (WTR::TestInvocation::didSetToSameSiteStrictCookies): Ditto.
+        (WTR::TestInvocation::didSetFirstPartyHostCNAMEDomain): Ditto.
+        (WTR::TestInvocation::didSetThirdPartyCNAMEDomain): Ditto.
+        (WTR::TestInvocation::didResetStatisticsToConsistentState): Ditto.
+        (WTR::TestInvocation::didSetBlockCookiesForHost): Ditto.
+        (WTR::TestInvocation::didSetStatisticsDebugMode): Ditto.
+        (WTR::TestInvocation::didSetPrevalentResourceForDebugMode): Ditto.
+        (WTR::TestInvocation::didSetLastSeen): Ditto.
+        (WTR::TestInvocation::didMergeStatistic): Ditto.
+        (WTR::TestInvocation::didSetExpiredStatistic): Ditto.
+        (WTR::TestInvocation::didSetPrevalentResource): Ditto.
+        (WTR::TestInvocation::didSetVeryPrevalentResource): Ditto.
+        (WTR::TestInvocation::didSetHasHadUserInteraction): Ditto.
+        (WTR::TestInvocation::didReceiveAllStorageAccessEntries): Ditto.
+        (WTR::TestInvocation::didReceiveLoadedSubresourceDomains): Ditto.
+        (WTR::TestInvocation::didRemoveAllSessionCredentials): Ditto.
+        (WTR::TestInvocation::didSetAppBoundDomains): Ditto.
+        (WTR::TestInvocation::performCustomMenuAction): Ditto.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Added JSBasics.h to DictionaryFunctions.h to appropriate targets.
+
+        * WebKitTestRunner/WorkQueueManager.cpp:
+        (WTR::ScriptItem::ScriptItem): Use toWK.
+        (WTR::WorkQueueManager::queueLoadHTMLString): Ditto.
+
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h: Make most functions private.
+
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::overridePreference): Use toWTFString.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h: Marked the class final and made
+        most functions private.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::arrayLength): Deleted. Use the one in JSBasics.h.
+        (WTR::parseModifierArray): Use the new toWTFString overload.
+        (WTR::UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard): Ditto.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::EventSenderProxy): Initialize in the class definition.
+        (WTR::EventSenderProxy::keyDown): Use toWTFString.
+
+        * WebKitTestRunner/mac/UIScriptControllerMac.h: Marked the class final and made
+        most functions private.
+
+2020-09-27  Darin Adler  <darin@apple.com>
+
+        Refactor test runner code to cut down on copy/paste code and long-winded repetitive idioms
+        https://bugs.webkit.org/show_bug.cgi?id=217028
+
+        Reviewed by Sam Weinig.
+
 2020-09-29  Jonathan Bedard  <jbedard@apple.com>
 
         [tvOS] [watchOS] Add support in libTestWTFAlwaysMissing-iOS-v2.tbd

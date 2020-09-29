@@ -68,24 +68,14 @@ static NSDictionary *toNSDictionary(CGRect rect)
     };
 }
 
-static unsigned arrayLength(JSContextRef context, JSObjectRef array)
-{
-    auto lengthString = adopt(JSStringCreateWithUTF8CString("length"));
-    if (auto lengthValue = JSObjectGetProperty(context, array, lengthString.get(), nullptr))
-        return static_cast<unsigned>(JSValueToNumber(context, lengthValue, nullptr));
-    return 0;
-}
-
 static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayValue)
 {
     if (!arrayValue)
         return { };
 
     // The value may either be a string with a single modifier or an array of modifiers.
-    if (JSValueIsString(context, arrayValue)) {
-        auto string = toWTFString(toWK(adopt(JSValueToStringCopy(context, arrayValue, nullptr))));
-        return { string };
-    }
+    if (JSValueIsString(context, arrayValue))
+        return { toWTFString(context, arrayValue) };
 
     if (!JSValueIsObject(context, arrayValue))
         return { };
@@ -93,16 +83,8 @@ static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayV
     unsigned length = arrayLength(context, array);
     Vector<String> modifiers;
     modifiers.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i) {
-        JSValueRef exception = nullptr;
-        JSValueRef value = JSObjectGetPropertyAtIndex(context, array, i, &exception);
-        if (exception)
-            continue;
-        auto string = adopt(JSValueToStringCopy(context, value, &exception));
-        if (exception)
-            continue;
-        modifiers.append(toWTFString(toWK(string.get())));
-    }
+    for (unsigned i = 0; i < length; ++i)
+        modifiers.append(toWTFString(context, JSObjectGetPropertyAtIndex(context, array, i, nullptr)));
     return modifiers;
 }
 
@@ -514,10 +496,9 @@ void UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard(JSStringRef chara
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     // Assumes that the keyboard is already shown.
-    [[HIDEventGenerator sharedHIDEventGenerator] keyPress:toWTFString(toWK(character)) completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
+    [[HIDEventGenerator sharedHIDEventGenerator] keyPress:toWTFString(character) completionBlock:makeBlockPtr([strongThis = makeRef(*this), callbackID] {
+        if (strongThis->m_context)
+            strongThis->m_context->asyncTaskComplete(callbackID);
     }).get()];
 }
 
@@ -534,7 +515,7 @@ void UIScriptControllerIOS::rawKeyDown(JSStringRef key)
 {
     // Key can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
-    [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(toWK(key))];
+    [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(key)];
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
 }
 
@@ -542,7 +523,7 @@ void UIScriptControllerIOS::rawKeyUp(JSStringRef key)
 {
     // Key can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
-    [[HIDEventGenerator sharedHIDEventGenerator] keyUp:toWTFString(toWK(key))];
+    [[HIDEventGenerator sharedHIDEventGenerator] keyUp:toWTFString(key)];
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
 }
 
@@ -550,7 +531,7 @@ void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierAr
 {
     // Character can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
     // HIDEventGenerator knows how to map these special keys to the appropriate keycode.
-    String inputString = toWTFString(toWK(character));
+    auto inputString = toWTFString(character);
     auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
 
     for (auto& modifierFlag : modifierFlags)
@@ -727,7 +708,7 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     TestRunnerWKWebView *webView = this->webView();
-    [webView applyAutocorrection:toWTFString(toWK(newString)) toString:toWTFString(toWK(oldString)) withCompletionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) withCompletionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
         dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
             // applyAutocorrection can call its completion handler synchronously,
             // which makes UIScriptController unhappy (see bug 172884).
@@ -1157,7 +1138,7 @@ bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 
 void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifier)
 {
-    TestController::singleton().setKeyboardInputModeIdentifier(toWTFString(toWK(identifier)));
+    TestController::singleton().setKeyboardInputModeIdentifier(toWTFString(identifier));
 }
 
 // FIXME: Write this in terms of HIDEventGenerator once we know how to reset caps lock state
@@ -1178,7 +1159,7 @@ bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
 
 JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdentifier)
 {
-    auto attachmentIdentifier = toWTFString(toWK(jsAttachmentIdentifier));
+    auto attachmentIdentifier = toWTFString(jsAttachmentIdentifier);
     _WKAttachment *attachment = [webView() _attachmentForIdentifier:attachmentIdentifier];
     _WKAttachmentInfo *attachmentInfo = attachment.info;
 

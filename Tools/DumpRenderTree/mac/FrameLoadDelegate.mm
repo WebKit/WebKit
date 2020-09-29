@@ -311,54 +311,26 @@ IGNORE_WARNINGS_END
 
 - (void)didClearWindowObjectInStandardWorldForFrame:(WebFrame *)frame
 {
-    // Make New-Style TestRunner
-    JSContextRef context = [frame globalContext];
-    JSObjectRef globalObject = JSContextGetGlobalObject(context);
-    JSValueRef exception = 0;
+    auto context = [frame globalContext];
+    auto webView = [frame webView];
+    auto windowObject = [frame windowObject];
 
-    ASSERT(gTestRunner);
-    gTestRunner->makeWindowObject(context, globalObject, &exception);
-    ASSERT(!exception);
-
-    gcController->makeWindowObject(context, globalObject, &exception);
-    ASSERT(!exception);
-
-    accessibilityController->makeWindowObject(context, globalObject, &exception);
-    ASSERT(!exception);
+    gTestRunner->makeWindowObject(context);
+    gcController->makeWindowObject(context);
+    accessibilityController->makeWindowObject(context);
 
     WebCoreTestSupport::injectInternalsObject(context);
 
-    // Make Old-Style controllers
-
-    WebView *webView = [frame webView];
-    WebScriptObject *obj = [frame windowObject];
-#if !PLATFORM(IOS_FAMILY)
-    AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:webView];
-    [obj setValue:asc forKey:@"appleScriptController"];
-    [asc release];
+#if PLATFORM(MAC)
+    [windowObject setValue:adoptNS([[AppleScriptController alloc] initWithWebView:webView]).get() forKey:@"appleScriptController"];
 #endif
 
-    EventSendingController *esc = [[EventSendingController alloc] init];
-    [obj setValue:esc forKey:@"eventSender"];
-    [esc release];
-    
-    [obj setValue:gNavigationController forKey:@"navigationController"];
-    
-    ObjCController *occ = [[ObjCController alloc] init];
-    [obj setValue:occ forKey:@"objCController"];
-    [occ release];
-
-    ObjCPlugin *plugin = [[ObjCPlugin alloc] init];
-    [obj setValue:plugin forKey:@"objCPlugin"];
-    [plugin release];
-    
-    ObjCPluginFunction *pluginFunction = [[ObjCPluginFunction alloc] init];
-    [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
-    [pluginFunction release];
-
-    TextInputController *tic = [[TextInputController alloc] initWithWebView:webView];
-    [obj setValue:tic forKey:@"textInputController"];
-    [tic release];
+    [windowObject setValue:adoptNS([[EventSendingController alloc] init]).get() forKey:@"eventSender"];
+    [windowObject setValue:gNavigationController forKey:@"navigationController"];
+    [windowObject setValue:adoptNS([[ObjCController alloc] init]).get() forKey:@"objCController"];
+    [windowObject setValue:adoptNS([[ObjCPlugin alloc] init]).get() forKey:@"objCPlugin"];
+    [windowObject setValue:adoptNS([[ObjCPluginFunction alloc] init]).get() forKey:@"objCPluginFunction"];
+    [windowObject setValue:adoptNS([[TextInputController alloc] initWithWebView:webView]).get() forKey:@"textInputController"];
 }
 
 - (void)didClearWindowObjectForFrame:(WebFrame *)frame inIsolatedWorld:(WebScriptWorld *)world
@@ -371,7 +343,7 @@ IGNORE_WARNINGS_END
     if (!globalObject)
         return;
 
-    JSObjectSetProperty(ctx, globalObject, adopt(JSStringCreateWithUTF8CString("__worldID")).get(), JSValueMakeNumber(ctx, worldIDForWorld(world)), kJSPropertyAttributeReadOnly, 0);
+    JSObjectSetProperty(ctx, globalObject, WTR::createJSString("__worldID").get(), JSValueMakeNumber(ctx, worldIDForWorld(world)), kJSPropertyAttributeReadOnly, 0);
 }
 
 - (void)webView:(WebView *)sender didClearWindowObjectForFrame:(WebFrame *)frame inScriptWorld:(WebScriptWorld *)world

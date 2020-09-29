@@ -371,19 +371,10 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* f
     IWebFrame* parentFrame = 0;
     frame->parentFrame(&parentFrame);
 
-    JSValueRef exception = 0;
-
-    ::gTestRunner->makeWindowObject(context, windowObject, &exception);
-    ASSERT(!exception);
-
-    m_gcController->makeWindowObject(context, windowObject, &exception);
-    ASSERT(!exception);
-
-    m_accessibilityController->makeWindowObject(context, windowObject, &exception);
-    ASSERT(!exception);
-
-    m_textInputController->makeWindowObject(context, windowObject, &exception);
-    ASSERT(!exception);
+    ::gTestRunner->makeWindowObject(context);
+    m_gcController->makeWindowObject(context);
+    m_accessibilityController->makeWindowObject(context);
+    m_textInputController->makeWindowObject(context);
 
     JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");
     JSValueRef eventSender = makeEventSender(context, !parentFrame);
