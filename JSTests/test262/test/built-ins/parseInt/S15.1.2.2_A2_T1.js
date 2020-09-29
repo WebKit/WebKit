@@ -11,12 +11,12 @@ assert.sameValue(parseInt("\u00091"), parseInt("1"), 'parseInt("\\u00091") must 
 
 assert.sameValue(parseInt("\u0009\u0009-1"), parseInt("-1"), 'parseInt("\\u0009\\u0009-1") must return the same value returned by parseInt("-1")');
 
-assert.sameValue(parseInt("\t1"), parseInt("1"), 'parseInt(" 1") must return the same value returned by parseInt("1")');
+assert.sameValue(parseInt("	1"), parseInt("1"), 'parseInt(" 1") must return the same value returned by parseInt("1")');
 
-assert.sameValue(parseInt("\t\t\t1"), parseInt("1"), 'parseInt(" 1") must return the same value returned by parseInt("1")');
+assert.sameValue(parseInt("			1"), parseInt("1"), 'parseInt(" 1") must return the same value returned by parseInt("1")');
 
 assert.sameValue(
-  parseInt("\t\t\t\u0009\t\t\t\u0009-1"),
+  parseInt("			\u0009			\u0009-1"),
   parseInt("-1"),
   'parseInt(" \\u0009 \\u0009-1") must return the same value returned by parseInt("-1")'
 );

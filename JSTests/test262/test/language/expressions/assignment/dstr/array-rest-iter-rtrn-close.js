@@ -51,6 +51,9 @@ var thisValue = null;
 var args = null;
 var iterable = {};
 var iterator = {
+  next() {
+    throw new Test262Error();
+  },
   return: function() {
     returnCount += 1;
     thisValue = this;

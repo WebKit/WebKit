@@ -630,6 +630,9 @@ test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.j
 test/built-ins/ArrayBuffer/prototype/slice/species.js:
   default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «undefined») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «undefined») to be true'
+test/built-ins/Date/UTC/fp-evaluation-order.js:
+  default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
+  strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
 test/built-ins/Function/call-bind-this-realm-undef.js:
   default: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
   strict mode: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
@@ -1422,9 +1425,6 @@ test/intl402/Locale/likely-subtags.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
-test/intl402/NumberFormat/dft-currency-mnfd-range-check-mxfd.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
   default: 'Test262Error: Expected obj[0] to have enumerable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:
@@ -1961,8 +1961,8 @@ test/language/expressions/assignment/dstr/array-rest-iter-rtrn-close-null.js:
   default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
   strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
 test/language/expressions/assignment/dstr/array-rest-iter-rtrn-close.js:
-  default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
+  default: 'Test262Error: '
+  strict mode: 'Test262Error: '
 test/language/expressions/assignment/dstr/array-rest-iter-thrw-close-err.js:
   default: 'Test262Error: Expected SameValue(«11», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«11», «0») to be true'
@@ -2113,178 +2113,184 @@ test/language/expressions/class/class-name-ident-static-escaped.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/class/class-name-ident-static.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/class/cpn-fields-computed-property-name-from-additive-expression-add.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-additive-expression-add.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-additive-expression-subtract.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-additive-expression-subtract.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-arrow-function-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-assignment-expression-assignment.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-assignment-expression-assignment.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-assignment-expression-bitwise-or.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-assignment-expression-bitwise-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-assignment-expression-coalesce.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-assignment-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-assignment-expression-logical-and.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-assignment-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-assignment-expression-logical-or.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-assignment-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-async-arrow-function-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-async-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-condition-expression-false.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-condition-expression-false.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-condition-expression-true.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-condition-expression-true.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-decimal-e-notational-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-decimal-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-decimal-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-decimal-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-exponetiation-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-exponetiation-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-expression-coalesce.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-expression-logical-and.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-expression-logical-or.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-function-declaration.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-function-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-generator-function-declaration.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-generator-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-identifier.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-identifier.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-integer-e-notational-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-integer-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-integer-separators.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-integer-separators.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-math.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-math.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-multiplicative-expression-div.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-multiplicative-expression-div.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-multiplicative-expression-mult.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-multiplicative-expression-mult.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-numeric-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-null.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-string-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-numeric-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-computed-property-name-from-yield-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-string-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-additive-expression-add.js:
+test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-yield-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-additive-expression-subtract.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-additive-expression-add.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-arrow-function-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-additive-expression-subtract.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-assignment-expression-assignment.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-assignment-expression-bitwise-or.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-assignment-expression-assignment.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-assignment-expression-coalesce.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-assignment-expression-bitwise-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-assignment-expression-logical-and.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-assignment-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-assignment-expression-logical-or.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-assignment-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-async-arrow-function-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-assignment-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-condition-expression-false.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-async-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-condition-expression-true.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-condition-expression-false.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-decimal-e-notational-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-condition-expression-true.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-decimal-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-decimal-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-exponetiation-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-decimal-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-expression-coalesce.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-exponetiation-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-expression-logical-and.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-expression-logical-or.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-function-declaration.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-function-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-generator-function-declaration.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-identifier.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-generator-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-integer-e-notational-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-identifier.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-integer-separators.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-integer-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-math.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-integer-separators.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-multiplicative-expression-div.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-math.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-multiplicative-expression-mult.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-multiplicative-expression-div.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-numeric-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-multiplicative-expression-mult.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-string-literal.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-null.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/expressions/class/cpn-fields-methods-computed-property-name-from-yield-expression.js:
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-numeric-literal.js:
+  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-string-literal.js:
+  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-yield-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
 test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
@@ -3083,178 +3089,184 @@ test/language/statements/class/class-name-ident-static-escaped.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/class/class-name-ident-static.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/class/cpn-fields-computed-property-name-from-additive-expression-add.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-additive-expression-add.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-additive-expression-subtract.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-additive-expression-subtract.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-arrow-function-expression.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-assignment-expression-assignment.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-assignment-expression-assignment.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-assignment-expression-bitwise-or.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-assignment-expression-bitwise-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-assignment-expression-coalesce.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-assignment-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-assignment-expression-logical-and.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-assignment-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-assignment-expression-logical-or.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-assignment-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-async-arrow-function-expression.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-async-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-condition-expression-false.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-condition-expression-false.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-condition-expression-true.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-condition-expression-true.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-decimal-e-notational-literal.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-decimal-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-decimal-literal.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-decimal-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-exponetiation-expression.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-exponetiation-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-expression-coalesce.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-expression-logical-and.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-expression-logical-or.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-function-declaration.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-function-expression.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-generator-function-declaration.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-generator-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-identifier.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-identifier.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-integer-e-notational-literal.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-integer-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-integer-separators.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-integer-separators.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-math.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-math.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-multiplicative-expression-div.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-multiplicative-expression-div.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-multiplicative-expression-mult.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-multiplicative-expression-mult.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-numeric-literal.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-null.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-string-literal.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-numeric-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-computed-property-name-from-yield-expression.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-string-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-additive-expression-add.js:
+test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-yield-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-additive-expression-subtract.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-additive-expression-add.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-arrow-function-expression.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-additive-expression-subtract.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-assignment-expression-assignment.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-assignment-expression-bitwise-or.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-assignment-expression-assignment.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-assignment-expression-coalesce.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-assignment-expression-bitwise-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-assignment-expression-logical-and.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-assignment-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-assignment-expression-logical-or.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-assignment-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-async-arrow-function-expression.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-assignment-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-condition-expression-false.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-async-arrow-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-condition-expression-true.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-condition-expression-false.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-decimal-e-notational-literal.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-condition-expression-true.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-decimal-literal.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-decimal-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-exponetiation-expression.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-decimal-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-expression-coalesce.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-exponetiation-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-expression-logical-and.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-expression-coalesce.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-expression-logical-or.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-expression-logical-and.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-function-declaration.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-expression-logical-or.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-function-expression.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-generator-function-declaration.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-function-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-identifier.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-generator-function-declaration.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-integer-e-notational-literal.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-identifier.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-integer-separators.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-integer-e-notational-literal.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-math.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-integer-separators.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-multiplicative-expression-div.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-math.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-multiplicative-expression-mult.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-multiplicative-expression-div.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-numeric-literal.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-multiplicative-expression-mult.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-string-literal.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-null.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/class/cpn-fields-methods-computed-property-name-from-yield-expression.js:
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-numeric-literal.js:
+  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-string-literal.js:
+  default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+  strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
+test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-yield-expression.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
 test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
@@ -3502,8 +3514,8 @@ test/language/statements/for-of/dstr/array-rest-iter-rtrn-close-null.js:
   default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
   strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
 test/language/statements/for-of/dstr/array-rest-iter-rtrn-close.js:
-  default: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
-  strict mode: "TypeError: undefined is not a function (near '...[...{}[yield]]...')"
+  default: 'Test262Error: '
+  strict mode: 'Test262Error: '
 test/language/statements/for-of/dstr/array-rest-iter-thrw-close-err.js:
   default: 'Test262Error: Expected SameValue(«11», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«11», «0») to be true'
