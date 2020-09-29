@@ -6,9 +6,6 @@
 </head>
 <body>
 <script>
-if (window.internals)
-    window.internals.settings.setIndexedDBWorkersEnabled(true);
-
 description("Explicitly terminating worker with blocked call should allow later open calls to proceed");
 
 function test()

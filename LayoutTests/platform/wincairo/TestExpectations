@@ -1697,7 +1697,6 @@ storage/indexeddb/modern/autoincrement-abort.html [ Crash Pass ]
 storage/indexeddb/modern/idbobjectstore-get-failures.html [ Crash Pass ]
 storage/indexeddb/modern/multiple-objectstore-index-cursor-collision.html [ Crash Pass ]
 storage/indexeddb/modern/objectstore-cursor-advance-failures-private.html [ Crash Pass ]
-storage/indexeddb/modern/workers-disabled.html [ Crash Pass ]
 storage/indexeddb/modern/workers-enable.html [ Crash Pass ]
 
 # Flaky timeouts

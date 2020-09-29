@@ -33,27 +33,27 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
     SkipVTableValidation,
+    Exposed=(Window,Worker)
 ] interface IDBIndex {
     attribute DOMString name;
-    readonly attribute IDBObjectStore objectStore;
+    [SameObject] readonly attribute IDBObjectStore objectStore;
     readonly attribute IDBKeyPath? keyPath;
     readonly attribute boolean multiEntry;
     readonly attribute boolean unique;
 
-    [CallWith=GlobalObject, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
-    [CallWith=GlobalObject, MayThrowException] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest get(IDBKeyRange? key);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest get(any key);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest getKey(IDBKeyRange? key);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest getKey(any key);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest getAll(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest getAll(any key, optional [EnforceRange] unsigned long count);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest count(optional IDBKeyRange? range = null);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest count(any key);
 
-    [CallWith=GlobalObject, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
-    [CallWith=GlobalObject, MayThrowException] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
-
-    [CallWith=GlobalObject, MayThrowException] IDBRequest get(IDBKeyRange? key);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest get(any key);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest getKey(IDBKeyRange? key);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest getKey(any key);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest getAll(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest getAll(any key, optional [EnforceRange] unsigned long count);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest count(optional IDBKeyRange? range = null);
-    [CallWith=GlobalObject, MayThrowException] IDBRequest count(any key);
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
 };

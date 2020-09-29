@@ -29,15 +29,21 @@
     Conditional=INDEXED_DATABASE,
     JSCustomMarkFunction,
     SkipVTableValidation,
+    Exposed=(Window,Worker)
 ] interface IDBTransaction : EventTarget {
     readonly attribute DOMStringList objectStoreNames;
     readonly attribute IDBTransactionMode mode;
-    readonly attribute IDBDatabase db;
-    readonly attribute DOMException error;
+    // Implement 'durability'.
+    // readonly attribute IDBTransactionDurability durability;
+    [SameObject] readonly attribute IDBDatabase db;
+    readonly attribute DOMException? error;
 
     [MayThrowException] IDBObjectStore objectStore(DOMString name);
+    // FIXME: Implement 'commit'.
+    // undefined commit();
     [MayThrowException] undefined abort();
 
+    // Event handlers:
     attribute EventHandler onabort;
     attribute EventHandler oncomplete;
     attribute EventHandler onerror;

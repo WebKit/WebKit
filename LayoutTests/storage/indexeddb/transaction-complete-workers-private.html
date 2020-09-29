@@ -6,9 +6,6 @@
 </head>
 <body>
 <script>
-if (window.internals)
-    window.internals.settings.setIndexedDBWorkersEnabled(true);
-
 worker = startWorker('resources/transaction-complete-workers.js');
 
 // FIXME: It should be possible for the worker to set self.onerror to catch the event

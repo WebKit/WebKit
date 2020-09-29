@@ -2,9 +2,6 @@
 <html>
 <head>
 <script>
-if (window.internals)
-    window.internals.settings.setIndexedDBWorkersEnabled(true);
-
 window.onload = function() {
     var worker = new Worker('worker-for-indexeddb.js');
     worker.postMessage(true);

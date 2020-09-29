@@ -129,7 +129,6 @@ public:
     void setForcedSupportsHighDynamicRangeValue(ForcedAccessibilityValue);
 
     // RuntimeEnabledFeatures.
-    static void setIndexedDBWorkersEnabled(bool);
     static void setWebGL2Enabled(bool);
     static void setWebGPUEnabled(bool);
     static void setPictureInPictureAPIEnabled(bool);
@@ -220,7 +219,6 @@ private:
         FrameFlattening m_frameFlattening;
 
         // Runtime enabled settings.
-        bool m_indexedDBWorkersEnabled;
         bool m_webGL2Enabled;
         bool m_fetchAPIKeepAliveAPIEnabled;
         

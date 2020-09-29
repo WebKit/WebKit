@@ -26,16 +26,17 @@
 [
     Conditional=INDEXED_DATABASE,
     ImplementationLacksVTable,
+    Exposed=(Window,Worker)
 ] interface IDBKeyRange {
     readonly attribute [OverrideIDLType=IDLIDBKey] any lower;
     readonly attribute [OverrideIDLType=IDLIDBKey] any upper;
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 
-    [CallWith=GlobalObject, MayThrowException] static IDBKeyRange only(any value);
-    [CallWith=GlobalObject, MayThrowException] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
-    [CallWith=GlobalObject, MayThrowException] static IDBKeyRange upperBound(any upper, optional boolean open = false);
-    [CallWith=GlobalObject, MayThrowException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
+    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange only(any value);
+    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
+    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange upperBound(any upper, optional boolean open = false);
+    [NewObject, CallWith=GlobalObject, MayThrowException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
 
     [CallWith=GlobalObject, MayThrowException] boolean includes(any key);
 };

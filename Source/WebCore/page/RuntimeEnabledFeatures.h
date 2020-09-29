@@ -149,11 +149,6 @@ public:
     bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
 #endif
 
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    void setIndexedDBWorkersEnabled(bool isEnabled) { m_isIndexedDBWorkersEnabled = isEnabled; }
-    bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
-#endif
-
     bool userGesturePromisePropagationEnabled() const { return m_userGesturePromisePropagationEnabled; }
     void setUserGesturePromisePropagationEnabled(bool isEnabled) { m_userGesturePromisePropagationEnabled = isEnabled; }
 
@@ -314,10 +309,6 @@ private:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };
-#endif
-
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    bool m_isIndexedDBWorkersEnabled { true };
 #endif
 
     bool m_userGesturePromisePropagationEnabled { true };

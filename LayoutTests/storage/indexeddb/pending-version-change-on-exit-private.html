@@ -6,9 +6,6 @@
 </head>
 <body>
 <script>
-if (window.internals)
-    window.internals.settings.setIndexedDBWorkersEnabled(true);
-
 description("No crashes when there are event listeners in a worker on shutdown");
 
 if (self.location.search == "?second") {

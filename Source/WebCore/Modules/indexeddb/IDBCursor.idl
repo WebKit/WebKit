@@ -28,15 +28,19 @@
     CustomToJSObject,
     JSCustomMarkFunction,
     SkipVTableValidation,
+    Exposed=(Window,Worker)
 ] interface IDBCursor {
     readonly attribute (IDBObjectStore or IDBIndex) source;
     readonly attribute IDBCursorDirection direction;
     [CustomGetter] readonly attribute any key;
     [CustomGetter] readonly attribute any primaryKey;
+    // FIXME: Implement 'request'
+    // [SameObject] readonly attribute IDBRequest request;
 
-    [CallWith=GlobalObject, MayThrowException] IDBRequest update(any value);
     [MayThrowException] undefined advance([EnforceRange] unsigned long count);
     [CallWith=GlobalObject, ImplementedAs=continueFunction, MayThrowException] undefined continue(optional any key);
     [CallWith=GlobalObject, MayThrowException] undefined continuePrimaryKey(any key, any primaryKey);
-    [CallWith=GlobalObject, ImplementedAs=deleteFunction, MayThrowException] IDBRequest delete();
+
+    [NewObject, CallWith=GlobalObject, MayThrowException] IDBRequest update(any value);
+    [NewObject, CallWith=GlobalObject, ImplementedAs=deleteFunction, MayThrowException] IDBRequest delete();
 };

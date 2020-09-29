@@ -1,3 +1,40 @@
+2020-09-29  Sam Weinig  <weinig@apple.com>
+
+        Remove IndexedDBWorkers runtime setting now since it is always true
+        https://bugs.webkit.org/show_bug.cgi?id=217090
+
+        Reviewed by Darin Adler.
+
+        Removes IndexedDBWorkers runtime setting, allowing us to remove a bunch
+        of special cases for WorkerGlobalScope constructors. Now instead of explicitly
+        adding the IndexedDB constructors to WorkerGlobalScope, we use the Exposed
+        mechanism to have the generators do this for us. While going through each of
+        the IndexedDB IDLs, I also re-alligned with the current spec, adding comments
+        for missing functionality as necessary.
+
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIndexedDBWorkersEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::indexedDBWorkersEnabled const): Deleted.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setIndexedDBWorkersEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * workers/WorkerGlobalScope.idl:
+
 2020-09-29  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB Index Corruption after upgrade from iOS 13 to iOS 14

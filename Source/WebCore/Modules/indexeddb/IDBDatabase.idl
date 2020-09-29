@@ -28,25 +28,28 @@
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     SkipVTableValidation,
+    Exposed=(Window,Worker)
 ] interface IDBDatabase : EventTarget {
     readonly attribute DOMString name;
     readonly attribute unsigned long long version;
     readonly attribute DOMStringList objectStoreNames;
 
-    [MayThrowException] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
-    [MayThrowException] undefined deleteObjectStore(DOMString name);
-
-    [MayThrowException] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly");
-
-    // FIXME: This is not part of the spec, but is needed for compatibility.
-    // See https://github.com/w3c/IndexedDB/issues/85
-    [MayThrowException] IDBTransaction transaction(DOMStringList storeNames, optional IDBTransactionMode mode = "readonly");
+    // FIXME: 'transaction' should also take an optional 'IDBTransactionOptions' argument.
+    [NewObject, MayThrowException] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly");
     undefined close();
 
+    [NewObject, MayThrowException] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
+    [MayThrowException] undefined deleteObjectStore(DOMString name);
+
+    // Event handlers:
     attribute EventHandler onabort;
     attribute EventHandler onclose;
     attribute EventHandler onerror;
     attribute EventHandler onversionchange;
+
+    // Non-standard: This is not part of the spec, but is needed for compatibility.
+    // See https://github.com/w3c/IndexedDB/issues/85
+    [MayThrowException] IDBTransaction transaction(DOMStringList storeNames, optional IDBTransactionMode mode = "readonly");
 };
 
 dictionary IDBObjectStoreParameters {

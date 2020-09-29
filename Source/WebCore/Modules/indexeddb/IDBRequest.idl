@@ -33,6 +33,7 @@
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
     SkipVTableValidation,
+    Exposed=(Window,Worker)
 ] interface IDBRequest : EventTarget {
     [CustomGetter] readonly attribute (IDBCursor or IDBDatabase or any) result;
     readonly attribute DOMException? error;
@@ -40,6 +41,7 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute IDBRequestReadyState readyState;
 
+    // Event handlers:
     attribute EventHandler onsuccess;
     attribute EventHandler onerror;
 };

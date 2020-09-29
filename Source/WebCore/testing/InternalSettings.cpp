@@ -110,9 +110,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
     , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
     , m_frameFlattening(settings.frameFlattening())
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
-#endif
 #if ENABLE(WEBGL2)
     , m_webGL2Enabled(RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
 #endif
@@ -214,9 +211,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
     settings.setAnimatedImageDebugCanvasDrawingEnabled(m_animatedImageDebugCanvasDrawingEnabled);
 
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
-#endif
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(m_webGL2Enabled);
 #endif
@@ -791,15 +785,6 @@ ExceptionOr<void> InternalSettings::setAnimatedImageDebugCanvasDrawingEnabled(bo
         return Exception { InvalidAccessError };
     settings().setAnimatedImageDebugCanvasDrawingEnabled(ignore);
     return { };
-}
-
-void InternalSettings::setIndexedDBWorkersEnabled(bool enabled)
-{
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
 }
 
 void InternalSettings::setWebGL2Enabled(bool enabled)

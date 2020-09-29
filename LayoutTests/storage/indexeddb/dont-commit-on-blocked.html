@@ -5,9 +5,6 @@
 </head>
 <body>
 <script>
-if (window.internals)
-    window.internals.settings.setIndexedDBWorkersEnabled(true);
-    
 description("Regression test for WK82678 - don't commit after a blocked event");
 
 indexedDBTest(prepareDatabase, holdConnection);

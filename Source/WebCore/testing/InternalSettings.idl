@@ -94,7 +94,6 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] undefined setShouldDispatchSyntheticMouseOutAfterSyntheticClick(boolean shouldDispatch);
 
     // RuntimeEnabledFeatures.
-    undefined setIndexedDBWorkersEnabled(boolean enabled);
     undefined setWebGL2Enabled(boolean enabled);
     undefined setWebGPUEnabled(boolean enabled);
     undefined setFetchAPIKeepAliveEnabled(boolean enabled);

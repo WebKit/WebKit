@@ -1,3 +1,39 @@
+2020-09-29  Sam Weinig  <weinig@apple.com>
+
+        Remove IndexedDBWorkers runtime setting now since it is always true
+        https://bugs.webkit.org/show_bug.cgi?id=217090
+
+        Reviewed by Darin Adler.
+
+        Removes calls to setIndexedDBWorkersEnabled, which hasn't been required in quite some time,
+        and removes workers-disabled.html test, as it is no longer possible nor desirable to do this.
+
+        * http/tests/security/cross-origin-worker-indexeddb-allowed.html:
+        * http/tests/security/cross-origin-worker-indexeddb.html:
+        * http/tests/security/resources/cross-origin-iframe-for-worker-indexeddb.html:
+        * http/tests/security/resources/document-for-cross-origin-worker-indexeddb.html:
+        * platform/wincairo/TestExpectations:
+        * storage/indexeddb/basics-workers.html:
+        * storage/indexeddb/cursor-advance-workers.html:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html:
+        * storage/indexeddb/dont-commit-on-blocked-private.html:
+        * storage/indexeddb/dont-commit-on-blocked.html:
+        * storage/indexeddb/index-basics-workers.html:
+        * storage/indexeddb/modern/workers-disabled-expected.txt: Removed.
+        * storage/indexeddb/modern/workers-disabled.html: Removed.
+        * storage/indexeddb/objectstore-basics-workers.html:
+        * storage/indexeddb/open-twice-workers.html:
+        * storage/indexeddb/pending-activity-workers.html:
+        * storage/indexeddb/pending-version-change-on-exit-private.html:
+        * storage/indexeddb/pending-version-change-on-exit.html:
+        * storage/indexeddb/pending-version-change-stuck-private.html:
+        * storage/indexeddb/pending-version-change-stuck-works-with-terminate-private.html:
+        * storage/indexeddb/pending-version-change-stuck-works-with-terminate.html:
+        * storage/indexeddb/pending-version-change-stuck.html:
+        * storage/indexeddb/transaction-complete-workers-private.html:
+        * storage/indexeddb/transaction-complete-workers.html:
+        * storage/indexeddb/unprefix-workers.html:
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage

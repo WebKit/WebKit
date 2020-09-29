@@ -46,21 +46,6 @@
 
     [MayThrowException] undefined importScripts(USVString... urls);
     readonly attribute WorkerNavigator navigator;
-
-    // Additional constructors
-
-    // FIXME: Automatically generate these once we can drop the IndexedDBWorkers runtime flag.
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBCursorConstructor IDBCursor;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBCursorWithValueConstructor IDBCursorWithValue;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBDatabaseConstructor IDBDatabase;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBFactoryConstructor IDBFactory;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBIndexConstructor IDBIndex;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBKeyRangeConstructor IDBKeyRange;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBObjectStoreConstructor IDBObjectStore;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBOpenDBRequestConstructor IDBOpenDBRequest;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBRequestConstructor IDBRequest;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBTransactionConstructor IDBTransaction;
-    [Conditional=INDEXED_DATABASE_IN_WORKERS, EnabledAtRuntime=IndexedDBWorkers] attribute IDBVersionChangeEventConstructor IDBVersionChangeEvent;
 };
 
 WorkerGlobalScope includes GlobalCrypto;
