@@ -271,8 +271,8 @@ void JIT::emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, Vir
     emitPutVirtualRegister(dst);
 }
 
-template<typename Op>
-void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+template<typename Op, typename SlowOperation>
+void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleCondition condition, SlowOperation operation, bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
     VirtualRegister op1 = bytecode.m_lhs;
@@ -281,7 +281,8 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
     emit_compareAndJumpSlowImpl(op1, op2, target, instruction->size(), condition, operation, invert, iter);
 }
 
-void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, size_t instructionSize, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+template<typename SlowOperation>
+void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, size_t instructionSize, DoubleCondition condition, SlowOperation operation, bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
 
     // We generate inline code for the following cases in the slow path:
@@ -560,8 +561,8 @@ void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalConditi
     emitStoreBool(dst, regT0);
 }
 
-template <typename Op>
-void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleCondition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+template <typename Op, typename SlowOperation>
+void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleCondition, SlowOperation operation, bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
     VirtualRegister op1 = bytecode.m_lhs;

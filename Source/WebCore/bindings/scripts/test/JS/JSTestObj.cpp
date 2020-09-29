@@ -1596,201 +1596,201 @@ JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunctionToString);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReadOnlyLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReadOnlyStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReadOnlyTestObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConstructorStaticReadOnlyLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConstructorStaticStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConstructorStaticStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConstructorTestSubObj(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConstructorTestStaticReadonlyObj(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjEnumAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjEnumAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjByteAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjByteAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjOctetAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjOctetAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjClampedShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjClampedShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjEnforceRangeShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjEnforceRangeShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUnsignedShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjUnsignedShortAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjLongLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjLongLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUnsignedLongLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjUnsignedLongLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUsvstringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjUsvstringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjTestObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjTestObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjTestNullableObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjTestNullableObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjLenientTestObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjLenientTestObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUnforgeableAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringAttrTreatingNullAsEmptyString(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringAttrTreatingNullAsEmptyString(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUsvstringAttrTreatingNullAsEmptyString(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjUsvstringAttrTreatingNullAsEmptyString(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjByteStringAttrTreatingNullAsEmptyString(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjByteStringAttrTreatingNullAsEmptyString(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringLongRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringLongRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUsvstringLongRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjUsvstringLongRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjUsvstringLongRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjUsvstringLongRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringObjRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringObjRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringNullableObjRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringNullableObjRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringVoidCallbackRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringVoidCallbackRecordAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjDictionaryAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjDictionaryAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableDictionaryAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjNullableDictionaryAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjAnnotatedTypeInUnionAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjAnnotatedTypeInUnionAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjAnnotatedTypeInSequenceAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjAnnotatedTypeInSequenceAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjImplementationEnumAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjImplementationEnumAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjMediaDevices(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjXMLObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjXMLObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjCreate(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjCreate(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedUSVStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedUSVStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedIntegralAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedIntegralAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedUnsignedIntegralAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedUnsignedIntegralAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedBooleanAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedBooleanAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedURLAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedURLAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedUSVURLAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedUSVURLAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedStringAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedCustomIntegralAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedCustomIntegralAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedCustomBooleanAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedCustomBooleanAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReflectedCustomURLAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReflectedCustomURLAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReadOnlyLongAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReadOnlyStringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReadOnlyTestObjAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructorStaticReadOnlyLongAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructorStaticStringAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConstructorStaticStringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructorTestSubObj);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructorTestStaticReadonlyObj);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjEnumAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjEnumAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjByteAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjByteAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjOctetAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjOctetAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjShortAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjShortAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjClampedShortAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjClampedShortAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjEnforceRangeShortAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjEnforceRangeShortAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUnsignedShortAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjUnsignedShortAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjLongAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjLongAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjLongLongAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjLongLongAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUnsignedLongLongAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjUnsignedLongLongAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUsvstringAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjUsvstringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTestObjAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjTestObjAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTestNullableObjAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjTestNullableObjAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjLenientTestObjAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjLenientTestObjAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUnforgeableAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringAttrTreatingNullAsEmptyString);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringAttrTreatingNullAsEmptyString);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUsvstringAttrTreatingNullAsEmptyString);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjUsvstringAttrTreatingNullAsEmptyString);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjByteStringAttrTreatingNullAsEmptyString);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjByteStringAttrTreatingNullAsEmptyString);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringLongRecordAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringLongRecordAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUsvstringLongRecordAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjUsvstringLongRecordAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjUsvstringLongRecordAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjUsvstringLongRecordAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringObjRecordAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringObjRecordAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringNullableObjRecordAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringNullableObjRecordAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringVoidCallbackRecordAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringVoidCallbackRecordAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjDictionaryAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjDictionaryAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableDictionaryAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjNullableDictionaryAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjAnnotatedTypeInUnionAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjAnnotatedTypeInUnionAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjAnnotatedTypeInSequenceAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjAnnotatedTypeInSequenceAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjImplementationEnumAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjImplementationEnumAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjMediaDevices);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjXMLObjAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjXMLObjAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjCreate);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjCreate);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedStringAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedStringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedUSVStringAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedUSVStringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedIntegralAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedIntegralAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedUnsignedIntegralAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedUnsignedIntegralAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedBooleanAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedBooleanAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedURLAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedURLAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedUSVURLAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedUSVURLAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedStringAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedStringAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedCustomIntegralAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedCustomIntegralAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedCustomBooleanAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedCustomBooleanAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReflectedCustomURLAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReflectedCustomURLAttr);
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjEnabledAtRuntimeAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjEnabledAtRuntimeAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjEnabledAtRuntimeAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjEnabledAtRuntimeAttribute);
 #endif
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConstructorEnabledAtRuntimeAttributeStatic(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConstructorEnabledAtRuntimeAttributeStatic(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructorEnabledAtRuntimeAttributeStatic);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConstructorEnabledAtRuntimeAttributeStatic);
 #endif
-JSC::EncodedJSValue JIT_OPERATION jsTestObjTypedArrayAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjTypedArrayAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjCustomAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjCustomAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjOnfoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjOnfoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjOnwebkitfoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjOnwebkitfoo(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjWithExecStateAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjWithExecStateAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjWithCallWithAndSetterCallWithAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjWithCallWithAndSetterCallWithAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjWithScriptExecutionContextAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjWithScriptExecutionContextAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjWithScriptExecutionContextAndExecStateAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjWithScriptExecutionContextAndExecStateAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTypedArrayAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjTypedArrayAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjCustomAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjCustomAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjOnfoo);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjOnfoo);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjOnwebkitfoo);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjOnwebkitfoo);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjWithExecStateAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjWithExecStateAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjWithCallWithAndSetterCallWithAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjWithCallWithAndSetterCallWithAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjWithScriptExecutionContextAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjWithScriptExecutionContextAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjWithScriptExecutionContextAndExecStateAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjWithScriptExecutionContextAndExecStateAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute);
 #if ENABLE(Condition1)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionalAttr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionalAttr1);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionalAttr1);
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionalAttr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionalAttr2);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionalAttr2);
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionalAttr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionalAttr3);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionalAttr3);
 #endif
 #if ENABLE(Condition1)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr4Constructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionalAttr4Constructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionalAttr4Constructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionalAttr4Constructor);
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr5Constructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionalAttr5Constructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionalAttr5Constructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionalAttr5Constructor);
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr6Constructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionalAttr6Constructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionalAttr6Constructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionalAttr6Constructor);
 #endif
-JSC::EncodedJSValue JIT_OPERATION jsTestObjCachedAttribute1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjCachedAttribute2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjCachedAttribute1);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjCachedAttribute2);
 #if ENABLE(CONDITION)
-JSC::EncodedJSValue JIT_OPERATION jsTestObjCachedAttribute3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjCachedAttribute3);
 #endif
-JSC::EncodedJSValue JIT_OPERATION jsTestObjAnyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjAnyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjObjectAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjObjectAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjContentDocument(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjMutablePoint(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjMutablePoint(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStrawberry(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStrawberry(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjDescription(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjId(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjId(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjHash(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjReplaceableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjReplaceableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableDoubleAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableBooleanAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableStringAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableLongSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjNullableLongSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableStringSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjNullableStringSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableUSVStringSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjNullableUSVStringSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjNullableByteStringSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjNullableByteStringSettableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjAttributeWithReservedEnumType(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjAttributeWithReservedEnumType(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjTestReadOnlyVoidPromiseAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjTestReadOnlyPromiseAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjPutForwardsAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjPutForwardsAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjPutForwardsNullableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjPutForwardsNullableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjStringifierAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjStringifierAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionallyExposedToWindowAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionallyExposedToWindowAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionallyExposedToWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionallyExposedToWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestObjConditionallyExposedToWindowAndWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestObjConditionallyExposedToWindowAndWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjAnyAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjAnyAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjObjectAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjObjectAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjContentDocument);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjMutablePoint);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjMutablePoint);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStrawberry);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStrawberry);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjDescription);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjId);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjId);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjHash);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjReplaceableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjReplaceableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableDoubleAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableLongAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableBooleanAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableStringAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableLongSettableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjNullableLongSettableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableStringSettableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjNullableStringSettableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableUSVStringSettableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjNullableUSVStringSettableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjNullableByteStringSettableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjNullableByteStringSettableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjAttributeWithReservedEnumType);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjAttributeWithReservedEnumType);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTestReadOnlyVoidPromiseAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjTestReadOnlyPromiseAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjPutForwardsAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjPutForwardsAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjPutForwardsNullableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjPutForwardsNullableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjStringifierAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjStringifierAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWindowAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWindowAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWorkerAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWorkerAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWindowAndWorkerAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWindowAndWorkerAttribute);
 
 class JSTestObjPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -2583,7 +2583,7 @@ template<> inline JSTestObj* IDLOperation<JSTestObj>::cast(JSGlobalObject& lexic
     return jsDynamicCast<JSTestObj*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -2593,7 +2593,7 @@ EncodedJSValue JIT_OPERATION jsTestObjConstructor(JSGlobalObject* lexicalGlobalO
     return JSValue::encode(JSTestObj::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestObjConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -2614,7 +2614,7 @@ static inline JSValue jsTestObjReadOnlyLongAttrGetter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.readOnlyLongAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReadOnlyLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReadOnlyLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReadOnlyLongAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readOnlyLongAttr");
 }
@@ -2627,7 +2627,7 @@ static inline JSValue jsTestObjReadOnlyStringAttrGetter(JSGlobalObject& lexicalG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.readOnlyStringAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReadOnlyStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReadOnlyStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReadOnlyStringAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readOnlyStringAttr");
 }
@@ -2640,7 +2640,7 @@ static inline JSValue jsTestObjReadOnlyTestObjAttrGetter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.readOnlyTestObjAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReadOnlyTestObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReadOnlyTestObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReadOnlyTestObjAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "readOnlyTestObjAttr");
 }
@@ -2652,7 +2652,7 @@ static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(JSGlobalO
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, TestObj::staticReadOnlyLongAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConstructorStaticReadOnlyLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructorStaticReadOnlyLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorStaticReadOnlyLongAttrGetter>(*lexicalGlobalObject, thisValue, "staticReadOnlyLongAttr");
 }
@@ -2664,7 +2664,7 @@ static inline JSValue jsTestObjConstructorStaticStringAttrGetter(JSGlobalObject&
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestObj::staticStringAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConstructorStaticStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructorStaticStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorStaticStringAttrGetter>(*lexicalGlobalObject, thisValue, "staticStringAttr");
 }
@@ -2681,7 +2681,7 @@ static inline bool setJSTestObjConstructorStaticStringAttrSetter(JSGlobalObject&
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConstructorStaticStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConstructorStaticStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::setStatic<setJSTestObjConstructorStaticStringAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "staticStringAttr");
 }
@@ -2692,7 +2692,7 @@ static inline JSValue jsTestObjConstructorTestSubObjGetter(JSGlobalObject& lexic
     return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConstructorTestSubObj(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructorTestSubObj, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorTestSubObjGetter>(*lexicalGlobalObject, thisValue, "TestSubObj");
 }
@@ -2709,7 +2709,7 @@ static inline JSValue jsTestObjConstructorTestStaticReadonlyObjGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, TestObj::testStaticReadonlyObj(document))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConstructorTestStaticReadonlyObj(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructorTestStaticReadonlyObj, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorTestStaticReadonlyObjGetter>(*lexicalGlobalObject, thisValue, "testStaticReadonlyObj");
 }
@@ -2722,7 +2722,7 @@ static inline JSValue jsTestObjEnumAttrGetter(JSGlobalObject& lexicalGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLEnumeration<TestObj::EnumType>>(lexicalGlobalObject, throwScope, impl.enumAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjEnumAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjEnumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjEnumAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enumAttr");
 }
@@ -2743,7 +2743,7 @@ static inline bool setJSTestObjEnumAttrSetter(JSGlobalObject& lexicalGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjEnumAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjEnumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjEnumAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enumAttr");
 }
@@ -2756,7 +2756,7 @@ static inline JSValue jsTestObjByteAttrGetter(JSGlobalObject& lexicalGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLByte>(lexicalGlobalObject, throwScope, impl.byteAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjByteAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjByteAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjByteAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "byteAttr");
 }
@@ -2774,7 +2774,7 @@ static inline bool setJSTestObjByteAttrSetter(JSGlobalObject& lexicalGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjByteAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjByteAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjByteAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "byteAttr");
 }
@@ -2787,7 +2787,7 @@ static inline JSValue jsTestObjOctetAttrGetter(JSGlobalObject& lexicalGlobalObje
     RELEASE_AND_RETURN(throwScope, (toJS<IDLOctet>(lexicalGlobalObject, throwScope, impl.octetAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjOctetAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjOctetAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjOctetAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "octetAttr");
 }
@@ -2805,7 +2805,7 @@ static inline bool setJSTestObjOctetAttrSetter(JSGlobalObject& lexicalGlobalObje
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjOctetAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjOctetAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjOctetAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "octetAttr");
 }
@@ -2818,7 +2818,7 @@ static inline JSValue jsTestObjShortAttrGetter(JSGlobalObject& lexicalGlobalObje
     RELEASE_AND_RETURN(throwScope, (toJS<IDLShort>(lexicalGlobalObject, throwScope, impl.shortAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjShortAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "shortAttr");
 }
@@ -2836,7 +2836,7 @@ static inline bool setJSTestObjShortAttrSetter(JSGlobalObject& lexicalGlobalObje
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjShortAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "shortAttr");
 }
@@ -2849,7 +2849,7 @@ static inline JSValue jsTestObjClampedShortAttrGetter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLClampAdaptor<IDLShort>>(lexicalGlobalObject, throwScope, impl.clampedShortAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjClampedShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjClampedShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjClampedShortAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "clampedShortAttr");
 }
@@ -2867,7 +2867,7 @@ static inline bool setJSTestObjClampedShortAttrSetter(JSGlobalObject& lexicalGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjClampedShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjClampedShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjClampedShortAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "clampedShortAttr");
 }
@@ -2880,7 +2880,7 @@ static inline JSValue jsTestObjEnforceRangeShortAttrGetter(JSGlobalObject& lexic
     RELEASE_AND_RETURN(throwScope, (toJS<IDLEnforceRangeAdaptor<IDLShort>>(lexicalGlobalObject, throwScope, impl.enforceRangeShortAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjEnforceRangeShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjEnforceRangeShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjEnforceRangeShortAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enforceRangeShortAttr");
 }
@@ -2898,7 +2898,7 @@ static inline bool setJSTestObjEnforceRangeShortAttrSetter(JSGlobalObject& lexic
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjEnforceRangeShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjEnforceRangeShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjEnforceRangeShortAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enforceRangeShortAttr");
 }
@@ -2911,7 +2911,7 @@ static inline JSValue jsTestObjUnsignedShortAttrGetter(JSGlobalObject& lexicalGl
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedShort>(lexicalGlobalObject, throwScope, impl.unsignedShortAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUnsignedShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUnsignedShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUnsignedShortAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unsignedShortAttr");
 }
@@ -2929,7 +2929,7 @@ static inline bool setJSTestObjUnsignedShortAttrSetter(JSGlobalObject& lexicalGl
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjUnsignedShortAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjUnsignedShortAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjUnsignedShortAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "unsignedShortAttr");
 }
@@ -2942,7 +2942,7 @@ static inline JSValue jsTestObjLongAttrGetter(JSGlobalObject& lexicalGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.longAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjLongAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "longAttr");
 }
@@ -2960,7 +2960,7 @@ static inline bool setJSTestObjLongAttrSetter(JSGlobalObject& lexicalGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjLongAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "longAttr");
 }
@@ -2973,7 +2973,7 @@ static inline JSValue jsTestObjLongLongAttrGetter(JSGlobalObject& lexicalGlobalO
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLongLong>(lexicalGlobalObject, throwScope, impl.longLongAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjLongLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjLongLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjLongLongAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "longLongAttr");
 }
@@ -2991,7 +2991,7 @@ static inline bool setJSTestObjLongLongAttrSetter(JSGlobalObject& lexicalGlobalO
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjLongLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjLongLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjLongLongAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "longLongAttr");
 }
@@ -3004,7 +3004,7 @@ static inline JSValue jsTestObjUnsignedLongLongAttrGetter(JSGlobalObject& lexica
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedLongLong>(lexicalGlobalObject, throwScope, impl.unsignedLongLongAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUnsignedLongLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUnsignedLongLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUnsignedLongLongAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unsignedLongLongAttr");
 }
@@ -3022,7 +3022,7 @@ static inline bool setJSTestObjUnsignedLongLongAttrSetter(JSGlobalObject& lexica
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjUnsignedLongLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjUnsignedLongLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjUnsignedLongLongAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "unsignedLongLongAttr");
 }
@@ -3035,7 +3035,7 @@ static inline JSValue jsTestObjStringAttrGetter(JSGlobalObject& lexicalGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.stringAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringAttr");
 }
@@ -3053,7 +3053,7 @@ static inline bool setJSTestObjStringAttrSetter(JSGlobalObject& lexicalGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringAttr");
 }
@@ -3066,7 +3066,7 @@ static inline JSValue jsTestObjUsvstringAttrGetter(JSGlobalObject& lexicalGlobal
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.usvstringAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUsvstringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUsvstringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUsvstringAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "usvstringAttr");
 }
@@ -3084,7 +3084,7 @@ static inline bool setJSTestObjUsvstringAttrSetter(JSGlobalObject& lexicalGlobal
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjUsvstringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjUsvstringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjUsvstringAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "usvstringAttr");
 }
@@ -3097,7 +3097,7 @@ static inline JSValue jsTestObjTestObjAttrGetter(JSGlobalObject& lexicalGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testObjAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjTestObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTestObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjTestObjAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testObjAttr");
 }
@@ -3115,7 +3115,7 @@ static inline bool setJSTestObjTestObjAttrSetter(JSGlobalObject& lexicalGlobalOb
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjTestObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjTestObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjTestObjAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testObjAttr");
 }
@@ -3128,7 +3128,7 @@ static inline JSValue jsTestObjTestNullableObjAttrGetter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLInterface<TestObj>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testNullableObjAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjTestNullableObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTestNullableObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjTestNullableObjAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testNullableObjAttr");
 }
@@ -3146,7 +3146,7 @@ static inline bool setJSTestObjTestNullableObjAttrSetter(JSGlobalObject& lexical
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjTestNullableObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjTestNullableObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjTestNullableObjAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testNullableObjAttr");
 }
@@ -3159,7 +3159,7 @@ static inline JSValue jsTestObjLenientTestObjAttrGetter(JSGlobalObject& lexicalG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.lenientTestObjAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjLenientTestObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjLenientTestObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjLenientTestObjAttrGetter, CastedThisErrorBehavior::ReturnEarly>(*lexicalGlobalObject, thisValue, "lenientTestObjAttr");
 }
@@ -3177,7 +3177,7 @@ static inline bool setJSTestObjLenientTestObjAttrSetter(JSGlobalObject& lexicalG
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjLenientTestObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjLenientTestObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjLenientTestObjAttrSetter, CastedThisErrorBehavior::ReturnEarly>(*lexicalGlobalObject, thisValue, encodedValue, "lenientTestObjAttr");
 }
@@ -3190,7 +3190,7 @@ static inline JSValue jsTestObjUnforgeableAttrGetter(JSGlobalObject& lexicalGlob
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.unforgeableAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUnforgeableAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUnforgeableAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUnforgeableAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unforgeableAttr");
 }
@@ -3203,7 +3203,7 @@ static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.stringAttrTreatingNullAsEmptyString())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringAttrTreatingNullAsEmptyString(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringAttrTreatingNullAsEmptyString, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringAttrTreatingNullAsEmptyStringGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringAttrTreatingNullAsEmptyString");
 }
@@ -3221,7 +3221,7 @@ static inline bool setJSTestObjStringAttrTreatingNullAsEmptyStringSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringAttrTreatingNullAsEmptyString(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringAttrTreatingNullAsEmptyString, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringAttrTreatingNullAsEmptyStringSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringAttrTreatingNullAsEmptyString");
 }
@@ -3234,7 +3234,7 @@ static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(JSGl
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.usvstringAttrTreatingNullAsEmptyString())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUsvstringAttrTreatingNullAsEmptyString(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUsvstringAttrTreatingNullAsEmptyString, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "usvstringAttrTreatingNullAsEmptyString");
 }
@@ -3252,7 +3252,7 @@ static inline bool setJSTestObjUsvstringAttrTreatingNullAsEmptyStringSetter(JSGl
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjUsvstringAttrTreatingNullAsEmptyString(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjUsvstringAttrTreatingNullAsEmptyString, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjUsvstringAttrTreatingNullAsEmptyStringSetter>(*lexicalGlobalObject, thisValue, encodedValue, "usvstringAttrTreatingNullAsEmptyString");
 }
@@ -3265,7 +3265,7 @@ static inline JSValue jsTestObjByteStringAttrTreatingNullAsEmptyStringGetter(JSG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLegacyNullToEmptyStringAdaptor<IDLByteString>>(lexicalGlobalObject, throwScope, impl.byteStringAttrTreatingNullAsEmptyString())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjByteStringAttrTreatingNullAsEmptyString(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjByteStringAttrTreatingNullAsEmptyString, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjByteStringAttrTreatingNullAsEmptyStringGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "byteStringAttrTreatingNullAsEmptyString");
 }
@@ -3283,7 +3283,7 @@ static inline bool setJSTestObjByteStringAttrTreatingNullAsEmptyStringSetter(JSG
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjByteStringAttrTreatingNullAsEmptyString(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjByteStringAttrTreatingNullAsEmptyString, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjByteStringAttrTreatingNullAsEmptyStringSetter>(*lexicalGlobalObject, thisValue, encodedValue, "byteStringAttrTreatingNullAsEmptyString");
 }
@@ -3296,7 +3296,7 @@ static inline JSValue jsTestObjStringLongRecordAttrGetter(JSGlobalObject& lexica
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLDOMString, IDLLong>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringLongRecordAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringLongRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringLongRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringLongRecordAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringLongRecordAttr");
 }
@@ -3314,7 +3314,7 @@ static inline bool setJSTestObjStringLongRecordAttrSetter(JSGlobalObject& lexica
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringLongRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringLongRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringLongRecordAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringLongRecordAttr");
 }
@@ -3327,7 +3327,7 @@ static inline JSValue jsTestObjUsvstringLongRecordAttrGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLUSVString, IDLLong>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.usvstringLongRecordAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUsvstringLongRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUsvstringLongRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUsvstringLongRecordAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "usvstringLongRecordAttr");
 }
@@ -3345,7 +3345,7 @@ static inline bool setJSTestObjUsvstringLongRecordAttrSetter(JSGlobalObject& lex
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjUsvstringLongRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjUsvstringLongRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjUsvstringLongRecordAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "usvstringLongRecordAttr");
 }
@@ -3358,7 +3358,7 @@ static inline JSValue jsTestObjUsvstringLongRecordAttrGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLByteString, IDLLong>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.usvstringLongRecordAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjUsvstringLongRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjUsvstringLongRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjUsvstringLongRecordAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "usvstringLongRecordAttr");
 }
@@ -3376,7 +3376,7 @@ static inline bool setJSTestObjUsvstringLongRecordAttrSetter(JSGlobalObject& lex
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjUsvstringLongRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjUsvstringLongRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjUsvstringLongRecordAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "usvstringLongRecordAttr");
 }
@@ -3389,7 +3389,7 @@ static inline JSValue jsTestObjStringObjRecordAttrGetter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLDOMString, IDLInterface<TestObj>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringObjRecordAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringObjRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringObjRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringObjRecordAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringObjRecordAttr");
 }
@@ -3407,7 +3407,7 @@ static inline bool setJSTestObjStringObjRecordAttrSetter(JSGlobalObject& lexical
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringObjRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringObjRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringObjRecordAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringObjRecordAttr");
 }
@@ -3420,7 +3420,7 @@ static inline JSValue jsTestObjStringNullableObjRecordAttrGetter(JSGlobalObject&
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLDOMString, IDLNullable<IDLInterface<TestObj>>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringNullableObjRecordAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringNullableObjRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringNullableObjRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringNullableObjRecordAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringNullableObjRecordAttr");
 }
@@ -3438,7 +3438,7 @@ static inline bool setJSTestObjStringNullableObjRecordAttrSetter(JSGlobalObject&
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringNullableObjRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringNullableObjRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringNullableObjRecordAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringNullableObjRecordAttr");
 }
@@ -3451,7 +3451,7 @@ static inline JSValue jsTestObjStringVoidCallbackRecordAttrGetter(JSGlobalObject
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLDOMString, IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.stringVoidCallbackRecordAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringVoidCallbackRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringVoidCallbackRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringVoidCallbackRecordAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringVoidCallbackRecordAttr");
 }
@@ -3469,7 +3469,7 @@ static inline bool setJSTestObjStringVoidCallbackRecordAttrSetter(JSGlobalObject
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringVoidCallbackRecordAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringVoidCallbackRecordAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringVoidCallbackRecordAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringVoidCallbackRecordAttr");
 }
@@ -3482,7 +3482,7 @@ static inline JSValue jsTestObjDictionaryAttrGetter(JSGlobalObject& lexicalGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDictionary<TestObj::Dictionary>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.dictionaryAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjDictionaryAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjDictionaryAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjDictionaryAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "dictionaryAttr");
 }
@@ -3500,7 +3500,7 @@ static inline bool setJSTestObjDictionaryAttrSetter(JSGlobalObject& lexicalGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjDictionaryAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjDictionaryAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjDictionaryAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "dictionaryAttr");
 }
@@ -3513,7 +3513,7 @@ static inline JSValue jsTestObjNullableDictionaryAttrGetter(JSGlobalObject& lexi
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLDictionary<TestObj::Dictionary>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.nullableDictionaryAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableDictionaryAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableDictionaryAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableDictionaryAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableDictionaryAttr");
 }
@@ -3531,7 +3531,7 @@ static inline bool setJSTestObjNullableDictionaryAttrSetter(JSGlobalObject& lexi
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjNullableDictionaryAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjNullableDictionaryAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjNullableDictionaryAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "nullableDictionaryAttr");
 }
@@ -3544,7 +3544,7 @@ static inline JSValue jsTestObjAnnotatedTypeInUnionAttrGetter(JSGlobalObject& le
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.annotatedTypeInUnionAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjAnnotatedTypeInUnionAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjAnnotatedTypeInUnionAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjAnnotatedTypeInUnionAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "annotatedTypeInUnionAttr");
 }
@@ -3562,7 +3562,7 @@ static inline bool setJSTestObjAnnotatedTypeInUnionAttrSetter(JSGlobalObject& le
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjAnnotatedTypeInUnionAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjAnnotatedTypeInUnionAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjAnnotatedTypeInUnionAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "annotatedTypeInUnionAttr");
 }
@@ -3575,7 +3575,7 @@ static inline JSValue jsTestObjAnnotatedTypeInSequenceAttrGetter(JSGlobalObject&
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLClampAdaptor<IDLLong>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.annotatedTypeInSequenceAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjAnnotatedTypeInSequenceAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjAnnotatedTypeInSequenceAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjAnnotatedTypeInSequenceAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "annotatedTypeInSequenceAttr");
 }
@@ -3593,7 +3593,7 @@ static inline bool setJSTestObjAnnotatedTypeInSequenceAttrSetter(JSGlobalObject&
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjAnnotatedTypeInSequenceAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjAnnotatedTypeInSequenceAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjAnnotatedTypeInSequenceAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "annotatedTypeInSequenceAttr");
 }
@@ -3606,7 +3606,7 @@ static inline JSValue jsTestObjImplementationEnumAttrGetter(JSGlobalObject& lexi
     RELEASE_AND_RETURN(throwScope, (toJS<IDLEnumeration<AlternateEnumName>>(lexicalGlobalObject, throwScope, impl.implementationEnumAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjImplementationEnumAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjImplementationEnumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjImplementationEnumAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementationEnumAttr");
 }
@@ -3627,7 +3627,7 @@ static inline bool setJSTestObjImplementationEnumAttrSetter(JSGlobalObject& lexi
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjImplementationEnumAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjImplementationEnumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjImplementationEnumAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "implementationEnumAttr");
 }
@@ -3640,7 +3640,7 @@ static inline JSValue jsTestObjMediaDevicesGetter(JSGlobalObject& lexicalGlobalO
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<MediaDevices>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.mediaDevices())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjMediaDevices(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjMediaDevices, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjMediaDevicesGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mediaDevices");
 }
@@ -3653,7 +3653,7 @@ static inline JSValue jsTestObjXMLObjAttrGetter(JSGlobalObject& lexicalGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.xmlObjAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjXMLObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjXMLObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjXMLObjAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "XMLObjAttr");
 }
@@ -3671,7 +3671,7 @@ static inline bool setJSTestObjXMLObjAttrSetter(JSGlobalObject& lexicalGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjXMLObjAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjXMLObjAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjXMLObjAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "XMLObjAttr");
 }
@@ -3684,7 +3684,7 @@ static inline JSValue jsTestObjCreateGetter(JSGlobalObject& lexicalGlobalObject,
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.isCreate())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjCreate(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjCreate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjCreateGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "create");
 }
@@ -3702,7 +3702,7 @@ static inline bool setJSTestObjCreateSetter(JSGlobalObject& lexicalGlobalObject,
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjCreate(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjCreate, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjCreateSetter>(*lexicalGlobalObject, thisValue, encodedValue, "create");
 }
@@ -3715,7 +3715,7 @@ static inline JSValue jsTestObjReflectedStringAttrGetter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedStringAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedStringAttr");
 }
@@ -3733,7 +3733,7 @@ static inline bool setJSTestObjReflectedStringAttrSetter(JSGlobalObject& lexical
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedStringAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedStringAttr");
 }
@@ -3746,7 +3746,7 @@ static inline JSValue jsTestObjReflectedUSVStringAttrGetter(JSGlobalObject& lexi
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedUSVStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedUSVStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedUSVStringAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedUSVStringAttr");
 }
@@ -3764,7 +3764,7 @@ static inline bool setJSTestObjReflectedUSVStringAttrSetter(JSGlobalObject& lexi
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedUSVStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedUSVStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedUSVStringAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedUSVStringAttr");
 }
@@ -3777,7 +3777,7 @@ static inline JSValue jsTestObjReflectedIntegralAttrGetter(JSGlobalObject& lexic
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedIntegralAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedIntegralAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedIntegralAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedIntegralAttr");
 }
@@ -3795,7 +3795,7 @@ static inline bool setJSTestObjReflectedIntegralAttrSetter(JSGlobalObject& lexic
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedIntegralAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedIntegralAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedIntegralAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedIntegralAttr");
 }
@@ -3808,7 +3808,7 @@ static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedLong>(lexicalGlobalObject, throwScope, std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedUnsignedIntegralAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedUnsignedIntegralAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedUnsignedIntegralAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedUnsignedIntegralAttr");
 }
@@ -3826,7 +3826,7 @@ static inline bool setJSTestObjReflectedUnsignedIntegralAttrSetter(JSGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedUnsignedIntegralAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedUnsignedIntegralAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedUnsignedIntegralAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedUnsignedIntegralAttr");
 }
@@ -3839,7 +3839,7 @@ static inline JSValue jsTestObjReflectedBooleanAttrGetter(JSGlobalObject& lexica
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedBooleanAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedBooleanAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedBooleanAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedBooleanAttr");
 }
@@ -3857,7 +3857,7 @@ static inline bool setJSTestObjReflectedBooleanAttrSetter(JSGlobalObject& lexica
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedBooleanAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedBooleanAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedBooleanAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedBooleanAttr");
 }
@@ -3870,7 +3870,7 @@ static inline JSValue jsTestObjReflectedURLAttrGetter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedURLAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedURLAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedURLAttr");
 }
@@ -3888,7 +3888,7 @@ static inline bool setJSTestObjReflectedURLAttrSetter(JSGlobalObject& lexicalGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedURLAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedURLAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedURLAttr");
 }
@@ -3901,7 +3901,7 @@ static inline JSValue jsTestObjReflectedUSVURLAttrGetter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedUSVURLAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedUSVURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedUSVURLAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedUSVURLAttr");
 }
@@ -3919,7 +3919,7 @@ static inline bool setJSTestObjReflectedUSVURLAttrSetter(JSGlobalObject& lexical
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedUSVURLAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedUSVURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedUSVURLAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedUSVURLAttr");
 }
@@ -3932,7 +3932,7 @@ static inline JSValue jsTestObjReflectedStringAttrGetter(JSGlobalObject& lexical
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedStringAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedStringAttr");
 }
@@ -3950,7 +3950,7 @@ static inline bool setJSTestObjReflectedStringAttrSetter(JSGlobalObject& lexical
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedStringAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedStringAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedStringAttr");
 }
@@ -3963,7 +3963,7 @@ static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(JSGlobalObject&
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedCustomIntegralAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedCustomIntegralAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedCustomIntegralAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedCustomIntegralAttr");
 }
@@ -3981,7 +3981,7 @@ static inline bool setJSTestObjReflectedCustomIntegralAttrSetter(JSGlobalObject&
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedCustomIntegralAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedCustomIntegralAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedCustomIntegralAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedCustomIntegralAttr");
 }
@@ -3994,7 +3994,7 @@ static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(JSGlobalObject& 
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedCustomBooleanAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedCustomBooleanAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedCustomBooleanAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedCustomBooleanAttr");
 }
@@ -4012,7 +4012,7 @@ static inline bool setJSTestObjReflectedCustomBooleanAttrSetter(JSGlobalObject& 
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedCustomBooleanAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedCustomBooleanAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedCustomBooleanAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedCustomBooleanAttr");
 }
@@ -4025,7 +4025,7 @@ static inline JSValue jsTestObjReflectedCustomURLAttrGetter(JSGlobalObject& lexi
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReflectedCustomURLAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReflectedCustomURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReflectedCustomURLAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectedCustomURLAttr");
 }
@@ -4043,7 +4043,7 @@ static inline bool setJSTestObjReflectedCustomURLAttrSetter(JSGlobalObject& lexi
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjReflectedCustomURLAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReflectedCustomURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReflectedCustomURLAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectedCustomURLAttr");
 }
@@ -4057,7 +4057,7 @@ static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(JSGlobalObject& l
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.enabledAtRuntimeAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjEnabledAtRuntimeAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjEnabledAtRuntimeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjEnabledAtRuntimeAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enabledAtRuntimeAttribute");
 }
@@ -4078,7 +4078,7 @@ static inline bool setJSTestObjEnabledAtRuntimeAttributeSetter(JSGlobalObject& l
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjEnabledAtRuntimeAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjEnabledAtRuntimeAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjEnabledAtRuntimeAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enabledAtRuntimeAttribute");
 }
@@ -4093,7 +4093,7 @@ static inline JSValue jsTestObjConstructorEnabledAtRuntimeAttributeStaticGetter(
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestObj::enabledAtRuntimeAttributeStatic())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConstructorEnabledAtRuntimeAttributeStatic(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructorEnabledAtRuntimeAttributeStatic, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::getStatic<jsTestObjConstructorEnabledAtRuntimeAttributeStaticGetter>(*lexicalGlobalObject, thisValue, "enabledAtRuntimeAttributeStatic");
 }
@@ -4113,7 +4113,7 @@ static inline bool setJSTestObjConstructorEnabledAtRuntimeAttributeStaticSetter(
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConstructorEnabledAtRuntimeAttributeStatic(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConstructorEnabledAtRuntimeAttributeStatic, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::setStatic<setJSTestObjConstructorEnabledAtRuntimeAttributeStaticSetter>(*lexicalGlobalObject, thisValue, encodedValue, "enabledAtRuntimeAttributeStatic");
 }
@@ -4128,7 +4128,7 @@ static inline JSValue jsTestObjTypedArrayAttrGetter(JSGlobalObject& lexicalGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLFloat32Array>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.typedArrayAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjTypedArrayAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTypedArrayAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjTypedArrayAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "typedArrayAttr");
 }
@@ -4146,7 +4146,7 @@ static inline bool setJSTestObjTypedArrayAttrSetter(JSGlobalObject& lexicalGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjTypedArrayAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjTypedArrayAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjTypedArrayAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "typedArrayAttr");
 }
@@ -4157,7 +4157,7 @@ static inline JSValue jsTestObjCustomAttrGetter(JSGlobalObject& lexicalGlobalObj
     return thisObject.customAttr(lexicalGlobalObject);
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjCustomAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjCustomAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjCustomAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "customAttr");
 }
@@ -4169,7 +4169,7 @@ static inline bool setJSTestObjCustomAttrSetter(JSGlobalObject& lexicalGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjCustomAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjCustomAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjCustomAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "customAttr");
 }
@@ -4180,7 +4180,7 @@ static inline JSValue jsTestObjOnfooGetter(JSGlobalObject& lexicalGlobalObject, 
     return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjOnfoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjOnfoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjOnfooGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "onfoo");
 }
@@ -4195,7 +4195,7 @@ static inline bool setJSTestObjOnfooSetter(JSGlobalObject& lexicalGlobalObject, 
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjOnfoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjOnfoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjOnfooSetter>(*lexicalGlobalObject, thisValue, encodedValue, "onfoo");
 }
@@ -4206,7 +4206,7 @@ static inline JSValue jsTestObjOnwebkitfooGetter(JSGlobalObject& lexicalGlobalOb
     return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjOnwebkitfoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjOnwebkitfoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjOnwebkitfooGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "onwebkitfoo");
 }
@@ -4221,7 +4221,7 @@ static inline bool setJSTestObjOnwebkitfooSetter(JSGlobalObject& lexicalGlobalOb
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjOnwebkitfoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjOnwebkitfoo, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjOnwebkitfooSetter>(*lexicalGlobalObject, thisValue, encodedValue, "onwebkitfoo");
 }
@@ -4234,7 +4234,7 @@ static inline JSValue jsTestObjWithExecStateAttributeGetter(JSGlobalObject& lexi
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.withExecStateAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjWithExecStateAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjWithExecStateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjWithExecStateAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "withExecStateAttribute");
 }
@@ -4252,7 +4252,7 @@ static inline bool setJSTestObjWithExecStateAttributeSetter(JSGlobalObject& lexi
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjWithExecStateAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjWithExecStateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithExecStateAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "withExecStateAttribute");
 }
@@ -4265,7 +4265,7 @@ static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(JSGl
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.withCallWithAndSetterCallWithAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjWithCallWithAndSetterCallWithAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjWithCallWithAndSetterCallWithAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjWithCallWithAndSetterCallWithAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "withCallWithAndSetterCallWithAttribute");
 }
@@ -4283,7 +4283,7 @@ static inline bool setJSTestObjWithCallWithAndSetterCallWithAttributeSetter(JSGl
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjWithCallWithAndSetterCallWithAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjWithCallWithAndSetterCallWithAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithCallWithAndSetterCallWithAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "withCallWithAndSetterCallWithAttribute");
 }
@@ -4299,7 +4299,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAttribute(*context))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjWithScriptExecutionContextAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjWithScriptExecutionContextAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjWithScriptExecutionContextAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "withScriptExecutionContextAttribute");
 }
@@ -4320,7 +4320,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjWithScriptExecutionContextAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjWithScriptExecutionContextAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "withScriptExecutionContextAttribute");
 }
@@ -4336,7 +4336,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndExecStateAttributeGe
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndExecStateAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), *callFrame, *context))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjWithScriptExecutionContextAndExecStateAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjWithScriptExecutionContextAndExecStateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjWithScriptExecutionContextAndExecStateAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "withScriptExecutionContextAndExecStateAttribute");
 }
@@ -4357,7 +4357,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndExecStateAttributeSe
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjWithScriptExecutionContextAndExecStateAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjWithScriptExecutionContextAndExecStateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAndExecStateAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "withScriptExecutionContextAndExecStateAttribute");
 }
@@ -4373,7 +4373,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndExecStateWithSpacesA
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndExecStateWithSpacesAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), *callFrame, *context))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjWithScriptExecutionContextAndExecStateWithSpacesAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "withScriptExecutionContextAndExecStateWithSpacesAttribute");
 }
@@ -4394,7 +4394,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesA
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAndExecStateWithSpacesAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "withScriptExecutionContextAndExecStateWithSpacesAttribute");
 }
@@ -4408,7 +4408,7 @@ static inline JSValue jsTestObjConditionalAttr1Getter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.conditionalAttr1())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionalAttr1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAttr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionalAttr1");
 }
@@ -4429,7 +4429,7 @@ static inline bool setJSTestObjConditionalAttr1Setter(JSGlobalObject& lexicalGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConditionalAttr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionalAttr1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAttr1Setter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr1");
 }
@@ -4445,7 +4445,7 @@ static inline JSValue jsTestObjConditionalAttr2Getter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.conditionalAttr2())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionalAttr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAttr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionalAttr2");
 }
@@ -4466,7 +4466,7 @@ static inline bool setJSTestObjConditionalAttr2Setter(JSGlobalObject& lexicalGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConditionalAttr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionalAttr2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAttr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr2");
 }
@@ -4482,7 +4482,7 @@ static inline JSValue jsTestObjConditionalAttr3Getter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.conditionalAttr3())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionalAttr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAttr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionalAttr3");
 }
@@ -4503,7 +4503,7 @@ static inline bool setJSTestObjConditionalAttr3Setter(JSGlobalObject& lexicalGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConditionalAttr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionalAttr3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAttr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr3");
 }
@@ -4517,7 +4517,7 @@ static inline JSValue jsTestObjConditionalAttr4ConstructorGetter(JSGlobalObject&
     return JSTestObjectA::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr4Constructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionalAttr4Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAttr4ConstructorGetter>(*lexicalGlobalObject, thisValue, "conditionalAttr4");
 }
@@ -4532,7 +4532,7 @@ static inline bool setJSTestObjConditionalAttr4ConstructorSetter(JSGlobalObject&
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr4"), strlen("conditionalAttr4")), value);
 }
 
-bool JIT_OPERATION setJSTestObjConditionalAttr4Constructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionalAttr4Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAttr4ConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr4");
 }
@@ -4546,7 +4546,7 @@ static inline JSValue jsTestObjConditionalAttr5ConstructorGetter(JSGlobalObject&
     return JSTestObjectB::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr5Constructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionalAttr5Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAttr5ConstructorGetter>(*lexicalGlobalObject, thisValue, "conditionalAttr5");
 }
@@ -4561,7 +4561,7 @@ static inline bool setJSTestObjConditionalAttr5ConstructorSetter(JSGlobalObject&
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr5"), strlen("conditionalAttr5")), value);
 }
 
-bool JIT_OPERATION setJSTestObjConditionalAttr5Constructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionalAttr5Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAttr5ConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr5");
 }
@@ -4575,7 +4575,7 @@ static inline JSValue jsTestObjConditionalAttr6ConstructorGetter(JSGlobalObject&
     return JSTestObjectC::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionalAttr6Constructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionalAttr6Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAttr6ConstructorGetter>(*lexicalGlobalObject, thisValue, "conditionalAttr6");
 }
@@ -4590,7 +4590,7 @@ static inline bool setJSTestObjConditionalAttr6ConstructorSetter(JSGlobalObject&
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionalAttr6"), strlen("conditionalAttr6")), value);
 }
 
-bool JIT_OPERATION setJSTestObjConditionalAttr6Constructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionalAttr6Constructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAttr6ConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionalAttr6");
 }
@@ -4610,7 +4610,7 @@ static inline JSValue jsTestObjCachedAttribute1Getter(JSGlobalObject& lexicalGlo
     return result;
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjCachedAttribute1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjCachedAttribute1, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjCachedAttribute1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedAttribute1");
 }
@@ -4628,7 +4628,7 @@ static inline JSValue jsTestObjCachedAttribute2Getter(JSGlobalObject& lexicalGlo
     return result;
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjCachedAttribute2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjCachedAttribute2, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjCachedAttribute2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedAttribute2");
 }
@@ -4647,7 +4647,7 @@ static inline JSValue jsTestObjCachedAttribute3Getter(JSGlobalObject& lexicalGlo
     return result;
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjCachedAttribute3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjCachedAttribute3, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjCachedAttribute3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "cachedAttribute3");
 }
@@ -4662,7 +4662,7 @@ static inline JSValue jsTestObjAnyAttributeGetter(JSGlobalObject& lexicalGlobalO
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, impl.anyAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjAnyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjAnyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjAnyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "anyAttribute");
 }
@@ -4680,7 +4680,7 @@ static inline bool setJSTestObjAnyAttributeSetter(JSGlobalObject& lexicalGlobalO
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjAnyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjAnyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjAnyAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "anyAttribute");
 }
@@ -4693,7 +4693,7 @@ static inline JSValue jsTestObjObjectAttributeGetter(JSGlobalObject& lexicalGlob
     RELEASE_AND_RETURN(throwScope, (toJS<IDLObject>(lexicalGlobalObject, throwScope, impl.objectAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjObjectAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjObjectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjObjectAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "objectAttribute");
 }
@@ -4711,7 +4711,7 @@ static inline bool setJSTestObjObjectAttributeSetter(JSGlobalObject& lexicalGlob
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjObjectAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjObjectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjObjectAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "objectAttribute");
 }
@@ -4724,7 +4724,7 @@ static inline JSValue jsTestObjContentDocumentGetter(JSGlobalObject& lexicalGlob
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<Document>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, BindingSecurity::checkSecurityForNode(lexicalGlobalObject, impl.contentDocument()))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjContentDocument(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjContentDocument, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjContentDocumentGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "contentDocument");
 }
@@ -4737,7 +4737,7 @@ static inline JSValue jsTestObjMutablePointGetter(JSGlobalObject& lexicalGlobalO
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<SVGPoint>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.mutablePoint())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjMutablePoint(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjMutablePoint, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjMutablePointGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mutablePoint");
 }
@@ -4755,7 +4755,7 @@ static inline bool setJSTestObjMutablePointSetter(JSGlobalObject& lexicalGlobalO
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjMutablePoint(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjMutablePoint, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjMutablePointSetter>(*lexicalGlobalObject, thisValue, encodedValue, "mutablePoint");
 }
@@ -4768,7 +4768,7 @@ static inline JSValue jsTestObjStrawberryGetter(JSGlobalObject& lexicalGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.blueberry())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStrawberry(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStrawberry, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStrawberryGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "strawberry");
 }
@@ -4786,7 +4786,7 @@ static inline bool setJSTestObjStrawberrySetter(JSGlobalObject& lexicalGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStrawberry(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStrawberry, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStrawberrySetter>(*lexicalGlobalObject, thisValue, encodedValue, "strawberry");
 }
@@ -4799,7 +4799,7 @@ static inline JSValue jsTestObjDescriptionGetter(JSGlobalObject& lexicalGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.description())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjDescription(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjDescription, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjDescriptionGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "description");
 }
@@ -4812,7 +4812,7 @@ static inline JSValue jsTestObjIdGetter(JSGlobalObject& lexicalGlobalObject, JST
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.id())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjId(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjId, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjIdGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "id");
 }
@@ -4830,7 +4830,7 @@ static inline bool setJSTestObjIdSetter(JSGlobalObject& lexicalGlobalObject, JST
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjId(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjId, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjIdSetter>(*lexicalGlobalObject, thisValue, encodedValue, "id");
 }
@@ -4843,7 +4843,7 @@ static inline JSValue jsTestObjHashGetter(JSGlobalObject& lexicalGlobalObject, J
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.hash())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjHash(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjHash, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjHashGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "hash");
 }
@@ -4856,7 +4856,7 @@ static inline JSValue jsTestObjReplaceableAttributeGetter(JSGlobalObject& lexica
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.replaceableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjReplaceableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjReplaceableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjReplaceableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "replaceableAttribute");
 }
@@ -4868,7 +4868,7 @@ static inline bool setJSTestObjReplaceableAttributeSetter(JSGlobalObject& lexica
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("replaceableAttribute"), strlen("replaceableAttribute")), value);
 }
 
-bool JIT_OPERATION setJSTestObjReplaceableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjReplaceableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjReplaceableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "replaceableAttribute");
 }
@@ -4881,7 +4881,7 @@ static inline JSValue jsTestObjNullableDoubleAttributeGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLUnrestrictedDouble>>(lexicalGlobalObject, throwScope, impl.nullableDoubleAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableDoubleAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableDoubleAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableDoubleAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableDoubleAttribute");
 }
@@ -4894,7 +4894,7 @@ static inline JSValue jsTestObjNullableLongAttributeGetter(JSGlobalObject& lexic
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLLong>>(lexicalGlobalObject, throwScope, impl.nullableLongAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableLongAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableLongAttribute");
 }
@@ -4907,7 +4907,7 @@ static inline JSValue jsTestObjNullableBooleanAttributeGetter(JSGlobalObject& le
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLBoolean>>(lexicalGlobalObject, throwScope, impl.nullableBooleanAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableBooleanAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableBooleanAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableBooleanAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableBooleanAttribute");
 }
@@ -4920,7 +4920,7 @@ static inline JSValue jsTestObjNullableStringAttributeGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.nullableStringAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableStringAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableStringAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableStringAttribute");
 }
@@ -4933,7 +4933,7 @@ static inline JSValue jsTestObjNullableLongSettableAttributeGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLLong>>(lexicalGlobalObject, throwScope, impl.nullableLongSettableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableLongSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableLongSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableLongSettableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableLongSettableAttribute");
 }
@@ -4951,7 +4951,7 @@ static inline bool setJSTestObjNullableLongSettableAttributeSetter(JSGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjNullableLongSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjNullableLongSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjNullableLongSettableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "nullableLongSettableAttribute");
 }
@@ -4964,7 +4964,7 @@ static inline JSValue jsTestObjNullableStringSettableAttributeGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.nullableStringSettableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableStringSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableStringSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableStringSettableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableStringSettableAttribute");
 }
@@ -4982,7 +4982,7 @@ static inline bool setJSTestObjNullableStringSettableAttributeSetter(JSGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjNullableStringSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjNullableStringSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjNullableStringSettableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "nullableStringSettableAttribute");
 }
@@ -4995,7 +4995,7 @@ static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(JSGlobal
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.nullableUSVStringSettableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableUSVStringSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableUSVStringSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableUSVStringSettableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableUSVStringSettableAttribute");
 }
@@ -5013,7 +5013,7 @@ static inline bool setJSTestObjNullableUSVStringSettableAttributeSetter(JSGlobal
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjNullableUSVStringSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjNullableUSVStringSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjNullableUSVStringSettableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "nullableUSVStringSettableAttribute");
 }
@@ -5026,7 +5026,7 @@ static inline JSValue jsTestObjNullableByteStringSettableAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLByteString>>(lexicalGlobalObject, throwScope, impl.nullableByteStringSettableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjNullableByteStringSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjNullableByteStringSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjNullableByteStringSettableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "nullableByteStringSettableAttribute");
 }
@@ -5044,7 +5044,7 @@ static inline bool setJSTestObjNullableByteStringSettableAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjNullableByteStringSettableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjNullableByteStringSettableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjNullableByteStringSettableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "nullableByteStringSettableAttribute");
 }
@@ -5057,7 +5057,7 @@ static inline JSValue jsTestObjAttributeGetter(JSGlobalObject& lexicalGlobalObje
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attribute");
 }
@@ -5070,7 +5070,7 @@ static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLEnumeration<TestObj::Optional>>(lexicalGlobalObject, throwScope, impl.attributeWithReservedEnumType())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjAttributeWithReservedEnumType(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjAttributeWithReservedEnumType, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjAttributeWithReservedEnumTypeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attributeWithReservedEnumType");
 }
@@ -5091,7 +5091,7 @@ static inline bool setJSTestObjAttributeWithReservedEnumTypeSetter(JSGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjAttributeWithReservedEnumType(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjAttributeWithReservedEnumType, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjAttributeWithReservedEnumTypeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "attributeWithReservedEnumType");
 }
@@ -5104,7 +5104,7 @@ static inline JSValue jsTestObjTestReadOnlyVoidPromiseAttributeGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLUndefined>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testReadOnlyVoidPromiseAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjTestReadOnlyVoidPromiseAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTestReadOnlyVoidPromiseAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjTestReadOnlyVoidPromiseAttributeGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "testReadOnlyVoidPromiseAttribute");
 }
@@ -5117,7 +5117,7 @@ static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(JSGlobalObject
     RELEASE_AND_RETURN(throwScope, (toJS<IDLPromise<IDLInterface<TestNode>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testReadOnlyPromiseAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjTestReadOnlyPromiseAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjTestReadOnlyPromiseAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjTestReadOnlyPromiseAttributeGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "testReadOnlyPromiseAttribute");
 }
@@ -5130,7 +5130,7 @@ static inline JSValue jsTestObjPutForwardsAttributeGetter(JSGlobalObject& lexica
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestNode>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.putForwardsAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjPutForwardsAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjPutForwardsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjPutForwardsAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "putForwardsAttribute");
 }
@@ -5153,7 +5153,7 @@ static inline bool setJSTestObjPutForwardsAttributeSetter(JSGlobalObject& lexica
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjPutForwardsAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjPutForwardsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjPutForwardsAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "putForwardsAttribute");
 }
@@ -5166,7 +5166,7 @@ static inline JSValue jsTestObjPutForwardsNullableAttributeGetter(JSGlobalObject
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLInterface<TestNode>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.putForwardsNullableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjPutForwardsNullableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjPutForwardsNullableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjPutForwardsNullableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "putForwardsNullableAttribute");
 }
@@ -5189,7 +5189,7 @@ static inline bool setJSTestObjPutForwardsNullableAttributeSetter(JSGlobalObject
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjPutForwardsNullableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjPutForwardsNullableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjPutForwardsNullableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "putForwardsNullableAttribute");
 }
@@ -5202,7 +5202,7 @@ static inline JSValue jsTestObjStringifierAttributeGetter(JSGlobalObject& lexica
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.stringifierAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjStringifierAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjStringifierAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjStringifierAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "stringifierAttribute");
 }
@@ -5220,7 +5220,7 @@ static inline bool setJSTestObjStringifierAttributeSetter(JSGlobalObject& lexica
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjStringifierAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjStringifierAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringifierAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "stringifierAttribute");
 }
@@ -5233,7 +5233,7 @@ static inline JSValue jsTestObjConditionallyExposedToWindowAttributeGetter(JSGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.conditionallyExposedToWindowAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionallyExposedToWindowAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWindowAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionallyExposedToWindowAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionallyExposedToWindowAttribute");
 }
@@ -5251,7 +5251,7 @@ static inline bool setJSTestObjConditionallyExposedToWindowAttributeSetter(JSGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConditionallyExposedToWindowAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWindowAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionallyExposedToWindowAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionallyExposedToWindowAttribute");
 }
@@ -5264,7 +5264,7 @@ static inline JSValue jsTestObjConditionallyExposedToWorkerAttributeGetter(JSGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.conditionallyExposedToWorkerAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionallyExposedToWorkerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionallyExposedToWorkerAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionallyExposedToWorkerAttribute");
 }
@@ -5282,7 +5282,7 @@ static inline bool setJSTestObjConditionallyExposedToWorkerAttributeSetter(JSGlo
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConditionallyExposedToWorkerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionallyExposedToWorkerAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionallyExposedToWorkerAttribute");
 }
@@ -5295,7 +5295,7 @@ static inline JSValue jsTestObjConditionallyExposedToWindowAndWorkerAttributeGet
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.conditionallyExposedToWindowAndWorkerAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestObjConditionallyExposedToWindowAndWorkerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestObjConditionallyExposedToWindowAndWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjConditionallyExposedToWindowAndWorkerAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "conditionallyExposedToWindowAndWorkerAttribute");
 }
@@ -5313,7 +5313,7 @@ static inline bool setJSTestObjConditionallyExposedToWindowAndWorkerAttributeSet
     return true;
 }
 
-bool JIT_OPERATION setJSTestObjConditionallyExposedToWindowAndWorkerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObjConditionallyExposedToWindowAndWorkerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjConditionallyExposedToWindowAndWorkerAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "conditionallyExposedToWindowAndWorkerAttribute");
 }

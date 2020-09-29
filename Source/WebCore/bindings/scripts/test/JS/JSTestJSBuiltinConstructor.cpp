@@ -47,11 +47,11 @@ JSC_DECLARE_HOST_FUNCTION(jsTestJSBuiltinConstructorPrototypeFunctionTestCustomF
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeRWCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestJSBuiltinConstructorConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestJSBuiltinConstructorConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestJSBuiltinConstructorTestAttributeCustom);
+JSC_DECLARE_CUSTOM_GETTER(jsTestJSBuiltinConstructorTestAttributeRWCustom);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestJSBuiltinConstructorTestAttributeRWCustom);
 
 class JSTestJSBuiltinConstructorPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -171,7 +171,7 @@ template<> inline JSTestJSBuiltinConstructor* IDLOperation<JSTestJSBuiltinConstr
     return jsDynamicCast<JSTestJSBuiltinConstructor*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestJSBuiltinConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -181,7 +181,7 @@ EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorConstructor(JSGlobalObjec
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestJSBuiltinConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestJSBuiltinConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -200,7 +200,7 @@ static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(JSGlob
     return thisObject.testAttributeCustom(lexicalGlobalObject);
 }
 
-EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestJSBuiltinConstructorTestAttributeCustom, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestJSBuiltinConstructor>::get<jsTestJSBuiltinConstructorTestAttributeCustomGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeCustom");
 }
@@ -211,7 +211,7 @@ static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(JSGl
     return thisObject.testAttributeRWCustom(lexicalGlobalObject);
 }
 
-EncodedJSValue JIT_OPERATION jsTestJSBuiltinConstructorTestAttributeRWCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestJSBuiltinConstructorTestAttributeRWCustom, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestJSBuiltinConstructor>::get<jsTestJSBuiltinConstructorTestAttributeRWCustomGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeRWCustom");
 }
@@ -223,7 +223,7 @@ static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomSetter(JSGl
     return true;
 }
 
-bool JIT_OPERATION setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestJSBuiltinConstructorTestAttributeRWCustom, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestJSBuiltinConstructor>::set<setJSTestJSBuiltinConstructorTestAttributeRWCustomSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeRWCustom");
 }

@@ -88,7 +88,9 @@ enum class CopyType {
     Unobservable,
 };
 
-static const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage { "Underlying ArrayBuffer has been detached from the view"_s };
+extern const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage;
+
+JSC_DECLARE_CUSTOM_GETTER(throwNeuteredTypedArrayTypeError);
 
 template<typename Adaptor>
 class JSGenericTypedArrayView final : public JSArrayBufferView {
@@ -297,8 +299,6 @@ private:
     friend struct TypedArrayClassInfos;
 
     JSGenericTypedArrayView(VM&, ConstructionContext&);
-
-    static EncodedJSValue throwNeuteredTypedArrayTypeError(JSGlobalObject*, EncodedJSValue, PropertyName);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);

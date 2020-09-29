@@ -58,9 +58,9 @@ JSC_DECLARE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunctionOverloadedMethod)
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestDomainSecurityConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDomainSecurityConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDomainSecurityExcitingAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurityConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDomainSecurityConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDomainSecurityExcitingAttr);
 
 class JSTestDomainSecurityPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -191,7 +191,7 @@ template<> inline JSTestDomainSecurity* IDLOperation<JSTestDomainSecurity>::cast
     return jsDynamicCast<JSTestDomainSecurity*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestDomainSecurityConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurityConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -201,7 +201,7 @@ EncodedJSValue JIT_OPERATION jsTestDomainSecurityConstructor(JSGlobalObject* lex
     return JSValue::encode(JSTestDomainSecurity::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestDomainSecurityConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDomainSecurityConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -226,7 +226,7 @@ static inline JSValue jsTestDomainSecurityExcitingAttrGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.excitingAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDomainSecurityExcitingAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurityExcitingAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDomainSecurity>::get<jsTestDomainSecurityExcitingAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "excitingAttr");
 }

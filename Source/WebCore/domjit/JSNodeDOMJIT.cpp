@@ -47,8 +47,8 @@ Ref<JSC::Snippet> checkSubClassSnippetForJSNode()
 
 enum class IsContainerGuardRequirement { Required, NotRequired };
 
-template<typename WrappedNode>
-static Ref<JSC::DOMJIT::CallDOMGetterSnippet> createCallDOMGetterForOffsetAccess(ptrdiff_t offset, IsContainerGuardRequirement isContainerGuardRequirement)
+template<typename WrappedNode, typename ToWrapperOperation>
+static Ref<JSC::DOMJIT::CallDOMGetterSnippet> createCallDOMGetterForOffsetAccess(ptrdiff_t offset, ToWrapperOperation operation, IsContainerGuardRequirement isContainerGuardRequirement)
 {
     Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
     snippet->numGPScratchRegisters = 1;
@@ -69,7 +69,7 @@ static Ref<JSC::DOMJIT::CallDOMGetterSnippet> createCallDOMGetterForOffsetAccess
         jit.loadPtr(CCallHelpers::Address(scratch, offset), scratch);
         nullCases.append(jit.branchTestPtr(CCallHelpers::Zero, scratch));
 
-        DOMJIT::toWrapper<WrappedNode>(jit, params, scratch, globalObject, result, DOMJIT::toWrapperSlow<WrappedNode>, globalObjectValue);
+        DOMJIT::toWrapper<WrappedNode>(jit, params, scratch, globalObject, result, operation, globalObjectValue);
         CCallHelpers::Jump done = jit.jump();
 
         nullCases.link(&jit);
@@ -82,35 +82,35 @@ static Ref<JSC::DOMJIT::CallDOMGetterSnippet> createCallDOMGetterForOffsetAccess
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeFirstChildAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(CAST_OFFSET(Node*, ContainerNode*) + ContainerNode::firstChildMemoryOffset(), IsContainerGuardRequirement::Required);
+    auto snippet = createCallDOMGetterForOffsetAccess<Node>(CAST_OFFSET(Node*, ContainerNode*) + ContainerNode::firstChildMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::Required);
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_firstChild);
     return snippet;
 }
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeLastChildAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(CAST_OFFSET(Node*, ContainerNode*) + ContainerNode::lastChildMemoryOffset(), IsContainerGuardRequirement::Required);
+    auto snippet = createCallDOMGetterForOffsetAccess<Node>(CAST_OFFSET(Node*, ContainerNode*) + ContainerNode::lastChildMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::Required);
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_lastChild);
     return snippet;
 }
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeNextSiblingAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::nextSiblingMemoryOffset(), IsContainerGuardRequirement::NotRequired);
+    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::nextSiblingMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::NotRequired);
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_nextSibling);
     return snippet;
 }
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodePreviousSiblingAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::previousSiblingMemoryOffset(), IsContainerGuardRequirement::NotRequired);
+    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::previousSiblingMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::NotRequired);
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_previousSibling);
     return snippet;
 }
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeParentNodeAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<ContainerNode>(Node::parentNodeMemoryOffset(), IsContainerGuardRequirement::NotRequired);
+    auto snippet = createCallDOMGetterForOffsetAccess<ContainerNode>(Node::parentNodeMemoryOffset(), DOMJIT::operationToJSContainerNode, IsContainerGuardRequirement::NotRequired);
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_parentNode);
     return snippet;
 }
@@ -151,7 +151,7 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeOwnerDocumentAttribute()
         CCallHelpers::JumpList nullCases;
         // If the |this| is the document itself, ownerDocument will return null.
         nullCases.append(jit.branchPtr(CCallHelpers::Equal, wrapped, document));
-        DOMJIT::toWrapper<Document>(jit, params, document, globalObject, result, DOMJIT::toWrapperSlow<Document>, globalObjectValue);
+        DOMJIT::toWrapper<Document>(jit, params, document, globalObject, result, DOMJIT::operationToJSDocument, globalObjectValue);
         auto done = jit.jump();
 
         nullCases.link(&jit);

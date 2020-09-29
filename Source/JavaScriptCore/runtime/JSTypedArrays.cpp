@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage { "Underlying ArrayBuffer has been detached from the view"_s };
+
 #define MAKE_CONSTRUCTORS(Class) \
     JSC_DEFINE_HOST_FUNCTION(call##Class, (JSGlobalObject* globalObject, CallFrame* callFrame)) { \
         return callGenericTypedArrayViewImpl<JS##Class>(globalObject, callFrame); \
@@ -61,6 +63,14 @@ MAKE_S_INFO(Float32);
 MAKE_S_INFO(Float64);
 
 MAKE_CONSTRUCTORS(DataView);
+
+JSC_DEFINE_CUSTOM_GETTER(throwNeuteredTypedArrayTypeError, (JSGlobalObject* globalObject, EncodedJSValue object, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT_UNUSED(object, jsCast<JSArrayBufferView*>(JSValue::decode(object))->isNeutered());
+    return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+}
 
 } // namespace JSC
 

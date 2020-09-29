@@ -455,11 +455,16 @@ static inline String stringFromUTF(const Vector& utf8)
     return String::fromUTF8WithLatin1Fallback(utf8.data(), utf8.size());
 }
 
-static EncodedJSValue JIT_OPERATION accessorMakeMasquerader(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
+static JSC_DECLARE_CUSTOM_GETTER(accessorMakeMasquerader);
+static JSC_DECLARE_CUSTOM_SETTER(testCustomAccessorSetter);
+static JSC_DECLARE_CUSTOM_SETTER(testCustomValueSetter);
+
+JSC_DEFINE_CUSTOM_GETTER(accessorMakeMasquerader, (JSGlobalObject* globalObject, EncodedJSValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     return JSValue::encode(InternalFunction::createFunctionThatMasqueradesAsUndefined(vm, globalObject, 0, "IsHTMLDDA"_s, functionCallMasquerader));
 }
+
 
 class GlobalObject final : public JSGlobalObject {
 public:
@@ -658,6 +663,7 @@ private:
         }
     }
 
+public:
     static bool testCustomSetterImpl(JSGlobalObject* lexicalGlobalObject, GlobalObject* thisObject, EncodedJSValue encodedValue, const char* propertyName)
     {
         VM& vm = lexicalGlobalObject->vm();
@@ -668,27 +674,7 @@ private:
         return true;
     }
 
-    static bool JIT_OPERATION testCustomAccessorSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-    {
-        VM& vm = lexicalGlobalObject->vm();
-        RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
-        JSCell* thisCell = JSValue::decode(thisValue).asCell();
-        RELEASE_ASSERT(thisCell->type() == PureForwardingProxyType);
-        GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, jsCast<JSProxy*>(thisCell)->target());
-        RELEASE_ASSERT(thisObject);
-        return testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter");
-    }
-
-    static bool JIT_OPERATION testCustomValueSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-    {
-        VM& vm = lexicalGlobalObject->vm();
-        RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
-        JSCell* thisCell = JSValue::decode(thisValue).asCell();
-        GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, thisCell);
-        RELEASE_ASSERT(thisObject);
-        return testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomValueSetter");
-    }
-    
+private:
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
     {
         Identifier identifier = Identifier::fromString(vm, name);
@@ -737,6 +723,27 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
 GlobalObject::GlobalObject(VM& vm, Structure* structure)
     : JSGlobalObject(vm, structure, &s_globalObjectMethodTable)
 {
+}
+
+JSC_DEFINE_CUSTOM_SETTER(testCustomAccessorSetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    VM& vm = lexicalGlobalObject->vm();
+    RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
+    JSCell* thisCell = JSValue::decode(thisValue).asCell();
+    RELEASE_ASSERT(thisCell->type() == PureForwardingProxyType);
+    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, jsCast<JSProxy*>(thisCell)->target());
+    RELEASE_ASSERT(thisObject);
+    return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter");
+}
+
+JSC_DEFINE_CUSTOM_SETTER(testCustomValueSetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    VM& vm = lexicalGlobalObject->vm();
+    RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
+    JSCell* thisCell = JSValue::decode(thisValue).asCell();
+    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, thisCell);
+    RELEASE_ASSERT(thisObject);
+    return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomValueSetter");
 }
 
 static UChar pathSeparator()

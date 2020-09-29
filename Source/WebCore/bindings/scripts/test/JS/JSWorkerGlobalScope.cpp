@@ -50,18 +50,18 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSWorkerGlobalScopeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSWorkerGlobalScopeTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSWorkerGlobalScopeTestObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeExposedToWorkerAndWindowConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeTestNodeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestNodeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeTestObjectConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestObjectConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeTestPromiseRejectionEventConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor);
 
 using JSWorkerGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSWorkerGlobalScope>;
 
@@ -171,7 +171,7 @@ template<> inline JSWorkerGlobalScope* IDLAttribute<JSWorkerGlobalScope>::cast(J
     return jsDynamicCast<JSWorkerGlobalScope*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -181,7 +181,7 @@ EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeConstructor(JSGlobalObject* lexi
     return JSValue::encode(JSWorkerGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSWorkerGlobalScopeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -200,7 +200,7 @@ static inline JSValue jsWorkerGlobalScopeExposedToWorkerAndWindowConstructorGett
     return JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScopeExposedToWorkerAndWindowConstructorGetter>(*lexicalGlobalObject, thisValue, "ExposedToWorkerAndWindow");
 }
@@ -212,7 +212,7 @@ static inline bool setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructorSett
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("ExposedToWorkerAndWindow"), strlen("ExposedToWorkerAndWindow")), value);
 }
 
-bool JIT_OPERATION setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeExposedToWorkerAndWindowConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "ExposedToWorkerAndWindow");
 }
@@ -223,7 +223,7 @@ static inline JSValue jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConst
     return JSTestDefaultToJSONFilteredByExposed::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructorGetter>(*lexicalGlobalObject, thisValue, "TestDefaultToJSONFilteredByExposed");
 }
@@ -235,7 +235,7 @@ static inline bool setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConst
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestDefaultToJSONFilteredByExposed"), strlen("TestDefaultToJSONFilteredByExposed")), value);
 }
 
-bool JIT_OPERATION setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeTestDefaultToJSONFilteredByExposedConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestDefaultToJSONFilteredByExposed");
 }
@@ -246,7 +246,7 @@ static inline JSValue jsWorkerGlobalScopeTestNodeConstructorGetter(JSGlobalObjec
     return JSTestNode::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeTestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScopeTestNodeConstructorGetter>(*lexicalGlobalObject, thisValue, "TestNode");
 }
@@ -258,7 +258,7 @@ static inline bool setJSWorkerGlobalScopeTestNodeConstructorSetter(JSGlobalObjec
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestNode"), strlen("TestNode")), value);
 }
 
-bool JIT_OPERATION setJSWorkerGlobalScopeTestNodeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeTestNodeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestNode");
 }
@@ -269,7 +269,7 @@ static inline JSValue jsWorkerGlobalScopeTestObjectConstructorGetter(JSGlobalObj
     return JSTestObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestObjectConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeTestObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScopeTestObjectConstructorGetter>(*lexicalGlobalObject, thisValue, "TestObject");
 }
@@ -281,7 +281,7 @@ static inline bool setJSWorkerGlobalScopeTestObjectConstructorSetter(JSGlobalObj
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestObject"), strlen("TestObject")), value);
 }
 
-bool JIT_OPERATION setJSWorkerGlobalScopeTestObjectConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestObjectConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeTestObjectConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestObject");
 }
@@ -292,7 +292,7 @@ static inline JSValue jsWorkerGlobalScopeTestPromiseRejectionEventConstructorGet
     return JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsWorkerGlobalScopeTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeTestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScopeTestPromiseRejectionEventConstructorGetter>(*lexicalGlobalObject, thisValue, "TestPromiseRejectionEvent");
 }
@@ -304,7 +304,7 @@ static inline bool setJSWorkerGlobalScopeTestPromiseRejectionEventConstructorSet
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestPromiseRejectionEvent"), strlen("TestPromiseRejectionEvent")), value);
 }
 
-bool JIT_OPERATION setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeTestPromiseRejectionEventConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestPromiseRejectionEvent");
 }

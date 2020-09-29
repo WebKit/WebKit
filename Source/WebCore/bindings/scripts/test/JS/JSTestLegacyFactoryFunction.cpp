@@ -48,8 +48,8 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestLegacyFactoryFunctionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestLegacyFactoryFunctionConstructor);
 
 class JSTestLegacyFactoryFunctionPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -207,7 +207,7 @@ void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
     thisObject->JSTestLegacyFactoryFunction::~JSTestLegacyFactoryFunction();
 }
 
-EncodedJSValue JIT_OPERATION jsTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -217,7 +217,7 @@ EncodedJSValue JIT_OPERATION jsTestLegacyFactoryFunctionConstructor(JSGlobalObje
     return JSValue::encode(JSTestLegacyFactoryFunction::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestLegacyFactoryFunctionConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestLegacyFactoryFunctionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

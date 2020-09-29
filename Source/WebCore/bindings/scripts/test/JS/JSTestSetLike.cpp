@@ -61,9 +61,9 @@ JSC_DECLARE_HOST_FUNCTION(jsTestSetLikePrototypeFunctionDelete);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestSetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestSetLikeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeSize);
 
 class JSTestSetLikePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -187,7 +187,7 @@ template<> inline JSTestSetLike* IDLOperation<JSTestSetLike>::cast(JSGlobalObjec
     return jsDynamicCast<JSTestSetLike*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestSetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -197,7 +197,7 @@ EncodedJSValue JIT_OPERATION jsTestSetLikeConstructor(JSGlobalObject* lexicalGlo
     return JSValue::encode(JSTestSetLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestSetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -217,7 +217,7 @@ static inline JSValue jsTestSetLikeSizeGetter(JSGlobalObject& lexicalGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToSetLike(lexicalGlobalObject, thisObject))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestSetLikeSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestSetLike>::get<jsTestSetLikeSizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }

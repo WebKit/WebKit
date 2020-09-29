@@ -39,7 +39,7 @@ namespace JSC {
 
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
 
-static EncodedJSValue JIT_OPERATION arrayLengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+static JSC_DECLARE_CUSTOM_GETTER(arrayLengthGetter);
 
 RuntimeArray::RuntimeArray(VM& vm, Structure* structure)
     : JSArray(vm, structure, nullptr)
@@ -64,7 +64,7 @@ void RuntimeArray::destroy(JSCell* cell)
     static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
-EncodedJSValue JIT_OPERATION arrayLengthGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

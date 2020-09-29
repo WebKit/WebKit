@@ -1,3 +1,14 @@
+2020-09-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use JSC_DECLARE_JIT_OPERATION / JSC_DECLARE_CUSTOM_GETTER / JSC_DECLARE_CUSTOM_SETTER
+        https://bugs.webkit.org/show_bug.cgi?id=217071
+
+        Reviewed by Keith Miller.
+
+        This patch changes how to define JIT_OPERATIONs including custom getters and setters.
+        We introduce JSC_DECLARE_JIT_OPERATION etc. to declare and define them. This is useful
+        to perform some additional things (like, JIT-caging registering) for each function.
+
 2020-09-28  Mark Lam  <mark.lam@apple.com>
 
         Add Bounds Check Elimination validation for debugging.

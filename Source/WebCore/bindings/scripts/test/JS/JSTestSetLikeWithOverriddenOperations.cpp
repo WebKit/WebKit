@@ -61,11 +61,11 @@ JSC_DECLARE_HOST_FUNCTION(jsTestSetLikeWithOverriddenOperationsPrototypeFunction
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsAdd(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsAdd(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestSetLikeWithOverriddenOperationsConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsAdd);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestSetLikeWithOverriddenOperationsAdd);
+JSC_DECLARE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsSize);
 
 class JSTestSetLikeWithOverriddenOperationsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -189,7 +189,7 @@ template<> inline JSTestSetLikeWithOverriddenOperations* IDLOperation<JSTestSetL
     return jsDynamicCast<JSTestSetLikeWithOverriddenOperations*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -199,7 +199,7 @@ EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsConstructor(JS
     return JSValue::encode(JSTestSetLikeWithOverriddenOperations::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSetLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -220,7 +220,7 @@ static inline JSValue jsTestSetLikeWithOverriddenOperationsAddGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.add())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsAdd(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsAdd, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::get<jsTestSetLikeWithOverriddenOperationsAddGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "add");
 }
@@ -238,7 +238,7 @@ static inline bool setJSTestSetLikeWithOverriddenOperationsAddSetter(JSGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestSetLikeWithOverriddenOperationsAdd(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestSetLikeWithOverriddenOperationsAdd, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::set<setJSTestSetLikeWithOverriddenOperationsAddSetter>(*lexicalGlobalObject, thisValue, encodedValue, "add");
 }
@@ -250,7 +250,7 @@ static inline JSValue jsTestSetLikeWithOverriddenOperationsSizeGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToSetLike(lexicalGlobalObject, thisObject))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestSetLikeWithOverriddenOperationsSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestSetLikeWithOverriddenOperations>::get<jsTestSetLikeWithOverriddenOperationsSizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }

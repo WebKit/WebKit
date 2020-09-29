@@ -58,9 +58,9 @@ JSC_DECLARE_HOST_FUNCTION(jsTestReadOnlySetLikePrototypeFunctionForEach);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestReadOnlySetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestReadOnlySetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestReadOnlySetLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestReadOnlySetLikeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestReadOnlySetLikeSize);
 
 class JSTestReadOnlySetLikePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -181,7 +181,7 @@ template<> inline JSTestReadOnlySetLike* IDLOperation<JSTestReadOnlySetLike>::ca
     return jsDynamicCast<JSTestReadOnlySetLike*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestReadOnlySetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -191,7 +191,7 @@ EncodedJSValue JIT_OPERATION jsTestReadOnlySetLikeConstructor(JSGlobalObject* le
     return JSValue::encode(JSTestReadOnlySetLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestReadOnlySetLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestReadOnlySetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -211,7 +211,7 @@ static inline JSValue jsTestReadOnlySetLikeSizeGetter(JSGlobalObject& lexicalGlo
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToSetLike(lexicalGlobalObject, thisObject))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestReadOnlySetLikeSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlySetLikeSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestReadOnlySetLike>::get<jsTestReadOnlySetLikeSizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }

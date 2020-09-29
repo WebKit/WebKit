@@ -62,9 +62,9 @@ JSC_DECLARE_HOST_FUNCTION(jsTestMapLikePrototypeFunctionDelete);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestMapLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestMapLikeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestMapLikeSize);
 
 class JSTestMapLikePrototype final : public JSC::JSNonFinalObject {
 public:
@@ -189,7 +189,7 @@ template<> inline JSTestMapLike* IDLOperation<JSTestMapLike>::cast(JSGlobalObjec
     return jsDynamicCast<JSTestMapLike*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -199,7 +199,7 @@ EncodedJSValue JIT_OPERATION jsTestMapLikeConstructor(JSGlobalObject* lexicalGlo
     return JSValue::encode(JSTestMapLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestMapLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -219,7 +219,7 @@ static inline JSValue jsTestMapLikeSizeGetter(JSGlobalObject& lexicalGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLAny>(lexicalGlobalObject, throwScope, forwardSizeToMapLike(lexicalGlobalObject, thisObject))));
 }
 
-EncodedJSValue JIT_OPERATION jsTestMapLikeSize(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeSize, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestMapLike>::get<jsTestMapLikeSizeGetter>(*lexicalGlobalObject, thisValue, "size");
 }

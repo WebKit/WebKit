@@ -67,15 +67,15 @@ JSC_DECLARE_HOST_FUNCTION(jsTestCallTracerPrototypeFunctionTestOperationWithDefa
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestCallTracerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeInterface(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestCallTracerTestAttributeInterface(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeSpecified(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestCallTracerTestAttributeSpecified(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestCallTracerTestReadonlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCallTracerConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestCallTracerConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCallTracerTestAttributeInterface);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestCallTracerTestAttributeInterface);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCallTracerTestAttributeSpecified);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestCallTracerTestAttributeSpecified);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCallTracerTestAttributeWithVariant);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestCallTracerTestAttributeWithVariant);
+JSC_DECLARE_CUSTOM_GETTER(jsTestCallTracerTestReadonlyAttribute);
 
 class JSTestCallTracerPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -212,7 +212,7 @@ template<> inline JSTestCallTracer* IDLOperation<JSTestCallTracer>::cast(JSGloba
     return jsDynamicCast<JSTestCallTracer*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -222,7 +222,7 @@ EncodedJSValue JIT_OPERATION jsTestCallTracerConstructor(JSGlobalObject* lexical
     return JSValue::encode(JSTestCallTracer::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestCallTracerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCallTracerConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -245,7 +245,7 @@ static inline JSValue jsTestCallTracerTestAttributeInterfaceGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeInterface())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeInterface(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerTestAttributeInterface, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeInterfaceGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeInterface");
 }
@@ -265,7 +265,7 @@ static inline bool setJSTestCallTracerTestAttributeInterfaceSetter(JSGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestCallTracerTestAttributeInterface(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCallTracerTestAttributeInterface, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeInterfaceSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeInterface");
 }
@@ -280,7 +280,7 @@ static inline JSValue jsTestCallTracerTestAttributeSpecifiedGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testAttributeSpecified())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeSpecified(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerTestAttributeSpecified, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeSpecifiedGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeSpecified");
 }
@@ -300,7 +300,7 @@ static inline bool setJSTestCallTracerTestAttributeSpecifiedSetter(JSGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestCallTracerTestAttributeSpecified(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCallTracerTestAttributeSpecified, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeSpecifiedSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeSpecified");
 }
@@ -315,7 +315,7 @@ static inline JSValue jsTestCallTracerTestAttributeWithVariantGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.testAttributeWithVariant())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestCallTracerTestAttributeWithVariant(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerTestAttributeWithVariant, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeWithVariantGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testAttributeWithVariant");
 }
@@ -335,7 +335,7 @@ static inline bool setJSTestCallTracerTestAttributeWithVariantSetter(JSGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestCallTracerTestAttributeWithVariant(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestCallTracerTestAttributeWithVariant, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeWithVariantSetter>(*lexicalGlobalObject, thisValue, encodedValue, "testAttributeWithVariant");
 }
@@ -348,7 +348,7 @@ static inline JSValue jsTestCallTracerTestReadonlyAttributeGetter(JSGlobalObject
     RELEASE_AND_RETURN(throwScope, (toJS<IDLBoolean>(lexicalGlobalObject, throwScope, impl.testReadonlyAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestCallTracerTestReadonlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerTestReadonlyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestReadonlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "testReadonlyAttribute");
 }

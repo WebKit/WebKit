@@ -70,6 +70,8 @@ namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(callJSAPIWrapperObjectCallbackObject);
 static JSC_DECLARE_HOST_FUNCTION(constructJSAPIWrapperObjectCallbackObject);
+static JSC_DECLARE_CUSTOM_GETTER(callbackGetterJSAPIWrapperObjectCallbackObject);
+static JSC_DECLARE_CUSTOM_GETTER(staticFunctionGetterJSAPIWrapperObjectCallbackObject);
 
 template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JSAPIWrapperObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template <> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
@@ -84,6 +86,18 @@ template <>
 RawNativeFunction JSCallbackObject<JSAPIWrapperObject>::getConstructFunction()
 {
     return constructJSAPIWrapperObjectCallbackObject;
+}
+
+template <>
+PropertySlot::GetValueFunc JSCallbackObject<JSAPIWrapperObject>::getCallbackGetter()
+{
+    return callbackGetterJSAPIWrapperObjectCallbackObject;
+}
+
+template <>
+PropertySlot::GetValueFunc JSCallbackObject<JSAPIWrapperObject>::getStaticFunctionGetter()
+{
+    return staticFunctionGetterJSAPIWrapperObjectCallbackObject;
 }
 
 template <>
@@ -140,6 +154,16 @@ JSC_DEFINE_HOST_FUNCTION(callJSAPIWrapperObjectCallbackObject, (JSGlobalObject* 
 JSC_DEFINE_HOST_FUNCTION(constructJSAPIWrapperObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSCallbackObject<JSAPIWrapperObject>::constructImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(callbackGetterJSAPIWrapperObjectCallbackObject, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
+{
+    return JSCallbackObject<JSAPIWrapperObject>::callbackGetterImpl(globalObject, thisValue, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(staticFunctionGetterJSAPIWrapperObjectCallbackObject, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
+{
+    return JSCallbackObject<JSAPIWrapperObject>::staticFunctionGetterImpl(globalObject, thisValue, propertyName);
 }
 
 } // namespace JSC

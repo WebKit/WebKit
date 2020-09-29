@@ -3270,10 +3270,10 @@ sub GenerateHeader
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@headerContent, "JSC::EncodedJSValue JIT_OPERATION ${getter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            push(@headerContent, "JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
             if (!IsReadonly($attribute)) {
                 my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@headerContent, "bool JIT_OPERATION ${setter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@headerContent, "JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
             }
             push(@headerContent, "#endif\n") if $conditionalString;
         }
@@ -4266,13 +4266,13 @@ sub GenerateImplementation
             if ($operation->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"DOMJITIDLType.h"} = 1;
                 my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
-                my $functionSignature = "JSC::EncodedJSValue JIT_OPERATION ${nameOfFunctionWithoutTypeCheck}(JSC::JSGlobalObject*, $className*";
+                my $functionSignature = "JSC_DECLARE_JIT_OPERATION(${nameOfFunctionWithoutTypeCheck}, JSC::EncodedJSValue, (JSC::JSGlobalObject*, $className*";
                 foreach my $argument (@{$operation->arguments}) {
                     my $type = $argument->type;
                     my $argumentType = GetArgumentTypeForFunctionWithoutTypeCheck($interface, $type);
                     $functionSignature .= ", ${argumentType}";
                 }
-                push(@implContent, $functionSignature . ");\n");
+                push(@implContent, $functionSignature . "));\n");
             }
             push(@implContent, "#endif\n") if $conditionalString;
         }
@@ -4286,10 +4286,10 @@ sub GenerateImplementation
 
         if (NeedsConstructorProperty($interface)) {
             my $constructorGetter = "js" . $interfaceName . "Constructor";
-            push(@implContent, "JSC::EncodedJSValue JIT_OPERATION ${constructorGetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            push(@implContent, "JSC_DECLARE_CUSTOM_GETTER(${constructorGetter});\n");
 
             my $constructorSetter = "setJS" . $interfaceName . "Constructor";
-            push(@implContent, "bool JIT_OPERATION ${constructorSetter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+            push(@implContent, "JSC_DECLARE_CUSTOM_SETTER(${constructorSetter});\n");
         }
 
         foreach my $attribute (@{$interface->attributes}) {
@@ -4299,7 +4299,7 @@ sub GenerateImplementation
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@implContent, "JSC::EncodedJSValue JIT_OPERATION ${getter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
+            push(@implContent, "JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
             if (!IsReadonly($attribute)) {
                 my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
                 if ($readWriteConditional) {
@@ -4307,7 +4307,7 @@ sub GenerateImplementation
                     push(@implContent, "#if ${readWriteConditionalString}\n");
                 }
                 my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@implContent, "bool JIT_OPERATION ${setter}(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@implContent, "JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
                 push(@implContent, "#endif\n") if $readWriteConditional;
             }
             push(@implContent, "#endif\n") if $conditionalString;
@@ -4870,7 +4870,7 @@ sub GenerateImplementation
     if (NeedsConstructorProperty($interface)) {
         my $constructorGetter = "js" . $interfaceName . "Constructor";
 
-        push(@implContent, "EncodedJSValue JIT_OPERATION ${constructorGetter}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)\n");
+        push(@implContent, "JSC_DEFINE_CUSTOM_GETTER(${constructorGetter}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))\n");
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -4890,7 +4890,7 @@ sub GenerateImplementation
 
         my $constructorSetter = "setJS" . $interfaceName . "Constructor";
 
-        push(@implContent, "bool JIT_OPERATION ${constructorSetter}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+        push(@implContent, "JSC_DEFINE_CUSTOM_SETTER(${constructorSetter}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))\n");
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
@@ -5338,7 +5338,7 @@ sub GenerateAttributeGetterTrampolineDefinition
         push(@templateParameters, "CastedThisErrorBehavior::Assert");
     }
     
-    push(@$outputArray, "EncodedJSValue JIT_OPERATION ${attributeGetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)\n");
+    push(@$outputArray, "JSC_DEFINE_CUSTOM_GETTER(${attributeGetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeGetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, \"" . $attribute->name .  "\");\n");
     push(@$outputArray, "}\n\n");
@@ -5527,7 +5527,7 @@ sub GenerateAttributeSetterTrampolineDefinition
     push(@templateParameters, $attributeSetterBodyName);
     push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LegacyLenientThis};
     
-    push(@$outputArray, "bool JIT_OPERATION ${attributeSetterName}(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+    push(@$outputArray, "JSC_DEFINE_CUSTOM_SETTER(${attributeSetterName}, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    return IDLAttribute<${className}>::${callAttributeSetterName}<" . join(", ", @templateParameters) . ">(*lexicalGlobalObject, thisValue, encodedValue, \"" . $attribute->name . "\");\n");
     push(@$outputArray, "}\n\n");
@@ -5734,7 +5734,7 @@ sub GenerateOperationDefinition
 
         AddToImplIncludes("<JavaScriptCore/FrameTracers.h>", $conditional);
         my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
-        push(@$outputArray, "JSC::EncodedJSValue JIT_OPERATION ${nameOfFunctionWithoutTypeCheck}(JSC::JSGlobalObject* lexicalGlobalObject, $className* castedThis");
+        push(@$outputArray, "JSC_DEFINE_JIT_OPERATION(${nameOfFunctionWithoutTypeCheck}, JSC::EncodedJSValue, (JSC::JSGlobalObject* lexicalGlobalObject, $className* castedThis");
         foreach my $argument (@{$operation->arguments}) {
             my $type = $argument->type;
             my $argumentType = GetArgumentTypeForFunctionWithoutTypeCheck($interface, $type);
@@ -5742,7 +5742,7 @@ sub GenerateOperationDefinition
             my $encodedName = "encoded" . $codeGenerator->WK_ucfirst($name);
             push(@$outputArray, ", ${argumentType} ${encodedName}");
         }
-        push(@$outputArray, ")\n");
+        push(@$outputArray, "))\n");
         push(@$outputArray, "{\n");
         push(@$outputArray, "    UNUSED_PARAM(lexicalGlobalObject);\n");
         push(@$outputArray, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");

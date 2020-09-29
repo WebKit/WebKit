@@ -138,8 +138,8 @@ struct OSRExitState : RefCounted<OSRExitState> {
     Profiler::OSRExit* profilerExit { nullptr };
 };
 
-void JIT_OPERATION operationCompileOSRExit(CallFrame*) WTF_INTERNAL;
-void JIT_OPERATION operationDebugPrintSpeculationFailure(CallFrame*, void*, void*) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*));
+JSC_DECLARE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame*, void*, void*));
 
 // === OSRExit ===
 //
@@ -148,7 +148,7 @@ void JIT_OPERATION operationDebugPrintSpeculationFailure(CallFrame*, void*, void
 struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
-    friend void JIT_OPERATION operationCompileOSRExit(CallFrame*);
+    friend void JIT_OPERATION_ATTRIBUTES operationCompileOSRExit(CallFrame*);
 
     CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
     MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
@@ -171,7 +171,7 @@ struct OSRExit : public OSRExitBase {
 private:
     static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
     static void emitRestoreArguments(CCallHelpers&, VM&, const Operands<ValueRecovery>&);
-    friend void JIT_OPERATION operationDebugPrintSpeculationFailure(CallFrame*, void*, void*);
+    friend void JIT_OPERATION_ATTRIBUTES operationDebugPrintSpeculationFailure(CallFrame*, void*, void*);
 };
 
 struct SpeculationFailureDebugInfo {

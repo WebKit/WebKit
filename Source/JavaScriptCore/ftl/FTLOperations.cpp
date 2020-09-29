@@ -53,7 +53,9 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace FTL {
 
-extern "C" void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* encodedValue, EncodedJSValue* values)
+extern "C" {
+
+JSC_DEFINE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* encodedValue, EncodedJSValue* values))
 {
     using namespace DFG;
     VM& vm = globalObject->vm();
@@ -181,7 +183,8 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject* globa
     }
 }
 
-extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values)
+
+JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values))
 {
     using namespace DFG;
     VM& vm = globalObject->vm();
@@ -697,7 +700,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
     }
 }
 
-extern "C" int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject* globalObject, size_t tableIndex, JSString* string)
+JSC_DEFINE_JIT_OPERATION(operationSwitchStringAndGetBranchOffset, int32_t, (JSGlobalObject* globalObject, size_t tableIndex, JSString* string))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -711,7 +714,7 @@ extern "C" int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGloba
     return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
 }
 
-extern "C" int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject* globalObject, JSCell* object)
+JSC_DEFINE_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalObject* globalObject, JSCell* object))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -726,7 +729,7 @@ extern "C" int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObjec
     return static_cast<int32_t>(TypeofType::Object);
 }
 
-extern "C" void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame* callFrame, unsigned index)
+JSC_DEFINE_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallFrame* callFrame, unsigned index))
 {
     VM& vm = callFrame->deprecatedVM();
 
@@ -742,12 +745,14 @@ extern "C" void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame* callFr
     return lazySlowPath.stub().code().executableAddress();
 }
 
-extern "C" NO_RETURN_DUE_TO_CRASH void JIT_OPERATION operationReportBoundsCheckEliminationErrorAndCrash(intptr_t codeBlockAsIntPtr, int32_t nodeIndex, int32_t child1Index, int32_t child2Index, int32_t checkedIndex, int32_t bounds)
+JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckEliminationErrorAndCrash, NO_RETURN_DUE_TO_CRASH, void, (intptr_t codeBlockAsIntPtr, int32_t nodeIndex, int32_t child1Index, int32_t child2Index, int32_t checkedIndex, int32_t bounds))
 {
     CodeBlock* codeBlock = bitwise_cast<CodeBlock*>(codeBlockAsIntPtr);
     dataLogLn("Bounds Check Eimination error found @ D@", nodeIndex, ": AssertInBounds(index D@", child1Index, ": ", checkedIndex, ", bounds D@", child2Index, " ", bounds, ") in ", codeBlock);
     CRASH();
 }
+
+} // extern "C"
 
 } } // namespace JSC::FTL
 

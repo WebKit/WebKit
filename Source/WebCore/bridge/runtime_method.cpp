@@ -44,7 +44,7 @@ using namespace Bindings;
 WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeMethod) };
 
 static JSC_DECLARE_HOST_FUNCTION(callRuntimeMethod);
-static EncodedJSValue JIT_OPERATION methodLengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+static JSC_DECLARE_CUSTOM_GETTER(methodLengthGetter);
 
 RuntimeMethod::RuntimeMethod(VM& vm, Structure* structure, Method* method)
     // Callers will need to pass in the right global object corresponding to this native object "method".
@@ -59,7 +59,7 @@ void RuntimeMethod::finishCreation(VM& vm, const String& ident)
     ASSERT(inherits(vm, info()));
 }
 
-EncodedJSValue JIT_OPERATION methodLengthGetter(JSGlobalObject* exec, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(methodLengthGetter, (JSGlobalObject* exec, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

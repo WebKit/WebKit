@@ -42,8 +42,10 @@
 #define JSC_HOST_CALL_ATTRIBUTES
 #endif
 
+#define JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionName, attributes, parameters) \
+    attributes JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName parameters
 #define JSC_DEFINE_HOST_FUNCTION(functionName, parameters) \
-    JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName parameters
+    JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionName, , parameters)
 #define JSC_DECLARE_HOST_FUNCTION(functionName) \
     JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName(JSC::JSGlobalObject*, JSC::CallFrame*)
 #define JSC_ANNOTATE_HOST_FUNCTION(functionId, function)
@@ -75,7 +77,21 @@
 #endif
 
 #if ENABLE(JIT) && CALLING_CONVENTION_IS_STDCALL
-#define JIT_OPERATION CDECL
+#define JIT_OPERATION_ATTRIBUTES CDECL
 #else
-#define JIT_OPERATION
+#define JIT_OPERATION_ATTRIBUTES
 #endif
+
+
+#define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
+    attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters
+#define JSC_DEFINE_JIT_OPERATION(functionName, returnType, parameters) \
+    JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, , returnType, parameters)
+#define JSC_DECLARE_JIT_OPERATION(functionName, returnType, parameters) \
+    returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM WTF_INTERNAL
+#define JSC_ANNOTATE_JIT_OPERATION(functionId, function)
+
+#define JSC_DECLARE_CUSTOM_GETTER(functionName) JSC_DECLARE_JIT_OPERATION(functionName, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName))
+#define JSC_DECLARE_CUSTOM_SETTER(functionName) JSC_DECLARE_JIT_OPERATION(functionName, bool, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue))
+#define JSC_DEFINE_CUSTOM_GETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION(functionName, JSC::EncodedJSValue, parameters)
+#define JSC_DEFINE_CUSTOM_SETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION(functionName, bool, parameters)

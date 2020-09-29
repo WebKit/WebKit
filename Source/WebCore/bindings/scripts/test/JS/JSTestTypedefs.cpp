@@ -83,21 +83,21 @@ JSC_DECLARE_HOST_FUNCTION(jsTestTypedefsPrototypeFunctionMethodWithException);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsUnsignedLongLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsUnsignedLongLongAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsSerializedScriptValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsSerializedScriptValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsConstructorTestSubObj(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsAttributeWithClamp(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsAttributeWithClamp(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsAttributeWithClampInTypedef(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsAttributeWithClampInTypedef(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsBufferSourceAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsBufferSourceAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestTypedefsDomTimeStampAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestTypedefsDomTimeStampAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsUnsignedLongLongAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsUnsignedLongLongAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsSerializedScriptValue);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsSerializedScriptValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsConstructorTestSubObj);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsAttributeWithClamp);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsAttributeWithClamp);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsAttributeWithClampInTypedef);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsAttributeWithClampInTypedef);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsBufferSourceAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsBufferSourceAttr);
+JSC_DECLARE_CUSTOM_GETTER(jsTestTypedefsDomTimeStampAttr);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestTypedefsDomTimeStampAttr);
 
 class JSTestTypedefsPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -282,7 +282,7 @@ template<> inline JSTestTypedefs* IDLOperation<JSTestTypedefs>::cast(JSGlobalObj
     return jsDynamicCast<JSTestTypedefs*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -292,7 +292,7 @@ EncodedJSValue JIT_OPERATION jsTestTypedefsConstructor(JSGlobalObject* lexicalGl
     return JSValue::encode(JSTestTypedefs::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestTypedefsConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -313,7 +313,7 @@ static inline JSValue jsTestTypedefsUnsignedLongLongAttrGetter(JSGlobalObject& l
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedLongLong>(lexicalGlobalObject, throwScope, impl.unsignedLongLongAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsUnsignedLongLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsUnsignedLongLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsUnsignedLongLongAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unsignedLongLongAttr");
 }
@@ -331,7 +331,7 @@ static inline bool setJSTestTypedefsUnsignedLongLongAttrSetter(JSGlobalObject& l
     return true;
 }
 
-bool JIT_OPERATION setJSTestTypedefsUnsignedLongLongAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsUnsignedLongLongAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsUnsignedLongLongAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "unsignedLongLongAttr");
 }
@@ -344,7 +344,7 @@ static inline JSValue jsTestTypedefsSerializedScriptValueGetter(JSGlobalObject& 
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.serializedScriptValue())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsSerializedScriptValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsSerializedScriptValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsSerializedScriptValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "serializedScriptValue");
 }
@@ -362,7 +362,7 @@ static inline bool setJSTestTypedefsSerializedScriptValueSetter(JSGlobalObject& 
     return true;
 }
 
-bool JIT_OPERATION setJSTestTypedefsSerializedScriptValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsSerializedScriptValue, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsSerializedScriptValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "serializedScriptValue");
 }
@@ -373,7 +373,7 @@ static inline JSValue jsTestTypedefsConstructorTestSubObjGetter(JSGlobalObject& 
     return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsConstructorTestSubObj(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsConstructorTestSubObj, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::getStatic<jsTestTypedefsConstructorTestSubObjGetter>(*lexicalGlobalObject, thisValue, "TestSubObj");
 }
@@ -386,7 +386,7 @@ static inline JSValue jsTestTypedefsAttributeWithClampGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLClampAdaptor<IDLUnsignedLongLong>>(lexicalGlobalObject, throwScope, impl.attributeWithClamp())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsAttributeWithClamp(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsAttributeWithClamp, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttributeWithClampGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attributeWithClamp");
 }
@@ -404,7 +404,7 @@ static inline bool setJSTestTypedefsAttributeWithClampSetter(JSGlobalObject& lex
     return true;
 }
 
-bool JIT_OPERATION setJSTestTypedefsAttributeWithClamp(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsAttributeWithClamp, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsAttributeWithClampSetter>(*lexicalGlobalObject, thisValue, encodedValue, "attributeWithClamp");
 }
@@ -417,7 +417,7 @@ static inline JSValue jsTestTypedefsAttributeWithClampInTypedefGetter(JSGlobalOb
     RELEASE_AND_RETURN(throwScope, (toJS<IDLClampAdaptor<IDLLong>>(lexicalGlobalObject, throwScope, impl.attributeWithClampInTypedef())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsAttributeWithClampInTypedef(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsAttributeWithClampInTypedef, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttributeWithClampInTypedefGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attributeWithClampInTypedef");
 }
@@ -435,7 +435,7 @@ static inline bool setJSTestTypedefsAttributeWithClampInTypedefSetter(JSGlobalOb
     return true;
 }
 
-bool JIT_OPERATION setJSTestTypedefsAttributeWithClampInTypedef(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsAttributeWithClampInTypedef, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsAttributeWithClampInTypedefSetter>(*lexicalGlobalObject, thisValue, encodedValue, "attributeWithClampInTypedef");
 }
@@ -448,7 +448,7 @@ static inline JSValue jsTestTypedefsBufferSourceAttrGetter(JSGlobalObject& lexic
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.bufferSourceAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsBufferSourceAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsBufferSourceAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsBufferSourceAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "bufferSourceAttr");
 }
@@ -466,7 +466,7 @@ static inline bool setJSTestTypedefsBufferSourceAttrSetter(JSGlobalObject& lexic
     return true;
 }
 
-bool JIT_OPERATION setJSTestTypedefsBufferSourceAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsBufferSourceAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsBufferSourceAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "bufferSourceAttr");
 }
@@ -479,7 +479,7 @@ static inline JSValue jsTestTypedefsDomTimeStampAttrGetter(JSGlobalObject& lexic
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedLongLong>(lexicalGlobalObject, throwScope, impl.domTimeStampAttr())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestTypedefsDomTimeStampAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsDomTimeStampAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsDomTimeStampAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "domTimeStampAttr");
 }
@@ -497,7 +497,7 @@ static inline bool setJSTestTypedefsDomTimeStampAttrSetter(JSGlobalObject& lexic
     return true;
 }
 
-bool JIT_OPERATION setJSTestTypedefsDomTimeStampAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestTypedefsDomTimeStampAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestTypedefs>::set<setJSTestTypedefsDomTimeStampAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "domTimeStampAttr");
 }

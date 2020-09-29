@@ -32,9 +32,9 @@
 namespace JSC {
 
 const int32_t maxExponentForIntegerMathPow = 1000;
-double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
-UCPUStrictInt32 JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
-UCPUStrictInt32 JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationMathPow, double, (double x, double y));
+JSC_DECLARE_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double));
+JSC_DECLARE_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double));
 
 constexpr double maxSafeInteger()
 {
@@ -220,12 +220,12 @@ ALWAYS_INLINE bool canBeInt32(double value)
 }
 
 extern "C" {
-double JIT_OPERATION jsRound(double value) REFERENCED_FROM_ASM WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(jsRound, double, (double));
 
 // On Windows we need to wrap fmod; on other platforms we can call it directly.
 // On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
 #if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-double JIT_OPERATION jsMod(double x, double y) REFERENCED_FROM_ASM WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(jsMod, double, (double, double));
 #else
 #define jsMod fmod
 #endif
@@ -252,7 +252,7 @@ using std::cbrt;
 using std::exp;
 using std::expm1;
 
-double JIT_OPERATION log1p(double) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(log1p, double, (double));
 
 } // namespace Math
 } // namespace JSC

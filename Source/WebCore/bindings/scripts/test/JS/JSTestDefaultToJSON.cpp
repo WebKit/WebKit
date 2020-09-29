@@ -74,41 +74,41 @@ JSC_DECLARE_HOST_FUNCTION(jsTestDefaultToJSONPrototypeFunctionToJSON);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEnabledBySettingsAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONLongAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONEnabledBySettingsAttribute);
 #if ENABLE(TEST_CONDITIONAL)
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEnabledByConditionalAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONEnabledByConditionalAttribute);
 #endif
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEventHandlerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONEventHandlerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFirstStringAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONFirstStringAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONSecondLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONSecondLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONThirdUnJSONableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONThirdUnJSONableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFourthUnrestrictedDoubleAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONFourthUnrestrictedDoubleAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFifthLongClampedAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONFifthLongClampedAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONSixthTypedefAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONSixthTypedefAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONSeventhDirectlyToJSONableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONSeventhDirectlyToJSONableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEighthIndirectlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONEighthIndirectlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONTenthFrozenArrayAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONTenthFrozenArrayAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEleventhSequenceAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONEleventhSequenceAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONTwelfthInterfaceSequenceAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONTwelfthInterfaceSequenceAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue JIT_OPERATION jsTestDefaultToJSONThirteenthRecordAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestDefaultToJSONThirteenthRecordAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONEventHandlerAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONEventHandlerAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFirstStringAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONFirstStringAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONSecondLongAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONSecondLongAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONThirdUnJSONableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONThirdUnJSONableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFourthUnrestrictedDoubleAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONFourthUnrestrictedDoubleAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONFifthLongClampedAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONFifthLongClampedAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONSixthTypedefAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONSixthTypedefAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONSeventhDirectlyToJSONableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONSeventhDirectlyToJSONableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONEighthIndirectlyAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONEighthIndirectlyAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONTenthFrozenArrayAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONTenthFrozenArrayAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONEleventhSequenceAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONEleventhSequenceAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONTwelfthInterfaceSequenceAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONTwelfthInterfaceSequenceAttribute);
+JSC_DECLARE_CUSTOM_GETTER(jsTestDefaultToJSONThirteenthRecordAttribute);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestDefaultToJSONThirteenthRecordAttribute);
 
 class JSTestDefaultToJSONPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -261,7 +261,7 @@ template<> inline JSTestDefaultToJSON* IDLOperation<JSTestDefaultToJSON>::cast(J
     return jsDynamicCast<JSTestDefaultToJSON*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -271,7 +271,7 @@ EncodedJSValue JIT_OPERATION jsTestDefaultToJSONConstructor(JSGlobalObject* lexi
     return JSValue::encode(JSTestDefaultToJSON::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -292,7 +292,7 @@ static inline JSValue jsTestDefaultToJSONLongAttributeGetter(JSGlobalObject& lex
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.longAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONLongAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "longAttribute");
 }
@@ -305,7 +305,7 @@ static inline JSValue jsTestDefaultToJSONEnabledBySettingsAttributeGetter(JSGlob
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnsignedShort>(lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEnabledBySettingsAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONEnabledBySettingsAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONEnabledBySettingsAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enabledBySettingsAttribute");
 }
@@ -319,7 +319,7 @@ static inline JSValue jsTestDefaultToJSONEnabledByConditionalAttributeGetter(JSG
     RELEASE_AND_RETURN(throwScope, (toJS<IDLEnumeration<TestDefaultToJSONEnum>>(lexicalGlobalObject, throwScope, impl.enabledByConditionalAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEnabledByConditionalAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONEnabledByConditionalAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONEnabledByConditionalAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "enabledByConditionalAttribute");
 }
@@ -332,7 +332,7 @@ static inline JSValue jsTestDefaultToJSONEventHandlerAttributeGetter(JSGlobalObj
     return eventHandlerAttribute(thisObject.wrapped(), eventNames().entHandlerAttributeEvent, worldForDOMObject(thisObject));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEventHandlerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONEventHandlerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONEventHandlerAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "eventHandlerAttribute");
 }
@@ -347,7 +347,7 @@ static inline bool setJSTestDefaultToJSONEventHandlerAttributeSetter(JSGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONEventHandlerAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONEventHandlerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONEventHandlerAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "eventHandlerAttribute");
 }
@@ -360,7 +360,7 @@ static inline JSValue jsTestDefaultToJSONFirstStringAttributeGetter(JSGlobalObje
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.firstStringAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFirstStringAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFirstStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONFirstStringAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "firstStringAttribute");
 }
@@ -378,7 +378,7 @@ static inline bool setJSTestDefaultToJSONFirstStringAttributeSetter(JSGlobalObje
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONFirstStringAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONFirstStringAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONFirstStringAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "firstStringAttribute");
 }
@@ -391,7 +391,7 @@ static inline JSValue jsTestDefaultToJSONSecondLongAttributeGetter(JSGlobalObjec
     RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.secondLongAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONSecondLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONSecondLongAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONSecondLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "secondLongAttribute");
 }
@@ -409,7 +409,7 @@ static inline bool setJSTestDefaultToJSONSecondLongAttributeSetter(JSGlobalObjec
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONSecondLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONSecondLongAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONSecondLongAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "secondLongAttribute");
 }
@@ -422,7 +422,7 @@ static inline JSValue jsTestDefaultToJSONThirdUnJSONableAttributeGetter(JSGlobal
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestException>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.thirdUnJSONableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONThirdUnJSONableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONThirdUnJSONableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONThirdUnJSONableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "thirdUnJSONableAttribute");
 }
@@ -440,7 +440,7 @@ static inline bool setJSTestDefaultToJSONThirdUnJSONableAttributeSetter(JSGlobal
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONThirdUnJSONableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONThirdUnJSONableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONThirdUnJSONableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "thirdUnJSONableAttribute");
 }
@@ -453,7 +453,7 @@ static inline JSValue jsTestDefaultToJSONFourthUnrestrictedDoubleAttributeGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLUnrestrictedDouble>(lexicalGlobalObject, throwScope, impl.fourthUnrestrictedDoubleAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFourthUnrestrictedDoubleAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFourthUnrestrictedDoubleAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONFourthUnrestrictedDoubleAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "fourthUnrestrictedDoubleAttribute");
 }
@@ -471,7 +471,7 @@ static inline bool setJSTestDefaultToJSONFourthUnrestrictedDoubleAttributeSetter
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONFourthUnrestrictedDoubleAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONFourthUnrestrictedDoubleAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONFourthUnrestrictedDoubleAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "fourthUnrestrictedDoubleAttribute");
 }
@@ -484,7 +484,7 @@ static inline JSValue jsTestDefaultToJSONFifthLongClampedAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLClampAdaptor<IDLLong>>(lexicalGlobalObject, throwScope, impl.fifthLongClampedAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONFifthLongClampedAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFifthLongClampedAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONFifthLongClampedAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "fifthLongClampedAttribute");
 }
@@ -502,7 +502,7 @@ static inline bool setJSTestDefaultToJSONFifthLongClampedAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONFifthLongClampedAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONFifthLongClampedAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONFifthLongClampedAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "fifthLongClampedAttribute");
 }
@@ -515,7 +515,7 @@ static inline JSValue jsTestDefaultToJSONSixthTypedefAttributeGetter(JSGlobalObj
     RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.sixthTypedefAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONSixthTypedefAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONSixthTypedefAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONSixthTypedefAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "sixthTypedefAttribute");
 }
@@ -533,7 +533,7 @@ static inline bool setJSTestDefaultToJSONSixthTypedefAttributeSetter(JSGlobalObj
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONSixthTypedefAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONSixthTypedefAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONSixthTypedefAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "sixthTypedefAttribute");
 }
@@ -546,7 +546,7 @@ static inline JSValue jsTestDefaultToJSONSeventhDirectlyToJSONableAttributeGette
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.seventhDirectlyToJSONableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONSeventhDirectlyToJSONableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONSeventhDirectlyToJSONableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONSeventhDirectlyToJSONableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "seventhDirectlyToJSONableAttribute");
 }
@@ -564,7 +564,7 @@ static inline bool setJSTestDefaultToJSONSeventhDirectlyToJSONableAttributeSette
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONSeventhDirectlyToJSONableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONSeventhDirectlyToJSONableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONSeventhDirectlyToJSONableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "seventhDirectlyToJSONableAttribute");
 }
@@ -577,7 +577,7 @@ static inline JSValue jsTestDefaultToJSONEighthIndirectlyAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eighthIndirectlyAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEighthIndirectlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONEighthIndirectlyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONEighthIndirectlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "eighthIndirectlyAttribute");
 }
@@ -595,7 +595,7 @@ static inline bool setJSTestDefaultToJSONEighthIndirectlyAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONEighthIndirectlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONEighthIndirectlyAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONEighthIndirectlyAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "eighthIndirectlyAttribute");
 }
@@ -608,7 +608,7 @@ static inline JSValue jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribut
     RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.ninthOptionalDirectlyToJSONableAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONNinthOptionalDirectlyToJSONableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "ninthOptionalDirectlyToJSONableAttribute");
 }
@@ -626,7 +626,7 @@ static inline bool setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribut
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONNinthOptionalDirectlyToJSONableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "ninthOptionalDirectlyToJSONableAttribute");
 }
@@ -639,7 +639,7 @@ static inline JSValue jsTestDefaultToJSONTenthFrozenArrayAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLFrozenArray<IDLBoolean>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.tenthFrozenArrayAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONTenthFrozenArrayAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONTenthFrozenArrayAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONTenthFrozenArrayAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "tenthFrozenArrayAttribute");
 }
@@ -657,7 +657,7 @@ static inline bool setJSTestDefaultToJSONTenthFrozenArrayAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONTenthFrozenArrayAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONTenthFrozenArrayAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONTenthFrozenArrayAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "tenthFrozenArrayAttribute");
 }
@@ -670,7 +670,7 @@ static inline JSValue jsTestDefaultToJSONEleventhSequenceAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eleventhSequenceAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONEleventhSequenceAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONEleventhSequenceAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONEleventhSequenceAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "eleventhSequenceAttribute");
 }
@@ -688,7 +688,7 @@ static inline bool setJSTestDefaultToJSONEleventhSequenceAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONEleventhSequenceAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONEleventhSequenceAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONEleventhSequenceAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "eleventhSequenceAttribute");
 }
@@ -701,7 +701,7 @@ static inline JSValue jsTestDefaultToJSONTwelfthInterfaceSequenceAttributeGetter
     RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.twelfthInterfaceSequenceAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONTwelfthInterfaceSequenceAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONTwelfthInterfaceSequenceAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONTwelfthInterfaceSequenceAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "twelfthInterfaceSequenceAttribute");
 }
@@ -719,7 +719,7 @@ static inline bool setJSTestDefaultToJSONTwelfthInterfaceSequenceAttributeSetter
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONTwelfthInterfaceSequenceAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONTwelfthInterfaceSequenceAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONTwelfthInterfaceSequenceAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "twelfthInterfaceSequenceAttribute");
 }
@@ -732,7 +732,7 @@ static inline JSValue jsTestDefaultToJSONThirteenthRecordAttributeGetter(JSGloba
     RELEASE_AND_RETURN(throwScope, (toJS<IDLRecord<IDLDOMString, IDLUnsignedShort>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.thirteenthRecordAttribute())));
 }
 
-EncodedJSValue JIT_OPERATION jsTestDefaultToJSONThirteenthRecordAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONThirteenthRecordAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     return IDLAttribute<JSTestDefaultToJSON>::get<jsTestDefaultToJSONThirteenthRecordAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "thirteenthRecordAttribute");
 }
@@ -750,7 +750,7 @@ static inline bool setJSTestDefaultToJSONThirteenthRecordAttributeSetter(JSGloba
     return true;
 }
 
-bool JIT_OPERATION setJSTestDefaultToJSONThirteenthRecordAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestDefaultToJSONThirteenthRecordAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSTestDefaultToJSON>::set<setJSTestDefaultToJSONThirteenthRecordAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "thirteenthRecordAttribute");
 }

@@ -54,8 +54,8 @@ JSC_DECLARE_HOST_FUNCTION(jsTestEventTargetPrototypeFunctionItem);
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsTestEventTargetConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSTestEventTargetConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsTestEventTargetConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSTestEventTargetConstructor);
 
 class JSTestEventTargetPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -226,7 +226,7 @@ template<> inline JSTestEventTarget* IDLOperation<JSTestEventTarget>::cast(JSGlo
     return jsDynamicCast<JSTestEventTarget*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsTestEventTargetConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -236,7 +236,7 @@ EncodedJSValue JIT_OPERATION jsTestEventTargetConstructor(JSGlobalObject* lexica
     return JSValue::encode(JSTestEventTarget::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSTestEventTargetConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSTestEventTargetConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);

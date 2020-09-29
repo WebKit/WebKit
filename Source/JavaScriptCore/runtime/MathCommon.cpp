@@ -410,7 +410,7 @@ ALWAYS_INLINE double mathPowInternal(double x, double y)
 
 #endif
 
-double JIT_OPERATION operationMathPow(double x, double y)
+JSC_DEFINE_JIT_OPERATION(operationMathPow, double, (double x, double y))
 {
     if (std::isnan(y))
         return PNaN;
@@ -450,12 +450,12 @@ double JIT_OPERATION operationMathPow(double x, double y)
     return mathPowInternal(x, y);
 }
 
-UCPUStrictInt32 JIT_OPERATION operationToInt32(double value)
+JSC_DEFINE_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double value))
 {
     return toUCPUStrictInt32(JSC::toInt32(value));
 }
 
-UCPUStrictInt32 JIT_OPERATION operationToInt32SensibleSlow(double number)
+JSC_DEFINE_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double number))
 {
     return toUCPUStrictInt32(toInt32Internal<ToInt32Mode::AfterSensibleConversionAttempt>(number));
 }
@@ -476,14 +476,15 @@ static inline bool isStrictInt32(double value)
 #endif
 
 extern "C" {
-double jsRound(double value)
+
+JSC_DEFINE_JIT_OPERATION(jsRound, double, (double value))
 {
     double integer = ceil(value);
     return integer - (integer - 0.5 > value);
 }
 
 #if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-double jsMod(double x, double y)
+JSC_DEFINE_JIT_OPERATION(jsMod, double, (double x, double y))
 {
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
     // fmod() does not have exact results for integer on ARMv7.
@@ -511,7 +512,7 @@ double jsMod(double x, double y)
 
 namespace Math {
 
-double JIT_OPERATION log1p(double value)
+JSC_DEFINE_JIT_OPERATION(log1p, double, (double value))
 {
     if (value == 0.0)
         return value;

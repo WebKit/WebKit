@@ -1,3 +1,21 @@
+2020-09-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use JSC_DECLARE_JIT_OPERATION / JSC_DECLARE_CUSTOM_GETTER / JSC_DECLARE_CUSTOM_SETTER
+        https://bugs.webkit.org/show_bug.cgi?id=217071
+
+        Reviewed by Keith Miller.
+
+        Add the following macros.
+
+            1. JSC_DECLARE_JIT_OPERATION
+            2. JSC_DEFINE_JIT_OPERATION
+            3. JSC_DECLARE_CUSTOM_GETTER
+            4. JSC_DEFINE_CUSTOM_GETTER
+            5. JSC_DECLARE_CUSTOM_SETTER
+            6. JSC_DEFINE_CUSTOM_SETTER
+
+        * wtf/PlatformCallingConventions.h:
+
 2020-09-28  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Move GeneratePreferences.rb and yaml configuration files to WTF to be shared

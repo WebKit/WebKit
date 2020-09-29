@@ -75,6 +75,7 @@ public:
     DECLARE_INFO;
 
     NPObject* npObject() const { return m_npObject; }
+    NPRuntimeObjectMap* objectMap() const { return m_objectMap; }
 
 private:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
@@ -99,10 +100,6 @@ private:
     bool deleteProperty(JSC::JSGlobalObject*, NPIdentifier propertyName);
 
     static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode);
-
-    static JSC::EncodedJSValue propertyGetter(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-    static JSC::EncodedJSValue methodGetter(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-    static JSC::Exception* throwInvalidAccessError(JSC::JSGlobalObject*, JSC::ThrowScope&);
 
     NPRuntimeObjectMap* m_objectMap;
     NPObject* m_npObject;

@@ -29,23 +29,23 @@
 
 namespace JSC {
 
-static EncodedJSValue JIT_OPERATION regExpConstructorInput(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorMultiline(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorLastMatch(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorLastParen(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorLeftContext(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorRightContext(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar1(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar2(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar3(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar4(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar5(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar6(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar7(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar8(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION regExpConstructorDollar9(JSGlobalObject*, EncodedJSValue, PropertyName);
-static bool JIT_OPERATION setRegExpConstructorInput(JSGlobalObject*, EncodedJSValue, EncodedJSValue);
-static bool JIT_OPERATION setRegExpConstructorMultiline(JSGlobalObject*, EncodedJSValue, EncodedJSValue);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorInput);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorMultiline);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorLastMatch);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorLastParen);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorLeftContext);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorRightContext);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar1);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar2);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar3);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar4);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar5);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar6);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar7);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar8);
+static JSC_DECLARE_CUSTOM_GETTER(regExpConstructorDollar9);
+static JSC_DECLARE_CUSTOM_SETTER(setRegExpConstructorInput);
+static JSC_DECLARE_CUSTOM_SETTER(setRegExpConstructorMultiline);
 
 } // namespace JSC
 
@@ -107,80 +107,80 @@ inline EncodedJSValue regExpConstructorDollarImpl(JSGlobalObject*, EncodedJSValu
     return JSValue::encode(globalObject->regExpGlobalData().getBackref(globalObject, N));
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorDollar1(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar1, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<1>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar2(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar2, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<2>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar3(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar3, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<3>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar4(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar4, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<4>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar5(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar5, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<5>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar6(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar6, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<6>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar7(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar7, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<7>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar8(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar8, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<8>(globalObject, thisValue, propertyName);
 }
-EncodedJSValue JIT_OPERATION regExpConstructorDollar9(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar9, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     return regExpConstructorDollarImpl<9>(globalObject, thisValue, propertyName);
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorInput(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorInput, (JSGlobalObject*, EncodedJSValue thisValue, PropertyName))
 {
     JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().input());
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorMultiline(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorMultiline, (JSGlobalObject*, EncodedJSValue thisValue, PropertyName))
 {
     JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(jsBoolean(globalObject->regExpGlobalData().multiline()));
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorLastMatch(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorLastMatch, (JSGlobalObject*, EncodedJSValue thisValue, PropertyName))
 {
     JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getBackref(globalObject, 0));
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorLastParen(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorLastParen, (JSGlobalObject*, EncodedJSValue thisValue, PropertyName))
 {
     JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getLastParen(globalObject));
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorLeftContext(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorLeftContext, (JSGlobalObject*, EncodedJSValue thisValue, PropertyName))
 {
     JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getLeftContext(globalObject));
 }
 
-EncodedJSValue JIT_OPERATION regExpConstructorRightContext(JSGlobalObject*, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(regExpConstructorRightContext, (JSGlobalObject*, EncodedJSValue thisValue, PropertyName))
 {
     JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getRightContext(globalObject));
 }
 
-bool JIT_OPERATION setRegExpConstructorInput(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
+JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorInput, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -195,7 +195,7 @@ bool JIT_OPERATION setRegExpConstructorInput(JSGlobalObject* globalObject, Encod
     return false;
 }
 
-bool JIT_OPERATION setRegExpConstructorMultiline(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
+JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorMultiline, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -184,6 +184,8 @@ public:
 
     static EncodedJSValue callImpl(JSGlobalObject*, CallFrame*);
     static EncodedJSValue constructImpl(JSGlobalObject*, CallFrame*);
+    static EncodedJSValue staticFunctionGetterImpl(JSGlobalObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue callbackGetterImpl(JSGlobalObject*, EncodedJSValue, PropertyName);
    
 private:
     JSCallbackObject(JSGlobalObject*, Structure*, JSClassRef, void* data);
@@ -231,10 +233,13 @@ private:
 
     static RawNativeFunction getCallFunction();
     static RawNativeFunction getConstructFunction();
+
+    using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue, PropertyName);
+
+    static GetValueFunc getStaticFunctionGetter();
+    static GetValueFunc getCallbackGetter();
  
     JSValue getStaticValue(JSGlobalObject*, PropertyName);
-    static EncodedJSValue staticFunctionGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-    static EncodedJSValue callbackGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
 
     std::unique_ptr<JSCallbackObjectData> m_callbackObjectData;
     const ClassInfo* m_classInfo { nullptr };

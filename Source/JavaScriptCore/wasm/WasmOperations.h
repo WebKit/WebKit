@@ -45,31 +45,31 @@ namespace Wasm {
 class Instance;
 class Signature;
 
-void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context&) WTF_INTERNAL;
-void JIT_OPERATION operationWasmTriggerTierUpNow(Instance*, uint32_t functionIndex) WTF_INTERNAL;
-void JIT_OPERATION operationWasmThrowBadI64(JSWebAssemblyInstance*) WTF_INTERNAL;
-void JIT_OPERATION operationWasmUnwind(CallFrame*) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
+JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
+JSC_DECLARE_JIT_OPERATION(operationWasmThrowBadI64, void, (JSWebAssemblyInstance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame*));
 
-double JIT_OPERATION operationConvertToF64(CallFrame*, JSValue) WTF_INTERNAL;
-int32_t JIT_OPERATION operationConvertToI32(CallFrame*, JSValue) WTF_INTERNAL;
-float JIT_OPERATION operationConvertToF32(CallFrame*, JSValue) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (CallFrame*, JSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame*, JSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (CallFrame*, JSValue));
 
-void JIT_OPERATION operationIterateResults(CallFrame*, Instance*, const Signature*, JSValue, uint64_t*, uint64_t*) WTF_INTERNAL;
-JSArray* JIT_OPERATION operationAllocateResultsArray(CallFrame*, Wasm::Instance*, const Signature*, IndexingType, JSValue*) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const Signature*, JSValue, uint64_t*, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame*, Wasm::Instance*, const Signature*, IndexingType, JSValue*));
 
-void JIT_OPERATION operationWasmWriteBarrierSlowPath(JSCell*, VM*) WTF_INTERNAL;
-uint32_t JIT_OPERATION operationPopcount32(int32_t) WTF_INTERNAL;
-uint64_t JIT_OPERATION operationPopcount64(int64_t) WTF_INTERNAL;
-int32_t JIT_OPERATION operationGrowMemory(void*, Instance*, int32_t) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
+JSC_DECLARE_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));
+JSC_DECLARE_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t));
+JSC_DECLARE_JIT_OPERATION(operationGrowMemory, int32_t, (void*, Instance*, int32_t));
 
-EncodedJSValue JIT_OPERATION operationGetWasmTableElement(Instance*, unsigned, int32_t) WTF_INTERNAL;
-bool JIT_OPERATION operationSetWasmTableElement(Instance*, unsigned, int32_t, EncodedJSValue encValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationWasmRefFunc(Instance*, uint32_t) WTF_INTERNAL;
-int32_t JIT_OPERATION operationWasmTableGrow(Instance*, unsigned, EncodedJSValue fill, int32_t delta) WTF_INTERNAL;
-bool JIT_OPERATION operationWasmTableFill(Instance*, unsigned, int32_t offset, EncodedJSValue fill, int32_t count) WTF_INTERNAL;
-int32_t JIT_OPERATION operationGetWasmTableSize(Instance*, unsigned) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance*, unsigned, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance*, unsigned, int32_t, EncodedJSValue encValue));
+JSC_DECLARE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance*, unsigned, EncodedJSValue fill, int32_t delta));
+JSC_DECLARE_JIT_OPERATION(operationWasmTableFill, bool, (Instance*, unsigned, int32_t offset, EncodedJSValue fill, int32_t count));
+JSC_DECLARE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance*, unsigned));
 
-void* JIT_OPERATION operationWasmToJSException(CallFrame*, Wasm::ExceptionType, Instance*) WTF_INTERNAL;
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame*, Wasm::ExceptionType, Instance*));
 
 } } // namespace JSC::Wasm
 

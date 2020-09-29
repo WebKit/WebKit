@@ -123,7 +123,7 @@ public:
 
     // FIXME: Remove this slotBase / receiver behavior difference in custom values and custom accessors.
     // https://bugs.webkit.org/show_bug.cgi?id=158014
-    typedef EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
+    using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 
     JSValue getValue(JSGlobalObject*, PropertyName) const;
     JSValue getValue(JSGlobalObject*, uint64_t propertyName) const;

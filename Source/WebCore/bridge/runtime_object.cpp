@@ -41,9 +41,9 @@ WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base:
 static JSC_DECLARE_HOST_FUNCTION(callRuntimeObject);
 static JSC_DECLARE_HOST_FUNCTION(callRuntimeConstructor);
 
-static EncodedJSValue JIT_OPERATION fallbackObjectGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION fieldGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
-static EncodedJSValue JIT_OPERATION methodGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+static JSC_DECLARE_CUSTOM_GETTER(fallbackObjectGetter);
+static JSC_DECLARE_CUSTOM_GETTER(fieldGetter);
+static JSC_DECLARE_CUSTOM_GETTER(methodGetter);
 
 RuntimeObject::RuntimeObject(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
     : Base(vm, structure)
@@ -70,7 +70,7 @@ void RuntimeObject::invalidate()
     m_instance = nullptr;
 }
 
-EncodedJSValue JIT_OPERATION fallbackObjectGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(fallbackObjectGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -91,7 +91,7 @@ EncodedJSValue JIT_OPERATION fallbackObjectGetter(JSGlobalObject* lexicalGlobalO
     return JSValue::encode(result);
 }
 
-EncodedJSValue JIT_OPERATION fieldGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(fieldGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {    
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -113,7 +113,7 @@ EncodedJSValue JIT_OPERATION fieldGetter(JSGlobalObject* lexicalGlobalObject, En
     return JSValue::encode(result);
 }
 
-EncodedJSValue JIT_OPERATION methodGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(methodGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

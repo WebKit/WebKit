@@ -51,6 +51,9 @@ namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
 
+static JSC_DECLARE_CUSTOM_GETTER(propertyGetter);
+static JSC_DECLARE_CUSTOM_GETTER(methodGetter);
+
 static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
 {
     String name(propertyName.publicName());
@@ -58,6 +61,11 @@ static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
     if (name.isNull())
         return nullptr;
     return static_cast<NPIdentifier>(IdentifierRep::get(name.utf8().data()));
+}
+
+static JSC::Exception* throwInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
+{
+    return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."));
 }
 
 const ClassInfo JSNPObject::s_info = { "NPObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNPObject) };
@@ -308,13 +316,13 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlo
 
     // First, check if the NPObject has a property with this name.
     if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
-        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete), thisObject->propertyGetter);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete), propertyGetter);
         return true;
     }
 
     // Second, check if the NPObject has a method with this name.
     if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
-        slot.setCustom(thisObject, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly, thisObject->methodGetter);
+        slot.setCustom(thisObject, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly, methodGetter);
         return true;
     }
     
@@ -468,18 +476,18 @@ void JSNPObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGl
     npnMemFree(identifiers);
 }
 
-EncodedJSValue JSNPObject::propertyGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(propertyGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSNPObject* thisObj = jsCast<JSNPObject*>(JSValue::decode(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(thisObj, info());
+    ASSERT_GC_OBJECT_INHERITS(thisObj, JSNPObject::info());
     
-    if (!thisObj->m_npObject)
+    if (!thisObj->npObject())
         return JSValue::encode(throwInvalidAccessError(lexicalGlobalObject, scope));
 
-    if (!thisObj->m_npObject->_class->getProperty)
+    if (!thisObj->npObject()->_class->getProperty)
         return JSValue::encode(jsUndefined());
 
     NPVariant result;
@@ -488,7 +496,7 @@ EncodedJSValue JSNPObject::propertyGetter(JSGlobalObject* lexicalGlobalObject, E
     // Calling NPClass::getProperty will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
     // the call has finished.
-    NPRuntimeObjectMap::PluginProtector protector(thisObj->m_objectMap);
+    NPRuntimeObjectMap::PluginProtector protector(thisObj->objectMap());
     
     bool returnValue;
     {
@@ -498,7 +506,7 @@ EncodedJSValue JSNPObject::propertyGetter(JSGlobalObject* lexicalGlobalObject, E
         if (!npIdentifier)
             return JSValue::encode(jsUndefined());
 
-        returnValue = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &result);
+        returnValue = thisObj->npObject()->_class->getProperty(thisObj->npObject(), npIdentifier, &result);
         
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(lexicalGlobalObject);
     }
@@ -506,20 +514,20 @@ EncodedJSValue JSNPObject::propertyGetter(JSGlobalObject* lexicalGlobalObject, E
     if (!returnValue)
         return JSValue::encode(jsUndefined());
 
-    JSValue propertyValue = thisObj->m_objectMap->convertNPVariantToJSValue(thisObj->globalObject(), result);
+    JSValue propertyValue = thisObj->objectMap()->convertNPVariantToJSValue(thisObj->globalObject(), result);
     releaseNPVariantValue(&result);
     return JSValue::encode(propertyValue);
 }
 
-EncodedJSValue JSNPObject::methodGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
+JSC_DEFINE_CUSTOM_GETTER(methodGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSNPObject* thisObj = jsCast<JSNPObject*>(JSValue::decode(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(thisObj, info());
+    ASSERT_GC_OBJECT_INHERITS(thisObj, JSNPObject::info());
     
-    if (!thisObj->m_npObject)
+    if (!thisObj->npObject())
         return JSValue::encode(throwInvalidAccessError(lexicalGlobalObject, scope));
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
@@ -528,11 +536,6 @@ EncodedJSValue JSNPObject::methodGetter(JSGlobalObject* lexicalGlobalObject, Enc
         return JSValue::encode(throwInvalidAccessError(lexicalGlobalObject, scope));
 
     return JSValue::encode(JSNPMethod::create(thisObj->globalObject(), propertyName.publicName(), npIdentifier));
-}
-
-JSC::Exception* JSNPObject::throwInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
-{
-    return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."));
 }
 
 IsoSubspace* JSNPObject::subspaceForImpl(VM& vm)

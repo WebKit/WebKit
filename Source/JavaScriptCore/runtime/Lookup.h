@@ -405,7 +405,7 @@ inline void reifyStaticProperties(VM& vm, const ClassInfo* classInfo, const Hash
     }
 }
 
-template<RawNativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetter(JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName)
+template<RawNativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetterImpl(JSGlobalObject* globalObject, PropertyName propertyName)
 {
     return JSValue::encode(JSFunction::create(globalObject->vm(), globalObject, length, propertyName.publicName(), nativeFunction));
 }

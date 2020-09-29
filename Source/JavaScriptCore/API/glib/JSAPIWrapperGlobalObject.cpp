@@ -56,6 +56,8 @@ namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(callJSAPIWrapperGlobalObjectCallbackObject);
 static JSC_DECLARE_HOST_FUNCTION(constructJSAPIWrapperGlobalObjectCallbackObject);
+static JSC_DECLARE_CUSTOM_GETTER(callbackGetterJSAPIWrapperGlobalObjectCallbackObject);
+static JSC_DECLARE_CUSTOM_GETTER(staticFunctionGetterJSAPIWrapperGlobalObjectCallbackObject);
 
 template <> const ClassInfo JSCallbackObject<JSAPIWrapperGlobalObject>::s_info = { "JSAPIWrapperGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template<> const bool JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = true;
@@ -70,6 +72,18 @@ template <>
 RawNativeFunction JSCallbackObject<JSAPIWrapperGlobalObject>::getConstructFunction()
 {
     return constructJSAPIWrapperGlobalObjectCallbackObject;
+}
+
+template <>
+PropertySlot::GetValueFunc JSCallbackObject<JSAPIWrapperGlobalObject>::getCallbackGetter()
+{
+    return callbackGetterJSAPIWrapperGlobalObjectCallbackObject;
+}
+
+template <>
+PropertySlot::GetValueFunc JSCallbackObject<JSAPIWrapperGlobalObject>::getStaticFunctionGetter()
+{
+    return staticFunctionGetterJSAPIWrapperGlobalObjectCallbackObject;
 }
 
 template <>
@@ -107,6 +121,16 @@ JSC_DEFINE_HOST_FUNCTION(callJSAPIWrapperGlobalObjectCallbackObject, (JSGlobalOb
 JSC_DEFINE_HOST_FUNCTION(constructJSAPIWrapperGlobalObjectCallbackObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSCallbackObject<JSAPIWrapperGlobalObject>::constructImpl(globalObject, callFrame);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(callbackGetterJSAPIWrapperGlobalObjectCallbackObject, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
+{
+    return JSCallbackObject<JSAPIWrapperGlobalObject>::callbackGetterImpl(globalObject, thisValue, propertyName);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(staticFunctionGetterJSAPIWrapperGlobalObjectCallbackObject, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName propertyName))
+{
+    return JSCallbackObject<JSAPIWrapperGlobalObject>::staticFunctionGetterImpl(globalObject, thisValue, propertyName);
 }
 
 JSAPIWrapperGlobalObject::JSAPIWrapperGlobalObject(VM& vm, Structure* structure)

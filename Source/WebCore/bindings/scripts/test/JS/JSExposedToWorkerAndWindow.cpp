@@ -91,8 +91,8 @@ JSC_DECLARE_HOST_FUNCTION(jsExposedToWorkerAndWindowPrototypeFunctionDoSomething
 
 // Attributes
 
-JSC::EncodedJSValue JIT_OPERATION jsExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool JIT_OPERATION setJSExposedToWorkerAndWindowConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC_DECLARE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSExposedToWorkerAndWindowConstructor);
 
 class JSExposedToWorkerAndWindowPrototype final : public JSC::JSNonFinalObject {
 public:
@@ -219,7 +219,7 @@ template<> inline JSExposedToWorkerAndWindow* IDLOperation<JSExposedToWorkerAndW
     return jsDynamicCast<JSExposedToWorkerAndWindow*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue JIT_OPERATION jsExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
+JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -229,7 +229,7 @@ EncodedJSValue JIT_OPERATION jsExposedToWorkerAndWindowConstructor(JSGlobalObjec
     return JSValue::encode(JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool JIT_OPERATION setJSExposedToWorkerAndWindowConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+JSC_DEFINE_CUSTOM_SETTER(setJSExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
