@@ -588,7 +588,7 @@ JSC_DEFINE_JIT_OPERATION(operationArith##capitalizedName, double, (JSGlobalObjec
     RETURN_IF_EXCEPTION(scope, PNaN); \
     return JSC::Math::lowerName(result); \
 }
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+    FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
 
 JSC_DEFINE_JIT_OPERATION(operationArithSqrt, double, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))
@@ -614,7 +614,7 @@ JSC_DEFINE_JIT_OPERATION(operationArithRound, EncodedJSValue, (JSGlobalObject* g
     JSValue argument = JSValue::decode(encodedArgument);
     double valueOfArgument = argument.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(jsNumber(jsRound(valueOfArgument)));
+    return JSValue::encode(jsNumber(Math::roundDouble(valueOfArgument)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationArithFloor, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedArgument))

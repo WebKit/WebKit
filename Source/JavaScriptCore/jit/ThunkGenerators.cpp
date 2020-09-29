@@ -744,6 +744,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+        JSC_ANNOTATE_JIT_OPERATION(function##ThunkId, function##Thunk); \
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
@@ -768,6 +769,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+        JSC_ANNOTATE_JIT_OPERATION(function##ThunkId, function##Thunk); \
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
@@ -788,6 +790,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
     );\
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+        JSC_ANNOTATE_JIT_OPERATION(function##ThunkId, function##Thunk); \
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
@@ -811,6 +814,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
     ); \
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+        JSC_ANNOTATE_JIT_OPERATION(function##ThunkId, function##Thunk); \
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
@@ -828,6 +832,7 @@ typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
     ); \
     extern "C" { \
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+        JSC_ANNOTATE_JIT_OPERATION(function##ThunkId, function##Thunk); \
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
@@ -855,6 +860,7 @@ static double (_cdecl *jsRoundFunction)(double) = jsRound;
         __asm ret \
         } \
     } \
+    JSC_ANNOTATE_JIT_OPERATION(function##ThunkId, function##Thunk); \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
 
 #else

@@ -1,5 +1,61 @@
 2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Annotate JIT operation functions called from B3 etc.
+        https://bugs.webkit.org/show_bug.cgi?id=217082
+
+        Reviewed by Saam Barati.
+
+        There are many math functions that are called from B3 etc. We should make them JIT operations to complete JIT-caging.
+
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3MathExtras.cpp:
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::JSC_DEFINE_JIT_OPERATION):
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+        (JSC::B3::fastForwardCopy32): Deleted.
+        * b3/B3ReduceLoopStrength.h:
+        (JSC::B3::fastForwardCopy32):
+        * b3/B3ReduceStrength.cpp:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArithMode.cpp:
+        (JSC::DFG::arithUnaryFunction):
+        (JSC::DFG::arithUnaryOperation):
+        (WTF::printInternal):
+        * dfg/DFGArithMode.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithPow):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::doubleTrunc):
+        (JSC::FTL::Output::doubleUnary):
+        (JSC::FTL::Output::doubleStdPow):
+        (JSC::FTL::Output::doublePow): Deleted.
+        * ftl/FTLOutput.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::callDoubleToDouble):
+        * jit/ThunkGenerators.cpp:
+        * runtime/MathCommon.cpp:
+        (JSC::Math::log1pDoubleImpl):
+        (JSC::Math::log1pFloatImpl):
+        (JSC::Math::log1p):
+        (JSC::Math::JSC_DEFINE_JIT_OPERATION):
+        (JSC::Math::roundDoubleImpl):
+        * runtime/MathCommon.h:
+        * runtime/MathObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/Operations.h:
+        (JSC::jsRemainder):
+
+2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, attempt to fix WinCairo build failure part 2
         https://bugs.webkit.org/show_bug.cgi?id=217071
 

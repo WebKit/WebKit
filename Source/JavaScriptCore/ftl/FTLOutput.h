@@ -181,7 +181,7 @@ public:
 
     LValue doubleUnary(DFG::Arith::UnaryType, LValue);
 
-    LValue doublePow(LValue base, LValue exponent);
+    LValue doubleStdPow(LValue base, LValue exponent);
     LValue doublePowi(LValue base, LValue exponent);
 
     LValue doubleSqrt(LValue);

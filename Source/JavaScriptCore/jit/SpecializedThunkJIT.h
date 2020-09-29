@@ -166,7 +166,7 @@ namespace JSC {
         // and return value. Like any sensible architecture would.
         void callDoubleToDouble(FunctionPtr<CFunctionPtrTag> function)
         {
-            m_calls.append(std::make_pair(call(JITThunkPtrTag), function.retagged<JITThunkPtrTag>()));
+            m_calls.append(std::make_pair(call(OperationPtrTag), function.retagged<OperationPtrTag>()));
         }
         
         void callDoubleToDoublePreservingReturn(FunctionPtr<CFunctionPtrTag> function)
@@ -196,7 +196,7 @@ namespace JSC {
         }
         
         MacroAssembler::JumpList m_failures;
-        Vector<std::pair<Call, FunctionPtr<JITThunkPtrTag>>> m_calls;
+        Vector<std::pair<Call, FunctionPtr<OperationPtrTag>>> m_calls;
     };
 
 }

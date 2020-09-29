@@ -81,7 +81,7 @@ JSC_DECLARE_JIT_OPERATION(operationArithSqrt, double, (JSGlobalObject*, EncodedJ
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
     JSC_DECLARE_JIT_OPERATION(operationArith##capitalizedName, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
-FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
 
 JSC_DECLARE_JIT_OPERATION(operationArithRound, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));

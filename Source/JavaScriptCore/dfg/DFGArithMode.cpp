@@ -39,8 +39,8 @@ Arith::UnaryFunction arithUnaryFunction(Arith::UnaryType type)
     switch (type) {
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
     case Arith::UnaryType::capitalizedName: \
-        return static_cast<Arith::UnaryFunction>(JSC::Math::lowerName);
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+        return JSC::Math::lowerName##Double;
+    FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -53,7 +53,7 @@ Arith::UnaryOperation arithUnaryOperation(Arith::UnaryType type)
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
     case Arith::UnaryType::capitalizedName: \
         return static_cast<Arith::UnaryOperation>(operationArith##capitalizedName);
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+    FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -108,7 +108,7 @@ void printInternal(PrintStream& out, JSC::DFG::Arith::UnaryType type)
     case JSC::DFG::Arith::UnaryType::capitalizedName: \
         out.print(#capitalizedName); \
         return;
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+    FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
     }
     RELEASE_ASSERT_NOT_REACHED();

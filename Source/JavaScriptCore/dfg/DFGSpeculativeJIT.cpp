@@ -6017,8 +6017,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         
         FPRResult result(this);
 
-        using OperationType = D_JITOperation_DD;
-        callOperation<OperationType>(jsMod, result.fpr(), op1FPR, op2FPR);
+        callOperation(Math::fmodDouble, result.fpr(), op1FPR, op2FPR);
         
         doubleResult(result.fpr(), node);
         return;
@@ -6111,16 +6110,15 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             flushRegisters();
             FPRResult roundedResultAsDouble(this);
             FPRReg resultFPR = roundedResultAsDouble.fpr();
-            using OperationType = D_JITOperation_D;
             if (node->op() == ArithRound)
-                callOperation<OperationType>(jsRound, resultFPR, valueFPR);
+                callOperation(Math::roundDouble, resultFPR, valueFPR);
             else if (node->op() == ArithFloor)
-                callOperation<OperationType>(floor, resultFPR, valueFPR);
+                callOperation(Math::floorDouble, resultFPR, valueFPR);
             else if (node->op() == ArithCeil)
-                callOperation<OperationType>(ceil, resultFPR, valueFPR);
+                callOperation(Math::ceilDouble, resultFPR, valueFPR);
             else {
                 ASSERT(node->op() == ArithTrunc);
-                callOperation<OperationType>(trunc, resultFPR, valueFPR);
+                callOperation(Math::truncDouble, resultFPR, valueFPR);
             }
             setResult(resultFPR);
         }
@@ -6165,7 +6163,7 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
         if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::useArchitectureSpecificOptimizations()) {
             flushRegisters();
             FPRResult result(this);
-            callOperation<D_JITOperation_D>(sqrt, result.fpr(), op1FPR);
+            callOperation(Math::sqrtDouble, result.fpr(), op1FPR);
             doubleResult(result.fpr(), node);
         } else {
             FPRTemporary result(this, op1);

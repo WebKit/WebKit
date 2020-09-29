@@ -483,8 +483,96 @@ JSC_DEFINE_JIT_OPERATION(jsRound, double, (double value))
     return integer - (integer - 0.5 > value);
 }
 
-#if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-JSC_DEFINE_JIT_OPERATION(jsMod, double, (double x, double y))
+} // extern "C"
+
+namespace Math {
+
+static ALWAYS_INLINE double log1pDoubleImpl(double value)
+{
+    if (value == 0.0)
+        return value;
+    return std::log1p(value);
+}
+
+static ALWAYS_INLINE float log1pFloatImpl(float value)
+{
+    if (value == 0.0)
+        return value;
+    return std::log1p(value);
+}
+
+double log1p(double value)
+{
+    return log1pDoubleImpl(value);
+}
+
+#define JSC_DEFINE_VIA_STD(capitalizedName, lowerName) \
+    JSC_DEFINE_JIT_OPERATION(lowerName##Double, double, (double value)) \
+    { \
+        return std::lowerName(value); \
+    } \
+    JSC_DEFINE_JIT_OPERATION(lowerName##Float, float, (float value)) \
+    { \
+        return std::lowerName(value); \
+    }
+FOR_EACH_ARITH_UNARY_OP_STD(JSC_DEFINE_VIA_STD)
+#undef JSC_DEFINE_VIA_STD
+
+#define JSC_DEFINE_VIA_CUSTOM(capitalizedName, lowerName) \
+    JSC_DEFINE_JIT_OPERATION(lowerName##Double, double, (double value)) \
+    { \
+        return lowerName##DoubleImpl(value); \
+    } \
+    JSC_DEFINE_JIT_OPERATION(lowerName##Float, float, (float value)) \
+    { \
+        return lowerName##FloatImpl(value); \
+    }
+FOR_EACH_ARITH_UNARY_OP_CUSTOM(JSC_DEFINE_VIA_CUSTOM)
+#undef JSC_DEFINE_VIA_CUSTOM
+
+JSC_DEFINE_JIT_OPERATION(truncDouble, double, (double value))
+{
+    return std::trunc(value);
+}
+JSC_DEFINE_JIT_OPERATION(truncFloat, float, (float value))
+{
+    return std::trunc(value);
+}
+JSC_DEFINE_JIT_OPERATION(ceilDouble, double, (double value))
+{
+    return std::ceil(value);
+}
+JSC_DEFINE_JIT_OPERATION(ceilFloat, float, (float value))
+{
+    return std::ceil(value);
+}
+JSC_DEFINE_JIT_OPERATION(floorDouble, double, (double value))
+{
+    return std::floor(value);
+}
+JSC_DEFINE_JIT_OPERATION(floorFloat, float, (float value))
+{
+    return std::floor(value);
+}
+JSC_DEFINE_JIT_OPERATION(sqrtDouble, double, (double value))
+{
+    return std::sqrt(value);
+}
+JSC_DEFINE_JIT_OPERATION(sqrtFloat, float, (float value))
+{
+    return std::sqrt(value);
+}
+
+JSC_DEFINE_JIT_OPERATION(stdPowDouble, double, (double x, double y))
+{
+    return std::pow(x, y);
+}
+JSC_DEFINE_JIT_OPERATION(stdPowFloat, float, (float x, float y))
+{
+    return std::pow(x, y);
+}
+
+JSC_DEFINE_JIT_OPERATION(fmodDouble, double, (double x, double y))
 {
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
     // fmod() does not have exact results for integer on ARMv7.
@@ -507,16 +595,21 @@ JSC_DEFINE_JIT_OPERATION(jsMod, double, (double x, double y))
 #endif
     return fmod(x, y);
 }
-#endif
-} // extern "C"
 
-namespace Math {
-
-JSC_DEFINE_JIT_OPERATION(log1p, double, (double value))
+static ALWAYS_INLINE double roundDoubleImpl(double value)
 {
-    if (value == 0.0)
-        return value;
-    return std::log1p(value);
+    double integer = ceil(value);
+    return integer - (integer - 0.5 > value);
+}
+
+JSC_DEFINE_JIT_OPERATION(roundDouble, double, (double value))
+{
+    return roundDoubleImpl(value);
+}
+
+JSC_DEFINE_JIT_OPERATION(jsRoundDouble, double, (double value))
+{
+    return roundDoubleImpl(value);
 }
 
 } // namespace Math

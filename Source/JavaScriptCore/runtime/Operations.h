@@ -648,7 +648,7 @@ ALWAYS_INLINE JSValue jsDiv(JSGlobalObject* globalObject, JSValue v1, JSValue v2
 ALWAYS_INLINE JSValue jsRemainder(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     auto doubleOp = [] (double left, double right) -> double {
-        return jsMod(left, right);
+        return Math::fmodDouble(left, right);
     };
 
     auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {

@@ -147,8 +147,6 @@ using V_JITOperation_GCCJ = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, JS
 using J_JITOperation_GSsiJI = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*);
 using Z_JITOperation_GJZZ = int32_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, int32_t, int32_t);
 using F_JITOperation_GFJZZ = CallFrame*(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t);
-using D_JITOperation_DD = double(JIT_OPERATION_ATTRIBUTES *)(double, double);
-using D_JITOperation_D = double(JIT_OPERATION_ATTRIBUTES *)(double);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

@@ -1288,11 +1288,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
             double roundedValue = 0;
             if (node->op() == ArithRound)
-                roundedValue = jsRound(*number);
+                roundedValue = Math::roundDouble(*number);
             else if (node->op() == ArithFloor)
-                roundedValue = floor(*number);
+                roundedValue = Math::floorDouble(*number);
             else if (node->op() == ArithCeil)
-                roundedValue = ceil(*number);
+                roundedValue = Math::ceilDouble(*number);
             else {
                 ASSERT(node->op() == ArithTrunc);
                 roundedValue = trunc(*number);

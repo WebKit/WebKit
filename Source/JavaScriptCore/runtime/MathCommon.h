@@ -221,38 +221,67 @@ ALWAYS_INLINE bool canBeInt32(double value)
 
 extern "C" {
 JSC_DECLARE_JIT_OPERATION(jsRound, double, (double));
-
-// On Windows we need to wrap fmod; on other platforms we can call it directly.
-// On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
-#if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-JSC_DECLARE_JIT_OPERATION(jsMod, double, (double, double));
-#else
-#define jsMod fmod
-#endif
 }
 
 namespace Math {
 
-using std::sin;
-using std::sinh;
-using std::cos;
-using std::cosh;
-using std::tan;
-using std::tanh;
-using std::asin;
-using std::asinh;
-using std::acos;
-using std::acosh;
-using std::atan;
-using std::atanh;
-using std::log;
-using std::log10;
-using std::log2;
-using std::cbrt;
-using std::exp;
-using std::expm1;
+// This macro defines a set of information about all known arith unary generic node.
+#define FOR_EACH_ARITH_UNARY_OP_CUSTOM(macro) \
+    macro(Log1p, log1p) \
 
-JSC_DECLARE_JIT_OPERATION(log1p, double, (double));
+#define FOR_EACH_ARITH_UNARY_OP_STD(macro) \
+    macro(Sin, sin) \
+    macro(Sinh, sinh) \
+    macro(Cos, cos) \
+    macro(Cosh, cosh) \
+    macro(Tan, tan) \
+    macro(Tanh, tanh) \
+    macro(ASin, asin) \
+    macro(ASinh, asinh) \
+    macro(ACos, acos) \
+    macro(ACosh, acosh) \
+    macro(ATan, atan) \
+    macro(ATanh, atanh) \
+    macro(Log, log) \
+    macro(Log10, log10) \
+    macro(Log2, log2) \
+    macro(Cbrt, cbrt) \
+    macro(Exp, exp) \
+    macro(Expm1, expm1) \
+
+#define FOR_EACH_ARITH_UNARY_OP(macro) \
+    FOR_EACH_ARITH_UNARY_OP_STD(macro) \
+    FOR_EACH_ARITH_UNARY_OP_CUSTOM(macro) \
+
+#define JSC_DEFINE_VIA_STD(capitalizedName, lowerName) \
+    using std::lowerName; \
+    JSC_DECLARE_JIT_OPERATION(lowerName##Double, double, (double)); \
+    JSC_DECLARE_JIT_OPERATION(lowerName##Float, float, (float));
+FOR_EACH_ARITH_UNARY_OP_STD(JSC_DEFINE_VIA_STD)
+#undef JSC_DEFINE_VIA_STD
+
+#define JSC_DEFINE_VIA_CUSTOM(capitalizedName, lowerName) \
+    JS_EXPORT_PRIVATE double lowerName(double); \
+    JSC_DECLARE_JIT_OPERATION(lowerName##Double, double, (double)); \
+    JSC_DECLARE_JIT_OPERATION(lowerName##Float, float, (float));
+FOR_EACH_ARITH_UNARY_OP_CUSTOM(JSC_DEFINE_VIA_CUSTOM)
+#undef JSC_DEFINE_VIA_CUSTOM
+
+JSC_DECLARE_JIT_OPERATION(truncDouble, double, (double));
+JSC_DECLARE_JIT_OPERATION(truncFloat, float, (float));
+JSC_DECLARE_JIT_OPERATION(ceilDouble, double, (double));
+JSC_DECLARE_JIT_OPERATION(ceilFloat, float, (float));
+JSC_DECLARE_JIT_OPERATION(floorDouble, double, (double));
+JSC_DECLARE_JIT_OPERATION(floorFloat, float, (float));
+JSC_DECLARE_JIT_OPERATION(sqrtDouble, double, (double));
+JSC_DECLARE_JIT_OPERATION(sqrtFloat, float, (float));
+
+JSC_DECLARE_JIT_OPERATION(stdPowDouble, double, (double, double));
+JSC_DECLARE_JIT_OPERATION(stdPowFloat, float, (float, float));
+
+JSC_DECLARE_JIT_OPERATION(fmodDouble, double, (double, double));
+JSC_DECLARE_JIT_OPERATION(roundDouble, double, (double));
+JSC_DECLARE_JIT_OPERATION(jsRoundDouble, double, (double));
 
 } // namespace Math
 } // namespace JSC

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "MathCommon.h"
+
 #if ENABLE(DFG_JIT)
 
 namespace JSC {
@@ -53,37 +55,14 @@ enum class RoundingMode {
     Double // The round operation produce a double. The result can be -0, NaN or (+/-)Infinity.
 };
 
-
-// This macro defines a set of information about all known arith unary generic node.
-#define FOR_EACH_DFG_ARITH_UNARY_OP(macro) \
-    macro(Sin, sin) \
-    macro(Sinh, sinh) \
-    macro(Cos, cos) \
-    macro(Cosh, cosh) \
-    macro(Tan, tan) \
-    macro(Tanh, tanh) \
-    macro(ASin, asin) \
-    macro(ASinh, asinh) \
-    macro(ACos, acos) \
-    macro(ACosh, acosh) \
-    macro(ATan, atan) \
-    macro(ATanh, atanh) \
-    macro(Log, log) \
-    macro(Log10, log10) \
-    macro(Log1p, log1p) \
-    macro(Log2, log2) \
-    macro(Cbrt, cbrt) \
-    macro(Exp, exp) \
-    macro(Expm1, expm1) \
-
 enum class UnaryType : uint32_t {
 #define DFG_ARITH_UNARY_ENUM(capitalizedName, lowerName) capitalizedName,
-    FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY_ENUM)
+    FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY_ENUM)
 #undef DFG_ARITH_UNARY_ENUM
 };
 
-typedef double (*UnaryFunction)(double);
-typedef double (*UnaryOperation)(JSGlobalObject*, EncodedJSValue);
+using UnaryFunction = double(JIT_OPERATION_ATTRIBUTES*)(double);
+using UnaryOperation = double(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue);
 
 } // namespace Arith
 

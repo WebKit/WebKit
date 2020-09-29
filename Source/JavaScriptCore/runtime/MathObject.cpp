@@ -276,7 +276,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncRandom, (JSGlobalObject* globalObject, Cal
 
 JSC_DEFINE_HOST_FUNCTION(mathProtoFuncRound, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(jsNumber(jsRound(callFrame->argument(0).toNumber(globalObject))));
+    return JSValue::encode(jsNumber(Math::roundDouble(callFrame->argument(0).toNumber(globalObject))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSign, (JSGlobalObject* globalObject, CallFrame* callFrame))

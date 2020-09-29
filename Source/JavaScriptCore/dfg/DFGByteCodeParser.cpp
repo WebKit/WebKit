@@ -2346,7 +2346,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
         case capitalizedName##Intrinsic:
-        FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+        FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
         {
             if (argumentCountIncludingThis == 1) {
@@ -2360,7 +2360,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             case capitalizedName##Intrinsic: \
                 type = Arith::UnaryType::capitalizedName; \
                 break;
-        FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
+            FOR_EACH_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
             default:
                 RELEASE_ASSERT_NOT_REACHED();

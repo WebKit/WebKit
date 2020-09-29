@@ -3123,7 +3123,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(powBlock, nanExceptionResultIsNaN);
-            ValueFromBlock powResult = m_out.anchor(m_out.doublePow(base, exponent));
+            ValueFromBlock powResult = m_out.anchor(m_out.doubleStdPow(base, exponent));
             m_out.jump(continuation);
 
             m_out.appendTo(nanExceptionResultIsNaN, continuation);
