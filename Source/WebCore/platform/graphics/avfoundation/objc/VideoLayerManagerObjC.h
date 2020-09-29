@@ -51,7 +51,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     WEBCORE_EXPORT VideoLayerManagerObjC(const Logger&, const void*);
 #else
-    WEBCORE_EXPORT VideoLayerManagerObjC() = default;
+    VideoLayerManagerObjC() = default;
 #endif
 
     WEBCORE_EXPORT ~VideoLayerManagerObjC();
