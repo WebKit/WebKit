@@ -1,3 +1,25 @@
+2020-09-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Make sure <wbr> gets an inline box too.
+        https://bugs.webkit.org/show_bug.cgi?id=217100
+
+        Reviewed by Antti Koivisto.
+
+        <wbr> behaves similarly to <br> when it comes to line breaking. They are not committed to LineBreaker but instead we post-process them.  
+        In this patch the <wbr> content is added to the LineCandidate list as a special item (same as with <br>) and later submitted to the current line as a zero width run.
+        This behavior matches the spec (and FF) but does not match current trunk/rendering.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::trailingWordBreakOpportunity const):
+        (WebCore::Layout::LineCandidate::InlineContent::appendTrailingLineBreak):
+        (WebCore::Layout::LineCandidate::InlineContent::appendtrailingWordBreakOpportunity):
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineCandidate::InlineContent::reset):
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+        (WebCore::Layout::LineBuilder::nextContentForLine):
+        (WebCore::Layout::LineCandidate::InlineContent::appendLineBreak): Deleted.
+        (WebCore::Layout::LineCandidate::InlineContent::setTrailingLineBreak): Deleted.
+
 2020-09-29  Sam Weinig  <weinig@apple.com>
 
         Remove IndexedDBWorkers runtime setting now since it is always true

@@ -173,19 +173,20 @@ struct LineCandidate {
         InlineLayoutUnit logicalWidth() const { return m_LogicalWidth; }
         InlineLayoutUnit collapsibleTrailingWidth() const { return m_collapsibleTrailingWidth; }
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
+        const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
         void appendInlineItem(const InlineItem&, InlineLayoutUnit logicalWidth);
-        void appendLineBreak(const InlineItem& inlineItem) { setTrailingLineBreak(inlineItem); }
+        void appendTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
+        void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
         void reset();
 
     private:
-        void setTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
-
         bool m_ignoreTrailingLetterSpacing { false };
         InlineLayoutUnit m_LogicalWidth { 0 };
         InlineLayoutUnit m_collapsibleTrailingWidth { 0 };
         LineBreaker::RunList m_inlineRuns;
         const InlineItem* m_trailingLineBreak { nullptr };
+        const InlineItem* m_trailingWordBreakOpportunity { nullptr };
     };
 
     struct FloatContent {
@@ -233,7 +234,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
             return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
         }
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isWordBreakOpportunity())
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
             return false;
         ASSERT_NOT_REACHED();
         return true;
@@ -265,6 +266,7 @@ inline void LineCandidate::InlineContent::reset()
     m_collapsibleTrailingWidth = { };
     m_inlineRuns.clear();
     m_trailingLineBreak = { };
+    m_trailingWordBreakOpportunity = { };
 }
 
 inline void LineCandidate::FloatContent::append(const InlineItem& floatItem, InlineLayoutUnit logicalWidth, bool isIntrusive)
@@ -384,8 +386,13 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         auto inlineContentIsFullyCommitted = inlineContent.runs().size() == result.committedCount.value && !result.partialContent;
         auto isEndOfLine = result.isEndOfLine == LineBreaker::IsEndOfLine::Yes;
 
+        if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
+            // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
+            ++committedInlineItemCount;
+            m_line.append(*wordBreakOpportunity, { });
+        }
         if (inlineContentIsFullyCommitted && inlineContent.trailingLineBreak()) {
-            // Fully commited (or empty) content followed by a line break means "end of line".
+            // Fully committed (or empty) content followed by a line break means "end of line".
             m_line.append(*inlineContent.trailingLineBreak(), { });
             ++committedInlineItemCount;
             isEndOfLine = true;
@@ -523,15 +530,23 @@ void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, size_t curren
             accumulatedWidth += floatWidth;
             continue;
         }
-        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox() || inlineItem.isWordBreakOpportunity()) {
+        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox()) {
             auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItenmWidth);
             currentLogicalRight += inlineItenmWidth;
             accumulatedWidth += inlineItenmWidth;
             continue;
         }
+        if (inlineItem.isWordBreakOpportunity()) {
+            // Since <wbr> is an explicit word break opportunity it has to be a trailing item in this candidate run list.
+            ASSERT(index == softWrapOpportunityIndex - 1);
+            lineCandidate.inlineContent.appendtrailingWordBreakOpportunity(inlineItem);
+            continue;
+        }
         if (inlineItem.isLineBreak()) {
-            lineCandidate.inlineContent.appendLineBreak(inlineItem);
+            // Since <br> is an forced break opportunity it has to be a trailing item in this candidate run list.
+            ASSERT(index == softWrapOpportunityIndex - 1);
+            lineCandidate.inlineContent.appendTrailingLineBreak(inlineItem);
             continue;
         }
         ASSERT_NOT_REACHED();
