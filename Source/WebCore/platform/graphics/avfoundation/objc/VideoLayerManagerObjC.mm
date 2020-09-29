@@ -51,6 +51,10 @@ VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, const void* l
 }
 #endif
 
+VideoLayerManagerObjC::~VideoLayerManagerObjC()
+{
+}
+
 PlatformLayer* VideoLayerManagerObjC::videoInlineLayer() const
 {
     return m_videoInlineLayer.get();

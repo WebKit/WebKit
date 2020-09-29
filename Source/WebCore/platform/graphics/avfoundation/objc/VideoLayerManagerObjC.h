@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT VideoLayerManagerObjC() = default;
 #endif
 
-    ~VideoLayerManagerObjC() = default;
+    WEBCORE_EXPORT ~VideoLayerManagerObjC();
 
     WEBCORE_EXPORT PlatformLayer* videoInlineLayer() const final;
 

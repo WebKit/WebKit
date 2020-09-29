@@ -1,3 +1,16 @@
+2020-09-29  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Use VideoLayerManager to manage layers of MediaPlayerPrivateRemote
+        https://bugs.webkit.org/show_bug.cgi?id=216995
+
+        Reviewed by Zalan Bujtas.
+
+        A follow-up patch to fix a build failure.
+
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h:
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        (WebCore::VideoLayerManagerObjC::~VideoLayerManagerObjC):
+
 2020-09-29  Chris Lord  <clord@igalia.com>
 
         Implement asynchronous OffscreenCanvas placeholder updates for TextureMapperGL-based compositor
