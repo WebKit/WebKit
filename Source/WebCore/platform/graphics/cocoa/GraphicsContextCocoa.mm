@@ -60,8 +60,6 @@ namespace WebCore {
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
 
-#if ENABLE(FULL_KEYBOARD_ACCESS)
-
 static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset, const Color& color)
 {
 #if USE(APPKIT)
@@ -108,11 +106,8 @@ static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath
     drawFocusRing(context, color);
 }
 
-#endif // ENABLE(FULL_KEYBOARD_ACCESS)
-
 void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
-#if ENABLE(FULL_KEYBOARD_ACCESS)
     if (paintingDisabled() || path.isNull())
         return;
 
@@ -122,12 +117,6 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
     }
 
     drawFocusRingToContext(platformContext(), path.platformPath(), color);
-#else
-    UNUSED_PARAM(path);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(color);
-#endif
 }
 
 #if PLATFORM(MAC)
@@ -170,7 +159,6 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeO
 
 void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
-#if ENABLE(FULL_KEYBOARD_ACCESS)
     if (paintingDisabled())
         return;
 
@@ -184,12 +172,6 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rect, -offset, -offset));
 
     drawFocusRingToContext(platformContext(), focusRingPath.get(), color);
-#else
-    UNUSED_PARAM(rects);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(color);
-#endif
 }
 
 static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phasePoint)

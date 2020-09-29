@@ -1,3 +1,26 @@
+2020-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macCatalyst] Focus rings are not painted
+        https://bugs.webkit.org/show_bug.cgi?id=217073
+        <rdar://problem/46794111>
+
+        Reviewed by Darin Adler.
+
+        The logic which paints focus rings on Cocoa platforms is incorrectly
+        guarded by the ENABLE(FULL_KEYBOARD_ACCESS) flag. This flag is only
+        enabled on macOS and iOS, resulting in an empty implementation for
+        GraphicsContext::drawFocusRing on macCatalyst.
+
+        To fix, remove the incorrect usage of ENABLE(FULL_KEYBOARD_ACCESS).
+
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::platformFocusRingColor const):
+
 2020-09-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Make sure <wbr> gets an inline box too.

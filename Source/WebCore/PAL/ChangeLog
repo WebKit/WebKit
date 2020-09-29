@@ -1,3 +1,15 @@
+2020-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macCatalyst] Focus rings are not painted
+        https://bugs.webkit.org/show_bug.cgi?id=217073
+        <rdar://problem/46794111>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/ios/UIKitSPI.h:
+
+        Ensure needed interfaces are available on all IOS_FAMILY platforms.
+
 2020-09-24  Dean Jackson  <dino@apple.com>
 
         WebGL should use GLES in iOS apps running on Apple Silicon

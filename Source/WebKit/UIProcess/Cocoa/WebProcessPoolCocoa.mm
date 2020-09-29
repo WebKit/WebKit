@@ -446,9 +446,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPadOrMac();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
-#if ENABLE(FULL_KEYBOARD_ACCESS)
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
-#endif
     parameters.localizedDeviceModel = localizedDeviceModel();
 #endif
 

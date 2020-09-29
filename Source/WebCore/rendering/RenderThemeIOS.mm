@@ -1143,7 +1143,6 @@ static Optional<Color>& cachedFocusRingColor()
     return color;
 }
 
-#if ENABLE(FULL_KEYBOARD_ACCESS)
 Color RenderThemeIOS::systemFocusRingColor()
 {
     if (!cachedFocusRingColor().hasValue()) {
@@ -1157,7 +1156,6 @@ Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) con
 {
     return systemFocusRingColor();
 }
-#endif
 
 bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
 {

@@ -65,9 +65,7 @@ public:
 
     WEBCORE_EXPORT static void setFocusRingColor(const Color&);
 
-#if ENABLE(FULL_KEYBOARD_ACCESS)
     WEBCORE_EXPORT static Color systemFocusRingColor();
-#endif
 
 private:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
@@ -116,9 +114,7 @@ private:
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
-#if ENABLE(FULL_KEYBOARD_ACCESS)
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
     Color platformTapHighlightColor() const override { return SRGBA<uint8_t> { 26, 26, 26, 77 } ; }

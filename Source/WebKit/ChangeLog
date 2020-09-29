@@ -1,3 +1,16 @@
+2020-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macCatalyst] Focus rings are not painted
+        https://bugs.webkit.org/show_bug.cgi?id=217073
+        <rdar://problem/46794111>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
+        Ensure that a default focus ring color is specified on macCatalyst.
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage
