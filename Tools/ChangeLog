@@ -1,3 +1,13 @@
+2020-09-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [tvOS] [watchOS] Add support in libTestWTFAlwaysMissing-iOS-v2.tbd
+        https://bugs.webkit.org/show_bug.cgi?id=217068
+        <rdar://problem/69724742>
+
+        Rubber-stamped by Aakash Jain.
+
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-iOS-v2.tbd: Add watchOS and tvOS.
+
 2020-09-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         URL for Apple-iOS-14-Simulator-Debug-WK2-Tests is broken on the dashboard

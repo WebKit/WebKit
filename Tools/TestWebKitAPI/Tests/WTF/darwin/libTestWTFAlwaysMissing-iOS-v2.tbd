@@ -1,7 +1,7 @@
 --- !tapi-tbd-v2
 archs: [ i386, x86_64, armv7, armv7s, arm64, arm64_32, arm64e ]
 uuids: [ 'i386: 6EA81A0A-D83F-4081-B3EA-90419C1573BA87', 'x86_64: 28E81E11-2794-4192-A46A-06C73C9BAFB9', 'armv7: 00C67397-F7A2-431A-9F27-D4F61106FC1F', 'armv7s: F9C172FC-A112-488C-889B-B70FA20AE827', 'arm64: 3FDB12FB-0BF2-405C-B21A-2D3D2D18EB5F', 'arm64_32: 7AACF92F-A11C-4015-9434-365CE3DC5F9E' ]
-platform: ios
+platform: ios tvos watchos
 install-name: /usr/local/lib/libTestWTFAlwaysMissing.dylib
 objc-constraint: none
 exports:
