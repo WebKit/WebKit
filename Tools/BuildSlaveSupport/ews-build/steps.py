@@ -1742,13 +1742,13 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
         new_stress_failures_to_display = ', '.join(list(new_stress_failures)[:self.NUM_FAILURES_TO_DISPLAY])
         new_binary_failures_to_display = ', '.join(list(new_binary_failures)[:self.NUM_FAILURES_TO_DISPLAY])
 
-        self._addToLog('stderr', '\nFailures in first run: {}'.format(list(first_run_binary_failures) + list(first_run_stress_failures)))
-        self._addToLog('stderr', '\nFailures in second run: {}'.format(list(second_run_binary_failures) + list(second_run_stress_failures)))
+        self._addToLog('stderr', '\nFailures in first run: {}'.format((list(first_run_binary_failures) + list(first_run_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]))
+        self._addToLog('stderr', '\nFailures in second run: {}'.format((list(second_run_binary_failures) + list(second_run_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]))
         self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
-        self._addToLog('stderr', '\nFailures on clean tree: {}'.format(list(clean_tree_stress_failures) + list(clean_tree_binary_failures)))
+        self._addToLog('stderr', '\nFailures on clean tree: {}'.format(clean_tree_failures_string))
 
         if new_stress_failures or new_binary_failures:
-            self._addToLog('stderr', '\nNew failures: {}\n'.format(list(new_binary_failures) + list(new_stress_failures)))
+            self._addToLog('stderr', '\nNew binary failures: {}.\nNew stress test failures: {}\n'.format(new_binary_failures_to_display, new_stress_failures_to_display))
             self.finished(FAILURE)
             self.build.results = FAILURE
             message = ''
