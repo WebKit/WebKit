@@ -94,6 +94,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<ClipOutToPath>(item));
     case ItemType::ClipPath:
         return sizeof(downcast<ClipPath>(item));
+    case ItemType::ClipToDrawingCommands:
+        return sizeof(downcast<ClipToDrawingCommands>(item));
     case ItemType::DrawGlyphs:
         return sizeof(downcast<DrawGlyphs>(item));
     case ItemType::DrawImage:
@@ -507,6 +509,32 @@ static TextStream& operator<<(TextStream& ts, const ClipPath& item)
 {
     ts.dumpProperty("path", item.path());
     ts.dumpProperty("wind-rule", item.windRule());
+    return ts;
+}
+
+ClipToDrawingCommands::ClipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, DisplayList&& drawingCommands)
+    : Item(ItemType::ClipToDrawingCommands)
+    , m_destination(destination)
+    , m_colorSpace(colorSpace)
+    , m_drawingCommands(WTFMove(drawingCommands))
+{
+}
+
+ClipToDrawingCommands::~ClipToDrawingCommands() = default;
+
+void ClipToDrawingCommands::apply(GraphicsContext& context) const
+{
+    context.clipToDrawingCommands(m_destination, m_colorSpace, [&] (GraphicsContext& clippingContext) {
+        Replayer replayer { clippingContext, m_drawingCommands };
+        replayer.replay();
+    });
+}
+
+static TextStream& operator<<(TextStream& ts, const ClipToDrawingCommands& item)
+{
+    ts.dumpProperty("destination", item.destination());
+    ts.dumpProperty("color-space", item.colorSpace());
+    ts.dumpProperty("drawing-commands-count", item.drawingCommands().itemCount());
     return ts;
 }
 
@@ -1393,6 +1421,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::ClipOut: ts << "clip-out"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
+    case ItemType::ClipToDrawingCommands: ts << "clip-to-image-buffer"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
     case ItemType::DrawImage: ts << "draw-image"; break;
     case ItemType::DrawTiledImage: ts << "draw-tiled-image"; break;
@@ -1482,6 +1511,9 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::ClipPath:
         ts << downcast<ClipPath>(item);
+        break;
+    case ItemType::ClipToDrawingCommands:
+        ts << downcast<ClipToDrawingCommands>(item);
         break;
     case ItemType::DrawGlyphs:
         ts << downcast<DrawGlyphs>(item);

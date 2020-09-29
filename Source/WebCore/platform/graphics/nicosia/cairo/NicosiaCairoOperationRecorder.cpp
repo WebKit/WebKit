@@ -1090,4 +1090,9 @@ void CairoOperationRecorder::append(std::unique_ptr<PaintingOperation>&& command
     m_commandList.append(WTFMove(command));
 }
 
+void CairoOperationRecorder::clipToDrawingCommands(const FloatRect&, ColorSpace, Function<void(GraphicsContext&)>&&)
+{
+    // FIXME: Not implemented.
+}
+
 } // namespace Nicosia

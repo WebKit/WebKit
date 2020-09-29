@@ -106,6 +106,7 @@ public:
     void clipPath(const Path&, WindRule) override;
     IntRect clipBounds() override;
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) override;
+    void clipToDrawingCommands(const FloatRect& destination, ColorSpace, Function<void(GraphicsContext&)>&&) override;
     
     void applyDeviceScaleFactor(float) override;
 

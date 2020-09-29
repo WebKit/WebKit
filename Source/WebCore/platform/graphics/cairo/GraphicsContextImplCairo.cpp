@@ -427,6 +427,11 @@ FloatRect GraphicsContextImplCairo::roundToDevicePixels(const FloatRect& rect, G
     return Cairo::State::roundToDevicePixels(m_platformContext, rect);
 }
 
+void GraphicsContextImplCairo::clipToDrawingCommands(const FloatRect&, ColorSpace, Function<void(GraphicsContext&)>&&)
+{
+    // FIXME: Not implemented.
+}
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)

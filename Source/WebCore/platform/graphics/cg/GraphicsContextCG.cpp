@@ -510,22 +510,27 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     }
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destinationRect)
 {
     if (paintingDisabled())
         return;
 
-    FloatSize bufferDestinationSize = destRect.size();
+    if (m_impl) {
+        m_impl->clipToImageBuffer(buffer, destinationRect);
+        return;
+    }
+
+    FloatSize bufferDestinationSize = destinationRect.size();
     RetainPtr<CGImageRef> image = buffer.copyNativeImage(DontCopyBackingStore);
 
     CGContextRef context = platformContext();
     // FIXME: This image needs to be grayscale to be used as an alpha mask here.
-    CGContextTranslateCTM(context, destRect.x(), destRect.y() + bufferDestinationSize.height());
+    CGContextTranslateCTM(context, destinationRect.x(), destinationRect.y() + bufferDestinationSize.height());
     CGContextScaleCTM(context, 1, -1);
-    CGContextClipToRect(context, FloatRect(FloatPoint(0, bufferDestinationSize.height() - destRect.height()), destRect.size()));
+    CGContextClipToRect(context, FloatRect(FloatPoint(0, bufferDestinationSize.height() - destinationRect.height()), destinationRect.size()));
     CGContextClipToMask(context, FloatRect(FloatPoint(), bufferDestinationSize), image.get());
     CGContextScaleCTM(context, 1, -1);
-    CGContextTranslateCTM(context, -destRect.x(), -destRect.y() - destRect.height());
+    CGContextTranslateCTM(context, -destinationRect.x(), -destinationRect.y() - destinationRect.height());
 }
 
 // Draws a filled rectangle with a stroked border.

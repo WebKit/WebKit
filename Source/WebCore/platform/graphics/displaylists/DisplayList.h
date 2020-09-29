@@ -57,6 +57,7 @@ enum class ItemType : uint8_t {
     ClipOut,
     ClipOutToPath,
     ClipPath,
+    ClipToDrawingCommands,
     DrawGlyphs,
     DrawImage,
     DrawTiledImage,

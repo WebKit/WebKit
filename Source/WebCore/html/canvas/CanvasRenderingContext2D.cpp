@@ -546,33 +546,32 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
         }
 
-        auto maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), ColorSpace::SRGB, *c);
-        if (!maskImage)
+        GraphicsContextStateSaver stateSaver(*c);
+
+        auto paintMaskImage = [&] (GraphicsContext& maskImageContext) {
+            if (fill)
+                maskImageContext.setFillColor(Color::black);
+            else {
+                maskImageContext.setStrokeColor(Color::black);
+                maskImageContext.setStrokeThickness(c->strokeThickness());
+            }
+
+            maskImageContext.setTextDrawingMode(fill ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
+
+            if (useMaxWidth) {
+                maskImageContext.translate(location - maskRect.location());
+                // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
+                maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
+                fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
+            } else {
+                maskImageContext.translate(-maskRect.location());
+                fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+            }
+        };
+
+        if (c->clipToDrawingCommands(maskRect, ColorSpace::SRGB, WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
             return;
 
-        auto& maskImageContext = maskImage->context();
-
-        if (fill)
-            maskImageContext.setFillColor(Color::black);
-        else {
-            maskImageContext.setStrokeColor(Color::black);
-            maskImageContext.setStrokeThickness(c->strokeThickness());
-        }
-
-        maskImageContext.setTextDrawingMode(fill ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
-
-        if (useMaxWidth) {
-            maskImageContext.translate(location - maskRect.location());
-            // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
-            maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
-            fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
-        } else {
-            maskImageContext.translate(-maskRect.location());
-            fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::UseFallbackIfFontNotReady);
-        }
-
-        GraphicsContextStateSaver stateSaver(*c);
-        c->clipToImageBuffer(*maskImage, maskRect);
         drawStyle.applyFillColor(*c);
         c->fillRect(maskRect);
         return;

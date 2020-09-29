@@ -381,6 +381,13 @@ void Recorder::clipToImageBuffer(ImageBuffer&, const FloatRect&)
     WTFLogAlways("GraphicsContext::clipToImageBuffer is not compatible with DisplayList::Recorder.");
 }
 
+void Recorder::clipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
+{
+    auto recordingContext = makeUnique<DrawingContext>(destination.size());
+    drawingFunction(recordingContext->context());
+    appendItem(ClipToDrawingCommands::create(destination, colorSpace, recordingContext->takeDisplayList()));
+}
+
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.

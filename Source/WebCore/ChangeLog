@@ -1,3 +1,105 @@
+2020-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Several layout tests in fast/canvas crash under GraphicsContext::clipToImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=217026
+        <rdar://problem/69663834>
+
+        Reviewed by Simon Fraser.
+
+        When using the GPU Process for rendering, calling `GraphicsContext::clipToImageBuffer` currently results in a
+        crash, due to the platform `CGContextRef` being null. This causes the following 4 canvas-related tests to fail:
+        - fast/canvas/2d.fillText.gradient.html
+        - fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
+        - fast/canvas/canvas-text-alignment.html
+        - fast/canvas/gradient-text-with-shadow.html
+
+        In all four of these tests, the `clipToImageBuffer` call comes from `CanvasRenderingContext2D::drawTextInternal`
+        method, while creating the image used to provide the mask when there is a gradient or pattern fill. This is
+        tricky to support when using the GPU process with display list items, since `ImageBuffer`s cannot be generally
+        sent to the GPU process through IPC. Instead of painting an `ImageBuffer` and sending it over IPC, we can
+        introduce a new `GraphicsContext` method that clips to an image that is painted via a `WTF::Function` that is
+        passed in, and receives a `GraphicsContext&`. When using a display-list-backed `GraphicsContext`, we can create
+        a new `DisplayList` recording context and use the given `Function` to populate the display list with items,
+        which can then be sent to the GPU process through IPC. When using a platform `CGContextRef`-backed
+        `GraphicsContext`, we instead create a new `ImageBuffer` compatible with the current context, and then use this
+        `ImageBuffer` to call `clipToImageBuffer`. We then refactor `drawTextInternal` so that it uses this new
+        `GraphicsContext` method. See below for more details.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
+        Refactor this to use `clipToDrawingCommands` instead of `clipToImageBuffer`.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipToDrawingCommands):
+
+        Introduce a new `GraphicsContext` method that takes a function which draws into a given `GraphicsContext`. When
+        there is no `GraphicsContextImpl` present, we create a new `ImageBuffer` compatible with this `GraphicsContext`,
+        paint into it using the given `Function`, and lastly pass this painted `ImageBuffer` into `clipToImageBuffer`.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::clipToDrawingCommands):
+
+        Add an unimplemented method stub. Since the only call site of `GraphicsContext::clipToDrawingCommands` is behind
+        a `USE(CG)` guard, leaving this unimplemented for the time being won't result in any regression in behavior.
+
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+
+        It's not strictly necessary to fix these layout tests, but we should still add a check for `clipToImageBuffer`
+        here with a call to `GraphicsContextImpl::clipToImageBuffer` even though `clipToImageBuffer` is unimplemented,
+        to ensure that we at least avoid crashing if anything calls into this codepath.
+
+        * platform/graphics/displaylists/DisplayList.h:
+        * platform/graphics/displaylists/DisplayListDrawingContext.h:
+        (WebCore::DisplayList::DrawingContext::takeDisplayList):
+
+        Add a helper function to extract the `DisplayList` out of a `DisplayList::DrawingContext`.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::ClipToDrawingCommands::ClipToDrawingCommands):
+        (WebCore::DisplayList::ClipToDrawingCommands::apply const):
+
+        Apply the `ClipToDrawingCommands` item by using `DisplayList::Replayer` to replay the given display list items
+        back in a new platform CG-backed image buffer in the GPU process.
+
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::ClipToDrawingCommands::create):
+        (WebCore::DisplayList::ClipToDrawingCommands::destination const):
+        (WebCore::DisplayList::ClipToDrawingCommands::colorSpace const):
+        (WebCore::DisplayList::ClipToDrawingCommands::drawingCommands const):
+        (WebCore::DisplayList::ClipToDrawingCommands::encode const):
+        (WebCore::DisplayList::ClipToDrawingCommands::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+
+        Add a new `ClipToDrawingCommands` display list item, with support for IPC encoding and decoding.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::clipToDrawingCommands):
+
+        Implement the display-list-backed `clipToDrawingCommands` method by creating a new `DisplayList::DrawingContext`
+        and playing the given drawing function back into the `DrawingContext`. This populates the recording context with
+        a display list, which we can use to create a serializable display list item.
+
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::clipToDrawingCommands):
+
+        Add another unimplemented method stub.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        (WebCore::GraphicsContextImplDirect2D::clipToDrawingCommands):
+
+        Add another unimplemented method stub.
+
+        * platform/graphics/win/GraphicsContextImplDirect2D.h:
+
 2020-09-29  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Use VideoLayerManager to manage layers of MediaPlayerPrivateRemote

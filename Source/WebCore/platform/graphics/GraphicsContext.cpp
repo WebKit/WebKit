@@ -851,6 +851,25 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
+GraphicsContext::ClipToDrawingCommandsResult GraphicsContext::clipToDrawingCommands(const FloatRect& destination, ColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
+{
+    if (paintingDisabled())
+        return ClipToDrawingCommandsResult::Success;
+
+    if (m_impl) {
+        m_impl->clipToDrawingCommands(destination, colorSpace, WTFMove(drawingFunction));
+        return ClipToDrawingCommandsResult::Success;
+    }
+
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(destination.size(), colorSpace, *this);
+    if (!imageBuffer)
+        return ClipToDrawingCommandsResult::FailedToCreateImageBuffer;
+
+    drawingFunction(imageBuffer->context());
+    clipToImageBuffer(*imageBuffer, destination);
+    return ClipToDrawingCommandsResult::Success;
+}
+
 #if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
 IntRect GraphicsContext::clipBounds() const
 {
