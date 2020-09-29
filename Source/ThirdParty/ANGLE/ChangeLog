@@ -1,3 +1,15 @@
+2020-09-29  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix EXT_color_buffer_half_float on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=217107
+
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/Context.cpp:
+        (gl::Context::generateSupportedExtensions const):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::GenerateTextureFormatCaps):
+
 2020-09-24  Dean Jackson  <dino@apple.com>
 
         WebGL should use GLES in iOS apps running on Apple Silicon

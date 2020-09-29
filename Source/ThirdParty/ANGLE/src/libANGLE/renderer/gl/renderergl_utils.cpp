@@ -288,6 +288,18 @@ static gl::TextureCaps GenerateTextureFormatCaps(const FunctionsGL *functions,
     textureCaps.blendable         = textureCaps.renderbuffer || textureCaps.textureAttachment;
 
     // Do extra renderability validation for some formats.
+    if (internalFormat == GL_R16F || internalFormat == GL_RG16F || internalFormat == GL_RGB16F)
+    {
+        // SupportRequirement can't currently express a condition of the form (version && extension)
+        // || other extensions, so do the (version && extension) part here.
+        if (functions->isAtLeastGLES(gl::Version(3, 0)) &&
+            functions->hasGLESExtension("GL_EXT_color_buffer_half_float"))
+        {
+            textureCaps.textureAttachment = true;
+            textureCaps.renderbuffer      = true;
+        }
+    }
+
     // We require GL_RGBA16F is renderable to expose EXT_color_buffer_half_float but we can't know
     // if the format is supported unless we try to create a framebuffer.
     if (internalFormat == GL_RGBA16F)
