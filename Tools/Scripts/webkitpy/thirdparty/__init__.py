@@ -133,10 +133,6 @@ class AutoinstallImportHook(object):
         self._install("https://files.pythonhosted.org/packages/7d/a9/8c6bf60710781ce13a9987c0debda8adab35eb79c6b5525f7fe5240b7a8a/keyring-7.3.1.tar.gz",
                              "keyring-7.3.1/keyring")
 
-    def _install_pycodestyle(self):
-        self._install("https://files.pythonhosted.org/packages/source/p/pycodestyle/pycodestyle-2.5.0.tar.gz",
-                             "pycodestyle-2.5.0/pycodestyle.py")
-
     def _install_pytest_timeout(self):
         self._install("https://files.pythonhosted.org/packages/cc/b7/b2a61365ea6b6d2e8881360ae7ed8dad0327ad2df89f2f0be4a02304deb2/pytest-timeout-1.2.0.tar.gz",
                               "pytest-timeout-1.2.0/pytest_timeout.py")

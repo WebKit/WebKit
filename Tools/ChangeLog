@@ -1,3 +1,17 @@
+2020-09-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's auto installer for pycodestyle (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=215427
+        <rdar://problem/66931291>
+
+        Unreviewed follow-up fix.
+
+        Conflict resolution at some point broke the original change.
+
+        * Scripts/webkitpy/style/checkers/python.py: Import directly from pycodestyle.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pycodestyle): Deleted.
+
 2020-09-28  Mark Lam  <mark.lam@apple.com>
 
         Add Bounds Check Elimination validation for debugging.

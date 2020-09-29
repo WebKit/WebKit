@@ -30,7 +30,8 @@ from webkitcorepy import StringIO
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.thirdparty.autoinstalled import pycodestyle
+
+import pycodestyle
 
 from webkitcorepy import OutputCapture
 
