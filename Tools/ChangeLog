@@ -1,3 +1,13 @@
+2020-09-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Restrict incoming traffic to localhost
+        https://bugs.webkit.org/show_bug.cgi?id=217089
+        <rdar://problem/69749845>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/docker-compose.yml: Restrict incoming traffic to localhost.
+
 2020-09-29  Aakash Jain  <aakash_jain@apple.com>
 
         Limit number of tests to log in case of large number of JSC test failures

@@ -27,8 +27,8 @@ services:
     image: cassandra
     container_name: resultsdbpy-cassandra
     ports:
-      - "9042:9042"
-      - "7199:7199"
+      - "127.0.0.1:9042:9042"
+      - "127.0.0.1:7199:7199"
     volumes:
       - cassandradata:/data/cassandra
 
@@ -36,7 +36,7 @@ services:
     image: redis
     container_name: resultsdbpy-redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
 
 volumes:
   cassandradata:
