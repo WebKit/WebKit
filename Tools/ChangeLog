@@ -1,3 +1,18 @@
+2020-09-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Add unit-test to detect invalid triggers in config.json
+        https://bugs.webkit.org/show_bug.cgi?id=216898
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig_unittest.py: Added.
+        (ConfigDotJSONTest):
+        (ConfigDotJSONTest.get_config):
+        (ConfigDotJSONTest.test_builder_keys):
+        (ConfigDotJSONTest.test_multiple_scheduers_for_builder):
+        (ConfigDotJSONTest.test_schduler_contains_valid_builder_name):
+        (ConfigDotJSONTest.test_single_builder_for_triggerable_scheduler):
+
 2020-09-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use webkitcorepy's auto installer for pycodestyle (Follow-up fix)
