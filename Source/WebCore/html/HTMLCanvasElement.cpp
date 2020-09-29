@@ -779,6 +779,9 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
         return Exception { InvalidStateError };
 
     m_context = makeUnique<PlaceholderRenderingContext>(*this);
+    if (m_context->isAccelerated())
+        invalidateStyleAndLayerComposition();
+
     return OffscreenCanvas::create(context, *this);
 }
 #endif

@@ -29,6 +29,7 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "HTMLCanvasElement.h"
+#include "ImageBufferPipe.h"
 #include "OffscreenCanvas.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -39,6 +40,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
 PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
     : CanvasRenderingContext(canvas)
 {
+    m_imageBufferPipe = ImageBufferPipe::create();
 }
 
 HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
@@ -47,6 +49,14 @@ HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
     if (!is<HTMLCanvasElement>(base))
         return nullptr;
     return &downcast<HTMLCanvasElement>(base);
+}
+
+PlatformLayer* PlaceholderRenderingContext::platformLayer() const
+{
+    if (m_imageBufferPipe)
+        return m_imageBufferPipe->platformLayer();
+
+    return nullptr;
 }
 
 }

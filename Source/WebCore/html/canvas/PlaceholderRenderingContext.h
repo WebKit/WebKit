@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class ImageBufferPipe;
 class OffscreenCanvas;
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
@@ -40,8 +41,17 @@ public:
 
     HTMLCanvasElement* canvas() const;
 
+    const RefPtr<ImageBufferPipe>& imageBufferPipe() const { return m_imageBufferPipe; }
+
 private:
     bool isPlaceholder() const final { return true; }
+
+    PlatformLayer* platformLayer() const final;
+
+    bool isAccelerated() const final { return !!m_imageBufferPipe; }
+    bool isGPUBased() const final { return !!m_imageBufferPipe; }
+
+    RefPtr<ImageBufferPipe> m_imageBufferPipe;
 };
 
 }

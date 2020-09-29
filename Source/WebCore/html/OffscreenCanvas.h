@@ -34,6 +34,7 @@
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "ImageBuffer.h"
+#include "ImageBufferPipe.h"
 #include "IntSize.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
@@ -187,10 +188,10 @@ private:
 
     bool m_hasScheduledCommit { false };
     WeakPtr<HTMLCanvasElement> m_placeholderCanvas;
+    RefPtr<ImageBufferPipe::Source> m_bufferPipeSource;
 
     mutable Lock m_commitLock;
-    bool m_hasPendingCommitData { false };
-    RefPtr<ImageData> m_pendingCommitData;
+    std::unique_ptr<ImageBuffer> m_pendingCommitBuffer;
 };
 
 }

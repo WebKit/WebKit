@@ -1,3 +1,51 @@
+2020-09-29  Chris Lord  <clord@igalia.com>
+
+        Implement asynchronous OffscreenCanvas placeholder updates for TextureMapperGL-based compositor
+        https://bugs.webkit.org/show_bug.cgi?id=202798
+
+        Reviewed by Simon Fraser.
+
+        Implement asynchronous updates for users of the Nicosia compositor
+        (i.e. GTK, WPE). This allows OffscreenCanvas-controlled canvases to
+        update visually while the main thread is blocked.
+
+        No new tests. Covered by existing tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::transferControlToOffscreen):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::create):
+        (WebCore::OffscreenCanvas::setPlaceholderCanvas):
+        (WebCore::OffscreenCanvas::pushBufferToPlaceholder):
+        (WebCore::OffscreenCanvas::commitToPlaceholderCanvas):
+        * html/OffscreenCanvas.h:
+        * html/canvas/PlaceholderRenderingContext.cpp:
+        (WebCore::PlaceholderRenderingContext::PlaceholderRenderingContext):
+        (WebCore::PlaceholderRenderingContext::platformLayer const):
+        * html/canvas/PlaceholderRenderingContext.h:
+        * platform/TextureMapper.cmake:
+        * platform/graphics/ImageBufferPipe.cpp: Added.
+        (WebCore::ImageBufferPipe::create):
+        * platform/graphics/ImageBufferPipe.h: Added.
+        * platform/graphics/nicosia/NicosiaImageBufferPipe.cpp: Added.
+        (Nicosia::NicosiaImageBufferPipeSource::NicosiaImageBufferPipeSource):
+        (Nicosia::NicosiaImageBufferPipeSource::handle):
+        (Nicosia::NicosiaImageBufferPipeSource::platformLayer const):
+        (Nicosia::NicosiaImageBufferPipeSource::swapBuffersIfNeeded):
+        (Nicosia::NicosiaImageBufferPipe::NicosiaImageBufferPipe):
+        (Nicosia::NicosiaImageBufferPipe::source const):
+        (Nicosia::NicosiaImageBufferPipe::platformLayer const):
+        (WebCore::ImageBufferPipe::create):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::activateOnCompositingThread):
+        (WebCore::TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::containsPaintedContent const):
+        (WebCore::RenderLayerBacking::contentChanged):
+
 2020-09-29  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Generalize run iterator for non-text runs

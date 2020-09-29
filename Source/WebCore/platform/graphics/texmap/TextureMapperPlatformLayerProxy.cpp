@@ -65,19 +65,27 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
     ASSERT(m_compositorThread == &Thread::current());
     ASSERT(compositor);
     ASSERT(targetLayer);
-    LockHolder locker(m_lock);
-    m_compositor = compositor;
-    m_targetLayer = targetLayer;
-    if (m_targetLayer && m_currentBuffer)
-        m_targetLayer->setContentsLayer(m_currentBuffer.get());
+    Function<void()> updateFunction;
+    {
+        LockHolder locker(m_lock);
+        m_compositor = compositor;
+        m_targetLayer = targetLayer;
+        if (m_targetLayer && m_currentBuffer)
+            m_targetLayer->setContentsLayer(m_currentBuffer.get());
 
-    m_releaseUnusedBuffersTimer = makeUnique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired);
-    m_compositorThreadUpdateTimer = makeUnique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
+        m_releaseUnusedBuffersTimer = makeUnique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired);
+        m_compositorThreadUpdateTimer = makeUnique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
 
 #if USE(GLIB_EVENT_LOOP)
-    m_compositorThreadUpdateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
-    m_releaseUnusedBuffersTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+        m_compositorThreadUpdateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
+        m_releaseUnusedBuffersTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 #endif
+
+        if (!m_compositorThreadUpdateFunction)
+            return;
+        updateFunction = WTFMove(m_compositorThreadUpdateFunction);
+    }
+    updateFunction();
 }
 
 void TextureMapperPlatformLayerProxy::invalidate()
@@ -249,10 +257,11 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
 bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(Function<void()>&& updateFunction)
 {
     LockHolder locker(m_lock);
+    m_compositorThreadUpdateFunction = WTFMove(updateFunction);
+
     if (!m_compositorThreadUpdateTimer)
         return false;
 
-    m_compositorThreadUpdateFunction = WTFMove(updateFunction);
     m_compositorThreadUpdateTimer->startOneShot(0_s);
     return true;
 }

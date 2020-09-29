@@ -76,6 +76,7 @@ if (USE_COORDINATED_GRAPHICS)
     )
     list(APPEND WebCore_SOURCES
         platform/graphics/nicosia/NicosiaBuffer.cpp
+        platform/graphics/nicosia/NicosiaImageBufferPipe.cpp
         platform/graphics/nicosia/NicosiaPaintingContext.cpp
         platform/graphics/nicosia/NicosiaPaintingEngine.cpp
         platform/graphics/nicosia/NicosiaPaintingEngineBasic.cpp

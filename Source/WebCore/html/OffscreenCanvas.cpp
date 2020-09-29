@@ -87,6 +87,12 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, st
 
     callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), offscreenCanvas = makeRef(clone.get())] () mutable {
         offscreenCanvas->m_placeholderCanvas = detachedCanvas->takePlaceholderCanvas();
+        if (offscreenCanvas->m_placeholderCanvas) {
+            auto& placeholderContext = downcast<PlaceholderRenderingContext>(*offscreenCanvas->m_placeholderCanvas->renderingContext());
+            auto& imageBufferPipe = placeholderContext.imageBufferPipe();
+            if (imageBufferPipe)
+                offscreenCanvas->m_bufferPipeSource = imageBufferPipe->source();
+        }
         offscreenCanvas->scriptExecutionContext()->postTask({ ScriptExecutionContext::Task::CleanupTask,
             [releaseOffscreenCanvas = WTFMove(offscreenCanvas)] (ScriptExecutionContext&) { } });
     });
@@ -393,21 +399,24 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
     ASSERT(!m_context);
     ASSERT(isMainThread());
     m_placeholderCanvas = makeWeakPtr(canvas);
+    auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas.renderingContext());
+    auto& imageBufferPipe = placeholderContext.imageBufferPipe();
+    if (imageBufferPipe)
+        m_bufferPipeSource = imageBufferPipe->source();
 }
 
 void OffscreenCanvas::pushBufferToPlaceholder()
 {
     callOnMainThread([protectedThis = makeRef(*this), this] () mutable {
-        auto locker = holdLock(m_commitLock);
-
-        if (m_placeholderCanvas && m_hasPendingCommitData) {
-            std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(FloatSize(m_pendingCommitData->size()), RenderingMode::Unaccelerated);
-            buffer->putImageData(AlphaPremultiplication::Premultiplied, *m_pendingCommitData, IntRect(IntPoint(), m_pendingCommitData->size()));
-            m_placeholderCanvas->setImageBufferAndMarkDirty(WTFMove(buffer));
-            m_hasPendingCommitData = false;
+        {
+            auto locker = holdLock(m_commitLock);
+            if (m_placeholderCanvas && m_pendingCommitBuffer)
+                m_placeholderCanvas->setImageBufferAndMarkDirty(WTFMove(m_pendingCommitBuffer));
+            m_pendingCommitBuffer = nullptr;
         }
 
-        scriptExecutionContext()->postTask([releaseThis = WTFMove(protectedThis)] (ScriptExecutionContext&) { });
+        scriptExecutionContext()->postTask({ ScriptExecutionContext::Task::CleanupTask,
+            [releaseThis = WTFMove(protectedThis)] (ScriptExecutionContext&) { } });
     });
 }
 
@@ -421,21 +430,16 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     if (m_context && (m_context->isWebGL() || m_context->isAccelerated()))
         m_context->paintRenderingResultsToCanvas();
 
-    if (isMainThread()) {
-        if (m_placeholderCanvas) {
-            if (auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), ColorSpace::SRGB, imageBuffer->context()))
-                m_placeholderCanvas->setImageBufferAndMarkDirty(WTFMove(bufferCopy));
-        }
-        return;
+    if (m_bufferPipeSource) {
+        auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), ColorSpace::SRGB, imageBuffer->context());
+        if (bufferCopy)
+            m_bufferPipeSource->handle(WTFMove(bufferCopy));
     }
 
     auto locker = holdLock(m_commitLock);
-
-    bool shouldPushBuffer = !m_hasPendingCommitData;
-    m_pendingCommitData = imageBuffer->getImageData(AlphaPremultiplication::Premultiplied, IntRect(IntPoint(), imageBuffer->logicalSize()));
-    m_hasPendingCommitData = true;
-
-    if (shouldPushBuffer)
+    bool shouldPushBuffer = !m_pendingCommitBuffer;
+    m_pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), ColorSpace::SRGB, imageBuffer->context());
+    if (m_pendingCommitBuffer && shouldPushBuffer)
         pushBufferToPlaceholder();
 }
 
