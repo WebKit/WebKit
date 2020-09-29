@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCookieManagerProxy.h"
 
+#include "NetworkProcessProxy.h"
 #include "WebCookieManagerMessages.h"
 #include "WebProcessPool.h"
 
@@ -33,8 +34,8 @@ namespace WebKit {
 
 void WebCookieManagerProxy::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
 {
-    m_cookiePersistentStorageMap.set(sessionID, std::make_pair(storagePath, storageType));
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetCookiePersistentStorage(sessionID, storagePath, storageType));
+    if (m_networkProcess)
+        m_networkProcess->send(Messages::WebCookieManager::SetCookiePersistentStorage(sessionID, storagePath, storageType), 0);
 }
 
 void WebCookieManagerProxy::getCookiePersistentStorage(PAL::SessionID sessionID, String& storagePath, SoupCookiePersistentStorageType& storageType) const

@@ -31,6 +31,7 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -109,7 +110,7 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"session:storage", [lastScriptMessage body]);
 
-    [configuration.get().processPool _terminateNetworkProcess];
+    [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -162,7 +163,7 @@ TEST(WKWebView, LocalStorageProcessSuspends)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"value", [lastScriptMessage body]);
 
-    [processPool.get() _sendNetworkProcessWillSuspendImminently];
+    [configuration.get().websiteDataStore _sendNetworkProcessWillSuspendImminently];
 
     readyToContinue = false;
     [webView1 evaluateJavaScript:@"window.localStorage.setItem('key', 'newValue')" completionHandler:^(id, NSError *) {
@@ -177,7 +178,7 @@ TEST(WKWebView, LocalStorageProcessSuspends)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
     
-    [processPool.get() _sendNetworkProcessDidResume];
+    [configuration.get().websiteDataStore _sendNetworkProcessDidResume];
 
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);

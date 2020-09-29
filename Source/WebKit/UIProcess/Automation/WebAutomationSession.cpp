@@ -1392,8 +1392,8 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
     cookie.httpOnly = *httpOnly;
 
-    WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback]() {
+    WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
+    cookieManager.setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback]() {
         callback->sendSuccess();
     });
 }
@@ -1409,8 +1409,8 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteAllCookies(
 
     String host = activeURL.host().toString();
 
-    WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
+    WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
+    cookieManager.deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
 
     return { };
 }

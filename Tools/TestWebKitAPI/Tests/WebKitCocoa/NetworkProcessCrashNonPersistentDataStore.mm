@@ -72,7 +72,7 @@ static void checkRecoveryAfterCrash(WKWebsiteDataStore *dataStore)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [[webView configuration].processPool _terminateNetworkProcess];
+    [[webView configuration].websiteDataStore _terminateNetworkProcess];
     [webView loadRequest:[NSURLRequest requestWithURL:simple2]];
     TestWebKitAPI::Util::run(&done);
 }

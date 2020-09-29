@@ -36,7 +36,7 @@ messages -> WebCookieManager NotRefCounted {
     void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time) -> () Async
 
     void SetHTTPCookieAcceptPolicy(enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy) -> () Async
-    void GetHTTPCookieAcceptPolicy() -> (enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy) Async
+    void GetHTTPCookieAcceptPolicy(PAL::SessionID sessionID) -> (enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy) Async
     
     void StartObservingCookieChanges(PAL::SessionID sessionID)
     void StopObservingCookieChanges(PAL::SessionID sessionID)

@@ -155,7 +155,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
     configuration->setResourceLoadStatisticsDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "itp"));
     configuration->setServiceWorkerRegistrationDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "serviceworkers"));
     configuration->setDeviceIdHashSaltsStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "deviceidhashsalts"));
-    return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
+    return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
 }
 
 WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
@@ -175,7 +175,6 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
     auto pageGroup = WebPageGroup::create(inspectorPageGroupIdentifierForPage(inspectedPage()));
     auto websiteDataStore = inspectorWebsiteDataStore();
     auto& processPool = inspectorProcessPool(inspectionLevel());
-    processPool.setPrimaryDataStore(websiteDataStore.get());
 
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&processPool);

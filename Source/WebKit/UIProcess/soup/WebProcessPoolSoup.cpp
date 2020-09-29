@@ -37,15 +37,6 @@ namespace WebKit {
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
-    NetworkSessionCreationParameters& defaultSessionParameters = parameters.defaultDataStoreParameters.networkSessionParameters;
-    supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(defaultSessionParameters.sessionID, defaultSessionParameters.cookiePersistentStoragePath, defaultSessionParameters.cookiePersistentStorageType);
-    if (m_websiteDataStore) {
-        defaultSessionParameters.persistentCredentialStorageEnabled = m_websiteDataStore->persistentCredentialStorageEnabled();
-        defaultSessionParameters.ignoreTLSErrors = m_websiteDataStore->ignoreTLSErrors();
-        defaultSessionParameters.proxySettings = m_websiteDataStore->networkProxySettings();
-    }
-
-    parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.languages = userPreferredLanguages();
 }
 

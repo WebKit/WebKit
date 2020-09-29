@@ -5385,7 +5385,7 @@ TEST(ProcessSwap, UsePrewarmedProcessAfterTerminatingNetworkProcess)
 
     TestWebKitAPI::Util::spinRunLoop(1);
 
-    [processPool _terminateNetworkProcess];
+    [webViewConfiguration.get().websiteDataStore _terminateNetworkProcess];
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];

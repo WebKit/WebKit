@@ -406,28 +406,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->clearSupportedPlugins();
 }
 
-- (void)_terminateNetworkProcess
-{
-    _processPool->terminateNetworkProcess();
-}
-
-- (void)_sendNetworkProcessWillSuspendImminently
-{
-    _processPool->sendNetworkProcessWillSuspendImminentlyForTesting();
-}
-
-- (void)_sendNetworkProcessPrepareToSuspend:(void(^)(void))completionHandler
-{
-    _processPool->sendNetworkProcessPrepareToSuspendForTesting([completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
-}
-
-- (void)_sendNetworkProcessDidResume
-{
-    _processPool->sendNetworkProcessDidResume();
-}
-
 - (void)_terminateServiceWorkers
 {
     _processPool->terminateServiceWorkers();
@@ -435,12 +413,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_setUseSeparateServiceWorkerProcess:(BOOL)useSeparateServiceWorkerProcess
 {
-    _processPool->setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
-}
-
-- (pid_t)_networkProcessIdentifier
-{
-    return _processPool->networkProcessIdentifier();
+    WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
 }
 
 - (pid_t)_prewarmedProcessIdentifier
@@ -465,11 +438,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (void)_makeNextWebProcessLaunchFailForTesting
 {
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);
-}
-
-- (void)_makeNextNetworkProcessLaunchFailForTesting
-{
-    _processPool->setShouldMakeNextNetworkProcessLaunchFailForTesting(true);
 }
 
 - (BOOL)_hasPrewarmedWebProcess
@@ -560,18 +528,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setCookieStoragePartitioningEnabled(enabled);
 }
 
-- (void)_synthesizeAppIsBackground:(BOOL)background
-{
-    _processPool->synthesizeAppIsBackground(background);
-}
-
-- (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL)allows
-{
-#if ENABLE(SERVICE_WORKER)
-    _processPool->setAllowsAnySSLCertificateForServiceWorker(allows);
-#endif
-}
-
 #if PLATFORM(IOS_FAMILY)
 - (id <_WKGeolocationCoreLocationProvider>)_coreLocationProvider
 {
@@ -602,11 +558,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->activePagesOriginsInWebProcessForTesting(pid, [completionHandler = makeBlockPtr(completionHandler)] (Vector<String>&& activePagesOrigins) {
         completionHandler(createNSArray(activePagesOrigins).get());
     });
-}
-
-- (BOOL)_networkProcessHasEntitlementForTesting:(NSString *)entitlement
-{
-    return _processPool->networkProcessHasEntitlementForTesting(entitlement);
 }
 
 - (void)_clearPermanentCredentialsForProtectionSpace:(NSURLProtectionSpace *)protectionSpace

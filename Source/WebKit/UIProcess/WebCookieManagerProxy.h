@@ -56,11 +56,9 @@ typedef GenericCallback<API::Array*> ArrayCallback;
 typedef GenericCallback<WebCore::HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
 typedef GenericCallback<const Vector<WebCore::Cookie>&> GetCookiesCallback;
 
-class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, public WebContextSupplement, private IPC::MessageReceiver {
+class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, private IPC::MessageReceiver {
 public:
-    static const char* supplementName();
-
-    static Ref<WebCookieManagerProxy> create(WebProcessPool*);
+    static Ref<WebCookieManagerProxy> create(NetworkProcessProxy& networkProcess) { return adoptRef(*new WebCookieManagerProxy(networkProcess)); }
     virtual ~WebCookieManagerProxy();
 
     void initializeClient(const WKCookieManagerClientBase*);
@@ -104,16 +102,9 @@ public:
     using API::Object::deref;
 
 private:
-    WebCookieManagerProxy(WebProcessPool*);
+    WebCookieManagerProxy(NetworkProcessProxy&);
 
     void cookiesDidChange(PAL::SessionID);
-
-    // WebContextSupplement
-    void processPoolDestroyed() override;
-    void processDidClose(WebProcessProxy*) override;
-    void processDidClose(NetworkProcessProxy*) override;
-    void refWebContextSupplement() override;
-    void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -125,6 +116,7 @@ private:
     HashMap<PAL::SessionID, WTF::Function<void ()>> m_legacyCookieObservers;
     HashMap<PAL::SessionID, HashSet<Observer*>> m_cookieObservers;
 
+    WeakPtr<NetworkProcessProxy> m_networkProcess;
     WebCookieManagerProxyClient m_client;
 
 #if USE(SOUP)

@@ -1,3 +1,98 @@
+2020-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Move NetworkProcessProxy ownership from WebProcessPool to WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=216041
+
+        Reviewed by Brady Eidson.
+
+        Most changes to tests are just calling a function on the WKWebsiteDataStore instead of the WKProcessPool
+        because we want to do something with the network process and it has a new owner.
+        Exceptions are noted inline.
+
+        * TestWebKitAPI/Tests/WebKit/NetworkProcessCrashWithPendingConnection.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::downloadAtRate):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBCheckpointWAL.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBDeleteRecovery.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBMultiProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBSuspendImminently.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm:
+        (checkRecoveryAfterCrash):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        This test was making a WKWebsiteDataStore, getting its resource load statistics directory,
+        putting things in that directory, then starting the network process and making sure everything
+        works when initializing the network process.  Now, network process initialization happens when a
+        WKWebsiteDataStore is instantiated, so we need to put things there before instantiating a WKWebsiteDataStore.
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        Before this change, each WKProcessPool had its own network process, which holds the service worker registry
+        for the WebsiteDataStores used with that process pool.  Now, the network process still needs to have a service
+        worker registry in it, but when we receive a message from it looking for a web process to run the service
+        worker, we go arbitrarily to the first process pool that has a process we can use.  This logic is in 
+        WebProcessPool::establishWorkerContextConnectionToNetworkProcess.  Because we use the first process pool each
+        time, setting the custom user agent to two different things in two different process pools causes only one
+        to be used.  This is not a problem in practice, though, because the only application that uses the SPI to
+        set a service worker's custom user agent is Safari, which only has one process pool.  This test still verifies
+        that a user ageint is correctly sent.
+        Similarly, the tests that count service worker processes either have different results or need to be run with
+        one process pool per parent process.  To keep the results the same, I separated the tests into different
+        TEST(ServiceWorkers, ...) macros which are run in separate parent processes.
+        The test RestoreFromDiskNonDefaultStore needs to use the same data store for both WKWebViews now because otherwise
+        there was a race condition in the startup of a new network process that wasn't there before because we were using the
+        same process pool and therefore the same network process.  I added spinning the run loop and sleeping to be able to
+        reproduce the race condition failure and I use the same WKWebsiteDataStore to use the same network process, which was
+        the intent of using the same WKProcessPool before.  The test still tests that the registration is re-used when we are
+        not using the default data store.
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (-[CheckSessionCookieUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[CheckSessionCookieUIDelegate waitForMessage]):
+        (-[CheckSessionCookieUIDelegate alertCookieHTML]):
+        (TEST):
+        This is the whole point of me doing this.
+        I took a test that was flaky only on iOS (because of different NSHTTPCookieStorage syncing behavior) and made
+        it flaky nowhere (fingers crossed!) and added a test that correctly handles session cookies like we could not
+        before this change.
+        I also re-used some test infrastructure and made it stop using process-global static variables for test state.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitObjC/CustomProtocolsTest.mm:
+        (-[CloseWhileStartingProtocol startLoading]):
+        (TestWebKitAPI::runTest):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::findAndDumpWebKitProcessIdentifiers):
+        (WTR::TestController::networkProcessDidCrash):
+        (WTR::TestController::terminateNetworkProcess):
+        (WTR::TestController::platformAdjustContext):
+        WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting is not needed, so I removed it.
+        WKContextSetPrimaryWebsiteDataStore isn't needed any more because WKContextRef (WebProcessPool) doesn't
+        own a network process any more, so it doesn't care which is the default WebsiteDataStore.
+        In fact, the "default" WebsiteDataStore isn't really important in the network process any more.
+
 2020-09-26  Darin Adler  <darin@apple.com>
 
         Refactor test runner code to cut down on copy/paste code and long-winded repetitive idioms

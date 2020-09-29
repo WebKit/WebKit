@@ -411,11 +411,6 @@ void WKContextPreconnectToServer(WKContextRef, WKURLRef)
 {
 }
 
-WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
-{
-    return WebKit::toAPI(WebKit::toImpl(contextRef)->supplement<WebKit::WebCookieManagerProxy>());
-}
-
 WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef)
 {
     return WKWebsiteDataStoreGetDefaultDataStore();
@@ -527,13 +522,6 @@ void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef contextRef,
     WebKit::toImpl(contextRef)->setJavaScriptGarbageCollectorTimerEnabled(enable);
 }
 
-void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef context, bool allows)
-{
-#if ENABLE(SERVICE_WORKER)
-    WebKit::toImpl(context)->setAllowsAnySSLCertificateForServiceWorker(allows);
-#endif
-}
-
 WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
 {
     return WebKit::toAPI(&WebKit::toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());
@@ -575,19 +563,9 @@ void WKContextSetFontAllowList(WKContextRef contextRef, WKArrayRef arrayRef)
     WebKit::toImpl(contextRef)->setFontAllowList(WebKit::toImpl(arrayRef));
 }
 
-void WKContextTerminateNetworkProcess(WKContextRef context)
-{
-    WebKit::toImpl(context)->terminateNetworkProcess();
-}
-
 void WKContextTerminateServiceWorkers(WKContextRef context)
 {
     WebKit::toImpl(context)->terminateServiceWorkers();
-}
-
-ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
-{
-    return WebKit::toImpl(contextRef)->networkProcessIdentifier();
 }
 
 void WKContextAddSupportedPlugin(WKContextRef contextRef, WKStringRef domainRef, WKStringRef nameRef, WKArrayRef mimeTypesRef, WKArrayRef extensionsRef)
@@ -619,12 +597,11 @@ void WKContextClearCurrentModifierStateForTesting(WKContextRef contextRef)
     WebKit::toImpl(contextRef)->clearCurrentModifierStateForTesting();
 }
 
-void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef contextRef, bool useSeparateServiceWorkerProcess)
+void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef, bool useSeparateServiceWorkerProcess)
 {
-    WebKit::toImpl(contextRef)->setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
+    WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
 }
 
-void WKContextSetPrimaryWebsiteDataStore(WKContextRef contextRef, WKWebsiteDataStoreRef websiteDataStore)
+void WKContextSetPrimaryWebsiteDataStore(WKContextRef, WKWebsiteDataStoreRef)
 {
-    WebKit::toImpl(contextRef)->setPrimaryDataStore(*WebKit::toImpl(websiteDataStore));
 }

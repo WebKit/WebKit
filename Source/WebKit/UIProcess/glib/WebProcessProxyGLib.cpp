@@ -44,7 +44,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
         if (!dataStore) {
             // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
             // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
-            dataStore = m_processPool->websiteDataStore();
+            dataStore = WebsiteDataStore::defaultDataStore().ptr();
         }
 
         ASSERT(dataStore);

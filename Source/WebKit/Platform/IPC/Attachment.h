@@ -95,8 +95,8 @@ private:
     int m_fileDescriptor { -1 };
     size_t m_size;
 #elif OS(DARWIN)
-    mach_port_name_t m_port;
-    mach_msg_type_name_t m_disposition;
+    mach_port_name_t m_port { 0 };
+    mach_msg_type_name_t m_disposition { 0 };
 #elif OS(WINDOWS)
     HANDLE m_handle { INVALID_HANDLE_VALUE };
 #endif

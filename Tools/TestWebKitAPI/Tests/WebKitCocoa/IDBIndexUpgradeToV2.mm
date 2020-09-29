@@ -31,6 +31,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -58,7 +59,7 @@ TEST(IndexedDB, IndexUpgradeToV2)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    [configuration.get().processPool _terminateNetworkProcess];
+    [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     // Copy the inconsistent database files to the database directory
     NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"IndexUpgrade" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
@@ -90,7 +91,7 @@ static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    [configuration.get().processPool _terminateNetworkProcess];
+    [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     NSURL *url = [[NSBundle mainBundle] URLForResource:databaseName withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
 

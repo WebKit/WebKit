@@ -28,7 +28,7 @@
 #import "HTTPServer.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
-#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -37,14 +37,14 @@ TEST(WebKit, NetworkProcessEntitlements)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
-    WKProcessPool *pool = [webView configuration].processPool;
-    bool hasEntitlement = [pool _networkProcessHasEntitlementForTesting:@"com.apple.rootless.storage.WebKitNetworkingSandbox"];
+    WKWebsiteDataStore *store = [webView configuration].websiteDataStore;
+    bool hasEntitlement = [store _networkProcessHasEntitlementForTesting:@"com.apple.rootless.storage.WebKitNetworkingSandbox"];
 #if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
     EXPECT_TRUE(hasEntitlement);
 #else
     EXPECT_FALSE(hasEntitlement);
 #endif
-    EXPECT_FALSE([pool _networkProcessHasEntitlementForTesting:@"test failure case"]);
+    EXPECT_FALSE([store _networkProcessHasEntitlementForTesting:@"test failure case"]);
 }
 
 TEST(WebKit, HTTPReferer)

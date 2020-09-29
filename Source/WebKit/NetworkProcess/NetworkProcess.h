@@ -170,7 +170,6 @@ public:
 
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(const PAL::SessionID&) const;
-    WebCore::NetworkStorageSession& defaultStorageSession() const;
     std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(const PAL::SessionID&);
 #if PLATFORM(COCOA)
     void ensureSession(const PAL::SessionID&, bool shouldUseTestingNetworkSession, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
@@ -373,7 +372,6 @@ public:
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
-    std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
 
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -542,7 +540,6 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
-    mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
 
     RefPtr<StorageManagerSet> m_storageManagerSet;
 

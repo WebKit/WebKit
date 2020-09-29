@@ -214,7 +214,8 @@ void LocalStorageDatabase::clear()
 
 void LocalStorageDatabase::close()
 {
-    ASSERT(!m_isClosed);
+    if (m_isClosed)
+        return;
     m_isClosed = true;
 
     if (m_didScheduleDatabaseUpdate) {

@@ -118,6 +118,8 @@ WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
 
 WK_EXPORT uint64_t WKPageGetRenderTreeSize(WKPageRef page);
 
+WK_EXPORT WKWebsiteDataStoreRef WKPageGetWebsiteDataStore(WKPageRef page);
+
 WK_EXPORT WKInspectorRef WKPageGetInspector(WKPageRef page);
 
 WK_EXPORT WKStringRef WKPageCopyUserAgent(WKPageRef page);

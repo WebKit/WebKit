@@ -759,7 +759,6 @@ static void webkitWebViewConstructed(GObject* object)
         webkit_website_data_manager_set_tls_errors_policy(priv->websiteDataManager.get(), webkit_website_data_manager_get_tls_errors_policy(contextDataManager));
         auto proxySettings = webkitWebsiteDataManagerGetDataStore(contextDataManager).networkProxySettings();
         webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setNetworkProxySettings(WTFMove(proxySettings));
-        webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), webkitWebContextGetProcessPool(priv->context.get()));
     }
 
     if (!priv->websitePolicies)
@@ -943,11 +942,6 @@ static void webkitWebViewDispose(GObject* object)
         // call this in finalize, not dispose, but finalize is used internally and we don't
         // have access to the instance pointer from the private struct destructor.
         webkitWebContextWebViewDestroyed(webView->priv->context.get(), webView);
-    }
-
-    if (webView->priv->websiteDataManager) {
-        webkitWebsiteDataManagerRemoveProcessPool(webView->priv->websiteDataManager.get(), webkitWebContextGetProcessPool(webView->priv->context.get()));
-        webView->priv->websiteDataManager = nullptr;
     }
 
     if (webView->priv->currentScriptDialog) {

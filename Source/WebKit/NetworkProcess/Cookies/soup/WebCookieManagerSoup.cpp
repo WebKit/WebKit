@@ -37,11 +37,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
     m_process.forEachNetworkStorageSession([policy] (auto& session) {
         session.setCookieAcceptPolicy(policy);
     });
+    completionHandler();
 }
 
 void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)

@@ -28,10 +28,12 @@
 
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
+#import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
 #import "StorageManager.h"
 #import "WebFramePolicyListenerProxy.h"
 #import "WebPreferencesKeys.h"
+#import "WebProcessProxy.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/NetworkStorageSession.h>
@@ -44,6 +46,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -561,5 +564,29 @@ void WebsiteDataStore::reinitializeAppBoundDomains()
     initializeAppBoundDomains(ForceReinitialization::Yes);
 }
 #endif
+
+bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
+{
+    return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement.utf8().data());
+}
+
+void WebsiteDataStore::sendNetworkProcessXPCEndpointToWebProcess(WebProcessProxy& process)
+{
+    if (process.state() != AuxiliaryProcessProxy::State::Running)
+        return;
+    auto* connection = process.connection();
+    if (!connection)
+        return;
+    auto message = networkProcess().xpcEndpointMessage();
+    if (!message)
+        return;
+    xpc_connection_send_message(connection->xpcConnection(), message);
+}
+
+void WebsiteDataStore::sendNetworkProcessXPCEndpointToAllWebProcesses()
+{
+    for (auto& process : m_processes)
+        sendNetworkProcessXPCEndpointToWebProcess(process);
+}
 
 }

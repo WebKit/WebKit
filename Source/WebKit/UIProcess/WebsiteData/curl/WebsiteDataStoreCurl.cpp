@@ -42,8 +42,7 @@ void WebsiteDataStore::setNetworkProxySettings(WebCore::CurlProxySettings&& prox
 {
     m_proxySettings = WTFMove(proxySettings);
 
-    for (auto& processPool : processPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_proxySettings));
+    networkProcess().send(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_proxySettings), 0);
 }
 
 }

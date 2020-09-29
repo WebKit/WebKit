@@ -889,9 +889,9 @@ void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToFo
     receivedData = false;
     Util::run(&receivedData);
     // Start the DownloadMonitor's timer.
-    [[webView configuration].processPool _synthesizeAppIsBackground:YES];
+    [[webView configuration].websiteDataStore _synthesizeAppIsBackground:YES];
     if (returnToForeground == AppReturnsToForeground::Yes)
-        [[webView configuration].processPool _synthesizeAppIsBackground:NO];
+        [[webView configuration].websiteDataStore _synthesizeAppIsBackground:NO];
     didCancel = false;
     Util::run(&didCancel);
     terminateServer = true;

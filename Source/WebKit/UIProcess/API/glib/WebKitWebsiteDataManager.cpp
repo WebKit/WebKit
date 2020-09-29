@@ -95,11 +95,6 @@ enum {
 };
 
 struct _WebKitWebsiteDataManagerPrivate {
-    ~_WebKitWebsiteDataManagerPrivate()
-    {
-        ASSERT(processPools.isEmpty());
-    }
-
     RefPtr<WebKit::WebsiteDataStore> websiteDataStore;
     GUniquePtr<char> baseDataDirectory;
     GUniquePtr<char> baseCacheDirectory;
@@ -115,7 +110,6 @@ struct _WebKitWebsiteDataManagerPrivate {
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
     GRefPtr<WebKitCookieManager> cookieManager;
-    Vector<WebProcessPool*> processPools;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT)
@@ -494,28 +488,11 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
             configuration->setServiceWorkerRegistrationDirectory(FileSystem::stringFromFileSystemRepresentation(priv->swRegistrationsDirectory.get()));
         if (priv->domCacheDirectory)
             configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
-        priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::defaultSessionID());
+        priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
         priv->websiteDataStore->setIgnoreTLSErrors(priv->tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
     }
 
     return *priv->websiteDataStore;
-}
-
-void webkitWebsiteDataManagerAddProcessPool(WebKitWebsiteDataManager* manager, WebProcessPool& processPool)
-{
-    ASSERT(!manager->priv->processPools.contains(&processPool));
-    manager->priv->processPools.append(&processPool);
-}
-
-void webkitWebsiteDataManagerRemoveProcessPool(WebKitWebsiteDataManager* manager, WebProcessPool& processPool)
-{
-    ASSERT(manager->priv->processPools.contains(&processPool));
-    manager->priv->processPools.removeFirst(&processPool);
-}
-
-const Vector<WebProcessPool*>& webkitWebsiteDataManagerGetProcessPools(WebKitWebsiteDataManager* manager)
-{
-    return manager->priv->processPools;
 }
 
 /**

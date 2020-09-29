@@ -426,7 +426,7 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 
     TestWebKitAPI::Util::spinRunLoop(1);
 
-    [configuration.get().processPool _terminateNetworkProcess];
+    [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -459,7 +459,7 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 
     TestWebKitAPI::Util::spinRunLoop(1);
 
-    [configuration.get().processPool _terminateNetworkProcess];
+    [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1237,10 +1237,8 @@ TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSit
 
 TEST(ResourceLoadStatistics, CanAccessDataSummaryWithNoProcessPool)
 {
+    NSURL *itpRootURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CanAccessDataSummaryWithNoProcessPoolTest"] isDirectory:YES];
     auto defaultFileManager = [NSFileManager defaultManager];
-    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
-    auto *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease];
-    NSURL *itpRootURL = [[dataStore _configuration] _resourceLoadStatisticsDirectory];
     NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
@@ -1251,6 +1249,10 @@ TEST(ResourceLoadStatistics, CanAccessDataSummaryWithNoProcessPool)
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
+
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
+    dataStoreConfiguration._resourceLoadStatisticsDirectory = itpRootURL;
+    auto *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease];
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
     static bool doneFlag = false;
@@ -1300,12 +1302,12 @@ TEST(ResourceLoadStatistics, StoreSuspension)
     [webView2 _test_waitForDidFinishNavigation];
 
     __block bool doneFlag = false;
-    [sharedProcessPool _sendNetworkProcessPrepareToSuspend:^{
+    [dataStore1 _sendNetworkProcessPrepareToSuspend:^{
         doneFlag = true;
     }];
     TestWebKitAPI::Util::run(&doneFlag);
 
-    [sharedProcessPool _sendNetworkProcessDidResume];
+    [dataStore1 _sendNetworkProcessDidResume];
 }
 
 @interface ResourceLoadStatisticsSchemeHandler : NSObject <WKURLSchemeHandler>
