@@ -68,7 +68,10 @@ enum CSSParserTokenType {
     BadStringToken,
     EOFToken,
     CommentToken,
+    LastCSSParserTokenType = CommentToken,
 };
+
+constexpr std::underlying_type_t<CSSParserTokenType> numberOfCSSParserTokenTypes = LastCSSParserTokenType + 1;
 
 enum NumericSign {
     NoSign,
@@ -137,7 +140,7 @@ public:
 
     CSSPropertyID parseAsCSSPropertyID() const;
 
-    void serialize(StringBuilder&) const;
+    void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr) const;
 
     CSSParserToken copyWithUpdatedString(const StringView&) const;
 

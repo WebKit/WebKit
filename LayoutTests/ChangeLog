@@ -1,3 +1,18 @@
+2020-09-29  Keith Miller  <keith_miller@apple.com>
+
+        CSS serialization expects comments between certain tokens
+        https://bugs.webkit.org/show_bug.cgi?id=216947
+
+        Reviewed by Darin Adler.
+
+        Rebasline CSS tests for better serialization. The css-selectorText
+        test produces different output since we tokenize the <an-plus-b>
+        syntax incorrectly. I don't know if this means we evaluate it
+        incorrectly, however. In a follow up patch I will fix the the
+        tokenization issue so the comments will no longer appear.
+
+        * fast/dom/css-selectorText-expected.txt:
+
 2020-09-29  Sam Weinig  <weinig@apple.com>
 
         Remove IndexedDBWorkers runtime setting now since it is always true

@@ -394,61 +394,136 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     }
 }
 
-void CSSParserToken::serialize(StringBuilder& builder) const
+struct NextTokenNeedsCommentBuilder {
+    constexpr NextTokenNeedsCommentBuilder(std::initializer_list<CSSParserTokenType> tokens)
+    {
+        for (auto token : tokens)
+            buffer[token] = true;
+    }
+
+    std::array<bool, numberOfCSSParserTokenTypes> buffer { false };
+};
+
+void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nextToken) const
 {
     // This is currently only used for @supports CSSOM. To keep our implementation
     // simple we handle some of the edge cases incorrectly (see comments below).
+    auto appendCommentIfNeeded = [&] (const NextTokenNeedsCommentBuilder& tokensNeedingComment, auto... delimitersNeedingComment) {
+        if (!nextToken)
+            return;
+
+        CSSParserTokenType nextType = nextToken->type();
+        if (tokensNeedingComment.buffer[nextType]) {
+            builder.appendLiteral("/**/");
+            return;
+        }
+
+        if (nextType == DelimiterToken && ((delimitersNeedingComment == nextToken->delimiter()) || ... || false)) {
+            builder.appendLiteral("/**/");
+            return;
+        }
+    };
+
     switch (type()) {
-    case IdentToken:
+    case IdentToken: {
         serializeIdentifier(value().toString(), builder);
+        appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken, LeftParenthesisToken }, '-');
         break;
-    case FunctionToken:
+    }
+    case FunctionToken: {
         serializeIdentifier(value().toString(), builder);
         builder.append('(');
         break;
-    case AtKeywordToken:
+    }
+    case AtKeywordToken: {
         builder.append('@');
         serializeIdentifier(value().toString(), builder);
+        appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
-    case HashToken:
+    }
+    case HashToken: {
         builder.append('#');
         serializeIdentifier(value().toString(), builder, (getHashTokenType() == HashTokenUnrestricted));
+        appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
-    case UrlToken:
+    }
+    case UrlToken: {
         builder.appendLiteral("url(");
         serializeIdentifier(value().toString(), builder);
         builder.append(')');
         break;
-    case DelimiterToken:
-        if (delimiter() == '\\') {
+    }
+    case DelimiterToken: {
+        switch (delimiter()) {
+        case '\\': {
             builder.appendLiteral("\\\n");
             break;
         }
-        builder.append(delimiter());
+        case '#':
+        case '-': {
+            builder.append(delimiter());
+            appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken }, '-');
+            break;
+        }
+
+        case '@': {
+            builder.append('@');
+            appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken }, '-');
+            break;
+        }
+
+        case '.':
+        case '+': {
+            builder.append(delimiter());
+            appendCommentIfNeeded({ NumberToken, PercentageToken, DimensionToken });
+            break;
+        }
+
+        case '/': {
+            builder.append('/');
+            // Weirdly Clang errors if you try to use the fold expression in buildNextTokenNeedsCommentTable() because the true value is unused.
+            // So we just build the table by hand here instead. See: rdar://69710661
+            appendCommentIfNeeded({ }, '*');
+            break;
+        }
+
+        default:
+            builder.append(delimiter());
+            break;
+        }
+
         break;
-    case NumberToken:
+    }
+    case NumberToken: {
         // These won't properly preserve the NumericValueType flag
         if (m_numericSign == PlusSign)
             builder.append('+');
         builder.append(numericValue());
+        appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken }, '%');
         break;
-    case PercentageToken:
+    }
+    case PercentageToken: {
         builder.append(numericValue(), '%');
         break;
-    case DimensionToken:
+    }
+    case DimensionToken: {
         // This will incorrectly serialize e.g. 4e3e2 as 4000e2
         builder.append(numericValue());
         serializeIdentifier(value().toString(), builder);
+        appendCommentIfNeeded({ IdentToken, FunctionToken, UrlToken, BadUrlToken, NumberToken, PercentageToken, DimensionToken, CDCToken }, '-');
         break;
-    case UnicodeRangeToken:
+    }
+    case UnicodeRangeToken: {
         builder.appendLiteral("U+");
         builder.append(hex(unicodeRangeStart()));
         builder.append('-');
         builder.append(hex(unicodeRangeEnd()));
         break;
-    case StringToken:
+    }
+    case StringToken: {
         serializeString(value().toString(), builder);
         break;
+    }
 
     case IncludeMatchToken:
         builder.appendLiteral("~=");

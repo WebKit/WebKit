@@ -1,3 +1,30 @@
+2020-09-29  Keith Miller  <keith_miller@apple.com>
+
+        CSS serialization expects comments between certain tokens
+        https://bugs.webkit.org/show_bug.cgi?id=216947
+
+        Reviewed by Darin Adler.
+
+        This patch brings us up to spec on inserting comments while
+        serializing CSS tokens. The spec says that we should always be
+        able to round trip a serialized output. Weirdly, for reasons I
+        don't understand, the spec requires a comment rather than
+        whitespace so that's what this patch does. Since there are 32
+        token types building a table for every combination would have been
+        massive. Instead, this patch uses a constexpr function to generate
+        the table for the set of next (non-delimiter) tokens that require
+        a separating comment. This makes it a bit more readable while,
+        hopefully, not sacrificing too much performance. For delimiters
+        requiring separating comments, we check for those in a helper
+        lambda after checking the token table.
+
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::buildNextTokenNeedsCommentTable):
+        (WebCore::CSSParserToken::serialize const):
+        * css/parser/CSSParserToken.h:
+        * css/parser/CSSParserTokenRange.cpp:
+        (WebCore::CSSParserTokenRange::serialize const):
+
 2020-09-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [macCatalyst] Focus rings are not painted

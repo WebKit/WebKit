@@ -1,3 +1,17 @@
+2020-09-29  Keith Miller  <keith_miller@apple.com>
+
+        CSS serialization expects comments between certain tokens
+        https://bugs.webkit.org/show_bug.cgi?id=216947
+
+        Reviewed by Darin Adler.
+
+        The serialize-consecutive-tokens test now passes as expected. We fail the anplusb-selector-parsing
+        test because we consider `n-b` to be a DimensionToken followed by a NumberToken but this is incorrect.
+        I'll fix that test in a follow up patch.
+
+        * web-platform-tests/css/css-syntax/serialize-consecutive-tokens-expected.txt:
+        * web-platform-tests/css/selectors/anplusb-selector-parsing-expected.txt:
+
 2020-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add stubs for AudioWorklet

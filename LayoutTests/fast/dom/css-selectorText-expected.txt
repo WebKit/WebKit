@@ -43,13 +43,13 @@ div span#foo.test div:hover#bar a
 :nth-of-type(odd)
 :nth-of-type(even)
 :nth-of-type(2n)
-:nth-of-type(2n+1)
-:nth-of-type(-n+6)
+:nth-of-type(2n/**/+1)
+:nth-of-type(-n/**/+6)
 :nth-last-of-type(odd)
 :nth-last-of-type(even)
 :nth-last-of-type(2n)
-:nth-last-of-type(2n+1)
-:nth-last-of-type(-n+6)
+:nth-last-of-type(2n/**/+1)
+:nth-last-of-type(-n/**/+6)
 :first-child
 :last-child
 :first-of-type
