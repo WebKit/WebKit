@@ -1,3 +1,48 @@
+2020-09-28  Mark Lam  <mark.lam@apple.com>
+
+        Add Bounds Check Elimination validation for debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=217055
+        rdar://69122891
+
+        Reviewed by Keith Miller.
+
+        Added a JSC_validateBoundsCheckElimination option (with alias
+        JSC_validateBCE) that adds an AssertInBounds whenever a CheckInBounds
+        node is elided.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAssertNotEmpty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAssertInBounds):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationReportBoundsCheckEliminationErrorAndCrash):
+        * ftl/FTLOperations.h:
+        * runtime/OptionsList.h:
+
 2020-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r267373 to resolve post-commit review comments

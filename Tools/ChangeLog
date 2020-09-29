@@ -1,3 +1,16 @@
+2020-09-28  Mark Lam  <mark.lam@apple.com>
+
+        Add Bounds Check Elimination validation for debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=217055
+        rdar://69122891
+
+        Reviewed by Keith Miller.
+
+        Added --validateBCE=true to ftl-no-cjit-validate-sampling-profiler
+        and ftl-eager-no-cjit.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-09-28  Matt Lewis  <jlewis3@apple.com>
 
         Fix Build triggers for iOS, watchOS, and tvOS

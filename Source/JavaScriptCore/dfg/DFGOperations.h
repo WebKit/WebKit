@@ -330,7 +330,7 @@ EncodedJSValue JIT_OPERATION operationDateGetYear(VM*, DateInstance*) WTF_INTERN
 
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(VM*) WTF_INTERNAL;
 
-void JIT_OPERATION operationTriggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optiimzedCodeBlock, OSRExitBase*) WTF_INTERNAL;
+void JIT_OPERATION operationTriggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase*) WTF_INTERNAL;
 void triggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optiimzedCodeBlock, OSRExitBase*); // This is not JIT_OPERATION.
 
 #if USE(JSVALUE32_64)

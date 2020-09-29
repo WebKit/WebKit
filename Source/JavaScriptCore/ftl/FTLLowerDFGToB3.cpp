@@ -590,6 +590,8 @@ private:
             if (node->isPhantomAllocation())
                 continue;
 
+            if (node->op() == AssertInBounds)
+                continue;
             if (node->op() == CheckInBounds)
                 continue;
 
@@ -995,6 +997,9 @@ private:
             break;
         case GetVectorLength:
             compileGetVectorLength();
+            break;
+        case AssertInBounds:
+            compileAssertInBounds();
             break;
         case CheckInBounds:
             compileCheckInBounds();
@@ -3713,7 +3718,7 @@ private:
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                GPRReg input =  params[0].gpr();
+                GPRReg input = params[0].gpr();
                 CCallHelpers::Jump done = jit.branchIfNotEmpty(input);
                 jit.breakpoint();
                 done.link(&jit);
@@ -4643,7 +4648,29 @@ private:
             return;
         }
     }
-    
+
+    void compileAssertInBounds()
+    {
+        ASSERT(Options::validateBoundsCheckElimination());
+        LValue index = lowInt32(m_node->child1());
+        LValue bounds = lowInt32(m_node->child2());
+
+        LBasicBlock outOfBoundsCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        m_out.branch(m_out.below(index, bounds), usually(continuation), rarely(outOfBoundsCase));
+
+        LBasicBlock lastNext = m_out.appendTo(outOfBoundsCase, continuation);
+        vmCall(Void, operationReportBoundsCheckEliminationErrorAndCrash,
+            m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())),
+            m_out.constInt32(m_node->index()),
+            m_out.constInt32(m_node->child1()->index()),
+            m_out.constInt32(m_node->child2()->index()),
+            index, bounds);
+        m_out.unreachable();
+
+        m_out.appendTo(continuation, lastNext);
+    }
+
     void compileCheckInBounds()
     {
         speculate(

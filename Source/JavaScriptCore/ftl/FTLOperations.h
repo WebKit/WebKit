@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,8 @@ void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame*, unsigned) WTF_IN
 
 int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject*, size_t tableIndex, JSString*) WTF_INTERNAL;
 int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+
+void JIT_OPERATION operationReportBoundsCheckEliminationErrorAndCrash(intptr_t codeBlockAsIntPtr, int32_t, int32_t, int32_t, int32_t, int32_t);
 
 } // extern "C"
 

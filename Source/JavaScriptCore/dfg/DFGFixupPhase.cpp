@@ -2118,6 +2118,7 @@ private:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
+        case AssertInBounds:
         case CheckInBounds:
         case ConstantStoragePointer:
         case DoubleAsInt32:

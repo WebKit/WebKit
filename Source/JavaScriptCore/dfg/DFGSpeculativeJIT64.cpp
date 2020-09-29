@@ -5670,6 +5670,7 @@ void SpeculativeJIT::compile(Node* node)
     case Phi:
     case Upsilon:
     case ExtractOSREntryLocal:
+    case AssertInBounds:
     case CheckInBounds:
     case ArithIMul:
     case MultiGetByOffset:

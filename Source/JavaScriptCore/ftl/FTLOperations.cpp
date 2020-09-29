@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include "RegExpObject.h"
+#include <wtf/Assertions.h>
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
@@ -739,6 +740,13 @@ extern "C" void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame* callFr
     lazySlowPath.generate(codeBlock);
 
     return lazySlowPath.stub().code().executableAddress();
+}
+
+extern "C" NO_RETURN_DUE_TO_CRASH void JIT_OPERATION operationReportBoundsCheckEliminationErrorAndCrash(intptr_t codeBlockAsIntPtr, int32_t nodeIndex, int32_t child1Index, int32_t child2Index, int32_t checkedIndex, int32_t bounds)
+{
+    CodeBlock* codeBlock = bitwise_cast<CodeBlock*>(codeBlockAsIntPtr);
+    dataLogLn("Bounds Check Eimination error found @ D@", nodeIndex, ": AssertInBounds(index D@", child1Index, ": ", checkedIndex, ", bounds D@", child2Index, " ", bounds, ") in ", codeBlock);
+    CRASH();
 }
 
 } } // namespace JSC::FTL
