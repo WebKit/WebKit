@@ -1,3 +1,11 @@
+2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, attempt to fix WinCairo build failure
+        https://bugs.webkit.org/show_bug.cgi?id=217071
+
+        * ftl/FTLOperations.h:
+        * tools/JSDollarVM.cpp:
+
 2020-09-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use JSC_DECLARE_JIT_OPERATION / JSC_DECLARE_CUSTOM_GETTER / JSC_DECLARE_CUSTOM_SETTER

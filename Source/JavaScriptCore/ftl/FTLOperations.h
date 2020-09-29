@@ -45,7 +45,7 @@ JSC_DECLARE_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallFrame*, u
 JSC_DECLARE_JIT_OPERATION(operationSwitchStringAndGetBranchOffset, int32_t, (JSGlobalObject*, size_t tableIndex, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalObject*, JSCell*));
 
-JSC_DECLARE_JIT_OPERATION(operationReportBoundsCheckEliminationErrorAndCrash, void, (intptr_t codeBlockAsIntPtr, int32_t, int32_t, int32_t, int32_t, int32_t));
+NO_RETURN_DUE_TO_CRASH JSC_DECLARE_JIT_OPERATION(operationReportBoundsCheckEliminationErrorAndCrash, void, (intptr_t codeBlockAsIntPtr, int32_t, int32_t, int32_t, int32_t, int32_t));
 
 } // extern "C"
 
