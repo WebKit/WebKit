@@ -1,3 +1,21 @@
+2020-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] RemoteImageBufferProxy should ensure the state stack of the context is cleared before destruction
+        https://bugs.webkit.org/show_bug.cgi?id=208876
+
+        Reviewed by Tim Horton.
+
+        When running canvas layout tests in debug WebKit, the assertion in `~GraphicsContext()` which verifies that
+        `m_stack.isEmpty()` fires. This occurs because the matching call to restore may still be buffered in the web
+        process when the remote image buffer proxy in the GPU process is destroyed; however, this may also occur if the
+        web process terminates without having sent the matching calls to restore the graphics context.
+
+        We can fix both of these scenarios by manually unwinding the context's state stack when destroying the
+        `RemoteImageBufferProxy`. Original patch by Said Abou-Hallawa.
+
+        * GPUProcess/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+
 2020-09-29  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Build fix for GPU Process after r267725

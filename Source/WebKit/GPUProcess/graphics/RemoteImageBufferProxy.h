@@ -36,6 +36,7 @@ namespace WebKit {
 template<typename BackendType>
 class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy, public WebCore::DisplayList::Replayer::Delegate {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
+    using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
 
 public:
@@ -49,6 +50,14 @@ public:
         , RemoteImageBufferMessageHandlerProxy(remoteRenderingBackendProxy, imageBufferIdentifier)
     {
         createBackend(m_backend->logicalSize(), m_backend->backendSize(), m_backend->resolutionScale(), m_backend->colorSpace(), m_backend->createImageBufferBackendHandle());
+    }
+
+    ~RemoteImageBufferProxy()
+    {
+        // Unwind the context's state stack before destruction, since calls to restore may not have
+        // been flushed yet, or the web process may have terminated.
+        while (context().stackSize())
+            context().restore();
     }
 
 private:
