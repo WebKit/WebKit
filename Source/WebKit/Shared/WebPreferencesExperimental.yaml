@@ -503,7 +503,7 @@ DialogElementEnabled:
 
 WebShareFileAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_WEB_SHARE_ENABLED
   humanReadableName: "Web Share API Level 2"
   humanReadableDescription: "Enable level 2 of Web Share API"
 
