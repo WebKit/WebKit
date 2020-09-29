@@ -1,3 +1,13 @@
+2020-09-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny access to 'com.apple.awdd' in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=216975
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-09-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Data URL image is not rendered if there is whitespace between the mime type and and "base64" string

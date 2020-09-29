@@ -8,4 +8,5 @@ PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebConte
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nesessionmanager") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.nesessionmanager.content-filter") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.system.logger") is false
+PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.awdd") is false
 

@@ -1,3 +1,14 @@
+2020-09-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny access to 'com.apple.awdd' in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=216975
+
+        Reviewed by Darin Adler.
+
+        This has already been done on iOS in <https://trac.webkit.org/changeset/254376>, and should be done on macOS as well.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-09-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop using the default website data store for the inspector

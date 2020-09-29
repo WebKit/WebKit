@@ -732,7 +732,6 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     (with report) (with telemetry-backtrace)
 #endif
-    (global-name "com.apple.awdd")
     (global-name "com.apple.cookied")
     (global-name "com.apple.mobileassetd")
 )
