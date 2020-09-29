@@ -1944,11 +1944,6 @@ void Element::invalidateStyle()
 {
     Node::invalidateStyle(Style::Validity::ElementInvalid);
     invalidateSiblingsIfNeeded(*this);
-
-    // FIXME: This flag should be set whenever styles are invalidated while computed styles are present,
-    // not just in this codepath.
-    if (hasRareData() && elementRareData()->computedStyle())
-        setFlag(IsComputedStyleInvalidFlag);
 }
 
 void Element::invalidateStyleAndLayerComposition()
@@ -3322,7 +3317,7 @@ const RenderStyle* Element::renderOrDisplayContentsStyle() const
 const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
 {
     ASSERT(isConnected());
-    ASSERT(!existingComputedStyle() || hasFlag(IsComputedStyleInvalidFlag));
+    ASSERT(!existingComputedStyle());
 
     Deque<RefPtr<Element>, 32> elementsRequiringComputedStyle({ this });
     const RenderStyle* computedStyle = nullptr;
@@ -3342,7 +3337,6 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
         rareData.setComputedStyle(WTFMove(style));
-        element->clearFlag(IsComputedStyleInvalidFlag);
 
         if (mode == ResolveComputedStyleMode::RenderedOnly && computedStyle->display() == DisplayType::None)
             return nullptr;
@@ -3372,7 +3366,7 @@ bool Element::isVisibleWithoutResolvingFullStyle() const
         return renderStyle() && renderStyle()->visibility() == Visibility::Visible;
 
     // Compute style in yet unstyled subtree.
-    auto* style = hasFlag(IsComputedStyleInvalidFlag) ? nullptr : existingComputedStyle();
+    auto* style = existingComputedStyle();
     if (!style)
         style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
 
