@@ -92,11 +92,11 @@ using namespace WebCore;
 
 #if !PLATFORM(COCOA)
 MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
+    : m_player(player)
 #if !RELEASE_LOG_DISABLED
-    : m_logger(player->mediaPlayerLogger())
+    , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
-    , m_player(player)
     , m_mediaResourceLoader(*player->createResourceLoader())
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)

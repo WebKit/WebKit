@@ -1,3 +1,16 @@
+2020-09-29  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Build fix for GPU Process after r267725
+        https://bugs.webkit.org/show_bug.cgi?id=217098
+
+        Unreviewed build fix.
+
+        Update playstation specific code for signature changes in the above.
+        Fix MediaPlayerPrivateRemote constructor when RELEASE_LOG_DISABLED was specified.
+
+        * GPUProcess/media/playstation/RemoteMediaPlayerProxyPlayStation.cpp:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Move NetworkProcessProxy ownership from WebProcessPool to WebsiteDataStore
