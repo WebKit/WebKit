@@ -29,6 +29,7 @@
 #include "IntSize.h"
 #include "NativeImage.h"
 #include "PlatformLayer.h"
+#include "VideoLayerManager.h"
 #include "WebVideoContainerLayer.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
@@ -37,32 +38,44 @@
 
 namespace WebCore {
 
-class TextTrackRepresentation;
-
-class VideoLayerManagerObjC final : public LoggerHelper {
+class VideoLayerManagerObjC final
+    : public VideoLayerManager
+#if !RELEASE_LOG_DISABLED
+    , public LoggerHelper
+#endif
+{
     WTF_MAKE_NONCOPYABLE(VideoLayerManagerObjC);
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    VideoLayerManagerObjC(const Logger&, const void*);
-
-    PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
-
-    void setVideoLayer(PlatformLayer *, IntSize contentSize);
-    void didDestroyVideoLayer();
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
-    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler, NativeImagePtr);
-    FloatRect videoFullscreenFrame() const { return m_videoFullscreenFrame; }
-    void setVideoFullscreenFrame(FloatRect);
-    void updateVideoFullscreenInlineImage(NativeImagePtr);
+#if !RELEASE_LOG_DISABLED
+    WEBCORE_EXPORT VideoLayerManagerObjC(const Logger&, const void*);
+#else
+    WEBCORE_EXPORT VideoLayerManagerObjC() = default;
 #endif
 
-    bool requiresTextTrackRepresentation() const;
-    void setTextTrackRepresentationLayer(PlatformLayer*);
-    void syncTextTrackBounds();
+    ~VideoLayerManagerObjC() = default;
+
+    WEBCORE_EXPORT PlatformLayer* videoInlineLayer() const final;
+
+    WEBCORE_EXPORT void setVideoLayer(PlatformLayer*, IntSize contentSize) final;
+    WEBCORE_EXPORT void didDestroyVideoLayer() final;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    WEBCORE_EXPORT PlatformLayer* videoFullscreenLayer() const final;
+    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, NativeImagePtr) final;
+    WEBCORE_EXPORT FloatRect videoFullscreenFrame() const final;
+    WEBCORE_EXPORT void setVideoFullscreenFrame(FloatRect) final;
+    WEBCORE_EXPORT void updateVideoFullscreenInlineImage(NativeImagePtr) final;
+#endif
+
+    WEBCORE_EXPORT bool requiresTextTrackRepresentation() const final;
+    WEBCORE_EXPORT void setTextTrackRepresentationLayer(PlatformLayer*) final;
+    WEBCORE_EXPORT void syncTextTrackBounds() final;
 
 private:
+
+#if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const final { return "VideoLayerManagerObjC"; }
@@ -70,6 +83,7 @@ private:
 
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
+#endif
 
     RetainPtr<WebVideoContainerLayer> m_videoInlineLayer;
 #if ENABLE(VIDEO_PRESENTATION_MODE)

@@ -43,10 +43,17 @@ OBJC_CLASS AVPlayerLayer;
 
 namespace WebCore {
 
+#if !RELEASE_LOG_DISABLED
 VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, const void* logIdentifier)
     : m_logger(logger)
     , m_logIdentifier(logIdentifier)
 {
+}
+#endif
+
+PlatformLayer* VideoLayerManagerObjC::videoInlineLayer() const
+{
+    return m_videoInlineLayer.get();
 }
 
 void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
@@ -87,10 +94,9 @@ void VideoLayerManagerObjC::didDestroyVideoLayer()
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-void VideoLayerManagerObjC::updateVideoFullscreenInlineImage(NativeImagePtr image)
+PlatformLayer* VideoLayerManagerObjC::videoFullscreenLayer() const
 {
-    if (m_videoInlineLayer)
-        [m_videoInlineLayer setContents:(__bridge id)image.get()];
+    return m_videoFullscreenLayer.get();
 }
 
 void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler, NativeImagePtr currentImage)
@@ -140,6 +146,11 @@ void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscre
     [CATransaction commit];
 }
 
+FloatRect VideoLayerManagerObjC::videoFullscreenFrame() const
+{
+    return m_videoFullscreenFrame;
+}
+
 void VideoLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFrame)
 {
     ALWAYS_LOG(LOGIDENTIFIER, videoFullscreenFrame.x(), ", ", videoFullscreenFrame.y(), ", ", videoFullscreenFrame.width(), ", ", videoFullscreenFrame.height());
@@ -150,6 +161,12 @@ void VideoLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFra
 
     [m_videoLayer setFrame:m_videoFullscreenFrame];
     syncTextTrackBounds();
+}
+
+void VideoLayerManagerObjC::updateVideoFullscreenInlineImage(NativeImagePtr image)
+{
+    if (m_videoInlineLayer)
+        [m_videoInlineLayer setContents:(__bridge id)image.get()];
 }
 
 #endif

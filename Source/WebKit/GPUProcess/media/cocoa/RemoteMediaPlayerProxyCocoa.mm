@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId, Optional<LayerHostingContextID>&& fullscreenLayerHostingContextId)>&& completionHandler)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
     m_player->setPreload(preload);
@@ -45,11 +45,7 @@ void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::Media
     m_videoContentScale = videoContentScale;
     if (!m_inlineLayerHostingContext)
         m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (!m_fullscreenLayerHostingContext)
-        m_fullscreenLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-    completionHandler(m_inlineLayerHostingContext->contextID(), m_fullscreenLayerHostingContext->contextID());
-#endif
+    completionHandler(m_inlineLayerHostingContext->contextID());
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
@@ -73,30 +69,6 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& si
     [m_inlineLayerHostingContext->rootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
     [CATransaction commit];
 }
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-void RemoteMediaPlayerProxy::enterFullscreen(CompletionHandler<void()>&& completionHandler)
-{
-    auto videoFullscreenLayer = m_player->createVideoFullscreenLayer();
-    [videoFullscreenLayer setName:@"Web Video Fullscreen Layer (remote)"];
-    [videoFullscreenLayer setPosition:CGPointZero];
-    m_fullscreenLayerHostingContext->setRootLayer(videoFullscreenLayer.get());
-
-    m_player->setVideoFullscreenLayer(videoFullscreenLayer.get(), WTFMove(completionHandler));
-}
-
-void RemoteMediaPlayerProxy::exitFullscreen(CompletionHandler<void()>&& completionHandler)
-{
-    m_player->setVideoFullscreenLayer(nullptr, WTFMove(completionHandler));
-    m_fullscreenLayerHostingContext->setRootLayer(nullptr);
-}
-
-void RemoteMediaPlayerProxy::setVideoFullscreenFrameFenced(const WebCore::FloatRect& rect, const WTF::MachSendRight& machSendRight)
-{
-    m_fullscreenLayerHostingContext->setFencePort(machSendRight.sendRight());
-    m_player->setVideoFullscreenFrame(rect);
-}
-#endif
 
 } // namespace WebKit
 

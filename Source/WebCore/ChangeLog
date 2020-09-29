@@ -1,3 +1,35 @@
+2020-09-28  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Use VideoLayerManager to manage layers of MediaPlayerPrivateRemote
+        https://bugs.webkit.org/show_bug.cgi?id=216995
+
+        Reviewed by Eric Carlson.
+
+        No new tests since no functional changes.
+
+        * Headers.cmake:
+        Export TextTrackRepresentation and VideoLayerManager.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add VideoLayerManager.h.
+        Export TextTrackRepresentation, WebVideoContainerLayer and VideoLayerManager.
+
+        * platform/graphics/TextTrackRepresentation.cpp:
+        * platform/graphics/TextTrackRepresentation.h:
+        Minor clean-up.
+
+        * platform/graphics/VideoLayerManager.h: Added.
+        Add this interface so that we can use VideoLayerManager in the C++ code.
+
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h:
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        (WebCore::VideoLayerManagerObjC::videoInlineLayer const):
+        (WebCore::VideoLayerManagerObjC::videoFullscreenLayer const):
+        (WebCore::VideoLayerManagerObjC::videoFullscreenFrame const):
+        (WebCore::VideoLayerManagerObjC::updateVideoFullscreenInlineImage):
+        Fix the issue when RELEASE_LOG_DISABLED is defined and add WEBCORE_EXPORT
+        to some functions.
+
 2020-09-28  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         webkitfullscreenchange does not fire for shadow DOM elements

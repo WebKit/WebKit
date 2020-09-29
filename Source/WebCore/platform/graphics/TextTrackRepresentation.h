@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextTrackRepresentation_h
-#define TextTrackRepresentation_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -61,5 +60,3 @@ public:
 }
 
 #endif
-
-#endif // TextTrackRepresentation_h

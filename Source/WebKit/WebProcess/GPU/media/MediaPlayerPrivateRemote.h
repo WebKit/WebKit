@@ -27,13 +27,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "AudioTrackPrivateRemote.h"
 #include "LayerHostingContext.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceProxy.h"
+#include "TextTrackPrivateRemote.h"
 #include "TrackPrivateRemoteIdentifier.h"
+#include "VideoTrackPrivateRemote.h"
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/LoggerHelper.h>
@@ -48,15 +51,12 @@ namespace WebCore {
 struct GenericCueData;
 class ISOWebVTTCue;
 class SerializedPlatformDataCueValue;
-class TextTrackRepresentation;
+class VideoLayerManager;
 }
 
 namespace WebKit {
 
-class AudioTrackPrivateRemote;
-class TextTrackPrivateRemote;
 class UserData;
-class VideoTrackPrivateRemote;
 struct TextTrackPrivateRemoteConfiguration;
 struct TrackPrivateRemoteConfiguration;
 
@@ -101,7 +101,6 @@ public:
     void firstVideoFrameAvailable();
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
-    void setVideoFullscreenFrameFenced(const WebCore::FloatRect&, const WTF::MachSendRight&);
 #endif
 
     void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
@@ -149,14 +148,18 @@ public:
     void currentPlaybackTargetIsWirelessChanged(bool);
 #endif
 
+private:
+
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return *m_logger; }
+    const Logger& logger() const final { return m_logger; }
     const char* logClassName() const override { return "MediaPlayerPrivateRemote"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
+
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
 #endif
 
-private:
     void load(const URL&, const WebCore::ContentType&, const String&) final;
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayer::Preload, bool preservesPitch, bool prepare) final;
 
@@ -324,11 +327,10 @@ private:
     void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
-    bool requiresTextTrackRepresentation() const final { return m_requiresTextTrackRepresentation; }
-#if PLATFORM(COCOA)
+    bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(WebCore::TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
-#endif
+
     void tracksChanged() final;
 
     void beginSimulatedHDCPError() final;
@@ -358,14 +360,12 @@ private:
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
 
     WebCore::MediaPlayer* m_player { nullptr };
-    RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
-    bool m_requiresTextTrackRepresentation { false };
-    PlatformLayerContainer m_videoInlineLayer;
-    PlatformLayerContainer m_videoFullscreenLayer;
+    Ref<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
 #if PLATFORM(COCOA)
-    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
+    UniqueRef<WebCore::VideoLayerManager> m_videoLayerManager;
 #endif
-    Optional<LayerHostingContextID> m_fullscreenLayerHostingContextId;
+    PlatformLayerContainer m_videoLayer;
+
     RemoteMediaPlayerManager& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
     MediaPlayerPrivateRemoteIdentifier m_id;
@@ -388,12 +388,6 @@ private:
     bool m_muted { false };
     bool m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
-
-#if !RELEASE_LOG_DISABLED
-    RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
-#endif
-
     bool m_invalid { false };
 };
 

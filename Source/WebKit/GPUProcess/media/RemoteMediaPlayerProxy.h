@@ -100,7 +100,7 @@ public:
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
-    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId, Optional<LayerHostingContextID>&& fullscreenLayerHostingContextId)>&&);
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&&);
     void prepareForRendering();
 
     void load(URL&&, Optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
@@ -124,8 +124,6 @@ public:
     void setVisible(bool);
     void setShouldMaintainAspectRatio(bool);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    void enterFullscreen(CompletionHandler<void()>&&);
-    void exitFullscreen(CompletionHandler<void()>&&);
     void setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity);
 #endif
     void acceleratedRenderingStateChanged(bool);
@@ -138,9 +136,6 @@ public:
 
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    void setVideoFullscreenFrameFenced(const WebCore::FloatRect&, const WTF::MachSendRight&);
-#endif
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

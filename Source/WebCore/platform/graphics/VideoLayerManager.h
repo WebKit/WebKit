@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TextTrackRepresentation.h"
+#pragma once
 
-#if ENABLE(VIDEO)
-
-#include "IntRect.h"
+#include "NativeImage.h"
+#include "PlatformLayer.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
-class NullTextTrackRepresentation : public TextTrackRepresentation {
+class FloatRect;
+class IntSize;
+
+class VideoLayerManager {
 public:
-    virtual ~NullTextTrackRepresentation() = default;
-    void update() final { }
-    PlatformLayer* platformLayer() final { return nullptr; }
-    void setContentScale(float) final { }
-    IntRect bounds() const final { return IntRect(); }
-    void setHidden(bool) const final { }
+    virtual ~VideoLayerManager() = default;
+
+    virtual PlatformLayer* videoInlineLayer() const = 0;
+    virtual void setVideoLayer(PlatformLayer*, IntSize) = 0;
+    virtual void didDestroyVideoLayer() = 0;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    virtual PlatformLayer* videoFullscreenLayer() const = 0;
+    virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, NativeImagePtr) = 0;
+    virtual FloatRect videoFullscreenFrame() const = 0;
+    virtual void setVideoFullscreenFrame(FloatRect) = 0;
+    virtual void updateVideoFullscreenInlineImage(NativeImagePtr) = 0;
+#endif
+
+    virtual bool requiresTextTrackRepresentation() const = 0;
+    virtual void setTextTrackRepresentationLayer(PlatformLayer*) = 0;
+    virtual void syncTextTrackBounds() = 0;
 };
 
-#if !(PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)))
-
-std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient&)
-{
-    return makeUnique<NullTextTrackRepresentation>();
 }
-
-#endif
-
-}
-
-#endif

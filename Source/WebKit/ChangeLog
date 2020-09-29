@@ -1,3 +1,58 @@
+2020-09-28  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Use VideoLayerManager to manage layers of MediaPlayerPrivateRemote
+        https://bugs.webkit.org/show_bug.cgi?id=216995
+
+        Reviewed by Eric Carlson.
+
+        This patch removes the remote hosting layer in the GPU process for video fullscreen and
+        picture-in-picture. We don't need to keep a layer in the GPU process for video fullscreen
+        and picture-in-picture because no rendering will be done for that layer. We don't need
+        EnterFullscreen, ExitFullscreen and SetVideoFullscreenFrameFenced IPC messages after removing
+        the layer because the RemoteMediaPlayerPrivateRemote in the web process can deal with
+        the video presentation mode change.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::enterFullscreen): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::exitFullscreen): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenFrameFenced): Deleted.
+        Remove unused IPC messages after removing the remote hosting layer for video fullscreen
+        and picture-in-picture.
+
+        * GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::enterFullscreen): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::exitFullscreen): Deleted.
+        Ditto.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        Remove the code related to the remote hosting layer for video fullscreen and picture-in-picture.
+        (WebKit::MediaPlayerPrivateRemote::platformLayer const):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenLayer):
+        Use VideoLayerManager to manage the layer.
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::requiresTextTrackRepresentation const): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::setTextTrackRepresentation): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::syncTextTrackBounds): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrameFenced): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        Need to move the Logger up in the data members so that other members can use it
+        in the constructor, e.g., VideoLayerManager.
+
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::createVideoFullscreenLayer):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame): Deleted.
+        (WebKit::MediaPlayerPrivateRemote::setTextTrackRepresentation): Deleted.
+        (WebKit::MediaPlayerPrivateRemote::syncTextTrackBounds): Deleted.
+        Simplify the implementation by managing layers with VideoLayerManager.
+
 2020-09-28  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] Out-of-band TextTracks

@@ -1213,9 +1213,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/StringTruncator.h
     platform/graphics/TabSize.h
     platform/graphics/TextRun.h
+    platform/graphics/TextTrackRepresentation.h
     platform/graphics/TiledBacking.h
     platform/graphics/TrackPrivateBase.h
     platform/graphics/VelocityData.h
+    platform/graphics/VideoLayerManager.h
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/WidthCache.h
     platform/graphics/WindRule.h
