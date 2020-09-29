@@ -1,3 +1,17 @@
+2020-09-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Data URL image is not rendered if there is whitespace between the mime type and and "base64" string
+        https://bugs.webkit.org/show_bug.cgi?id=216900
+
+        Reviewed by Darin Adler.
+
+        In the new test, 16 cases are included to cover all the permutations of
+        adding spaces before and after the comma and the semicolon. PNG and JPEG
+        formats are used to ensure the mime type is tested.
+
+        * fast/images/image-data-url-with-spaces-expected.html: Added.
+        * fast/images/image-data-url-with-spaces.html: Added.
+
 2020-09-28  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         webkitfullscreenchange does not fire for shadow DOM elements

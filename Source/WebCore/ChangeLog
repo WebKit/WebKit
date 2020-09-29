@@ -1,3 +1,20 @@
+2020-09-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Data URL image is not rendered if there is whitespace between the mime type and and "base64" string
+        https://bugs.webkit.org/show_bug.cgi?id=216900
+
+        Reviewed by Darin Adler.
+
+        According to https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs,
+        spaces are allowed in the data URL to allow better formatting. This
+        means spaces may appear before and after the comma and the semicolon
+        (if it exits in the Data URL).
+
+        Test: fast/images/image-data-url-with-spaces.html
+
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::DecodeTask::process):
+
 2020-09-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use JSC_DECLARE_JIT_OPERATION / JSC_DECLARE_CUSTOM_GETTER / JSC_DECLARE_CUSTOM_SETTER

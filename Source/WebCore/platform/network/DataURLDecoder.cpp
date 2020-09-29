@@ -66,25 +66,42 @@ public:
 
     bool process()
     {
+        // Syntax:
+        //  url := data:<header>,<encodedData>
+        //  header := [<mediatype>][;base64]
+        //  mediatype := [<mimetype>][;charset=<charsettype>]
+
         if (urlString.find(',') == notFound)
             return false;
-        const char dataString[] = "data:";
-        const char base64String[] = ";base64";
 
+        const char dataString[] = "data:";
         ASSERT(urlString.startsWith(dataString));
 
-        size_t headerEnd = urlString.find(',', strlen(dataString));
+        size_t headerStart = strlen(dataString);
+        size_t headerEnd = urlString.find(',', headerStart);
         size_t encodedDataStart = headerEnd == notFound ? headerEnd : headerEnd + 1;
 
         encodedData = StringView(urlString).substring(encodedDataStart);
-        auto header = StringView(urlString).substring(strlen(dataString), headerEnd - strlen(dataString));
-        isBase64 = header.endsWithIgnoringASCIICase(StringView(base64String));
-        auto mediaType = (isBase64 ? header.substring(0, header.length() - strlen(base64String)) : header).toString();
-        mediaType = mediaType.stripWhiteSpace();
+        auto header = StringView(urlString).substring(headerStart, headerEnd - headerStart);
+        
+        // There might one or two semicolons in the header, find the last one.
+        size_t mediaTypeEnd = header.reverseFind(';');
+        mediaTypeEnd = mediaTypeEnd == notFound ? header.length() : mediaTypeEnd;
+
+        // formatTypeStart might be at the begining of "base64" or "charset=...".
+        size_t formatTypeStart = mediaTypeEnd + 1;
+        auto formatType = header.substring(formatTypeStart, header.length() - formatTypeStart);
+        formatType = stripLeadingAndTrailingHTTPSpaces(formatType);
+
+        isBase64 = equalLettersIgnoringASCIICase(formatType, "base64");
+
+        // If header does not end with "base64", mediaType should be the whole header.
+        auto mediaType = (isBase64 ? header.substring(0, mediaTypeEnd) : header).toString();
+        mediaType = stripLeadingAndTrailingHTTPSpaces(mediaType);
         if (mediaType.startsWith(';'))
             mediaType.insert("text/plain", 0);
-        result = parseMediaType(mediaType);
 
+        result = parseMediaType(mediaType);
         return true;
     }
 
