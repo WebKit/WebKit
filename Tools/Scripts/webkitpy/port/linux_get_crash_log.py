@@ -152,7 +152,7 @@ class GDBCrashLogGenerator(object):
         errors_str = '\n'.join(('STDERR: ' + stderr_line) for stderr_line in stderr_lines)
         cppfilt_proc = self._executive.popen(
             ['c++filt'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        errors_str = cppfilt_proc.communicate(errors_str)[0]
+        errors_str = cppfilt_proc.communicate(string_utils.encode(errors_str))[0]
 
         if not crash_log:
             if not log_directory:
