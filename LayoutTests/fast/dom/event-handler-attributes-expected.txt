@@ -936,10 +936,10 @@ PASS testElementAttribute(nonHTMLElement, "transitionend") is "none"
 PASS testElementAttribute(nonHTMLElement, "unload") is "none"
 PASS testElementAttribute(nonHTMLElement, "volumechange") is "none"
 PASS testElementAttribute(nonHTMLElement, "waiting") is "none"
-FAIL testElementAttribute(nonHTMLElement, "webkitanimationend") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "webkitanimationiteration") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "webkitanimationstart") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "webkittransitionend") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "webkitanimationend") is "none"
+PASS testElementAttribute(nonHTMLElement, "webkitanimationiteration") is "none"
+PASS testElementAttribute(nonHTMLElement, "webkitanimationstart") is "none"
+PASS testElementAttribute(nonHTMLElement, "webkittransitionend") is "none"
 PASS testElementAttribute(nonHTMLElement, "wheel") is "none"
 
 PASS successfullyParsed is true

@@ -34,8 +34,4 @@ interface mixin DocumentAndElementEventHandlers {
     [NotEnumerable] attribute EventHandler onbeforecut;
     [NotEnumerable] attribute EventHandler onbeforeinput;
     [NotEnumerable] attribute EventHandler onbeforepaste;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
-    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
 };

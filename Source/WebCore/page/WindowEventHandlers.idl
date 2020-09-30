@@ -33,12 +33,16 @@ interface mixin WindowEventHandlers {
     [WindowEventHandler] attribute EventHandler onhashchange;
     [WindowEventHandler] attribute EventHandler onlanguagechange;
     [WindowEventHandler] attribute EventHandler onmessage;
+    // FIXME: Implement 'onmessageerror'
+    // attribute EventHandler onmessageerror;
     [WindowEventHandler] attribute EventHandler onoffline;
     [WindowEventHandler] attribute EventHandler ononline;
     [WindowEventHandler] attribute EventHandler onpagehide;
     [WindowEventHandler] attribute EventHandler onpageshow;
     [WindowEventHandler] attribute EventHandler onpopstate;
+    [WindowEventHandler] attribute EventHandler onrejectionhandled;
     [WindowEventHandler] attribute EventHandler onstorage;
+    [WindowEventHandler] attribute EventHandler onunhandledrejection;
     [WindowEventHandler] attribute EventHandler onunload;
 
 

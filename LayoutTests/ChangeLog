@@ -1,3 +1,28 @@
+2020-09-30  Sam Weinig  <weinig@apple.com>
+
+        Re-align DocumentAndElementEventHandlers.idl, GlobalEventHandlers.idl and WindowEventHandlers.idl with the HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=217088
+
+        Reviewed by Darin Adler.
+
+        Update results for more passing tests.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * platform/ios-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2020-09-30  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support isTypeSupported

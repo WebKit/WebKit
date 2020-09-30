@@ -32,20 +32,19 @@
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
 ] interface WorkerGlobalScope : EventTarget {
-
     readonly attribute WorkerGlobalScope self;
     readonly attribute WorkerLocation location;
+    readonly attribute WorkerNavigator navigator;
+    [MayThrowException] undefined importScripts(USVString... urls);
 
+    // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
     attribute EventHandler onerror;
+    // FIXME: Implement 'onlanguagechange'.
+    // attribute EventHandler onlanguagechange;
     attribute EventHandler onoffline;
     attribute EventHandler ononline;
     attribute EventHandler onrejectionhandled;
     attribute EventHandler onunhandledrejection;
-
-    // WorkerUtils
-
-    [MayThrowException] undefined importScripts(USVString... urls);
-    readonly attribute WorkerNavigator navigator;
 };
 
 WorkerGlobalScope includes GlobalCrypto;

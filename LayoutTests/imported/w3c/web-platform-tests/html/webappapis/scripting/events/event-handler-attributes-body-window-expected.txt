@@ -17,9 +17,9 @@ PASS shadowed online (document.body)
 PASS shadowed pagehide (document.body)
 PASS shadowed pageshow (document.body)
 PASS shadowed popstate (document.body)
-FAIL shadowed rejectionhandled (document.body) assert_equals: alternative body should reflect expected (function) function "() => 0" but got (object) null
+PASS shadowed rejectionhandled (document.body)
 PASS shadowed storage (document.body)
-FAIL shadowed unhandledrejection (document.body) assert_equals: alternative body should reflect expected (function) function "() => 0" but got (object) null
+PASS shadowed unhandledrejection (document.body)
 PASS shadowed unload (document.body)
 PASS not shadowed abort (document.body)
 FAIL not shadowed auxclick (document.body) assert_equals: alternative body should reflect expected (object) null but got (undefined) undefined
@@ -125,9 +125,9 @@ PASS shadowed online (document.createElement("body"))
 PASS shadowed pagehide (document.createElement("body"))
 PASS shadowed pageshow (document.createElement("body"))
 PASS shadowed popstate (document.createElement("body"))
-FAIL shadowed rejectionhandled (document.createElement("body")) assert_equals: body should reflect expected (function) function "() => 0" but got (object) null
+PASS shadowed rejectionhandled (document.createElement("body"))
 PASS shadowed storage (document.createElement("body"))
-FAIL shadowed unhandledrejection (document.createElement("body")) assert_equals: body should reflect expected (function) function "() => 0" but got (object) null
+PASS shadowed unhandledrejection (document.createElement("body"))
 PASS shadowed unload (document.createElement("body"))
 PASS not shadowed abort (document.createElement("body"))
 FAIL not shadowed auxclick (document.createElement("body")) assert_equals: body should reflect expected (object) null but got (undefined) undefined
@@ -233,9 +233,9 @@ PASS shadowed online (window)
 PASS shadowed pagehide (window)
 PASS shadowed pageshow (window)
 PASS shadowed popstate (window)
-FAIL shadowed rejectionhandled (window) assert_equals: body should reflect expected (function) function "() => 0" but got (object) null
+PASS shadowed rejectionhandled (window)
 PASS shadowed storage (window)
-FAIL shadowed unhandledrejection (window) assert_equals: body should reflect expected (function) function "() => 0" but got (object) null
+PASS shadowed unhandledrejection (window)
 PASS shadowed unload (window)
 PASS not shadowed abort (window)
 FAIL not shadowed auxclick (window) assert_equals: body should reflect expected (object) null but got (undefined) undefined

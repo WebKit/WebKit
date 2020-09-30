@@ -1,3 +1,26 @@
+2020-09-30  Sam Weinig  <weinig@apple.com>
+
+        Re-align DocumentAndElementEventHandlers.idl, GlobalEventHandlers.idl and WindowEventHandlers.idl with the HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=217088
+
+        Reviewed by Darin Adler.
+
+        Re-align DocumentAndElementEventHandlers.idl, GlobalEventHandlers.idl and WindowEventHandlers.idl with
+        the HTML spec, adding commented out variants of properties we don't yet support. The actual changes are:
+        
+        - onwebkitanimation* handlers moved from DocumentAndElementEventHandlers to GlobalEventHandlers
+          (and were removed from DOMWindow as they are now redundant).
+        - onrejectionhandled/onunhandledrejection handlers move from  GlobalEventHandlers to 
+          WindowEventHandlers
+
+        Updated results for more existing tests that now pass.
+
+        * dom/DocumentAndElementEventHandlers.idl:
+        * dom/GlobalEventHandlers.idl:
+        * page/DOMWindow.idl:
+        * page/WindowEventHandlers.idl:
+        * workers/WorkerGlobalScope.idl:
+
 2020-09-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Rename LineBreaker to InlineContentBreaker

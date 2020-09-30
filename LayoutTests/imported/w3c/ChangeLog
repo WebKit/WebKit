@@ -1,3 +1,17 @@
+2020-09-30  Sam Weinig  <weinig@apple.com>
+
+        Re-align DocumentAndElementEventHandlers.idl, GlobalEventHandlers.idl and WindowEventHandlers.idl with the HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=217088
+
+        Reviewed by Darin Adler.
+
+        Update results for more passing tests.
+
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-windowless-body-expected.txt:
+        * web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+
 2020-09-30  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support isTypeSupported

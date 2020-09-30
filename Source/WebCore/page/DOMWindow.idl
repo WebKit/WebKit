@@ -195,12 +195,6 @@ typedef USVString CSSOMString;
 
     // Event handler from DeviceOrientation Event Specification (https://w3c.github.io/deviceorientation/spec-source-orientation.html#deviceorientation)
     [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation; // FIXME: Should be enumerable.
-
-    // Non standard event handlers.
-    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
-    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
 };
 
 [

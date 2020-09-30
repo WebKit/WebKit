@@ -304,22 +304,22 @@ PASS onwaiting: the default value must be null
 PASS onwaiting: the content attribute must be compiled into a function as the corresponding property
 PASS onwaiting: dynamic changes on the attribute
 PASS onwaiting: dispatching an Event at a <math> element must trigger element.onwaiting
-FAIL onwebkitanimationend: must be on the appropriate locations for GlobalEventHandlers assert_false: Element.prototype must not contain a "onwebkitanimationend" property expected false got true
+PASS onwebkitanimationend: must be on the appropriate locations for GlobalEventHandlers
 PASS onwebkitanimationend: the default value must be null
 PASS onwebkitanimationend: the content attribute must be compiled into a function as the corresponding property
 PASS onwebkitanimationend: dynamic changes on the attribute
 PASS onwebkitanimationend: dispatching an Event at a <math> element must trigger element.onwebkitanimationend
-FAIL onwebkitanimationiteration: must be on the appropriate locations for GlobalEventHandlers assert_false: Element.prototype must not contain a "onwebkitanimationiteration" property expected false got true
+PASS onwebkitanimationiteration: must be on the appropriate locations for GlobalEventHandlers
 PASS onwebkitanimationiteration: the default value must be null
 PASS onwebkitanimationiteration: the content attribute must be compiled into a function as the corresponding property
 PASS onwebkitanimationiteration: dynamic changes on the attribute
 PASS onwebkitanimationiteration: dispatching an Event at a <math> element must trigger element.onwebkitanimationiteration
-FAIL onwebkitanimationstart: must be on the appropriate locations for GlobalEventHandlers assert_false: Element.prototype must not contain a "onwebkitanimationstart" property expected false got true
+PASS onwebkitanimationstart: must be on the appropriate locations for GlobalEventHandlers
 PASS onwebkitanimationstart: the default value must be null
 PASS onwebkitanimationstart: the content attribute must be compiled into a function as the corresponding property
 PASS onwebkitanimationstart: dynamic changes on the attribute
 PASS onwebkitanimationstart: dispatching an Event at a <math> element must trigger element.onwebkitanimationstart
-FAIL onwebkittransitionend: must be on the appropriate locations for GlobalEventHandlers assert_false: Element.prototype must not contain a "onwebkittransitionend" property expected false got true
+PASS onwebkittransitionend: must be on the appropriate locations for GlobalEventHandlers
 PASS onwebkittransitionend: the default value must be null
 PASS onwebkittransitionend: the content attribute must be compiled into a function as the corresponding property
 PASS onwebkittransitionend: dynamic changes on the attribute

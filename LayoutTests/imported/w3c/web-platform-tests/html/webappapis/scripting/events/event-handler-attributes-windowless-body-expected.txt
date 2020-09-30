@@ -36,11 +36,11 @@ PASS Ignore setting of pageshow window event handlers on windowless body
 PASS Return null when getting the popstate event handler of a windowless body
 PASS Ignore setting of popstate window event handlers on windowless body
 PASS Return null when getting the rejectionhandled event handler of a windowless body
-FAIL Ignore setting of rejectionhandled window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Ignore setting of rejectionhandled window event handlers on windowless body
 PASS Return null when getting the storage event handler of a windowless body
 PASS Ignore setting of storage window event handlers on windowless body
 PASS Return null when getting the unhandledrejection event handler of a windowless body
-FAIL Ignore setting of unhandledrejection window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Ignore setting of unhandledrejection window event handlers on windowless body
 PASS Return null when getting the unload event handler of a windowless body
 PASS Ignore setting of unload window event handlers on windowless body
 PASS abort is unaffected on a windowless body
@@ -144,11 +144,11 @@ PASS Ignore setting of pageshow window event handlers on windowless frameset
 PASS Return null when getting the popstate event handler of a windowless frameset
 PASS Ignore setting of popstate window event handlers on windowless frameset
 PASS Return null when getting the rejectionhandled event handler of a windowless frameset
-FAIL Ignore setting of rejectionhandled window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Ignore setting of rejectionhandled window event handlers on windowless frameset
 PASS Return null when getting the storage event handler of a windowless frameset
 PASS Ignore setting of storage window event handlers on windowless frameset
 PASS Return null when getting the unhandledrejection event handler of a windowless frameset
-FAIL Ignore setting of unhandledrejection window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Ignore setting of unhandledrejection window event handlers on windowless frameset
 PASS Return null when getting the unload event handler of a windowless frameset
 PASS Ignore setting of unload window event handlers on windowless frameset
 PASS abort is unaffected on a windowless frameset

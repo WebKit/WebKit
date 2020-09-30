@@ -318,11 +318,11 @@ PASS HTMLElement interface: attribute ontimeupdate
 PASS HTMLElement interface: attribute ontoggle
 PASS HTMLElement interface: attribute onvolumechange
 PASS HTMLElement interface: attribute onwaiting
-FAIL HTMLElement interface: attribute onwebkitanimationend assert_own_property: expected property "onwebkitanimationend" missing
-FAIL HTMLElement interface: attribute onwebkitanimationiteration assert_own_property: expected property "onwebkitanimationiteration" missing
-FAIL HTMLElement interface: attribute onwebkitanimationstart assert_own_property: expected property "onwebkitanimationstart" missing
-FAIL HTMLElement interface: attribute onwebkittransitionend assert_own_property: expected property "onwebkittransitionend" missing
-FAIL HTMLElement interface: attribute onwheel assert_true: property should be enumerable expected true got false
+PASS HTMLElement interface: attribute onwebkitanimationend
+PASS HTMLElement interface: attribute onwebkitanimationiteration
+PASS HTMLElement interface: attribute onwebkitanimationstart
+PASS HTMLElement interface: attribute onwebkittransitionend
+PASS HTMLElement interface: attribute onwheel
 FAIL HTMLElement interface: attribute oncopy assert_own_property: expected property "oncopy" missing
 FAIL HTMLElement interface: attribute oncut assert_own_property: expected property "oncut" missing
 FAIL HTMLElement interface: attribute onpaste assert_own_property: expected property "onpaste" missing
@@ -582,9 +582,9 @@ PASS HTMLBodyElement interface: attribute ononline
 PASS HTMLBodyElement interface: attribute onpagehide
 PASS HTMLBodyElement interface: attribute onpageshow
 PASS HTMLBodyElement interface: attribute onpopstate
-FAIL HTMLBodyElement interface: attribute onrejectionhandled assert_own_property: expected property "onrejectionhandled" missing
+PASS HTMLBodyElement interface: attribute onrejectionhandled
 PASS HTMLBodyElement interface: attribute onstorage
-FAIL HTMLBodyElement interface: attribute onunhandledrejection assert_own_property: expected property "onunhandledrejection" missing
+PASS HTMLBodyElement interface: attribute onunhandledrejection
 PASS HTMLBodyElement interface: attribute onunload
 PASS HTMLBodyElement must be primary interface of document.createElement("body")
 PASS Stringification of document.createElement("body")
@@ -4389,11 +4389,11 @@ PASS Window interface: attribute ontimeupdate
 PASS Window interface: attribute ontoggle
 PASS Window interface: attribute onvolumechange
 PASS Window interface: attribute onwaiting
-FAIL Window interface: attribute onwebkitanimationend assert_true: property should be enumerable expected true got false
-FAIL Window interface: attribute onwebkitanimationiteration assert_true: property should be enumerable expected true got false
-FAIL Window interface: attribute onwebkitanimationstart assert_true: property should be enumerable expected true got false
-FAIL Window interface: attribute onwebkittransitionend assert_true: property should be enumerable expected true got false
-FAIL Window interface: attribute onwheel assert_true: property should be enumerable expected true got false
+PASS Window interface: attribute onwebkitanimationend
+PASS Window interface: attribute onwebkitanimationiteration
+PASS Window interface: attribute onwebkitanimationstart
+PASS Window interface: attribute onwebkittransitionend
+PASS Window interface: attribute onwheel
 PASS Window interface: attribute onafterprint
 PASS Window interface: attribute onbeforeprint
 PASS Window interface: attribute onbeforeunload
@@ -5105,9 +5105,9 @@ PASS HTMLFrameSetElement interface: attribute ononline
 PASS HTMLFrameSetElement interface: attribute onpagehide
 PASS HTMLFrameSetElement interface: attribute onpageshow
 PASS HTMLFrameSetElement interface: attribute onpopstate
-FAIL HTMLFrameSetElement interface: attribute onrejectionhandled assert_own_property: expected property "onrejectionhandled" missing
+PASS HTMLFrameSetElement interface: attribute onrejectionhandled
 PASS HTMLFrameSetElement interface: attribute onstorage
-FAIL HTMLFrameSetElement interface: attribute onunhandledrejection assert_own_property: expected property "onunhandledrejection" missing
+PASS HTMLFrameSetElement interface: attribute onunhandledrejection
 PASS HTMLFrameSetElement interface: attribute onunload
 PASS HTMLFrameSetElement must be primary interface of document.createElement("frameset")
 PASS Stringification of document.createElement("frameset")
@@ -5255,11 +5255,11 @@ PASS SVGElement interface: attribute ontimeupdate
 PASS SVGElement interface: attribute ontoggle
 PASS SVGElement interface: attribute onvolumechange
 PASS SVGElement interface: attribute onwaiting
-FAIL SVGElement interface: attribute onwebkitanimationend assert_own_property: expected property "onwebkitanimationend" missing
-FAIL SVGElement interface: attribute onwebkitanimationiteration assert_own_property: expected property "onwebkitanimationiteration" missing
-FAIL SVGElement interface: attribute onwebkitanimationstart assert_own_property: expected property "onwebkitanimationstart" missing
-FAIL SVGElement interface: attribute onwebkittransitionend assert_own_property: expected property "onwebkittransitionend" missing
-FAIL SVGElement interface: attribute onwheel assert_true: property should be enumerable expected true got false
+PASS SVGElement interface: attribute onwebkitanimationend
+PASS SVGElement interface: attribute onwebkitanimationiteration
+PASS SVGElement interface: attribute onwebkitanimationstart
+PASS SVGElement interface: attribute onwebkittransitionend
+PASS SVGElement interface: attribute onwheel
 FAIL SVGElement interface: attribute oncopy assert_own_property: expected property "oncopy" missing
 FAIL SVGElement interface: attribute oncut assert_own_property: expected property "oncut" missing
 FAIL SVGElement interface: attribute onpaste assert_own_property: expected property "onpaste" missing
@@ -5281,9 +5281,9 @@ FAIL SVGSVGElement interface: attribute ononline assert_true: The prototype obje
 FAIL SVGSVGElement interface: attribute onpagehide assert_true: The prototype object must have a property "onpagehide" expected true got false
 FAIL SVGSVGElement interface: attribute onpageshow assert_true: The prototype object must have a property "onpageshow" expected true got false
 FAIL SVGSVGElement interface: attribute onpopstate assert_true: The prototype object must have a property "onpopstate" expected true got false
-FAIL SVGSVGElement interface: attribute onrejectionhandled assert_own_property: expected property "onrejectionhandled" missing
+FAIL SVGSVGElement interface: attribute onrejectionhandled assert_true: The prototype object must have a property "onrejectionhandled" expected true got false
 FAIL SVGSVGElement interface: attribute onstorage assert_true: The prototype object must have a property "onstorage" expected true got false
-FAIL SVGSVGElement interface: attribute onunhandledrejection assert_own_property: expected property "onunhandledrejection" missing
+FAIL SVGSVGElement interface: attribute onunhandledrejection assert_true: The prototype object must have a property "onunhandledrejection" expected true got false
 FAIL SVGSVGElement interface: attribute onunload assert_true: The prototype object must have a property "onunload" expected true got false
 PASS Document interface: attribute domain
 PASS Document interface: attribute referrer
@@ -5392,11 +5392,11 @@ PASS Document interface: attribute ontimeupdate
 PASS Document interface: attribute ontoggle
 PASS Document interface: attribute onvolumechange
 PASS Document interface: attribute onwaiting
-FAIL Document interface: attribute onwebkitanimationend assert_true: property should be enumerable expected true got false
-FAIL Document interface: attribute onwebkitanimationiteration assert_true: property should be enumerable expected true got false
-FAIL Document interface: attribute onwebkitanimationstart assert_true: property should be enumerable expected true got false
-FAIL Document interface: attribute onwebkittransitionend assert_true: property should be enumerable expected true got false
-FAIL Document interface: attribute onwheel assert_true: property should be enumerable expected true got false
+PASS Document interface: attribute onwebkitanimationend
+PASS Document interface: attribute onwebkitanimationiteration
+PASS Document interface: attribute onwebkitanimationstart
+PASS Document interface: attribute onwebkittransitionend
+PASS Document interface: attribute onwheel
 PASS Document interface: attribute oncopy
 PASS Document interface: attribute oncut
 PASS Document interface: attribute onpaste

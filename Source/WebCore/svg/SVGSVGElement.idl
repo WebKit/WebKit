@@ -74,3 +74,4 @@
 
 SVGSVGElement includes SVGFitToViewBox;
 SVGSVGElement includes SVGZoomAndPan;
+// SVGSVGElement includes WindowEventHandlers;
