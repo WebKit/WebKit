@@ -1,3 +1,15 @@
+2020-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Adjuster::computeEventListenerRegionTypes() should use ENABLE(WHEEL_EVENT_REGIONS) not a platform #ifdef
+        https://bugs.webkit.org/show_bug.cgi?id=217146
+
+        Reviewed by Tim Horton.
+
+        Use ENABLE(WHEEL_EVENT_REGIONS) instead of !PLATFORM(IOS_FAMILY).
+
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::computeEventListenerRegionTypes):
+
 2020-09-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable <wbr> content

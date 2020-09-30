@@ -204,7 +204,7 @@ void Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle
 
 OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
 {
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(WHEEL_EVENT_REGIONS)
     if (!eventTarget.hasEventListeners())
         return parentTypes;
 
