@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,19 @@
 #include "Capabilities.h"
 #include "CapabilitiesSocket.h"
 
+#include <dlfcn.h>
+
 namespace WebDriver {
 
 void WebDriverService::platformInit()
 {
+    dlopen("PosixWebKit", RTLD_NOW);
 }
 
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String("win");
+    capabilities.platformName = String("playstation");
     capabilities.setWindowRect = true;
     return capabilities;
 }
@@ -48,12 +51,12 @@ bool WebDriverService::platformCompareBrowserVersions(const String& requiredVers
     return true;
 }
 
-bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
+bool WebDriverService::platformValidateCapability(const String&, const RefPtr<JSON::Value>&) const
 {
     return true;
 }
 
-bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
+bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const
 {
     return true;
 }

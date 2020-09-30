@@ -33,13 +33,22 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/SocketConnection.h>
 typedef struct _GSubprocess GSubprocess;
+#elif USE(INSPECTOR_SOCKET_SERVER)
+#include <JavaScriptCore/RemoteInspectorConnectionClient.h>
+#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #endif
 
 namespace WebDriver {
 
 struct ConnectToBrowserAsyncData;
 
-class SessionHost {
+class SessionHost
+#if USE(INSPECTOR_SOCKET_SERVER)
+    : public Inspector::RemoteInspectorConnectionClient
+#endif
+{
     WTF_MAKE_FAST_ALLOCATED(SessionHost);
 public:
     explicit SessionHost(Capabilities&& capabilities)
@@ -48,6 +57,9 @@ public:
     }
     ~SessionHost();
 
+#if USE(INSPECTOR_SOCKET_SERVER)
+    void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
+#endif
     bool isConnected() const;
 
     const String& sessionID() const { return m_sessionID; }
@@ -84,6 +96,17 @@ private:
     void didStartAutomationSession(GVariant*);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
+#elif USE(INSPECTOR_SOCKET_SERVER)
+    HashMap<String, CallHandler>& dispatchMap() override;
+    void didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector::ConnectionID) final;
+    void sendWebInspectorEvent(const String&);
+
+    void receivedSetTargetList(const struct Event&);
+    void receivedSendMessageToFrontend(const struct Event&);
+    void receivedStartAutomationSessionReturn(const struct Event&);
+
+    Optional<Vector<Target>> parseTargetList(const struct Event&);
+    void setTargetList(uint64_t connectionID, Vector<Target>&&);
 #endif
 
     Capabilities m_capabilities;
@@ -99,6 +122,11 @@ private:
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
+#elif USE(INSPECTOR_SOCKET_SERVER)
+    String m_targetIp;
+    uint16_t m_targetPort { 0 };
+    Function<void(bool, Optional<String>)> m_startSessionCompletionHandler;
+    Optional<Inspector::ConnectionID> m_clientID;
 #endif
 };
 

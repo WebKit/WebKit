@@ -1,3 +1,79 @@
+2020-09-30  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation][WinCairo] Enable WebDriver target on PlayStation and client for WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=216908
+
+        Reviewed by Don Olmstead.
+
+        Extend WebDriver client binary to support connection to remote device for both PlayStation
+        and WinCairo. We've implemented a simple web server to accept WebDriver request natively and bypass them
+        to RemoteInspector.
+
+        * Capabilities.h:
+        * HTTPServer.h:
+        * PlatformPlayStation.cmake: Added.
+        * PlatformWin.cmake:
+        * SessionHost.h:
+        (WebDriver::SessionHost::setHostAddress):
+        * WebDriverMain.cpp:
+        (main):
+        (dllLauncherEntryPoint):
+        * WebDriverService.cpp:
+        (WebDriver::printUsageStatement):
+        (WebDriver::WebDriverService::run):
+        (WebDriver::WebDriverService::connectToBrowser):
+        * WebDriverService.h:
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformInit):
+        * playstation/WebDriverServicePlayStation.cpp: Copied from Source\WebDriver\win\WebDriverServiceWin.cpp.
+        (WebDriver::WebDriverService::platformInit):
+        (WebDriver::WebDriverService::platformCapabilities):
+        (WebDriver::WebDriverService::platformCompareBrowserVersions):
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformMatchCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+        (WebDriver::WebDriverService::platformSupportProxyType const):
+        * socket/CapabilitiesSocket.cpp: Copied from Source\WebDriver\socket\SessionHostSocket.cpp.
+        (WebDriver::CapabilitiesSocket::parseCapabilities):
+        * socket/CapabilitiesSocket.h: Copied from Source\WebDriver\socket\HTTPServerSocket.cpp.
+        * socket/HTTPParser.cpp: Added.
+        (WebDriver::HTTPParser::parse):
+        (WebDriver::HTTPParser::handlePhase):
+        (WebDriver::HTTPParser::abortProcess):
+        (WebDriver::HTTPParser::parseFirstLine):
+        (WebDriver::HTTPParser::readLine):
+        (WebDriver::HTTPParser::expectedBodyLength const):
+        * socket/HTTPParser.h: Copied from Source\WebDriver\HTTPServer.h.
+        (WebDriver::HTTPParser::pullMessage):
+        * socket/HTTPServerSocket.cpp:
+        (WebDriver::HTTPServer::listen):
+        (WebDriver::HTTPServer::disconnect):
+        (WebDriver::HTTPServer::doAccept):
+        (WebDriver::HTTPServer::didClose):
+        (WebDriver::HTTPRequestHandler::connect):
+        (WebDriver::HTTPRequestHandler::reset):
+        (WebDriver::HTTPRequestHandler::didReceive):
+        (WebDriver::HTTPRequestHandler::sendResponse):
+        (WebDriver::HTTPRequestHandler::packHTTPMessage const):
+        (WebDriver::HTTPRequestHandler::didClose):
+        * socket/SessionHostSocket.cpp:
+        (WebDriver::SessionHost::dispatchMap):
+        (WebDriver::SessionHost::sendWebInspectorEvent):
+        (WebDriver::SessionHost::connectToBrowser):
+        (WebDriver::SessionHost::isConnected const):
+        (WebDriver::SessionHost::didClose):
+        (WebDriver::SessionHost::parseTargetList):
+        (WebDriver::SessionHost::receivedSetTargetList):
+        (WebDriver::SessionHost::receivedSendMessageToFrontend):
+        (WebDriver::SessionHost::startAutomationSession):
+        (WebDriver::SessionHost::setTargetList):
+        (WebDriver::SessionHost::sendMessageToBackend):
+        * win/WebDriverServiceWin.cpp:
+        (WebDriver::WebDriverService::platformInit):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformInit):
+
 2020-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r266885): WebDriver is broken since r266885

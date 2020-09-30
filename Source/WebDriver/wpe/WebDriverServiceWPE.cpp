@@ -32,6 +32,10 @@
 
 namespace WebDriver {
 
+void WebDriverService::platformInit()
+{
+}
+
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;

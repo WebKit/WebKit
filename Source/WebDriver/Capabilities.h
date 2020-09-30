@@ -83,6 +83,10 @@ struct Capabilities {
 #if PLATFORM(GTK)
     Optional<bool> useOverlayScrollbars;
 #endif
+#if USE(INSPECTOR_SOCKET_SERVER)
+    Optional<String> targetAddr;
+    Optional<int> targetPort;
+#endif
 };
 
 } // namespace WebDriver

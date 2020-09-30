@@ -32,11 +32,22 @@
 #if USE(SOUP)
 #include <wtf/glib/GRefPtr.h>
 typedef struct _SoupServer SoupServer;
+#elif USE(INSPECTOR_SOCKET_SERVER)
+#include "HTTPParser.h"
+#include <JavaScriptCore/RemoteInspectorSocketEndpoint.h>
+
+using Inspector::ConnectionID;
+using Inspector::PlatformSocketType;
+using Inspector::RemoteInspectorSocketEndpoint;
 #endif
 
 namespace WebDriver {
 
-class HTTPRequestHandler {
+class HTTPRequestHandler
+#if USE(INSPECTOR_SOCKET_SERVER)
+: public RemoteInspectorSocketEndpoint::Client
+#endif
+{
 public:
     struct Request {
         String method;
@@ -50,9 +61,30 @@ public:
         String contentType;
     };
     virtual void handleRequest(Request&&, Function<void (Response&&)>&& replyHandler) = 0;
+
+#if USE(INSPECTOR_SOCKET_SERVER)
+    void connect(ConnectionID);
+#endif
+
+private:
+#if USE(INSPECTOR_SOCKET_SERVER)
+    void sendResponse(Response&&);
+    void reset();
+    String packHTTPMessage(Response&&) const;
+
+    void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
+    void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
+
+    Optional<ConnectionID> m_client;
+    HTTPParser m_parser;
+#endif
 };
 
-class HTTPServer {
+class HTTPServer
+#if USE(INSPECTOR_SOCKET_SERVER)
+: public RemoteInspectorSocketEndpoint::Listener
+#endif
+{
 public:
     explicit HTTPServer(HTTPRequestHandler&);
     ~HTTPServer() = default;
@@ -61,10 +93,19 @@ public:
     void disconnect();
 
 private:
+#if USE(INSPECTOR_SOCKET_SERVER)
+    Optional<ConnectionID> doAccept(RemoteInspectorSocketEndpoint&, PlatformSocketType) final;
+    void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;
+#endif
+
     HTTPRequestHandler& m_requestHandler;
 
 #if USE(SOUP)
     GRefPtr<SoupServer> m_soupServer;
+#endif
+
+#if USE(INSPECTOR_SOCKET_SERVER)
+    Optional<ConnectionID> m_server;
 #endif
 };
 

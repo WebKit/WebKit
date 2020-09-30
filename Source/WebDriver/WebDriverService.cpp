@@ -45,16 +45,23 @@ WebDriverService::WebDriverService()
 static void printUsageStatement(const char* programName)
 {
     printf("Usage: %s options\n", programName);
-    printf("  -h,        --help         Prints this help message\n");
-    printf("  -p <port>, --port=<port>  Port number the driver will use\n");
-    printf("             --host=<host>  Host IP the driver will use, or either 'local' or 'all' (default: 'local')");
-    printf("\n");
+    printf("  -h,          --help             Prints this help message\n");
+    printf("  -p <port>,   --port=<port>      Port number the driver will use\n");
+    printf("               --host=<host>      Host IP the driver will use, or either 'local' or 'all' (default: 'local')\n");
+#if USE(INSPECTOR_SOCKET_SERVER)
+    printf("  -t <ip:port> --target=<ip:port> [WinCairo] Target IP and port\n");
+#endif
 }
 
 int WebDriverService::run(int argc, char** argv)
 {
     String portString;
     Optional<String> host;
+#if USE(INSPECTOR_SOCKET_SERVER)
+    String targetString;
+    if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
+        targetString = targetEnvVar;
+#endif
     for (int i = 1 ; i < argc; ++i) {
         const char* arg = argv[i];
         if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
@@ -82,12 +89,39 @@ int WebDriverService::run(int argc, char** argv)
             host = String(arg + hostStrLength);
             continue;
         }
+
+#if USE(INSPECTOR_SOCKET_SERVER)
+        if (!strcmp(arg, "-t") && targetString.isNull()) {
+            if (++i == argc) {
+                printUsageStatement(argv[0]);
+                return EXIT_FAILURE;
+            }
+            targetString = argv[i];
+            continue;
+        }
+
+        static const unsigned targetStrLength = strlen("--target=");
+        if (!strncmp(arg, "--target=", targetStrLength) && targetString.isNull()) {
+            targetString = String(arg + targetStrLength);
+            continue;
+        }
+#endif
     }
 
     if (portString.isNull()) {
         printUsageStatement(argv[0]);
         return EXIT_FAILURE;
     }
+
+#if USE(INSPECTOR_SOCKET_SERVER)
+    if (!targetString.isEmpty()) {
+        auto position = targetString.reverseFind(":"_s);
+        if (position != notFound) {
+            m_targetAddress = targetString.left(position);
+            m_targetPort = targetString.substring(position + 1).toUInt(nullptr);
+        }
+    }
+#endif
 
     bool ok;
     unsigned port = portString.toUInt(&ok);
@@ -788,6 +822,9 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
 
     auto sessionHost = makeUnique<SessionHost>(capabilitiesList.takeLast());
     auto* sessionHostPtr = sessionHost.get();
+#if USE(INSPECTOR_SOCKET_SERVER)
+    sessionHostPtr->setHostAddress(m_targetAddress, m_targetPort);
+#endif
     sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](Optional<String> error) mutable {
         if (error) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: ", error.value())));

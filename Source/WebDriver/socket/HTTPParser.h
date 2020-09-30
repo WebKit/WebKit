@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebDriverService.h"
+#pragma once
 
-#include "Capabilities.h"
-#include "CapabilitiesSocket.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebDriver {
 
-void WebDriverService::platformInit()
-{
-}
+class HTTPParser {
+public:
+    struct Message {
+        String path;
+        String method;
+        String version;
+        Vector<String> requestHeaders;
+        Vector<uint8_t> requestBody;
+    };
 
-Capabilities WebDriverService::platformCapabilities()
-{
-    Capabilities capabilities;
-    capabilities.platformName = String("win");
-    capabilities.setWindowRect = true;
-    return capabilities;
-}
+    enum class Phase {
+        Idle,
+        Header,
+        Body,
+        Complete,
+        Error,
+    };
 
-bool WebDriverService::platformCompareBrowserVersions(const String& requiredVersion, const String& proposedVersion)
-{
-    return true;
-}
+    enum class Process {
+        Suspend,
+        Continue,
+    };
 
-bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
-{
-    return true;
-}
+    Phase parse(Vector<uint8_t>&&);
+    Message pullMessage() { return m_message; }
 
-bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
-{
-    return true;
-}
+private:
+    Process handlePhase();
+    Process abortProcess(const char* message = nullptr);
+    bool parseFirstLine(String&& line);
+    bool readLine(String& line);
+    size_t expectedBodyLength() const;
 
-void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
-{
-    CapabilitiesSocket::parseCapabilities(matchedCapabilities, capabilities);
-}
+    Phase m_phase { Phase::Idle };
+    Message m_message;
+    size_t m_bodyLength { 0 };
 
-bool WebDriverService::platformSupportProxyType(const String&) const
-{
-    return false;
-}
+    Vector<uint8_t> m_buffer;
+};
 
 } // namespace WebDriver

@@ -31,8 +31,17 @@
 
 int main(int argc, char** argv)
 {
+    WebDriver::WebDriverService::platformInit();
+
     WTF::initializeMainThread();
 
     WebDriver::WebDriverService service;
     return service.run(argc, argv);
 }
+
+#if OS(WINDOWS)
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
+{
+    return main(argc, const_cast<char**>(argv));
+}
+#endif

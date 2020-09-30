@@ -45,6 +45,7 @@ public:
 
     int run(int argc, char** argv);
 
+    static void platformInit();
     static bool platformCompareBrowserVersions(const String&, const String&);
 
 private:
@@ -136,6 +137,11 @@ private:
 
     HTTPServer m_server;
     RefPtr<Session> m_session;
+
+#if USE(INSPECTOR_SOCKET_SERVER)
+    String m_targetAddress;
+    uint16_t m_targetPort { 0 };
+#endif
 };
 
 } // namespace WebDriver

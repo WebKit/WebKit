@@ -1,3 +1,21 @@
+2020-09-30  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation][WinCairo] Enable WebDriver target on PlayStation and client for WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=216908
+
+        Reviewed by Don Olmstead.
+
+        Implement automation session correctly for PlayStation and WinCairo.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::parseTargetListJSON):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::requestAutomationSession):
+        (Inspector::RemoteInspector::startAutomationSession):
+
 2020-09-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r267795.

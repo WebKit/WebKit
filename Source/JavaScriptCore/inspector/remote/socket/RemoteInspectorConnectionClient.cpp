@@ -119,6 +119,26 @@ Optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient
     return event;
 }
 
+Optional<Vector<Ref<JSON::Object>>> RemoteInspectorConnectionClient::parseTargetListJSON(const String& message)
+{
+    auto messageValue = JSON::Value::parseJSON(message);
+    if (!messageValue)
+        return WTF::nullopt;
+
+    auto messageArray = messageValue->asArray();
+    if (!messageArray)
+        return WTF::nullopt;
+
+    Vector<Ref<JSON::Object>> targetList;
+    for (auto& itemValue : *messageArray) {
+        if (auto itemObject = itemValue->asObject())
+            targetList.append(itemObject.releaseNonNull());
+        else
+            LOG_ERROR("Invalid type of value in targetList. It must be object.");
+    }
+    return targetList;
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)

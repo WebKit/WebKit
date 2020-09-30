@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebDriverService.h"
+#pragma once
 
 #include "Capabilities.h"
-#include "CapabilitiesSocket.h"
+#include <wtf/JSONValues.h>
 
 namespace WebDriver {
 
-void WebDriverService::platformInit()
-{
-}
-
-Capabilities WebDriverService::platformCapabilities()
-{
-    Capabilities capabilities;
-    capabilities.platformName = String("win");
-    capabilities.setWindowRect = true;
-    return capabilities;
-}
-
-bool WebDriverService::platformCompareBrowserVersions(const String& requiredVersion, const String& proposedVersion)
-{
-    return true;
-}
-
-bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
-{
-    return true;
-}
-
-bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Value>&) const
-{
-    return true;
-}
-
-void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
-{
-    CapabilitiesSocket::parseCapabilities(matchedCapabilities, capabilities);
-}
-
-bool WebDriverService::platformSupportProxyType(const String&) const
-{
-    return false;
-}
+class CapabilitiesSocket {
+public:
+    static void parseCapabilities(const JSON::Object&, Capabilities&);
+};
 
 } // namespace WebDriver
