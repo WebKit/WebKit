@@ -27,44 +27,32 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include <wtf/IsoMalloc.h>
+#include "DisplayBox.h"
+#include "InlineLineRun.h"
 
 namespace WebCore {
-
-namespace Layout {
-class Box;
-class BoxGeometry;
-class LayoutState;
-}
-
 namespace Display {
 
-class Box;
-class ContainerBox;
-class Tree;
-
-class TreeBuilder {
+class TextBox : public Box {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextBox);
 public:
-    explicit TreeBuilder(float pixelSnappingFactor);
 
-    std::unique_ptr<Tree> build(const Layout::LayoutState&) const;
+    TextBox(AbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
+
+    Layout::LineRun::Expansion expansion() const { return m_expansion; }
+    Optional<Layout::LineRun::Text> text() const {return m_text; }
 
 private:
-    std::unique_ptr<Box> displayBoxForRootBox(const Layout::BoxGeometry&, const Layout::ContainerBox&) const;
-    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::BoxGeometry&, const Layout::Box&, LayoutSize offsetFromRoot) const;
 
-    Box* recursiveBuildDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::Box&, Display::ContainerBox& parentDisplayBox, Display::Box* previousSiblingBox = nullptr) const;
-
-    void buildInlineDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::ContainerBox&, Display::ContainerBox& parentDisplayBox) const;
-
-    float m_pixelSnappingFactor { 1 };
+    String debugDescription() const final;
+    
+    Layout::LineRun::Expansion m_expansion;
+    Optional<Layout::LineRun::Text> m_text;
 };
-
-#if ENABLE(TREE_DEBUGGING)
-void showDisplayTree(const Box&);
-#endif
 
 } // namespace Display
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(TextBox, isTextBox())
 
 #endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

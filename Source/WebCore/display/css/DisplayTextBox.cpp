@@ -23,46 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DisplayTextBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include <wtf/IsoMalloc.h>
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
-namespace Layout {
-class Box;
-class BoxGeometry;
-class LayoutState;
-}
-
 namespace Display {
 
-class Box;
-class ContainerBox;
-class Tree;
+TextBox::TextBox(AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
+    : Box(borderBox, WTFMove(displayStyle), { Flags::TextBox })
+    , m_expansion(lineRun.expansion())
+    , m_text(lineRun.text())
+{
+}
 
-class TreeBuilder {
-public:
-    explicit TreeBuilder(float pixelSnappingFactor);
+String TextBox::debugDescription() const
+{
+    TextStream stream;
 
-    std::unique_ptr<Tree> build(const Layout::LayoutState&) const;
+    stream << "text box " << borderBoxFrame() << " (" << this << ")";
+    auto textContent = text()->content().substring(text()->start(), text()->length());
+    textContent.replaceWithLiteral('\\', "\\\\");
+    textContent.replaceWithLiteral('\n', "\\n");
+    const size_t maxPrintedLength = 80;
+    if (textContent.length() > maxPrintedLength) {
+        auto substring = textContent.substring(0, maxPrintedLength);
+        stream << " \"" << substring << "\"…";
+    } else
+        stream << " \"" << textContent << "\"";
 
-private:
-    std::unique_ptr<Box> displayBoxForRootBox(const Layout::BoxGeometry&, const Layout::ContainerBox&) const;
-    std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::BoxGeometry&, const Layout::Box&, LayoutSize offsetFromRoot) const;
-
-    Box* recursiveBuildDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::Box&, Display::ContainerBox& parentDisplayBox, Display::Box* previousSiblingBox = nullptr) const;
-
-    void buildInlineDisplayTree(const Layout::LayoutState&, LayoutSize offsetFromRoot, const Layout::ContainerBox&, Display::ContainerBox& parentDisplayBox) const;
-
-    float m_pixelSnappingFactor { 1 };
-};
-
-#if ENABLE(TREE_DEBUGGING)
-void showDisplayTree(const Box&);
-#endif
+    return stream.release();
+}
 
 } // namespace Display
 } // namespace WebCore

@@ -31,7 +31,9 @@
 #include "DisplayContainerBox.h"
 #include "DisplayImageBox.h"
 #include "DisplayStyle.h"
+#include "DisplayTextBox.h"
 #include "DisplayTree.h"
+#include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
@@ -80,7 +82,36 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
     return makeUnique<Tree>(WTFMove(rootDisplayContainerBox));
 }
 
-Box* TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::Box& box, Display::ContainerBox& parentDisplayBox, Display::Box* previousSiblingBox) const
+void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::ContainerBox& inlineFormattingRoot, ContainerBox& parentDisplayBox) const
+{
+    auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
+
+    Box* previousSiblingBox = nullptr;
+
+    for (auto& run : inlineFormattingState.lineRuns()) {
+        auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
+
+        auto lineRect = lineGeometry.logicalRect();
+        auto lineLayoutRect = LayoutRect { lineRect.left(), lineRect.top(), lineRect.width(), lineRect.height() };
+
+        auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };
+        runRect.moveBy(lineLayoutRect.location());
+        runRect.move(offsetFromRoot);
+
+        auto style = Style { run.layoutBox().style() };
+        auto textBox = makeUnique<TextBox>(snapRectToDevicePixels(runRect, m_pixelSnappingFactor), WTFMove(style), run);
+        auto textBoxPtr = textBox.get();
+
+        if (previousSiblingBox)
+            previousSiblingBox->setNextSibling(WTFMove(textBox));
+        else
+            parentDisplayBox.setFirstChild(WTFMove(textBox));
+
+        previousSiblingBox = textBoxPtr;
+    }
+}
+
+Box* TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutState, LayoutSize offsetFromRoot, const Layout::Box& box, ContainerBox& parentDisplayBox, Box* previousSiblingBox) const
 {
     auto geometry = layoutState.geometryForBox(box);
     auto displayBox = displayBoxForLayoutBox(geometry, box, offsetFromRoot);
@@ -104,12 +135,15 @@ Box* TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
 
     auto& displayContainerBox = downcast<ContainerBox>(*result);
 
+    if (layoutContainerBox.establishesInlineFormattingContext()) {
+        buildInlineDisplayTree(layoutState, offsetFromRoot, downcast<Layout::ContainerBox>(layoutContainerBox), displayContainerBox);
+        return result;
+    }
+
     Display::Box* currSiblingDisplayBox = nullptr;
     for (auto& child : Layout::childrenOfType<Layout::Box>(layoutContainerBox)) {
-        if (!layoutState.hasBoxGeometry(child))
-            continue;
-
-        currSiblingDisplayBox = recursiveBuildDisplayTree(layoutState, offsetFromRoot, child, displayContainerBox, currSiblingDisplayBox);
+        if (layoutState.hasBoxGeometry(child))
+            currSiblingDisplayBox = recursiveBuildDisplayTree(layoutState, offsetFromRoot, child, displayContainerBox, currSiblingDisplayBox);
     }
 
     return result;
@@ -167,7 +201,7 @@ static void outputDisplayBox(TextStream& stream, const Box& displayBox, unsigned
     stream.writeIndent();
 
     stream << displayBox.debugDescription();
-    stream.nextLine();
+    stream << "\n";
 }
 
 static void outputDisplayTree(TextStream& stream, const Box& displayBox, unsigned depth)

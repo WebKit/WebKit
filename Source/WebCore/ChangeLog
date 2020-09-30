@@ -1,3 +1,44 @@
+2020-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        [LFC Display] Basic text display
+        https://bugs.webkit.org/show_bug.cgi?id=217120
+
+        Reviewed by Zalan Bujtas.
+
+        Add basic text painting to LFC display. Display::TextBox() represents a run of text.
+        Display::TreeBuilder gains code to build the inline tree by traversing runs, and
+        CSSPainter gets the ability to paint text boxes.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/DisplayTreeBuilder.cpp:
+        (WebCore::Display::TreeBuilder::buildInlineDisplayTree const):
+        (WebCore::Display::TreeBuilder::recursiveBuildDisplayTree const):
+        (WebCore::Display::outputDisplayBox):
+        * display/DisplayTreeBuilder.h:
+        * display/css/DisplayBox.h:
+        (WebCore::Display::Box::isTextBox const):
+        * display/css/DisplayCSSPainter.cpp:
+        (WebCore::Display::CSSPainter::paintBoxContent):
+        * display/css/DisplayStyle.cpp:
+        (WebCore::Display::Style::Style):
+        (WebCore::Display::Style::autoWrap const):
+        (WebCore::Display::Style::preserveNewline const):
+        (WebCore::Display::Style::collapseWhiteSpace const):
+        * display/css/DisplayStyle.h:
+        (WebCore::Display::Style::color const):
+        (WebCore::Display::Style::fontCascade const):
+        (WebCore::Display::Style::fontMetrics const):
+        (WebCore::Display::Style::whiteSpace const):
+        (WebCore::Display::Style::tabSize const):
+        * display/css/DisplayTextBox.cpp: Copied from Source/WebCore/display/DisplayTreeBuilder.h.
+        (WebCore::Display::TextBox::TextBox):
+        (WebCore::Display::m_text):
+        (WebCore::Display::TextBox::debugDescription const):
+        * display/css/DisplayTextBox.h: Copied from Source/WebCore/display/DisplayTreeBuilder.h.
+        (WebCore::Display::TextBox::expansion const):
+        (WebCore::Display::TextBox::text const):
+
 2020-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         We should avoid making connections to the GPU Process during garbage collection

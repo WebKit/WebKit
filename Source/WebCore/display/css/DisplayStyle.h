@@ -29,7 +29,10 @@
 
 #include "BorderValue.h"
 #include "Color.h"
+#include "FontCascade.h"
 #include "NinePieceImage.h"
+#include "RenderStyleConstants.h"
+#include "TabSize.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
@@ -54,7 +57,9 @@ public:
     };
 
     explicit Style(const RenderStyle&);
-    
+
+    const Color& color() const { return m_color; }
+
     const Color& backgroundColor() const { return m_backgroundColor; }
     bool hasBackground() const;
     bool hasBackgroundImage() const { return false; } // FIXME
@@ -73,10 +78,21 @@ public:
 
     bool participatesInZOrderSorting() const { return isPositioned() || isStackingContext(); }
 
+    const FontCascade& fontCascade() const { return m_fontCascade; }
+    const FontMetrics& fontMetrics() const { return m_fontCascade.fontMetrics(); }
+
+    WhiteSpace whiteSpace() const { return m_whiteSpace; }
+    bool autoWrap() const;
+    bool preserveNewline() const;
+    bool collapseWhiteSpace() const;
+
+    const TabSize& tabSize() const { return m_tabSize; }
+
 private:
     void setIsPositioned(bool value) { m_flags.set({ Flags::Positioned }, value); }
     void setIsFloating(bool value) { m_flags.set({ Flags::Floating }, value); }
 
+    Color m_color;
     Color m_backgroundColor;
 
     struct {
@@ -87,6 +103,10 @@ private:
 
         NinePieceImage image;
     } m_border;
+
+    FontCascade m_fontCascade;
+    WhiteSpace m_whiteSpace;
+    TabSize m_tabSize;
 
     Optional<int> m_zIndex;
     OptionSet<Flags> m_flags;

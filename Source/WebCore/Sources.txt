@@ -803,6 +803,7 @@ display/css/DisplayCSSPainter.cpp
 display/css/DisplayImageBox.cpp
 display/css/DisplayReplacedBox.cpp
 display/css/DisplayStyle.cpp
+display/css/DisplayTextBox.cpp
 display/DisplayLayerController.cpp
 display/DisplayTree.cpp
 display/DisplayTreeBuilder.cpp

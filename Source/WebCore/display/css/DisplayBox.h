@@ -44,6 +44,7 @@ public:
     enum class Flags : uint8_t {
         ContainerBox    = 1 << 0,
         ImageBox        = 1 << 1,
+        TextBox         = 1 << 2,
     };
 
     Box(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags> = { });
@@ -56,6 +57,7 @@ public:
     bool isContainerBox() const { return m_flags.contains(Flags::ContainerBox); }
     bool isImageBox() const { return m_flags.contains(Flags::ImageBox); }
     bool isReplacedBox() const { return m_flags.contains(Flags::ImageBox); /* and other types later. */ }
+    bool isTextBox() const { return m_flags.contains(Flags::TextBox); }
 
     const Box* nextSibling() const { return m_nextSibling.get(); }
     void setNextSibling(std::unique_ptr<Box>&&);

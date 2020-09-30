@@ -36,7 +36,13 @@ namespace WebCore {
 namespace Display {
 
 Style::Style(const RenderStyle& style)
+    : m_fontCascade(style.fontCascade())
+    , m_whiteSpace(style.whiteSpace())
+    , m_tabSize(style.tabSize())
 {
+    // FIXME: Is currentColor resovled here?
+    m_color = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
+
     m_backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 
     const auto& borderData = style.border();
@@ -70,6 +76,21 @@ bool Style::hasVisibleBorder() const
 {
     bool haveImage = m_border.image.hasImage();
     return m_border.left.isVisible(!haveImage) || m_border.right.isVisible(!haveImage) || m_border.top.isVisible(!haveImage) || m_border.bottom.isVisible(!haveImage);
+}
+
+bool Style::autoWrap() const
+{
+    return RenderStyle::autoWrap(whiteSpace());
+}
+
+bool Style::preserveNewline() const
+{
+    return RenderStyle::preserveNewline(whiteSpace());
+}
+
+bool Style::collapseWhiteSpace() const
+{
+    return RenderStyle::collapseWhiteSpace(whiteSpace());
 }
 
 } // namespace Display

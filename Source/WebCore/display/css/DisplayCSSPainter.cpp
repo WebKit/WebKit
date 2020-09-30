@@ -33,10 +33,12 @@
 #include "DisplayContainerBox.h"
 #include "DisplayImageBox.h"
 #include "DisplayStyle.h"
+#include "DisplayTextBox.h"
 #include "DisplayTree.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LayoutState.h"
+#include "TextRun.h"
 
 namespace WebCore {
 namespace Display {
@@ -113,6 +115,30 @@ void CSSPainter::paintBoxContent(const Box& box, GraphicsContext& context)
 
         if (image)
             context.drawImage(*image, imageRect);
+
+        return;
+    }
+    
+    if (is<TextBox>(box)) {
+        auto& textBox = downcast<TextBox>(box);
+        if (!textBox.text())
+            return;
+
+        auto& style = box.style();
+        auto textRect = box.borderBoxFrame();
+
+        context.setStrokeColor(style.color());
+        context.setFillColor(style.color());
+
+        // FIXME: Add non-baseline align painting
+        auto baseline = textRect.y() + style.fontMetrics().ascent();
+        auto expansion = textBox.expansion();
+
+        auto textRun = TextRun { textBox.text()->content().substring(textBox.text()->start(), textBox.text()->length()), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        context.drawText(style.fontCascade(), textRun, { textRect.x(), baseline });
+        
+        return;
     }
 }
 
