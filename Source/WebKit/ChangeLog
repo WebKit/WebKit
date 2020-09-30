@@ -1,3 +1,23 @@
+2020-09-30  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r265009): Web Share API can no longer be invoked if a previous invocation was dismissed using the close button
+        https://bugs.webkit.org/show_bug.cgi?id=216913
+        <rdar://problem/69659878>
+
+        Reviewed by Darin Adler.
+
+        No new tests; not able to test without UI tests that actually use UIActivityViewController.
+
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithShareDataArray:inRect:]):
+        -presentationControllerDidDismiss is not called if the UIActivityViewController is
+        programmatically dismissed, so we need to revert to observing completion via
+        UIActivityViewController's -completionWithItemsHandler.
+
+        In order to avoid regressing bug 214894 by doing so, we also need to 
+        make sure that we're actually not presented anymore, as -completionWithItemsHandler
+        can be called multiple times before the share sheet is actually dismissed.
+
 2020-09-30  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support isTypeSupported
