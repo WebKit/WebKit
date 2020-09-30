@@ -119,6 +119,8 @@ public:
     
     bool needsAkamaiMediaPlayerQuirk(const HTMLVideoElement&) const;
 
+    bool needsBlackFullscreenBackgroundQuirk() const;
+
 private:
     bool needsQuirks() const;
 
@@ -149,6 +151,7 @@ private:
     mutable Optional<bool> m_shouldBypassAsyncScriptDeferring;
     mutable Optional<bool> m_needsVP9FullRangeFlagQuirk;
     mutable Optional<bool> m_needsHDRPixelDepthQuirk;
+    mutable Optional<bool> m_needsBlackFullscreenBackgroundQuirk;
 };
 
 }

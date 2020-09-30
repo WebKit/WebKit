@@ -1,3 +1,19 @@
+2020-09-29  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen mode on mlb.com shows white letterboxing when video aspect ratio does not match screen
+        https://bugs.webkit.org/show_bug.cgi?id=217060
+        <rdar://problem/68936043>
+
+        Reviewed by Darin Adler.
+
+        Add a Quirk which sets the background color of fullscreen elements on mlb.com to black.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsBlackFullscreenBackgroundQuirk const):
+        * page/Quirks.h:
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::ensureDefaultStyleSheetsForElement):
+
 2020-09-29  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Use VideoLayerManager to manage layers of MediaPlayerPrivateRemote

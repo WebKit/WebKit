@@ -289,6 +289,8 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         StringBuilder fullscreenRules;
         fullscreenRules.appendCharacters(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet));
         fullscreenRules.append(RenderTheme::singleton().extraFullScreenStyleSheet());
+        if (element.document().quirks().needsBlackFullscreenBackgroundQuirk())
+            fullscreenRules.append(":-webkit-full-screen { background-color: black; }"_s);
         fullscreenStyleSheet = parseUASheet(fullscreenRules.toString());
         addToDefaultStyle(*fullscreenStyleSheet);
     }

@@ -1071,4 +1071,19 @@ bool Quirks::needsAkamaiMediaPlayerQuirk(const HTMLVideoElement& element) const
 #endif
 }
 
+bool Quirks::needsBlackFullscreenBackgroundQuirk() const
+{
+    // MLB.com sets a black background-color on the :backdrop pseudo element, which WebKit does not yet support. This
+    // quirk can be removed once support for :backdrop psedue element is added.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsBlackFullscreenBackgroundQuirk) {
+        auto host = m_document->topDocument().url().host();
+        m_needsBlackFullscreenBackgroundQuirk = equalLettersIgnoringASCIICase(host, "mlb.com") || host.endsWithIgnoringASCIICase(".mlb.com");
+    }
+
+    return *m_needsBlackFullscreenBackgroundQuirk;
+}
+
 }
