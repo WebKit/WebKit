@@ -1281,6 +1281,7 @@ void WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const
     if (!urlScheme)
         return;
 
+    InitializeWebKit2();
     globalURLSchemesWithCustomProtocolHandlers().add(urlScheme);
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
         networkProcess->registerSchemeForLegacyCustomProtocol(urlScheme);
@@ -1291,6 +1292,7 @@ void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(con
     if (!urlScheme)
         return;
 
+    InitializeWebKit2();
     globalURLSchemesWithCustomProtocolHandlers().remove(urlScheme);
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
         networkProcess->unregisterSchemeForLegacyCustomProtocol(urlScheme);

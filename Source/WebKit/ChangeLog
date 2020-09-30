@@ -1,3 +1,20 @@
+2020-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION[267763] RELEASE_ASSERT in allNetworkProcesses hit when registering legacy protocol handlers before instantiating any WebKit objects
+        https://bugs.webkit.org/show_bug.cgi?id=217142
+        <rdar://problem/69778879>
+
+        Reviewed by Brady Eidson.
+
+        RELEASE_ASSERT(RunLoop::isMain()) was crashing because WTF::initializeMainThread hadn't been called.
+        This wasn't a problem before r267763 because the assertion did not exist.  Rather than remove the assertion (which I think is important to have)
+        let's just initialize WebKit threading at these SPI entry points.
+        This unfortunately can't be tested with our current infrastructure because TestsController's constructor calls initializeMainThread.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        (WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers):
+
 2020-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r267788.
