@@ -134,3 +134,5 @@ webkit.org/b/215216 imported/w3c/web-platform-tests/svg/import/interact-zoom-01-
 webkit.org/b/215608 [ Release ] imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm [ Pass Timeout ]
 
 webkit.org/b/215676 [ Release ] http/tests/security/contentSecurityPolicy/worker-redirect-allowed.html [ Pass ]
+
+webkit.org/b/217114 [ Release ] compositing/debug-borders-dynamic.html [ Pass ImageOnlyFailure ]

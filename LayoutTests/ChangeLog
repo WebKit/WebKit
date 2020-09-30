@@ -1,3 +1,12 @@
+2020-09-29  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: [ iOS release wk2 ] compositing/debug-borders-dynamic.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=217114
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-09-29  Keith Miller  <keith_miller@apple.com>
 
         CSS serialization expects comments between certain tokens
