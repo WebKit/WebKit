@@ -33,10 +33,15 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLBlitCommandEncoder);
 OBJC_PROTOCOL(MTLCommandBuffer);
+#endif
 
 namespace WebCore {
 
@@ -44,8 +49,10 @@ class GPUDevice;
 
 struct GPUExtent3D;
 
+#if USE(METAL)
 using PlatformCommandBuffer = MTLCommandBuffer;
 using PlatformCommandBufferSmartPtr = RetainPtr<MTLCommandBuffer>;
+#endif
 
 struct GPUBufferCopyViewBase {
     uint64_t offset;

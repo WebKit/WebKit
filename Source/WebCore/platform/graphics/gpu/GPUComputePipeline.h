@@ -29,12 +29,20 @@
 
 #include "GPUPipeline.h"
 #include "GPUProgrammableStageDescriptor.h"
-#include "WHLSLPrepare.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
+#if ENABLE(WHLSL_COMPILER)
+#include "WHLSLPrepare.h"
+#endif
+
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLComputePipelineState);
+#endif
 
 namespace WebCore {
 
@@ -44,8 +52,10 @@ class GPUPipelineLayout;
 
 struct GPUComputePipelineDescriptor;
 
+#if USE(METAL)
 using PlatformComputePipeline = MTLComputePipelineState;
 using PlatformComputePipelineSmartPtr = RetainPtr<MTLComputePipelineState>;
+#endif
 
 class GPUComputePipeline final : public GPUPipeline {
 public:
@@ -59,13 +69,19 @@ public:
 
     const PlatformComputePipeline* platformComputePipeline() const { return m_platformComputePipeline.get(); }
 
+#if ENABLE(WHLSL_COMPILER)
     WHLSL::ComputeDimensions computeDimensions() const { return m_computeDimensions; }
+#endif
 
 private:
+#if ENABLE(WHLSL_COMPILER)
     GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions, const RefPtr<GPUPipelineLayout>&);
+#endif
 
     PlatformComputePipelineSmartPtr m_platformComputePipeline;
+#if ENABLE(WHLSL_COMPILER)
     WHLSL::ComputeDimensions m_computeDimensions { 0, 0, 0 };
+#endif
 
     // Preserved for Web Inspector recompilation.
     RefPtr<GPUPipelineLayout> m_layout;

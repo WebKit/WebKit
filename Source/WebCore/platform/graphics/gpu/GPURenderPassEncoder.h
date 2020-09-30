@@ -32,10 +32,15 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLRenderCommandEncoder);
+#endif
 
 namespace WebCore {
 
@@ -45,8 +50,10 @@ class GPUCommandBuffer;
 struct GPUColor;
 struct GPURenderPassDescriptor;
 
+#if USE(METAL)
 using PlatformRenderPassEncoder = MTLRenderCommandEncoder;
 using PlatformRenderPassEncoderSmartPtr = RetainPtr<MTLRenderCommandEncoder>;
+#endif
 
 class GPURenderPassEncoder : public GPUProgrammablePassEncoder {
 public:

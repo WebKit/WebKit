@@ -28,13 +28,27 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUTexture.h"
+#include "PlatformLayer.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
-OBJC_CLASS CALayer;
+// PlatformLayer implementation needed otherwise compiling derived sources will fail.
+#if USE(NICOSIA)
+#include "NicosiaPlatformLayer.h"
+#elif USE(COORDINATED_GRAPHICS)
+#include "TextureMapperPlatformLayerProxyProvider.h"
+#elif USE(TEXTURE_MAPPER)
+#include "TextureMapperPlatformLayer.h"
+#endif
+
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_CLASS CAMetalDrawable;
 OBJC_CLASS WebGPULayer;
+#endif
 
 namespace WebCore {
 
@@ -44,9 +58,10 @@ struct GPUSwapChainDescriptor;
 
 enum class GPUTextureFormat;
 
+#if USE(METAL)
 using PlatformDrawableSmartPtr = RetainPtr<CAMetalDrawable>;
-using PlatformLayer = CALayer;
 using PlatformSwapLayerSmartPtr = RetainPtr<WebGPULayer>;
+#endif
 
 class GPUSwapChain : public RefCounted<GPUSwapChain> {
 public:

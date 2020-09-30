@@ -29,9 +29,14 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLSamplerState);
+#endif
 
 namespace WebCore {
 
@@ -39,8 +44,10 @@ class GPUDevice;
 
 struct GPUSamplerDescriptor;
 
+#if USE(METAL)
 using PlatformSampler = MTLSamplerState;
 using PlatformSamplerSmartPtr = RetainPtr<MTLSamplerState>;
+#endif
 
 class GPUSampler : public RefCounted<GPUSampler> {
 public:

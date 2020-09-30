@@ -30,9 +30,14 @@
 #include "WHLSLPrepare.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLLibrary);
+#endif
 
 namespace WebCore {
 
@@ -40,22 +45,30 @@ class GPUDevice;
 
 struct GPUShaderModuleDescriptor;
 
+#if USE(METAL)
 using PlatformShaderModule = MTLLibrary;
 using PlatformShaderModuleSmartPtr = RetainPtr<MTLLibrary>;
+#endif
 
 class GPUShaderModule : public RefCounted<GPUShaderModule> {
 public:
     static RefPtr<GPUShaderModule> tryCreate(const GPUDevice&, const GPUShaderModuleDescriptor&);
 
+#if ENABLE(WHLSL_COMPILER)
     PlatformShaderModule* platformShaderModule() const { return m_whlslModule ? nullptr : m_platformShaderModule.get(); }
     const WHLSL::ShaderModule* whlslModule() const { return m_whlslModule.get(); }
+#endif
 
 private:
     GPUShaderModule(PlatformShaderModuleSmartPtr&&);
+#if ENABLE(WHLSL_COMPILER)
     GPUShaderModule(UniqueRef<WHLSL::ShaderModule>&& whlslModule);
+#endif
 
     PlatformShaderModuleSmartPtr m_platformShaderModule;
+#if ENABLE(WHLSL_COMPILER)
     std::unique_ptr<WHLSL::ShaderModule> m_whlslModule;
+#endif
 };
 
 } // namespace WebCore

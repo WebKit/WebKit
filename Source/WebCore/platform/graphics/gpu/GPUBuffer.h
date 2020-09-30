@@ -33,8 +33,11 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
 
 #if USE(METAL)
 OBJC_PROTOCOL(MTLBuffer);
@@ -56,10 +59,8 @@ enum class GPUBufferMappedOption;
 
 #if USE(METAL)
 using PlatformBuffer = MTLBuffer;
-#else
-using PlatformBuffer = void;
+using PlatformBufferSmartPtr = RetainPtr<MTLBuffer>;
 #endif
-using PlatformBufferSmartPtr = RetainPtr<PlatformBuffer>;
 
 class GPUBuffer : public RefCounted<GPUBuffer> {
 public:

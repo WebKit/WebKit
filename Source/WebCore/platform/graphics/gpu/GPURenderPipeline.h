@@ -33,20 +33,25 @@
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+
+#if USE(METAL)
 #include <wtf/RetainPtr.h>
+#endif
 
 #if USE(METAL)
 OBJC_PROTOCOL(MTLDepthStencilState);
 OBJC_PROTOCOL(MTLRenderPipelineState);
-#endif // USE(METAL)
+#endif
 
 namespace WebCore {
 
 class GPUDevice;
 class GPUErrorScopes;
 
+#if USE(METAL)
 using PlatformRenderPipeline = MTLRenderPipelineState;
 using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
+#endif
 
 class GPURenderPipeline final : public GPUPipeline {
 public:

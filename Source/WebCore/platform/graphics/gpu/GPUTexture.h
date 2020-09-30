@@ -31,9 +31,14 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLTexture);
+#endif
 
 namespace WebCore {
 
@@ -42,8 +47,10 @@ class GPUErrorScopes;
 
 struct GPUTextureDescriptor;
 
+#if USE(METAL)
 using PlatformTexture = MTLTexture;
 using PlatformTextureSmartPtr = RetainPtr<MTLTexture>;
+#endif
 
 class GPUTexture : public RefCounted<GPUTexture> {
 public:

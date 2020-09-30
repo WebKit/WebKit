@@ -30,12 +30,15 @@
 #include "GPUBindGroupAllocator.h"
 #include "GPUBuffer.h"
 #include "GPUTexture.h"
-#include <objc/NSObjCRuntime.h>
 #include <utility>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+
+#if USE(METAL)
+#include <objc/NSObjCRuntime.h>
 #include <wtf/RetainPtr.h>
+#endif
 
 #if USE(METAL)
 OBJC_PROTOCOL(MTLBuffer);

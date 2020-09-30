@@ -36,10 +36,15 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(METAL)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if USE(METAL)
 OBJC_PROTOCOL(MTLDevice);
+#endif
 
 namespace WebCore {
 
@@ -69,8 +74,10 @@ struct GPUTextureDescriptor;
 
 enum class GPUBufferMappedOption;
 
+#if USE(METAL)
 using PlatformDevice = MTLDevice;
 using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
+#endif
 
 class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:

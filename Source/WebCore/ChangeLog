@@ -1,3 +1,35 @@
+2020-09-29  Don Olmstead  <don.olmstead@sony.com>
+
+        [WebGPU] Add platform guards
+        https://bugs.webkit.org/show_bug.cgi?id=217095
+
+        Reviewed by Darin Adler.
+
+        Add platform guards around Apple specific implementations. The WebGPU implementation
+        on Apple platforms is guarded by USE(METAL). Additionally guard uses of the WHLSL
+        compiler.
+
+        No new tests. No change in behavior.
+
+        * Modules/webgpu/GPUCanvasContext.cpp:
+        (WebCore::GPUCanvasContext::platformLayer const):
+        * platform/graphics/gpu/GPUBindGroup.h:
+        * platform/graphics/gpu/GPUBindGroupAllocator.h:
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        * platform/graphics/gpu/GPUComputePassEncoder.h:
+        * platform/graphics/gpu/GPUComputePipeline.h:
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        * platform/graphics/gpu/GPUQueue.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        * platform/graphics/gpu/GPUSampler.h:
+        * platform/graphics/gpu/GPUShaderModule.h:
+        * platform/graphics/gpu/GPUSwapChain.h:
+        * platform/graphics/gpu/GPUTexture.h:
+
 2020-09-29  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen mode on mlb.com shows white letterboxing when video aspect ratio does not match screen

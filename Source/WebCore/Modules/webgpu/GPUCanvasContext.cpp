@@ -75,7 +75,7 @@ Ref<WebGPUSwapChain> GPUCanvasContext::configureSwapChain(const WebGPUSwapChainD
     return newSwapChain;
 }
 
-CALayer* GPUCanvasContext::platformLayer() const
+PlatformLayer* GPUCanvasContext::platformLayer() const
 {
     if (m_swapChain && m_swapChain->swapChain())
         return m_swapChain->swapChain()->platformLayer();
