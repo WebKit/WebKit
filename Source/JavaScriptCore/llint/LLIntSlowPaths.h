@@ -143,8 +143,8 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_sampler_begin);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_sampler_end);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_out_of_line_jump_target);
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) WTF_INTERNAL;
-extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue unused) WTF_INTERNAL;
-extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue callResult) WTF_INTERNAL;
+extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue unused) WTF_INTERNAL;
+extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue callResult) WTF_INTERNAL;
 #if ENABLE(C_LOOP)
 extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM*, Register*) WTF_INTERNAL;
 #endif

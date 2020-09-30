@@ -2273,7 +2273,7 @@ inline SlowPathReturnType dispatchToNextInstruction(ThrowScope& scope, CodeBlock
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue result)
+extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit_from_inlined_call(CallFrame* callFrame, EncodedJSValue result)
 {
     // Since all our calling checkpoints do right now is move result into our dest we can just do that here and return.
     CodeBlock* codeBlock = callFrame->codeBlock();
@@ -2323,7 +2323,7 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(Ca
     return dispatchToNextInstruction(scope, codeBlock, pc);
 }
 
-extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue /* needed for cCall2 in CLoop */)
+extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue /* needed for cCall2 in CLoop */)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     VM& vm = codeBlock->vm();

@@ -1,3 +1,28 @@
+2020-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Common slow paths should be JIT operations
+        https://bugs.webkit.org/show_bug.cgi?id=217141
+
+        Reviewed by Saam Barati.
+
+        Unlike LLInt slow paths, common (common means common between LLInt and Baseline) slow paths can be called from baseline JIT code. Thus, they should be JIT operations.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_slow_path_checkpoint_osr_exit_from_inlined_call):
+        (JSC::LLInt::llint_slow_path_checkpoint_osr_exit):
+        (JSC::LLInt::slow_path_checkpoint_osr_exit_from_inlined_call): Deleted.
+        (JSC::LLInt::slow_path_checkpoint_osr_exit): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        (JSC::iteratorOpenTryFastImpl):
+        (JSC::iteratorNextTryFastImpl):
+        (JSC::SLOW_PATH_DECL): Deleted.
+        (JSC::iterator_open_try_fast): Deleted.
+        (JSC::iterator_next_try_fast): Deleted.
+        * runtime/CommonSlowPaths.h:
+
 2020-09-30  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation][WinCairo] Enable WebDriver target on PlayStation and client for WinCairo

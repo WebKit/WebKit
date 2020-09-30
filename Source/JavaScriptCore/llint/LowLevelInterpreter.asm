@@ -2192,7 +2192,7 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
 
         # Make sure we move r0 to a1 first since r0 might be the same as a0, for instance, on arm.
         if ARMv7 or MIPS
-            # Given _slow_path_checkpoint_osr_exit_from_inlined_call has
+            # Given _llint_slow_path_checkpoint_osr_exit_from_inlined_call has
             # parameters as CallFrame* and EncodedJSValue,
             # we need to store call result on a2, a3 and call frame on a0,
             # leaving a1 as dummy value (this calling convention is considered only
@@ -2201,12 +2201,12 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
             move r0, a2
             move cfr, a0
             # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
-            cCall4(_slow_path_checkpoint_osr_exit_from_inlined_call)
+            cCall4(_llint_slow_path_checkpoint_osr_exit_from_inlined_call)
         else
             move r0, a1
             move cfr, a0
             # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
-            cCall2(_slow_path_checkpoint_osr_exit_from_inlined_call)
+            cCall2(_llint_slow_path_checkpoint_osr_exit_from_inlined_call)
         end
 
         restoreStateAfterCCall()
@@ -2225,7 +2225,7 @@ op(checkpoint_osr_exit_trampoline, macro ()
 
         move cfr, a0
         # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
-        cCall2(_slow_path_checkpoint_osr_exit)
+        cCall2(_llint_slow_path_checkpoint_osr_exit)
         restoreStateAfterCCall()
         branchIfException(_llint_throw_from_slow_path_trampoline)
         jmp r1, JSEntryPtrTag

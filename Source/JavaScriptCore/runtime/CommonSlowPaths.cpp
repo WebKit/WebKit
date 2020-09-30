@@ -151,7 +151,7 @@ static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, Thro
 #endif
 }
 
-SLOW_PATH_DECL(slow_path_call_arityCheck)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_call_arityCheck)
 {
     BEGIN();
     int slotsToAdd = CommonSlowPaths::arityCheckFor(vm, callFrame, CodeForCall);
@@ -167,7 +167,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
     RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
 }
 
-SLOW_PATH_DECL(slow_path_construct_arityCheck)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_construct_arityCheck)
 {
     BEGIN();
     int slotsToAdd = CommonSlowPaths::arityCheckFor(vm, callFrame, CodeForConstruct);
@@ -182,14 +182,14 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
 }
 
-SLOW_PATH_DECL(slow_path_create_direct_arguments)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_direct_arguments)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateDirectArguments>();
     RETURN(DirectArguments::createByCopying(globalObject, callFrame));
 }
 
-SLOW_PATH_DECL(slow_path_create_scoped_arguments)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_scoped_arguments)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateScopedArguments>();
@@ -198,14 +198,14 @@ SLOW_PATH_DECL(slow_path_create_scoped_arguments)
     RETURN(ScopedArguments::createByCopying(globalObject, callFrame, table, scope));
 }
 
-SLOW_PATH_DECL(slow_path_create_cloned_arguments)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_cloned_arguments)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateClonedArguments>();
     RETURN(ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned));
 }
 
-SLOW_PATH_DECL(slow_path_create_arguments_butterfly)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_arguments_butterfly)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateArgumentsButterfly>();
@@ -218,7 +218,7 @@ SLOW_PATH_DECL(slow_path_create_arguments_butterfly)
     RETURN(butterfly);
 }
 
-SLOW_PATH_DECL(slow_path_create_this)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateThis>();
@@ -256,7 +256,7 @@ SLOW_PATH_DECL(slow_path_create_this)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_create_promise)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_promise)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreatePromise>();
@@ -288,7 +288,7 @@ SLOW_PATH_DECL(slow_path_create_promise)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_new_promise)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_promise)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewPromise>();
@@ -320,21 +320,21 @@ static JSClass* createInternalFieldObject(JSGlobalObject* globalObject, VM& vm, 
     RELEASE_AND_RETURN(scope, result);
 }
 
-SLOW_PATH_DECL(slow_path_create_generator)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_generator)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateGenerator>();
     RETURN(createInternalFieldObject<JSGenerator>(globalObject, vm, codeBlock, bytecode, asObject(GET(bytecode.m_callee).jsValue()), globalObject->generatorStructure()));
 }
 
-SLOW_PATH_DECL(slow_path_create_async_generator)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_async_generator)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateAsyncGenerator>();
     RETURN(createInternalFieldObject<JSAsyncGenerator>(globalObject, vm, codeBlock, bytecode, asObject(GET(bytecode.m_callee).jsValue()), globalObject->asyncGeneratorStructure()));
 }
 
-SLOW_PATH_DECL(slow_path_new_generator)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_generator)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewGenerator>();
@@ -342,7 +342,7 @@ SLOW_PATH_DECL(slow_path_new_generator)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_to_this)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpToThis>();
@@ -371,88 +371,88 @@ SLOW_PATH_DECL(slow_path_to_this)
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, value, PROFILE_VALUE(value));
 }
 
-SLOW_PATH_DECL(slow_path_throw_tdz_error)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_tdz_error)
 {
     BEGIN();
     THROW(createTDZError(globalObject));
 }
 
-SLOW_PATH_DECL(slow_path_check_tdz)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_check_tdz)
 {
     BEGIN();
     THROW(createTDZError(globalObject));
 }
 
-SLOW_PATH_DECL(slow_path_throw_strict_mode_readonly_property_write_error)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_strict_mode_readonly_property_write_error)
 {
     BEGIN();
     THROW(createTypeError(globalObject, ReadonlyPropertyWriteError));
 }
 
-SLOW_PATH_DECL(slow_path_not)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_not)
 {
     BEGIN();
     auto bytecode = pc->as<OpNot>();
     RETURN(jsBoolean(!GET_C(bytecode.m_operand).jsValue().toBoolean(globalObject)));
 }
 
-SLOW_PATH_DECL(slow_path_eq)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_eq)
 {
     BEGIN();
     auto bytecode = pc->as<OpEq>();
     RETURN(jsBoolean(JSValue::equal(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_neq)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_neq)
 {
     BEGIN();
     auto bytecode = pc->as<OpNeq>();
     RETURN(jsBoolean(!JSValue::equal(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_stricteq)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_stricteq)
 {
     BEGIN();
     auto bytecode = pc->as<OpStricteq>();
     RETURN(jsBoolean(JSValue::strictEqual(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_nstricteq)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_nstricteq)
 {
     BEGIN();
     auto bytecode = pc->as<OpNstricteq>();
     RETURN(jsBoolean(!JSValue::strictEqual(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_less)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_less)
 {
     BEGIN();
     auto bytecode = pc->as<OpLess>();
     RETURN(jsBoolean(jsLess<true>(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_lesseq)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_lesseq)
 {
     BEGIN();
     auto bytecode = pc->as<OpLesseq>();
     RETURN(jsBoolean(jsLessEq<true>(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_greater)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_greater)
 {
     BEGIN();
     auto bytecode = pc->as<OpGreater>();
     RETURN(jsBoolean(jsLess<false>(globalObject, GET_C(bytecode.m_rhs).jsValue(), GET_C(bytecode.m_lhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_greatereq)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_greatereq)
 {
     BEGIN();
     auto bytecode = pc->as<OpGreatereq>();
     RETURN(jsBoolean(jsLessEq<false>(globalObject, GET_C(bytecode.m_rhs).jsValue(), GET_C(bytecode.m_lhs).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_inc)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_inc)
 {
     BEGIN();
     auto bytecode = pc->as<OpInc>();
@@ -462,7 +462,7 @@ SLOW_PATH_DECL(slow_path_inc)
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
 }
 
-SLOW_PATH_DECL(slow_path_dec)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_dec)
 {
     BEGIN();
     auto bytecode = pc->as<OpDec>();
@@ -472,7 +472,7 @@ SLOW_PATH_DECL(slow_path_dec)
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
 }
 
-SLOW_PATH_DECL(slow_path_to_string)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_string)
 {
     BEGIN();
     auto bytecode = pc->as<OpToString>();
@@ -519,7 +519,7 @@ static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSVa
 static void updateArithProfileForUnaryArithOp(OpNegate::Metadata&, JSValue, JSValue) { }
 #endif
 
-SLOW_PATH_DECL(slow_path_negate)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
 {
     BEGIN();
     auto bytecode = pc->as<OpNegate>();
@@ -591,7 +591,7 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
 static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock*, const Instruction*, JSValue, JSValue, JSValue) { }
 #endif
 
-SLOW_PATH_DECL(slow_path_to_number)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_number)
 {
     BEGIN();
     auto bytecode = pc->as<OpToNumber>();
@@ -600,7 +600,7 @@ SLOW_PATH_DECL(slow_path_to_number)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_to_numeric)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_numeric)
 {
     BEGIN();
     auto bytecode = pc->as<OpToNumeric>();
@@ -610,7 +610,7 @@ SLOW_PATH_DECL(slow_path_to_numeric)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_to_object)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_object)
 {
     BEGIN();
     auto bytecode = pc->as<OpToObject>();
@@ -624,7 +624,7 @@ SLOW_PATH_DECL(slow_path_to_object)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_add)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_add)
 {
     BEGIN();
     auto bytecode = pc->as<OpAdd>();
@@ -645,7 +645,7 @@ SLOW_PATH_DECL(slow_path_add)
 // toNumeric/toBigIntOrInt32() on their operands in order.  (A call to these is idempotent
 // if an exception is already set on the CallFrame.)
 
-SLOW_PATH_DECL(slow_path_mul)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_mul)
 {
     BEGIN();
     auto bytecode = pc->as<OpMul>();
@@ -658,7 +658,7 @@ SLOW_PATH_DECL(slow_path_mul)
     });
 }
 
-SLOW_PATH_DECL(slow_path_sub)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_sub)
 {
     BEGIN();
     auto bytecode = pc->as<OpSub>();
@@ -671,7 +671,7 @@ SLOW_PATH_DECL(slow_path_sub)
     });
 }
 
-SLOW_PATH_DECL(slow_path_div)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_div)
 {
     BEGIN();
     auto bytecode = pc->as<OpDiv>();
@@ -684,7 +684,7 @@ SLOW_PATH_DECL(slow_path_div)
     });
 }
 
-SLOW_PATH_DECL(slow_path_mod)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_mod)
 {
     BEGIN();
     auto bytecode = pc->as<OpMod>();
@@ -695,7 +695,7 @@ SLOW_PATH_DECL(slow_path_mod)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_pow)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_pow)
 {
     BEGIN();
     auto bytecode = pc->as<OpPow>();
@@ -706,7 +706,7 @@ SLOW_PATH_DECL(slow_path_pow)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_lshift)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_lshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpLshift>();
@@ -718,7 +718,7 @@ SLOW_PATH_DECL(slow_path_lshift)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_rshift)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpRshift>();
@@ -730,7 +730,7 @@ SLOW_PATH_DECL(slow_path_rshift)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_urshift)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_urshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpUrshift>();
@@ -742,7 +742,7 @@ SLOW_PATH_DECL(slow_path_urshift)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_unsigned)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_unsigned)
 {
     BEGIN();
     auto bytecode = pc->as<OpUnsigned>();
@@ -750,7 +750,7 @@ SLOW_PATH_DECL(slow_path_unsigned)
     RETURN(jsNumber(a));
 }
 
-SLOW_PATH_DECL(slow_path_bitnot)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitnot)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitnot>();
@@ -761,7 +761,7 @@ SLOW_PATH_DECL(slow_path_bitnot)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_bitand)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitand)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitand>();
@@ -773,7 +773,7 @@ SLOW_PATH_DECL(slow_path_bitand)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_bitor)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitor>();
@@ -785,7 +785,7 @@ SLOW_PATH_DECL(slow_path_bitor)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_bitxor)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitxor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitxor>();
@@ -797,42 +797,42 @@ SLOW_PATH_DECL(slow_path_bitxor)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_typeof)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof)
 {
     BEGIN();
     auto bytecode = pc->as<OpTypeof>();
     RETURN(jsTypeStringForValue(globalObject, GET_C(bytecode.m_value).jsValue()));
 }
 
-SLOW_PATH_DECL(slow_path_typeof_is_object)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof_is_object)
 {
     BEGIN();
     auto bytecode = pc->as<OpTypeofIsObject>();
     RETURN(jsBoolean(jsTypeofIsObject(globalObject, GET_C(bytecode.m_operand).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_typeof_is_function)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof_is_function)
 {
     BEGIN();
     auto bytecode = pc->as<OpTypeofIsFunction>();
     RETURN(jsBoolean(jsTypeofIsFunction(globalObject, GET_C(bytecode.m_operand).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_is_callable)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_callable)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsCallable>();
     RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isCallable(vm)));
 }
 
-SLOW_PATH_DECL(slow_path_is_constructor)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_constructor)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsConstructor>();
     RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isConstructor(vm)));
 }
 
-SLOW_PATH_DECL(slow_path_in_by_val)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_by_val)
 {
     BEGIN();
     auto bytecode = pc->as<OpInByVal>();
@@ -840,7 +840,7 @@ SLOW_PATH_DECL(slow_path_in_by_val)
     RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, GET_C(bytecode.m_base).jsValue(), GET_C(bytecode.m_property).jsValue(), &metadata.m_arrayProfile)));
 }
 
-SLOW_PATH_DECL(slow_path_in_by_id)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_by_id)
 {
     BEGIN();
 
@@ -853,7 +853,7 @@ SLOW_PATH_DECL(slow_path_in_by_id)
 }
 
 template<OpcodeSize width>
-SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame* callFrame, const Instruction* pc)
+ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(CallFrame* callFrame, const Instruction* pc)
 {
     // Don't set PC; we can't throw and it's relatively slow.
     BEGIN_NO_SET_PC();
@@ -898,23 +898,23 @@ SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame* callFrame, const 
     return encodeResult(pc, reinterpret_cast<void*>(IterationMode::Generic));
 }
 
-SLOW_PATH_DECL(iterator_open_try_fast_narrow)
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_narrow)
 {
-    return iterator_open_try_fast<Narrow>(callFrame, pc);
+    return iteratorOpenTryFastImpl<Narrow>(callFrame, pc);
 }
 
-SLOW_PATH_DECL(iterator_open_try_fast_wide16)
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_wide16)
 {
-    return iterator_open_try_fast<Wide16>(callFrame, pc);
+    return iteratorOpenTryFastImpl<Wide16>(callFrame, pc);
 }
 
-SLOW_PATH_DECL(iterator_open_try_fast_wide32)
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_wide32)
 {
-    return iterator_open_try_fast<Wide32>(callFrame, pc);
+    return iteratorOpenTryFastImpl<Wide32>(callFrame, pc);
 }
 
 template<OpcodeSize width>
-SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const Instruction* pc)
+ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(CallFrame* callFrame, const Instruction* pc)
 {
     BEGIN();
 
@@ -955,22 +955,22 @@ SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-SLOW_PATH_DECL(iterator_next_try_fast_narrow)
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_narrow)
 {
-    return iterator_next_try_fast<Narrow>(callFrame, pc);
+    return iteratorNextTryFastImpl<Narrow>(callFrame, pc);
 }
 
-SLOW_PATH_DECL(iterator_next_try_fast_wide16)
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide16)
 {
-    return iterator_next_try_fast<Wide16>(callFrame, pc);
+    return iteratorNextTryFastImpl<Wide16>(callFrame, pc);
 }
 
-SLOW_PATH_DECL(iterator_next_try_fast_wide32)
+JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide32)
 {
-    return iterator_next_try_fast<Wide32>(callFrame, pc);
+    return iteratorNextTryFastImpl<Wide32>(callFrame, pc);
 }
 
-SLOW_PATH_DECL(slow_path_del_by_val)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_del_by_val)
 {
     BEGIN();
     auto bytecode = pc->as<OpDelByVal>();
@@ -999,35 +999,35 @@ SLOW_PATH_DECL(slow_path_del_by_val)
     RETURN(jsBoolean(couldDelete));
 }
 
-SLOW_PATH_DECL(slow_path_strcat)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_strcat)
 {
     BEGIN();
     auto bytecode = pc->as<OpStrcat>();
     RETURN(jsStringFromRegisterArray(globalObject, &GET(bytecode.m_src), bytecode.m_count));
 }
 
-SLOW_PATH_DECL(slow_path_to_primitive)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_primitive)
 {
     BEGIN();
     auto bytecode = pc->as<OpToPrimitive>();
     RETURN(GET_C(bytecode.m_src).jsValue().toPrimitive(globalObject));
 }
 
-SLOW_PATH_DECL(slow_path_enter)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enter)
 {
     BEGIN();
     Heap::heap(codeBlock)->writeBarrier(codeBlock);
     END();
 }
 
-SLOW_PATH_DECL(slow_path_to_property_key)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_property_key)
 {
     BEGIN();
     auto bytecode = pc->as<OpToPropertyKey>();
     RETURN(GET_C(bytecode.m_src).jsValue().toPropertyKeyValue(globalObject));
 }
 
-SLOW_PATH_DECL(slow_path_get_enumerable_length)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_enumerable_length)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetEnumerableLength>();
@@ -1040,7 +1040,7 @@ SLOW_PATH_DECL(slow_path_get_enumerable_length)
     RETURN(jsNumber(enumerator->indexedLength()));
 }
 
-SLOW_PATH_DECL(slow_path_has_indexed_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_indexed_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpHasIndexedProperty>();
@@ -1053,7 +1053,7 @@ SLOW_PATH_DECL(slow_path_has_indexed_property)
     RETURN(jsBoolean(base->hasPropertyGeneric(globalObject, property.asUInt32AsAnyInt(), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
-SLOW_PATH_DECL(slow_path_has_structure_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_structure_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpHasStructureProperty>();
@@ -1072,7 +1072,7 @@ SLOW_PATH_DECL(slow_path_has_structure_property)
     RETURN(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
-SLOW_PATH_DECL(slow_path_has_own_structure_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_own_structure_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpHasOwnStructureProperty>();
@@ -1093,7 +1093,7 @@ SLOW_PATH_DECL(slow_path_has_own_structure_property)
     RETURN(jsBoolean(objectPrototypeHasOwnProperty(globalObject, base, propertyName)));
 }
 
-SLOW_PATH_DECL(slow_path_in_structure_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_structure_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpInStructureProperty>();
@@ -1108,7 +1108,7 @@ SLOW_PATH_DECL(slow_path_in_structure_property)
     RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, asString(property))));
 }
 
-SLOW_PATH_DECL(slow_path_has_generic_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_generic_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpHasGenericProperty>();
@@ -1122,7 +1122,7 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
     RETURN(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
-SLOW_PATH_DECL(slow_path_get_direct_pname)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_direct_pname)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetDirectPname>();
@@ -1135,7 +1135,7 @@ SLOW_PATH_DECL(slow_path_get_direct_pname)
     RETURN(baseValue.get(globalObject, propertyName));
 }
 
-SLOW_PATH_DECL(slow_path_get_property_enumerator)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_property_enumerator)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetPropertyEnumerator>();
@@ -1149,7 +1149,7 @@ SLOW_PATH_DECL(slow_path_get_property_enumerator)
     RETURN(propertyNameEnumerator(globalObject, base));
 }
 
-SLOW_PATH_DECL(slow_path_enumerator_structure_pname)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_structure_pname)
 {
     BEGIN();
     auto bytecode = pc->as<OpEnumeratorStructurePname>();
@@ -1162,7 +1162,7 @@ SLOW_PATH_DECL(slow_path_enumerator_structure_pname)
     RETURN(propertyName ? propertyName : jsNull());
 }
 
-SLOW_PATH_DECL(slow_path_enumerator_generic_pname)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_generic_pname)
 {
     BEGIN();
     auto bytecode = pc->as<OpEnumeratorGenericPname>();
@@ -1175,7 +1175,7 @@ SLOW_PATH_DECL(slow_path_enumerator_generic_pname)
     RETURN(propertyName ? propertyName : jsNull());
 }
 
-SLOW_PATH_DECL(slow_path_to_index_string)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_index_string)
 {
     BEGIN();
     auto bytecode = pc->as<OpToIndexString>();
@@ -1184,21 +1184,21 @@ SLOW_PATH_DECL(slow_path_to_index_string)
     RETURN(jsString(vm, Identifier::from(vm, indexValue.asUInt32AsAnyInt()).string()));
 }
 
-SLOW_PATH_DECL(slow_path_profile_type_clear_log)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_profile_type_clear_log)
 {
     BEGIN();
     vm.typeProfilerLog()->processLogEntries(vm, "LLInt log full."_s);
     END();
 }
 
-SLOW_PATH_DECL(slow_path_unreachable)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_unreachable)
 {
     BEGIN();
     UNREACHABLE_FOR_PLATFORM();
     END();
 }
 
-SLOW_PATH_DECL(slow_path_create_lexical_environment)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_lexical_environment)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateLexicalEnvironment>();
@@ -1210,7 +1210,7 @@ SLOW_PATH_DECL(slow_path_create_lexical_environment)
     RETURN(newScope);
 }
 
-SLOW_PATH_DECL(slow_path_push_with_scope)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_push_with_scope)
 {
     BEGIN();
     auto bytecode = pc->as<OpPushWithScope>();
@@ -1221,7 +1221,7 @@ SLOW_PATH_DECL(slow_path_push_with_scope)
     RETURN(JSWithScope::create(vm, globalObject, currentScope, newScope));
 }
 
-SLOW_PATH_DECL(slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
 {
     BEGIN();
     auto bytecode = pc->as<OpResolveScopeForHoistingFuncDeclInEval>();
@@ -1234,7 +1234,7 @@ SLOW_PATH_DECL(slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
     RETURN(resolvedScope);
 }
 
-SLOW_PATH_DECL(slow_path_resolve_scope)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
 {
     BEGIN();
     auto bytecode = pc->as<OpResolveScope>();
@@ -1280,7 +1280,7 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     RETURN(resolvedScope);
 }
 
-SLOW_PATH_DECL(slow_path_create_rest)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateRest>();
@@ -1291,7 +1291,7 @@ SLOW_PATH_DECL(slow_path_create_rest)
     RETURN(constructArray(globalObject, structure, argumentsToCopyRegion, arraySize));
 }
 
-SLOW_PATH_DECL(slow_path_get_by_id_with_this)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_id_with_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetByIdWithThis>();
@@ -1303,7 +1303,7 @@ SLOW_PATH_DECL(slow_path_get_by_id_with_this)
     RETURN_PROFILED(result);
 }
 
-SLOW_PATH_DECL(slow_path_get_by_val_with_this)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)
 {
     BEGIN();
 
@@ -1340,7 +1340,7 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
     RETURN_PROFILED(baseValue.get(globalObject, property, slot));
 }
 
-SLOW_PATH_DECL(slow_path_get_private_name)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_private_name)
 {
     BEGIN();
 
@@ -1362,7 +1362,7 @@ SLOW_PATH_DECL(slow_path_get_private_name)
     RETURN_PROFILED(slot.getValue(globalObject, property));
 }
 
-SLOW_PATH_DECL(slow_path_get_prototype_of)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_prototype_of)
 {
     BEGIN();
     auto bytecode = pc->as<OpGetPrototypeOf>();
@@ -1370,7 +1370,7 @@ SLOW_PATH_DECL(slow_path_get_prototype_of)
     RETURN_PROFILED(value.getPrototype(globalObject));
 }
 
-SLOW_PATH_DECL(slow_path_put_by_id_with_this)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_put_by_id_with_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpPutByIdWithThis>();
@@ -1383,7 +1383,7 @@ SLOW_PATH_DECL(slow_path_put_by_id_with_this)
     END();
 }
 
-SLOW_PATH_DECL(slow_path_put_by_val_with_this)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_put_by_val_with_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpPutByValWithThis>();
@@ -1399,7 +1399,7 @@ SLOW_PATH_DECL(slow_path_put_by_val_with_this)
     END();
 }
 
-SLOW_PATH_DECL(slow_path_define_data_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_define_data_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpDefineDataProperty>();
@@ -1417,7 +1417,7 @@ SLOW_PATH_DECL(slow_path_define_data_property)
     END();
 }
 
-SLOW_PATH_DECL(slow_path_define_accessor_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_define_accessor_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpDefineAccessorProperty>();
@@ -1436,7 +1436,7 @@ SLOW_PATH_DECL(slow_path_define_accessor_property)
     END();
 }
 
-SLOW_PATH_DECL(slow_path_throw_static_error)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_static_error)
 {
     BEGIN();
     auto bytecode = pc->as<OpThrowStaticError>();
@@ -1447,7 +1447,7 @@ SLOW_PATH_DECL(slow_path_throw_static_error)
     THROW(createError(globalObject, errorType, errorMessage));
 }
 
-SLOW_PATH_DECL(slow_path_new_array_with_spread)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewArrayWithSpread>();
@@ -1511,7 +1511,7 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_new_array_buffer)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewArrayBuffer>();
@@ -1544,7 +1544,7 @@ SLOW_PATH_DECL(slow_path_new_array_buffer)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_spread)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
 {
     BEGIN();
 
