@@ -59,7 +59,7 @@ std::pair<BasicBlock*, Value*> powDoubleInt32(Procedure& procedure, BasicBlock* 
     Value* yAsDouble = functionCallCase->appendNew<Value>(procedure, IToD, origin, y);
     Value* powResult = functionCallCase->appendNew<CCallValue>(
         procedure, Double, origin,
-        functionCallCase->appendNew<ConstPtrValue>(procedure, origin, bitwise_cast<void*>(tagCFunction<B3CCallPtrTag>(Math::stdPowDouble))),
+        functionCallCase->appendNew<ConstPtrValue>(procedure, origin, bitwise_cast<void*>(tagCFunction<OperationPtrTag>(Math::stdPowDouble))),
         x, yAsDouble);
     UpsilonValue* powResultUpsilon = functionCallCase->appendNew<UpsilonValue>(procedure, origin, powResult);
     functionCallCase->appendNew<Value>(procedure, Jump, origin);

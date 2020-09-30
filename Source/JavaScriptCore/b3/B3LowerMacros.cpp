@@ -128,7 +128,7 @@ private:
                 }
                 
                 if (m_value->type() == Double) {
-                    Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(Math::fmodDouble));
+                    Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
                     Value* result = m_insertionSet.insert<CCallValue>(m_index, Double, m_origin,
                         Effects::none(),
                         functionAddress,
@@ -139,7 +139,7 @@ private:
                 } else if (m_value->type() == Float) {
                     Value* numeratorAsDouble = m_insertionSet.insert<Value>(m_index, FloatToDouble, m_origin, m_value->child(0));
                     Value* denominatorAsDouble = m_insertionSet.insert<Value>(m_index, FloatToDouble, m_origin, m_value->child(1));
-                    Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(Math::fmodDouble));
+                    Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::fmodDouble));
                     Value* doubleMod = m_insertionSet.insert<CCallValue>(m_index, Double, m_origin,
                         Effects::none(),
                         functionAddress,

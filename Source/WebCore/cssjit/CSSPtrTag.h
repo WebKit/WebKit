@@ -33,7 +33,6 @@ namespace WebCore {
 
 #define FOR_EACH_CSS_PTRTAG(v) \
     v(CSSSelectorPtrTag) \
-    v(CSSOperationPtrTag) \
 
 #if COMPILER(MSVC)
 #pragma warning(push)

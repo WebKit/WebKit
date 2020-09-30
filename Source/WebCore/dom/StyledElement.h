@@ -54,8 +54,7 @@ public:
     bool removeInlineStyleProperty(CSSPropertyID);
     void removeAllInlineStyleProperties();
 
-    static void synchronizeStyleAttributeInternal(StyledElement*);
-    void synchronizeStyleAttributeInternal() const { StyledElement::synchronizeStyleAttributeInternal(const_cast<StyledElement*>(this)); }
+    void synchronizeStyleAttributeInternal() const { const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
     
     WEBCORE_EXPORT CSSStyleDeclaration& cssomStyle();
 #if ENABLE(CSS_TYPED_OM)
@@ -83,6 +82,7 @@ protected:
 
 private:
     void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);
+    void synchronizeStyleAttributeInternalImpl();
 
     void inlineStyleChanged();
     PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();

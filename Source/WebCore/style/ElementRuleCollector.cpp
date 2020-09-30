@@ -35,6 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
 #include "SVGElement.h"
+#include "SelectorCheckerTestFunctions.h"
 #include "SelectorCompiler.h"
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"
@@ -154,7 +155,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
 
     if (element().isLink())
         collectMatchingRulesForList(matchRequest.ruleSet->linkPseudoClassRules(), matchRequest);
-    if (SelectorChecker::matchesFocusPseudoClass(element()))
+    if (matchesFocusPseudoClass(element()))
         collectMatchingRulesForList(matchRequest.ruleSet->focusPseudoClassRules(), matchRequest);
     collectMatchingRulesForList(matchRequest.ruleSet->tagRules(element().localName(), element().isHTMLElement() && element().document().isHTMLDocument()), matchRequest);
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest);

@@ -520,11 +520,6 @@ void SVGElement::synchronizeAllAttributes()
         setSynchronizedLazyAttribute(entry.key, entry.value);
 }
 
-void SVGElement::synchronizeAllAnimatedSVGAttribute(SVGElement& svgElement)
-{
-    svgElement.synchronizeAllAttributes();
-}
-
 void SVGElement::commitPropertyChange(SVGProperty* property)
 {
     // We want to dirty the top-level property when a descendant changes. For example

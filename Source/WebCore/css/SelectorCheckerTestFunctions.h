@@ -27,12 +27,18 @@
 #pragma once
 
 #include "FocusController.h"
+#include "Frame.h"
+#include "FrameSelection.h"
 #include "FullscreenManager.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
+#include "InspectorInstrumentation.h"
+#include "Page.h"
 #include "SelectorChecker.h"
+#include "ShadowRoot.h"
 #include <wtf/Compiler.h>
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -436,5 +442,34 @@ ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 }
 
 #endif
+
+ALWAYS_INLINE bool isFrameFocused(const Element& element)
+{
+    return element.document().frame() && element.document().frame()->selection().isFocusedAndActive();
+}
+
+// This needs to match a subset of elements matchesFocusPseudoClass match since direct focus is treated
+// as a part of focus pseudo class selectors in ElementRuleCollector::collectMatchingRules.
+ALWAYS_INLINE bool matchesDirectFocusPseudoClass(const Element& element)
+{
+    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocus))
+        return true;
+
+    return element.focused() && isFrameFocused(element);
+}
+
+ALWAYS_INLINE bool doesShadowTreeContainFocusedElement(const Element& element)
+{
+    auto* shadowRoot = element.shadowRoot();
+    return shadowRoot && shadowRoot->containsFocusedElement();
+}
+
+ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
+{
+    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocus))
+        return true;
+
+    return (element.focused() || doesShadowTreeContainFocusedElement(element)) && isFrameFocused(element);
+}
 
 } // namespace WebCore

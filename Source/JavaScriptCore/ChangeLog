@@ -1,3 +1,82 @@
+2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Always use OperationPtrTag for all operations and annotate operations in CSS JIT
+        https://bugs.webkit.org/show_bug.cgi?id=217117
+
+        Reviewed by Mark Lam.
+
+        For JIT-caging, we would like to annotate all operations consistently with OperationPtrTag.
+        This patch replaces B3CCallPtrTag and CSSOperationPtrTag with OperationPtrTag and handle these
+        operations as Operation in JIT-caging.
+
+        We also collect and annotate all the operations called in CSS JIT and define them with JSC_DEFINE_JIT_OPERATION.
+
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3MathExtras.cpp:
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::generate):
+        * b3/testb3_5.cpp:
+        (testCallSimple):
+        (testCallRare):
+        (testCallRareLive):
+        (testCallSimplePure):
+        (testCallFunctionWithHellaArguments):
+        (testCallFunctionWithHellaArguments2):
+        (testCallFunctionWithHellaArguments3):
+        (testCallSimpleDouble):
+        (testCallSimpleFloat):
+        (testCallFunctionWithHellaDoubleArguments):
+        (testCallFunctionWithHellaFloatArguments):
+        (testLinearScanWithCalleeOnStack):
+        * b3/testb3_6.cpp:
+        (testInterpreter):
+        * b3/testb3_7.cpp:
+        (testLICMPure):
+        (testLICMPureSideExits):
+        (testLICMPureWritesPinned):
+        (testLICMPureWrites):
+        (testLICMReadsLocalState):
+        (testLICMReadsPinned):
+        (testLICMReads):
+        (testLICMPureNotBackwardsDominant):
+        (testLICMPureFoiledByChild):
+        (testLICMPureNotBackwardsDominantFoiledByChild):
+        (testLICMExitsSideways):
+        (testLICMWritesLocalState):
+        (testLICMWrites):
+        (testLICMFence):
+        (testLICMWritesPinned):
+        (testLICMControlDependent):
+        (testLICMControlDependentNotBackwardsDominant):
+        (testLICMControlDependentSideExits):
+        (testLICMReadsPinnedWritesPinned):
+        (testLICMReadsWritesDifferentHeaps):
+        (testLICMReadsWritesOverlappingHeaps):
+        (testLICMDefaultCall):
+        (testShuffleDoesntTrashCalleeSaves):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::callWithoutSideEffects):
+        (JSC::FTL::Output::operation):
+        * runtime/JSCPtrTag.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::emitWriteBarrierForJSWrapper):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+
 2020-09-26  Darin Adler  <darin@apple.com>
 
         Refactor test runner code to cut down on copy/paste code and long-winded repetitive idioms

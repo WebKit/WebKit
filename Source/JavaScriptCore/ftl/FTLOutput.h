@@ -395,13 +395,13 @@ public:
     {
         static_assert(!std::is_same<Function, LValue>::value);
         return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Effects::none(),
-            constIntPtr(tagCFunctionPtr<void*>(function, B3CCallPtrTag)), arg1, args...);
+            constIntPtr(tagCFunctionPtr<void*>(function, OperationPtrTag)), arg1, args...);
     }
 
     // FIXME: Consider enhancing this to allow the client to choose the target PtrTag to use.
     // https://bugs.webkit.org/show_bug.cgi?id=184324
     template<typename FunctionType>
-    LValue operation(FunctionType function) { return constIntPtr(tagCFunctionPtr<void*>(function, B3CCallPtrTag)); }
+    LValue operation(FunctionType function) { return constIntPtr(tagCFunctionPtr<void*>(function, OperationPtrTag)); }
 
     void jump(LBasicBlock);
     void branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight);

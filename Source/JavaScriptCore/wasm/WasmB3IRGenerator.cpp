@@ -694,7 +694,7 @@ auto B3IRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expre
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Anyref), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationGetWasmTableElement)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationGetWasmTableElement)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), index);
 
     {
@@ -713,7 +713,7 @@ auto B3IRGenerator::addTableSet(unsigned tableIndex, ExpressionType index, Expre
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     auto shouldThrow = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int32, origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationSetWasmTableElement)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationSetWasmTableElement)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), index, value);
 
     {
@@ -733,7 +733,7 @@ auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Partia
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
 
     result = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationWasmRefFunc)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmRefFunc)),
         instanceValue(), addConstant(Type::I32, index));
 
     return { };
@@ -743,7 +743,7 @@ auto B3IRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) ->
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationGetWasmTableSize)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationGetWasmTableSize)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex));
 
     return { };
@@ -752,7 +752,7 @@ auto B3IRGenerator::addTableSize(unsigned tableIndex, ExpressionType& result) ->
 auto B3IRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationWasmTableGrow)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableGrow)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), fill, delta);
 
     return { };
@@ -761,7 +761,7 @@ auto B3IRGenerator::addTableGrow(unsigned tableIndex, ExpressionType fill, Expre
 auto B3IRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, ExpressionType fill, ExpressionType count) -> PartialResult
 {
     auto result = m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(I32), origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationWasmTableFill)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmTableFill)),
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), tableIndex), offset, fill, count);
 
     {
@@ -796,7 +796,7 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
 auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationGrowMemory)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationGrowMemory)),
         framePointer(), instanceValue(), delta);
 
     restoreWebAssemblyGlobalState(RestoreCachedStackLimit::No, m_info.memory, instanceValue(), m_proc, m_currentBlock);
@@ -900,7 +900,7 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
             continuation->addPredecessor(m_currentBlock);
             m_currentBlock = doSlowPath;
 
-            Value* writeBarrierAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationWasmWriteBarrierSlowPath));
+            Value* writeBarrierAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmWriteBarrierSlowPath));
             m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(), writeBarrierAddress, cell, vm);
             m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
@@ -953,7 +953,7 @@ inline void B3IRGenerator::emitWriteBarrierForJSWrapper()
     continuation->addPredecessor(m_currentBlock);
     m_currentBlock = doSlowPath;
 
-    Value* writeBarrierAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationWasmWriteBarrierSlowPath));
+    Value* writeBarrierAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmWriteBarrierSlowPath));
     m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(), writeBarrierAddress, cell, vm);
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
@@ -2146,7 +2146,7 @@ auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType&
     }
 #endif
 
-    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationPopcount32));
+    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationPopcount32));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(), Effects::none(), funcAddress, arg);
     return { };
 }
@@ -2167,7 +2167,7 @@ auto B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType arg, ExpressionType&
     }
 #endif
 
-    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<B3CCallPtrTag>(operationPopcount64));
+    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationPopcount64));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int64, origin(), Effects::none(), funcAddress, arg);
     return { };
 }

@@ -32,7 +32,6 @@ namespace JSC {
 using PtrTag = WTF::PtrTag;
 
 #define FOR_EACH_JSC_PTRTAG(v) \
-    v(B3CCallPtrTag) \
     v(B3CompilationPtrTag) \
     v(BytecodePtrTag) \
     v(DOMJITFunctionPtrTag) \

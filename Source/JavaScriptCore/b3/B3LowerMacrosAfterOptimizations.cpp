@@ -98,9 +98,9 @@ private:
 
                 Value* functionAddress = nullptr;
                 if (m_value->type() == Double)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(Math::ceilDouble));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::ceilDouble));
                 else if (m_value->type() == Float)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(Math::ceilFloat));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::ceilFloat));
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 
@@ -119,9 +119,9 @@ private:
 
                 Value* functionAddress = nullptr;
                 if (m_value->type() == Double)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(Math::floorDouble));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::floorDouble));
                 else if (m_value->type() == Float)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(Math::floorFloat));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(Math::floorFloat));
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 

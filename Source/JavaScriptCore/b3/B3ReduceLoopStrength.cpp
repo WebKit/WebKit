@@ -351,7 +351,7 @@ public:
 
         Effects effects = Effects::forCall();
         memcpy->appendNew<CCallValue>(m_proc, B3::Void, origin, effects,
-            memcpy->appendNew<ConstPtrValue>(m_proc, origin, tagCFunction<B3CCallPtrTag>(operationFastForwardCopy32)),
+            memcpy->appendNew<ConstPtrValue>(m_proc, origin, tagCFunction<OperationPtrTag>(operationFastForwardCopy32)),
             destination->appendAddr(m_proc, memcpy, destination->arrayBase),
             source->appendAddr(m_proc, memcpy, source->arrayBase),
             loopBound);

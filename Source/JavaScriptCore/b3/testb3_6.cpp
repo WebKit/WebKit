@@ -1768,7 +1768,7 @@ void testInterpreter()
     print->appendNew<CCallValue>(
         proc, Void, Origin(),
         print->appendNew<ConstPtrValue>(
-            proc, Origin(), tagCFunction<B3CCallPtrTag>(interpreterPrint)),
+            proc, Origin(), tagCFunction<OperationPtrTag>(interpreterPrint)),
         context,
         print->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), dataPointerValue));
     print->appendNew<VariableValue>(

@@ -131,7 +131,6 @@ public:
 
     void synchronizeAttribute(const QualifiedName&);
     void synchronizeAllAttributes();
-    static void synchronizeAllAnimatedSVGAttribute(SVGElement&);
 
     void commitPropertyChange(SVGProperty*) override;
     void commitPropertyChange(SVGAnimatedProperty&);

@@ -56,13 +56,13 @@ COMPILE_ASSERT(sizeof(StyledElement) == sizeof(Element), styledelement_should_re
 
 using namespace HTMLNames;
 
-void StyledElement::synchronizeStyleAttributeInternal(StyledElement* styledElement)
+void StyledElement::synchronizeStyleAttributeInternalImpl()
 {
-    ASSERT(styledElement->elementData());
-    ASSERT(styledElement->elementData()->styleAttributeIsDirty());
-    styledElement->elementData()->setStyleAttributeIsDirty(false);
-    if (const StyleProperties* inlineStyle = styledElement->inlineStyle())
-        styledElement->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
+    ASSERT(elementData());
+    ASSERT(elementData()->styleAttributeIsDirty());
+    elementData()->setStyleAttributeIsDirty(false);
+    if (const StyleProperties* inlineStyle = this->inlineStyle())
+        setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
 }
 
 StyledElement::~StyledElement()

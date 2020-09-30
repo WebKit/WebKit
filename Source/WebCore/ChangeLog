@@ -1,3 +1,63 @@
+2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Always use OperationPtrTag for all operations and annotate operations in CSS JIT
+        https://bugs.webkit.org/show_bug.cgi?id=217117
+
+        Reviewed by Mark Lam.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::isFrameFocused): Deleted.
+        (WebCore::doesShadowTreeContainFocusedElement): Deleted.
+        (WebCore::SelectorChecker::matchesFocusPseudoClass): Deleted.
+        (WebCore::SelectorChecker::matchesDirectFocusPseudoClass): Deleted.
+        * css/SelectorChecker.h:
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isFrameFocused):
+        (WebCore::matchesDirectFocusPseudoClass):
+        (WebCore::doesShadowTreeContainFocusedElement):
+        (WebCore::matchesFocusPseudoClass):
+        * cssjit/CSSPtrTag.h:
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::setFunctionAddress):
+        (WebCore::FunctionCall::prepareAndCall):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::JSC_DEFINE_JIT_OPERATION):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSynchronizeStyleAttribute):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSynchronizeAllAnimatedSVGAttribute):
+        (WebCore::SelectorCompiler::attributeValueSpaceSeparatedListContains):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementFunctionCallTest):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsInLanguage):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPlaceholderShown):
+        (WebCore::SelectorCompiler::SelectorFragment::appendUnoptimizedPseudoClassWithContext): Deleted.
+        (WebCore::SelectorCompiler::addStyleRelationFunction): Deleted.
+        (WebCore::SelectorCompiler::moduloHelper): Deleted.
+        (WebCore::SelectorCompiler::attributeValueSpaceSeparetedListContains): Deleted.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateContextFunctionCallTest): Deleted.
+        (WebCore::SelectorCompiler::elementIsActive): Deleted.
+        (WebCore::SelectorCompiler::elementIsHovered): Deleted.
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown): Deleted.
+        (WebCore::SelectorCompiler::isPlaceholderShown): Deleted.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternalImpl):
+        (WebCore::StyledElement::synchronizeStyleAttributeInternal): Deleted.
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternal const):
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingRules):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeAllAnimatedSVGAttribute): Deleted.
+        * svg/SVGElement.h:
+
 2020-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Remove FontHandle

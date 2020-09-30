@@ -136,14 +136,14 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     case Arg::Imm:
     case Arg::BigImm:
         jit.move(inst.args[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
-        jit.call(scratchRegister, B3CCallPtrTag);
+        jit.call(scratchRegister, OperationPtrTag);
         break;
     case Arg::Tmp:
-        jit.call(inst.args[calleeArgOffset].gpr(), B3CCallPtrTag);
+        jit.call(inst.args[calleeArgOffset].gpr(), OperationPtrTag);
         break;
     case Arg::Addr:
     case Arg::ExtendedOffsetAddr:
-        jit.call(inst.args[calleeArgOffset].asAddress(), B3CCallPtrTag);
+        jit.call(inst.args[calleeArgOffset].asAddress(), OperationPtrTag);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
