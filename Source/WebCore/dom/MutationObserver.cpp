@@ -121,7 +121,7 @@ void MutationObserver::disconnect()
     m_pendingTargets.clear();
     m_records.clear();
     auto registrationAndNodeList = WTF::compactMap(m_registrations, [](auto* registration) -> Optional<std::pair<Ref<Node>, Ref<MutationObserverRegistration>>> {
-        auto node = makeRefPtr(registration->node());
+        auto node = registration->stopObserving();
         if (!node)
             return WTF::nullopt;
         return { { node.releaseNonNull(), makeRef(*registration) } };

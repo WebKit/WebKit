@@ -1,3 +1,28 @@
+2020-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash while loading a confluence page
+        https://bugs.webkit.org/show_bug.cgi?id=217111
+
+        Reviewed by Wenson Hsieh.
+
+        The crash was caused by MutationObserver::disconnect attempting to unregister
+        a MutationObserverRegistration from a Node after it had already been removed once.
+
+        This happens when MutationObserverRegistration remains in MutationObserver
+        when there is an ongoing transient mutation observation.
+
+        Fixed the bug by setting a boolean MutationObserverRegistration when we've stopped
+        the observation in MutationObserverRegistration::stopObserving and not unregistering it
+        in subsequent calls to MutationObserver::disconnect.
+
+        Test: fast/dom/MutationObserver/disconnect-twice.html
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::disconnect):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::stopObserving): Added.
+        * dom/MutationObserverRegistration.h:
+
 2020-09-29  Don Olmstead  <don.olmstead@sony.com>
 
         [WebGPU] Add platform guards

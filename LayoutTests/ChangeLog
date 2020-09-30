@@ -1,3 +1,15 @@
+2020-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash while loading a confluence page
+        https://bugs.webkit.org/show_bug.cgi?id=217111
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test.
+
+        * fast/dom/MutationObserver/disconnect-twice-expected.txt: Added.
+        * fast/dom/MutationObserver/disconnect-twice.html: Added.
+
 2020-09-29  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION(r267402): [ macOS iOS Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html is a flaky failure

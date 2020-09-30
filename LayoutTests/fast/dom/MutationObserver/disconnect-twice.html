@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests disconnecting MutationObserver twice while keeping a transient observation going.<br>
+WebKit should not crash and you should see PASS below.</p>
+<div id="child"><div></div></div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const observer = new MutationObserver((records) => {
+});
+
+observer.observe(document.body, {childList: true, subtree: true});
+child.remove();
+observer.disconnect();
+observer.disconnect();
+
+document.write('PASS');
+
+</script>
+</body>
+</html>

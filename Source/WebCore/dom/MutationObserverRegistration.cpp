@@ -107,6 +107,14 @@ bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, Mutatio
     return m_attributeFilter.contains(attributeName->localName());
 }
 
+RefPtr<Node> MutationObserverRegistration::stopObserving()
+{
+    if (m_hasStoppedObservingNode)
+        return nullptr;
+    m_hasStoppedObservingNode = true;
+    return makeRefPtr(m_node.get());
+}
+
 void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Node*>& nodes) const
 {
     ASSERT(m_node.get() || m_transientRegistrationNodes);

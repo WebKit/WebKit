@@ -1,0 +1,4 @@
+This tests disconnecting MutationObserver twice while keeping a transient observation going.
+WebKit should not crash and you should see PASS below.
+
+PASS

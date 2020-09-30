@@ -58,6 +58,7 @@ public:
 
     MutationObserver& observer() { return m_observer.get(); }
     Node* node() { return m_node.get(); }
+    RefPtr<Node> stopObserving();
     MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
@@ -68,8 +69,9 @@ private:
 
     Ref<MutationObserver> m_observer;
     WeakPtr<Node> m_node;
-    std::unique_ptr<HashSet<GCReachableRef<Node>>> m_transientRegistrationNodes;
+    bool m_hasStoppedObservingNode { false };
     MutationObserverOptions m_options;
+    std::unique_ptr<HashSet<GCReachableRef<Node>>> m_transientRegistrationNodes;
     HashSet<AtomString> m_attributeFilter;
 };
 
