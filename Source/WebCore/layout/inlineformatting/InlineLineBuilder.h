@@ -27,9 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
 #include "InlineLine.h"
-#include "InlineLineBreaker.h"
 
 namespace WebCore {
 namespace Layout {
@@ -79,7 +79,7 @@ public:
 private:
     void nextContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, Optional<size_t> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
     struct Result {
-        LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
+        InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
         struct CommittedContentCount {
             size_t value { 0 };
             bool isRevert { false };
@@ -95,9 +95,9 @@ private:
     };
     UsedConstraints constraintsForLine(const FormattingContext::ConstraintsForInFlowContent& initialLineConstraints, bool isFirstLine);
     void commitFloats(const LineCandidate&, CommitIntrusiveFloatsOnly = CommitIntrusiveFloatsOnly::No);
-    Result handleFloatsAndInlineContent(LineBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
+    Result handleFloatsAndInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     size_t rebuildLine(const InlineItemRange& needsLayoutRange);
-    void commitPartialContent(const LineBreaker::ContinuousContent::RunList&, const LineBreaker::Result::PartialTrailingContent&);
+    void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const UsedConstraints&);
     struct CommittedContent {
         size_t inlineItemCount { 0 };

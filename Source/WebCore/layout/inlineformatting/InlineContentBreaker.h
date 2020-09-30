@@ -36,11 +36,9 @@ class RenderStyle;
 namespace Layout {
 
 class InlineItem;
-class InlineTextItem;
-struct ContinuousContent;
 struct TrailingTextContent;
 
-class LineBreaker {
+class InlineContentBreaker {
 public:
     struct PartialRun {
         size_t length { 0 };
@@ -53,20 +51,20 @@ public:
             Keep, // Keep content on the current line.
             Break, // Partial content is on the current line.
             Push, // Content is pushed to the next line.
-            RevertToLastWrapOpportunity // The current content overflows and can't get wrapped. The line needs to be reverted back to the last line wrapping opportunity.
+            RevertToLastWrapOpportunity // The current content overflows and can't get wrapped. The content needs to be reverted back to the last wrapping opportunity.
         };
         struct PartialTrailingContent {
             size_t trailingRunIndex { 0 };
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
-
         Action action { Action::Keep };
+    
         IsEndOfLine isEndOfLine { IsEndOfLine::No };
         Optional<PartialTrailingContent> partialTrailingContent { };
         const InlineItem* lastWrapOpportunityItem { nullptr };
     };
 
-    // This struct represents the amount of continuous content committed to line breaking at a time (no in-between wrap opportunities).
+    // This struct represents the amount of continuous content committed to content breaking at a time (no in-between wrap opportunities).
     // e.g.
     // <div>text content <span>span1</span>between<span>span2</span></div>
     // [text][ ][content][ ][container start][span1][container end][between][container start][span2][container end]
@@ -134,13 +132,13 @@ private:
     bool m_hasWrapOpportunityAtPreviousPosition { false };
 };
 
-inline LineBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
     : inlineItem(inlineItem)
     , logicalWidth(logicalWidth)
 {
 }
 
-inline LineBreaker::ContinuousContent::Run::Run(const Run& other)
+inline InlineContentBreaker::ContinuousContent::Run::Run(const Run& other)
     : inlineItem(other.inlineItem)
     , logicalWidth(other.logicalWidth)
 {

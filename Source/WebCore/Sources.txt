@@ -1457,6 +1457,7 @@ layout/flexformatting/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp
+layout/inlineformatting/InlineContentBreaker.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingContextGeometry.cpp
 layout/inlineformatting/InlineFormattingContextQuirks.cpp
@@ -1464,7 +1465,6 @@ layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineItem.cpp
 layout/inlineformatting/InlineLine.cpp
 layout/inlineformatting/InlineLineBox.cpp
-layout/inlineformatting/InlineLineBreaker.cpp
 layout/inlineformatting/InlineLineBuilder.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp

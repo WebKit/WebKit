@@ -1,3 +1,49 @@
+2020-09-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Rename LineBreaker to InlineContentBreaker
+        https://bugs.webkit.org/show_bug.cgi?id=217119
+
+        Reviewed by Antti Koivisto.
+
+        This class is responsible for breaking inline content.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineContentBreaker.cpp: Renamed from Source/WebCore/layout/inlineformatting/InlineLineBreaker.cpp.
+        (WebCore::Layout::isTextContentOnly):
+        (WebCore::Layout::isVisuallyEmptyWhitespaceContentOnly):
+        (WebCore::Layout::isNonContentRunsOnly):
+        (WebCore::Layout::firstTextRunIndex):
+        (WebCore::Layout::lastContentRunIndex):
+        (WebCore::Layout::isWrappingAllowed):
+        (WebCore::Layout::shouldKeepBeginningOfLineWhitespace):
+        (WebCore::Layout::lastWrapOpportunityIndex):
+        (WebCore::Layout::InlineContentBreaker::isContentWrappingAllowed const):
+        (WebCore::Layout::InlineContentBreaker::shouldKeepEndOfLineWhitespace const):
+        (WebCore::Layout::InlineContentBreaker::processInlineContent):
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const):
+        (WebCore::Layout::InlineContentBreaker::processOverflowingTextContent const):
+        (WebCore::Layout::InlineContentBreaker::wordBreakBehavior const):
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::append):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::reset):
+        * layout/inlineformatting/InlineContentBreaker.h: Renamed from Source/WebCore/layout/inlineformatting/InlineLineBreaker.h.
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::logicalWidth const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::logicalLeft const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::collapsibleLogicalWidth const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::nonCollapsibleLogicalWidth const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::hasTrailingCollapsibleContent const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::isFullyCollapsible const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::runs const):
+        (WebCore::Layout::InlineContentBreaker::setHyphenationDisabled):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::Run::Run):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::continuousContent const):
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        (WebCore::Layout::LineBuilder::commitPartialContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-09-30  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support isTypeSupported
