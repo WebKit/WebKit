@@ -1,3 +1,14 @@
+2020-09-30  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Bump libwpe and wpebackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=217122
+
+        Reviewed by Carlos Garcia Campos.
+
+        * buildstream/elements/sdk/libwpe.bst: Bump to 1.8.0 and switch to Meson build system.
+        * buildstream/elements/sdk/wpebackend-fdo.bst: Bump to 1.9.0 development version and switch
+        to Meson build system.
+
 2020-09-30  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Fix assertion in linux_get_crash_log.py using Python 2.7
