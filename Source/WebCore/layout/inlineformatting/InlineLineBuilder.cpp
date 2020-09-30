@@ -164,27 +164,24 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_
 struct LineCandidate {
     LineCandidate(bool ignoreTrailingLetterSpacing);
 
-    void reset();
+    void reset(InlineLayoutUnit contentLogicalLeft);
 
     struct InlineContent {
         InlineContent(bool ignoreTrailingLetterSpacing);
 
-        const LineBreaker::RunList& runs() const { return m_inlineRuns; }
-        InlineLayoutUnit logicalWidth() const { return m_LogicalWidth; }
-        InlineLayoutUnit collapsibleTrailingWidth() const { return m_collapsibleTrailingWidth; }
+        const LineBreaker::ContinuousContent& continuousContent() const { return m_continuousContent; }
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
         const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
         void appendInlineItem(const InlineItem&, InlineLayoutUnit logicalWidth);
         void appendTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
         void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
-        void reset();
+        void reset(InlineLayoutUnit contentLogicalLeft);
 
     private:
         bool m_ignoreTrailingLetterSpacing { false };
-        InlineLayoutUnit m_LogicalWidth { 0 };
-        InlineLayoutUnit m_collapsibleTrailingWidth { 0 };
-        LineBreaker::RunList m_inlineRuns;
+
+        LineBreaker::ContinuousContent m_continuousContent;
         const InlineItem* m_trailingLineBreak { nullptr };
         const InlineItem* m_trailingWordBreakOpportunity { nullptr };
     };
@@ -224,47 +221,30 @@ LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
 
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    m_LogicalWidth += logicalWidth;
-    m_inlineRuns.append({ inlineItem, logicalWidth });
-
-    auto isFullyCollapsible = [&] {
-        if (inlineItem.isBox())
-            return false;
-        if (inlineItem.isText()) {
-            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
-        }
-        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
-            return false;
-        ASSERT_NOT_REACHED();
-        return true;
-    };
-    if (isFullyCollapsible()) {
-        m_collapsibleTrailingWidth += logicalWidth;
-        return;
-    }
-
-    auto partiallyCollapsibleTrailingWidth = [&]() -> InlineLayoutUnit {
-        if (m_ignoreTrailingLetterSpacing)
-            return { };
+    ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isContainerStart() || inlineItem.isContainerEnd());
+    auto collapsibleWidth = [&]() -> Optional<InlineLayoutUnit> {
         if (!inlineItem.isText())
             return { };
-        if (auto letterSpacing = inlineItem.style().letterSpacing(); letterSpacing > 0)
-            return letterSpacing;
-        return { };
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style())) {
+            // Fully collapsible trailing content.
+            return logicalWidth;
+        }
+        // Check for partially collapsible content.
+        if (m_ignoreTrailingLetterSpacing)
+            return { };
+        auto letterSpacing = inlineItem.style().letterSpacing();
+        if (letterSpacing <= 0)
+            return { };
+        ASSERT(logicalWidth > letterSpacing);
+        return letterSpacing;
     };
-    if (auto collapsibleTrailingWidth = partiallyCollapsibleTrailingWidth()) {
-        m_collapsibleTrailingWidth = collapsibleTrailingWidth;
-        return;
-    }
-    m_collapsibleTrailingWidth = { };
+    m_continuousContent.append(inlineItem, logicalWidth, collapsibleWidth());
 }
 
-inline void LineCandidate::InlineContent::reset()
+inline void LineCandidate::InlineContent::reset(InlineLayoutUnit contentLogicalLeft)
 {
-    m_LogicalWidth = { };
-    m_collapsibleTrailingWidth = { };
-    m_inlineRuns.clear();
+    m_continuousContent.reset(contentLogicalLeft);
     m_trailingLineBreak = { };
     m_trailingWordBreakOpportunity = { };
 }
@@ -282,10 +262,10 @@ inline void LineCandidate::FloatContent::reset()
     m_intrusiveWidth = { };
 }
 
-inline void LineCandidate::reset()
+inline void LineCandidate::reset(InlineLayoutUnit contentLogicalLeft)
 {
     floatContent.reset();
-    inlineContent.reset();
+    inlineContent.reset(contentLogicalLeft);
 }
 
 InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft) const
@@ -383,7 +363,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         auto result = handleFloatsAndInlineContent(lineBreaker, needsLayoutRange, lineCandidate);
         committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
         auto& inlineContent = lineCandidate.inlineContent;
-        auto inlineContentIsFullyCommitted = inlineContent.runs().size() == result.committedCount.value && !result.partialContent;
+        auto inlineContentIsFullyCommitted = inlineContent.continuousContent().runs().size() == result.committedCount.value && !result.partialContent;
         auto isEndOfLine = result.isEndOfLine == LineBreaker::IsEndOfLine::Yes;
 
         if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
@@ -502,7 +482,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
 void LineBuilder::nextContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, Optional<size_t> partialLeadingContentLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight)
 {
     ASSERT(currentInlineItemIndex < layoutRange.end);
-    lineCandidate.reset();
+    lineCandidate.reset(currentLogicalRight);
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
@@ -583,9 +563,8 @@ void LineBuilder::commitFloats(const LineCandidate& lineCandidate, CommitIntrusi
 
 LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineBreaker, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
-    auto& candidateInlineContent = lineCandidate.inlineContent;
-    auto& candidateRuns = candidateInlineContent.runs();
-    if (candidateRuns.isEmpty()) {
+    auto& continuousInlineContent = lineCandidate.inlineContent.continuousContent();
+    if (continuousInlineContent.runs().isEmpty()) {
         commitFloats(lineCandidate);
         return { LineBreaker::IsEndOfLine::No };
     }
@@ -603,10 +582,10 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     auto availableWidth = m_line.availableWidth() - floatContent.intrusiveWidth();
     auto isLineConsideredEmpty = m_line.isVisuallyEmpty() && !m_contentIsConstrainedByFloat;
     auto lineStatus = LineBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
-    auto contentLogicalLeft = m_line.contentLogicalWidth();
-    auto result = lineBreaker.processInlineContent({ candidateRuns, contentLogicalLeft, candidateInlineContent.logicalWidth(), candidateInlineContent.collapsibleTrailingWidth() }, lineStatus);
+    auto result = lineBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
+    auto& candidateRuns = continuousInlineContent.runs();
     if (result.action == LineBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line including non-intrusive floats.
         for (auto& run : candidateRuns)
@@ -648,7 +627,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(LineBreaker& lineB
     return { LineBreaker::IsEndOfLine::No };
 }
 
-void LineBuilder::commitPartialContent(const LineBreaker::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
+void LineBuilder::commitPartialContent(const LineBreaker::ContinuousContent::RunList& runs, const LineBreaker::Result::PartialTrailingContent& partialTrailingContent)
 {
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& run = runs[index];

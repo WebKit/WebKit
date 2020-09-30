@@ -1,3 +1,65 @@
+2020-09-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Merge LineBreaker::CandidateContent and ContinuousContent
+        https://bugs.webkit.org/show_bug.cgi?id=217113
+
+        Reviewed by Antti Koivisto.
+
+        This patch simplifies the connection between the LineBuilder and the LineBreaker by using the same structure to track candidate runs.
+        LineBreaker::CandidateContent is also a continuous content (it has to be) so we can just use this structure in LineCandidate::InlineContent (m_continuousContent)
+        and pass it in to the LineBreaker when we hit a wrapping opportunity.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::isTextContentOnly):
+        (WebCore::Layout::isVisuallyEmptyWhitespaceContentOnly):
+        (WebCore::Layout::isNonContentRunsOnly):
+        (WebCore::Layout::firstTextRunIndex):
+        (WebCore::Layout::lastContentRunIndex):
+        (WebCore::Layout::lastWrapOpportunityIndex):
+        (WebCore::Layout::LineBreaker::isContentWrappingAllowed const):
+        (WebCore::Layout::LineBreaker::shouldKeepEndOfLineWhitespace const):
+        (WebCore::Layout::LineBreaker::processInlineContent):
+        (WebCore::Layout::LineBreaker::processOverflowingContent const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::append):
+        (WebCore::Layout::LineBreaker::ContinuousContent::reset):
+        (WebCore::Layout::ContinuousContent::runs const): Deleted.
+        (WebCore::Layout::ContinuousContent::isEmpty const): Deleted.
+        (WebCore::Layout::ContinuousContent::logicalWidth const): Deleted.
+        (WebCore::Layout::ContinuousContent::logicalLeft const): Deleted.
+        (WebCore::Layout::ContinuousContent::hasTrailingCollapsibleContent const): Deleted.
+        (WebCore::Layout::ContinuousContent::isFullyCollapsible const): Deleted.
+        (WebCore::Layout::ContinuousContent::ContinuousContent): Deleted.
+        (WebCore::Layout::ContinuousContent::nonCollapsibleLogicalWidth const): Deleted.
+        (WebCore::Layout::ContinuousContent::hasTextContentOnly const): Deleted.
+        (WebCore::Layout::ContinuousContent::isVisuallyEmptyWhitespaceContentOnly const): Deleted.
+        (WebCore::Layout::ContinuousContent::firstTextRunIndex const): Deleted.
+        (WebCore::Layout::ContinuousContent::lastContentRunIndex const): Deleted.
+        (WebCore::Layout::ContinuousContent::hasNonContentRunsOnly const): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::ContinuousContent::logicalWidth const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::logicalLeft const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::collapsibleLogicalWidth const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::nonCollapsibleLogicalWidth const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::hasTrailingCollapsibleContent const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::isFullyCollapsible const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::runs const):
+        (WebCore::Layout::LineBreaker::ContinuousContent::Run::Run):
+        (WebCore::Layout::LineBreaker::Run::Run): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::continuousContent const):
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineCandidate::InlineContent::reset):
+        (WebCore::Layout::LineCandidate::reset):
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+        (WebCore::Layout::LineBuilder::nextContentForLine):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        (WebCore::Layout::LineBuilder::commitPartialContent):
+        (WebCore::Layout::LineCandidate::InlineContent::runs const): Deleted.
+        (WebCore::Layout::LineCandidate::InlineContent::logicalWidth const): Deleted.
+        (WebCore::Layout::LineCandidate::InlineContent::collapsibleTrailingWidth const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Always use OperationPtrTag for all operations and annotate operations in CSS JIT

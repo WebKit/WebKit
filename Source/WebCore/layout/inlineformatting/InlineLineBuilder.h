@@ -97,7 +97,7 @@ private:
     void commitFloats(const LineCandidate&, CommitIntrusiveFloatsOnly = CommitIntrusiveFloatsOnly::No);
     Result handleFloatsAndInlineContent(LineBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     size_t rebuildLine(const InlineItemRange& needsLayoutRange);
-    void commitPartialContent(const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
+    void commitPartialContent(const LineBreaker::ContinuousContent::RunList&, const LineBreaker::Result::PartialTrailingContent&);
     void initialize(const UsedConstraints&);
     struct CommittedContent {
         size_t inlineItemCount { 0 };
