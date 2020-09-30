@@ -46,7 +46,12 @@ static Optional<ChassisType> readMachineInfoChassisType()
     for (int i = 0; split.get()[i]; ++i) {
         if (g_str_has_prefix(split.get()[i], "CHASSIS=")) {
             char* chassis = split.get()[i] + 8;
-            if (!strcmp(chassis, "tablet") || !strcmp(chassis, "handset"))
+
+            GUniquePtr<char> unquoted(g_shell_unquote(chassis, &error.outPtr()));
+            if (error)
+                g_warning("Could not unquote chassis type %s: %s", chassis, error->message);
+
+            if (!strcmp(unquoted.get(), "tablet") || !strcmp(unquoted.get(), "handset"))
                 return ChassisType::Mobile;
 
             return ChassisType::Desktop;

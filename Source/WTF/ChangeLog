@@ -1,3 +1,17 @@
+2020-09-30  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Chassis type check fails if the value is quoted
+        https://bugs.webkit.org/show_bug.cgi?id=217123
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sometimes the chassis type can be quoted, in this case we'll fail to
+        parse it and fall back to desktop type. Unquote the string before
+        attempting to parse it.
+
+        * wtf/glib/ChassisType.cpp:
+        (WTF::readMachineInfoChassisType):
+
 2020-09-29  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Adopt shared preferences configuration and script in WebKit
