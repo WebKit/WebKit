@@ -29,5 +29,13 @@ set -e
 ARGS=("$@")
 
 PREFERENCES_DIR=${WTF_BUILD_SCRIPTS_DIR}/Preferences
+TEMPLATES_DIR=${SRCROOT}/mac/Scripts/PreferencesTemplates
 
-/usr/bin/env ruby ${WTF_BUILD_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --template WebPreferencesDefinitions.h --template WebPreferencesExperimentalFeatures.mm --template WebPreferencesInternalFeatures.mm --template WebViewPreferencesChangedGenerated.mm --templateDir=${SRCROOT}/mac/Scripts/PreferencesTemplates --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${PREFERENCES_DIR}/WebPreferences.yaml --debug ${PREFERENCES_DIR}/WebPreferencesDebug.yaml --experimental ${PREFERENCES_DIR}/WebPreferencesExperimental.yaml --internal ${PREFERENCES_DIR}/WebPreferencesInternal.yaml
+TEMPLATES=(
+    WebPreferencesDefinitions.h.erb
+    WebPreferencesExperimentalFeatures.mm.erb
+    WebPreferencesInternalFeatures.mm.erb
+    WebViewPreferencesChangedGenerated.mm.erb
+)
+
+/usr/bin/env ruby ${WTF_BUILD_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy ${TEMPLATES[@]/#/--template ${TEMPLATES_DIR}/} --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ --base ${PREFERENCES_DIR}/WebPreferences.yaml --debug ${PREFERENCES_DIR}/WebPreferencesDebug.yaml --experimental ${PREFERENCES_DIR}/WebPreferencesExperimental.yaml --internal ${PREFERENCES_DIR}/WebPreferencesInternal.yaml

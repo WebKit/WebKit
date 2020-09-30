@@ -28,7 +28,7 @@
 #include "config.h"
 #include "WebPreferencesStore.h"
 
-#include "WebPreferencesDefaultValues.h"
+#include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Variant.h>
@@ -52,7 +52,7 @@ WebPreferencesStore::ValueMap& WebPreferencesStore::defaults()
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        defaults.get().set(WebPreferencesKey::<%= @pref.nameLower %>Key(), Value(<%= @pref.type %>(<%= @pref.defaultValue %>)));
+        defaults.get().set(WebPreferencesKey::<%= @pref.nameLower %>Key(), Value(<%= @pref.type %>(DEFAULT_VALUE_FOR_<%= @pref.name %>)));
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

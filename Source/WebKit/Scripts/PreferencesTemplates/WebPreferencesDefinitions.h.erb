@@ -29,11 +29,35 @@
 
 #include "WebPreferencesDefaultValues.h"
 
+<%- for @pref in @preferences do -%>
+<%-   if @pref.condition -%>
+#if <%= @pref.condition %>
+<%-   end -%>
+<%-   if @pref.defaultValues.size() == 1 -%>
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= @pref.defaultValues['default'] %>
+<%-   else -%>
+<%-     @pref.defaultValues.each_with_index do |(key, value), index| -%>
+<%-       if index == 0 -%>
+#if <%= key %>
+<%-       elsif index != @pref.defaultValues.size() - 1 -%>
+#elif <%= key %>
+<%-       else -%>
+#else
+<%-       end -%>
+#define DEFAULT_VALUE_FOR_<%= @pref.name %> <%= value %>
+<%-     end -%>
+#endif
+<%-   end -%>
+<%-   if @pref.condition -%>
+#endif
+<%-   end -%>
+<%- end -%>
+
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue, HumanReadableName, HumanReadableDescription)
 
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \
 <%- for @pref in @preferencesNotDebug do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \
 
@@ -42,15 +66,15 @@
 
 #define FOR_EACH_WEBKIT_DEBUG_PREFERENCE(macro) \
 <%- for @pref in @preferencesDebug do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \
 
 // Internal Debug Features
 
 #define FOR_EACH_WEBKIT_INTERNAL_DEBUG_FEATURE_PREFERENCE(macro) \
-<%- for @pref in @internalDebugFeatures do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+<%- for @pref in @internalFeatures do -%>
+    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
    \
 
@@ -58,7 +82,7 @@
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
 <%- for @pref in @experimentalFeatures do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \
 

@@ -215,6 +215,7 @@ DisallowSyncXHRDuringPageDismissalEnabled:
     WebKitLegacy:
       default: true
     WebKit:
+      "PLATFORM(MAC) || PLATFORM(IOS_FAMILY)": WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled()
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
@@ -280,6 +281,7 @@ HTTP3Enabled:
   type: bool
   humanReadableName: "HTTP/3"
   humanReadableDescription: "Enable HTTP/3"
+  webcoreBinding: none
   condition: HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
   exposed: [ WebKit ]
   defaultValue:
@@ -625,6 +627,7 @@ ServerTimingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
 ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:

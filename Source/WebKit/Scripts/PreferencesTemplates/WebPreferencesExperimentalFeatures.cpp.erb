@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPreferences.h"
 
+#include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
 
 namespace WebKit {
@@ -53,7 +54,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        API::ExperimentalFeature::create(<%= @pref.humanReadableName %>, "<%= @pref.name %>", <%= @pref.humanReadableDescription %>, <%= @pref.defaultValue %>, <%= @pref.hidden %>),
+        API::ExperimentalFeature::create(<%= @pref.humanReadableName %>, "<%= @pref.name %>", <%= @pref.humanReadableDescription %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

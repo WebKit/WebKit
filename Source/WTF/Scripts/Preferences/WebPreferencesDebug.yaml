@@ -30,6 +30,28 @@ AcceleratedDrawingEnabled:
     WebKit:
       default: true
 
+# FIXME: WebKit has an alternate name for this called 'ShowDebugBorders'. We should standardize on one name.
+CompositingBordersVisible:
+  type: bool
+  webKitLegacyPreferenceKey: WebKitShowDebugBorders
+  webcoreName: showDebugBorders
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: WebKit has an alternate name for this called 'ShowRepaintCounter'. We should standardize on one name.
+CompositingRepaintCountersVisible:
+  type: bool
+  webKitLegacyPreferenceKey: WebKitShowRepaintCounter
+  webcoreName: showRepaintCounter
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 DeveloperExtrasEnabled:
   type: bool
   webKitLegacyPreferenceKey: WebKitDeveloperExtrasEnabledPreferenceKey
@@ -101,24 +123,6 @@ NeedsInAppBrowserPrivacyQuirks:
 ResourceUsageOverlayVisible:
   type: bool
   condition: ENABLE(RESOURCE_USAGE)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
-# FIXME: WebKit has an alternate name for this called 'CompositingBordersVisible'. We should standardize on one name.
-ShowDebugBorders:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
-# FIXME: WebKit has an alternate name for this called 'CompositingRepaintCountersVisible'. We should standardize on one name.
-ShowRepaintCounter:
-  type: bool
   defaultValue:
     WebKitLegacy:
       default: false

@@ -1,3 +1,22 @@
+2020-09-29  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Adopt shared preferences configuration and script in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=217075
+
+        Reviewed by Darin Adler.
+
+        * Scripts/GeneratePreferences.rb:
+        Simplify input by passing the templates as complete paths, rather than by name + template directory.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesDebug.yaml:
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Fix some mistakes / things left out to make WebKit defaults and names match current WebKit names and defaults.
+
+        * wtf/CMakeLists.txt:
+        Copy all the preferences and scripts into WTF_SCRIPTS_DIR so it can be accessed by WebKit.
+
 2020-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove plist-based ResourceLoadStatistics storage, which has been replaced by database-based storage

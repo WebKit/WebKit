@@ -1,3 +1,47 @@
+2020-09-29  Sam Weinig  <weinig@apple.com>
+
+        [Preferences] Adopt shared preferences configuration and script in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=217075
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebPreferences.yaml: Removed.
+        * Shared/WebPreferencesDebug.yaml: Removed.
+        * Shared/WebPreferencesExperimental.yaml: Removed.
+        * Shared/WebPreferencesInternal.yaml: Removed.
+        * Scripts/GeneratePreferences.rb: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove yaml preferences and preference generator in favor of shared one
+        in WTF. 
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        Update preference generation to use the shared script and preference files.
+        
+        * Configurations/BaseTarget.xcconfig:
+        Add new variable, WTF_BUILD_SCRIPTS_DIR, that points to directory where the
+        shared generator and preference files live for use as input to the generation.
+  
+        * DerivedSources-input.xcfilelist:
+        Update for new location of script and preference files.
+
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb:
+        Port support for multiple conditionally-defined defaultValues from WebKitLegacy,
+        keeping the same DEFAULT_VALUE_FOR_* macro naming and using the macro definitions
+        in place of existing <%= @pref.defaultValue %> idiom. Also updates for rename
+        from @internalDebugFeatures to @internalFeatures.
+ 
+        * Shared/WebPreferencesDefaultValues.cpp:
+        * Shared/WebPreferencesDefaultValues.h:
+        Remove defaults that are now fully specified in the preference files.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        Replace removed DEFAULT_APPLE_PAY_ENABLED, with the now generated DEFAULT_VALUE_FOR_ApplePayEnabled.
+
 2020-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] RemoteImageBufferProxy should ensure the state stack of the context is cleared before destruction

@@ -36,32 +36,23 @@
 
 namespace WebKit {
 
+#if PLATFORM(IOS_FAMILY)
+
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-#if PLATFORM(IOS_FAMILY)
-    return linkedOnOrAfter(WebKit::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
-#else
-    return true;
-#endif
+    static bool result = linkedOnOrAfter(WebKit::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    return result;
 }
 
 bool defaultCSSOMViewScrollingAPIEnabled()
 {
-#if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isIMDb() && applicationSDKVersion() < DYLD_IOS_VERSION_13_0)
-        return false;
+    static bool result = WebCore::IOSApplication::isIMDb() && applicationSDKVersion() < DYLD_IOS_VERSION_13_0;
+    return !result;
+}
+
 #endif
-    return true;
-}
 
-#if ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
-
-bool defaultTextAutosizingUsesIdempotentMode()
-{
-    return false;
-}
-
-#endif // ENABLE(TEXT_AUTOSIZING) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 
 bool defaultDisallowSyncXHRDuringPageDismissalEnabled()
 {
@@ -78,6 +69,9 @@ bool defaultDisallowSyncXHRDuringPageDismissalEnabled()
 #endif
     return true;
 }
+
+#endif
+
 
 static bool defaultAsyncFrameAndOverflowScrollingEnabled()
 {
@@ -154,12 +148,12 @@ bool defaultUseGPUProcessForWebGLEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if PLATFORM(MAC) && HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if PLATFORM(MAC)
     return isFeatureFlagEnabled("gpu_process_webrtc");
-#endif
-
-#if PLATFORM(IOS_FAMILY) && HAVE(SYSTEM_FEATURE_FLAGS)
+#elif PLATFORM(IOS_FAMILY)
     return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
+#endif
 #endif
 
     return false;
@@ -167,10 +161,6 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 
 bool defaultCaptureAudioInUIProcessEnabled()
 {
-#if PLATFORM(IOS_FAMILY)
-    return false;
-#endif
-
 #if PLATFORM(MAC)
     return !defaultCaptureAudioInGPUProcessEnabled();
 #endif
@@ -258,6 +248,7 @@ bool defaultWebXREnabled()
 #endif // ENABLE(WEBXR)
 
 #if ENABLE(VP9)
+
 bool defaultVP9DecoderEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
@@ -266,9 +257,7 @@ bool defaultVP9DecoderEnabled()
 
     return true;
 }
-#endif
 
-#if ENABLE(VP9)
 bool defaultVP9SWDecoderEnabledOnBattery()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
@@ -277,9 +266,9 @@ bool defaultVP9SWDecoderEnabledOnBattery()
 
     return false;
 }
-#endif
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+#if ENABLE(MEDIA_SOURCE)
+
 bool defaultWebMParserEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
@@ -288,24 +277,8 @@ bool defaultWebMParserEnabled()
 
     return true;
 }
-#endif
 
-#if ENABLE(MEDIA_STREAM)
-bool defaultMediaRecorderEnabled()
-{
-#if HAVE(AVASSETWRITERDELEGATE)
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
-
-#if ENABLE(WEB_RTC)
-bool defaultWebRTCH264LowLatencyEncoderEnabled()
-{
-    return true;
-}
-#endif
+#endif // ENABLE(MEDIA_SOURCE)
+#endif // ENABLE(VP9)
 
 } // namespace WebKit

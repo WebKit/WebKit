@@ -38,6 +38,7 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
 #import "WebPreferencesDefaultValues.h"
+#import "WebPreferencesDefinitions.h"
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStore.h"
@@ -267,7 +268,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _undoManagerAPIEnabled = NO;
 
 #if ENABLE(APPLE_PAY)
-    _applePayEnabled = DEFAULT_APPLE_PAY_ENABLED;
+    _applePayEnabled = DEFAULT_VALUE_FOR_ApplePayEnabled;
 #endif
 
     return self;

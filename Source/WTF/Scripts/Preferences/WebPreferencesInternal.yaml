@@ -42,6 +42,7 @@ AlwaysZoomOnDoubleTap:
   type: bool
   humanReadableName: "DTTZ always"
   humanReadableDescription: "Double taps zoom, even if we dispatched a click anywhere"
+  webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
   exposed: [ WebKit ]
   defaultValue:
@@ -79,6 +80,8 @@ AsyncFrameScrollingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(NICOSIA)": true
+      "PLATFORM(IOS_FAMILY)": true
       default: WebKit::defaultAsyncFrameScrollingEnabled()
 
 AsyncOverflowScrollingEnabled:
@@ -89,6 +92,7 @@ AsyncOverflowScrollingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(IOS_FAMILY)": true
       default: WebKit::defaultAsyncFrameScrollingEnabled()
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
@@ -520,7 +524,7 @@ RestrictedHTTPResponseAccess:
     WebKitLegacy:
       default: true
     WebKit:
-      default: false
+      default: true
 
 SecureContextChecksEnabled:
   type: bool

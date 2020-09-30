@@ -1276,7 +1276,8 @@ PassiveTouchListenersAsDefaultOnDocument:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultPassiveTouchListenersAsDefaultOnDocument()
       default: true
     WebKit:
-      default: WebKit::defaultPassiveTouchListenersAsDefaultOnDocument()
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultPassiveTouchListenersAsDefaultOnDocument()
+      default: true
 
 PasswordEchoDuration:
   type: double
