@@ -1180,69 +1180,58 @@ bool ArgumentCoder<NativeImageHandle>::decode(Decoder& decoder, NativeImageHandl
     return decodeOptionalNativeImage(decoder, imageHandle.image);
 }
 
-void ArgumentCoder<FontHandle>::encode(Encoder& encoder, const FontHandle& handle)
+void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
-    encoder << !!handle.font;
-    if (!handle.font)
-        return;
-
-    auto* fontFaceData = handle.font->fontFaceData();
-    encoder << !!fontFaceData;
+    auto* fontFaceData = font->fontFaceData();
+    encoder << static_cast<bool>(fontFaceData);
     if (fontFaceData) {
         encodeSharedBuffer(encoder, fontFaceData);
-        auto& data = handle.font->platformData();
+        auto& data = font->platformData();
         encoder << data.size();
         encoder << data.syntheticBold();
         encoder << data.syntheticOblique();
     }
 
-    encodePlatformData(encoder, handle);
+    encodePlatformData(encoder, font);
 }
 
-bool ArgumentCoder<FontHandle>::decode(Decoder& decoder, FontHandle& handle)
+Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decode(Decoder& decoder)
 {
-    Optional<bool> hasFont;
-    decoder >> hasFont;
-    if (!hasFont.hasValue())
-        return false;
-
-    if (!hasFont.value())
-        return true;
-
     Optional<bool> hasFontFaceData;
     decoder >> hasFontFaceData;
     if (!hasFontFaceData.hasValue())
-        return false;
+        return WTF::nullopt;
 
+    Optional<Ref<WebCore::Font>> result;
     if (hasFontFaceData.value()) {
         RefPtr<SharedBuffer> fontFaceData;
         if (!decodeSharedBuffer(decoder, fontFaceData))
-            return false;
+            return WTF::nullopt;
 
         if (!fontFaceData)
-            return false;
+            return WTF::nullopt;
 
         Optional<float> fontSize;
         decoder >> fontSize;
         if (!fontSize)
-            return false;
+            return WTF::nullopt;
 
         Optional<bool> syntheticBold;
         decoder >> syntheticBold;
         if (!syntheticBold)
-            return false;
+            return WTF::nullopt;
 
         Optional<bool> syntheticItalic;
         decoder >> syntheticItalic;
         if (!syntheticItalic)
-            return false;
+            return WTF::nullopt;
 
         FontDescription description;
         description.setComputedSize(*fontSize);
-        handle = { fontFaceData.releaseNonNull(), Font::Origin::Remote, *fontSize, *syntheticBold, *syntheticItalic };
+        result = Font::create(fontFaceData.releaseNonNull(), Font::Origin::Remote, *fontSize, *syntheticBold, *syntheticItalic);
     }
 
-    return decodePlatformData(decoder, handle);
+    return decodePlatformData(decoder, WTFMove(result));
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)

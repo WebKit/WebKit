@@ -94,6 +94,7 @@ public:
     {
         return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback));
     }
+    WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     WEBCORE_EXPORT ~Font();
 
@@ -326,14 +327,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;
 #endif
-};
-
-class FontHandle {
-public:
-    FontHandle() = default;
-    WEBCORE_EXPORT FontHandle(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
-
-    RefPtr<Font> font;
 };
 
 #if PLATFORM(IOS_FAMILY)

@@ -1148,9 +1148,7 @@ private:
 template<class Encoder>
 void DrawGlyphs::encode(Encoder& encoder) const
 {
-    FontHandle handle;
-    handle.font = m_font.ptr();
-    encoder << handle;
+    encoder << m_font;
     encoder << m_glyphs;
     encoder << m_advances;
     encoder << m_blockLocation;
@@ -1161,9 +1159,9 @@ void DrawGlyphs::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
 {
-    Optional<FontHandle> handle;
-    decoder >> handle;
-    if (!handle || !handle->font)
+    Optional<Ref<Font>> font;
+    decoder >> font;
+    if (!font)
         return WTF::nullopt;
 
     Optional<Vector<GlyphBufferGlyph, 128>> glyphs;
@@ -1194,7 +1192,7 @@ Optional<Ref<DrawGlyphs>> DrawGlyphs::decode(Decoder& decoder)
     if (!smoothingMode)
         return WTF::nullopt;
 
-    return DrawGlyphs::create(handle->font.releaseNonNull(), WTFMove(*glyphs), WTFMove(*advances), *blockLocation, *localAnchor, *smoothingMode);
+    return DrawGlyphs::create(font->get(), WTFMove(*glyphs), WTFMove(*advances), *blockLocation, *localAnchor, *smoothingMode);
 }
 
 class DrawImage : public DrawingItem {

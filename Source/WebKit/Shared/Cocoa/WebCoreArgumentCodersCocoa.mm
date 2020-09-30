@@ -507,29 +507,28 @@ Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformD
     return attributes;
 }
 
-void ArgumentCoder<FontHandle>::encodePlatformData(Encoder& encoder, const FontHandle& handle)
+void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
-    auto ctFont = handle.font && !handle.font->fontFaceData() ? handle.font->getCTFont() : nil;
-    encoder << !!ctFont;
+    auto ctFont = !font->fontFaceData() ? font->getCTFont() : nil;
+    encoder << static_cast<bool>(ctFont);
     if (ctFont)
         encoder << (__bridge CocoaFont *)ctFont;
 }
 
-bool ArgumentCoder<FontHandle>::decodePlatformData(Decoder& decoder, FontHandle& handle)
+Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder, Optional<Ref<WebCore::Font>>&& existingFont)
 {
     bool hasPlatformFont;
     if (!decoder.decode(hasPlatformFont))
-        return false;
+        return WTF::nullopt;
 
     if (!hasPlatformFont)
-        return true;
+        return WTFMove(existingFont);
 
     RetainPtr<CocoaFont> font;
     if (!IPC::decode(decoder, font))
-        return false;
+        return WTF::nullopt;
 
-    handle.font = Font::create({ (__bridge CTFontRef)font.get(), static_cast<float>([font pointSize]) });
-    return true;
+    return Font::create({ (__bridge CTFontRef)font.get(), static_cast<float>([font pointSize]) });
 }
 
 } // namespace IPC

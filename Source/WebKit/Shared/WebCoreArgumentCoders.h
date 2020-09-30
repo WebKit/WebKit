@@ -94,7 +94,7 @@ class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
 class FixedPositionViewportConstraints;
-class FontHandle;
+class Font;
 class HTTPHeaderMap;
 class ImageHandle;
 class IntPoint;
@@ -407,11 +407,11 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
 };
 
-template<> struct ArgumentCoder<WebCore::FontHandle> {
-    static void encode(Encoder&, const WebCore::FontHandle&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FontHandle&);
-    static void encodePlatformData(Encoder&, const WebCore::FontHandle&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::FontHandle&);
+template<> struct ArgumentCoder<Ref<WebCore::Font>> {
+    static void encode(Encoder&, const Ref<WebCore::Font>&);
+    static Optional<Ref<WebCore::Font>> decode(Decoder&);
+    static void encodePlatformData(Encoder&, const Ref<WebCore::Font>&);
+    static Optional<Ref<WebCore::Font>> decodePlatformData(Decoder&, Optional<Ref<WebCore::Font>>&&);
 };
 
 template<> struct ArgumentCoder<WebCore::ImageHandle> {

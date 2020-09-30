@@ -235,15 +235,15 @@ bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, Dictionary
     return false;
 }
 
-void ArgumentCoder<FontHandle>::encodePlatformData(Encoder&, const FontHandle&)
+void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
 {
     ASSERT_NOT_REACHED();
 }
 
-bool ArgumentCoder<FontHandle>::decodePlatformData(Decoder&, FontHandle&)
+Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&, Optional<Ref<WebCore::Font>>&&)
 {
     ASSERT_NOT_REACHED();
-    return false;
+    return WTF::nullopt;
 }
 
 #if ENABLE(VIDEO)

@@ -1,3 +1,23 @@
+2020-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Remove FontHandle
+        https://bugs.webkit.org/show_bug.cgi?id=217076
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<Ref<Font>>::encodePlatformData):
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData):
+        (IPC::ArgumentCoder<FontHandle>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<FontHandle>::decodePlatformData): Deleted.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<Font>>::encode):
+        (IPC::createFont):
+        (IPC::ArgumentCoder<Ref<Font>>::decode):
+        (IPC::ArgumentCoder<FontHandle>::encode): Deleted.
+        (IPC::ArgumentCoder<FontHandle>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
 2020-09-29  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Adopt shared preferences configuration and script in WebKit
