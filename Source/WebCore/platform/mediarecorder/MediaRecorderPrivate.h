@@ -64,6 +64,8 @@ public:
     using ErrorCallback = CompletionHandler<void(Optional<Exception>&&)>;
     virtual void startRecording(ErrorCallback&& callback) { callback({ }); }
 
+    WEBCORE_EXPORT virtual const String& mimeType() const;
+
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
     void setVideoSource(RefPtr<RealtimeMediaSource>&&);

@@ -1,3 +1,17 @@
+2020-09-30  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support isTypeSupported
+        https://bugs.webkit.org/show_bug.cgi?id=216856
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-mimetype-expected.txt:
+        * web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https-expected.txt:
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt:
+        * web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https-expected.txt:
+        * web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https.html:
+        Remove JS console log error line.
+
 2020-09-29  Keith Miller  <keith_miller@apple.com>
 
         CSS serialization expects comments between certain tokens

@@ -1,3 +1,36 @@
+2020-09-30  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support isTypeSupported
+        https://bugs.webkit.org/show_bug.cgi?id=216856
+
+        Reviewed by Darin Adler.
+
+        Introduce MediaRecorder::isMimeTypeSupported whose result is exposed as MediaRecoder.isTypeSupported.
+        Cocoa port allows mp4 audio and video mime types, with H264 and AAC codecs.
+        Add a routine to get the mime type from the MediaRecorderPrivate.
+        Store it in MediaRecorder and add a mimeType getter.
+
+        Test: http/wpt/mediarecorder/mimeType.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::isTypeSupported):
+        (WebCore::MediaRecorder::create):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * Modules/mediarecorder/MediaRecorderProvider.cpp:
+        (WebCore::MediaRecorderProvider::isSupported):
+        * Modules/mediarecorder/MediaRecorderProvider.h:
+        * platform/mediarecorder/MediaRecorderPrivate.cpp:
+        (WebCore::MediaRecorderPrivate::mimeType const):
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::fetchData):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::mimeType const):
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediastream/MediaStreamPrivate.h:
+
 2020-09-30  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Internal audio rendering support

@@ -1,3 +1,13 @@
+2020-09-30  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support isTypeSupported
+        https://bugs.webkit.org/show_bug.cgi?id=216856
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/mediarecorder/mimeType-expected.txt: Added.
+        * http/wpt/mediarecorder/mimeType.html: Added.
+
 2020-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash while loading a confluence page

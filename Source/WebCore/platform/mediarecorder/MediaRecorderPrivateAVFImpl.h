@@ -48,7 +48,6 @@ private:
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
-    const String& mimeType();
     void stopRecording();
 
     Ref<MediaRecorderPrivateWriter> m_writer;

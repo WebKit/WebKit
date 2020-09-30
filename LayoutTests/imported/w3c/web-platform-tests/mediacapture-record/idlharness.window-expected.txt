@@ -8,7 +8,7 @@ PASS MediaRecorder interface: existence and properties of interface prototype ob
 PASS MediaRecorder interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaRecorder interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaRecorder interface: attribute stream
-FAIL MediaRecorder interface: attribute mimeType assert_true: The prototype object must have a property "mimeType" expected true got false
+PASS MediaRecorder interface: attribute mimeType
 PASS MediaRecorder interface: attribute state
 PASS MediaRecorder interface: attribute onstart
 PASS MediaRecorder interface: attribute onstop
@@ -24,11 +24,11 @@ PASS MediaRecorder interface: operation stop()
 FAIL MediaRecorder interface: operation pause() assert_own_property: interface prototype object missing non-static operation expected property "pause" missing
 FAIL MediaRecorder interface: operation resume() assert_own_property: interface prototype object missing non-static operation expected property "resume" missing
 PASS MediaRecorder interface: operation requestData()
-FAIL MediaRecorder interface: operation isTypeSupported(DOMString) assert_own_property: interface object missing static operation expected property "isTypeSupported" missing
+PASS MediaRecorder interface: operation isTypeSupported(DOMString)
 PASS MediaRecorder must be primary interface of [object MediaRecorder]
 PASS Stringification of [object MediaRecorder]
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "stream" with the proper type
-FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "mimeType" with the proper type assert_inherits: property "mimeType" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "mimeType" with the proper type
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "state" with the proper type
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onstart" with the proper type
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onstop" with the proper type
@@ -46,7 +46,7 @@ FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "paus
 FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "resume()" with the proper type assert_inherits: property "resume" not found in prototype chain
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "requestData()" with the proper type
 PASS MediaRecorder interface: [object MediaRecorder] must inherit property "isTypeSupported(DOMString)" with the proper type
-FAIL MediaRecorder interface: calling isTypeSupported(DOMString) on [object MediaRecorder] with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "isTypeSupported" missing
+PASS MediaRecorder interface: calling isTypeSupported(DOMString) on [object MediaRecorder] with too few arguments must throw TypeError
 PASS BlobEvent interface: existence and properties of interface object
 PASS BlobEvent interface object length
 PASS BlobEvent interface object name
