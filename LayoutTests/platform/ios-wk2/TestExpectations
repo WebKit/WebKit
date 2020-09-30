@@ -1889,3 +1889,6 @@ webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/
 
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
+
+webkit.org/b/217118 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Pass Failure ]
+
