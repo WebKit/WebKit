@@ -43,6 +43,14 @@ class Scm(object):
         self.path = path
 
     @property
+    def is_svn(self):
+        return False
+
+    @property
+    def is_git(self):
+        return False
+
+    @property
     def root_path(self):
         raise NotImplementedError()
 

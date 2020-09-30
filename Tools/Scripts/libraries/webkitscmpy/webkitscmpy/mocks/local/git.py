@@ -32,6 +32,7 @@ class Git(mocks.Subprocess):
         self, path='/.invalid-git',
         branch=None, remote=None, branches=None, tags=None,
         detached=None, default_branch='main',
+        git_svn=False,
     ):
         self.path = path
         self.branch = branch or default_branch
@@ -40,6 +41,39 @@ class Git(mocks.Subprocess):
 
         self.branches = branches or []
         self.tags = tags or []
+
+        if git_svn:
+            git_svn_routes = [
+                mocks.Subprocess.Route(
+                    local.Git.executable, 'svn', 'find-rev', 'r1',
+                    cwd=self.path,
+                    completion=mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout='d423ea82efaaed0dcbafb09aaa4a70fafdea0729\n',
+                    ),
+                ), mocks.Subprocess.Route(
+                    local.Git.executable, 'svn', 'info',
+                    cwd=self.path,
+                    completion=mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout=
+                            'Path: .\n'
+                            'URL: {remote}/{branch}\n'
+                            'Repository Root: {remote}\n'.format(
+                                path=self.path,
+                                remote=self.remote,
+                                branch=self.branch,
+                            ),
+                    ),
+                ),
+            ]
+
+        else:
+            git_svn_routes = [mocks.Subprocess.Route(
+                local.Git.executable, 'svn',
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(returncode=1, elapsed=2),
+            )]
 
         super(Git, self).__init__(
             mocks.Subprocess.Route(
@@ -116,5 +150,5 @@ nothing to commit, working tree clean
                     returncode=128,
                     stderr='fatal: not a git repository (or any parent up to mount point)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n',
                 ),
-            ),
+            ), *git_svn_routes
         )

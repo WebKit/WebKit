@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from webkitcorepy import run, decorators
+from webkitcorepy import run, decorators, TimeoutExpired
 from webkitscmpy.local import Scm
 
 
@@ -36,6 +36,39 @@ class Git(Scm):
         super(Git, self).__init__(path)
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
+
+    @decorators.Memoize(cached=False)
+    def info(self):
+        if not self.is_svn:
+            raise self.Exception('Cannot run SVN info on a git checkout which is not git-svn')
+
+        info_result = run([self.executable, 'svn', 'info'], cwd=self.path, capture_output=True, encoding='utf-8')
+        if info_result.returncode:
+            return {}
+
+        result = {}
+        for line in info_result.stdout.splitlines():
+            split = line.split(': ')
+            result[split[0]] = ': '.join(split[1:])
+        return result
+
+    @property
+    @decorators.Memoize()
+    def is_svn(self):
+        try:
+            return run(
+                [self.executable, 'svn', 'find-rev', 'r1'],
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+                timeout=1,
+            ).returncode == 0
+        except TimeoutExpired:
+            return False
+
+    @property
+    def is_git(self):
+        return True
 
     @property
     @decorators.Memoize()

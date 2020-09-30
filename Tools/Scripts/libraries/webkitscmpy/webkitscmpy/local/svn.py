@@ -50,6 +50,10 @@ class Svn(Scm):
         return result
 
     @property
+    def is_svn(self):
+        return True
+
+    @property
     def root_path(self):
         return self.info(cached=True).get('Working Copy Root Path')
 

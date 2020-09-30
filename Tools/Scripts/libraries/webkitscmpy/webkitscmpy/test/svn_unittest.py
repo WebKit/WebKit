@@ -66,3 +66,8 @@ class TestSvn(unittest.TestCase):
     def test_default_branch(self):
         with mocks.local.Svn(self.path):
             self.assertEqual(local.Svn(self.path).default_branch, 'trunk')
+
+    def test_scm_type(self):
+        with mocks.local.Svn(self.path):
+            self.assertTrue(local.Svn(self.path).is_svn)
+            self.assertFalse(local.Svn(self.path).is_git)

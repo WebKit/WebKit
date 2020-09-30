@@ -23,6 +23,8 @@
 import os
 import unittest
 
+from webkitcorepy import LoggerCapture
+from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import local, mocks
 
 
@@ -69,3 +71,26 @@ class TestGit(unittest.TestCase):
     def test_default_branch(self):
         with mocks.local.Git(self.path):
             self.assertEqual(local.Git(self.path).default_branch, 'main')
+
+    def test_scm_type(self):
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            self.assertTrue(local.Git(self.path).is_git)
+            self.assertFalse(local.Git(self.path).is_svn)
+
+        with mocks.local.Git(self.path, git_svn=True), MockTime, LoggerCapture():
+            self.assertTrue(local.Git(self.path).is_git)
+            self.assertTrue(local.Git(self.path).is_svn)
+
+    def test_info(self):
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            with self.assertRaises(local.Git.Exception):
+                self.assertEqual(dict(), local.Git(self.path).info())
+
+        with mocks.local.Git(self.path, git_svn=True), MockTime, LoggerCapture():
+            self.assertEqual(
+                {
+                    'Path': '.',
+                    'Repository Root': 'git@webkit.org:/mock/repository',
+                    'URL': 'git@webkit.org:/mock/repository/main',
+                }, local.Git(self.path).info(),
+            )

@@ -1,5 +1,31 @@
 2020-09-30  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Check if a git checkout is linked to an SVN checkout
+        https://bugs.webkit.org/show_bug.cgi?id=216888
+        <rdar://problem/69446322>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Increment library version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.info): Run `git svn info` if in a Git-SVN checkout.
+        (Git.is_svn): Check if in a Git-SVN checkout.
+        (Git.is_git): Return True.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.is_svn): Return False.
+        (Scm.is_git): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.is_svn): Return True.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add `git svn` commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_scm_type):
+        (TestGit.test_info):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestSvn.test_scm_type):
+
+2020-09-30  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitpy] Use webkitcorepy's auto installer for html5lib
         https://bugs.webkit.org/show_bug.cgi?id=217130
         <rdar://problem/69798724>
