@@ -436,16 +436,6 @@ WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef cont
     return reinterpret_cast<WKKeyValueStorageManagerRef>(WKWebsiteDataStoreGetDefaultDataStore());
 }
 
-WKMediaSessionFocusManagerRef WKContextGetMediaSessionFocusManager(WKContextRef context)
-{
-#if ENABLE(MEDIA_SESSION)
-    return WebKit::toAPI(WebKit::toImpl(context)->supplement<WebKit::WebMediaSessionFocusManager>());
-#else
-    UNUSED_PARAM(context);
-    return nullptr;
-#endif
-}
-
 WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef contextRef)
 {
     return WebKit::toAPI(WebKit::toImpl(contextRef)->supplement<WebKit::WebNotificationManagerProxy>());

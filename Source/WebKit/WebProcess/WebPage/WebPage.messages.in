@@ -411,11 +411,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetMayStartMediaWhenInWindow(bool mayStartMedia)
     StopMediaCapture()
 
-#if ENABLE(MEDIA_SESSION)
-    HandleMediaEvent(uint32_t eventType)
-    SetVolumeOfMediaElement(double volume, uint64_t elementID)
-#endif
-
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 

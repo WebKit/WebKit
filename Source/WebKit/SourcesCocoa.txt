@@ -226,15 +226,12 @@ UIProcess/HighPerformanceGraphicsUsageSampler.cpp
 UIProcess/PerActivityStateCPUUsageSampler.cpp
 UIProcess/ViewGestureController.cpp
 UIProcess/ViewSnapshotStore.cpp
-UIProcess/WebMediaSessionFocusManager.cpp
-UIProcess/WebMediaSessionFocusManagerClient.cpp
 UIProcess/WebMemoryPressureHandler.cpp
 UIProcess/WKImagePreviewViewController.mm
 
 UIProcess/API/APIWebsiteDataRecord.cpp
 
 UIProcess/API/C/WKContextMenuListener.cpp
-UIProcess/API/C/WKMediaSessionFocusManager.cpp
 UIProcess/API/C/WKTestingSupport.cpp
 UIProcess/API/C/WKUserScriptRef.cpp
 

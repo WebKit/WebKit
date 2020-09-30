@@ -298,10 +298,6 @@
 #include "MathMLNames.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSession.h"
-#endif
-
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
 #endif
@@ -4185,22 +4181,6 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     state |= MediaStreamTrack::captureState(*this);
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-    if (HTMLMediaElement* sourceElement = HTMLMediaElement::elementWithID(sourceElementID)) {
-        if (sourceElement->isPlaying())
-            state |= MediaProducer::IsSourceElementPlaying;
-
-        if (auto* session = sourceElement->session()) {
-            if (auto* controls = session->controls()) {
-                if (controls->previousTrackEnabled())
-                    state |= MediaProducer::IsPreviousTrackControlEnabled;
-                if (controls->nextTrackEnabled())
-                    state |= MediaProducer::IsNextTrackControlEnabled;
-            }
-        }
-    }
-#endif
-
     if (m_userHasInteractedWithMediaElement)
         state |= MediaProducer::HasUserInteractedWithMediaElement;
 
@@ -7468,17 +7448,6 @@ void Document::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdent
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-#if ENABLE(MEDIA_SESSION)
-
-MediaSession& Document::defaultMediaSession()
-{
-    if (!m_defaultMediaSession)
-        m_defaultMediaSession = MediaSession::create(*scriptExecutionContext());
-    return *m_defaultMediaSession;
-}
-
-#endif
 
 ShouldOpenExternalURLsPolicy Document::shouldOpenExternalURLsPolicyToPropagate() const
 {

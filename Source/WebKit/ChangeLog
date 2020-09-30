@@ -1,3 +1,51 @@
+2020-09-30  Sam Weinig  <weinig@apple.com>
+
+        Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
+        https://bugs.webkit.org/show_bug.cgi?id=216831
+
+        Reviewed by Alex Christensen.
+
+        Removes all code in ENABLE(MEDIA_SESSION) and all media session
+        related SPI. It was never enabled and nothing ever adopted it.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove media session related files.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebMediaSessionMetadata.cpp: Removed.
+        * Shared/WebMediaSessionMetadata.h: Removed.
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKMediaSessionFocusManager.cpp: Removed.
+        * UIProcess/API/C/WKMediaSessionFocusManager.h: Removed.
+        * UIProcess/API/C/WKMediaSessionMetadata.cpp: Removed.
+        * UIProcess/API/C/WKMediaSessionMetadata.h: Removed.
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/WebMediaSessionFocusManager.cpp: Removed.
+        * UIProcess/WebMediaSessionFocusManager.h: Removed.
+        * UIProcess/WebMediaSessionFocusManagerClient.cpp: Removed.
+        * UIProcess/WebMediaSessionFocusManagerClient.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Remove all code in ENABLE(MEDIA_SESSION).
+
 2020-09-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: exempt API::SharedJSContext from remote inspection and automatic inspection

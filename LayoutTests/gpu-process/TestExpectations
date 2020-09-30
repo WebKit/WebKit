@@ -258,8 +258,6 @@ media/presentationmodechanged-fired-once.html [ Skip ]
 media/progress-events-generated-correctly.html [ Skip ]
 media/remoteplayback-prompt.html [ Skip ]
 
-media/session [ Skip ]
-
 media/track/audio/audio-track-mkv-vorbis-addtrack.html [ Skip ]
 media/track/audio/audio-track-mkv-vorbis-enabled.html [ Skip ]
 media/track/audio/audio-track-mkv-vorbis-language.html [ Skip ]

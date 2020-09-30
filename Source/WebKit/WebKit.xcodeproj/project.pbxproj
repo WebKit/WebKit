@@ -1706,11 +1706,6 @@
 		C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */; };
 		C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */ = {isa = PBXBuildFile; fileRef = C6A4CA092252899800169289 /* WKBundlePageMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */; };
-		C98C48A61B6FD4C300145103 /* WebMediaSessionFocusManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */; };
-		C98C48AA1B6FD5B500145103 /* WKMediaSessionFocusManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C98C48A81B6FD5B500145103 /* WKMediaSessionFocusManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C9C1833C1B74026D007036A7 /* WebMediaSessionFocusManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C183381B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.h */; };
-		C9CD43981B4B001D00239E33 /* WebMediaSessionMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CD43941B4B000E00239E33 /* WebMediaSessionMetadata.h */; };
-		C9CD439D1B4B024F00239E33 /* WKMediaSessionMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CD439A1B4B024200239E33 /* WKMediaSessionMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA05397923EE324400A553DC /* ContentAsStringIncludesChildFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */; };
 		CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD003A5119D49B5D005ABCE0 /* WebMediaKeyStorageManager.h */; };
 		CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */; };
@@ -5052,16 +5047,6 @@
 		C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAirPlayRoutePicker.mm; path = ios/forms/WKAirPlayRoutePicker.mm; sourceTree = "<group>"; };
 		C6A4CA092252899800169289 /* WKBundlePageMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBundlePageMac.h; sourceTree = "<group>"; };
 		C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePageMac.mm; sourceTree = "<group>"; };
-		C98C48A31B6FD4C300145103 /* WebMediaSessionFocusManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaSessionFocusManager.cpp; sourceTree = "<group>"; };
-		C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaSessionFocusManager.h; sourceTree = "<group>"; };
-		C98C48A71B6FD5B500145103 /* WKMediaSessionFocusManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMediaSessionFocusManager.cpp; sourceTree = "<group>"; };
-		C98C48A81B6FD5B500145103 /* WKMediaSessionFocusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMediaSessionFocusManager.h; sourceTree = "<group>"; };
-		C9C183371B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaSessionFocusManagerClient.cpp; sourceTree = "<group>"; };
-		C9C183381B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaSessionFocusManagerClient.h; sourceTree = "<group>"; };
-		C9CD43931B4B000E00239E33 /* WebMediaSessionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaSessionMetadata.cpp; sourceTree = "<group>"; };
-		C9CD43941B4B000E00239E33 /* WebMediaSessionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaSessionMetadata.h; sourceTree = "<group>"; };
-		C9CD43991B4B024200239E33 /* WKMediaSessionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMediaSessionMetadata.cpp; sourceTree = "<group>"; };
-		C9CD439A1B4B024200239E33 /* WKMediaSessionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMediaSessionMetadata.h; sourceTree = "<group>"; };
 		CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentAsStringIncludesChildFrames.h; sourceTree = "<group>"; };
 		CD003A5019D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMediaKeyStorageManager.cpp; path = MediaCache/WebMediaKeyStorageManager.cpp; sourceTree = "<group>"; };
 		CD003A5119D49B5D005ABCE0 /* WebMediaKeyStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMediaKeyStorageManager.h; path = MediaCache/WebMediaKeyStorageManager.h; sourceTree = "<group>"; };
@@ -6132,8 +6117,6 @@
 				C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */,
 				BC9BA5021697C45300E44616 /* WebKit2Initialize.cpp */,
 				BC9BA5031697C45300E44616 /* WebKit2Initialize.h */,
-				C9CD43931B4B000E00239E33 /* WebMediaSessionMetadata.cpp */,
-				C9CD43941B4B000E00239E33 /* WebMediaSessionMetadata.h */,
 				905620E812BC248B000799B6 /* WebMemorySampler.cpp */,
 				905620E912BC248B000799B6 /* WebMemorySampler.h */,
 				C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */,
@@ -9051,10 +9034,6 @@
 				BC1BE1F112D54DBD0004A228 /* WebGeolocationProvider.cpp */,
 				BC1BE1F012D54DBD0004A228 /* WebGeolocationProvider.h */,
 				51C8E19B1F21617200BF731B /* WebIconDatabase.h */,
-				C98C48A31B6FD4C300145103 /* WebMediaSessionFocusManager.cpp */,
-				C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */,
-				C9C183371B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.cpp */,
-				C9C183381B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.h */,
 				2D3EF4401917646300034184 /* WebMemoryPressureHandler.cpp */,
 				2D3EF4411917646300034184 /* WebMemoryPressureHandler.h */,
 				7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */,
@@ -9257,10 +9236,6 @@
 				51A9E1081315CD18009E7031 /* WKKeyValueStorageManager.cpp */,
 				51A9E1091315CD18009E7031 /* WKKeyValueStorageManager.h */,
 				2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */,
-				C98C48A71B6FD5B500145103 /* WKMediaSessionFocusManager.cpp */,
-				C98C48A81B6FD5B500145103 /* WKMediaSessionFocusManager.h */,
-				C9CD43991B4B024200239E33 /* WKMediaSessionMetadata.cpp */,
-				C9CD439A1B4B024200239E33 /* WKMediaSessionMetadata.h */,
 				5CABDC8422C40FCC001EDE8E /* WKMessageListener.cpp */,
 				5CABDC8522C40FCC001EDE8E /* WKMessageListener.h */,
 				C11E1693212B87C500985FF6 /* WKMockDisplay.cpp */,
@@ -11320,9 +11295,6 @@
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
 				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
 				CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */,
-				C98C48A61B6FD4C300145103 /* WebMediaSessionFocusManager.h in Headers */,
-				C9C1833C1B74026D007036A7 /* WebMediaSessionFocusManagerClient.h in Headers */,
-				C9CD43981B4B001D00239E33 /* WebMediaSessionMetadata.h in Headers */,
 				9B5BEC262400F4A90070C6EF /* WebMediaStrategy.h in Headers */,
 				2D3EF4431917646300034184 /* WebMemoryPressureHandler.h in Headers */,
 				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
@@ -11621,8 +11593,6 @@
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
 				5CE912142293C280005BEC78 /* WKMain.h in Headers */,
-				C98C48AA1B6FD5B500145103 /* WKMediaSessionFocusManager.h in Headers */,
-				C9CD439D1B4B024F00239E33 /* WKMediaSessionMetadata.h in Headers */,
 				1AB40EE61BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h in Headers */,
 				5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */,
 				C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */,

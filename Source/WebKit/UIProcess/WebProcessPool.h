@@ -59,10 +59,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(MEDIA_SESSION)
-#include "WebMediaSessionFocusManager.h"
-#endif
-
 #if PLATFORM(COCOA)
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSObject;

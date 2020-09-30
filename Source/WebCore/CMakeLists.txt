@@ -43,7 +43,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediacapabilities"
     "${WEBCORE_DIR}/Modules/mediacontrols"
     "${WEBCORE_DIR}/Modules/mediarecorder"
-    "${WEBCORE_DIR}/Modules/mediasession"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/mediastream/libwebrtc"
@@ -139,7 +138,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/mediarecorder"
-    "${WEBCORE_DIR}/platform/mediasession"
     "${WEBCORE_DIR}/platform/mediastream"
     "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
     "${WEBCORE_DIR}/platform/mock"
@@ -198,7 +196,6 @@ set(WebCore_IDL_INCLUDES
     Modules/indexeddb
     Modules/mediacapabilities
     Modules/mediarecorder
-    Modules/mediasession
     Modules/mediastream
     Modules/notifications
     Modules/paymentrequest
@@ -326,10 +323,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediarecorder/BlobEvent.idl
     Modules/mediarecorder/MediaRecorder.idl
     Modules/mediarecorder/MediaRecorderErrorEvent.idl
-
-    Modules/mediasession/HTMLMediaElement+MediaSession.idl
-    Modules/mediasession/MediaRemoteControls.idl
-    Modules/mediasession/MediaSession.idl
 
     Modules/mediasource/AudioTrack+MediaSource.idl
     Modules/mediasource/DOMURL+MediaSource.idl

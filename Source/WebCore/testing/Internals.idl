@@ -46,18 +46,6 @@ enum ResourceLoadPriority {
     "ResourceLoadPriorityVeryHigh"
 };
 
-[Conditional=MEDIA_SESSION] enum MediaSessionInterruptingCategory {
-    "content",
-    "transient",
-    "transient-solo"
-};
-
-[Conditional=MEDIA_SESSION] enum MediaControlEvent {
-    "play-pause",
-    "next-track",
-    "previous-track"
-};
-
 enum AutoFillButtonType {
     "None",
     "Contacts",
@@ -696,11 +684,6 @@ enum ContentSizeCategory {
 
     [Conditional=VIDEO, MayThrowException] undefined beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] undefined endMediaSessionInterruption(DOMString flags);
-    [Conditional=MEDIA_SESSION] undefined sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory category);
-    [Conditional=MEDIA_SESSION] undefined sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory category);
-    [Conditional=MEDIA_SESSION] DOMString mediaSessionCurrentState(MediaSession session);
-    [Conditional=MEDIA_SESSION] double mediaElementPlayerVolume(HTMLMediaElement element);
-    [Conditional=MEDIA_SESSION] undefined sendMediaControlEvent(MediaControlEvent event);
     [Conditional=VIDEO] undefined applicationWillBecomeInactive();
     [Conditional=VIDEO] undefined applicationDidBecomeActive();
     [Conditional=VIDEO] undefined applicationWillEnterForeground(optional boolean suspendedUnderLock = false);

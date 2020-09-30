@@ -94,11 +94,6 @@
 #include "WebContextMenuItem.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "WebMediaSessionMetadata.h"
-#include <WebCore/MediaSessionEvents.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include "VersionChecks.h"
 #endif
@@ -2033,15 +2028,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.didResignInputElementStrongPasswordAppearance(toAPI(&page), toAPI(userInfo), m_client.base.clientInfo);
         }
 
-#if ENABLE(MEDIA_SESSION)
-        void mediaSessionMetadataDidChange(WebPageProxy& page, WebMediaSessionMetadata* metadata) final
-        {
-            if (!m_client.mediaSessionMetadataDidChange)
-                return;
-
-            m_client.mediaSessionMetadataDidChange(toAPI(&page), toAPI(metadata), m_client.base.clientInfo);
-        }
-#endif
 #if ENABLE(POINTER_LOCK)
         void requestPointerLock(WebPageProxy* page) final
         {
@@ -2729,43 +2715,6 @@ void WKPageDidDenyPointerLock(WKPageRef page)
     toImpl(page)->didDenyPointerLock();
 #else
     UNUSED_PARAM(page);
-#endif
-}
-
-bool WKPageHasMediaSessionWithActiveMediaElements(WKPageRef page)
-{
-#if ENABLE(MEDIA_SESSION)
-    return toImpl(page)->hasMediaSessionWithActiveMediaElements();
-#else
-    UNUSED_PARAM(page);
-    return false;
-#endif
-}
-
-void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType wkEventType)
-{
-#if ENABLE(MEDIA_SESSION)
-    MediaEventType eventType;
-
-    switch (wkEventType) {
-    case kWKMediaEventTypePlayPause:
-        eventType = MediaEventType::PlayPause;
-        break;
-    case kWKMediaEventTypeTrackNext:
-        eventType = MediaEventType::TrackNext;
-        break;
-    case kWKMediaEventTypeTrackPrevious:
-        eventType = MediaEventType::TrackPrevious;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    toImpl(page)->handleMediaEvent(eventType);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(wkEventType);
 #endif
 }
 

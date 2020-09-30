@@ -1,3 +1,18 @@
+2020-09-30  Sam Weinig  <weinig@apple.com>
+
+        Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
+        https://bugs.webkit.org/show_bug.cgi?id=216831
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        Remove support for building with MEDIA_SESSION enabled.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        Update names to new 'unused' naming.
+
 2020-09-30  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Internal audio rendering support

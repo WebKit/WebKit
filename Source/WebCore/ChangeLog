@@ -1,3 +1,38 @@
+2020-09-30  Sam Weinig  <weinig@apple.com>
+
+        Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
+        https://bugs.webkit.org/show_bug.cgi?id=216831
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove media session related files.
+
+        * Modules/airplay/PlaybackTargetClientContextIdentifier.h: Added.
+        * Modules/airplay/WebMediaSessionManager.cpp: Added.
+        * Modules/airplay/WebMediaSessionManager.h: Added.
+        * Modules/airplay/WebMediaSessionManagerClient.h: Added.
+        * Modules/mediasession: Removed.
+        * platform/mediasession: Removed.
+        Delete Modules/mediasession and platform/mediasession. Move files that
+        were actually used for the WIRELESS_PLAYBACK_TARGET feature to 
+        Modules/airplay where other parts of that feature are implemented.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/EventTargetFactory.in:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        * page/Page.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Remove all code inside ENABLE(MEDIA_SESSION).
+
 2020-09-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for multiple layout tests in accessibility isolated tree mode.

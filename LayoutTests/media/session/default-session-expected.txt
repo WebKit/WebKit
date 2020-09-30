@@ -1,6 +1,0 @@
-New media elements are assigned to the Default media session, which is not exposed through the session attribute.
-
-RUN(audioElement = document.createElement('audio'))
-EXPECTED (audioElement.session == 'null') OK
-END OF TEST
-

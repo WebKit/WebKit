@@ -169,12 +169,6 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/PromisedAttachmentInfo.h>
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-namespace WebCore {
-class MediaSessionMetadata;
-}
-#endif
-
 #if USE(DIRECT2D)
 interface ID3D11Device1;
 #endif
@@ -1344,12 +1338,6 @@ public:
     void suspendAllMediaPlayback();
     void resumeAllMediaPlayback();
 
-#if ENABLE(MEDIA_SESSION)
-    bool hasMediaSessionWithActiveMediaElements() const { return m_hasMediaSessionWithActiveMediaElements; }
-    void handleMediaEvent(WebCore::MediaEventType);
-    void setVolumeOfMediaElement(double, uint64_t);
-#endif
-        
 #if ENABLE(POINTER_LOCK)
     void didAllowPointerLock();
     void didDenyPointerLock();
@@ -1473,12 +1461,6 @@ public:
 #if PLATFORM(COCOA)
     void requestActiveNowPlayingSessionInfo(Ref<NowPlayingInfoCallback>&&);
     void nowPlayingInfoCallback(bool, bool, const String&, double, double, uint64_t, CallbackID);
-#endif
-
-#if ENABLE(MEDIA_SESSION)
-    void hasMediaSessionWithActiveMediaElementsDidChange(bool);
-    void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&);
-    void focusedContentMediaElementDidChange(uint64_t);
 #endif
 
 #if PLATFORM(MAC)
@@ -2776,10 +2758,6 @@ private:
 #if HAVE(TOUCH_BAR)
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
-#endif
-
-#if ENABLE(MEDIA_SESSION)
-    bool m_hasMediaSessionWithActiveMediaElements { false };
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

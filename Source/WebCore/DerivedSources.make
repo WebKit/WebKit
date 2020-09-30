@@ -70,7 +70,6 @@ VPATH = \
     $(WebCore)/Modules/mediacapabilities \
     $(WebCore)/Modules/mediacontrols \
     $(WebCore)/Modules/mediarecorder \
-    $(WebCore)/Modules/mediasession \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
@@ -256,9 +255,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediarecorder/BlobEvent.idl \
     $(WebCore)/Modules/mediarecorder/MediaRecorder.idl \
     $(WebCore)/Modules/mediarecorder/MediaRecorderErrorEvent.idl \
-    $(WebCore)/Modules/mediasession/HTMLMediaElement+MediaSession.idl \
-    $(WebCore)/Modules/mediasession/MediaRemoteControls.idl \
-    $(WebCore)/Modules/mediasession/MediaSession.idl \
     $(WebCore)/Modules/mediasource/AudioTrack+MediaSource.idl \
     $(WebCore)/Modules/mediasource/DOMURL+MediaSource.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \

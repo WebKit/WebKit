@@ -126,7 +126,6 @@ typedef void (*WKPageIsPlayingAudioDidChangeCallback)(WKPageRef page, const void
 typedef void (*WKPageDecidePolicyForUserMediaPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo);
 typedef void (*WKCheckUserMediaPermissionCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionCheckRef devicesRequest, const void *clientInfo);
 typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
-typedef void (*WKPageMediaSessionMetadataDidChangeCallback)(WKPageRef page, WKMediaSessionMetadataRef metadata, const void* clientInfo);
 typedef void (*WKHandleAutoplayEventCallback)(WKPageRef page, WKAutoplayEvent event, WKAutoplayEventFlags flags, const void* clientInfo);
 typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);
@@ -503,7 +502,7 @@ typedef struct WKPageUIClientV5 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 } WKPageUIClientV5;
 
 typedef struct WKPageUIClientV6 {
@@ -576,7 +575,7 @@ typedef struct WKPageUIClientV6 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -656,7 +655,7 @@ typedef struct WKPageUIClientV7 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -740,7 +739,7 @@ typedef struct WKPageUIClientV8 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
     
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -828,7 +827,7 @@ typedef struct WKPageUIClientV9 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -919,7 +918,7 @@ typedef struct WKPageUIClientV10 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
     
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -1014,7 +1013,7 @@ typedef struct WKPageUIClientV11 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -1112,7 +1111,7 @@ typedef struct WKPageUIClientV12 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
     
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -1213,7 +1212,7 @@ typedef struct WKPageUIClientV13 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -1317,7 +1316,7 @@ typedef struct WKPageUIClientV14 {
     WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
     WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
     WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
-    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+    void*                                                               unused5; // Used to be mediaSessionMetadataDidChange.
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;

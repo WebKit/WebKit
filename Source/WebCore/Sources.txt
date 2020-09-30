@@ -130,9 +130,6 @@ Modules/mediarecorder/BlobEvent.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediarecorder/MediaRecorderErrorEvent.cpp
 Modules/mediarecorder/MediaRecorderProvider.cpp
-Modules/mediasession/HTMLMediaElementMediaSession.cpp
-Modules/mediasession/MediaRemoteControls.cpp
-Modules/mediasession/MediaSession.cpp
 Modules/mediasource/DOMURLMediaSource.cpp
 Modules/mediasource/MediaSource.cpp
 Modules/mediasource/MediaSourceRegistry.cpp
@@ -3109,8 +3106,6 @@ JSMediaQueryList.cpp
 JSMediaQueryListEvent.cpp
 JSMediaRecorder.cpp
 JSMediaRecorderErrorEvent.cpp
-JSMediaRemoteControls.cpp
-JSMediaSession.cpp
 JSMediaSource.cpp
 JSMediaStream.cpp
 JSMediaStreamAudioDestinationNode.cpp
