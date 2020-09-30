@@ -112,16 +112,12 @@ protected:
 
     size_t memoryCost() const override
     {
-        if (auto* backend = ensureBackendCreated())
-            return backend->memoryCost();
-        return 0;
+        return m_backend ? m_backend->memoryCost() : 0;
     }
 
     size_t externalMemoryCost() const override
     {
-        if (auto* backend = ensureBackendCreated())
-            return backend->externalMemoryCost();
-        return 0;
+        return m_backend ? m_backend->externalMemoryCost() : 0;
     }
 
     NativeImagePtr copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override

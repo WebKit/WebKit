@@ -1,3 +1,26 @@
+2020-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        We should avoid making connections to the GPU Process during garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=217112
+
+        Reviewed by Tim Horton.
+
+        Currently, it's possible to establish a connection to the GPU process from the web content process in the middle
+        of garbage collection. This may occur if GC occurs after a canvas element and its image buffer has been created,
+        but before the image buffer has initialized its backend (which, in the case of using the GPU process for
+        rendering, is a RemoteRenderingBackend). While estimating memory cost for the canvas element, if a remote
+        rendering backend has not been created yet, we end up creating it underneath `ensureBackendCreated()`, and
+        subsequently block the web process until the GPU process is finished creating the proxy rendering backend.
+
+        When running layout tests in `fast/canvas`, this causes some layout tests to occasionally hit assertions under
+        `RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend`, due to accessing `m_remoteRenderingBackend`
+        (a weak pointer).
+
+        To fix this, in the case where the image buffer does not yet have a rendering backend, we should simply return 0
+        instead of telling the GPU process to allocate the actual image buffer and then returning a non-zero cost.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+
 2020-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash while loading a confluence page
