@@ -34,7 +34,11 @@
 // If an unsupported attribute is passed in, it will raise an accessibility exception. These are usually caught by the Accessibility Runtime to inform
 // the AX client app of the error. However, DRT is the AX client app, so it must catch these exceptions.
 #define BEGIN_AX_OBJC_EXCEPTIONS @try {
-#define END_AX_OBJC_EXCEPTIONS } @catch(NSException *e) { if (![[e name] isEqualToString:NSAccessibilityException]) @throw; }
+#define END_AX_OBJC_EXCEPTIONS } @catch(NSException *e) { \
+    ASSERT_NOT_REACHED(); \
+    if (![e.name isEqualToString:NSAccessibilityException]) \
+        @throw; \
+    }
 
 @interface NSString (JSStringRefAdditions)
 + (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
