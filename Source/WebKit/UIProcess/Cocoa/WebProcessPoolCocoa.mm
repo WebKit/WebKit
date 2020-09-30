@@ -299,6 +299,8 @@ static const Vector<ASCIILiteral>& diagnosticServices()
         "com.apple.diagnosticd"_s,
 #if PLATFORM(IOS_FAMILY)
         "com.apple.osanalytics.osanalyticshelper"_s
+#else
+        "com.apple.analyticsd"_s
 #endif
     });
     return services;

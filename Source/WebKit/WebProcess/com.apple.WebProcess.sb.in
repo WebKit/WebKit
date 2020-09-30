@@ -755,7 +755,6 @@
     (with report) (with telemetry-backtrace)
 #endif
     (global-name "com.apple.SystemConfiguration.configd")
-    (global-name "com.apple.analyticsd")
     (global-name "com.apple.assertiond.processassertionconnection")
     (global-name "com.apple.audio.SystemSoundServer-OSX")
     (global-name "com.apple.audio.audiohald")
@@ -988,6 +987,7 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
+            "com.apple.analyticsd"
             "com.apple.nehelper"
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500 || PLATFORM(MACCATALYST)
             "com.apple.nesessionmanager.content-filter"

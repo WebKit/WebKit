@@ -1,3 +1,17 @@
+2020-09-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the analytics service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=217137
+        <rdar://problem/69019193>
+
+        Reviewed by Brent Fulgham.
+
+        Only internal OS variants should have access to the 'com.apple.analyticsd' service.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::diagnosticServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-09-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION[267763] RELEASE_ASSERT in allNetworkProcesses hit when registering legacy protocol handlers before instantiating any WebKit objects
