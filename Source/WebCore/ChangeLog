@@ -1,3 +1,20 @@
+2020-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Handle deprecation warnings from libwebrtc headers
+        https://bugs.webkit.org/show_bug.cgi?id=217126
+        <rdar://problem/69747375>
+
+        Reviewed by Tim Horton.
+
+        Disable deprecation warnings coming from libwebrtc headers.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCObservers.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2020-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r267788.
