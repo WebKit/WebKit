@@ -1715,8 +1715,12 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         labelChanged(element);
     else if (attrName == tabindexAttr)
         childrenChanged(element->parentNode(), element);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == langAttr)
-        postNotification(element, AXObjectCache::AXLanguageChanged);
+        updateIsolatedTree(get(element), AXObjectCache::AXLanguageChanged);
+    else if (attrName == idAttr)
+        updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
+#endif
 
     if (!attrName.localName().string().startsWith("aria-"))
         return;
@@ -3180,7 +3184,10 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
 
     switch (notification) {
     case AXCheckedStateChanged:
-        tree->updateNodeCheckedState(object);
+        tree->updateNodeProperty(object, AXPropertyName::IsChecked);
+        break;
+    case AXIdAttributeChanged:
+        tree->updateNodeProperty(object, AXPropertyName::IdentifierAttribute);
         break;
     case AXActiveDescendantChanged:
     case AXSelectedChildrenChanged:
@@ -3199,6 +3206,12 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     default:
         break;
     }
+}
+
+void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification notification)
+{
+    if (object)
+        updateIsolatedTree(*object, notification);
 }
 
 void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXLoadingEvent notification)
@@ -3244,7 +3257,10 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
 
         switch (notification.second) {
         case AXCheckedStateChanged:
-            tree->updateNodeCheckedState(*notification.first);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
+            break;
+        case AXIdAttributeChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);
             break;
         case AXActiveDescendantChanged:
         case AXSelectedChildrenChanged:

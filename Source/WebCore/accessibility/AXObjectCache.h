@@ -276,6 +276,7 @@ public:
         AXCurrentChanged,
         AXDisabledStateChanged,
         AXFocusedUIElementChanged,
+        AXIdAttributeChanged,
         AXLanguageChanged,
         AXLayoutComplete,
         AXLoadComplete,
@@ -369,6 +370,7 @@ private:
     static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
     RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
     void updateIsolatedTree(AXCoreObject&, AXNotification);
+    void updateIsolatedTree(AXCoreObject*, AXNotification);
     void updateIsolatedTree(AXCoreObject&, AXLoadingEvent);
     void updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>&);
     static void initializeSecondaryAXThread();

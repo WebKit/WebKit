@@ -197,7 +197,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
     setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::ClickPoint, object.clickPoint());
-    setProperty(AXPropertyName::ComputedRoleString, object.computedRoleString());
+    setProperty(AXPropertyName::ComputedRoleString, object.computedRoleString().isolatedCopy());
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXPropertyName::URL, object.url().isolatedCopy());
     setProperty(AXPropertyName::AccessKey, object.accessKey());

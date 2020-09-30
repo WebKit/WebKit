@@ -337,15 +337,13 @@ public:
     Vector<RefPtr<AXCoreObject>> objectsForIDs(Vector<AXID>) const;
 
     struct NodeChange {
-        Ref<AXIsolatedObject> m_isolatedObject;
-        RetainPtr<AccessibilityObjectWrapper> m_wrapper;
-        NodeChange(AXIsolatedObject&, AccessibilityObjectWrapper*);
-        NodeChange(const NodeChange&);
+        Ref<AXIsolatedObject> isolatedObject;
+        RetainPtr<AccessibilityObjectWrapper> wrapper;
     };
 
     void generateSubtree(AXCoreObject&, AXCoreObject*, bool attachWrapper);
     void updateNode(AXCoreObject&);
-    void updateNodeCheckedState(const AXCoreObject&);
+    void updateNodeProperty(const AXCoreObject&, AXPropertyName);
     void updateSubtree(AXCoreObject&);
     void updateChildren(AXCoreObject&);
 
@@ -374,9 +372,7 @@ private:
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
 
     // Call on main thread
-    Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&);
-    // Queues all pending additions to the tree as the result of a subtree generation.
-    void appendNodeChanges(Vector<NodeChange>&&);
+    Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);
     // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
     void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs);
 
