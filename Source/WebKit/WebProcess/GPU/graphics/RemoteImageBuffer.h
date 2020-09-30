@@ -51,6 +51,11 @@ public:
         return std::unique_ptr<RemoteImageBuffer>(new RemoteImageBuffer(size, renderingMode, resolutionScale, colorSpace, remoteRenderingBackend));
     }
 
+    ~RemoteImageBuffer()
+    {
+        flushDrawingContext();
+    }
+
 protected:
     RemoteImageBuffer(const WebCore::FloatSize& size, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackend& remoteRenderingBackend)
         : BaseDisplayListImageBuffer(size)

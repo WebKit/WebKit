@@ -1,3 +1,24 @@
+2020-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Canvas layout tests occasionally crash the web process under PutImageData::apply
+        https://bugs.webkit.org/show_bug.cgi?id=217140
+
+        Reviewed by Tim Horton.
+
+        When destroying a `RemoteImageBuffer`, logic exists in the superclass (`DisplayList::ImageBuffer`) that attempts
+        to flush any remaining display list items. However, this currently doesn't work as intended, since we've already
+        finished destroying the subclass, so the superclass' call to `flushDrawingContext()` calls `DisplayList::
+        ImageBuffer::flushDrawingContext()` rather than `RemoteImageBuffer::flushDrawingContext()`. Rather than flushing
+        display list items to the GPU process, this has the effect of attempting to replay these display list items to
+        the drawing context (which is backed by a `DisplayList` anyways), so this ends up having no tangible effect.
+
+        However, if one of these display list items happens to be `PutImageData`, we'll end up hitting an assertion due
+        to being unable to apply it without a `Delegate`. To fix this, hoist the call to `flushDrawingContext()` out to
+        `~RemoteImageBuffer()`, rather than `~DisplayList::ImageBuffer()`.
+
+        * WebProcess/GPU/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::~RemoteImageBuffer):
+
 2020-09-30  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the analytics service in the WebContent process
