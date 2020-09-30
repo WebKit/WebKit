@@ -366,16 +366,18 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         auto inlineContentIsFullyCommitted = inlineContent.continuousContent().runs().size() == result.committedCount.value && !result.partialContent;
         auto isEndOfLine = result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes;
 
-        if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
-            // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
-            ++committedInlineItemCount;
-            m_line.append(*wordBreakOpportunity, { });
-        }
-        if (inlineContentIsFullyCommitted && inlineContent.trailingLineBreak()) {
-            // Fully committed (or empty) content followed by a line break means "end of line".
-            m_line.append(*inlineContent.trailingLineBreak(), { });
-            ++committedInlineItemCount;
-            isEndOfLine = true;
+        if (inlineContentIsFullyCommitted) {
+            if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
+                // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
+                ++committedInlineItemCount;
+                m_line.append(*wordBreakOpportunity, { });
+            }
+            if (inlineContent.trailingLineBreak()) {
+                // Fully committed (or empty) content followed by a line break means "end of line".
+                m_line.append(*inlineContent.trailingLineBreak(), { });
+                ++committedInlineItemCount;
+                isEndOfLine = true;
+            }
         }
         if (isEndOfLine) {
             // We can't place any more items on the current line.

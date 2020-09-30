@@ -1,3 +1,13 @@
+2020-09-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable <wbr> content
+        https://bugs.webkit.org/show_bug.cgi?id=217065
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/wbr-simple-expected.html: Added.
+        * fast/text/wbr-simple.html: Added.
+
 2020-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r267788.

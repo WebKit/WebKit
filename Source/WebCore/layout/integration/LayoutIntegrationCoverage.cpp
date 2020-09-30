@@ -307,7 +307,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
             child = child->nextSibling();
             continue;
         }
-        if (is<RenderLineBreak>(child) && !downcast<RenderLineBreak>(*child).isWBR() && child->style().clear() == Clear::None) {
+        if (is<RenderLineBreak>(child) && child->style().clear() == Clear::None) {
             child = child->nextSibling();
             continue;
         }
