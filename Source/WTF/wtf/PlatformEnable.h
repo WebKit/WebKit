@@ -885,6 +885,6 @@
 #error "ENABLE(WHLSL_COMPILER) requires ENABLE(WEBGPU)"
 #endif
 
-#if CPU(ARM64) && CPU(ADDRESS64)
+#if CPU(ARM64) && CPU(ADDRESS64) && ENABLE(JIT)
 #define USE_JUMP_ISLANDS 1
 #endif
