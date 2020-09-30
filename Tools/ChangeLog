@@ -1,3 +1,18 @@
+2020-09-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's auto installer for html5lib
+        https://bugs.webkit.org/show_bug.cgi?id=217130
+        <rdar://problem/69798724>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/__init__.py: Add html5lib, webencodings and genshi.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove html5lib.
+        (AutoinstallImportHook._install_mechanize):Ditto.
+        (AutoinstallImportHook._install_beautifulsoup): Ditto.
+        (AutoinstallImportHook._install_html5lib): Deleted.
+
 2020-09-30  Sam Weinig  <weinig@apple.com>
 
         Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
