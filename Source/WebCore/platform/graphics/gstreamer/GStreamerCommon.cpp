@@ -24,9 +24,11 @@
 #if USE(GSTREAMER)
 
 #include "GLVideoSinkGStreamer.h"
+#include "GStreamerAudioMixer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include "SharedBuffer.h"
+#include "WebKitAudioSinkGStreamer.h"
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
@@ -318,6 +320,8 @@ bool initializeGStreamerAndRegisterWebKitElements()
         gst_element_register(0, "webkitglvideosink", GST_RANK_PRIMARY, WEBKIT_TYPE_GL_VIDEO_SINK);
 #endif
 #endif
+        // We don't want autoaudiosink to autoplug our sink.
+        gst_element_register(0, "webkitaudiosink", GST_RANK_NONE, WEBKIT_TYPE_AUDIO_SINK);
 
         // If the FDK-AAC decoder is available, promote it and downrank the
         // libav AAC decoders, due to their broken LC support, as reported in:
@@ -424,6 +428,26 @@ bool isGStreamerPluginAvailable(const char* name)
     if (!plugin)
         GST_WARNING("Plugin %s not found. Please check your GStreamer installation", name);
     return plugin;
+}
+
+GstElement* createPlatformAudioSink()
+{
+    GstElement* audioSink = webkitAudioSinkNew();
+    if (!audioSink) {
+        // This means the WebKit audio sink configuration failed. It can happen for the following reasons:
+        // - audio mixing was not requested using the WEBKIT_GST_ENABLE_AUDIO_MIXER
+        // - audio mixing was requested using the WEBKIT_GST_ENABLE_AUDIO_MIXER but the audio mixer
+        //   runtime requirements are not fullfilled.
+        // - the sink was created for the WPE port, audio mixing was not requested and no
+        //   WPEBackend-FDO audio receiver has been registered at runtime.
+        audioSink = gst_element_factory_make("autoaudiosink", nullptr);
+    }
+    if (!audioSink) {
+        GST_WARNING("GStreamer's autoaudiosink not found. Please check your gst-plugins-good installation");
+        return nullptr;
+    }
+
+    return audioSink;
 }
 
 }

@@ -1,5 +1,31 @@
 2020-09-30  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Internal audio rendering support
+        https://bugs.webkit.org/show_bug.cgi?id=207634
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/webkitpy/style/checker.py: White-list the new audio sink from the style checker.
+        * TestWebKitAPI/Tests/WebKit/file-with-video.html: New utility functions to pause and seek in the video.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp: WPE test for external audio
+        rendering support. A video file is loaded through the webview and the test receives
+        notifications during playback. In order to reduce timeout risks, a seek near the end of the
+        video is performed early on.
+        (AudioRenderingWebViewTest::setup):
+        (AudioRenderingWebViewTest::teardown):
+        (AudioRenderingWebViewTest::AudioRenderingWebViewTest):
+        (AudioRenderingWebViewTest::handleStart):
+        (AudioRenderingWebViewTest::handleStop):
+        (AudioRenderingWebViewTest::handlePause):
+        (AudioRenderingWebViewTest::handleResume):
+        (AudioRenderingWebViewTest::handlePacket):
+        (AudioRenderingWebViewTest::waitUntilPaused):
+        (AudioRenderingWebViewTest::waitUntilEOS):
+        (AudioRenderingWebViewTest::state const):
+        (beforeAll):
+
+2020-09-30  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Bump libwpe and wpebackend-fdo
         https://bugs.webkit.org/show_bug.cgi?id=217122
 

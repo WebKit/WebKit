@@ -1,3 +1,101 @@
+2020-09-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Internal audio rendering support
+        https://bugs.webkit.org/show_bug.cgi?id=207634
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch introduces two features regarding audio rendering:
+
+        1. Internal audio mixing enabled at runtime with the WEBKIT_GST_ENABLE_AUDIO_MIXER=1
+        environment variable. When this is enabled, the WebProcess will have its GStreamer backends
+        render to dedicated WebKit audio sinks. Those will forward buffers to a singleton audio
+        mixer. The resulting audio stream will then be rendered through the default audio sink
+        (PulseAudio in most cases). Using this approach, applications will maintain a single
+        connection to the audio daemon.
+
+        2. For WPE, external audio pass-through. To enable this, the application has to register an
+        audio receiver using the WPEBackend-FDO wpe_audio_register_receiver() API. When this is
+        enabled, the WebKit audio sinks running in the WebProcess will forward audio samples to the
+        UIProcess, using a Wayland protocol defined in the WPEBackend-FDO backend and exposed
+        through its audio extension. This client-side rendering support allows applications to have
+        full control on the audio samples rendering.
+
+        The Internal mode should be considered a technology preview and can't be enabled by default
+        yet, because audiomixer lacks some features such as reverse playback support. External audio
+        rendering policy is covered by a new WPE API test.
+
+        * platform/GStreamer.cmake:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer): Create sink depending on
+        selected audio rendering policy and probe platform for a working audio output device only
+        when the WebKit custom audio sink hasn't been selected. This is needed only for the
+        autoaudiosink case.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::configureAudioBin): Instead of creating a new sink,
+        embed the one provided by the player into the audio bin. The resulting bin becomes the
+        player audio sink and it's able to render both to the WebAudio provider and the usual sink, as before.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        * platform/graphics/gstreamer/GStreamerAudioMixer.cpp: Added.
+        (WebCore::GStreamerAudioMixer::isAllowed): The mixer requires a recent GStreamer version and
+        the inter plugin (shipped in gst-plugins-bad until version 1.20 at least).
+        (WebCore::GStreamerAudioMixer::singleton): Entry point for the mixer. This is where the
+        singleton is created.
+        (WebCore::GStreamerAudioMixer::GStreamerAudioMixer): Configure the standalone mixer
+        pipeline.
+        (WebCore::GStreamerAudioMixer::~GStreamerAudioMixer):
+        (WebCore::GStreamerAudioMixer::ensureState): Lazily start/stop the mixer, depending on the
+        number of incoming streams. The pipeline starts when the first incoming stream is connected,
+        and stops when the last stream disappears.
+        (WebCore::GStreamerAudioMixer::registerProducer): Client pipelines require an interaudiosink, they
+        will render to that sink, which internally forwards data to a twin interaudiosrc element,
+        connected to the audiomixer.
+        (WebCore::GStreamerAudioMixer::unregisterProducer): Get rid of an interaudiosink and its interaudiosrc.
+        This is called by the WebKit audio sink when the element is being disposed.
+        * platform/graphics/gstreamer/GStreamerAudioMixer.h: Added.
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitElements): Register new audio sink element.
+        (WebCore::createPlatformAudioSink): New utility function to create an audio sink based on
+        the desired and implied runtime rendering policy.
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::seek): Drive-by clean-up, no need to create the seek
+        Mediatime before the early return checking this is a live stream.
+        (WebCore::setSyncOnClock): Fixup code style in this method.
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::audioSink const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitAudioSinkGStreamer.cpp: Added. This sink can either
+        forward incoming samples to the shared audiomixer running in its own pipeline, or forward
+        samples to the UIProcess using the WPEBackend-FDO audio extension.
+        (AudioPacketHolder::AudioPacketHolder): Wrapper around audio buffers, in charge of creating
+        the corresponding memfd descriptor and also keeping track of the corresponding
+        wpe_audio_packet_export.
+        (AudioPacketHolder::~AudioPacketHolder):
+        (AudioPacketHolder::map): Create the memfd descriptor and return it along with the buffer size.
+        (webKitAudioSinkHandleSample): Forward incoming samples using the WPEBackend-FDO audio
+        extension. The wpe_audio_source start is synchronized with the buffer flow.
+        (webKitAudioSinkConfigure): When internal mixing has been requested, create an
+        interaudiosink to which samples will be sent. Internally the interaudiosink will forward
+        data to its interaudiosrc which is connected to the audiomixer. Otherwise, if external
+        rendering has been requested, create an appsink in order to relay samples to the UIProcess.
+        (webKitAudioSinkDispose):
+        (getInternalVolumeObject): When internal mixing is enabled, volume and mute states are
+        tracked within the audiomixer sink pads. Otherwise our audio sink manages this using a volume
+        element.
+        (webKitAudioSinkSetProperty): Proxy volume and mute properties from the internal volume proxy.
+        (webKitAudioSinkGetProperty): Ditto.
+        (webKitAudioSinkChangeState): Keep the WPE audio source state synchronized with the element
+        state, in order to know when the pause/resume notifications should be sent to the UIProcess.
+        This is also where maintain the relationship between the interaudiosink and the audiomixer, when
+        it's enabled.
+        (webkit_audio_sink_class_init):
+        (webkitAudioSinkNew):
+        * platform/graphics/gstreamer/WebKitAudioSinkGStreamer.h: Added.
+
 2020-09-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Merge LineBreaker::CandidateContent and ContinuousContent

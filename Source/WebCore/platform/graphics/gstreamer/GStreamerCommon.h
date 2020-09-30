@@ -292,6 +292,8 @@ enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 
 bool isGStreamerPluginAvailable(const char* name);
 
+GstElement* createPlatformAudioSink();
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS

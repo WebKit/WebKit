@@ -141,7 +141,7 @@ AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
     g_object_unref(m_frontRightAdapter);
 }
 
-void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstElement* teePredecessor)
+void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstElement* audioSink)
 {
     m_audioSinkBin = audioBin;
 
@@ -152,26 +152,16 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
     GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
     GstElement* audioResample2 = gst_element_factory_make("audioresample", nullptr);
     GstElement* volumeElement = gst_element_factory_make("volume", "volume");
-    GstElement* audioSink = gst_element_factory_make("autoaudiosink", nullptr);
 
-    gst_bin_add_many(GST_BIN(m_audioSinkBin.get()), audioTee, audioQueue, audioConvert, audioResample, volumeElement, audioConvert2, audioResample2, audioSink, nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_audioSinkBin.get()), audioTee, audioQueue, audioConvert, audioResample, volumeElement, audioConvert2, audioResample2, audioSink, nullptr);
 
-    // In cases where the audio-sink needs elements before tee (such
-    // as scaletempo) they need to be linked to tee which in this case
-    // doesn't need a ghost pad. It is assumed that the teePredecessor
-    // chain already configured a ghost pad.
-    if (teePredecessor)
-        gst_element_link_pads_full(teePredecessor, "src", audioTee, "sink", GST_PAD_LINK_CHECK_NOTHING);
-    else {
-        // Add a ghostpad to the bin so it can proxy to tee.
-        GRefPtr<GstPad> audioTeeSinkPad = adoptGRef(gst_element_get_static_pad(audioTee, "sink"));
-        gst_element_add_pad(m_audioSinkBin.get(), gst_ghost_pad_new("sink", audioTeeSinkPad.get()));
-    }
+    // Add a ghostpad to the bin so it can proxy to tee.
+    auto audioTeeSinkPad = adoptGRef(gst_element_get_static_pad(audioTee, "sink"));
+    gst_element_add_pad(m_audioSinkBin.get(), gst_ghost_pad_new("sink", audioTeeSinkPad.get()));
 
-    // Link a new src pad from tee to queue ! audioconvert !
-    // audioresample ! volume ! audioconvert ! audioresample !
-    // autoaudiosink. The audioresample and audioconvert are needed to
-    // ensure the audio sink receives buffers in the correct format.
+    // Link a new src pad from tee to queue ! audioconvert ! audioresample ! volume ! audioconvert !
+    // audioresample ! audiosink. The audioresample and audioconvert are needed to ensure the audio
+    // sink receives buffers in the correct format.
     gst_element_link_pads_full(audioTee, "src_%u", audioQueue, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioQueue, "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);

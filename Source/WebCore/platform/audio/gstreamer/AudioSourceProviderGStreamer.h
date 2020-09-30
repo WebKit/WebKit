@@ -57,7 +57,7 @@ public:
     AudioSourceProviderGStreamer();
     ~AudioSourceProviderGStreamer();
 
-    void configureAudioBin(GstElement* audioBin, GstElement* teePredecessor);
+    void configureAudioBin(GstElement* audioBin, GstElement* audioSink);
 
     void provideInput(AudioBus*, size_t framesToProcess) override;
     void setClient(AudioSourceProviderClient*) override;

@@ -34,6 +34,10 @@
 #include <wpe/extensions/video-plane-display-dmabuf.h>
 #endif
 
+#if defined(BUILDING_WebCore) && PLATFORM(WPE) && USE(WPEBACKEND_FDO_AUDIO_EXTENSION)
+#include <wpe/extensions/audio.h>
+#endif
+
 namespace WTF {
 
 WTF_DEFINE_GPTR_DELETER(GstStructure, gst_structure_free)
@@ -49,6 +53,9 @@ WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 WTF_DEFINE_GPTR_DELETER(struct wpe_video_plane_display_dmabuf_source, wpe_video_plane_display_dmabuf_source_destroy)
 #endif
 
+#if defined(BUILDING_WebCore) && PLATFORM(WPE) && USE(WPEBACKEND_FDO_AUDIO_EXTENSION)
+WTF_DEFINE_GPTR_DELETER(struct wpe_audio_source, wpe_audio_source_destroy)
+#endif
 }
 
 #endif // USE(GSTREAMER)

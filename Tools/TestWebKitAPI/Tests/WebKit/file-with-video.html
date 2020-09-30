@@ -5,6 +5,15 @@
     {
         document.getElementById("test-video").play();
     }
+    function pauseVideo()
+    {
+        document.getElementById("test-video").pause();
+    }
+    function seekNearTheEnd()
+    {
+        let video = document.getElementById("test-video");
+        video.currentTime = video.duration - 0.5;
+    }
   </script>
 </head>
 <body>

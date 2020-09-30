@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GraphicsContext.h"
+#include "GStreamerAudioMixer.h"
 #include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
 #include "HTTPHeaderNames.h"
@@ -43,6 +44,7 @@
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
+#include "WebKitAudioSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #include "AudioTrackPrivateGStreamer.h"
 #include "InbandMetadataTextTrackPrivateGStreamer.h"
@@ -236,10 +238,9 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
         g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
 
-    if (m_autoAudioSink) {
-        g_signal_handlers_disconnect_by_func(G_OBJECT(m_autoAudioSink.get()),
-            reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
-    }
+    auto* sink = audioSink();
+    if (sink && !WEBKIT_IS_AUDIO_SINK(sink))
+        g_signal_handlers_disconnect_by_func(G_OBJECT(sink), reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
 
     m_readyTimerHandler.stop();
     for (auto& missingPluginCallback : m_missingPluginCallbacks) {
@@ -518,17 +519,16 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
 
     // Avoid useless seeking.
     if (mediaTime == currentMediaTime()) {
-        GST_DEBUG_OBJECT(pipeline(), "[Seek] seek to EOS position unhandled");
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] Already at requested position. Aborting.");
         return;
     }
-
-    MediaTime time = std::min(mediaTime, durationMediaTime());
 
     if (m_isLiveStream) {
         GST_DEBUG_OBJECT(pipeline(), "[Seek] Live stream seek unhandled");
         return;
     }
 
+    MediaTime time = std::min(mediaTime, durationMediaTime());
     GST_INFO_OBJECT(pipeline(), "[Seek] seeking to %s", toString(time).utf8().data());
 
     if (m_isSeeking) {
@@ -1004,17 +1004,16 @@ static void setSyncOnClock(GstElement *element, bool sync)
         return;
 
     if (!GST_IS_BIN(element)) {
-        g_object_set(element, "sync", sync, NULL);
+        g_object_set(element, "sync", sync, nullptr);
         return;
     }
 
-    GstIterator* it = gst_bin_iterate_sinks(GST_BIN(element));
-    while (gst_iterator_foreach(it, (GstIteratorForeachFunction)([](const GValue* item, void* syncPtr) {
+    GUniquePtr<GstIterator> iterator(gst_bin_iterate_sinks(GST_BIN_CAST(element)));
+    while (gst_iterator_foreach(iterator.get(), static_cast<GstIteratorForeachFunction>([](const GValue* item, void* syncPtr) {
         bool* sync = static_cast<bool*>(syncPtr);
-        setSyncOnClock(GST_ELEMENT(g_value_get_object(item)), *sync);
+        setSyncOnClock(GST_ELEMENT_CAST(g_value_get_object(item)), *sync);
     }), &sync) == GST_ITERATOR_RESYNC)
-        gst_iterator_resync(it);
-    gst_iterator_free(it);
+        gst_iterator_resync(iterator.get());
 }
 
 void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
@@ -1353,26 +1352,29 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networ
 
 GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 {
-    m_autoAudioSink = gst_element_factory_make("autoaudiosink", nullptr);
-    if (!m_autoAudioSink) {
-        GST_WARNING("GStreamer's autoaudiosink not found. Please check your gst-plugins-good installation");
+    GstElement* audioSink = createPlatformAudioSink();
+    RELEASE_ASSERT(audioSink);
+    if (!audioSink)
         return nullptr;
-    }
 
-    g_signal_connect_swapped(m_autoAudioSink.get(), "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
+    if (!WEBKIT_IS_AUDIO_SINK(audioSink))
+        g_signal_connect_swapped(audioSink, "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
 
 #if ENABLE(WEB_AUDIO)
     GstElement* audioSinkBin = gst_bin_new("audio-sink");
     ensureAudioSourceProvider();
-    m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
+    m_audioSourceProvider->configureAudioBin(audioSinkBin, audioSink);
     return audioSinkBin;
 #else
-    return m_autoAudioSink.get();
+    return audioSink;
 #endif
 }
 
 GstElement* MediaPlayerPrivateGStreamer::audioSink() const
 {
+    if (!m_pipeline)
+        return nullptr;
+
     GstElement* sink;
     g_object_get(m_pipeline.get(), "audio-sink", &sink, nullptr);
     return sink;

@@ -1,3 +1,15 @@
+2020-09-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Internal audio rendering support
+        https://bugs.webkit.org/show_bug.cgi?id=207634
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/cmake/FindWPEBackend_fdo.cmake: Check for the audio extension header initially
+        shipped in the 1.8.0 release.
+        * Source/cmake/GStreamerChecks.cmake: Check and enable external audio rendering support if
+        the WPEBackend-FDO audio extension was found.
+
 2020-09-29  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WebGPU] Add FindDawn module
