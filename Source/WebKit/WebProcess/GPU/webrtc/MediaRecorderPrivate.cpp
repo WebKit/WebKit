@@ -48,7 +48,6 @@ MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const Med
     , m_stream(makeRef(stream))
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_options(options)
-    , m_hasVideo(stream.hasVideo())
 {
 }
 
@@ -127,7 +126,7 @@ void MediaRecorderPrivate::storageChanged(SharedMemory* storage)
 
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& mimeType)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::FetchData { }, [completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& data) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::FetchData { }, [completionHandler = WTFMove(completionHandler)](auto&& data, auto&& mimeType) mutable {
         RefPtr<SharedBuffer> buffer;
         if (data.size())
             buffer = SharedBuffer::create(data.data(), data.size());
@@ -140,13 +139,6 @@ void MediaRecorderPrivate::stopRecording()
     setAudioSource(nullptr);
     setVideoSource(nullptr);
     m_connection->send(Messages::RemoteMediaRecorder::StopRecording { }, m_identifier);
-}
-
-const String& MediaRecorderPrivate::mimeType() const
-{
-    static NeverDestroyed<const String> audioMP4(MAKE_STATIC_STRING_IMPL("audio/mp4"));
-    static NeverDestroyed<const String> videoMP4(MAKE_STATIC_STRING_IMPL("video/mp4"));
-    return m_hasVideo ? videoMP4 : audioMP4;
 }
 
 }

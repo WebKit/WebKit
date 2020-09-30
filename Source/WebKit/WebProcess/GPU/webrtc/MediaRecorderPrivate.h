@@ -60,7 +60,6 @@ private:
     void stopRecording() final;
     void startRecording(ErrorCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
-    const String& mimeType() const;
 
     // SharedRingBufferStorage::Client
     void storageChanged(SharedMemory*);
@@ -73,7 +72,6 @@ private:
     WebCore::CAAudioStreamDescription m_description { };
     int64_t m_numberOfFrames { 0 };
     WebCore::MediaRecorderPrivateOptions m_options;
-    bool m_hasVideo { false };
 };
 
 }

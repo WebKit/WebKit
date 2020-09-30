@@ -1,18 +1,21 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
 
 
 Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
-FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got "video/mp4"
-FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got "video/mp4"
-FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got "video/mp4"
-FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got "video/mp4"
+FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got undefined
+FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got undefined
+FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got undefined
+FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got undefined
 TIMEOUT PeerConnection passthrough MediaRecorder should be prepared to handle the codec switching from VP8 to VP9 Test timed out
 
 Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
-FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got "video/mp4"
-FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got "video/mp4"
-FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got "video/mp4"
-FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got "video/mp4"
+FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got undefined
+FAIL PeerConnection passthrough MediaRecorder receives VP8 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP8 in case of passthrough. expected object "/.*vp8.*/" but got undefined
+FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got undefined
+FAIL PeerConnection passthrough MediaRecorder receives VP9 after onstart with a audio/video stream. assert_regexp_match: mimeType is matching VP9 in case of passthrough. expected object "/.*vp9.*/" but got undefined
 TIMEOUT PeerConnection passthrough MediaRecorder should be prepared to handle the codec switching from VP8 to VP9 Test timed out
 

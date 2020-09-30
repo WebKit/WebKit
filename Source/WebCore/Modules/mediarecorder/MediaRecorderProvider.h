@@ -39,7 +39,6 @@ public:
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     virtual std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
-    virtual bool isSupported(const String&);
 #endif
 
     void setUseGPUProcess(bool value) { m_useGPUProcess = value; }

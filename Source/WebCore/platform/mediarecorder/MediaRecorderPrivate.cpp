@@ -56,18 +56,6 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
     return selectedTracks;
 }
 
-const String& MediaRecorderPrivate::mimeType() const
-{
-#if PLATFORM(COCOA)
-    static NeverDestroyed<const String> audioMP4(MAKE_STATIC_STRING_IMPL("audio/mp4"));
-    static NeverDestroyed<const String> videoMP4(MAKE_STATIC_STRING_IMPL("video/mp4"));
-    // FIXME: we will need to support MIME type codecs parameter values.
-    return m_videoSource ? videoMP4 : audioMP4;
-#else
-    return emptyString();
-#endif
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

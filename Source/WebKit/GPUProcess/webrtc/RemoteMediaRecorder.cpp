@@ -121,11 +121,12 @@ void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remo
     m_writer->appendVideoSampleBuffer(*sampleBuffer);
 }
 
-void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&)>&& completionHandler)
+void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&, const String& mimeType)>&& completionHandler)
 {
-    m_writer->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data) mutable {
+    static NeverDestroyed<const String> mp4MimeType(MAKE_STATIC_STRING_IMPL("video/mp4"));
+    m_writer->fetchData([&mp4MimeType = mp4MimeType.get(), completionHandler = WTFMove(completionHandler)](auto&& data) mutable {
         auto* pointer = reinterpret_cast<const uint8_t*>(data ? data->data() : nullptr);
-        completionHandler(IPC::DataReference { pointer, data ? data->size() : 0 });
+        completionHandler(IPC::DataReference { pointer, data ? data->size() : 0 }, mp4MimeType);
     });
 }
 

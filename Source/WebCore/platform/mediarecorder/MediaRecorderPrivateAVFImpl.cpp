@@ -94,6 +94,13 @@ void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandle
     });
 }
 
+const String& MediaRecorderPrivateAVFImpl::mimeType()
+{
+    static NeverDestroyed<const String> mp4MimeType(MAKE_STATIC_STRING_IMPL("video/mp4"));
+    // FIXME: we will need to support more MIME types.
+    return mp4MimeType;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)

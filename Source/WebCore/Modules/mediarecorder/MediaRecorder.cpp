@@ -46,28 +46,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MediaRecorder);
 
 MediaRecorder::CreatorFunction MediaRecorder::m_customCreator = nullptr;
 
-bool MediaRecorder::isTypeSupported(Document& document, const String& value)
-{
-#if PLATFORM(COCOA)
-    auto* page = document.page();
-    return page && page->mediaRecorderProvider().isSupported(value);
-#else
-    UNUSED_PARAM(document);
-    return false;
-#endif
-
-}
-
 ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<MediaStream>&& stream, Options&& options)
 {
-    if (!isTypeSupported(document, options.mimeType))
-        return Exception { NotSupportedError, "mimeType is not supported" };
-
     auto result = MediaRecorder::createMediaRecorderPrivate(document, stream->privateStream(), options);
     if (result.hasException())
         return result.releaseException();
 
-    options.mimeType = result.returnValue()->mimeType();
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
     return recorder;
