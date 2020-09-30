@@ -1,3 +1,18 @@
+2020-09-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: exempt API::SharedJSContext from remote inspection and automatic inspection
+        https://bugs.webkit.org/show_bug.cgi?id=217109
+        <rdar://problem/69386559>
+
+        Reviewed by Mark Lam.
+
+        We have seen occasional unexpected spins underneath pauseWaitingForRemoteInspection() waiting
+        for this JSContext. Since it does not evaluate JavaScript and is WebKit-internal, simply disable
+        remote inspection for the JSContext.
+
+        * UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm:
+        (API::SharedJSContext::ensureContext):
+
 2020-09-30  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r265009): Web Share API can no longer be invoked if a previous invocation was dismissed using the close button

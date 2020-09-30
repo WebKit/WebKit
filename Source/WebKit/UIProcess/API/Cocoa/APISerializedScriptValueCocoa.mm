@@ -27,7 +27,7 @@
 #import "APISerializedScriptValue.h"
 
 #import <JavaScriptCore/APICast.h>
-#import <JavaScriptCore/JSContext.h>
+#import <JavaScriptCore/JSContextPrivate.h>
 #import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSValue.h>
 #import <wtf/NeverDestroyed.h>
@@ -46,6 +46,7 @@ public:
     {
         if (!m_context) {
             m_context = adoptNS([[JSContext alloc] init]);
+            [m_context _setRemoteInspectionEnabled:NO];
             m_timer.startOneShot(1_s);
         }
         return m_context.get();
