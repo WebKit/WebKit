@@ -1,3 +1,13 @@
+2020-10-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make AXLoadingEvent notifications asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=217157
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/loading-iframe-sends-notification-expected.txt:
+        * accessibility/loading-iframe-sends-notification.html:
+
 2020-09-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Implement row-gap and column-gap for flex layout

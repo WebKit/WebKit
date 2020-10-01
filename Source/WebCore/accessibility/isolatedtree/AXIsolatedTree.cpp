@@ -269,6 +269,11 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     AXLOG(&axObject);
     ASSERT(isMainThread());
 
+    if (m_nodeMap.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
         return;
 
@@ -286,9 +291,11 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
         }
         return false;
     });
-    ASSERT(axAncestor && iterator != m_nodeMap.end());
-    if (!axAncestor || axAncestor->objectID() == InvalidAXID || iterator == m_nodeMap.end())
-        return; // nothing to update.
+    if (!axAncestor || axAncestor->objectID() == InvalidAXID || iterator == m_nodeMap.end()) {
+        // This update triggered before the isolated tree has been repopulated.
+        // Return here since there is nothing to update.
+        return;
+    }
 
     // iterator is pointing to the m_nodeMap entry corresponding to axAncestor->objectID().
     ASSERT(iterator->key == axAncestor->objectID());

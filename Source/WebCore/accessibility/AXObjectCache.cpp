@@ -1550,11 +1550,6 @@ void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent l
         return;
 
     AccessibilityObject* obj = getOrCreate(contentRenderer);
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(*obj, loadingEvent);
-#endif
-
     frameLoadingEventPlatformNotification(obj, loadingEvent);
 }
 
@@ -3212,13 +3207,6 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification noti
 {
     if (object)
         updateIsolatedTree(*object, notification);
-}
-
-void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXLoadingEvent notification)
-{
-    AXTRACE("AXObjectCache::updateIsolatedTree");
-    if (notification == AXLoadingFinished)
-        updateIsolatedTree(object, AXChildrenChanged);
 }
 
 // FIXME: should be added to WTF::Vector.

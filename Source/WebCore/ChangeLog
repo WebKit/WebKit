@@ -1,3 +1,32 @@
+2020-10-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make AXLoadingEvent notifications asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=217157
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/loading-iframe-sends-notification-expected.html.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::frameLoadingEventNotification):
+        Removed the isolated tree update from the frame loading notification
+        handler. This avoids updating the isolated tree synchronously.
+
+        * accessibility/AXObjectCache.h:
+        Added AXNotification::AXFrameLoadComplete.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateChildren):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXPostNotificationWithUserInfo):
+        Do not ignore AXLoadCompleteNotifications during LayoutTest.
+
+        (WebCore::AXObjectCache::postPlatformNotification):
+        Handle AXFrameLoadComplete notification as a AXLoadComplete notification.
+
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+        Loading finished event is now mapped to either AXLoadComplete or AXFrameLoadComplete.
+
 2020-10-01  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Add LineRunIterator

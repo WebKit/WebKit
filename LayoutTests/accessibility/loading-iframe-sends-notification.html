@@ -40,45 +40,47 @@
         return null;
     }
 
-    function runTest()
-    {
-        if (window.accessibilityController) {
-            window.root = accessibilityController.rootElement;
+    if (window.accessibilityController) {
+        window.root = accessibilityController.rootElement;
 
-            // Initially, the iframe should not be loaded, so we shouldn't be able to find this button.
-            shouldBeFalse("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
+        // Initially, the iframe should not be loaded, so we shouldn't be able to find this button.
+        shouldBeFalse("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
 
-            window.accessibilityController.addNotificationListener(function (target, notification) {
-                // Ignore this notification if it's not on the iframe or not about the iframe being loaded.
+        var gotLoadCompleteNotification = false;
+        window.accessibilityController.addNotificationListener(function (target, notification) {
+            // Ignore this notification if it's not on the iframe or not about the iframe being loaded.
+            var targetString = platformValueForW3CName(target);
+            if (targetString.indexOf("InnerFrame") != -1
+                && notification == "AXLoadComplete")
+                gotLoadCompleteNotification = true;
+        });
 
-                var targetString = platformValueForW3CName(target);
-                if (targetString.indexOf("InnerFrame") == -1
-                    || (notification != "AXLoadComplete" && notification != "AXLayoutComplete"))
-                    return;
-
-                debug("Got notification on iframe.");
-
-                // Check that the button within the iframe is now reachable from the root.
-                shouldBeTrue("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
-                accessibilityController.removeNotificationListener();
-                finishJSTest();
+        setTimeout(async function() {
+            // Reset gotLoadCompleteNotification to false to disregard any notification up to  this point.
+            gotLoadCompleteNotification = false;
+            await waitFor(() => {
+                return gotLoadCompleteNotification;
             });
-        }
+            debug("Got AXLoadComplete notification on iframe.");
 
-        window.iframeElement = document.getElementById("iframe");
+            await waitFor(() => {
+                return findByAccessibleTitleSubstring(root, 'InnerButton');
+            });
+            // Check that the button within the iframe is now reachable from the root.
+            shouldBeTrue("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
 
-        // Load content into the iframe. This will trigger the event
-        // handler above, which will check that the accessibility tree
-        // was updated with new content.
-        window.iframeElement.src = "data:text/html,<body><button>InnerButton</button></body>";
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
+        }, 0);
     }
 
-    window.addEventListener('load', function() {
-        setTimeout(runTest, 10);
-    }, false);
+    window.iframeElement = document.getElementById("iframe");
 
+    // Load content into the iframe. This will trigger the event
+    // handler above, which will check that the accessibility tree
+    // was updated with new content.
+    window.iframeElement.src = "data:text/html,<body><button>InnerButton</button></body>";
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

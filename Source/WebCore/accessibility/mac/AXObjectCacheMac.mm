@@ -278,8 +278,7 @@ static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, N
     // To simplify monitoring for notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back
     if (UNLIKELY(axShouldRepostNotificationsForTests))
         [object accessibilityPostedNotification:notification userInfo:userInfo];
-
-    if (skipSystemNotification)
+    else if (skipSystemNotification)
         return;
 
     NSAccessibilityPostNotificationWithUserInfo(object, notification, userInfo);
@@ -317,6 +316,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
             macNotification = @"AXLayoutComplete";
             break;
         case AXLoadComplete:
+        case AXFrameLoadComplete:
             macNotification = @"AXLoadComplete";
             // Frame loading events are handled by the UIProcess on macOS to improve reliability.
             // On macOS, before notifications are allowed by AppKit to be sent to clients, you need to have a client (e.g. VoiceOver)
@@ -559,9 +559,13 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* a
 {
     if (!axFrameObject)
         return;
-    
-    if (loadingEvent == AXLoadingFinished && axFrameObject->document() == axFrameObject->topDocument())
-        postPlatformNotification(axFrameObject, AXLoadComplete);
+
+    if (loadingEvent == AXLoadingFinished) {
+        if (axFrameObject->document() == axFrameObject->topDocument())
+            postNotification(axFrameObject, axFrameObject->document(), AXLoadComplete);
+        else
+            postNotification(axFrameObject, axFrameObject->document(), AXFrameLoadComplete);
+    }
 }
 
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
