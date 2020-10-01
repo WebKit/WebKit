@@ -172,10 +172,11 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
 
         String mimeType = responseMIMEType();
         bool isHTML = equalLettersIgnoringASCIICase(mimeType, "text/html");
+        bool isXML = MIMETypeRegistry::isXMLMIMEType(mimeType);
 
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
-        if ((m_response.isInHTTPFamily() && !responseIsXML() && !isHTML)
+        if ((m_response.isInHTTPFamily() && !isXML && !isHTML)
             || (isHTML && responseType() == ResponseType::EmptyString)) {
             m_responseDocument = nullptr;
         } else {
@@ -858,11 +859,6 @@ String XMLHttpRequest::responseMIMEType() const
     return mimeType;
 }
 
-bool XMLHttpRequest::responseIsXML() const
-{
-    return MIMETypeRegistry::isXMLMIMEType(responseMIMEType());
-}
-
 int XMLHttpRequest::status() const
 {
     if (readyState() == UNSENT || readyState() == OPENED || m_error)
@@ -996,7 +992,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
 
     switch (responseType()) {
     case ResponseType::EmptyString:
-        if (responseIsXML()) {
+        if (MIMETypeRegistry::isXMLMIMEType(responseMIMEType())) {
             auto decoder = TextResourceDecoder::create("application/xml");
             // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
             decoder->useLenientXMLDecoding();

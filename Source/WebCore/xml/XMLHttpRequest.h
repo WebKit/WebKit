@@ -161,8 +161,6 @@ private:
     void didFail(const ResourceError&) override;
     void notifyIsDone(bool) final;
 
-    bool responseIsXML() const;
-
     Optional<ExceptionOr<void>> prepareToSend();
     ExceptionOr<void> send(Document&);
     ExceptionOr<void> send(const String& = { });
