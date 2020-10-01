@@ -673,8 +673,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectNonStrictOptimize, void, (JSGloba
 
 } // extern "C"
 
-using PutPrivateFieldCallback = std::function<void(VM&, CodeBlock*, Structure*, PutPropertySlot&, const Identifier&)>;
-ALWAYS_INLINE static void setPrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, const PutPrivateFieldCallback& callback = PutPrivateFieldCallback())
+template<typename PutPrivateFieldCallback>
+ALWAYS_INLINE static void setPrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, PutPrivateFieldCallback callback)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -689,11 +689,11 @@ ALWAYS_INLINE static void setPrivateField(VM& vm, JSGlobalObject* globalObject, 
     baseObject->setPrivateField(globalObject, ident, value, putSlot);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (callback)
-        callback(vm, codeBlock, oldStructure, putSlot, ident);
+    callback(vm, codeBlock, oldStructure, putSlot, ident);
 }
 
-ALWAYS_INLINE static void definePrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, const PutPrivateFieldCallback& callback = PutPrivateFieldCallback())
+template<typename PutPrivateFieldCallback>
+ALWAYS_INLINE static void definePrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, PutPrivateFieldCallback callback)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -708,8 +708,7 @@ ALWAYS_INLINE static void definePrivateField(VM& vm, JSGlobalObject* globalObjec
     baseObject->definePrivateField(globalObject, ident, value, putSlot);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (callback)
-        callback(vm, codeBlock, oldStructure, putSlot, ident);
+    callback(vm, codeBlock, oldStructure, putSlot, ident);
 }
 
 extern "C" {
@@ -723,7 +722,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrict, void, (JSGlob
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
 
-    definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value);
+    definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [](VM&, CodeBlock*, Structure*, PutPropertySlot&, const Identifier&) { });
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictOptimize, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier))
@@ -757,7 +756,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrict, void, (JSGlobalO
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
 
-    setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value);
+    setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [](VM&, CodeBlock*, Structure*, PutPropertySlot&, const Identifier&) { });
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictOptimize, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier))

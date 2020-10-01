@@ -1,3 +1,16 @@
+2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use std::function in setPrivateField and definePrivateField
+        https://bugs.webkit.org/show_bug.cgi?id=217167
+
+        Reviewed by Ross Kirsling.
+
+        std::function can potentially allocate an object in heap. We should should just pass lambda with a templatized parameter instead.
+
+        * jit/JITOperations.cpp:
+        (JSC::setPrivateField):
+        (JSC::definePrivateField):
+
 2020-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] We should not tag C function with JIT code related ptr tag
