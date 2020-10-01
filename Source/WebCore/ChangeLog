@@ -1,3 +1,23 @@
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support MediaRecorderOptions.mimeType
+        https://bugs.webkit.org/show_bug.cgi?id=215018
+        <rdar://problem/66681508>
+
+        Reviewed by Eric Carlson.
+
+        Instead of setting mime type right away, set it just before firing start event as per spec.
+        This will allow in the future to populate exact codec parameters if proven useful.
+
+        Covered by rebased and updated tests.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::startRecording):
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        (WebCore::MediaRecorderPrivate::startRecording):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+
 2020-10-01  Andres Gonzalez  <andresg_22@apple.com>
 
         Make AXLoadingEvent notifications asynchronous.

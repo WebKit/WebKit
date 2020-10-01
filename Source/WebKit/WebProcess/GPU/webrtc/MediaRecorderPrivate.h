@@ -58,7 +58,7 @@ private:
     void videoSampleAvailable(WebCore::MediaSample&) final;
     void fetchData(CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& mimeType)>&&) final;
     void stopRecording() final;
-    void startRecording(ErrorCallback&&) final;
+    void startRecording(StartRecordingCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
     const String& mimeType() const final;
 

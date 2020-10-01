@@ -24,7 +24,7 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
 messages -> RemoteMediaRecorderManager NotRefCounted {
-    CreateRecorder(WebKit::MediaRecorderIdentifier id, bool hasAudio, bool hasVideo, struct WebCore::MediaRecorderPrivateOptions options) -> (Optional<WebCore::ExceptionData> creationError) Async
+    CreateRecorder(WebKit::MediaRecorderIdentifier id, bool hasAudio, bool hasVideo, struct WebCore::MediaRecorderPrivateOptions options) -> (Optional<WebCore::ExceptionData> creationError, String mimeType) Async
     ReleaseRecorder(WebKit::MediaRecorderIdentifier id)
 }
 

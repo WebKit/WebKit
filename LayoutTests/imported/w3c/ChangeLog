@@ -1,3 +1,13 @@
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should support MediaRecorderOptions.mimeType
+        https://bugs.webkit.org/show_bug.cgi?id=215018
+        <rdar://problem/66681508>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-record/MediaRecorder-mimetype-expected.txt:
+
 2020-09-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Implement row-gap and column-gap for flex layout

@@ -1,5 +1,25 @@
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorder should support MediaRecorderOptions.mimeType
+        https://bugs.webkit.org/show_bug.cgi?id=215018
+        <rdar://problem/66681508>
+
+        Reviewed by Eric Carlson.
+
+        Update code to pass mimeType as part of startRecording callback.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        (WebKit::RemoteMediaRecorder::mimeType const):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp:
+        (WebKit::RemoteMediaRecorderManager::createRecorder):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.h:
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::startRecording):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder should support isTypeSupported
         https://bugs.webkit.org/show_bug.cgi?id=216856
         <rdar://problem/69767695>

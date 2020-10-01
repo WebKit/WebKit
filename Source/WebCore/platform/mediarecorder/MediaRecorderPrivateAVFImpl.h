@@ -47,6 +47,7 @@ private:
     void videoSampleAvailable(MediaSample&) final;
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void startRecording(StartRecordingCallback&& callback) final { callback(String(m_writer->mimeType())); }
     const String& mimeType() const final;
 
     void stopRecording();
