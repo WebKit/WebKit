@@ -1,3 +1,11 @@
+2020-10-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLib] Garden webaudio/Convolver/unmmodified-buffer.html flakiness
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-10-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r267841.

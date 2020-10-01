@@ -629,6 +629,8 @@ webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-upd
 webkit.org/b/216768 webaudio/Analyser/realtimeanalyser-downmix.html [ Failure ]
 webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pass ]
 
+webkit.org/b/217189 webaudio/Convolver/unmmodified-buffer.html [ Pass Timeout Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
