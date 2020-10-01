@@ -58,6 +58,8 @@ public:
     void shrink();
     void resetAllocator();
 
+    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
+
 private:
     JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator(CellContainer);
     WeakBlock::FreeCell* tryFindAllocator();

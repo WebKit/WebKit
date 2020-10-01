@@ -57,6 +57,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> functionForConstructArityCheckThunk();
 MacroAssemblerCodeRef<JITThunkPtrTag> evalEntryThunk();
 MacroAssemblerCodeRef<JITThunkPtrTag> programEntryThunk();
 MacroAssemblerCodeRef<JITThunkPtrTag> moduleProgramEntryThunk();
+MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk();
 
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk();

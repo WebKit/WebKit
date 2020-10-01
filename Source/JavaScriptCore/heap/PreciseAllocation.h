@@ -75,6 +75,8 @@ public:
     VM& vm() const { return m_weakSet.vm(); }
     WeakSet& weakSet() { return m_weakSet; }
 
+    static ptrdiff_t offsetOfWeakSet() { return OBJECT_OFFSETOF(PreciseAllocation, m_weakSet); }
+
     unsigned indexInSpace() { return m_indexInSpace; }
     void setIndexInSpace(unsigned indexInSpace) { m_indexInSpace = indexInSpace; }
     

@@ -353,6 +353,16 @@ op(handleUncaughtException, macro ()
     ret
 end)
 
+op(llint_get_host_call_return_value, macro ()
+    functionPrologue()
+    pushCalleeSaves()
+    loadp Callee[cfr], t0
+    convertCalleeToVM(t0)
+    loadq VM::encodedHostCallReturnValue[t0], t0
+    popCalleeSaves()
+    functionEpilogue()
+    ret
+end)
 
 macro prepareStateForCCall()
     addp PB, PC

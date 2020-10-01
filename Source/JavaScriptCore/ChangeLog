@@ -1,3 +1,52 @@
+2020-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] We should not tag C function with JIT code related ptr tag
+        https://bugs.webkit.org/show_bug.cgi?id=217150
+
+        Reviewed by Mark Lam.
+
+        We are tagging getHostCallReturnValue function with JIT related PtrTag. As a part of JIT-caging effort, we are restricting our
+        PtrTag usage more for code types (e.g. JIT code should be tagged with JIT related PtrTag). So, we should not tag getHostCallReturnValue
+        with that. This patch implements getHostCallReturnValue in JIT code if JIT is enabled. If not, it is implemented by LLInt.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeList.rb:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Footer::offsetOfVM):
+        * heap/PreciseAllocation.h:
+        (JSC::PreciseAllocation::offsetOfWeakSet):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::offsetOfVM):
+        * jit/HostCallReturnValue.cpp: Removed.
+        * jit/HostCallReturnValue.h: Removed.
+        * jit/JITOperations.cpp:
+        * jit/JITOperationsMSVC64.cpp: Removed.
+        * jit/JITStubsMSVC64.asm:
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::getHostCallReturnValueEntrypoint):
+        * llint/LLIntEntrypoint.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::commonCallEval):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::getHostCallReturnValueThunk):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCellInlines.h:
+        (JSC::tryAllocateCellHelper):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::offsetOfVM):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::offsetOfEncodedHostCallReturnValue):
+
 2020-09-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Implement item method proposal

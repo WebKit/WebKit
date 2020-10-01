@@ -422,6 +422,18 @@ op(handleUncaughtException, macro()
     ret
 end)
 
+op(llint_get_host_call_return_value, macro ()
+    functionPrologue()
+    pushCalleeSaves()
+    loadp Callee[cfr], t0
+    convertCalleeToVM(t0)
+    loadi VM::encodedHostCallReturnValue + TagOffset[t0], t1
+    loadi VM::encodedHostCallReturnValue + PayloadOffset[t0], t0
+    popCalleeSaves()
+    functionEpilogue()
+    ret
+end)
+
 macro doReturnFromHostFunction(extraStackSpace)
     functionEpilogue(extraStackSpace)
     ret

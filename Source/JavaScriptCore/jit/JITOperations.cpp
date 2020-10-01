@@ -41,7 +41,6 @@
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
 #include "GetterSetter.h"
-#include "HostCallReturnValue.h"
 #include "ICStats.h"
 #include "Interpreter.h"
 #include "JIT.h"
@@ -57,6 +56,7 @@
 #include "JSInternalPromise.h"
 #include "JSLexicalEnvironment.h"
 #include "JSWithScope.h"
+#include "LLIntEntrypoint.h"
 #include "ObjectConstructor.h"
 #include "PropertyName.h"
 #include "RegExpObject.h"
@@ -1224,7 +1224,8 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
         if (callData.type == CallData::Type::Native) {
             NativeCallFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
-            vm.hostCallReturnValue = JSValue::decode(callData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
+            vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->globalObject(vm), calleeFrame);
+            DisallowGC disallowGC;
             if (UNLIKELY(scope.exception())) {
                 return encodeResult(
                     vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),
@@ -1232,7 +1233,7 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
             }
 
             return encodeResult(
-                tagCFunction<void*, JSEntryPtrTag>(getHostCallReturnValue),
+                LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(),
                 reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
     
@@ -1251,14 +1252,15 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
     if (constructData.type == CallData::Type::Native) {
         NativeCallFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
-        vm.hostCallReturnValue = JSValue::decode(constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
+        vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame);
+        DisallowGC disallowGC;
         if (UNLIKELY(scope.exception())) {
             return encodeResult(
                 vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
-        return encodeResult(tagCFunction<void*, JSEntryPtrTag>(getHostCallReturnValue), reinterpret_cast<void*>(KeepTheFrame));
+        return encodeResult(LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), reinterpret_cast<void*>(KeepTheFrame));
     }
 
     ASSERT(constructData.type == CallData::Type::None);

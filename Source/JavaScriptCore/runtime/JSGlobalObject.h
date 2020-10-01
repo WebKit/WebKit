@@ -831,6 +831,8 @@ public:
     RegExpGlobalData& regExpGlobalData() { return m_regExpGlobalData; }
     static ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
 
+    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSGlobalObject, m_vm); }
+
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
     JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable.get(); }

@@ -37,4 +37,6 @@ void setEntrypoint(CodeBlock*);
 
 unsigned frameRegisterCountFor(CodeBlock*);
 
+MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueEntrypoint();
+
 } } // namespace JSC::LLInt

@@ -251,6 +251,8 @@ public:
     public:
         Footer(VM&, Handle&);
         ~Footer();
+
+        static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Footer, m_vm); }
         
     private:
         friend class LLIntOffsetsExtractor;

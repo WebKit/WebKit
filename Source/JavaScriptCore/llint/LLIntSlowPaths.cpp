@@ -40,7 +40,6 @@
 #include "FunctionAllowlist.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
-#include "HostCallReturnValue.h"
 #include "JITExceptions.h"
 #include "JITWorklist.h"
 #include "JSAsyncFunction.h"
@@ -1671,8 +1670,9 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
         if (callData.type == CallData::Type::Native) {
             SlowPathFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
-            vm.hostCallReturnValue = JSValue::decode(callData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
-            LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
+            vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->globalObject(vm), calleeFrame);
+            DisallowGC disallowGC;
+            LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), JSEntryPtrTag);
         }
         
         slowPathLog("Call callee is not a function: ", callee, "\n");
@@ -1689,8 +1689,9 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
     if (constructData.type == CallData::Type::Native) {
         SlowPathFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
-        vm.hostCallReturnValue = JSValue::decode(constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
-        LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
+        vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame);
+        DisallowGC disallowGC;
+        LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), JSEntryPtrTag);
     }
     
     slowPathLog("Constructor callee is not a function: ", callee, "\n");
@@ -1959,8 +1960,9 @@ inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const Instruction
     if (!isHostFunction(calleeAsValue, globalFuncEval))
         RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
     
-    vm.hostCallReturnValue = eval(globalObject, calleeFrame, bytecode.m_ecmaMode);
-    LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
+    vm.encodedHostCallReturnValue = JSValue::encode(eval(globalObject, calleeFrame, bytecode.m_ecmaMode));
+    DisallowGC disallowGC;
+    LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getHostCallReturnValueEntrypoint().code().executableAddress(), JSEntryPtrTag);
 }
     
 LLINT_SLOW_PATH_DECL(slow_path_call_eval)

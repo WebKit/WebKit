@@ -63,7 +63,6 @@
 #include "HasOwnPropertyCache.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
-#include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "IntlCache.h"
 #include "IntlCollator.h"
@@ -489,10 +488,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     }
 
     Thread::current().setCurrentAtomStringTable(existingEntryAtomStringTable);
-    
-#if !ENABLE(C_LOOP)
-    initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
-#endif
     
     Gigacage::addPrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
 

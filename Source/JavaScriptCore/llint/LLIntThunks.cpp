@@ -152,9 +152,42 @@ MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk()
 }
 #endif // ENABLE(WEBASSEMBLY)
 
+MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk()
+{
+    static LazyNeverDestroyed<MacroAssemblerCodeRef<JSEntryPtrTag>> codeRef;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        CCallHelpers jit;
+
+        jit.emitFunctionPrologue();
+        jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, GPRInfo::regT0);
+
+        auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
+        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfFooter + MarkedBlock::Footer::offsetOfVM()), GPRInfo::regT0);
+        auto loadedCase = jit.jump();
+
+        preciseAllocationCase.link(&jit);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
+
+        loadedCase.link(&jit);
+#if USE(JSVALUE64)
+        jit.loadValue(CCallHelpers::Address(GPRInfo::regT0, VM::offsetOfEncodedHostCallReturnValue()), JSValueRegs { GPRInfo::returnValueGPR });
+#else
+        jit.loadValue(CCallHelpers::Address(GPRInfo::regT0, VM::offsetOfEncodedHostCallReturnValue()), JSValueRegs { GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR });
+#endif
+        jit.emitFunctionEpilogue();
+        jit.ret();
+
+        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+        codeRef.construct(FINALIZE_CODE(patchBuffer, JSEntryPtrTag, "LLInt::getHostCallReturnValue thunk"));
+    });
+    return codeRef;
+}
+
 } // namespace LLInt
 
-#endif
+#endif // ENABLE(JIT)
 
 #if ENABLE(C_LOOP)
 // Non-JIT (i.e. C Loop LLINT) case:

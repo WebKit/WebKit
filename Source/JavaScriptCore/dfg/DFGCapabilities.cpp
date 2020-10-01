@@ -316,6 +316,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case llint_native_construct_trampoline:
     case llint_internal_function_call_trampoline:
     case llint_internal_function_construct_trampoline:
+    case llint_get_host_call_return_value:
     case checkpoint_osr_exit_from_inlined_call_trampoline:
     case checkpoint_osr_exit_trampoline:
     case handleUncaughtException:

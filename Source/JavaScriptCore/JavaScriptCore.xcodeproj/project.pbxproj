@@ -343,7 +343,6 @@
 		0F4680CB14BBB17200BFE272 /* LLIntOfflineAsmConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680C614BBB16900BFE272 /* LLIntOfflineAsmConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4680CD14BBB17D00BFE272 /* LowLevelInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680C814BBB16900BFE272 /* LowLevelInterpreter.h */; };
 		0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680CF14BBB3D100BFE272 /* LLIntData.h */; };
-		0F4680D514BBD24B00BFE272 /* HostCallReturnValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F485322187750560083B687 /* DFGArithMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485320187750560083B687 /* DFGArithMode.h */; };
 		0F485328187DFDEC0083B687 /* FTLAvailableRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485324187DFDEC0083B687 /* FTLAvailableRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2601,8 +2600,6 @@
 		0F4680C814BBB16900BFE272 /* LowLevelInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LowLevelInterpreter.h; path = llint/LowLevelInterpreter.h; sourceTree = "<group>"; };
 		0F4680CE14BBB3D100BFE272 /* LLIntData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntData.cpp; path = llint/LLIntData.cpp; sourceTree = "<group>"; };
 		0F4680CF14BBB3D100BFE272 /* LLIntData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntData.h; path = llint/LLIntData.h; sourceTree = "<group>"; };
-		0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HostCallReturnValue.cpp; sourceTree = "<group>"; };
-		0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostCallReturnValue.h; sourceTree = "<group>"; };
 		0F48531F187750560083B687 /* DFGArithMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArithMode.cpp; path = dfg/DFGArithMode.cpp; sourceTree = "<group>"; };
 		0F485320187750560083B687 /* DFGArithMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArithMode.h; path = dfg/DFGArithMode.h; sourceTree = "<group>"; };
 		0F485323187DFDEC0083B687 /* FTLAvailableRecovery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLAvailableRecovery.cpp; path = ftl/FTLAvailableRecovery.cpp; sourceTree = "<group>"; };
@@ -6131,8 +6128,6 @@
 				0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */,
 				0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */,
 				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
-				0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */,
-				0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */,
 				DC2143051CA32E52000A8869 /* ICStats.cpp */,
 				DC2143061CA32E52000A8869 /* ICStats.h */,
 				DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */,
@@ -9767,7 +9762,6 @@
 				A5311C361C77CEC500E6B1B6 /* HeapSnapshotBuilder.h in Headers */,
 				0FADE6731D4D23BE00768457 /* HeapUtil.h in Headers */,
 				FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */,
-				0F4680D514BBD24B00BFE272 /* HostCallReturnValue.h in Headers */,
 				DC2143071CA32E55000A8869 /* ICStats.h in Headers */,
 				0F44A7B220BF68CE0022B171 /* ICStatusMap.h in Headers */,
 				0FB399BE20AF6B3D0017E213 /* ICStatusUtils.h in Headers */,

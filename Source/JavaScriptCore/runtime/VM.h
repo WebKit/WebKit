@@ -853,6 +853,11 @@ public:
         return OBJECT_OFFSETOF(VM, topEntryFrame);
     }
 
+    static ptrdiff_t offsetOfEncodedHostCallReturnValue()
+    {
+        return OBJECT_OFFSETOF(VM, encodedHostCallReturnValue);
+    }
+
     static ptrdiff_t offsetOfHeapBarrierThreshold()
     {
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_barrierThreshold);
@@ -933,7 +938,7 @@ public:
         }
     }
 
-    JSValue hostCallReturnValue;
+    EncodedJSValue encodedHostCallReturnValue { };
     unsigned varargsLength;
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch;

@@ -629,7 +629,6 @@ jit/ExecutableAllocationFuzz.cpp
 jit/ExecutableAllocator.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/GPRInfo.cpp
-jit/HostCallReturnValue.cpp
 jit/ICStats.cpp
 jit/IntrinsicEmitter.cpp
 jit/JIT.cpp

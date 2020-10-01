@@ -154,6 +154,15 @@ static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
     codeBlock->setJITCode(makeRef(*jitCode));
 }
 
+MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueEntrypoint()
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return getHostCallReturnValueThunk();
+#endif // ENABLE(JIT)
+    return getCodeRef<JSEntryPtrTag>(llint_get_host_call_return_value);
+}
+
 void setEntrypoint(CodeBlock* codeBlock)
 {
     switch (codeBlock->codeType()) {
