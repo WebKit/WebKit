@@ -1,3 +1,26 @@
+2020-10-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove redundant "needs hyphen" flag from LineContent::PartialContent
+        https://bugs.webkit.org/show_bug.cgi?id=217155
+
+        Reviewed by Antti Koivisto.
+
+        The last run already had this information. This is also in preparation for adding support for soft-hyphen where
+        the run with the hyphen is not partial at all.
+        (This patch also changes Optional<size_t> partialContentLength to just size_t. Optional<> may suggest that 0 is a valid overflow length.)
+
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::debugDescription const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::nextContentForLine):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support MediaRecorderOptions.mimeType

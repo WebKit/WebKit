@@ -48,12 +48,8 @@ public:
         size_t end { 0 };
     };
     struct LineContent {
-        struct PartialContent {
-            bool trailingContentHasHyphen { false };
-            size_t overflowContentLength { 0 };
-        };
-        Optional<PartialContent> partialContent;
         InlineItemRange inlineItemRange;
+        size_t partialTrailingContentLength { 0 };
         struct Float {
             bool isIntrusive { true };
             const InlineItem* item { nullptr };
@@ -68,7 +64,7 @@ public:
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, Optional<size_t> partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialLineConstraints, bool isFirstLine);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, const FormattingContext::ConstraintsForInFlowContent& initialLineConstraints, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
@@ -77,7 +73,7 @@ public:
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, InlineLayoutUnit availableWidth);
 
 private:
-    void nextContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, Optional<size_t> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, size_t overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
     struct Result {
         InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
         struct CommittedContentCount {
@@ -85,7 +81,7 @@ private:
             bool isRevert { false };
         };
         CommittedContentCount committedCount { };
-        Optional <LineContent::PartialContent> partialContent { };
+        size_t partialTrailingContentLength { 0 };
     };
     enum class CommitIntrusiveFloatsOnly { No, Yes };
     struct UsedConstraints {
@@ -101,9 +97,9 @@ private:
     void initialize(const UsedConstraints&);
     struct CommittedContent {
         size_t inlineItemCount { 0 };
-        Optional <LineContent::PartialContent> partialTrailingContent;
+        size_t partialTrailingContentLength { 0 };
     };
-    CommittedContent placeInlineContent(const InlineItemRange&, Optional<size_t> partialLeadingContentLength);
+    CommittedContent placeInlineContent(const InlineItemRange&, size_t partialLeadingContentLength);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;

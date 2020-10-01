@@ -146,7 +146,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     auto lineLogicalTop = constraints.vertical.logicalTop;
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
-        Optional<size_t> overflowContentLength;
+        size_t overflowContentLength { 0 };
     };
     Optional<PreviousLine> previousLine;
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
@@ -156,7 +156,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     while (!needsLayoutRange.isEmpty()) {
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
-        auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : WTF::nullopt;
+        auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : 0;
         auto initialLineConstraints = ConstraintsForInFlowContent { constraints.horizontal, { lineLogicalTop, makeOptional(toLayoutUnit(quirks().initialLineHeight())) } };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, initialLineConstraints, isFirstLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal);
@@ -167,12 +167,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
             isFirstLine = false;
             lineLogicalTop = lineLogicalRect.bottom();
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
-            auto lastInlineItemNeedsPartialLayout = lineContent.partialContent.hasValue();
+            auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;
             if (lastInlineItemNeedsPartialLayout) {
-                ASSERT(lineContent.partialContent->overflowContentLength);
                 auto lineLayoutHasAdvanced = !previousLine
                     || lineContentRange.end > previousLine->range.end
-                    || (previousLine->overflowContentLength && *previousLine->overflowContentLength > lineContent.partialContent->overflowContentLength);
+                    || (previousLine->overflowContentLength && previousLine->overflowContentLength > lineContent.partialTrailingContentLength);
                 if (!lineLayoutHasAdvanced) {
                     ASSERT_NOT_REACHED();
                     // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
@@ -181,7 +180,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 }
             }
             needsLayoutRange.start = lastInlineItemNeedsPartialLayout ? lineContentRange.end - 1 : lineContentRange.end;
-            previousLine = PreviousLine { lineContentRange, lineContent.partialContent ? makeOptional(lineContent.partialContent->overflowContentLength) : WTF::nullopt };
+            previousLine = PreviousLine { lineContentRange, lineContent.partialTrailingContentLength };
             continue;
         }
         // Floats prevented us placing any content on the line.
