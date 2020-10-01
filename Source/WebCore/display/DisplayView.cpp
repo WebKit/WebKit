@@ -28,9 +28,11 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayTree.h"
 #include "DisplayTreeBuilder.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LayoutContainerBox.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 

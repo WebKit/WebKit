@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DisplayListItems.h"
 
+#include "DisplayListReplayer.h"
 #include "FontCascade.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"

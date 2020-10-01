@@ -30,6 +30,7 @@
 
 #include "FlexFormattingState.h"
 #include "FormattingContext.h"
+#include "LayoutContext.h"
 
 namespace WebCore {
 namespace Layout {

@@ -29,7 +29,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FlexFormattingState.h"
+#include "InlineRect.h"
 #include "InvalidationState.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>

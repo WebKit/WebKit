@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include "JSCPtrTag.h"
 
 namespace JSC {
 
 class CodeBlock;
 class VM;
+
+template<PtrTag> class MacroAssemblerCodeRef;
 
 namespace LLInt {
 

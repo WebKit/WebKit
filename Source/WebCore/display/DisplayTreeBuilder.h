@@ -31,9 +31,12 @@
 
 namespace WebCore {
 
+class LayoutSize;
+
 namespace Layout {
 class Box;
 class BoxGeometry;
+class ContainerBox;
 class LayoutState;
 }
 

@@ -30,11 +30,14 @@
 #include "HTMLTextFormControlElement.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
+#include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include <wtf/OptionSet.h>
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 

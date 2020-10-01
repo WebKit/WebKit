@@ -1,3 +1,13 @@
+2020-10-01  Adrian Perez de Castro <aperez@igalia.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early October 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=217165
+
+        Reviewed by Yusuke Suzuki.
+
+        * llint/LLIntEntrypoint.h:
+        * llint/LLIntSlowPaths.cpp:
+
 2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         stress/put-private-name-invalid-define.js.ftl-eager is getting flaky failure

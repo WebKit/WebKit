@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "RenderStyleConstants.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

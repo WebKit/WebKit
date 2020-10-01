@@ -34,6 +34,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
+#include <WebCore/ScrollView.h>
 #include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;

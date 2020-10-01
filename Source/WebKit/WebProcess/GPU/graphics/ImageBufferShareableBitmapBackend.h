@@ -60,7 +60,7 @@ public:
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
 private:
-    ColorFormat backendColorFormat() const override { return ColorFormat::BGRA; }
+    WebCore::ColorFormat backendColorFormat() const override { return WebCore::ColorFormat::BGRA; }
 
     RefPtr<ShareableBitmap> m_bitmap;
     std::unique_ptr<WebCore::GraphicsContext> m_context;

@@ -32,6 +32,7 @@
 
 #include <memory>
 #include <wtf/OptionSet.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

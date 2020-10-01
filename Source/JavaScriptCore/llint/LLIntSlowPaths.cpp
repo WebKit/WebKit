@@ -52,6 +52,7 @@
 #include "JSString.h"
 #include "LLIntCommon.h"
 #include "LLIntData.h"
+#include "LLIntEntrypoint.h"
 #include "LLIntExceptions.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "ObjectConstructor.h"

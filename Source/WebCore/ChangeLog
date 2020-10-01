@@ -1,3 +1,22 @@
+2020-10-01  Adrian Perez de Castro <aperez@igalia.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, early October 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=217165
+
+        Reviewed by Yusuke Suzuki.
+
+        * css/parser/CSSSelectorParser.cpp:
+        * display/DisplayTreeBuilder.h:
+        * display/DisplayView.cpp:
+        * editing/TextManipulationController.cpp:
+        * layout/flexformatting/FlexFormattingContext.cpp:
+        * layout/flexformatting/FlexFormattingContextGeometry.cpp:
+        * layout/inlineformatting/InlineLine.cpp:
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+
 2020-10-01  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Fix build break after r267753
