@@ -98,8 +98,8 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
 
         platform = builder['platform']
 
-        builderType = builder.pop('type')
-        factory = globals()["%sFactory" % builderType]
+        factoryName = builder.pop('factory')
+        factory = globals()[factoryName]
         factorykwargs = {}
         for key in "platform", "configuration", "architectures", "triggers", "additionalArguments", "SVNMirror", "device_model":
             value = builder.pop(key, None)
@@ -125,7 +125,7 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
         else:
             builder["category"] = 'misc'
 
-        if (builder['category'] in ('AppleMac', 'AppleWin', 'iOS')) and builderType != 'Build':
+        if (builder['category'] in ('AppleMac', 'AppleWin', 'iOS')) and factoryName != 'BuildFactory':
             builder['nextBuild'] = pickLatestBuild
 
         c['builders'].append(builder)
