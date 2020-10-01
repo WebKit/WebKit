@@ -99,25 +99,11 @@ void AudioSampleBufferCompressor::finish()
 
 void AudioSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
 {
-    // FIXME: we have some issues when setting up some bit rates, only allow some that work for the moment.
-    if (bitRate < 128000) {
-        RELEASE_LOG_INFO(WebRTC, "AudioSampleBufferCompressor::outputBitRate clamped to 128000.");
-        bitRate = 128000;
-    } else if (bitRate > 256000) {
-        RELEASE_LOG_INFO(WebRTC, "AudioSampleBufferCompressor::outputBitRate clamped to 256000.");
-        bitRate = 256000;
-    } else if (bitRate != 128000 && bitRate != 192000 && bitRate != 256000) {
-        RELEASE_LOG_INFO(WebRTC, "AudioSampleBufferCompressor::outputBitRate did not set output bit rate as value is not supported.");
-        return;
-    }
     m_outputBitRate = bitRate;
 }
 
-UInt32 AudioSampleBufferCompressor::outputBitRate(const AudioStreamBasicDescription& destinationFormat) const
+UInt32 AudioSampleBufferCompressor::defaultOutputBitRate(const AudioStreamBasicDescription& destinationFormat) const
 {
-    if (m_outputBitRate)
-        return *m_outputBitRate;
-
     if (destinationFormat.mSampleRate >= 44100)
         return 192000;
     if (destinationFormat.mSampleRate < 22000)
@@ -180,10 +166,18 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
     }
 
     if (m_destinationFormat.mFormatID == kAudioFormatMPEG4AAC) {
-        auto outputBitRate = this->outputBitRate(m_destinationFormat);
-        size = sizeof(outputBitRate);
-        if (auto error = AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
-            RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
+        bool shouldSetDefaultOutputBitRate = true;
+        if (m_outputBitRate) {
+            auto error = AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(*m_outputBitRate), &m_outputBitRate.value());
+            RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
+            shouldSetDefaultOutputBitRate = !!error;
+        }
+        if (shouldSetDefaultOutputBitRate) {
+            auto outputBitRate = defaultOutputBitRate(m_destinationFormat);
+            size = sizeof(outputBitRate);
+            if (auto error = AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
+                RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting default kAudioConverterEncodeBitRate failed with %d", error);
+        }
     }
 
     if (!m_destinationFormat.mBytesPerPacket) {

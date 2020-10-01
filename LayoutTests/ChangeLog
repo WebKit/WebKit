@@ -1,3 +1,15 @@
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should allow setting low bit rates for audio
+        https://bugs.webkit.org/show_bug.cgi?id=216688
+        <rdar://problem/69129142>
+
+        Reviewed by Eric Carlson.
+
+        Add more bitrate tests.
+
+        * http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html:
+
 2020-09-30  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Missing bits from last gardening

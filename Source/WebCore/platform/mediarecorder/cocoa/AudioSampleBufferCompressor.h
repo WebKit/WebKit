@@ -48,7 +48,7 @@ public:
 private:
     AudioSampleBufferCompressor();
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
-    UInt32 outputBitRate(const AudioStreamBasicDescription&) const;
+    UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 
     static OSStatus audioConverterComplexInputDataProc(AudioConverterRef, UInt32*, AudioBufferList*, AudioStreamPacketDescription**, void*);
 
