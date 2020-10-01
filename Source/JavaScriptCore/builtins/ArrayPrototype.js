@@ -306,156 +306,179 @@ function includes(searchElement /*, fromIndex*/)
     return false;
 }
 
-function sort(comparator)
+@globalPrivate
+function sortMin(a, b)
 {
     "use strict";
 
-    function min(a, b)
-    {
-        return a < b ? a : b;
-    }
+    return a < b ? a : b;
+}
 
-    function stringComparator(a, b)
-    {
-        var aString = a.string;
-        var bString = b.string;
+@globalPrivate
+function sortStringComparator(a, b)
+{
+    "use strict";
 
-        if (aString === bString)
-            return 0;
+    var aString = a.string;
+    var bString = b.string;
 
-        return aString > bString ? 1 : -1;
-    }
+    if (aString === bString)
+        return 0;
 
-    function compact(receiver, receiverLength, compacted, isStringSort)
-    {
-        var undefinedCount = 0;
-        var compactedIndex = 0;
+    return aString > bString ? 1 : -1;
+}
 
-        for (var i = 0; i < receiverLength; ++i) {
-            if (i in receiver) {
-                var value = receiver[i];
-                if (value === @undefined)
-                    ++undefinedCount;
-                else {
-                    @putByValDirect(compacted, compactedIndex, 
-                        isStringSort ? {string: @toString(value), value} : value);
-                    ++compactedIndex;
-                }
+@globalPrivate
+function sortCompact(receiver, receiverLength, compacted, isStringSort)
+{
+    "use strict";
+
+    var undefinedCount = 0;
+    var compactedIndex = 0;
+
+    for (var i = 0; i < receiverLength; ++i) {
+        if (i in receiver) {
+            var value = receiver[i];
+            if (value === @undefined)
+                ++undefinedCount;
+            else {
+                @putByValDirect(compacted, compactedIndex,
+                    isStringSort ? {string: @toString(value), value} : value);
+                ++compactedIndex;
             }
         }
-
-        return undefinedCount;
     }
+
+    return undefinedCount;
+}
+
+@globalPrivate
+function sortCommit(receiver, receiverLength, sorted, undefinedCount)
+{
+    "use strict";
 
     // Move undefineds and holes to the end of an array. Result is [values..., undefineds..., holes...].
-    function commit(receiver, receiverLength, sorted, undefinedCount)
-    {
-        @assert(@isJSArray(sorted));
-        var sortedLength = sorted.length;
-        @assert(sortedLength + undefinedCount <= receiverLength);
 
-        var i = 0;
-        if (@isJSArray(receiver) && sortedLength >= 64 && typeof sorted[0] !== "number") { // heuristic
-            @appendMemcpy(receiver, sorted, 0);
-            i = sortedLength;
-        } else {
-            for (; i < sortedLength; ++i)
-                receiver[i] = sorted[i];
-        }
+    @assert(@isJSArray(sorted));
+    var sortedLength = sorted.length;
+    @assert(sortedLength + undefinedCount <= receiverLength);
 
-        for (; i < sortedLength + undefinedCount; ++i)
-            receiver[i] = @undefined;
-
-        for (; i < receiverLength; ++i)
-            delete receiver[i];
+    var i = 0;
+    if (@isJSArray(receiver) && sortedLength >= 64 && typeof sorted[0] !== "number") { // heuristic
+        @appendMemcpy(receiver, sorted, 0);
+        i = sortedLength;
+    } else {
+        for (; i < sortedLength; ++i)
+            receiver[i] = sorted[i];
     }
 
-    function merge(dst, src, srcIndex, srcEnd, width, comparator)
-    {
-        var left = srcIndex;
-        var leftEnd = min(left + width, srcEnd);
-        var right = leftEnd;
-        var rightEnd = min(right + width, srcEnd);
+    for (; i < sortedLength + undefinedCount; ++i)
+        receiver[i] = @undefined;
 
-        for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
-            if (right < rightEnd) {
-                if (left >= leftEnd) {
-                    @putByValDirect(dst, dstIndex, src[right]);
-                    ++right;
-                    continue;
-                }
+    for (; i < receiverLength; ++i)
+        delete receiver[i];
+}
 
-                // See https://bugs.webkit.org/show_bug.cgi?id=47825 on boolean special-casing
-                var comparisonResult = comparator(src[right], src[left]);
-                if (comparisonResult === false || comparisonResult < 0) {
-                    @putByValDirect(dst, dstIndex, src[right]);
-                    ++right;
-                    continue;
-                }
 
-            }
+@globalPrivate
+function sortMerge(dst, src, srcIndex, srcEnd, width, comparator)
+{
+    "use strict";
 
-            @putByValDirect(dst, dstIndex, src[left]);
-            ++left;
-        }
-    }
+    var left = srcIndex;
+    var leftEnd = @sortMin(left + width, srcEnd);
+    var right = leftEnd;
+    var rightEnd = @sortMin(right + width, srcEnd);
 
-    function mergeSort(array, comparator)
-    {
-        var valueCount = array.length;
-        var buffer = @newArrayWithSize(valueCount);
-
-        var dst = buffer;
-        var src = array;
-        for (var width = 1; width < valueCount; width *= 2) {
-            for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
-                merge(dst, src, srcIndex, valueCount, width, comparator);
-
-            var tmp = src;
-            src = dst;
-            dst = tmp;
-        }
-
-        return src;
-    }
-
-    function bucketSort(array, dst, bucket, depth)
-    {
-        if (bucket.length < 32 || depth > 32) {
-            var sorted = mergeSort(bucket, stringComparator);
-            for (var i = 0; i < sorted.length; ++i) {
-                @putByValDirect(array, dst, sorted[i].value);
-                ++dst;
-            }
-            return dst;
-        }
-
-        var buckets = [ ];
-        for (var i = 0; i < bucket.length; ++i) {
-            var entry = bucket[i];
-            var string = entry.string;
-            if (string.length == depth) {
-                @putByValDirect(array, dst, entry.value);
-                ++dst;
+    for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
+        if (right < rightEnd) {
+            if (left >= leftEnd) {
+                @putByValDirect(dst, dstIndex, src[right]);
+                ++right;
                 continue;
             }
 
-            var c = string.@charCodeAt(depth);
-            var cBucket = buckets[c];
-            if (cBucket)
-                @putByValDirect(cBucket, cBucket.length, entry);
-            else
-                @putByValDirect(buckets, c, [ entry ]);
-        }
-
-        for (var i = 0; i < buckets.length; ++i) {
-            if (!buckets[i])
+            // See https://bugs.webkit.org/show_bug.cgi?id=47825 on boolean special-casing
+            var comparisonResult = comparator(src[right], src[left]);
+            if (comparisonResult === false || comparisonResult < 0) {
+                @putByValDirect(dst, dstIndex, src[right]);
+                ++right;
                 continue;
-            dst = bucketSort(array, dst, buckets[i], depth + 1);
+            }
+
         }
 
+        @putByValDirect(dst, dstIndex, src[left]);
+        ++left;
+    }
+}
+
+@globalPrivate
+function sortMergeSort(array, comparator)
+{
+    "use strict";
+
+    var valueCount = array.length;
+    var buffer = @newArrayWithSize(valueCount);
+
+    var dst = buffer;
+    var src = array;
+    for (var width = 1; width < valueCount; width *= 2) {
+        for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
+            @sortMerge(dst, src, srcIndex, valueCount, width, comparator);
+
+        var tmp = src;
+        src = dst;
+        dst = tmp;
+    }
+
+    return src;
+}
+
+@globalPrivate
+function sortBucketSort(array, dst, bucket, depth)
+{
+    "use strict";
+
+    if (bucket.length < 32 || depth > 32) {
+        var sorted = @sortMergeSort(bucket, @sortStringComparator);
+        for (var i = 0; i < sorted.length; ++i) {
+            @putByValDirect(array, dst, sorted[i].value);
+            ++dst;
+        }
         return dst;
     }
+
+    var buckets = [ ];
+    for (var i = 0; i < bucket.length; ++i) {
+        var entry = bucket[i];
+        var string = entry.string;
+        if (string.length == depth) {
+            @putByValDirect(array, dst, entry.value);
+            ++dst;
+            continue;
+        }
+
+        var c = string.@charCodeAt(depth);
+        var cBucket = buckets[c];
+        if (cBucket)
+            @putByValDirect(cBucket, cBucket.length, entry);
+        else
+            @putByValDirect(buckets, c, [ entry ]);
+    }
+
+    for (var i = 0; i < buckets.length; ++i) {
+        if (!buckets[i])
+            continue;
+        dst = @sortBucketSort(array, dst, buckets[i], depth + 1);
+    }
+
+    return dst;
+}
+
+function sort(comparator)
+{
+    "use strict";
 
     var isStringSort = false;
     if (comparator === @undefined)
@@ -473,15 +496,15 @@ function sort(comparator)
 
     var compacted = [ ];
     var sorted = null;
-    var undefinedCount = compact(receiver, receiverLength, compacted, isStringSort);
+    var undefinedCount = @sortCompact(receiver, receiverLength, compacted, isStringSort);
 
     if (isStringSort) {
         sorted = @newArrayWithSize(compacted.length);
-        bucketSort(sorted, 0, compacted, 0);
+        @sortBucketSort(sorted, 0, compacted, 0);
     } else
-        sorted = mergeSort(compacted, comparator);
+        sorted = @sortMergeSort(compacted, comparator);
 
-    commit(receiver, receiverLength, sorted, undefinedCount);
+    @sortCommit(receiver, receiverLength, sorted, undefinedCount);
     return receiver;
 }
 

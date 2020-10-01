@@ -1,5 +1,32 @@
 2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Define Array#sort's implementation functions as globalPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=217168
+
+        Reviewed by Ross Kirsling.
+
+        Now, these Array#sort's implementation functions are not capturing any heap variables. So we can make them @globalPrivate,
+        this avoids function allocations in LLInt / Baseline / DFG in Array#sort.
+
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.sortMin):
+        (globalPrivate.sortStringComparator):
+        (globalPrivate.sortCompact):
+        (globalPrivate.sortCommit):
+        (globalPrivate.sortMerge):
+        (globalPrivate.sortMergeSort):
+        (globalPrivate.sortBucketSort):
+        (sort):
+        (sort.min): Deleted.
+        (sort.stringComparator): Deleted.
+        (sort.compact): Deleted.
+        (sort.commit): Deleted.
+        (sort.merge): Deleted.
+        (sort.mergeSort): Deleted.
+        (sort.bucketSort): Deleted.
+
+2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Do not use std::function in setPrivateField and definePrivateField
         https://bugs.webkit.org/show_bug.cgi?id=217167
 
