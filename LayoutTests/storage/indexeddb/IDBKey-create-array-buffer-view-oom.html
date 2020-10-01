@@ -24,7 +24,7 @@ try {
 } catch { }
 
 try {
-    while(1)
+    for (let timeoutCount = 1000; timeoutCount--;)
         new ArrayBuffer(2**20);
 } catch { }
 
