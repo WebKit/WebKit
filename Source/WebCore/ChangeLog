@@ -1,5 +1,23 @@
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
+        RealtimeMediaSource should ignore ideal values outside the min/max range
+        https://bugs.webkit.org/show_bug.cgi?id=217178
+
+        Reviewed by Eric Carlson.
+
+        Make valueForDiscreteCapabilityValues returns an Optional in case no valid value can be selected from the constraint.
+        This basically means the constraint will be ignored.
+        Before the patch, in case of no valid value, 0 will be set, which is a bad value for sample rate.
+
+        Test: fast/mediastream/audio-bad-sampleRate.html
+
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::NumericConstraint::valueForDiscreteCapabilityValues const):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::applyNumericConstraint):
+
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
         getUserMedia with sampleRate constraints may fail
         https://bugs.webkit.org/show_bug.cgi?id=217147
         <rdar://problem/69831144>

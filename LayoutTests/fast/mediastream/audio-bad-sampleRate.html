@@ -1,0 +1,10 @@
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio : { sampleRate : 24000 } });
+    assert_true(stream.getAudioTracks()[0].getSettings().sampleRate > 40000);
+}, "Ideal sample rate outside of min/max should be ignored");
+</script>
+</body>

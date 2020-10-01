@@ -511,9 +511,9 @@ template <typename ValueType>
 static void applyNumericConstraint(const NumericConstraint<ValueType>& constraint, ValueType current, Optional<Vector<ValueType>> discreteCapabilityValues, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource& source, void (RealtimeMediaSource::*applier)(ValueType))
 {
     if (discreteCapabilityValues) {
-        int value = constraint.valueForDiscreteCapabilityValues(current, *discreteCapabilityValues);
-        if (value != current)
-            (source.*applier)(value);
+        auto value = constraint.valueForDiscreteCapabilityValues(current, *discreteCapabilityValues);
+        if (value && *value != current)
+            (source.*applier)(*value);
         return;
     }
 

@@ -293,9 +293,9 @@ public:
         return value;
     }
 
-    ValueType valueForDiscreteCapabilityValues(ValueType current, const Vector<ValueType>& discreteCapabilityValues) const
+    Optional<ValueType> valueForDiscreteCapabilityValues(ValueType current, const Vector<ValueType>& discreteCapabilityValues) const
     {
-        ValueType value { 0 };
+        Optional<ValueType> value;
         Optional<ValueType> min;
         Optional<ValueType> max;
 
@@ -310,7 +310,7 @@ public:
                 min = value = discreteCapabilityValues[index];
 
                 // If there is no ideal, don't change if minimum is smaller than current.
-                if (!m_ideal && value < current)
+                if (!m_ideal && *value < current)
                     value = current;
             }
         }
@@ -325,9 +325,9 @@ public:
         if (m_ideal && discreteCapabilityValues.contains(m_ideal.value())) {
             value = m_ideal.value();
             if (max)
-                value = std::min(max.value(), value);
+                value = std::min(max.value(), *value);
             if (min)
-                value = std::max(min.value(), value);
+                value = std::max(min.value(), *value);
         }
 
         return value;
