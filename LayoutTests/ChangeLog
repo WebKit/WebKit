@@ -1,3 +1,12 @@
+2020-10-01  Karl Rackler  <rackler@apple.com>
+
+        [ iOS 13 wk2 ews ]: 2 in-app-browser-privacy and 1 WPT are constant failures slowing down ews
+        https://bugs.webkit.org/show_bug.cgi?id=217184
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
         Add AVAssetWriter SPI header
