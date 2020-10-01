@@ -1,3 +1,48 @@
+2020-10-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macCatalyst] Crash when attempting to display a select dropdown in a UIWebView
+        https://bugs.webkit.org/show_bug.cgi?id=217148
+        <rdar://problem/64004677>
+
+        Reviewed by Darin Adler.
+
+        When clicking on a select element in a Catalyst UIWebView, WebKit calls
+        into UIKit to present a popover. On Catalyst, UIKit popovers call
+        resignFirstResponder on the current first responder, when presented.
+        Consequently, when an attempt to display the select dropdown is made,
+        [WebHTMLView resignFirstResponder] is invoked. This method blurs the
+        currently focused element, which tells UIKit to destroy the popover.
+        Destroying the popover while its attempting to become first responder
+        is not safe, leading to a crash.
+
+        In [WebHTMLView resignFirstResponder], clearFocus is only called if
+        [WebView _isPerformingProgrammaticFocus] is false. UIKit can take
+        advantage of this to prevent blurring an element if the first
+        responder is being resigned due to presenting a view associated with
+        the same element.
+
+        However, [WebHTMLView resignFirstResponder] also clears focus on the
+        current page's FocusController, which can also cause the element to be
+        blurred. To prevent this, guard the call on the same check as
+        clearFocus.
+
+        Note that this approach to preventing resignFirstResponder from blurring
+        the focused element is similar to the approach taken in WebKit2.
+
+        This change is made for all Cocoa platforms, since _isPerformingProgrammaticFocus
+        is internal to WebKit and the only time it is true is within a call to
+        WebChromeClient::makeFirstResponder. That method calls
+        [WebUIDelegate webView:makeFirstResponder], which states in its
+        documentation: "responder will always be a view that is in the view
+        subhierarchy of the top-level web view for this WebView". Consequently,
+        nextResponderIsInWebView will be true when _isPerformingProgrammaticFocus
+        is true, meaning the change doesn't affect existing behavior.
+
+        No new tests as the functionality is dependent on a UIKit change.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView resignFirstResponder]):
+
 2020-09-29  Sam Weinig  <weinig@apple.com>
 
         [Preferences] Adopt shared preferences configuration and script in WebKit

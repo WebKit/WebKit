@@ -4651,7 +4651,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
         id nextResponder = [[self window] _newFirstResponderAfterResigning];
         bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
             && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
-        if (!nextResponderIsInWebView)
+        if (!nextResponderIsInWebView && ![[self _webView] _isPerformingProgrammaticFocus])
             page->focusController().setFocused(false);
     }
     return resign;
