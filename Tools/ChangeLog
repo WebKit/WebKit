@@ -1,5 +1,37 @@
 2020-09-30  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Add Commit object
+        https://bugs.webkit.org/show_bug.cgi?id=216403
+        <rdar://problem/68702779>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version number.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py: Added.
+        (Commit):
+        (Commit._parse_hash): Given a hash, verify that the provided argument is
+        Actually a git hash.
+        (Commit._parse_revision): Given a string or integer, verify the provided
+        argument is a valid SVN revision and return the revision as an integer.
+        (Commit._parse_identifier): Given a string or integer, verify the provided
+        argument is a valid identifier and return the identifier and branch.
+        (Commit.parse): Given a string representing a commit hash, svn revision or
+        identifier, return a commit object.
+        (Commit.__init__):
+        (Commit.pretty_print): Return a long string displaying the metadata for the commit
+        (Commit.__repr__): Return a one-line representation of the commit.
+        (Commit.__hash__):
+        (Commit.__cmp__): Compare two commit objects.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/commit_unittest.py: Added.
+        (TestCommit):
+        (TestCommit.test_parse_hash):
+        (TestCommit.test_parse_revision):
+        (TestCommit.test_parse_identifier):
+        (TestCommit.test_parse):
+        (TestCommit.test_pretty_print):
+
+2020-09-30  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Check if a git checkout is linked to an SVN checkout
         https://bugs.webkit.org/show_bug.cgi?id=216888
         <rdar://problem/69446322>
