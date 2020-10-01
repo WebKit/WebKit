@@ -1,3 +1,19 @@
+2020-09-30  James Darpinian  <jdarpinian@chromium.org>
+
+        Expose pvrtc extension without vendor prefix and remove redundant WebGL 2 extensions
+        https://bugs.webkit.org/show_bug.cgi?id=217110
+
+        Reviewed by Kenneth Russell.
+
+        Extensions are tested in LayoutTests/webgl
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+
 2020-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Adjuster::computeEventListenerRegionTypes() should use ENABLE(WHEEL_EVENT_REGIONS) not a platform #ifdef
