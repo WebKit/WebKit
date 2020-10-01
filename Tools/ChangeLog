@@ -1,3 +1,13 @@
+2020-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs are not idempotent
+        https://bugs.webkit.org/show_bug.cgi?id=215762
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

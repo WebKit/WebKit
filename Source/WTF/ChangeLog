@@ -1,3 +1,35 @@
+2020-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs are not idempotent
+        https://bugs.webkit.org/show_bug.cgi?id=215762
+
+        Reviewed by Tim Horton.
+
+        https://github.com/whatwg/url/pull/505 added an interesting edge case to the URL serialization:
+        "If url’s host is null, url’s path’s size is greater than 1, and url’s path[0] is the empty string, then append U+002F (/) followed by U+002E (.) to output."
+        The problem was that URLs like "a:/a/..//a" would be parsed into "a://a" with a pathname of "//a" and an empty host.  If "a://a" was then reparsed, it would again have an href of "a://a"
+        but its host would be "a" and it would have an empty path.  There is consensus that URL parsing should be idempotent, so we need to do something different here.
+        According to https://github.com/whatwg/url/issues/415#issuecomment-419197290 this follows what Edge did (and then subsequently abandoned when they switched to Chromium)
+        to make URL parsing idempotent by adding "/." before the path in the edge case of a URL with a non-special scheme (not http, https, wss, etc.) and a null host and a non-empty path that
+        has an empty first segment.  All the members of the URL remain unchanged except the full serialization (href).  This is not important in practice, but important in theory.
+
+        Our URL parser tries very hard to use the exact same WTF::String object given as input if it can.  However, this step is better implemented as a post-processing step that will almost never happen
+        because otherwise we would have to parse the entire path twice to find out if we need to add "./" or if the "./" that may have already been there needs to stay.  This is illustrated with the test URL
+        "t:/.//p/../../../..//x" which does need the "./".
+
+        In the common case, this adds one well-predicted branch to URL parsing, so I expect performance to be unaffected.  Since this is such a rare edge case of URLs, I expect no compatibility problems.
+
+        * wtf/URL.cpp:
+        (WTF::URL::pathStart const):
+        * wtf/URL.h:
+        (WTF::URL::pathStart const): Deleted.
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::copyURLPartsUntil):
+        (WTF::URLParser::URLParser):
+        (WTF::URLParser::needsNonSpecialDotSlash const):
+        (WTF::URLParser::addNonSpecialDotSlash):
+        * wtf/URLParser.h:
+
 2020-09-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r267795.

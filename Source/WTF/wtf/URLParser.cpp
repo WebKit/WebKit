@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -807,6 +807,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
         m_url.m_protocolIsInHTTPFamily = base.m_protocolIsInHTTPFamily;
         m_url.m_schemeEnd = base.m_schemeEnd;
     }
+
     switch (scheme(StringView(m_asciiBuffer.data(), m_url.m_schemeEnd))) {
     case Scheme::WS:
     case Scheme::WSS:
@@ -824,6 +825,16 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
     case Scheme::NonSpecial:
         m_urlIsSpecial = false;
         nonUTF8QueryEncoding = nullptr;
+        auto pathStart = m_url.m_hostEnd + m_url.m_portLength;
+        if (pathStart + 2 < m_asciiBuffer.size()
+            && m_asciiBuffer[pathStart] == '/'
+            && m_asciiBuffer[pathStart + 1] == '.'
+            && m_asciiBuffer[pathStart + 2] == '/') {
+            m_asciiBuffer.remove(pathStart + 1, 2);
+            m_url.m_pathAfterLastSlash = std::max(2u, m_url.m_pathAfterLastSlash) - 2;
+            m_url.m_pathEnd = std::max(2u, m_url.m_pathEnd) - 2;
+            m_url.m_queryEnd = std::max(2u, m_url.m_queryEnd) - 2;
+        }
         return;
     }
     ASSERT_NOT_REACHED();
@@ -1075,6 +1086,9 @@ URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding
             ASSERT(allValuesEqual(parser.result(), m_url));
     }
 #endif // ASSERT_ENABLED
+
+    if (UNLIKELY(needsNonSpecialDotSlash()))
+        addNonSpecialDotSlash();
 }
 
 template<typename CharacterType>
@@ -2432,6 +2446,26 @@ URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t lengt
             output.uncheckedAppend(byte);
     }
     return output;
+}
+
+bool URLParser::needsNonSpecialDotSlash() const
+{
+    auto pathStart = m_url.m_hostEnd + m_url.m_portLength;
+    return !m_urlIsSpecial
+        && pathStart == m_url.m_schemeEnd + 1
+        && pathStart + 1 < m_url.m_string.length()
+        && m_url.m_string[pathStart] == '/'
+        && m_url.m_string[pathStart + 1] == '/';
+}
+
+void URLParser::addNonSpecialDotSlash()
+{
+    auto oldPathStart = m_url.m_hostEnd + m_url.m_portLength;
+    auto& oldString = m_url.m_string;
+    m_url.m_string = makeString(oldString.substring(0, oldPathStart + 1), "./", oldString.substring(oldPathStart + 1));
+    m_url.m_pathAfterLastSlash += 2;
+    m_url.m_pathEnd += 2;
+    m_url.m_queryEnd += 2;
 }
 
 template<typename CharacterType> Optional<URLParser::LCharBuffer> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)

@@ -1,3 +1,15 @@
+2020-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URLs are not idempotent
+        https://bugs.webkit.org/show_bug.cgi?id=215762
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support MediaRecorderOptions.mimeType

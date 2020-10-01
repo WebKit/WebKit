@@ -93,6 +93,16 @@ StringView URL::lastPathComponent() const
     return StringView(m_string).substring(start, end - start + 1);
 }
 
+unsigned URL::pathStart() const
+{
+    unsigned start = m_hostEnd + m_portLength;
+    if (start == m_schemeEnd + 1
+        && start + 1 < m_string.length()
+        && m_string[start] == '/' && m_string[start + 1] == '.')
+        start += 2;
+    return start;
+}
+
 StringView URL::protocol() const
 {
     if (!m_isValid)

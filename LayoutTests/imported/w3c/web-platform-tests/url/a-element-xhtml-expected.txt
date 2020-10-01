@@ -511,18 +511,18 @@ PASS Parsing: <ldap://localhost:389/ou=People,o=JNDITutorial> against <about:bla
 PASS Parsing: <git+https://github.com/foo/bar> against <about:blank>
 PASS Parsing: <urn:ietf:rfc:2648> against <about:blank>
 PASS Parsing: <tag:joe@example.org,2001:foo/bar> against <about:blank>
-FAIL Parsing: <non-spec:/.//> against <about:blank> assert_equals: href expected "non-spec:/.//" but got "non-spec://"
-FAIL Parsing: <non-spec:/..//> against <about:blank> assert_equals: href expected "non-spec:/.//" but got "non-spec://"
-FAIL Parsing: <non-spec:/a/..//> against <about:blank> assert_equals: href expected "non-spec:/.//" but got "non-spec://"
-FAIL Parsing: <non-spec:/.//path> against <about:blank> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: <non-spec:/..//path> against <about:blank> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: <non-spec:/a/..//path> against <about:blank> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: </.//path> against <non-spec:/p> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: </..//path> against <non-spec:/p> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: <..//path> against <non-spec:/p> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: <a/..//path> against <non-spec:/p> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
-FAIL Parsing: <> against <non-spec:/..//p> assert_equals: href expected "non-spec:/.//p" but got "non-spec://p"
-FAIL Parsing: <path> against <non-spec:/..//p> assert_equals: href expected "non-spec:/.//path" but got "non-spec://path"
+PASS Parsing: <non-spec:/.//> against <about:blank>
+PASS Parsing: <non-spec:/..//> against <about:blank>
+PASS Parsing: <non-spec:/a/..//> against <about:blank>
+PASS Parsing: <non-spec:/.//path> against <about:blank>
+PASS Parsing: <non-spec:/..//path> against <about:blank>
+PASS Parsing: <non-spec:/a/..//path> against <about:blank>
+PASS Parsing: </.//path> against <non-spec:/p>
+PASS Parsing: </..//path> against <non-spec:/p>
+PASS Parsing: <..//path> against <non-spec:/p>
+PASS Parsing: <a/..//path> against <non-spec:/p>
+PASS Parsing: <> against <non-spec:/..//p>
+PASS Parsing: <path> against <non-spec:/..//p>
 PASS Parsing: <../path> against <non-spec:/.//p>
 PASS Parsing: <non-special://%E2%80%A0/> against <about:blank>
 PASS Parsing: <non-special://H%4fSt/path> against <about:blank>

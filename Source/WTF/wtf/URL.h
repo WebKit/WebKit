@@ -167,7 +167,7 @@ public:
 
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
 
-    unsigned pathStart() const;
+    WTF_EXPORT_PRIVATE unsigned pathStart() const;
     unsigned pathEnd() const;
     unsigned pathAfterLastSlash() const;
 
@@ -368,11 +368,6 @@ inline bool URL::hasFragmentIdentifier() const
 inline bool URL::protocolIsInHTTPFamily() const
 {
     return m_protocolIsInHTTPFamily;
-}
-
-inline unsigned URL::pathStart() const
-{
-    return m_hostEnd + m_portLength;
 }
 
 inline unsigned URL::pathEnd() const
