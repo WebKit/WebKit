@@ -44,14 +44,32 @@ webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.htm
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
+# CSS
+webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
+
+# Editing
+webkit.org/b/217160 editing/inserting/typing-003.html [ Timeout ]
+
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 
 # Media - GTK-X11 flaky crash
 webkit.org/b/215499 [ Release ] media/video-load-networkState.html [ Crash Pass ]
 
-# MESA-related
+# MESA-related segfault
+webkit.org/b/216777 compositing/reflections/nested-reflection-anchor-point.html
 webkit.org/b/216777 compositing/video/video-update-rendering.html [ Pass Crash ]
+webkit.org/b/216777 fast/spatial-navigation/snav-table-traversal.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html [ Pass Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-ready.tentative.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/animation/caret-color-interpolation.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html [ Pass Crash ]
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/appearance-initial-value-001.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-computed.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-computed.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-valid.html
+webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-values/angle-units-003.html
+webkit.org/b/216777 media/video-display-toggle.html
 
 # Printing
 webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]

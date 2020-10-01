@@ -2,4 +2,5 @@ CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document
 
 
 FAIL Navigation resulted download in sandbox is blocked. undefined is not an object (evaluating 'anchor.href = "support/download_stash.py?token=" + token + "&finish-delay=" + StreamDownloadFinishDelay()')
+PASS Navigation resulted download in sandbox from <object> is blocked.
 

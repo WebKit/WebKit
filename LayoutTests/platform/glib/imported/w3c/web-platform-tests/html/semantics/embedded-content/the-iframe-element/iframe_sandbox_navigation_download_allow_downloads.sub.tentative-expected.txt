@@ -1,6 +1,10 @@
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
 CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 
+Harness Error (TIMEOUT), message = null
+
 FAIL Navigation resulted download in sandbox is allowed by allow-downloads. undefined is not an object (evaluating 'anchor.href = "support/download_stash.py?token=" + token + "&finish-delay=" + StreamDownloadFinishDelay()')
+TIMEOUT Navigation resulted download in sandbox from <object> is allowed by allow-downloads. Test timed out
 

@@ -16,6 +16,7 @@ webkit.org/b/210370 media/track/text-track-cue-is-reachable.html [ Pass ]
 webkit.org/b/210848 compositing/video/video-border-radius-clipping.html [ Pass ]
 webkit.org/b/190001 [ Release ] transitions/start-transform-transition.html [ Pass ]
 webkit.org/b/215499 media/video-load-networkState.html [ Pass ]
+webkit.org/b/217159 http/wpt/service-workers/file-upload.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
@@ -30,6 +31,8 @@ webkit.org/b/215499 media/video-load-networkState.html [ Pass ]
 # Workers
 ## Crashing in X11, but also timing out in Wayland
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash Timeout ]
+webkit.org/b/217159 [ Release ] http/wpt/service-workers/file-upload.html [ Pass Failure ]
+webkit.org/b/217159 [ Debug ] http/wpt/service-workers/file-upload.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations

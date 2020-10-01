@@ -198,6 +198,9 @@ webkit.org/b/216770 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_stf-
 
 webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 
+webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html [ Pass Failure ]
+webkit.org/b/216292 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -487,6 +490,11 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
 webkit.org/b/215638 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Failure ]
+
+webkit.org/b/217163 fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Pass Crash ]
+webkit.org/b/217163 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Crash ]
+webkit.org/b/217163 webrtc/missing-exception-checks-RTCPeerConnection-generateCertificate.html [ Pass Crash ]
+webkit.org/b/217163 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs

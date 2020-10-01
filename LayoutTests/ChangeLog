@@ -1,3 +1,16 @@
+2020-09-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative-expected.txt:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-09-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Implement item method proposal
