@@ -1,3 +1,20 @@
+2020-09-30  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Enable per-page storage access scope and align test cases
+        https://bugs.webkit.org/show_bug.cgi?id=217077
+        <rdar://problem/69017878>
+
+        Reviewed by Brent Fulgham.
+
+        It was decided in https://github.com/privacycg/storage-access/issues/3 that
+        browsers should grant storage access for all same-site resources on the whole
+        page, not just the requesting iframe.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasStorageAccess):
+            Added a call to WebPage::hasPageLevelStorageAccess()
+            and an early return if it returns true.
+
 2020-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Canvas layout tests occasionally crash the web process under PutImageData::apply

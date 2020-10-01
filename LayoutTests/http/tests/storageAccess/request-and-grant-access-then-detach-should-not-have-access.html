@@ -11,6 +11,8 @@
         window.addEventListener("message", receiveMessage, false);
 
         function finishTest() {
+            // Reset access scope.
+            internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
             setEnableFeature(false, finishJSTest);
         }
 
@@ -93,6 +95,9 @@
                 document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
             });
         } else {
+            // Set per-frame access since clearing access on detaching the iframe requires per-frame access.
+            internals.settings.setStorageAccessAPIPerPageScopeEnabled(false);
+
             testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
                 if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
                     testFailed("Host did not get set as prevalent resource.");

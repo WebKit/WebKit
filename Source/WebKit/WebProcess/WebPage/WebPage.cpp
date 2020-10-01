@@ -6811,6 +6811,11 @@ void WebPage::frameBecameRemote(FrameIdentifier frameID, GlobalFrameIdentifier&&
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
+    if (hasPageLevelStorageAccess(topFrameDomain, subFrameDomain)) {
+        completionHandler(true);
+        return;
+    }
+
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier), WTFMove(completionHandler));
 }
 

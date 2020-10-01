@@ -1,3 +1,32 @@
+2020-09-30  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Enable per-page storage access scope and align test cases
+        https://bugs.webkit.org/show_bug.cgi?id=217077
+        <rdar://problem/69017878>
+
+        Reviewed by Brent Fulgham.
+
+        It was decided in https://github.com/privacycg/storage-access/issues/3 that
+        browsers should grant storage access for all same-site resources on the whole
+        page, not just the requesting iframe.
+
+        No new tests. Existing tests aligned, including
+        LayoutTests/http/tests/storageAccess/request-and-grant-access-with-per-page-scope-access-from-another-frame.html
+        which no longer calls
+        internals.settings.setStorageAccessAPIPerPageScopeEnabled(true)
+        to opt in to the setting that is now the default.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+            Changed the settings check to do the reverse, i.e. assume
+            per-page access by default and per-frame access as the
+            exception.
+        * dom/DocumentStorageAccess.h:
+            Changed the default setting for m_storageAccessScope to per-page.
+        * page/Settings.yaml:
+            Changed the default to true for
+            storageAccessAPIPerPageScopeEnabled.
+
 2020-09-30  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Make Exposed mandatory for IDL interfaces
