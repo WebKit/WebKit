@@ -37,8 +37,8 @@
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
 #include <AVFoundation/AVAssetWriterInput.h>
+#include <AVFoundation/AVAssetWriter_Private.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <pal/spi/cocoa/AVAssetWriterSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>

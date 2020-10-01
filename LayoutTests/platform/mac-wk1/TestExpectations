@@ -65,10 +65,6 @@ inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 http/tests/navigation/page-cache-mediastream.html [ Skip ]
 
-http/wpt/mediarecorder [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
-fast/history/page-cache-media-recorder.html [ Skip ]
-
 http/wpt/audio-output [ Skip ]
 imported/w3c/web-platform-tests/audio-output [ Skip ]
 

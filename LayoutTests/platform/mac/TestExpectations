@@ -1653,9 +1653,9 @@ webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailu
 [ Catalina+ ] fast/text/design-system-ui-15.html [ Pass ]
 [ Catalina+ ] fast/text/design-system-ui-16.html [ Pass ]
 
-[ Mojave ] http/wpt/mediarecorder [ Skip ]
-[ Mojave ] imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
-[ Mojave ] fast/history/page-cache-media-recorder.html [ Skip ]
+[ Catalina+ ] http/wpt/mediarecorder [ Pass Failure ] 
+[ Catalina+ ] imported/w3c/web-platform-tests/mediacapture-record [ Pass Failure ]
+[ Catalina+ ] fast/history/page-cache-media-recorder.html [ Pass Failure ]
 
 webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
 
