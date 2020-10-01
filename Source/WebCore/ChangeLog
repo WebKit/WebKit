@@ -1,3 +1,18 @@
+2020-10-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Fix build break after r267753
+        https://bugs.webkit.org/show_bug.cgi?id=217188
+
+        Reviewed by Fujii Hironori.
+
+        After r267753 the PlayStation builds started failing with an error around a structured
+        binding declaration of a tuple type.
+
+        No new tests. No change in behavior.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::handleDuplicateIndexIDs):
+
 2020-10-01  Peng Liu  <peng.liu6@apple.com>
 
         Handle deprecation warnings from libwebrtc headers

@@ -954,14 +954,14 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
 
 bool SQLiteIDBBackingStore::handleDuplicateIndexIDs(const HashMap<uint64_t, Vector<IDBIndexInfo>>& indexInfoMap, IDBDatabaseInfo& databaseInfo)
 {
-    for (auto& [indexID, infos] : indexInfoMap) {
-        if (infos.size() == 1)
+    for (auto& iter : indexInfoMap) {
+        if (iter.value.size() == 1)
             continue;
 
-        if (!removeExistingIndex(indexID))
+        if (!removeExistingIndex(iter.key))
             return false;
 
-        for (auto info : infos) {
+        for (auto info : iter.value) {
             auto objectStoreInfo = databaseInfo.infoForExistingObjectStore(info.objectStoreIdentifier());
             ASSERT(objectStoreInfo);
             objectStoreInfo->deleteIndex(info.identifier());
