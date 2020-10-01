@@ -28,6 +28,7 @@ import urllib.request
 from html.parser import HTMLParser
 
 REPO = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
+SDK_BRANCH = "0.3"
 USER_DIR = os.path.expanduser("~/.cache/wk-nightly")
 
 def spinning_cursor():
@@ -53,14 +54,15 @@ def flatpak(*args, env=None, stdout=None):
     return subprocess.call(("flatpak",) + args, env=cmd_env, stdout=stdout)
 
 def ensure_sdk(build_type):
+    branch = SDK_BRANCH
     if not os.path.isdir(USER_DIR):
         flatpak("remote-add", "--user", "webkit-nightly", REPO)
-        flatpak("install", "--user", "-y", "org.webkit.Platform")
+        flatpak("install", "--user", "-y", f"org.webkit.Platform//{branch}")
     else:
         flatpak("update", "--user", "-y")
     if (build_type == "Debug") and (flatpak("info", "org.webkit.Sdk.Debug", stdout=subprocess.DEVNULL) >= 1):
-        flatpak("install", "--user", "-y", "org.webkit.Sdk")
-        flatpak("install", "--user", "-y", "org.webkit.Sdk.Debug")
+        flatpak("install", "--user", "-y", f"org.webkit.Sdk//{branch}")
+        flatpak("install", "--user", "-y", f"org.webkit.Sdk.Debug//{branch}")
 
 def get_build_path(platform, build_type, build_number):
     dirname = f"{platform}-{build_type}-b{build_number}"
