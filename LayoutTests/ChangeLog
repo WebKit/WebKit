@@ -1,3 +1,12 @@
+2020-10-01  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r267814): [ Mojave+ release wk2 ] inspector/console/queryHolders.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217193
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-10-01  Michael Saboff  <msaboff@apple.com>
 
         [macOS/iOS WK2] storage/indexeddb/IDBKey-create-array-buffer-view-oom.html is a flaky timeout

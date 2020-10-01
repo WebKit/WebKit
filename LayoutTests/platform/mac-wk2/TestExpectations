@@ -1324,3 +1324,5 @@ webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Pass Failure ]
 
 webkit.org/b/217001 [ Catalina ] fast/scrolling/latching/latched-scroll-into-nonfast-region.html [ Pass Failure ]
 
+webkit.org/b/217193 [ Mojave+ Release ] inspector/console/queryHolders.html [ Pass Failure ]
+
