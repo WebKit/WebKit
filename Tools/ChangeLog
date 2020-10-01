@@ -1,3 +1,24 @@
+2020-10-01  Chris Dumez  <cdumez@apple.com>
+
+        [DRT] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=217187
+
+        Reviewed by Eric Carlson.
+
+        The test sometimes fails with DRT only because window.AudioWorkletNode does not exist. The thing is that
+        window.AudioWorkletNode only exists in secure contexts. DumpRenderTree::resetWebViewToConsistentState()
+        was calling [WebFrame globalContext] before each test, which would eagerly create the Window JS wrapper
+        if it did not exist yet. Because the wrapper would get created too early, its security origin upon
+        creation was null and we would decide NOT to expose window.AudioWorkletNode.
+
+        To address the issue, I updated DumpRenderTree::resetWebViewToConsistentState() to only call
+        `WebCoreTestSupport::resetInternalsObject([mainFrame globalContext])` after each test, instead of doing
+        it both before AND after. This new behavior is also more consistent with WebKitTestRunner.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentState):
+        (runTest):
+
 2020-10-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Support git-svn committers

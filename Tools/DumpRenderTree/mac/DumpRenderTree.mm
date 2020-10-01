@@ -1825,7 +1825,8 @@ static void setJSCOptions(const TestOptions& options)
     }
 }
 
-static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& options)
+enum class ResetTime { BeforeTest, AfterTest };
+static void resetWebViewToConsistentState(const TestOptions& options, ResetTime resetTime)
 {
     setJSCOptions(options);
 
@@ -1875,7 +1876,10 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     // In the case that a test using the chrome input field failed, be sure to clean up for the next test.
     gTestRunner->removeChromeInputField();
 
-    WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
+    // We do not do this before running the test since it may eagerly create the global JS context
+    // if we have not loaded anything yet.
+    if (resetTime == ResetTime::AfterTest)
+        WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
 
 #if !PLATFORM(IOS_FAMILY)
     if (WebCore::Frame* frame = [webView _mainCoreFrame])
@@ -1999,7 +2003,7 @@ static void runTest(const string& inputLine)
     gTestRunner->setCustomTimeout(command.timeout);
     gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr);
 
-    resetWebViewToConsistentStateBeforeTesting(options);
+    resetWebViewToConsistentState(options, ResetTime::BeforeTest);
 
 #if !PLATFORM(IOS_FAMILY)
     changeWindowScaleIfNeeded(testURL);
@@ -2119,7 +2123,7 @@ static void runTest(const string& inputLine)
             }
         }
 
-        resetWebViewToConsistentStateBeforeTesting(options);
+        resetWebViewToConsistentState(options, ResetTime::AfterTest);
 
         // Loading an empty request synchronously replaces the document with a blank one, which is necessary
         // to stop timers, WebSockets and other activity that could otherwise spill output into next test's results.
