@@ -1,3 +1,18 @@
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia with sampleRate constraints may fail
+        https://bugs.webkit.org/show_bug.cgi?id=217147
+        <rdar://problem/69831144>
+
+        Reviewed by Eric Carlson.
+
+        In case of new capture, make sure to reset sample rate and volume to default values.
+        This ensures that a sample rate that will fail the capture will not stick for other pages.
+        Manually tested.
+
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::prepareForNewCapture):
+
 2020-10-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Add missing guard around ModernPath usage.

@@ -86,6 +86,7 @@ protected:
     virtual OSStatus startInternal() = 0;
     virtual void stopInternal() = 0;
     virtual OSStatus reconfigureAudioUnit() = 0;
+    virtual void resetSampleRate();
 
     void setSuspended(bool value) { m_suspended = value; }
 

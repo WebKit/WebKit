@@ -109,8 +109,16 @@ OSStatus BaseAudioSharedUnit::startUnit()
     return 0;
 }
 
+void BaseAudioSharedUnit::resetSampleRate()
+{
+    m_sampleRate = AudioSession::sharedSession().sampleRate();
+}
+
 void BaseAudioSharedUnit::prepareForNewCapture()
 {
+    m_volume = 1;
+    resetSampleRate();
+
     if (!m_suspended)
         return;
     m_suspended = false;
