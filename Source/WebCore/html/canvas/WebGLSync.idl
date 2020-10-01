@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: This is specified as Exposed=(Window,Worker)
 [
-    Conditional=WEBGL
+    Conditional=WEBGL,
+    Exposed=Window
 ] interface WebGLSync {
 };

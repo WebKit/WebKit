@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLStyleElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLStyleElement : HTMLElement {
     attribute boolean disabled;
     [CEReactions=NotNeeded, Reflect] attribute DOMString media;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;

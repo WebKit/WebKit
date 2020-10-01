@@ -18,7 +18,9 @@
  */
 
 // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
-interface HashChangeEvent : Event {
+[
+    Exposed=Window
+] interface HashChangeEvent : Event {
     constructor(DOMString type, optional HashChangeEventInit eventInitDict);
 
     undefined initHashChangeEvent(DOMString type,

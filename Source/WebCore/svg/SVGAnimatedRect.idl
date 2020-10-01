@@ -24,7 +24,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedRect {
     readonly attribute SVGRect baseVal;
     readonly attribute SVGRect animVal;

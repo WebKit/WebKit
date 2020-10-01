@@ -21,7 +21,8 @@
 [
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-    InterfaceName=RGBColor
+    InterfaceName=RGBColor,
+    Exposed=Window
 ] interface DeprecatedCSSOMRGBColor {
     readonly attribute DeprecatedCSSOMPrimitiveValue red;
     readonly attribute DeprecatedCSSOMPrimitiveValue green;

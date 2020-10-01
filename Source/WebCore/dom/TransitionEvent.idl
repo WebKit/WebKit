@@ -24,7 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface TransitionEvent : Event {
+[
+    Exposed=Window
+] interface TransitionEvent : Event {
     constructor(DOMString type, optional TransitionEventInit transitionEventInitDict);
 
     readonly attribute DOMString propertyName;

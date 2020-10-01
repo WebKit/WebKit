@@ -26,6 +26,7 @@
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
     EnabledBySetting=LegacyEncryptedMediaAPI,
+    Exposed=Window
 ] interface WebKitMediaKeys {
     constructor(DOMString keySystem);
 

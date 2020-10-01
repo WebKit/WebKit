@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasimagedata
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasImageData {
+interface mixin CanvasImageData {
     // FIXME: All the float arguments below should be longs.
 
     // pixel manipulation

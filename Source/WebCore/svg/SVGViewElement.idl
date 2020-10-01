@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGViewElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGViewElement : SVGElement {
 };
 
 SVGViewElement includes SVGFitToViewBox;

@@ -24,6 +24,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    Exposed=Window
 ] interface AudioNode : EventTarget {
     [ImplementedAs=contextForBindings] readonly attribute (BaseAudioContext or WebKitAudioContext) context;
     readonly attribute unsigned long numberOfInputs;

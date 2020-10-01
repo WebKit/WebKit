@@ -42,7 +42,8 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     IsImmutablePrototypeExoticObject,
     ImplementationLacksVTable,
-    LegacyUnforgeable
+    LegacyUnforgeable,
+    Exposed=Window
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 

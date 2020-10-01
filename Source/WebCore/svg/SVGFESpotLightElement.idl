@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFESpotLightElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGFESpotLightElement : SVGElement {
     readonly attribute SVGAnimatedNumber x;
     readonly attribute SVGAnimatedNumber y;
     readonly attribute SVGAnimatedNumber z;

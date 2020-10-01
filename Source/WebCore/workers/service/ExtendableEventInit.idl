@@ -25,6 +25,5 @@
 
 [
     Conditional=SERVICE_WORKER,
-]
-dictionary ExtendableEventInit : EventInit {
+] dictionary ExtendableEventInit : EventInit {
 };

@@ -20,7 +20,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface SVGNumber {
+[
+    Exposed=Window
+] interface SVGNumber {
     [ImplementedAs=valueForBindings] attribute unrestricted float value;
 };
 

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGAnimateTransformElement : SVGAnimationElement {
+[
+    Exposed=Window
+] interface SVGAnimateTransformElement : SVGAnimationElement {
 };
 

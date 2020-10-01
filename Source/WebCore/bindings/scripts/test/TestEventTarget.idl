@@ -27,7 +27,8 @@
  */
 
 [
-    MasqueradesAsUndefined
+    MasqueradesAsUndefined,
+    Exposed=TestGlobalObject
 ] interface TestEventTarget : EventTarget {
 
     getter Node item(unsigned long index);

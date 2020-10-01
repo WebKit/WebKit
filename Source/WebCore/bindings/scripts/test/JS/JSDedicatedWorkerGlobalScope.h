@@ -59,6 +59,8 @@ public:
     {
         return static_cast<DedicatedWorkerGlobalScope&>(Base::wrapped());
     }
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
     JSDedicatedWorkerGlobalScope(JSC::VM&, JSC::Structure*, Ref<DedicatedWorkerGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSProxy*);

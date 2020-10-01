@@ -17,6 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface SVGAltGlyphDefElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGAltGlyphDefElement : SVGElement {
 };
 

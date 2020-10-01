@@ -24,7 +24,8 @@
  */
 
 [
-    LegacyOverrideBuiltIns
+    LegacyOverrideBuiltIns,
+    Exposed=TestGlobalObject
 ] interface TestNamedSetterWithLegacyOverrideBuiltIns {
     setter undefined (DOMString name, DOMString value);
 

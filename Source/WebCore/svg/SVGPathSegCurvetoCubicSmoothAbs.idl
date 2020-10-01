@@ -24,7 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */ 
 
-interface SVGPathSegCurvetoCubicSmoothAbs : SVGPathSeg {
+[
+    Exposed=Window
+] interface SVGPathSegCurvetoCubicSmoothAbs : SVGPathSeg {
     attribute unrestricted float x;
     attribute unrestricted float y;
     attribute unrestricted float x2;

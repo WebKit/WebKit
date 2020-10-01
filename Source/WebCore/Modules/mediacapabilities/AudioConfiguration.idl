@@ -26,8 +26,7 @@
 [
     EnabledBySetting=MediaCapabilities,
     JSGenerateToJSObject,
-]
-dictionary AudioConfiguration {
+] dictionary AudioConfiguration {
   required DOMString contentType;
   DOMString channels;
   unsigned long long bitrate;

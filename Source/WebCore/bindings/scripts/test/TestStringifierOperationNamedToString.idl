@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestStringifierOperationNamedToString {
+[
+    Exposed=TestGlobalObject
+] interface TestStringifierOperationNamedToString {
     stringifier DOMString toString();
 };

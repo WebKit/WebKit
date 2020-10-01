@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// https://wicg.github.io/speech-api/#tts-section
-// FIXME: This is not specified as "LegacyNoInterfaceObject". It should have an interface object.
+// https://wicg.github.io/speech-api/#speechsynthesis
+// FIXME: This is not specified as "LegacyNoInterfaceObject". It should have an interface object and be Exposed=Window.
 [
     Conditional=SPEECH_SYNTHESIS,
     LegacyNoInterfaceObject,

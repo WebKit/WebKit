@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLModElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLModElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString cite;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dateTime;
 };

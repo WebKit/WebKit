@@ -23,7 +23,9 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-interface TestOverloadedConstructorsWithSequence {
+[
+    Exposed=TestGlobalObject
+] interface TestOverloadedConstructorsWithSequence {
     constructor(optional sequence<DOMString> sequenceOfStrings = []);
     constructor(DOMString string);
 };

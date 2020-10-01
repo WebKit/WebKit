@@ -22,9 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
+
+// https://wicg.github.io/speech-api/#speechsynthesisevent
 [
-    Conditional=SPEECH_SYNTHESIS
+    Conditional=SPEECH_SYNTHESIS,
+    Exposed=Window
 ] interface SpeechSynthesisEvent : Event {
     readonly attribute unsigned long charIndex;
     readonly attribute unrestricted float elapsedTime;

@@ -28,6 +28,7 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable,
-    InterfaceName=GPUPipelineLayout
+    InterfaceName=GPUPipelineLayout,
+    Exposed=Window
 ] interface WebGPUPipelineLayout {
 };

@@ -27,6 +27,7 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    InterfaceName=GPURenderPipeline
+    InterfaceName=GPURenderPipeline,
+    Exposed=Window
 ] interface WebGPURenderPipeline {
 };

@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface WebKitAnimationEvent : Event {
+[
+    Exposed=Window
+] interface WebKitAnimationEvent : Event {
     constructor(DOMString type, optional WebKitAnimationEventInit eventInitDict);
 
     readonly attribute DOMString animationName;

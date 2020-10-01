@@ -20,6 +20,7 @@
 
 [
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLTableSectionElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;

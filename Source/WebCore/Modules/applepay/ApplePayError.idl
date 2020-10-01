@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=APPLE_PAY
+    Conditional=APPLE_PAY,
+    Exposed=Window
 ] interface ApplePayError {
     constructor(ApplePayErrorCode errorCode, optional ApplePayErrorContactField contactField, optional DOMString message = "");
 

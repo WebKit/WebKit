@@ -33,6 +33,7 @@
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestPromiseRejectionEvent.h"
+#include "JSWorkerGlobalScope.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
@@ -62,6 +63,8 @@ JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeTestObjectConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestObjectConstructor);
 JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeTestPromiseRejectionEventConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkerGlobalScopeWorkerGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkerGlobalScopeWorkerGlobalScopeConstructor);
 
 using JSWorkerGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSWorkerGlobalScope>;
 
@@ -70,7 +73,7 @@ using JSWorkerGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSWorker
 static const struct CompactHashIndex JSWorkerGlobalScopeTableIndex[18] = {
     { -1, -1 },
     { 0, 16 },
-    { -1, -1 },
+    { 5, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -96,9 +99,10 @@ static const HashTableValue JSWorkerGlobalScopeTableValues[] =
     { "TestNode", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkerGlobalScopeTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSWorkerGlobalScopeTestNodeConstructor) } },
     { "TestObject", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkerGlobalScopeTestObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSWorkerGlobalScopeTestObjectConstructor) } },
     { "TestPromiseRejectionEvent", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkerGlobalScopeTestPromiseRejectionEventConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor) } },
+    { "WorkerGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkerGlobalScopeWorkerGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSWorkerGlobalScopeWorkerGlobalScopeConstructor) } },
 };
 
-static const HashTable JSWorkerGlobalScopeTable = { 5, 15, true, JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues, JSWorkerGlobalScopeTableIndex };
+static const HashTable JSWorkerGlobalScopeTable = { 6, 15, true, JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues, JSWorkerGlobalScopeTableIndex };
 template<> JSValue JSWorkerGlobalScopeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
@@ -307,6 +311,29 @@ static inline bool setJSWorkerGlobalScopeTestPromiseRejectionEventConstructorSet
 JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeTestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
 {
     return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeTestPromiseRejectionEventConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestPromiseRejectionEvent");
+}
+
+static inline JSValue jsWorkerGlobalScopeWorkerGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSWorkerGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSWorkerGlobalScope>::get<jsWorkerGlobalScopeWorkerGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, "WorkerGlobalScope");
+}
+
+static inline bool setJSWorkerGlobalScopeWorkerGlobalScopeConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSWorkerGlobalScope& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("WorkerGlobalScope"), strlen("WorkerGlobalScope")), value);
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkerGlobalScopeWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSWorkerGlobalScope>::set<setJSWorkerGlobalScopeWorkerGlobalScopeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "WorkerGlobalScope");
 }
 
 JSC::IsoSubspace* JSWorkerGlobalScope::subspaceForImpl(JSC::VM& vm)

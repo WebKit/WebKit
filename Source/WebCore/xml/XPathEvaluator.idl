@@ -20,6 +20,7 @@
 // https://dom.spec.whatwg.org/#xpathevaluator
 [
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface XPathEvaluator {
     constructor();
 };

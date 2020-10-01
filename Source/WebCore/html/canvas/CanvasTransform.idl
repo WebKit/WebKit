@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvastransform
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasTransform {
+interface mixin CanvasTransform {
     // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
 
     // transformations (default transform is the identity matrix)

@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface DragEvent : MouseEvent {
+[
+    Exposed=Window
+] interface DragEvent : MouseEvent {
     constructor(DOMString type, optional DragEventInit eventInitDict);
 
     readonly attribute DataTransfer? dataTransfer;

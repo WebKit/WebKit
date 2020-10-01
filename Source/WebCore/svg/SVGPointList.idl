@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGPointList {
+[
+    Exposed=Window
+] interface SVGPointList {
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;
 

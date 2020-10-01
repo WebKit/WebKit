@@ -26,5 +26,6 @@
 [
     CustomToJSObject,
     LegacyWindowAlias=SVGDocument,
+    Exposed=Window
 ] interface XMLDocument : Document {
 };

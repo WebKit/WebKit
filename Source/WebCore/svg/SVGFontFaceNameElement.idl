@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFontFaceNameElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGFontFaceNameElement : SVGElement {
 };
 

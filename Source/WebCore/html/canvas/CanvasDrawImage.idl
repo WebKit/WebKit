@@ -37,9 +37,7 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 ) CanvasImageSource;
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasdrawimage
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasDrawImage {
+interface mixin CanvasDrawImage {
     // FIXME: All the unrestricted float arguments below should be unrestricted doubles.
 
     // drawing images

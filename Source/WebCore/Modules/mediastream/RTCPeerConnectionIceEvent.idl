@@ -30,7 +30,8 @@ dictionary RTCPeerConnectionIceEventInit : EventInit {
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
+    EnabledAtRuntime=PeerConnection,
+    Exposed=Window
 ] interface RTCPeerConnectionIceEvent : Event {
     constructor(DOMString type, optional RTCPeerConnectionIceEventInit eventInitDict);
 

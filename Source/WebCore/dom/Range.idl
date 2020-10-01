@@ -22,6 +22,7 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface Range {
     [CallWith=Document] constructor();
 

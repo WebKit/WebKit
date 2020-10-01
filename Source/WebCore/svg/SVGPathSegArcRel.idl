@@ -24,7 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGPathSegArcRel : SVGPathSeg {
+[
+    Exposed=Window
+] interface SVGPathSegArcRel : SVGPathSeg {
     attribute unrestricted float x;
     attribute unrestricted float y;
     attribute unrestricted float r1;

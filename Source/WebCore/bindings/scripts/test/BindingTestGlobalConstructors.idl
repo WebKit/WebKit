@@ -1,22 +1,14 @@
 partial interface TestGlobalObject {
-    attribute DOMWindowConstructor DOMWindow;
-    attribute DedicatedWorkerGlobalScopeConstructor DedicatedWorkerGlobalScope;
-    attribute PaintWorkletGlobalScopeConstructor PaintWorkletGlobalScope;
-    attribute ServiceWorkerGlobalScopeConstructor ServiceWorkerGlobalScope;
     attribute TestCEReactionsConstructor TestCEReactions;
     attribute TestCEReactionsStringifierConstructor TestCEReactionsStringifier;
     attribute TestCallTracerConstructor TestCallTracer;
     [Conditional=TEST_CONDITIONAL] attribute TestCallbackInterfaceConstructor TestCallbackInterface;
     attribute TestClassWithJSBuiltinConstructorConstructor TestClassWithJSBuiltinConstructor;
-    attribute TestConditionalIncludesConstructor TestConditionalIncludes;
     attribute TestDOMJITConstructor TestDOMJIT;
-    attribute TestDefaultToJSONConstructor TestDefaultToJSON;
     attribute TestDefaultToJSONIndirectInheritanceConstructor TestDefaultToJSONIndirectInheritance;
     attribute TestDefaultToJSONInheritConstructor TestDefaultToJSONInherit;
     attribute TestDefaultToJSONInheritFinalConstructor TestDefaultToJSONInheritFinal;
     attribute TestDomainSecurityConstructor TestDomainSecurity;
-    attribute TestEnabledBySettingConstructor TestEnabledBySetting;
-    [EnabledForContext, SecureContext] attribute TestEnabledForContextConstructor TestEnabledForContext;
     attribute TestEventConstructorConstructor TestEventConstructor;
     attribute TestEventTargetConstructor TestEventTarget;
     attribute TestExceptionConstructor TestException;
@@ -25,7 +17,6 @@ partial interface TestGlobalObject {
     attribute TestIndexedSetterNoIdentifierConstructor TestIndexedSetterNoIdentifier;
     attribute TestIndexedSetterThrowingExceptionConstructor TestIndexedSetterThrowingException;
     attribute TestIndexedSetterWithIdentifierConstructor TestIndexedSetterWithIdentifier;
-    [Conditional=Condition1|Condition2] attribute TestInterfaceConstructor TestInterface;
     attribute TestInterfaceLeadingUnderscoreConstructor TestInterfaceLeadingUnderscore;
     attribute TestIterableConstructor TestIterable;
     attribute TestJSBuiltinConstructorConstructor TestJSBuiltinConstructor;
@@ -69,6 +60,4 @@ partial interface TestGlobalObject {
     attribute TestStringifierReadOnlyAttributeConstructor TestStringifierReadOnlyAttribute;
     attribute TestStringifierReadWriteAttributeConstructor TestStringifierReadWriteAttribute;
     attribute TestTypedefsConstructor TestTypedefs;
-    attribute WorkerGlobalScopeConstructor WorkerGlobalScope;
-    attribute WorkletGlobalScopeConstructor WorkletGlobalScope;
 };

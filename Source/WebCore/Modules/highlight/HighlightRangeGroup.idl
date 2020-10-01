@@ -25,7 +25,8 @@
 
 [
     EnabledAtRuntime=HighlightAPI,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface HighlightRangeGroup {
     constructor(StaticRange range);
 

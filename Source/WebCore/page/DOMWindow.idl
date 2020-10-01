@@ -48,7 +48,7 @@ typedef USVString CSSOMString;
     JSLegacyParent=JSDOMWindowBase,
     LegacyUnenumerableNamedProperties,
     Global=Window,
-    Exposed=Window,
+    Exposed=Window
 ] interface DOMWindow : EventTarget {
     // The current browsing context.
     [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;

@@ -32,7 +32,8 @@
 [
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface RTCRtpReceiver {
     readonly attribute MediaStreamTrack track;
     // FIXME 169662: missing transport

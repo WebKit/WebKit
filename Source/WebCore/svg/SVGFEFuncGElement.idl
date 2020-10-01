@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFEFuncGElement : SVGComponentTransferFunctionElement {
+[
+    Exposed=Window
+] interface SVGFEFuncGElement : SVGComponentTransferFunctionElement {
 };
 

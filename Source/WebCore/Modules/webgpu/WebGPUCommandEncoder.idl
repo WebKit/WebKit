@@ -53,7 +53,8 @@ typedef unsigned long long u64;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable,
-    InterfaceName=GPUCommandEncoder
+    InterfaceName=GPUCommandEncoder,
+    Exposed=Window
 ] interface WebGPUCommandEncoder {
     WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
     WebGPUComputePassEncoder beginComputePass();

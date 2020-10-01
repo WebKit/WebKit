@@ -25,7 +25,8 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
+    EnabledAtRuntime=PeerConnection,
+    Exposed=Window
 ] interface RTCDataChannelEvent : Event {
     constructor(DOMString type, RTCDataChannelEventInit eventInitDict);
 

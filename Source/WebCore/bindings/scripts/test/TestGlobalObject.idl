@@ -26,6 +26,7 @@
 // This interface is recognized as a global object by the bindings generator.
 [
     Global,
+    Exposed=TestGlobalObject
 ] interface TestGlobalObject {
     attribute DOMString regularAttribute;
     [PrivateIdentifier, PublicIdentifier] attribute DOMString publicAndPrivateAttribute;

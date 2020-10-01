@@ -36,6 +36,7 @@
     ImplementationLacksVTable,
     JSCustomMarkFunction,
     CustomIsReachable,
+    Exposed=Window
 ] interface UndoItem {
     constructor(UndoItemInit initDict);
 

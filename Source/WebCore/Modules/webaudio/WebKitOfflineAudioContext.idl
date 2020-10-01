@@ -27,6 +27,7 @@
     EnabledBySetting=PrefixedWebAudio,
     InterfaceName=webkitOfflineAudioContext,
     JSGenerateToJSObject,
+    Exposed=Window
 ] interface WebKitOfflineAudioContext : WebKitAudioContext {
     [CallWith=ScriptExecutionContext] constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
 };

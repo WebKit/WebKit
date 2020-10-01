@@ -22,7 +22,8 @@
 
 // FIXME: This should be removed and made an alias to DOMRect.
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGMatrix {
     // FIXME: these attributes should all be floats but since we implement
     // AffineTransform with doubles setting these as doubles makes more sense.

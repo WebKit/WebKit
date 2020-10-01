@@ -27,7 +27,8 @@
  */
 
 [
-    CheckSecurity
+    CheckSecurity,
+    Exposed=TestGlobalObject
 ] interface TestDomainSecurity {
     readonly attribute long excitingAttr;
     undefined excitingFunction(Node nextChild);

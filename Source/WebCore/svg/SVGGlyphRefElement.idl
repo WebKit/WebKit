@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface SVGGlyphRefElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGGlyphRefElement : SVGElement {
     [Reflect=glyphRef] attribute DOMString glyphRef;
     [Reflect] attribute DOMString format;
     attribute unrestricted float x;

@@ -22,6 +22,7 @@
     ExportToWrappedFunction,
     ImplementationLacksVTable,
     JSCustomMarkFunction,
+    Exposed=Window
 ] interface TreeWalker {
     readonly attribute Node root; // FIXME: Should be [SameObject].
     readonly attribute unsigned long whatToShow;

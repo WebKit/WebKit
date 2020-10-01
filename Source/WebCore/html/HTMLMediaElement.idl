@@ -38,6 +38,7 @@ typedef (
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLMediaElement : HTMLElement {
 
     // error state

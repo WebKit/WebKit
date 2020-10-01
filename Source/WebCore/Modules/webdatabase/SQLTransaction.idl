@@ -30,6 +30,7 @@ typedef (DOMString? or unrestricted double) SQLValue;
 
 [
     SkipVTableValidation,
+    Exposed=Window
 ] interface SQLTransaction {
     [MayThrowException] undefined executeSql(DOMString sqlStatement, optional sequence<SQLValue>? arguments = [], optional SQLStatementCallback? callback, optional SQLStatementErrorCallback? errorCallback);
 };

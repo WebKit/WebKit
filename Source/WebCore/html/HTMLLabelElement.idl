@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLLabelElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLLabelElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     [CEReactions=NotNeeded, Reflect=for] attribute DOMString htmlFor;
     readonly attribute HTMLElement control;

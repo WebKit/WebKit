@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: This has been removed from the spec: https://github.com/w3c/webvtt/pull/31
 [
     Conditional=VIDEO,
     ImplementationLacksVTable,

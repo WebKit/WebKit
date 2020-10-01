@@ -24,6 +24,7 @@
     JSCustomHeader,
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface Element : Node {
     readonly attribute DOMString? namespaceURI;
     readonly attribute DOMString? prefix;

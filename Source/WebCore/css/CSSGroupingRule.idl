@@ -29,8 +29,9 @@
 
 typedef USVString CSSOMString;
 
-[Exposed=Window]
-interface CSSGroupingRule : CSSRule {
+[
+    Exposed=Window
+] interface CSSGroupingRule : CSSRule {
     [SameObject] readonly attribute CSSRuleList cssRules;
     [MayThrowException] unsigned long insertRule(CSSOMString rule, optional unsigned long index = 0);
     [MayThrowException] undefined deleteRule(unsigned long index);

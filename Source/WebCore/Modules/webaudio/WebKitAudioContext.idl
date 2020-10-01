@@ -29,6 +29,7 @@
     EnabledBySetting=WebAudio&PrefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
     InterfaceName=webkitAudioContext,
+    Exposed=Window
 ] interface WebKitAudioContext : EventTarget {
     [CallWith=Document] constructor();
 

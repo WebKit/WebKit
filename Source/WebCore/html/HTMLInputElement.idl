@@ -22,6 +22,7 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLInputElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;

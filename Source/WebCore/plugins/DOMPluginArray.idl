@@ -23,6 +23,7 @@
     LegacyUnenumerableNamedProperties,
     ImplementationLacksVTable,
     InterfaceName=PluginArray,
+    Exposed=Window
 ] interface DOMPluginArray {
     readonly attribute unsigned long length;
     getter DOMPlugin? item(unsigned long index);

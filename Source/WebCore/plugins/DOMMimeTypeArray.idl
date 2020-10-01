@@ -23,6 +23,7 @@
     LegacyUnenumerableNamedProperties,
     ImplementationLacksVTable,
     InterfaceName=MimeTypeArray,
+    Exposed=Window
 ] interface DOMMimeTypeArray {
     readonly attribute unsigned long length;
     getter DOMMimeType? item(unsigned long index);

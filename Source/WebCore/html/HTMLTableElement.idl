@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLTableElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLTableElement : HTMLElement {
     [CEReactions] attribute HTMLTableCaptionElement? caption;
     [CEReactions] attribute HTMLTableSectionElement? tHead;
     [CEReactions] attribute HTMLTableSectionElement? tFoot;

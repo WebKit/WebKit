@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLAnchorElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLAnchorElement : HTMLElement {
     [CEReactions=NotNeeded, EnabledBySetting=AdClickAttribution, Reflect] attribute DOMString adcampaignid;
     [CEReactions=NotNeeded, EnabledBySetting=AdClickAttribution, Reflect] attribute DOMString addestination;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;

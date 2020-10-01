@@ -24,10 +24,12 @@
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
 #include "DedicatedWorkerGlobalScope.h"
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
+#include "JSDedicatedWorkerGlobalScope.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
@@ -46,9 +48,25 @@ using namespace JSC;
 
 JSC_DECLARE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScopeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSDedicatedWorkerGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructor);
 
 using JSDedicatedWorkerGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSDedicatedWorkerGlobalScope>;
 
+/* Hash table */
+
+static const struct CompactHashIndex JSDedicatedWorkerGlobalScopeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSDedicatedWorkerGlobalScopeTableValues[] =
+{
+    { "DedicatedWorkerGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructor) } },
+};
+
+static const HashTable JSDedicatedWorkerGlobalScopeTable = { 1, 1, true, JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopeTableValues, JSDedicatedWorkerGlobalScopeTableIndex };
 template<> JSValue JSDedicatedWorkerGlobalScopeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSWorkerGlobalScope::getConstructor(vm, &globalObject);
@@ -86,7 +104,7 @@ void JSDedicatedWorkerGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSDedicatedWorkerGlobalScope::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScope) };
+const ClassInfo JSDedicatedWorkerGlobalScope::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, &JSDedicatedWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScope) };
 
 JSDedicatedWorkerGlobalScope::JSDedicatedWorkerGlobalScope(VM& vm, Structure* structure, Ref<DedicatedWorkerGlobalScope>&& impl)
     : JSWorkerGlobalScope(vm, structure, WTFMove(impl))
@@ -104,6 +122,11 @@ void JSDedicatedWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 JSValue JSDedicatedWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSDedicatedWorkerGlobalScopeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
+template<> inline JSDedicatedWorkerGlobalScope* IDLAttribute<JSDedicatedWorkerGlobalScope>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
+{
+    return jsDynamicCast<JSDedicatedWorkerGlobalScope*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
@@ -127,6 +150,29 @@ JSC_DEFINE_CUSTOM_SETTER(setJSDedicatedWorkerGlobalScopeConstructor, (JSGlobalOb
     }
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
+}
+
+static inline JSValue jsDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSDedicatedWorkerGlobalScope& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSDedicatedWorkerGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSDedicatedWorkerGlobalScope>::get<jsDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, "DedicatedWorkerGlobalScope");
+}
+
+static inline bool setJSDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSDedicatedWorkerGlobalScope& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("DedicatedWorkerGlobalScope"), strlen("DedicatedWorkerGlobalScope")), value);
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSDedicatedWorkerGlobalScope>::set<setJSDedicatedWorkerGlobalScopeDedicatedWorkerGlobalScopeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "DedicatedWorkerGlobalScope");
 }
 
 JSC::IsoSubspace* JSDedicatedWorkerGlobalScope::subspaceForImpl(JSC::VM& vm)

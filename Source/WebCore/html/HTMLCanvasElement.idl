@@ -43,6 +43,7 @@ typedef (
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
     ReportExternalMemoryCost,
+    Exposed=Window
 ] interface HTMLCanvasElement : HTMLElement {
     [CEReactions=NotNeeded, CallTracingCallback=recordCanvasAction] attribute unsigned long width;
     [CEReactions=NotNeeded, CallTracingCallback=recordCanvasAction] attribute unsigned long height;

@@ -27,6 +27,7 @@
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLVideoElement : HTMLMediaElement {
     [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long height;

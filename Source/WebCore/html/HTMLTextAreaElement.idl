@@ -19,7 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLTextAreaElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLTextAreaElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;

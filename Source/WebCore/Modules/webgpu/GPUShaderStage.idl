@@ -30,7 +30,8 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     DoNotCheckConstants,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface GPUShaderStage {
     const u32 NONE = 0;
     const u32 VERTEX = 1;

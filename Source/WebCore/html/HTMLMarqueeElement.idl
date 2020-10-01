@@ -19,6 +19,7 @@
 
 [
     ActiveDOMObject,
+    Exposed=Window
 ] interface HTMLMarqueeElement : HTMLElement {
     undefined start();
     undefined stop();

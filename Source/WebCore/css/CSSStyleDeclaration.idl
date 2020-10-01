@@ -25,6 +25,7 @@
     JSCustomHeader,
     JSCustomMarkFunction,
     SkipVTableValidation,
+    Exposed=Window
 ] interface CSSStyleDeclaration {
     [CEReactions] attribute DOMString cssText;
 

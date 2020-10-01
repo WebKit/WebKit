@@ -19,6 +19,7 @@
 
 [
     CustomToJSObject,
+    Exposed=Window
 ] interface Text : CharacterData {
     [CallWith=Document] constructor(optional DOMString data = "");
 

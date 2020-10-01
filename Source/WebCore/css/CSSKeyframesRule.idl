@@ -26,7 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface CSSKeyframesRule : CSSRule {
+[
+    Exposed=Window
+] interface CSSKeyframesRule : CSSRule {
     attribute DOMString name;
     readonly attribute CSSRuleList cssRules;
     

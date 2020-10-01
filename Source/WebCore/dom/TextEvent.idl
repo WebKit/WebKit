@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// Introduced in DOM Level 3:
-interface TextEvent : UIEvent {
-
+[
+    Exposed=Window
+] interface TextEvent : UIEvent {
     readonly attribute DOMString data;
 
     undefined initTextEvent(DOMString typeArg,
@@ -33,6 +33,5 @@ interface TextEvent : UIEvent {
                        optional boolean cancelableArg = false,
                        optional WindowProxy? viewArg = null,
                        optional DOMString dataArg = "undefined");
-
 };
 

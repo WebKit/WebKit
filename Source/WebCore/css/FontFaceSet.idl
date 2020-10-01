@@ -30,6 +30,7 @@ enum FontFaceSetLoadStatus {
 
 [
     ActiveDOMObject,
+    Exposed=Window
 ] interface FontFaceSet : EventTarget {
     [CallWith=Document] constructor(sequence<FontFace> initialFaces);
 

@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvastextdrawingstyles
-[
-    Exposed=Window
-] interface mixin CanvasTextDrawingStyles {
+interface mixin CanvasTextDrawingStyles {
     // text
     attribute DOMString font; // (default 10px sans-serif)
     attribute CanvasTextAlign textAlign; // (default: "start")

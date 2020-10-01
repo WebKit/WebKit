@@ -26,7 +26,8 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
-    EnabledBySetting=ModernUnprefixedWebAudio
+    EnabledBySetting=ModernUnprefixedWebAudio,
+    Exposed=Window
 ] interface StereoPannerNode : AudioNode {
     constructor (BaseAudioContext context, optional StereoPannerOptions options);
     readonly attribute AudioParam pan;

@@ -22,6 +22,7 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLLinkElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;

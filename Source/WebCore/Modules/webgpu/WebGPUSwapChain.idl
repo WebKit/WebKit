@@ -28,7 +28,8 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     InterfaceName=GPUSwapChain,
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface WebGPUSwapChain {
     WebGPUTexture getCurrentTexture();
 };

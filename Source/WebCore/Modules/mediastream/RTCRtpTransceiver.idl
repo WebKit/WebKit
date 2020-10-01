@@ -33,7 +33,8 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
+    EnabledAtRuntime=PeerConnection,
+    Exposed=Window
 ] interface RTCRtpTransceiver {
     readonly attribute DOMString? mid;
     [SameObject] readonly attribute RTCRtpSender sender;

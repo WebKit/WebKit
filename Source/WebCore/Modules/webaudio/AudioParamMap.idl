@@ -31,6 +31,7 @@
     EnabledBySetting=AudioWorklet,
     Exposed=Window,
     SkipVTableValidation,
+    Exposed=Window
 ] interface AudioParamMap {
     readonly maplike<DOMString, AudioParam>;
 };

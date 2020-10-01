@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestMapLikeWithOverriddenOperations {
+[
+    Exposed=TestGlobalObject
+] interface TestMapLikeWithOverriddenOperations {
     maplike<DOMString, DOMString>;
     
     attribute long set;

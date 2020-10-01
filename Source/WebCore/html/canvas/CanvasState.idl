@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasstate
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasState {
+interface mixin CanvasState {
     // state
     undefined save(); // push state on state stack
     undefined restore(); // pop state stack and restore state

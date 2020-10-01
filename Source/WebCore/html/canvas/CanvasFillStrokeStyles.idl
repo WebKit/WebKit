@@ -37,9 +37,7 @@ typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap
 ) CanvasImageSource;
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasfillstrokestyles
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasFillStrokeStyles {
+interface mixin CanvasFillStrokeStyles {
     // colors and styles (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
     attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
     attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)

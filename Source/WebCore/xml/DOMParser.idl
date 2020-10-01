@@ -19,6 +19,7 @@
 
 [
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface DOMParser {
     [CallWith=Document] constructor();
 

@@ -24,7 +24,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedLengthList {
     readonly attribute SVGLengthList baseVal;
     readonly attribute SVGLengthList animVal;

@@ -23,5 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGDefsElement : SVGGraphicsElement {
+[
+    Exposed=Window
+] interface SVGDefsElement : SVGGraphicsElement {
 };

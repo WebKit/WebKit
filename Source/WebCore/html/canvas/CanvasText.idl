@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvastext
-[
-    Exposed=Window
-] interface mixin CanvasText {
+interface mixin CanvasText {
     // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
 
     // text (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)

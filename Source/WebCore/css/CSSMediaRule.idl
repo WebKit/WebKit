@@ -18,7 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[Exposed=Window]
-interface CSSMediaRule : CSSConditionRule {
+[
+    Exposed=Window
+] interface CSSMediaRule : CSSConditionRule {
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
 };

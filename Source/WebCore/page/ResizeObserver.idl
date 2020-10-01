@@ -28,7 +28,8 @@
 [
     ActiveDOMObject,
     Conditional=RESIZE_OBSERVER,
-    EnabledBySetting=ResizeObserver
+    EnabledBySetting=ResizeObserver,
+    Exposed=Window
 ] interface ResizeObserver {
     [CallWith=Document] constructor(ResizeObserverCallback callback);
 

@@ -24,7 +24,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedAngle {
     readonly attribute SVGAngle baseVal;
     readonly attribute SVGAngle animVal;

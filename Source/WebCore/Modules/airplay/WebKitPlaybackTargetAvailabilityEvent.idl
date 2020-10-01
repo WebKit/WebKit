@@ -26,6 +26,7 @@
 
 [
     Conditional=WIRELESS_PLAYBACK_TARGET,
+    Exposed=Window
 ] interface WebKitPlaybackTargetAvailabilityEvent : Event {
     constructor(DOMString type, optional WebKitPlaybackTargetAvailabilityEventInit eventInitDict);
 

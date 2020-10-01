@@ -18,8 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[Exposed=Window]
-interface CSSStyleSheet : StyleSheet {
+[
+    Exposed=Window
+] interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule ownerRule;
     readonly attribute CSSRuleList cssRules;
     [MayThrowException] unsigned long insertRule(DOMString rule, optional unsigned long index = 0);

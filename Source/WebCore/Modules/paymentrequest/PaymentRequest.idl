@@ -29,6 +29,7 @@
     EnabledBySetting=PaymentRequest,
     EnabledForContext,
     SecureContext,
+    Exposed=Window
 ] interface PaymentRequest : EventTarget {
     [CallWith=Document] constructor(sequence<PaymentMethodData> methodData, PaymentDetailsInit details, optional PaymentOptions options);
 

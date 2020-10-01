@@ -24,7 +24,8 @@
  */
 
 [
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    Exposed=Window
 ] interface SVGFETurbulenceElement : SVGElement {
     // Turbulence Types
     const unsigned short SVG_TURBULENCE_TYPE_UNKNOWN      = 0;

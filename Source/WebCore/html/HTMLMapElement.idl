@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLMapElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLMapElement : HTMLElement {
     readonly attribute HTMLCollection areas;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 };

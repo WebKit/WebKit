@@ -21,7 +21,8 @@
 [
     InterfaceName=MimeType,
     GenerateIsReachable=ReachableFromNavigator,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface DOMMimeType {
     readonly attribute DOMString type;
     readonly attribute DOMString suffixes;

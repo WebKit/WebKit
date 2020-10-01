@@ -26,6 +26,7 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
     ActiveDOMObject,
+    Exposed=Window
 ] interface AudioScheduledSourceNode : AudioNode {
     attribute EventHandler onended;
     [MayThrowException, ImplementedAs=startLater] undefined start(optional double when = 0);

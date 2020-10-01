@@ -22,6 +22,7 @@
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface CSSFontFaceRule : CSSRule {
     readonly attribute CSSStyleDeclaration style;
 };

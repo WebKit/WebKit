@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasdrawpath
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasDrawPath {
+interface mixin CanvasDrawPath {
     // path API (see also CanvasPath)
     undefined beginPath();
     undefined fill(optional CanvasFillRule fillRule = "nonzero");

@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLHRElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLHRElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString color;
     [CEReactions=NotNeeded, Reflect] attribute boolean noShade;

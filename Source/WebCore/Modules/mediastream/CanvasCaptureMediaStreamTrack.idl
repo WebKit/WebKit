@@ -25,6 +25,7 @@
 [
     Conditional=MEDIA_STREAM,
     SkipVTableValidation,
+    Exposed=Window
 ] interface CanvasCaptureMediaStreamTrack : MediaStreamTrack {
     readonly attribute HTMLCanvasElement canvas;
     undefined requestFrame();

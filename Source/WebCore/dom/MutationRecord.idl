@@ -30,7 +30,8 @@
 
 [    
     SkipVTableValidation,
-    JSCustomMarkFunction
+    JSCustomMarkFunction,
+    Exposed=Window
 ] interface MutationRecord {
     readonly attribute DOMString type;
 

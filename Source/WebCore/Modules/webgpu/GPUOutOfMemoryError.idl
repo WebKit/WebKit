@@ -27,7 +27,8 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface GPUOutOfMemoryError {
     constructor();
 };

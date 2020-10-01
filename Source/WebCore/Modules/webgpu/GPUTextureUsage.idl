@@ -30,7 +30,8 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     DoNotCheckConstants,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface GPUTextureUsage {
     const u32 COPY_SRC = 1;
     const u32 COPY_DST = 2;

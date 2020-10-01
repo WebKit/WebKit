@@ -19,7 +19,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface CSSPageRule : CSSRule {
+[
+    Exposed=Window
+] interface CSSPageRule : CSSRule {
     attribute DOMString? selectorText;
 
     [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;

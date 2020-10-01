@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This should also be exposed to DedicatedWorker.
 [
-// We should also inherit from LSProgressEvent when the idl is added.
+    Exposed=Window
 ] interface XMLHttpRequestProgressEvent : ProgressEvent {
      readonly attribute unsigned long long position;
      readonly attribute unsigned long long totalSize;

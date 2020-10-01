@@ -31,7 +31,8 @@
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
-    SecureContext
+    SecureContext,
+    Exposed=Window
 ] interface MediaDevices : EventTarget {
     attribute EventHandler ondevicechange;
     Promise<sequence<MediaDeviceInfo>> enumerateDevices();

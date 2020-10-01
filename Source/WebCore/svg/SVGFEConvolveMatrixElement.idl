@@ -24,7 +24,8 @@
  */
 
 [
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    Exposed=Window
 ] interface SVGFEConvolveMatrixElement : SVGElement {
     // Edge Mode Values
     const unsigned short SVG_EDGEMODE_UNKNOWN   = 0;

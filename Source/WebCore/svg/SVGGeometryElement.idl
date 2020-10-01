@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// [Exposed=Window]
-interface SVGGeometryElement : SVGGraphicsElement {
+[
+    Exposed=Window
+] interface SVGGeometryElement : SVGGraphicsElement {
     [SameObject] readonly attribute SVGAnimatedNumber pathLength;
 
     boolean isPointInFill(optional DOMPointInit point);

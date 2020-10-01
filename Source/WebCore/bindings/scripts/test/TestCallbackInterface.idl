@@ -36,6 +36,7 @@ dictionary TestCallbackInterfaceDictionary {
 
 [
     Conditional=TEST_CONDITIONAL,
+    Exposed=TestGlobalObject
 ] callback interface TestCallbackInterface {
     // Constants
     const unsigned short CONSTANT1 = 1;

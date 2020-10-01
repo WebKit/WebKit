@@ -22,7 +22,8 @@
     InterfaceName=Plugin,
     GenerateIsReachable=ReachableFromNavigator,
     ImplementationLacksVTable,
-    LegacyUnenumerableNamedProperties
+    LegacyUnenumerableNamedProperties,
+    Exposed=Window
 ] interface DOMPlugin {
     readonly attribute DOMString name;
     readonly attribute DOMString filename;

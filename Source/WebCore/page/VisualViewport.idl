@@ -25,10 +25,10 @@
 
 // https://wicg.github.io/ViewportAPI/spec.html
 [
-EnabledBySetting=VisualViewportAPI,
-GenerateIsReachable=ReachableFromDOMWindow
-]
-interface VisualViewport : EventTarget {
+    EnabledBySetting=VisualViewportAPI,
+    GenerateIsReachable=ReachableFromDOMWindow,
+    Exposed=Window
+] interface VisualViewport : EventTarget {
     readonly attribute double offsetLeft;
     readonly attribute double offsetTop;
 

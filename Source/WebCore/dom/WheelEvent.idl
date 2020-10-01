@@ -19,7 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface WheelEvent : MouseEvent {
+[
+    Exposed=Window
+] interface WheelEvent : MouseEvent {
     constructor(DOMString type, optional WheelEventInit eventInitDict);
 
     // DeltaModeCode

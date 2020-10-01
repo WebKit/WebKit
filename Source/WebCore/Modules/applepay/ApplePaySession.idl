@@ -28,6 +28,7 @@
     Conditional=APPLE_PAY,
     EnabledBySetting=ApplePay,
     EnabledForContext,
+    Exposed=Window
 ] interface ApplePaySession : EventTarget {
     [CallWith=Document] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
 

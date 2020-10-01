@@ -26,7 +26,8 @@
 // Introduced in DOM Level 2:
 [
     ImplementationLacksVTable,
-    InterfaceName=CSSValueList
+    InterfaceName=CSSValueList,
+    Exposed=Window
 ] interface DeprecatedCSSOMValueList : DeprecatedCSSOMValue {
     readonly attribute unsigned long length;
     getter DeprecatedCSSOMValue item(unsigned long index);

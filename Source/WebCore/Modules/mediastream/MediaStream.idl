@@ -27,7 +27,8 @@
     Conditional=MEDIA_STREAM,
     ExportToWrappedFunction,
     PrivateIdentifier,
-    PublicIdentifier
+    PublicIdentifier,
+    Exposed=Window
 ] interface MediaStream : EventTarget {
     [CallWith=Document] constructor();
     [CallWith=Document] constructor(MediaStream stream);

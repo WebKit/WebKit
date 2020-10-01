@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasfilters
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasFilters {
+interface mixin CanvasFilters {
     // filters
     // FIXME: Implement filter.
     // attribute DOMString filter; // (default "none")

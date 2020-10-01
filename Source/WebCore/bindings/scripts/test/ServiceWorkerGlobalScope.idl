@@ -1,2 +1,2 @@
-interface ServiceWorkerGlobalScope : WorkerGlobalScope {
+[Exposed=ServiceWorker] interface ServiceWorkerGlobalScope : WorkerGlobalScope {
 };

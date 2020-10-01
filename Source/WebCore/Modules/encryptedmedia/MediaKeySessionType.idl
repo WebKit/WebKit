@@ -27,8 +27,7 @@
     Conditional=ENCRYPTED_MEDIA,
     ImplementedAs=MediaKeySessionType,
     ExportMacro=WEBCORE_EXPORT
-]
-enum MediaKeySessionType {
+] enum MediaKeySessionType {
     "temporary",
     "persistent-usage-record",
     "persistent-license"

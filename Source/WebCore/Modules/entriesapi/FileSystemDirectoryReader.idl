@@ -26,6 +26,7 @@
 [
     ActiveDOMObject,
     EnabledAtRuntime=DirectoryUpload,
+    Exposed=Window
 ] interface FileSystemDirectoryReader {
     [CallWith=ScriptExecutionContext] undefined readEntries(FileSystemEntriesCallback successCallback, optional ErrorCallback? errorCallback);
 };

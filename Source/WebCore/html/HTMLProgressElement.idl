@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLProgressElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLProgressElement : HTMLElement {
     [CEReactions=NotNeeded] attribute double value;
     [CEReactions=NotNeeded] attribute double max;
     readonly attribute double position;

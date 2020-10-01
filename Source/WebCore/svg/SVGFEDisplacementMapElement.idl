@@ -24,7 +24,8 @@
  */
 
 [
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    Exposed=Window
 ] interface SVGFEDisplacementMapElement : SVGElement {
     // Channel Selectors
     const unsigned short SVG_CHANNEL_UNKNOWN = 0;

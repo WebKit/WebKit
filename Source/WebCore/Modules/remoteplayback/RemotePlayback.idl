@@ -29,19 +29,21 @@ enum RemotePlaybackState {
     "disconnected"
 };
 
+// https://w3c.github.io/remote-playback/#remoteplayback-interface
 [
     ActiveDOMObject,
     Conditional=WIRELESS_PLAYBACK_TARGET,
     EnabledBySetting=RemotePlayback,
-]
-interface RemotePlayback : EventTarget {
+    Exposed=Window
+] interface RemotePlayback : EventTarget {
+    Promise<long> watchAvailability(RemotePlaybackAvailabilityCallback callback);
+    Promise<undefined> cancelWatchAvailability(optional long id);
+
     readonly attribute RemotePlaybackState state;
 
     attribute EventHandler onconnecting;
     attribute EventHandler onconnect;
     attribute EventHandler ondisconnect;
 
-    Promise<long> watchAvailability(RemotePlaybackAvailabilityCallback callback);
-    Promise<undefined> cancelWatchAvailability(optional long id);
     Promise<undefined> prompt();
 };

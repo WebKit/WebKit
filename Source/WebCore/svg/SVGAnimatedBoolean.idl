@@ -24,7 +24,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedBoolean {
     attribute boolean baseVal;
     readonly attribute boolean animVal;

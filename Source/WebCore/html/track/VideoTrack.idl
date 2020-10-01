@@ -26,7 +26,8 @@
 [
     Conditional=VIDEO,
     GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction
+    JSCustomMarkFunction,
+    Exposed=Window
 ] interface VideoTrack {
     readonly attribute DOMString id;
     [ConditionallyReadWrite=MEDIA_SOURCE] attribute DOMString kind;

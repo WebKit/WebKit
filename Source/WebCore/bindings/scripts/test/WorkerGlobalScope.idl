@@ -1,2 +1,2 @@
-interface WorkerGlobalScope : EventTarget {
+[Exposed=Worker] interface WorkerGlobalScope : EventTarget {
 };

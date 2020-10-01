@@ -24,7 +24,8 @@
  */
 
 [
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    Exposed=Window
 ] interface SVGFEColorMatrixElement : SVGElement {
     // Color Matrix Types
     const unsigned short SVG_FECOLORMATRIX_TYPE_UNKNOWN          = 0;

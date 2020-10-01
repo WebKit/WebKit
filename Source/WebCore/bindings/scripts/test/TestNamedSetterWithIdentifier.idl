@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestNamedSetterWithIdentifier {
+[
+    Exposed=TestGlobalObject
+] interface TestNamedSetterWithIdentifier {
     setter undefined namedSetter(DOMString name, DOMString value);
 
     // NOTE: Named setters require the presence of a named getter as well.

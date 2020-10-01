@@ -24,7 +24,8 @@
  */
 
 [
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLSlotElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     sequence<Node> assignedNodes(optional AssignedNodesOptions options);

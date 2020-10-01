@@ -37,7 +37,8 @@ typedef (object or DOMString) AlgorithmIdentifier;
 [
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface RTCCertificate {
     readonly attribute double expires;
     sequence<RTCDtlsFingerprint> getFingerprints();

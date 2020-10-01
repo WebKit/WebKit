@@ -20,7 +20,8 @@
 [
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-    InterfaceName=Rect
+    InterfaceName=Rect,
+    Exposed=Window
 ] interface DeprecatedCSSOMRect {
     readonly attribute DeprecatedCSSOMPrimitiveValue top;
     readonly attribute DeprecatedCSSOMPrimitiveValue right;

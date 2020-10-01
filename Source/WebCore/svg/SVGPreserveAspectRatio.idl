@@ -24,7 +24,8 @@
  */
 
 [
-    ConstantsScope=SVGPreserveAspectRatioValue
+    ConstantsScope=SVGPreserveAspectRatioValue,
+    Exposed=Window
 ] interface SVGPreserveAspectRatio {
     // Alignment Types
     const unsigned short SVG_PRESERVEASPECTRATIO_UNKNOWN = 0;

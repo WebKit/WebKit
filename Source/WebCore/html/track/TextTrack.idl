@@ -32,6 +32,7 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction,
     SkipVTableValidation,
+    Exposed=Window
 ] interface TextTrack : EventTarget {
     readonly attribute DOMString id;
     [ImplementedAs=kindForBindings] attribute TextTrackKind kind;

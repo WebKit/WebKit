@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGStopElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGStopElement : SVGElement {
     readonly attribute SVGAnimatedNumber offset;
 };
 

@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO,
+    Exposed=Window,
     LegacyFactoryFunctionCallWith=Document,
     LegacyFactoryFunction=Audio(optional [AtomString] DOMString src)
 ] interface HTMLAudioElement : HTMLMediaElement {

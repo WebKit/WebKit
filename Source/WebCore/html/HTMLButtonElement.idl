@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLButtonElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLButtonElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;

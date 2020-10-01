@@ -25,7 +25,9 @@
 
 typedef double TestTimeStamp;
 
-interface TestDefaultToJSON {
+[
+    Exposed=Window
+] interface TestDefaultToJSON {
     [EnabledAtRuntime=TestRuntimeEnabled]readonly attribute long longAttribute;
     [EnabledBySetting=TestSetting] readonly attribute unsigned short enabledBySettingsAttribute;
     [Conditional=TEST_CONDITIONAL] readonly attribute TestDefaultToJSONEnum enabledByConditionalAttribute;

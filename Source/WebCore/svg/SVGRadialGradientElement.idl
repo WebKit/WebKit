@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGRadialGradientElement : SVGGradientElement {
+[
+    Exposed=Window
+] interface SVGRadialGradientElement : SVGGradientElement {
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
     readonly attribute SVGAnimatedLength r;

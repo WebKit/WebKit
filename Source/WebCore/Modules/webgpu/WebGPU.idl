@@ -28,7 +28,8 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable,
-    InterfaceName=GPU
+    InterfaceName=GPU,
+    Exposed=Window
 ] interface WebGPU {
     Promise<WebGPUAdapter> requestAdapter(optional GPURequestAdapterOptions options);
 };

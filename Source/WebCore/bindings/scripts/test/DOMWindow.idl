@@ -1,2 +1,2 @@
-interface DOMWindow : EventTarget {
+[Exposed=Window] interface DOMWindow : EventTarget {
 };

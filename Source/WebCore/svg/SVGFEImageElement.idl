@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFEImageElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGFEImageElement : SVGElement {
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
 

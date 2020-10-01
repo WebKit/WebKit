@@ -27,6 +27,7 @@
     ActiveDOMObject,
     CustomToJSObject,
     EnabledAtRuntime=DirectoryUpload,
+    Exposed=Window
 ] interface FileSystemEntry {
     readonly attribute boolean isFile;
     readonly attribute boolean isDirectory;

@@ -24,7 +24,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedPreserveAspectRatio {
     readonly attribute SVGPreserveAspectRatio baseVal;
     readonly attribute SVGPreserveAspectRatio animVal;

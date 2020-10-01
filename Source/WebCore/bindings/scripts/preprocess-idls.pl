@@ -216,33 +216,34 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
     #   property must exist on the ECMAScript environment's global object.
     # See https://heycam.github.io/webidl/#es-interfaces
     my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFile);
-    if (shouldExposeInterface($extendedAttributes)) {
-        if (!$isCallbackInterface || containsInterfaceWithConstantsFromIDL($idlFile)) {
-            my $exposedAttribute = $extendedAttributes->{"Exposed"} || $testGlobalContextName || "Window";
-            $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-            my @globalContexts = split(",", $exposedAttribute);
-            my ($attributeCode, $windowAliases) = GenerateConstructorAttributes($interfaceName, $extendedAttributes);
-            foreach my $globalContext (@globalContexts) {
-                if ($globalContext eq "Window") {
-                    $windowConstructorsCode .= $attributeCode;
-                } elsif ($globalContext eq "Worker") {
-                    $workerGlobalScopeConstructorsCode .= $attributeCode;
-                } elsif ($globalContext eq "DedicatedWorker") {
-                    $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode;
-                } elsif ($globalContext eq "ServiceWorker") {
-                    $serviceWorkerGlobalScopeConstructorsCode .= $attributeCode;
-                } elsif ($globalContext eq "Worklet") {
-                    $workletGlobalScopeConstructorsCode .= $attributeCode;
-                } elsif ($globalContext eq "PaintWorklet") {
-                    $paintWorkletGlobalScopeConstructorsCode .= $attributeCode;
-                } elsif ($globalContext eq $testGlobalContextName) {
-                    $testGlobalScopeConstructorsCode .= $attributeCode;
-                } else {
-                    die "Unsupported global context '$globalContext' used in [Exposed] at $idlFileName";
-                }
-            }
-            $windowConstructorsCode .= $windowAliases if $windowAliases;
+    if (!$extendedAttributes->{"LegacyNoInterfaceObject"} && (!$isCallbackInterface || containsInterfaceWithConstantsFromIDL($idlFile))) {
+        my $exposedAttribute = $extendedAttributes->{"Exposed"};
+        if (!$exposedAttribute) {
+            die "ERROR: No [Exposed] extended attribute specified for interface in $idlFileName";
         }
+        $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+        my @globalContexts = split(",", $exposedAttribute);
+        my ($attributeCode, $windowAliases) = GenerateConstructorAttributes($interfaceName, $extendedAttributes);
+        foreach my $globalContext (@globalContexts) {
+            if ($globalContext eq "Window") {
+                $windowConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "Worker") {
+                $workerGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "DedicatedWorker") {
+                $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "ServiceWorker") {
+                $serviceWorkerGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "Worklet") {
+                $workletGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "PaintWorklet") {
+                $paintWorkletGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq $testGlobalContextName) {
+                $testGlobalScopeConstructorsCode .= $attributeCode;
+            } else {
+                die "Unsupported global context '$globalContext' used in [Exposed] at $idlFileName";
+            }
+        }
+        $windowConstructorsCode .= $windowAliases if $windowAliases;
     }
 }
 
@@ -771,11 +772,4 @@ sub getUndefinedBaseDictionariesFromIDL
     }
 
     return \@baseDictionaries;
-}
-
-sub shouldExposeInterface
-{
-    my $extendedAttributes = shift;
-
-    return !$extendedAttributes->{"LegacyNoInterfaceObject"};
 }

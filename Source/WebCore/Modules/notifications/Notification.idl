@@ -29,10 +29,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: Notification is specified to be exposed on both Window and Worker.
+// https://notifications.spec.whatwg.org/#notification
 [
     Conditional=NOTIFICATIONS,
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface Notification : EventTarget {
     [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
 

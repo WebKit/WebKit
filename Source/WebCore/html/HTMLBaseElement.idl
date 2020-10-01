@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLBaseElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLBaseElement : HTMLElement {
     [CEReactions=NotNeeded] attribute USVString href;
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;

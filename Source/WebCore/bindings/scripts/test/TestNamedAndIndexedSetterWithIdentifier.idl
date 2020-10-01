@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestNamedAndIndexedSetterWithIdentifier {
+[
+    Exposed=TestGlobalObject
+] interface TestNamedAndIndexedSetterWithIdentifier {
     setter undefined namedSetter(DOMString name, DOMString value);
     getter DOMString (DOMString name);
 

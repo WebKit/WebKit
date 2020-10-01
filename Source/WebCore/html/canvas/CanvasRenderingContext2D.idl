@@ -28,6 +28,7 @@
     JSGenerateToJSObject,
     JSCustomMarkFunction,
     CallTracingCallback=recordCanvasAction,
+    Exposed=Window
 ] interface CanvasRenderingContext2D {
     // back-reference to the canvas
     readonly attribute HTMLCanvasElement canvas;

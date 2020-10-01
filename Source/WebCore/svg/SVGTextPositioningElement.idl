@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGTextPositioningElement : SVGTextContentElement {
+[
+    Exposed=Window
+] interface SVGTextPositioningElement : SVGTextContentElement {
     readonly attribute SVGAnimatedLengthList x;
     readonly attribute SVGAnimatedLengthList y;
     readonly attribute SVGAnimatedLengthList dx;

@@ -22,7 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface HTMLOutputElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLOutputElement : HTMLElement {
     [PutForwards=value] readonly attribute DOMTokenList htmlFor;
 
     readonly attribute HTMLFormElement form;

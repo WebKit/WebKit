@@ -25,7 +25,8 @@
  */
 
 [
-    EnabledBySetting=LegacyBeforeLoadEvent
+    EnabledBySetting=LegacyBeforeLoadEvent,
+    Exposed=Window
 ] interface BeforeLoadEvent : Event {
     constructor(DOMString type, optional BeforeLoadEventInit eventInitDict);
 

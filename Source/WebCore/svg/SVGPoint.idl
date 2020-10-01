@@ -21,7 +21,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGPoint {
     attribute unrestricted float x;
     attribute unrestricted float y;

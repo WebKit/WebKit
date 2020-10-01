@@ -26,6 +26,7 @@
 [
     Conditional=VIDEO,
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface TextTrackCueList {
     readonly attribute unsigned long length;
     getter TextTrackCue item(unsigned long index);

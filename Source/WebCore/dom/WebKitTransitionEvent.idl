@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface WebKitTransitionEvent : Event {
+[
+    Exposed=Window
+] interface WebKitTransitionEvent : Event {
     constructor(DOMString type, optional WebKitTransitionEventInit eventInitDict);
 
     readonly attribute DOMString propertyName;

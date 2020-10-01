@@ -27,8 +27,7 @@
     Conditional=ENCRYPTED_MEDIA,
     ImplementedAs=MediaKeyEncryptionScheme,
     ExportMacro=WEBCORE_EXPORT
-]
-enum MediaKeyEncryptionScheme {
+] enum MediaKeyEncryptionScheme {
     "cenc",
     "cbcs"
 };

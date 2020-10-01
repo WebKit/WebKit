@@ -21,6 +21,7 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLSelectElement : HTMLElement {
     [CEReactions] attribute DOMString autocomplete;
     [CEReactions, Reflect] attribute boolean autofocus;

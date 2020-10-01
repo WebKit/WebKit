@@ -24,7 +24,8 @@
 */
 
 [
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    Exposed=Window
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute ShadowRootMode mode;
     readonly attribute Element host;

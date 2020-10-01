@@ -23,10 +23,12 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
+#include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
+#include "JSWorkletGlobalScope.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include "WorkletGlobalScope.h"
@@ -46,9 +48,25 @@ using namespace JSC;
 
 JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScopeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSWorkletGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScopeWorkletGlobalScopeConstructor);
+JSC_DECLARE_CUSTOM_SETTER(setJSWorkletGlobalScopeWorkletGlobalScopeConstructor);
 
 using JSWorkletGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSWorkletGlobalScope>;
 
+/* Hash table */
+
+static const struct CompactHashIndex JSWorkletGlobalScopeTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSWorkletGlobalScopeTableValues[] =
+{
+    { "WorkletGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkletGlobalScopeWorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSWorkletGlobalScopeWorkletGlobalScopeConstructor) } },
+};
+
+static const HashTable JSWorkletGlobalScopeTable = { 1, 1, true, JSWorkletGlobalScope::info(), JSWorkletGlobalScopeTableValues, JSWorkletGlobalScopeTableIndex };
 template<> JSValue JSWorkletGlobalScopeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
@@ -86,7 +104,7 @@ void JSWorkletGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSWorkletGlobalScope::s_info = { "WorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScope) };
+const ClassInfo JSWorkletGlobalScope::s_info = { "WorkletGlobalScope", &Base::s_info, &JSWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScope) };
 
 JSWorkletGlobalScope::JSWorkletGlobalScope(VM& vm, Structure* structure, Ref<WorkletGlobalScope>&& impl)
     : JSEventTarget(vm, structure, WTFMove(impl))
@@ -116,6 +134,11 @@ JSValue JSWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globa
     return getDOMConstructor<JSWorkletGlobalScopeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+template<> inline JSWorkletGlobalScope* IDLAttribute<JSWorkletGlobalScope>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
+{
+    return jsDynamicCast<JSWorkletGlobalScope*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
+}
+
 JSC_DEFINE_CUSTOM_GETTER(jsWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
@@ -137,6 +160,29 @@ JSC_DEFINE_CUSTOM_SETTER(setJSWorkletGlobalScopeConstructor, (JSGlobalObject* le
     }
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
+}
+
+static inline JSValue jsWorkletGlobalScopeWorkletGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkletGlobalScope& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSWorkletGlobalScope::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsWorkletGlobalScopeWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    return IDLAttribute<JSWorkletGlobalScope>::get<jsWorkletGlobalScopeWorkletGlobalScopeConstructorGetter>(*lexicalGlobalObject, thisValue, "WorkletGlobalScope");
+}
+
+static inline bool setJSWorkletGlobalScopeWorkletGlobalScopeConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSWorkletGlobalScope& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    // Shadowing a built-in constructor.
+    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("WorkletGlobalScope"), strlen("WorkletGlobalScope")), value);
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSWorkletGlobalScopeWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue))
+{
+    return IDLAttribute<JSWorkletGlobalScope>::set<setJSWorkletGlobalScopeWorkletGlobalScopeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "WorkletGlobalScope");
 }
 
 JSC::IsoSubspace* JSWorkletGlobalScope::subspaceForImpl(JSC::VM& vm)

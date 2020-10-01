@@ -20,6 +20,7 @@
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
+    Exposed=Window
 ] interface Navigator {
     // Non-standard.
     [Conditional=NAVIGATOR_STANDALONE] readonly attribute boolean standalone;

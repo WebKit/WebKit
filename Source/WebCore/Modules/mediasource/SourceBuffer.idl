@@ -37,6 +37,7 @@
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface SourceBuffer : EventTarget {
     attribute AppendMode mode;
 

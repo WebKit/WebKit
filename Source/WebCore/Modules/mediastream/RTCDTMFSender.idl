@@ -28,6 +28,7 @@
     ActiveDOMObject,
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
+    Exposed=Window
 ] interface RTCDTMFSender : EventTarget {
     [MayThrowException] undefined insertDTMF(DOMString tones, optional unsigned long duration = 100, optional unsigned long interToneGap = 70);
     attribute EventHandler ontonechange;

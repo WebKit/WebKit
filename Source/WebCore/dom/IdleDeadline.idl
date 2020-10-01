@@ -27,7 +27,8 @@ typedef double DOMHighResTimeStamp;
 
 [
     EnabledBySetting=requestIdleCallback,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface IdleDeadline {
     [CallWith=Document] DOMHighResTimeStamp timeRemaining();
     [CallWith=Document] readonly attribute boolean didTimeout;

@@ -24,7 +24,7 @@
  */
 
 [
-    Exposed=Window,
+    Exposed=Window
 ] interface AnimationPlaybackEvent : Event {
     constructor(DOMString type, optional AnimationPlaybackEventInit eventInitDict);
 

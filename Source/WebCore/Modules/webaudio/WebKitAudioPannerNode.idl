@@ -27,6 +27,7 @@
     EnabledBySetting=PrefixedWebAudio,
     JSGenerateToJSObject,
     InterfaceName=webkitAudioPannerNode,
+    Exposed=Window
 ] interface WebKitAudioPannerNode : AudioNode {
     // Default model for stereo is HRTF
     attribute PanningModelType panningModel;

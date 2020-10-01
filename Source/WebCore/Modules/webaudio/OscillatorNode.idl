@@ -27,6 +27,7 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
     ActiveDOMObject,
+    Exposed=Window
 ] interface OscillatorNode : AudioScheduledSourceNode {
     [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional OscillatorOptions options);
 

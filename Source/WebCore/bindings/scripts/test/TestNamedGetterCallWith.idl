@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestNamedGetterCallWith {
+[
+    Exposed=TestGlobalObject
+] interface TestNamedGetterCallWith {
     [CallWith=World] getter DOMString (DOMString name);
 };

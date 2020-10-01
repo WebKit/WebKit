@@ -29,6 +29,7 @@
     EnabledBySetting=WebAudio&ModernUnprefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface AudioContext : BaseAudioContext {
     [CallWith=Document] constructor(optional AudioContextOptions contextOptions);
 

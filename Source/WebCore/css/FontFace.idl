@@ -43,6 +43,7 @@ dictionary FontFaceDescriptors {
 
 [
     ActiveDOMObject,
+    Exposed=Window
 ] interface FontFace {
     [CallWith=Document] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
 

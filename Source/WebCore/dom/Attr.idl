@@ -22,6 +22,7 @@
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface Attr : Node {
     readonly attribute DOMString? namespaceURI;
     readonly attribute DOMString? prefix;

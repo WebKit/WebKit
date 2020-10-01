@@ -28,6 +28,7 @@
     Conditional=VIDEO,
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction,
+    Exposed=Window
 ] interface VideoTrackList : EventTarget {
     readonly attribute unsigned long length;
     getter VideoTrack item(unsigned long index);

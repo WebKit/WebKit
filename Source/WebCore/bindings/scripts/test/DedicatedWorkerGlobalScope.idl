@@ -1,2 +1,2 @@
-interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
+[Exposed=DedicatedWorker] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
 };

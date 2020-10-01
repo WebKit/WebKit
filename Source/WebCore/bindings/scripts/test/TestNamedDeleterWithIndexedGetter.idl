@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestNamedDeleterWithIndexedGetter {
+[
+    Exposed=TestGlobalObject
+] interface TestNamedDeleterWithIndexedGetter {
     deleter undefined (DOMString name);
 
     // The presence of an index getter changes adds additional

@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFEDistantLightElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGFEDistantLightElement : SVGElement {
     readonly attribute SVGAnimatedNumber azimuth;
     readonly attribute SVGAnimatedNumber elevation;
 };

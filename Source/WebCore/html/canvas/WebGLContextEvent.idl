@@ -25,6 +25,7 @@
 
 [
     Conditional=WEBGL,
+    Exposed=Window
 ] interface WebGLContextEvent : Event {
     constructor(DOMString type, optional WebGLContextEventInit eventInit);
 

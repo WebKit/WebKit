@@ -23,9 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+// FIXME: Given this is just for non-normal web content, does it make sense to exposed this
+// interface in the Window at all? We should at least limit it worlds that return true for
+// DOMWindow::shouldHaveWebKitNamespaceForWorld as we do for window.webkit?
 [
-    Conditional=USER_MESSAGE_HANDLERS
+    Conditional=USER_MESSAGE_HANDLERS,
+    Exposed=Window
 ] interface WebKitNamespace {
     readonly attribute UserMessageHandlersNamespace messageHandlers;
 };

@@ -26,7 +26,7 @@
 [
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
-    Exposed=(Window),
+    Exposed=Window,
     SkipVTableValidation,
     JSGenerateToJSObject
 ] interface StylePropertyMap : StylePropertyMapReadOnly {

@@ -25,7 +25,8 @@
 
 [
     Conditional=TOUCH_EVENTS,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface Touch {
     readonly attribute long                clientX;
     readonly attribute long                clientY;

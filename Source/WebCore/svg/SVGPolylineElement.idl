@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGPolylineElement : SVGGeometryElement {
+[
+    Exposed=Window
+] interface SVGPolylineElement : SVGGeometryElement {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };

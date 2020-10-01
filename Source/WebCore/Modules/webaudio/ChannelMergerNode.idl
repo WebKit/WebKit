@@ -28,7 +28,8 @@
 
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    Exposed=Window
 ] interface ChannelMergerNode : AudioNode {
     [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional ChannelMergerOptions options);
 };

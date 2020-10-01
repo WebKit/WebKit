@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasuserinterface
-[
-    Exposed=Window
-] interface mixin CanvasUserInterface {
+interface mixin CanvasUserInterface {
     undefined drawFocusIfNeeded(Element element);
     undefined drawFocusIfNeeded(Path2D path, Element element);
 

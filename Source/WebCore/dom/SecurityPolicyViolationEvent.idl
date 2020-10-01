@@ -23,7 +23,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface SecurityPolicyViolationEvent : Event {
+// https://w3c.github.io/webappsec-csp/#securitypolicyviolationevent
+// FIXME: Should be Exposed=(Window,Worker).
+[
+    Exposed=Window
+] interface SecurityPolicyViolationEvent : Event {
     constructor(DOMString type, optional SecurityPolicyViolationEventInit eventInitDict);
 
     readonly attribute USVString documentURI;

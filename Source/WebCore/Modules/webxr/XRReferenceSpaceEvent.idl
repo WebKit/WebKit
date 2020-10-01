@@ -35,7 +35,7 @@
     EnabledAtRuntime=WebXR,
     Conditional=WEBXR,
     SecureContext,
-    Exposed=Window,
+    Exposed=Window
 ] interface XRReferenceSpaceEvent : Event {
     constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict);
 

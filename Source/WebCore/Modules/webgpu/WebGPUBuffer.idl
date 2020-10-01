@@ -29,7 +29,8 @@ typedef unsigned long long u64;
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    InterfaceName=GPUBuffer
+    InterfaceName=GPUBuffer,
+    Exposed=Window
 ] interface WebGPUBuffer {
     Promise<ArrayBuffer> mapReadAsync();
     Promise<ArrayBuffer> mapWriteAsync();

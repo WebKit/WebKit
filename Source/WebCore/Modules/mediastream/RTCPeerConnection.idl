@@ -75,6 +75,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface RTCPeerConnection : EventTarget {
     [CallWith=Document] constructor(optional RTCConfiguration configuration);
 

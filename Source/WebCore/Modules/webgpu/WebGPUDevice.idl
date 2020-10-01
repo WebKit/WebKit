@@ -31,6 +31,7 @@ typedef sequence<any> GPUMappedBuffer;  // [GPUBuffer, ArrayBuffer]
     EnabledAtRuntime=WebGPU,
     InterfaceName=GPUDevice,
     JSGenerateToJSObject,
+    Exposed=Window
 ] interface WebGPUDevice : EventTarget {
     readonly attribute WebGPUAdapter adapter;
 

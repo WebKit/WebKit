@@ -1,2 +1,3 @@
 partial interface ServiceWorkerGlobalScope {
+    attribute ServiceWorkerGlobalScopeConstructor ServiceWorkerGlobalScope;
 };

@@ -31,7 +31,8 @@
 // changes in its ouput.
 [
     ActiveDOMObject,
+    Exposed=TestGlobalObject,
     LegacyFactoryFunction=Audio(DOMString str1, optional DOMString str2 = "defaultString", optional DOMString str3),
-    LegacyFactoryFunctionCallWith=Document
+    LegacyFactoryFunctionCallWith=Document,
 ] interface TestLegacyFactoryFunction {
 };

@@ -26,7 +26,7 @@
 [
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
-    Exposed=(ServiceWorker),
+    Exposed=ServiceWorker,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface ExtendableEvent : Event {

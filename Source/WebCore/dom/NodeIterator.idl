@@ -22,6 +22,7 @@
     ExportToWrappedFunction,
     ImplementationLacksVTable,
     JSCustomMarkFunction,
+    Exposed=Window
 ] interface NodeIterator {
     readonly attribute Node root; // FIXME: Should be [SameObject].
     readonly attribute Node referenceNode;

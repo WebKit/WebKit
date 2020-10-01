@@ -20,13 +20,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// FIXME: no css::ViewCSS available!
-// FIXME: Fix SVGSVGElement inheritance (css::DocumentCSS)!
-// FIXME: no events::DocumentEvent available!
-
 [
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface SVGSVGElement : SVGGraphicsElement {
     [SameObject] readonly attribute SVGAnimatedLength x;
     [SameObject] readonly attribute SVGAnimatedLength y;

@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasshadowstyles
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasShadowStyles {
+interface mixin CanvasShadowStyles {
     // FIXME: All the unrestricted float attributes below should be unrestricted doubles.
 
     // shadows

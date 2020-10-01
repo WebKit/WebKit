@@ -27,7 +27,8 @@
 // changes in its output.
 [
     Conditional=Condition22|Condition23,
-    LegacyNoInterfaceObject
+    LegacyNoInterfaceObject,
+    Exposed=TestGlobalObject
 ] interface TestLegacyNoInterfaceObject {
     readonly attribute DOMString readonlyStringAttribute;
     attribute DOMString readWriteStringAttribute;

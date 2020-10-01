@@ -26,6 +26,7 @@
 
 [
     JSCustomMarkFunction,
+    Exposed=Window
 ] interface PopStateEvent : Event {
     constructor(DOMString type, optional PopStateEventInit eventInitDict);
 

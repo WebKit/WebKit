@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO,
+    Exposed=Window
 ] interface TrackEvent : Event {
     constructor(DOMString type, optional TrackEventInit eventInitDict);
 

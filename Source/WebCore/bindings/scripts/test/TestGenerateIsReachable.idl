@@ -25,6 +25,7 @@
 
 [
     GenerateIsReachable=Impl,
+    Exposed=TestGlobalObject
 ] interface TestGenerateIsReachable {
     [SecureContext] readonly attribute DOMString aSecretAttribute;
 };

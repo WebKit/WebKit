@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFESpecularLightingElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGFESpecularLightingElement : SVGElement {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber surfaceScale;
     readonly attribute SVGAnimatedNumber specularConstant;

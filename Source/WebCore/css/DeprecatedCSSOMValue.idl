@@ -23,7 +23,8 @@
     CustomToJSObject,
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-    InterfaceName=CSSValue
+    InterfaceName=CSSValue,
+    Exposed=Window
 ] interface DeprecatedCSSOMValue {
     // UnitTypes
     const unsigned short CSS_INHERIT = 0;

@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGPatternElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGPatternElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;
     readonly attribute SVGAnimatedTransformList patternTransform;

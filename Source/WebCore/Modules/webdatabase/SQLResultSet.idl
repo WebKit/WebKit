@@ -29,6 +29,7 @@
 [
     ImplementationLacksVTable,
     EnabledAtRuntime=WebSQL,
+    Exposed=Window
 ] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;
     readonly attribute long long insertId;

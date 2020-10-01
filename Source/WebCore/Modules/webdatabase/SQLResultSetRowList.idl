@@ -31,6 +31,7 @@ typedef (DOMString? or unrestricted double) SQLValue;
 [
     ImplementationLacksVTable,
     EnabledAtRuntime=WebSQL,
+    Exposed=Window
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;
     [MayThrowException] record<DOMString, SQLValue> item(unsigned long index);

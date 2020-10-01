@@ -28,6 +28,7 @@
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
     EnabledAtRuntime=AttachmentElement,
+    Exposed=Window
 ] interface HTMLAttachmentElement : HTMLElement {
     attribute File? file;
     readonly attribute DOMString uniqueIdentifier;

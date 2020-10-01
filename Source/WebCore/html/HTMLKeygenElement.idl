@@ -28,8 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[EnabledAtRuntime=KeygenElement]
-interface HTMLKeygenElement : HTMLElement {
+[
+    EnabledAtRuntime=KeygenElement,
+    Exposed=Window
+] interface HTMLKeygenElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
     [Reflect] attribute DOMString challenge;
     [Reflect] attribute boolean disabled;

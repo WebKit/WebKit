@@ -26,7 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestDOMJIT : Node {
+[
+    Exposed=TestGlobalObject
+] interface TestDOMJIT : Node {
     [DOMJIT=Getter] readonly attribute any anyAttr;
     [DOMJIT=Getter] readonly attribute boolean booleanAttr;
     [DOMJIT=Getter] readonly attribute byte byteAttr;

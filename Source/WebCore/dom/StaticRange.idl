@@ -26,7 +26,7 @@
 [
     EnabledBySetting=InputEvents,
     ImplementationLacksVTable,
-    Exposed=Window,
+    Exposed=Window
 ] interface StaticRange {
     constructor(StaticRangeInit staticRangeInitDict);
 

@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLBodyElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLBodyElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString aLink;
     [CEReactions=NotNeeded, Reflect] attribute DOMString background;
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString bgColor;

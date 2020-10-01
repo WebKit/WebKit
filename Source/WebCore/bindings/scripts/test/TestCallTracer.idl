@@ -27,6 +27,7 @@ typedef (boolean or float or DOMString) VariantType;
 
 [
     CallTracingCallback=testCallTracerInterface,
+    Exposed=TestGlobalObject
 ] interface TestCallTracer {
     attribute boolean testAttributeInterface;
     [CallTracingCallback=testCallTracerAttribute] attribute boolean testAttributeSpecified;

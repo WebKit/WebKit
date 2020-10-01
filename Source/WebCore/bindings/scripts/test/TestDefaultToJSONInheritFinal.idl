@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface TestDefaultToJSONInheritFinal : TestDefaultToJSONInherit {
+[
+    Exposed=TestGlobalObject
+] interface TestDefaultToJSONInheritFinal : TestDefaultToJSONInherit {
     attribute long                  finalLongAttributeFoo;
     attribute long                  finalLongAttributeBar;
 

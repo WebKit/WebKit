@@ -24,7 +24,8 @@
  */
 
 [
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface DOMStringList {
     readonly attribute unsigned long length;
     getter DOMString? item(unsigned long index);

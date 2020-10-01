@@ -29,6 +29,7 @@
     ExportMacro=WEBCORE_EXPORT,
     SecureContext,
     SkipVTableValidation,
+    Exposed=Window
 ] interface ApplePaySetupFeature {
     [CachedAttribute] readonly attribute ApplePaySetupFeatureType type;
     [CachedAttribute] readonly attribute ApplePaySetupFeatureState state;

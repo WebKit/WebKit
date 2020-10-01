@@ -24,7 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGPathSegLinetoVerticalAbs : SVGPathSeg {
+[
+    Exposed=Window
+] interface SVGPathSegLinetoVerticalAbs : SVGPathSeg {
     attribute unrestricted float y;
 };
 

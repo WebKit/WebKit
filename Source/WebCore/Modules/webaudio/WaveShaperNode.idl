@@ -24,7 +24,8 @@
 
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    Exposed=Window
 ] interface WaveShaperNode : AudioNode {
     [EnabledBySetting=ModernUnprefixedWebAudio] constructor(BaseAudioContext context, optional WaveShaperOptions options);
 

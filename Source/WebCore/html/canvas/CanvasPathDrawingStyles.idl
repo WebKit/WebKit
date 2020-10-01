@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvaspathdrawingstyles
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasPathDrawingStyles {
+interface mixin CanvasPathDrawingStyles {
     // FIXME: All the unrestricted float arguments / attributes below should be unrestricted doubles.
 
     // line caps/joins

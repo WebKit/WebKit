@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLScriptElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLScriptElement : HTMLElement {
     [CEReactions=NotNeeded] attribute DOMString text;
 
     [CEReactions=NotNeeded, Reflect=for] attribute DOMString htmlFor;

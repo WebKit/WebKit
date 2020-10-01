@@ -24,7 +24,8 @@
  */
 
 [
-    LegacyOverrideBuiltIns
+    LegacyOverrideBuiltIns,
+    Exposed=TestGlobalObject
 ] interface TestLegacyOverrideBuiltIns {
     getter Node namedItem(DOMString name);
 };

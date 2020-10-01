@@ -22,6 +22,7 @@
     ExportToWrappedFunction,
     GenerateIsReachable=ImplDocument,
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface DOMImplementation {
     [NewObject, MayThrowException] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
     [NewObject, MayThrowException] XMLDocument createDocument(DOMString? namespaceURI, [LegacyNullToEmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);

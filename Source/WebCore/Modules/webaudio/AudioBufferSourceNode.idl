@@ -27,6 +27,7 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
+    Exposed=Window
 ] interface AudioBufferSourceNode : AudioScheduledSourceNode {
     [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
 

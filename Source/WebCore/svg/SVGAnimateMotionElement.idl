@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGAnimateMotionElement : SVGAnimationElement {
+[
+    Exposed=Window
+] interface SVGAnimateMotionElement : SVGAnimationElement {
 };
 

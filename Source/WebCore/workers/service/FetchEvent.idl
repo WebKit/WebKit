@@ -28,7 +28,7 @@
     JSCustomMarkFunction,
     EnabledAtRuntime=ServiceWorker,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(ServiceWorker),
+    Exposed=ServiceWorker,
     JSGenerateToNativeObject
 ] interface FetchEvent : ExtendableEvent {
     constructor(DOMString type, FetchEventInit eventInitDict);

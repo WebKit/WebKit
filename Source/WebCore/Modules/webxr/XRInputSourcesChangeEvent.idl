@@ -36,7 +36,7 @@
     EnabledAtRuntime=WebXR,
     Conditional=WEBXR,
     SecureContext,
-    Exposed=Window,
+    Exposed=Window
 ] interface XRInputSourcesChangeEvent : Event {
     constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict);
 

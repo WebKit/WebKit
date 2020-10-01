@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLFrameSetElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLFrameSetElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString cols;
     [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
 

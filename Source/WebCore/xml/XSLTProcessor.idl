@@ -33,6 +33,7 @@
 [
     Conditional=XSLT,
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface XSLTProcessor {
     constructor();
 

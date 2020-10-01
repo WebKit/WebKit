@@ -25,6 +25,7 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
+    Exposed=Window
 ] interface AnalyserNode : AudioNode {
     [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional AnalyserOptions options);
 

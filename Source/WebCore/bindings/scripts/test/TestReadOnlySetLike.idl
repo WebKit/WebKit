@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestReadOnlySetLike {
+[
+    Exposed=TestGlobalObject
+] interface TestReadOnlySetLike {
     readonly setlike<DOMString>;
 };

@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface StorageEvent : Event {
+[
+    Exposed=Window
+] interface StorageEvent : Event {
     constructor(DOMString type, optional StorageEventInit eventInitDict);
 
     readonly attribute DOMString? key;

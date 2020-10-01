@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLFrameElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLFrameElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute DOMString scrolling;
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;

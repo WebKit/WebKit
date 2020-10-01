@@ -19,7 +19,8 @@
  */
 
 [
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLTableCaptionElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
 };

@@ -26,9 +26,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvaspath
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasPath {
+interface mixin CanvasPath {
     // shared path API methods
     undefined closePath();
     undefined moveTo(unrestricted double x, unrestricted double y);

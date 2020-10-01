@@ -24,7 +24,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedNumberList {
     readonly attribute SVGNumberList baseVal;
     readonly attribute SVGNumberList animVal;

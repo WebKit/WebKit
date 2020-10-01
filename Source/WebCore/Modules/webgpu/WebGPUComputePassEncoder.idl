@@ -30,7 +30,8 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     InterfaceName=GPUComputePassEncoder,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    Exposed=Window
 ] interface WebGPUComputePassEncoder : WebGPUProgrammablePassEncoder {
     undefined setPipeline(WebGPUComputePipeline pipeline);
     undefined dispatch(u32 x, u32 y, u32 z);

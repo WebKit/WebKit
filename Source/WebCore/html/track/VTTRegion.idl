@@ -27,6 +27,7 @@
 [
     Conditional=VIDEO,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface VTTRegion {
     [CallWith=ScriptExecutionContext] constructor();
 

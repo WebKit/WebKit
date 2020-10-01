@@ -22,6 +22,7 @@
     LegacyUnenumerableNamedProperties,
     LegacyOverrideBuiltIns,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLFormElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect=accept_charset] attribute DOMString acceptCharset;
     [CEReactions=NotNeeded] attribute USVString action;

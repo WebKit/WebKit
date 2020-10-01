@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=VIDEO
+    Conditional=VIDEO,
+    Exposed=Window
 ] interface MediaController : EventTarget {
     [CallWith=ScriptExecutionContext] constructor();
 

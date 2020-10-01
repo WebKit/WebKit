@@ -28,7 +28,8 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable,
-    InterfaceName=GPUQueue
+    InterfaceName=GPUQueue,
+    Exposed=Window
 ] interface WebGPUQueue {
     undefined submit(sequence<WebGPUCommandBuffer> buffers);
 

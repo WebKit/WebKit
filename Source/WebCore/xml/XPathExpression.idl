@@ -21,6 +21,7 @@
 [
     ExportToWrappedFunction,
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface XPathExpression {
     [MayThrowException] XPathResult evaluate(Node contextNode, optional unsigned short type = 0, optional XPathResult? inResult = null);
 };

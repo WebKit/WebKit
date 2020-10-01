@@ -32,7 +32,8 @@
     CustomIsReachable,
     ImplementationLacksVTable,
     LegacyWindowAlias=WebKitMutationObserver,
-    JSCustomMarkFunction
+    JSCustomMarkFunction,
+    Exposed=Window
 ] interface MutationObserver {
     constructor(MutationCallback callback);
 

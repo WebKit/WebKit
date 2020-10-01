@@ -32,6 +32,7 @@ enum MediaStreamTrackState { "live", "ended" };
     ExportToWrappedFunction,
     PrivateIdentifier,
     PublicIdentifier,
+    Exposed=Window
 ] interface MediaStreamTrack : EventTarget {
     readonly attribute DOMString kind;
     readonly attribute DOMString id;

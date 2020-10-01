@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestMapLike {
+[
+    Exposed=TestGlobalObject
+] interface TestMapLike {
     maplike<DOMString, DOMString>;
 };

@@ -24,5 +24,7 @@
  */
 
 [
-    Conditional=MATHML
-] interface MathMLMathElement : MathMLElement { };
+    Conditional=MATHML,
+    Exposed=Window
+] interface MathMLMathElement : MathMLElement {
+};

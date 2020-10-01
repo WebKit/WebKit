@@ -28,6 +28,7 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable,
-    InterfaceName=GPUTextureView
+    InterfaceName=GPUTextureView,
+    Exposed=Window
 ] interface WebGPUTextureView {
 };

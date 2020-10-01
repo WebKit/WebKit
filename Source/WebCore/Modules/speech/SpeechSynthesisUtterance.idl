@@ -22,15 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
+
+// https://wicg.github.io/speech-api/#speechsynthesisutterance
 [
     Conditional=SPEECH_SYNTHESIS,
+    Exposed=Window
 ] interface SpeechSynthesisUtterance : EventTarget {
     [CallWith=ScriptExecutionContext] constructor(optional DOMString text);
 
     attribute DOMString text;
     attribute DOMString lang;
-    attribute SpeechSynthesisVoice? voice; // FIXME: should not be nullable.
+    attribute SpeechSynthesisVoice? voice;
     attribute unrestricted float volume;
     attribute unrestricted float rate;
     attribute unrestricted float pitch;

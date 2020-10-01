@@ -37,7 +37,8 @@
 [
     ImplementationLacksVTable,
     Conditional=MEDIA_STREAM,
-    Exception
+    Exception,
+    Exposed=Window
 ] interface OverconstrainedError {
     constructor(optional DOMString constraint = "", optional DOMString message = "");
 

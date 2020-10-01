@@ -41,6 +41,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     JSCustomHeader,
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface Document : Node {
     [CallWith=Document] constructor();
 

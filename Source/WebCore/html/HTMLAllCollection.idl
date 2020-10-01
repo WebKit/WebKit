@@ -27,6 +27,7 @@
     LegacyUnenumerableNamedProperties,
     MasqueradesAsUndefined,
     GenerateIsReachable=ImplOwnerNodeRoot,
+    Exposed=Window
 ] interface HTMLAllCollection {
     readonly attribute unsigned long length;
 

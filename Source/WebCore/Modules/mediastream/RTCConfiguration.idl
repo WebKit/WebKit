@@ -54,7 +54,7 @@
 [
     Conditional=WEB_RTC,
     EnabledAtRuntime=PeerConnection,
-    JSGenerateToJSObject,
+    JSGenerateToJSObject
 ] dictionary RTCConfiguration {
     sequence<RTCIceServer> iceServers;
     RTCIceTransportPolicy iceTransportPolicy = "all";

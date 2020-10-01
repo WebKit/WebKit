@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface MutationEvent : Event {
+[
+    Exposed=Window
+] interface MutationEvent : Event {
     // attrChangeType
     const unsigned short MODIFICATION = 1;
     const unsigned short ADDITION = 2;

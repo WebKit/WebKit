@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface UIEvent : Event {
+[
+    Exposed=Window
+] interface UIEvent : Event {
     constructor(DOMString type, optional UIEventInit eventInitDict);
 
     readonly attribute WindowProxy view;

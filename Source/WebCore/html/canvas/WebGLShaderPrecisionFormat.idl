@@ -24,9 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This is specified as Exposed=(Window,Worker)
 [
     Conditional=WEBGL,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface WebGLShaderPrecisionFormat {
     readonly attribute long rangeMin;
     readonly attribute long rangeMax;

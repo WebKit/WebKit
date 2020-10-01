@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestNamedDeleterWithIdentifier {
+[
+    Exposed=TestGlobalObject
+] interface TestNamedDeleterWithIdentifier {
     deleter undefined namedDeleter(DOMString name);
 
     // NOTE: Named deleters require the presence of a named getter as well.

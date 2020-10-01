@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGCursorElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGCursorElement : SVGElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
 };

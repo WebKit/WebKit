@@ -28,6 +28,7 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ActiveDOMObject,
+    Exposed=Window
 ] interface ScriptProcessorNode : AudioNode {
     // Rendering callback
     attribute EventHandler onaudioprocess;

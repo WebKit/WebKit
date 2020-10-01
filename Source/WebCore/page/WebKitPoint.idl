@@ -24,7 +24,8 @@
  */
 
 [
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface WebKitPoint {
     constructor(optional unrestricted float x = 0, optional unrestricted float y = 0);
 

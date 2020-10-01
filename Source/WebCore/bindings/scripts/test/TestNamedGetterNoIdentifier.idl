@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestNamedGetterNoIdentifier {
+[
+    Exposed=TestGlobalObject
+] interface TestNamedGetterNoIdentifier {
     getter DOMString (DOMString name);
 };

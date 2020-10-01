@@ -26,7 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestCEReactions {
+[
+    Exposed=TestGlobalObject
+] interface TestCEReactions {
     [CEReactions] undefined methodWithCEReactions();
     [CEReactions] attribute DOMString attributeWithCEReactions;
     [CEReactions, Reflect] attribute DOMString reflectAttributeWithCEReactions;

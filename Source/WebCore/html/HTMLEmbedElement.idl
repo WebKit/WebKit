@@ -19,7 +19,8 @@
  */
 
 [
-    Plugin
+    Plugin,
+    Exposed=Window
 ] interface HTMLEmbedElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString height;

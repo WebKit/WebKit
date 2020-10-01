@@ -26,6 +26,7 @@
 [
     Conditional=GAMEPAD,
     EnabledBySetting=Gamepads,
+    Exposed=Window
 ] interface GamepadEvent : Event {
     constructor(DOMString type, optional GamepadEventInit eventInitDict);
 

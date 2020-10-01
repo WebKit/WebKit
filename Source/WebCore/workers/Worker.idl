@@ -26,6 +26,7 @@
 
 [
     ActiveDOMObject,
+    Exposed=Window
 ] interface Worker : EventTarget {
     [CallWith=ScriptExecutionContext&RuntimeFlags] constructor(USVString scriptUrl, optional WorkerOptions options);
 

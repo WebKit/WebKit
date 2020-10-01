@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGMaskElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGMaskElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration maskUnits;
     readonly attribute SVGAnimatedEnumeration maskContentUnits;
 

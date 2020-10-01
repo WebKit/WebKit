@@ -27,6 +27,7 @@
 // changes in its output.
 [
     Conditional=Condition1|Condition2,
+    Exposed=TestGlobalObject
 ] interface TestSerializedScriptValueInterface {
     attribute SerializedScriptValue value;
     readonly attribute SerializedScriptValue readonlyValue;

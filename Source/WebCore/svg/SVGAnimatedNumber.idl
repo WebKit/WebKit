@@ -25,7 +25,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGAnimatedNumber {
     attribute unrestricted float baseVal;
     readonly attribute unrestricted float animVal;

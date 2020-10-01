@@ -28,6 +28,7 @@
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudio&ModernUnprefixedWebAudio,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface BaseAudioContext : EventTarget {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;

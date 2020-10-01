@@ -26,7 +26,8 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
+    EnabledAtRuntime=PeerConnection,
+    Exposed=Window
 ] interface RTCDTMFToneChangeEvent : Event {
     constructor(DOMString type, optional RTCDTMFToneChangeEventInit eventInitDict);
 

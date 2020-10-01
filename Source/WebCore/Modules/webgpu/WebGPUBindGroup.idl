@@ -28,6 +28,7 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable,
-    InterfaceName=GPUBindGroup
+    InterfaceName=GPUBindGroup,
+    Exposed=Window
 ] interface WebGPUBindGroup {
 };

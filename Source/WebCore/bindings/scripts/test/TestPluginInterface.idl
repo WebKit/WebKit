@@ -24,6 +24,7 @@
  */
 
 [
-    Plugin
+    Plugin,
+    Exposed=TestGlobalObject
 ] interface TestPluginInterface {
 };

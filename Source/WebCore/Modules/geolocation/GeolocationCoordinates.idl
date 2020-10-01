@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://w3c.github.io/geolocation-api/#coordinates_interface
+// FIXME: The current standard says this should be annotated with 'SecureContext'.
 [
     Conditional=GEOLOCATION,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface GeolocationCoordinates {
     readonly attribute unrestricted double latitude;
     readonly attribute unrestricted double longitude;

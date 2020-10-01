@@ -25,6 +25,7 @@
 
 [
     ActiveDOMObject,
+    Exposed=Window
 ] interface HTMLSourceElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;

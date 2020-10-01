@@ -23,6 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// FIXME: This has been replaced by a 'partial interface mixin WindowOrWorkerGlobalScope'
 // https://w3c.github.io/webcrypto/#crypto-interface
 interface mixin GlobalCrypto {
     readonly attribute Crypto crypto;

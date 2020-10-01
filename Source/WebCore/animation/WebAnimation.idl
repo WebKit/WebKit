@@ -40,7 +40,8 @@ enum AnimationReplaceState {
     ActiveDOMObject,
     InterfaceName=Animation,
     CustomToJSObject,
-    ExportMacro=WEBCORE_EXPORT
+    ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface WebAnimation : EventTarget {
     [Custom] constructor();
 

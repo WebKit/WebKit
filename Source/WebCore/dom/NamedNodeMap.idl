@@ -22,7 +22,8 @@
     ExportToWrappedFunction,
     GenerateIsReachable=ImplElementRoot,
     ImplementationLacksVTable,
-    LegacyUnenumerableNamedProperties
+    LegacyUnenumerableNamedProperties,
+    Exposed=Window
 ] interface NamedNodeMap {
     readonly attribute unsigned long length;
     getter Attr? item(unsigned long index);

@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLLegendElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLLegendElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
 };

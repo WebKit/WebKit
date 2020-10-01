@@ -27,7 +27,9 @@
  */
 
 // Introduced in DOM Level ?:
-interface CSSKeyframeRule : CSSRule {
+[
+    Exposed=Window
+] interface CSSKeyframeRule : CSSRule {
 
     attribute DOMString keyText;
     [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;

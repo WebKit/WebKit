@@ -1,2 +1,2 @@
-interface WorkletGlobalScope : EventTarget {
+[Exposed=Worklet] interface WorkletGlobalScope : EventTarget {
 };

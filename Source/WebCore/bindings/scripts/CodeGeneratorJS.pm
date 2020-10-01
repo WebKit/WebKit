@@ -1976,8 +1976,7 @@ sub NeedsRuntimeCheck
     my ($interface, $context) = @_;
 
     if ($context->extendedAttributes->{Exposed}) {
-        my $interfaceExposures = $interface->extendedAttributes->{Exposed} || "Window";
-        return 1 if !IsAlwaysExposedOnInterface($interfaceExposures, $context->extendedAttributes->{Exposed});
+        return 1 if !IsAlwaysExposedOnInterface($interface->extendedAttributes->{Exposed}, $context->extendedAttributes->{Exposed});
     }
 
     return $context->extendedAttributes->{EnabledAtRuntime}
@@ -5568,7 +5567,6 @@ sub GenerateOperationTrampolineDefinition
 
     my $hasPromiseReturnType = $codeGenerator->IsPromiseType($operation->type);
     my $idlOperationType = $hasPromiseReturnType ? "IDLOperationReturningPromise" : "IDLOperation";
-    my $exposureScope = $interface->extendedAttributes->{Exposed} ? "WindowOrWorker" : "WindowOnly";
 
     my $callFunctionName = "call";
     $callFunctionName .= "Static" if $operation->isStatic;

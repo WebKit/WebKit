@@ -29,7 +29,9 @@
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its output.
 
-interface TestConditionalIncludes {
+[
+    Exposed=Window
+] interface TestConditionalIncludes {
     readonly attribute double testAttr;
 };
 

@@ -23,9 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: This is specified as Exposed=(Window,Worker)
 [
     Conditional=WEBGL2,
     EnabledAtRuntime=WebGL2,
-    GenerateIsReachable=Impl
+    GenerateIsReachable=Impl,
+    Exposed=Window
 ] interface WebGLVertexArrayObject {
 };

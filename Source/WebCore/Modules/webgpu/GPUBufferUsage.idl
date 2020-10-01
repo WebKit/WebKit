@@ -30,7 +30,8 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     DoNotCheckConstants,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    Exposed=Window
 ] interface GPUBufferUsage {
     const u32 NONE = 0;
     const u32 MAP_READ = 1;

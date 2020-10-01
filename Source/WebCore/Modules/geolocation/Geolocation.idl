@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// http://www.w3.org/TR/geolocation-API/#geolocation_interface
+// https://w3c.github.io/geolocation-api/#navigator_interface
 [
     ActiveDOMObject,
     Conditional=GEOLOCATION, 
     GenerateIsReachable=ReachableFromNavigator,
+    Exposed=Window
 ] interface Geolocation {
     // FIXME: PositionErrorCallback should not be nullable
     undefined getCurrentPosition(PositionCallback successCallback,

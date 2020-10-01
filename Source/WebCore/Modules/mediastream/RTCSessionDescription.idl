@@ -34,7 +34,8 @@
     EnabledAtRuntime=PeerConnection,
     ImplementationLacksVTable,
     PrivateIdentifier,
-    PublicIdentifier
+    PublicIdentifier,
+    Exposed=Window
 ] interface RTCSessionDescription {
     constructor(RTCSessionDescriptionInit descriptionInitDict);
 

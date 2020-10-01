@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLMetaElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLMetaElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString content;
     [CEReactions=NotNeeded, Reflect=http_equiv] attribute DOMString httpEquiv;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;

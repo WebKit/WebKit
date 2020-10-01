@@ -24,6 +24,8 @@
  */
 
 // http://www.whatwg.org/specs/web-apps/current-work/#htmlspanelement
-interface HTMLSpanElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLSpanElement : HTMLElement {
 };
 

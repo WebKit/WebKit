@@ -32,7 +32,8 @@ typedef unsigned long long u64;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     InterfaceName=GPURenderPassEncoder,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    Exposed=Window
 ] interface WebGPURenderPassEncoder : WebGPUProgrammablePassEncoder {
     undefined setPipeline(WebGPURenderPipeline pipeline);
     undefined setBlendColor(GPUColor color);

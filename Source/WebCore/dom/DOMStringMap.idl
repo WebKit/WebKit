@@ -27,6 +27,7 @@
     GenerateIsReachable=ImplElementRoot,
     LegacyOverrideBuiltIns,
     SkipVTableValidation,
+    Exposed=Window
 ] interface DOMStringMap {
     getter DOMString (DOMString name);
     [CEReactions] setter undefined (DOMString name, DOMString value);

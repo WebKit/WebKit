@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLTableColElement : HTMLElement {
+[
+    Exposed=Window
+] interface HTMLTableColElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;
     [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;

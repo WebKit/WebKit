@@ -18,8 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[Exposed=Window]
-interface CSSStyleRule : CSSRule {
+[
+    Exposed=Window
+] interface CSSStyleRule : CSSRule {
     attribute DOMString? selectorText;
     [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };

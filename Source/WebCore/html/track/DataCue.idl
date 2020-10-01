@@ -26,6 +26,7 @@
 
 [
     Conditional=VIDEO,
+    Exposed=Window
 ] interface DataCue : TextTrackCue {
     [CallWith=Document] constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data);
     [CallWith=Document] constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type);

@@ -19,7 +19,8 @@
 
 [
     ImplementationLacksVTable,
-    InterfaceName=CSSPrimitiveValue
+    InterfaceName=CSSPrimitiveValue,
+    Exposed=Window
 ] interface DeprecatedCSSOMPrimitiveValue : DeprecatedCSSOMValue {
     // UnitTypes
     const unsigned short CSS_UNKNOWN = 0;

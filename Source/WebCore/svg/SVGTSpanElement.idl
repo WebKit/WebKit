@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGTSpanElement : SVGTextPositioningElement {
+[
+    Exposed=Window
+] interface SVGTSpanElement : SVGTextPositioningElement {
 };
 

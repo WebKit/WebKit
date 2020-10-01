@@ -19,6 +19,7 @@
 
 [
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLOptGroupElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     [CEReactions=NotNeeded, Reflect] attribute DOMString label;

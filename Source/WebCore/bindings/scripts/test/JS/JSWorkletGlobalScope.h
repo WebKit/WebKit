@@ -62,6 +62,8 @@ public:
     {
         return static_cast<WorkletGlobalScope&>(Base::wrapped());
     }
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
     JSWorkletGlobalScope(JSC::VM&, JSC::Structure*, Ref<WorkletGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSProxy*);

@@ -23,9 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This has been replaced by a 'partial interface mixin WindowOrWorkerGlobalScope'.
 // https://w3c.github.io/hr-time/#extensions-to-windoworworkerglobalscope-mixin
-[
-    Exposed=(Window,Worker)
-] interface mixin GlobalPerformance {
+interface mixin GlobalPerformance {
     [Replaceable] readonly attribute Performance performance;
 };

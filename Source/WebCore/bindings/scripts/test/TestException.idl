@@ -27,7 +27,8 @@
  */
 
 [
-    Exception
+    Exception,
+    Exposed=TestGlobalObject
 ] interface TestException {
    readonly attribute DOMString name;
 };

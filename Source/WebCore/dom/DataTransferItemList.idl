@@ -33,6 +33,7 @@
     EnabledBySetting=DataTransferItems,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
+    Exposed=Window
 ] interface DataTransferItemList {
     readonly attribute long length;
     getter DataTransferItem item(unsigned long index);

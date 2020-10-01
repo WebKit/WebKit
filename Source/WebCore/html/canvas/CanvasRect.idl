@@ -24,9 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasrect
-[
-    Exposed=(Window,Worker)
-] interface mixin CanvasRect {
+interface mixin CanvasRect {
     // FIXME: All the unrestricted float parameters below should be unrestricted doubles.
 
     // rects

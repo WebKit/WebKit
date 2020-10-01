@@ -18,8 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[Exposed=Window]
-interface CSSImportRule : CSSRule {
+[
+    Exposed=Window
+] interface CSSImportRule : CSSRule {
     readonly attribute USVString href;
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
     [SameObject] readonly attribute CSSStyleSheet styleSheet;

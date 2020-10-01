@@ -24,7 +24,8 @@
  */
 
 [
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    Exposed=Window
 ] interface SVGFEBlendElement : SVGElement {
     // Blend Mode Types
     const unsigned short SVG_FEBLEND_MODE_UNKNOWN = 0;

@@ -22,6 +22,7 @@
     ExportToWrappedFunction,
     GenerateIsReachable=ImplOwnerNodeRoot,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface HTMLOptionsCollection : HTMLCollection {
     [CEReactions] attribute unsigned long length;
     [CEReactions] setter undefined (unsigned long index, HTMLOptionElement? option);

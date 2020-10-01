@@ -29,6 +29,7 @@
 [
     ImplementationLacksVTable,
     EnabledAtRuntime=WebSQL,
+    Exposed=Window
 ] interface Database {
     readonly attribute DOMString version;
     undefined changeVersion(DOMString oldVersion, DOMString newVersion, optional SQLTransactionCallback? callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);

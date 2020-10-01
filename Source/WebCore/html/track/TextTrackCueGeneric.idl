@@ -29,5 +29,6 @@
     JSGenerateToNativeObject,
     LegacyNoInterfaceObject,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
 ] interface TextTrackCueGeneric : VTTCue {
 };

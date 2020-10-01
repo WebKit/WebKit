@@ -28,6 +28,7 @@
     Conditional=APPLE_PAY,
     EnabledBySetting=ApplePay,
     SecureContext,
+    Exposed=Window
 ] interface ApplePaySetup {
     [CallWith=ScriptExecutionContext] constructor(ApplePaySetupConfiguration configuration);
 

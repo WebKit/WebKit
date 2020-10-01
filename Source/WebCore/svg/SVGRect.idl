@@ -20,7 +20,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface SVGRect {
+[
+    Exposed=Window
+] interface SVGRect {
     attribute unrestricted float x;
     attribute unrestricted float y;
     attribute unrestricted float width;

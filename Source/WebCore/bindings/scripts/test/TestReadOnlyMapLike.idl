@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestReadOnlyMapLike {
+[
+    Exposed=TestGlobalObject
+] interface TestReadOnlyMapLike {
     readonly maplike<DOMString, DOMString>;
 };

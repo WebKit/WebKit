@@ -22,6 +22,7 @@
     CustomToJSObject,
     NewImpurePropertyFiresWatchpoints,
     LegacyOverrideBuiltIns,
+    Exposed=Window
 ] interface HTMLDocument : Document {    
     getter (WindowProxy or Element or HTMLCollection) (DOMString name);
 };

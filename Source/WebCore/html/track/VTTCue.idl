@@ -30,6 +30,7 @@ typedef (double or AutoKeyword) LineAndPositionSetting;
     Conditional=VIDEO,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    Exposed=Window
 ] interface VTTCue : TextTrackCue {
     [CallWith=Document] constructor(double startTime, double endTime, DOMString text);
 

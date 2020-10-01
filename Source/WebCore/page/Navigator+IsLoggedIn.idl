@@ -25,7 +25,6 @@
 
 [
     SecureContext,
-    Exposed=Window,
     EnabledBySetting=IsLoggedInAPI,
     ImplementedBy=NavigatorIsLoggedIn
 ] partial interface Navigator {

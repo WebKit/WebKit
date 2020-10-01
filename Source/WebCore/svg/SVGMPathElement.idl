@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGMPathElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGMPathElement : SVGElement {
 };
 
 SVGMPathElement includes SVGURIReference;

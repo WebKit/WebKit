@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface AnimationEvent : Event {
+[
+    Exposed=Window
+] interface AnimationEvent : Event {
     constructor(DOMString type, optional AnimationEventInit animationEventInitDict);
 
     readonly attribute DOMString animationName;

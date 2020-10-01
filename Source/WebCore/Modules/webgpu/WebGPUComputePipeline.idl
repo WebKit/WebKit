@@ -27,6 +27,7 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    InterfaceName=GPUComputePipeline
+    InterfaceName=GPUComputePipeline,
+    Exposed=Window
 ] interface WebGPUComputePipeline {
 };

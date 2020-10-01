@@ -36,6 +36,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    Exposed=Window
 ] interface AudioParam {
     [ImplementedAs=valueForBindings] attribute float value;
 

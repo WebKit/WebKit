@@ -29,6 +29,7 @@
     Conditional=CSS_PAINTING_API,
     JSGenerateToJSObject,
     JSCustomMarkFunction,
+    Exposed=PaintWorklet
 ] interface PaintRenderingContext2D {
 };
 

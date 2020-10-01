@@ -32,6 +32,7 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     ImplementationLacksVTable,
     InterfaceName=Selection,
+    Exposed=Window
 ] interface DOMSelection {
     readonly attribute Node? anchorNode;
     readonly attribute unsigned long anchorOffset;

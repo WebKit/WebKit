@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGMarkerElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGMarkerElement : SVGElement {
     // Marker Unit Types
     const unsigned short SVG_MARKERUNITS_UNKNOWN        = 0;
     const unsigned short SVG_MARKERUNITS_USERSPACEONUSE = 1;

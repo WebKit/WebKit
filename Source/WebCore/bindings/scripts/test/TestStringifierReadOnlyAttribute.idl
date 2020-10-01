@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface TestStringifierReadOnlyAttribute {
+[
+    Exposed=TestGlobalObject
+] interface TestStringifierReadOnlyAttribute {
     stringifier readonly attribute DOMString identifier;
 };

@@ -27,8 +27,7 @@
     Conditional=ENCRYPTED_MEDIA,
     ImplementedAs=MediaKeysRequirement,
     ExportMacro=WEBCORE_EXPORT
-]
-enum MediaKeysRequirement {
+] enum MediaKeysRequirement {
     "required",
     "optional",
     "not-allowed"

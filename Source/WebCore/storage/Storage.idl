@@ -26,6 +26,7 @@
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     SkipVTableValidation,
+    Exposed=Window
 ] interface Storage {
     readonly attribute unsigned long length;
     DOMString? key(unsigned long index);

@@ -30,6 +30,7 @@
 [
     InterfaceName=CSS,
     ImplementationLacksVTable,
+    Exposed=Window
 ] interface DOMCSSNamespace {
     [CallWith=Document] static boolean supports(DOMString property, DOMString value);
     [CallWith=Document] static boolean supports(DOMString conditionText);

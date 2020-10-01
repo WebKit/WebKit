@@ -30,6 +30,7 @@
     ImplementationLacksVTable,
     JSCustomMarkFunction,
     JSGenerateToJSObject,
+    Exposed=Window
 ] interface SVGViewSpec {
     readonly attribute SVGTransformList transform;
     readonly attribute SVGElement viewTarget;

@@ -30,7 +30,8 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     InterfaceName=GPUProgrammablePassEncoder,
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface WebGPUProgrammablePassEncoder {
     undefined endPass();
     undefined setBindGroup(u32 index, WebGPUBindGroup bindGroup/*, optional sequence<u32> dynamicOffsets*/);

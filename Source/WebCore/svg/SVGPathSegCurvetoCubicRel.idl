@@ -24,7 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */ 
 
-interface SVGPathSegCurvetoCubicRel : SVGPathSeg {
+[
+    Exposed=Window
+] interface SVGPathSegCurvetoCubicRel : SVGPathSeg {
     attribute unrestricted float x;
     attribute unrestricted float y;
     attribute unrestricted float x1;

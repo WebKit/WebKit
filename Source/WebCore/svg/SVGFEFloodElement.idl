@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface SVGFEFloodElement : SVGElement {
+[
+    Exposed=Window
+] interface SVGFEFloodElement : SVGElement {
 };
 
 SVGFEFloodElement includes SVGFilterPrimitiveStandardAttributes;

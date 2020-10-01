@@ -28,6 +28,7 @@
 
 [
     SkipVTableValidation,
+    Exposed=Window
 ] interface DataTransfer {
     constructor();
 

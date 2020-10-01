@@ -27,6 +27,7 @@
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     SkipVTableValidation,
+    Exposed=Window
 ] interface MediaDeviceInfo {
     readonly attribute DOMString deviceId;
     readonly attribute MediaDeviceKind kind;

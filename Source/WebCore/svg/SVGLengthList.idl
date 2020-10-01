@@ -25,7 +25,8 @@
  */
 
 [
-    SkipVTableValidation
+    SkipVTableValidation,
+    Exposed=Window
 ] interface SVGLengthList {
     readonly attribute unsigned long length;
     readonly attribute unsigned long numberOfItems;

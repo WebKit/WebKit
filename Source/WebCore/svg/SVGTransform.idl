@@ -20,7 +20,8 @@
  */
 
 [
-    ConstantsScope=SVGTransformValue
+    ConstantsScope=SVGTransformValue,
+    Exposed=Window
 ] interface SVGTransform { 
     // Transform Types
     const unsigned short SVG_TRANSFORM_UNKNOWN = 0;

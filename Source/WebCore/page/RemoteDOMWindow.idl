@@ -42,7 +42,7 @@
     LegacyUnenumerableNamedProperties,
     LegacyNoInterfaceObject,
     Global=Window,
-    Exposed=Window,
+    Exposed=Window
 ] interface RemoteDOMWindow {
     [LegacyUnforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
     [Replaceable] readonly attribute WindowProxy self;

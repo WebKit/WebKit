@@ -19,6 +19,7 @@
 
 [
     DoNotCheckConstants,
+    Exposed=Window
 ] interface MouseEvent : UIEvent {
     constructor(DOMString type, optional MouseEventInit eventInitDict);
 
