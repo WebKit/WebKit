@@ -1,3 +1,19 @@
+2020-10-01  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r267249): Crash in WebPage::updatePreferences() when libwebrtc is not available.
+        https://bugs.webkit.org/show_bug.cgi?id=217186
+        <rdar://problem/69817170>
+
+        Reviewed by Eric Carlson.
+
+        Always check for the presence of libwebrtc before calling into it.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProvider::setH264HardwareEncoderAllowed):
+        (WebCore::LibWebRTCProviderCocoa::createDecoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::setActive):
+
 2020-10-01  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Partially convert Position::inlineBoxAndOffset to use iterator

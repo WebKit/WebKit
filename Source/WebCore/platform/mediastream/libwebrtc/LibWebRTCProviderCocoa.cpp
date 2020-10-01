@@ -48,7 +48,8 @@ UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 
 void LibWebRTCProvider::setH264HardwareEncoderAllowed(bool allowed)
 {
-    webrtc::setH264HardwareEncoderAllowed(allowed);
+    if (webRTCAvailable())
+        webrtc::setH264HardwareEncoderAllowed(allowed);
 }
 
 LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa()
@@ -59,6 +60,9 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecod
 {
     ASSERT(isMainThread());
 
+    if (!webRTCAvailable())
+        return nullptr;
+
     return webrtc::createWebKitDecoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off);
 }
 
@@ -66,13 +70,17 @@ std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncod
 {
     ASSERT(isMainThread());
 
+    if (!webRTCAvailable())
+        return nullptr;
+
     webrtc::setH264LowLatencyEncoderEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled());
     return webrtc::createWebKitEncoderFactory(isSupportingH265() ? webrtc::WebKitH265::On : webrtc::WebKitH265::Off, isSupportingVP9() ? webrtc::WebKitVP9::On : webrtc::WebKitVP9::Off);
 }
 
 void LibWebRTCProviderCocoa::setActive(bool value)
 {
-    webrtc::setApplicationStatus(value);
+    if (webRTCAvailable())
+        webrtc::setApplicationStatus(value);
 }
 
 bool LibWebRTCProvider::webRTCAvailable()
