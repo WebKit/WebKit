@@ -717,6 +717,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrict, void, (JSGlob
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     JSValue value = JSValue::decode(encodedValue);
@@ -751,6 +752,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrict, void, (JSGlobalO
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     JSValue value = JSValue::decode(encodedValue);
@@ -764,7 +766,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictOptimize, void, (J
     SuperSamplerScope superSamplerScope(false);
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);

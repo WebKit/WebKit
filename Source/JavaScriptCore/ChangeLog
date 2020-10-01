@@ -1,5 +1,19 @@
 2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        stress/put-private-name-invalid-define.js.ftl-eager is getting flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217164
+
+        Reviewed by Mark Lam.
+
+        JIT operations need to use JITOperationPrologueCallFrameTracer to configure top call frame correctly.
+        But putById private field JIT operations miss them or use wrong frame tracer. Since we are not setting top frame correctly,
+        exception object creation from this JIT operations can be broken, and leading to stress/put-private-name-invalid-define.js.ftl-eager crash.
+        This patch configures top call frame via JITOperationPrologueCallFrameTracer appropriately.
+
+        * jit/JITOperations.cpp:
+
+2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Define Array#sort's implementation functions as globalPrivate
         https://bugs.webkit.org/show_bug.cgi?id=217168
 
