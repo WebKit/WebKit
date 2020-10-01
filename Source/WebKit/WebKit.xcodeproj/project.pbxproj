@@ -5155,7 +5155,7 @@
 		CDAC20F423FC383A0021DEE3 /* RemoteCDMProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCDMProxyMessages.h; sourceTree = "<group>"; };
 		CDAC20F523FC383B0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCDMInstanceProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		CDAC20F623FC383B0021DEE3 /* RemoteCDMInstanceProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCDMInstanceProxyMessagesReplies.h; sourceTree = "<group>"; };
-		CDBB49F4240D8AC60017C292 /* RemoteAudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSession.h; sourceTree = "<group>"; };
+		CDBB49F4240D8AC60017C292 /* RemoteAudioSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSession.h; sourceTree = "<group>"; };
 		CDBB49F5240D8AC60017C292 /* RemoteAudioSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSession.cpp; sourceTree = "<group>"; };
 		CDBB49F6240D8C950017C292 /* RemoteAudioSessionProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSessionProxy.h; sourceTree = "<group>"; };
 		CDBB49F7240D8C950017C292 /* RemoteAudioSessionProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSessionProxy.cpp; sourceTree = "<group>"; };
@@ -5174,7 +5174,6 @@
 		CDCDC99B248FE8DA00A69522 /* EndowmentStateTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EndowmentStateTracker.h; sourceTree = "<group>"; };
 		CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EndowmentStateTracker.mm; sourceTree = "<group>"; };
 		CDD5356F240DD34300F7B8C4 /* RemoteAudioSession.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioSession.messages.in; sourceTree = "<group>"; };
-		CDD53570240DD4EF00F7B8C4 /* RemoteAudioSessionProxyManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioSessionProxyManager.messages.in; sourceTree = "<group>"; };
 		CDD53571240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		CDD53572240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSessionProxyMessages.h; sourceTree = "<group>"; };
 		CDD53574240DDE0700F7B8C4 /* RemoteAudioSessionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSessionMessagesReplies.h; sourceTree = "<group>"; };
@@ -5561,7 +5560,6 @@
 				CDBB49F8240D8D530017C292 /* RemoteAudioSessionProxy.messages.in */,
 				CDBB49FA240D963D0017C292 /* RemoteAudioSessionProxyManager.cpp */,
 				CDBB49F9240D963C0017C292 /* RemoteAudioSessionProxyManager.h */,
-				CDD53570240DD4EF00F7B8C4 /* RemoteAudioSessionProxyManager.messages.in */,
 				071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */,
 				071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */,
 				CDAC207923FB1E210021DEE3 /* RemoteCDMFactoryProxy.cpp */,

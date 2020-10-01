@@ -1,3 +1,35 @@
+2020-10-01  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Enable IPC message handlers of RemoteAudioSession
+        https://bugs.webkit.org/show_bug.cgi?id=217144
+
+        Reviewed by Jer Noble.
+
+        This patch enables the RemoteAudioSession in the Web process to handle
+        IPC messages from the GPU process. It also fixes a bug preventing the
+        audio playback to start.
+
+        No new tests, no functional change.
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::tryToSetActiveForProcess):
+        Don't interrupt the audio session trying to start.
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.messages.in: Removed.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage): Clean-up.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::RemoteAudioSession):
+        (WebKit::RemoteAudioSession::~RemoteAudioSession):
+        We need to remove the "destinationID" parameter, otherwise, RemoteAudioSession
+        won't receive the IPC messages.
+
+        * WebProcess/GPU/media/RemoteAudioSession.h: Clean-up.
+        * WebProcess/GPU/media/WebMediaStrategy.h: Clean-up.
+
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should support MediaRecorderOptions.mimeType

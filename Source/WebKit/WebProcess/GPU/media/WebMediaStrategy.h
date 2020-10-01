@@ -50,9 +50,6 @@ private:
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcess { false };
 #endif
-
 };
 
 } // namespace WebKit
-
-

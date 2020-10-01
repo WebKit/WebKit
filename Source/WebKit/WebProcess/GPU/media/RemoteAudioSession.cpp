@@ -49,13 +49,13 @@ RemoteAudioSession::RemoteAudioSession(WebProcess& process, RemoteAudioSessionCo
     : m_process(process)
     , m_configuration(WTFMove(configuration))
 {
-    m_process.ensureGPUProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), 1, *this);
+    m_process.ensureGPUProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
 }
 
 RemoteAudioSession::~RemoteAudioSession()
 {
     if (auto* connection = m_process.existingGPUProcessConnection())
-        connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), 1);
+        connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
 }
 
 IPC::Connection& RemoteAudioSession::connection()

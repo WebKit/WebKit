@@ -46,7 +46,7 @@ class RemoteAudioSession final
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<RemoteAudioSession> create(WebProcess&);
-    virtual ~RemoteAudioSession();
+    ~RemoteAudioSession();
 
 private:
     friend UniqueRef<RemoteAudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSession>(WebProcess&, RemoteAudioSessionConfiguration&&);

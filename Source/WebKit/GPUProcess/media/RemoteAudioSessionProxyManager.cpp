@@ -155,6 +155,9 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
     // proxies who are already active. Walk over the proxies, and interrupt
     // those proxies whose categories indicate they cannot mix with others.
     for (auto& otherProxy : m_proxies) {
+        if (otherProxy.processIdentifier() == proxy.processIdentifier())
+            continue;
+
         if (!otherProxy.isActive())
             continue;
 
@@ -164,9 +167,7 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
         otherProxy.beginInterruption();
     }
 #endif
-
     return true;
-
 }
 
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()
