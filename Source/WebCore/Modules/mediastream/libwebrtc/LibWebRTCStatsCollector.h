@@ -31,9 +31,11 @@
 #include <wtf/RefPtr.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #include <webrtc/pc/rtc_stats_collector.h>
 
+ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
