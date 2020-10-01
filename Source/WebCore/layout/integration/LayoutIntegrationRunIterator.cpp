@@ -55,15 +55,20 @@ bool RunIterator::atEnd() const
     });
 }
 
+LineRunIterator RunIterator::nextOnLine() const
+{
+    return LineRunIterator(*this).traverseNextOnLine();
+}
+
 TextRunIterator::TextRunIterator(Run::PathVariant&& pathVariant)
     : RunIterator(WTFMove(pathVariant))
 {
 }
 
-TextRunIterator& TextRunIterator::traverseNextTextRunInVisualOrder()
+TextRunIterator& TextRunIterator::traverseNextTextRun()
 {
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
-        path.traverseNextTextRunInVisualOrder();
+        path.traverseNextTextRun();
     });
     return *this;
 }
@@ -97,7 +102,7 @@ LineRunIterator& LineRunIterator::traverseNextOnLine()
 static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject& renderer)
 {
     // In currently supported cases the renderer is always direct child of the flow.
-    if (!is<RenderBlockFlow>(*renderer.parent()))
+    if (!is<RenderBlockFlow>(renderer.parent()))
         return nullptr;
     return downcast<RenderBlockFlow>(renderer.parent());
 }
@@ -135,13 +140,23 @@ TextRunRange textRunsFor(const RenderText& text)
 
 RunIterator runFor(const RenderLineBreak& renderElement)
 {
-    if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
         if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
             return layoutFormattingContextLineLayout->runFor(renderElement);
-#endif
     }
+#endif
+    return { LegacyPath(renderElement.inlineBoxWrapper()) };
+}
 
+RunIterator runFor(const RenderBox& renderElement)
+{
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
+        if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
+            return layoutFormattingContextLineLayout->runFor(renderElement);
+    }
+#endif
     return { LegacyPath(renderElement.inlineBoxWrapper()) };
 }
 

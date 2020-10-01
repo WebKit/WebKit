@@ -121,6 +121,8 @@ public:
 
     bool atEnd() const;
 
+    LineRunIterator nextOnLine() const;
+
 protected:
     Run m_run;
 };
@@ -130,13 +132,16 @@ public:
     TextRunIterator() { }
     TextRunIterator(Run::PathVariant&&);
 
-    TextRunIterator& operator++() { return traverseNextTextRunInVisualOrder(); }
+    TextRunIterator& operator++() { return traverseNextTextRun(); }
 
     const TextRun& operator*() const { return get(); }
     const TextRun* operator->() const { return &get(); }
 
-    TextRunIterator& traverseNextTextRunInVisualOrder();
+    TextRunIterator& traverseNextTextRun();
     TextRunIterator& traverseNextTextRunInTextOrder();
+
+    TextRunIterator nextTextRun() const { return TextRunIterator(*this).traverseNextTextRun(); }
+    TextRunIterator nextTextRunInTextOrder() const { return TextRunIterator(*this).traverseNextTextRunInTextOrder(); }
 
 private:
     const TextRun& get() const { return downcast<TextRun>(m_run); }
@@ -171,6 +176,7 @@ TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunRange textRunsFor(const RenderText&);
 RunIterator runFor(const RenderLineBreak&);
+RunIterator runFor(const RenderBox&);
 LineRunIterator lineRun(const RunIterator&);
 
 // -----------------------------------------------

@@ -71,7 +71,7 @@ public:
     }
     inline bool isLastTextRun() const { return !nextInlineTextBoxInTextOrder(); };
 
-    void traverseNextTextRunInVisualOrder() { m_inlineBox = inlineTextBox()->nextTextBox(); }
+    void traverseNextTextRun() { m_inlineBox = inlineTextBox()->nextTextBox(); }
     void traverseNextTextRunInTextOrder()
     {
         m_inlineBox = nextInlineTextBoxInTextOrder();

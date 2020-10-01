@@ -1146,32 +1146,23 @@ static bool isNonTextLeafChild(RenderObject& object)
     return !downcast<RenderElement>(object).firstChild();
 }
 
-static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
+static LayoutIntegration::TextRunIterator searchAheadForBetterMatch(RenderText& renderer)
 {
-    RenderBlock* container = renderer->containingBlock();
-    RenderObject* next = renderer;
+    RenderBlock* container = renderer.containingBlock();
+    RenderObject* next = &renderer;
     while ((next = next->nextInPreOrder(container))) {
         if (is<RenderBlock>(*next))
-            return nullptr;
+            return { };
         if (next->isBR())
-            return nullptr;
+            return { };
         if (isNonTextLeafChild(*next))
-            return nullptr;
+            return { };
         if (is<RenderText>(*next)) {
-            InlineTextBox* match = nullptr;
-            unsigned minOffset = std::numeric_limits<unsigned>::max();
-            for (InlineTextBox* box = downcast<RenderText>(*next).firstTextBox(); box; box = box->nextTextBox()) {
-                unsigned caretMinOffset = box->caretMinOffset();
-                if (caretMinOffset < minOffset) {
-                    match = box;
-                    minOffset = caretMinOffset;
-                }
-            }
-            if (match)
-                return match;
+            if (auto run = LayoutIntegration::firstTextRunInTextOrderFor(downcast<RenderText>(*next)))
+                return run;
         }
     }
-    return nullptr;
+    return { };
 }
 
 static Position downstreamIgnoringEditingBoundaries(Position position)
@@ -1205,43 +1196,49 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
     if (!renderer)
         return { nullptr, caretOffset };
 
-    InlineBox* inlineBox = nullptr;
+    LayoutIntegration::RunIterator run;
 
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
         lineBreakRenderer.ensureLineBoxes();
-        inlineBox = !caretOffset ? lineBreakRenderer.inlineBoxWrapper() : nullptr;
+        if (!caretOffset)
+            run = LayoutIntegration::runFor(lineBreakRenderer);
     } else if (is<RenderText>(*renderer)) {
         auto& textRenderer = downcast<RenderText>(*renderer);
         textRenderer.ensureLineBoxes();
 
-        InlineTextBox* box;
-        InlineTextBox* candidate = nullptr;
+        auto textRun = LayoutIntegration::firstTextRunFor(textRenderer);
+        LayoutIntegration::TextRunIterator candidate;
 
-        for (box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
-            unsigned caretMinOffset = box->caretMinOffset();
-            unsigned caretMaxOffset = box->caretMaxOffset();
+        for (; textRun; ++textRun) {
+            unsigned caretMinOffset = textRun->minimumCaretOffset();
+            unsigned caretMaxOffset = textRun->maximumCaretOffset();
 
-            if (static_cast<unsigned>(caretOffset) < caretMinOffset || static_cast<unsigned>(caretOffset) > caretMaxOffset || (static_cast<unsigned>(caretOffset) == caretMaxOffset && box->isLineBreak()))
+            if (static_cast<unsigned>(caretOffset) < caretMinOffset || static_cast<unsigned>(caretOffset) > caretMaxOffset || (static_cast<unsigned>(caretOffset) == caretMaxOffset && textRun->isLineBreak()))
                 continue;
 
-            if (static_cast<unsigned>(caretOffset) > caretMinOffset && static_cast<unsigned>(caretOffset) < caretMaxOffset) {
-                return { box, caretOffset };
-            }
+            if (static_cast<unsigned>(caretOffset) > caretMinOffset && static_cast<unsigned>(caretOffset) < caretMaxOffset)
+                return { textRun->legacyInlineBox(), caretOffset };
 
-            if (((static_cast<unsigned>(caretOffset) == caretMaxOffset) ^ (affinity == Affinity::Downstream))
-                || ((static_cast<unsigned>(caretOffset) == caretMinOffset) ^ (affinity == Affinity::Upstream))
-                || (static_cast<unsigned>(caretOffset) == caretMaxOffset && box->nextLeafOnLine() && box->nextLeafOnLine()->isLineBreak()))
+            if ((static_cast<unsigned>(caretOffset) == caretMaxOffset) ^ (affinity == Affinity::Downstream))
                 break;
 
-            candidate = box;
+            if ((static_cast<unsigned>(caretOffset) == caretMinOffset) ^ (affinity == Affinity::Upstream))
+                break;
+
+            if (static_cast<unsigned>(caretOffset) == caretMaxOffset && textRun.nextOnLine() && textRun.nextOnLine()->isLineBreak())
+                break;
+
+            candidate = textRun;
         }
-        if (candidate && candidate == textRenderer.lastTextBox() && affinity == Affinity::Downstream) {
-            box = searchAheadForBetterMatch(&textRenderer);
-            if (box)
-                caretOffset = box->caretMinOffset();
+
+        if (candidate && !candidate.nextTextRun() && affinity == Affinity::Downstream) {
+            textRun = searchAheadForBetterMatch(textRenderer);
+            if (textRun)
+                caretOffset = textRun->minimumCaretOffset();
         }
-        inlineBox = box ? box : candidate;
+
+        run = textRun ? textRun : candidate;
     } else {
         if (canHaveChildrenForEditing(*deprecatedNode()) && is<RenderBlockFlow>(*renderer) && hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderBlockFlow>(*renderer))) {
             // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
@@ -1258,15 +1255,16 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
             return equivalent.inlineBoxAndOffset(Affinity::Upstream, primaryDirection);
         }
         if (is<RenderBox>(*renderer)) {
-            inlineBox = downcast<RenderBox>(*renderer).inlineBoxWrapper();
-            if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
-                return { inlineBox, caretOffset };
+            run = LayoutIntegration::runFor(downcast<RenderBox>(*renderer));
+            if (run && static_cast<unsigned>(caretOffset) > run->minimumCaretOffset() && static_cast<unsigned>(caretOffset) < run->maximumCaretOffset())
+                return { run->legacyInlineBox(), caretOffset };
         }
     }
 
-    if (!inlineBox)
+    if (!run)
         return { nullptr, caretOffset };
 
+    auto* inlineBox = run->legacyInlineBox();
     unsigned char level = inlineBox->bidiLevel();
 
     if (inlineBox->direction() == primaryDirection) {

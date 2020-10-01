@@ -98,7 +98,7 @@ public:
         return &run().layoutBox() != &runs()[m_runIndex + 1].layoutBox();
     };
 
-    void traverseNextTextRunInVisualOrder()
+    void traverseNextTextRun()
     {
         ASSERT(!atEnd());
         ASSERT(run().textContent());
@@ -114,7 +114,7 @@ public:
     void traverseNextTextRunInTextOrder()
     {
         // FIXME: No RTL in LFC.
-        traverseNextTextRunInVisualOrder();
+        traverseNextTextRun();
     }
 
     void traverseNextOnLine()

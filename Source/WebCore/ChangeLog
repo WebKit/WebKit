@@ -1,3 +1,33 @@
+2020-10-01  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Partially convert Position::inlineBoxAndOffset to use iterator
+        https://bugs.webkit.org/show_bug.cgi?id=217180
+
+        Reviewed by Zalan Bujtas.
+
+        This still forces the legacy path as the return type currently requires it.
+
+        * dom/Position.cpp:
+        (WebCore::searchAheadForBetterMatch):
+        (WebCore::Position::inlineBoxAndOffset const):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::nextOnLine const):
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextTextRun):
+        (WebCore::LayoutIntegration::lineLayoutSystemFlowForRenderer):
+        (WebCore::LayoutIntegration::runFor):
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextTextRunInVisualOrder): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::TextRunIterator::operator++):
+        (WebCore::LayoutIntegration::TextRunIterator::nextTextRun const):
+        (WebCore::LayoutIntegration::TextRunIterator::nextTextRunInTextOrder const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::traverseNextTextRun):
+        (WebCore::LayoutIntegration::LegacyPath::traverseNextTextRunInVisualOrder): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::traverseNextTextRun):
+        (WebCore::LayoutIntegration::ModernPath::traverseNextTextRunInTextOrder):
+        (WebCore::LayoutIntegration::ModernPath::traverseNextTextRunInVisualOrder): Deleted.
+
 2020-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r267781): ASSERTION FAILED: Optional.h(525) : T *WTF::Optional<WebCore::Layout::LineRun::Text>::operator->() on 16 fast/layoutformattingcontext/* tests
