@@ -46,16 +46,18 @@ String TextBox::debugDescription() const
     TextStream stream;
 
     stream << "text box " << borderBoxFrame() << " (" << this << ")";
-    auto textContent = text()->content().substring(text()->start(), text()->length());
-    textContent.replaceWithLiteral('\\', "\\\\");
-    textContent.replaceWithLiteral('\n', "\\n");
-    const size_t maxPrintedLength = 80;
-    if (textContent.length() > maxPrintedLength) {
-        auto substring = textContent.substring(0, maxPrintedLength);
-        stream << " \"" << substring << "\"…";
-    } else
-        stream << " \"" << textContent << "\"";
-
+    if (text()) {
+        auto textContent = text()->content().substring(text()->start(), text()->length());
+        textContent.replaceWithLiteral('\\', "\\\\");
+        textContent.replaceWithLiteral('\n', "\\n");
+        const size_t maxPrintedLength = 80;
+        if (textContent.length() > maxPrintedLength) {
+            auto substring = textContent.substring(0, maxPrintedLength);
+            stream << " \"" << substring << "\"…";
+        } else
+            stream << " \"" << textContent << "\"";
+    }
+    
     return stream.release();
 }
 

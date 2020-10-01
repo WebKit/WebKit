@@ -1,3 +1,15 @@
+2020-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r267781): ASSERTION FAILED: Optional.h(525) : T *WTF::Optional<WebCore::Layout::LineRun::Text>::operator->() on 16 fast/layoutformattingcontext/* tests
+        https://bugs.webkit.org/show_bug.cgi?id=217143
+
+        Reviewed by Zalan Bujtas.
+
+        Need to test the Optional<> text() in dumping code.
+
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::debugDescription const):
+
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
         Add AVAssetWriter SPI header
