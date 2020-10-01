@@ -32,7 +32,6 @@ class Protocol(object):
         """:returns: Current logger"""
         return self.executor.logger
 
-    @property
     def is_alive(self):
         """Is the browser connection still active
 
@@ -147,6 +146,13 @@ class BaseProtocolPart(ProtocolPart):
                        context."""
         pass
 
+    @abstractmethod
+    def load(self, url):
+        """Load a url in the current browsing context
+
+        :param url: The url to load"""
+        pass
+
 
 class TestharnessProtocolPart(ProtocolPart):
     """Protocol part required to run testharness tests."""
@@ -183,6 +189,10 @@ class TestharnessProtocolPart(ProtocolPart):
         :returns: A protocol-specific window handle.
         """
         pass
+
+    @abstractmethod
+    def test_window_loaded(self):
+        """Wait until the newly opened test window has been loaded."""
 
 
 class PrefsProtocolPart(ProtocolPart):
@@ -235,28 +245,18 @@ class SelectorProtocolPart(ProtocolPart):
 
     name = "select"
 
-    def element_by_selector(self, element_selector, frame="window"):
-        elements = self.elements_by_selector_and_frame(element_selector, frame)
-        frame_name = "window"
-        if (frame != "window"):
-            frame_name = frame.id
+    def element_by_selector(self, element_selector):
+        elements = self.elements_by_selector(element_selector)
         if len(elements) == 0:
-            raise ValueError("Selector '%s' in frame '%s' matches no elements" % (element_selector, frame_name))
+            raise ValueError("Selector '%s' matches no elements" % (element_selector,))
         elif len(elements) > 1:
-            raise ValueError("Selector '%s' in frame '%s' matches multiple elements" % (element_selector, frame_name))
+            raise ValueError("Selector '%s' matches multiple elements" % (element_selector,))
         return elements[0]
 
     @abstractmethod
     def elements_by_selector(self, selector):
         """Select elements matching a CSS selector
 
-        :param str selector: The CSS selector
-        :returns: A list of protocol-specific handles to elements"""
-        pass
-
-    @abstractmethod
-    def elements_by_selector_and_frame(self, element_selector, frame):
-        """Select elements matching a CSS selector
         :param str selector: The CSS selector
         :returns: A list of protocol-specific handles to elements"""
         pass
@@ -352,6 +352,18 @@ class TestDriverProtocolPart(ProtocolPart):
         :param str message: Additional data to add to the message."""
         pass
 
+    def switch_to_window(self, wptrunner_id):
+        """Switch to a window given a wptrunner window id
+
+        :param str wptrunner_id: window id"""
+        pass
+
+    def switch_to_frame(self, index):
+        """Switch to a frame in the current window
+
+        :param int index: Frame id"""
+        pass
+
 
 class AssertsProtocolPart(ProtocolPart):
     """ProtocolPart that implements the functionality required to get a count of non-fatal
@@ -381,6 +393,7 @@ class CoverageProtocolPart(ProtocolPart):
     def dump(self):
         """Dump coverage counters"""
         pass
+
 
 class VirtualAuthenticatorProtocolPart(ProtocolPart):
     """Protocol part for creating and manipulating virtual authenticators"""
@@ -439,4 +452,16 @@ class VirtualAuthenticatorProtocolPart(ProtocolPart):
 
         :param str authenticator_id: The ID of the authenticator
         :param bool uv: the user verified flag"""
+        pass
+
+
+class PrintProtocolPart(ProtocolPart):
+    """Protocol part for rendering to a PDF."""
+    __metaclass__ = ABCMeta
+
+    name = "pdf_print"
+
+    @abstractmethod
+    def render_as_pdf(self, width, height):
+        """Output document as PDF"""
         pass

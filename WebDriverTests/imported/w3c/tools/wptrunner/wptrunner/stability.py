@@ -5,6 +5,7 @@ import io
 import os
 from collections import OrderedDict, defaultdict
 from datetime import datetime
+from six import iteritems
 
 from mozlog import reader
 from mozlog.formatters import JSONFormatter
@@ -12,6 +13,7 @@ from mozlog.handlers import BaseHandler, StreamHandler, LogLevelFilter
 
 here = os.path.dirname(__file__)
 localpaths = imp.load_source("localpaths", os.path.abspath(os.path.join(here, os.pardir, os.pardir, "localpaths.py")))
+from ci.tc.github_checks_output import get_gh_checks_outputter
 from wpt.markdown import markdown_adjust, table
 
 
@@ -140,10 +142,10 @@ def process_results(log, iterations):
     handler = LogHandler()
     reader.handle_log(reader.read(log), handler)
     results = handler.results
-    for test_name, test in results.iteritems():
+    for test_name, test in iteritems(results):
         if is_inconsistent(test["status"], iterations):
             inconsistent.append((test_name, None, test["status"], []))
-        for subtest_name, subtest in test["subtests"].iteritems():
+        for subtest_name, subtest in iteritems(test["subtests"]):
             if is_inconsistent(subtest["status"], iterations):
                 inconsistent.append((test_name, subtest_name, subtest["status"], subtest["messages"]))
 
@@ -177,8 +179,32 @@ def err_string(results_dict, iterations):
     return rv
 
 
+def write_github_checks_summary_inconsistent(log, inconsistent, iterations):
+    """Outputs a summary of inconsistent tests for GitHub Checks."""
+    log("Some affected tests had inconsistent (flaky) results:\n")
+    write_inconsistent(log, inconsistent, iterations)
+    log("\n")
+    log("These may be pre-existing or new flakes. Please try to reproduce (see "
+        "the above WPT command, though some flags may not be needed when "
+        "running locally) and determine if your change introduced the flake. "
+        "If you are unable to reproduce the problem, please tag "
+        "`@web-platform-tests/wpt-core-team` in a comment for help.\n")
+
+
+def write_github_checks_summary_slow_tests(log, slow):
+    """Outputs a summary of slow tests for GitHub Checks."""
+    log("Some affected tests had slow results:\n")
+    write_slow_tests(log, slow)
+    log("\n")
+    log("These may be pre-existing or newly slow tests. Slow tests indicate "
+        "that a test ran very close to the test timeout limit and so may "
+        "become TIMEOUT-flaky in the future. Consider speeding up the test or "
+        "breaking it into multiple tests. For help, please tag "
+        "`@web-platform-tests/wpt-core-team` in a comment.\n")
+
+
 def write_inconsistent(log, inconsistent, iterations):
-    """Output inconsistent tests to logger.error."""
+    """Output inconsistent tests to the passed in logging function."""
     log("## Unstable results ##\n")
     strings = [(
         "`%s`" % markdown_adjust(test),
@@ -190,6 +216,7 @@ def write_inconsistent(log, inconsistent, iterations):
 
 
 def write_slow_tests(log, slow):
+    """Output slow tests to the passed in logging function."""
     log("## Slow tests ##\n")
     strings = [(
         "`%s`" % markdown_adjust(test),
@@ -208,7 +235,7 @@ def write_results(log, results, iterations, pr_number=None, use_details=False):
                                                   "tests" if len(results) > 1
                                                   else "test"))
 
-    for test_name, test in results.iteritems():
+    for test_name, test in iteritems(results):
         baseurl = "http://w3c-test.org/submissions"
         if "https" in os.path.splitext(test_name)[0].split(".")[1:]:
             baseurl = "https://w3c-test.org/submissions"
@@ -236,7 +263,7 @@ def write_results(log, results, iterations, pr_number=None, use_details=False):
 
 
 def run_step(logger, iterations, restart_after_iteration, kwargs_extras, **kwargs):
-    import wptrunner
+    from . import wptrunner
     kwargs = copy.deepcopy(kwargs)
 
     if restart_after_iteration:
@@ -278,7 +305,7 @@ def get_steps(logger, repeat_loop, repeat_restart, kwargs_extras):
     for kwargs_extra in kwargs_extras:
         if kwargs_extra:
             flags_string = " with flags %s" % " ".join(
-                "%s=%s" % item for item in kwargs_extra.iteritems())
+                "%s=%s" % item for item in iteritems(kwargs_extra))
         else:
             flags_string = ""
 
@@ -313,12 +340,14 @@ def check_stability(logger, repeat_loop=10, repeat_restart=5, chaos_mode=True, m
                     output_results=True, **kwargs):
     kwargs_extras = [{}]
     if chaos_mode and kwargs["product"] == "firefox":
-        kwargs_extras.append({"chaos_mode_flags": 3})
+        kwargs_extras.append({"chaos_mode_flags": "0xfb"})
 
     steps = get_steps(logger, repeat_loop, repeat_restart, kwargs_extras)
 
     start_time = datetime.now()
     step_results = []
+
+    github_checks_outputter = get_gh_checks_outputter(kwargs["github_checks_text_file"])
 
     for desc, step_func in steps:
         if max_time and datetime.now() - start_time > max_time:
@@ -336,12 +365,16 @@ def check_stability(logger, repeat_loop=10, repeat_restart=5, chaos_mode=True, m
 
         if inconsistent:
             step_results.append((desc, "FAIL"))
+            if github_checks_outputter:
+                write_github_checks_summary_inconsistent(github_checks_outputter.output, inconsistent, iterations)
             write_inconsistent(logger.info, inconsistent, iterations)
             write_summary(logger, step_results, "FAIL")
             return 1
 
         if slow:
             step_results.append((desc, "FAIL"))
+            if github_checks_outputter:
+                write_github_checks_summary_slow_tests(github_checks_outputter.output, slow)
             write_slow_tests(logger.info, slow)
             write_summary(logger, step_results, "FAIL")
             return 1

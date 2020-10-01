@@ -1,3 +1,13 @@
+2020-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * TestExpectations.json:
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/:
+        * imported/w3c/tools/wptrunner/:
+        * imported/w3c/webdriver/:
+
 2020-08-31  Lauro Moura  <lmoura@igalia.com>
 
         [WPE][WebDriver] Gardening a few more failures

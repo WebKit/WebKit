@@ -1,6 +1,5 @@
 import base64
 import hashlib
-from six.moves.http_client import HTTPConnection
 import io
 import json
 import os
@@ -8,13 +7,16 @@ import threading
 import traceback
 import socket
 import sys
-from six.moves.urllib.parse import urljoin, urlsplit, urlunsplit
 from abc import ABCMeta, abstractmethod
+from six import text_type
+from six.moves.http_client import HTTPConnection
+from six.moves.urllib.parse import urljoin, urlsplit, urlunsplit
 
 from ..testrunner import Stop
+from .actions import actions
 from .protocol import Protocol, BaseProtocolPart
 
-here = os.path.split(__file__)[0]
+here = os.path.dirname(__file__)
 
 
 def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
@@ -27,13 +29,19 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
                        "timeout_multiplier": timeout_multiplier,
                        "debug_info": kwargs["debug_info"]}
 
-    if test_type == "reftest":
+    if test_type in ("reftest", "print-reftest"):
         executor_kwargs["screenshot_cache"] = cache_manager.dict()
 
     if test_type == "wdspec":
         executor_kwargs["binary"] = kwargs.get("binary")
         executor_kwargs["webdriver_binary"] = kwargs.get("webdriver_binary")
         executor_kwargs["webdriver_args"] = kwargs.get("webdriver_args")
+
+    # By default the executor may try to cleanup windows after a test (to best
+    # associate any problems with the test causing them). If the user might
+    # want to view the results, however, the executor has to skip that cleanup.
+    if kwargs["pause_after_test"] or kwargs["pause_on_unexpected"]:
+        executor_kwargs["cleanup_after_test"] = False
 
     return executor_kwargs
 
@@ -78,9 +86,10 @@ class TestharnessResultConverter(object):
 testharness_result_converter = TestharnessResultConverter()
 
 
-def hash_screenshot(data):
-    """Computes the sha1 checksum of a base64-encoded screenshot."""
-    return hashlib.sha1(base64.b64decode(data)).hexdigest()
+def hash_screenshots(screenshots):
+    """Computes the sha1 checksum of a list of base64-encoded screenshots."""
+    return [hashlib.sha1(base64.b64decode(screenshot)).hexdigest()
+            for screenshot in screenshots]
 
 
 def _ensure_hash_in_reftest_screenshots(extra):
@@ -96,7 +105,35 @@ def _ensure_hash_in_reftest_screenshots(extra):
             # Skip relation strings.
             continue
         if "hash" not in item:
-            item["hash"] = hash_screenshot(item["screenshot"])
+            item["hash"] = hash_screenshots([item["screenshot"]])[0]
+
+
+def get_pages(ranges_value, total_pages):
+    """Get a set of page numbers to include in a print reftest.
+
+    :param ranges_value: Parsed page ranges as a list e.g. [[1,2], [4], [6,None]]
+    :param total_pages: Integer total number of pages in the paginated output.
+    :retval: Set containing integer page numbers to include in the comparison e.g.
+             for the example ranges value and 10 total pages this would be
+             {1,2,4,6,7,8,9,10}"""
+    if not ranges_value:
+        return set(range(1, total_pages + 1))
+
+    rv = set()
+
+    for range_limits in ranges_value:
+        if len(range_limits) == 1:
+            range_limits = [range_limits[0], range_limits[0]]
+
+        if range_limits[0] is None:
+            range_limits[0] = 1
+        if range_limits[1] is None:
+            range_limits[1] = total_pages
+
+        if range_limits[0] > total_pages:
+            continue
+        rv |= set(range(range_limits[0], range_limits[1] + 1))
+    return rv
 
 
 def reftest_result_converter(self, test, result):
@@ -119,6 +156,10 @@ def pytest_result_converter(self, test, data):
     subtest_results = [test.subtest_result_cls(*item) for item in subtest_data]
 
     return (harness_result, subtest_results)
+
+
+def crashtest_result_converter(self, test, result):
+    return test.result_cls(**result), []
 
 
 class ExecutorException(Exception):
@@ -159,14 +200,18 @@ class TimedRunner(object):
                 self.result = False, ("INTERNAL-ERROR", "%s.run_func didn't set a result" %
                                       self.__class__.__name__)
             else:
-                message = "Executor hit external timeout (this may indicate a hang)\n"
-                # get a traceback for the current stack of the executor thread
-                message += "".join(traceback.format_stack(sys._current_frames()[executor.ident]))
-                self.result = False, ("EXTERNAL-TIMEOUT", message)
+                if self.protocol.is_alive():
+                    message = "Executor hit external timeout (this may indicate a hang)\n"
+                    # get a traceback for the current stack of the executor thread
+                    message += "".join(traceback.format_stack(sys._current_frames()[executor.ident]))
+                    self.result = False, ("EXTERNAL-TIMEOUT", message)
+                else:
+                    self.logger.info("Browser not responding, setting status to CRASH")
+                    self.result = False, ("CRASH", None)
         elif self.result[1] is None:
             # We didn't get any data back from the test, so check if the
             # browser is still responsive
-            if self.protocol.is_alive:
+            if self.protocol.is_alive():
                 self.result = False, ("INTERNAL-ERROR", None)
             else:
                 self.logger.info("Browser not responding, setting status to CRASH")
@@ -207,8 +252,9 @@ class TestExecutor(object):
     extra_timeout = 5  # seconds
 
 
-    def __init__(self, browser, server_config, timeout_multiplier=1,
+    def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  debug_info=None, **kwargs):
+        self.logger = logger
         self.runner = None
         self.browser = browser
         self.server_config = server_config
@@ -217,12 +263,6 @@ class TestExecutor(object):
         self.last_environment = {"protocol": "http",
                                  "prefs": {}}
         self.protocol = None  # This must be set in subclasses
-
-    @property
-    def logger(self):
-        """StructuredLogger for this executor"""
-        if self.runner is not None:
-            return self.runner.logger
 
     def setup(self, runner):
         """Run steps needed before tests can be started e.g. connecting to
@@ -252,8 +292,9 @@ class TestExecutor(object):
         try:
             result = self.do_test(test)
         except Exception as e:
-            self.logger.warning(traceback.format_exc(e))
-            result = self.result_from_exception(test, e)
+            exception_string = traceback.format_exc()
+            self.logger.warning(exception_string)
+            result = self.result_from_exception(test, e, exception_string)
 
         if result is Stop:
             return result
@@ -267,7 +308,8 @@ class TestExecutor(object):
         self.runner.send_message("test_ended", test, result)
 
     def server_url(self, protocol):
-        return "%s://%s:%s" % (protocol,
+        scheme = "https" if protocol == "h2" else protocol
+        return "%s://%s:%s" % (scheme,
                                self.server_config["browser_host"],
                                self.server_config["ports"][protocol][0])
 
@@ -285,15 +327,15 @@ class TestExecutor(object):
     def on_environment_change(self, new_environment):
         pass
 
-    def result_from_exception(self, test, e):
+    def result_from_exception(self, test, e, exception_string):
         if hasattr(e, "status") and e.status in test.result_cls.statuses:
             status = e.status
         else:
             status = "INTERNAL-ERROR"
-        message = unicode(getattr(e, "message", ""))
+        message = text_type(getattr(e, "message", ""))
         if message:
             message += "\n"
-        message += traceback.format_exc(e)
+        message += exception_string
         return test.result_cls(status, message), []
 
     def wait(self):
@@ -306,14 +348,24 @@ class TestharnessExecutor(TestExecutor):
 
 class RefTestExecutor(TestExecutor):
     convert_result = reftest_result_converter
+    is_print = False
 
-    def __init__(self, browser, server_config, timeout_multiplier=1, screenshot_cache=None,
+    def __init__(self, logger, browser, server_config, timeout_multiplier=1, screenshot_cache=None,
                  debug_info=None, **kwargs):
-        TestExecutor.__init__(self, browser, server_config,
+        TestExecutor.__init__(self, logger, browser, server_config,
                               timeout_multiplier=timeout_multiplier,
                               debug_info=debug_info)
 
         self.screenshot_cache = screenshot_cache
+
+
+class CrashtestExecutor(TestExecutor):
+    convert_result = crashtest_result_converter
+
+
+class PrintRefTestExecutor(TestExecutor):
+    convert_result = reftest_result_converter
+    is_print = True
 
 
 class RefTestImplementation(object):
@@ -337,20 +389,20 @@ class RefTestImplementation(object):
     def logger(self):
         return self.executor.logger
 
-    def get_hash(self, test, viewport_size, dpi):
+    def get_hash(self, test, viewport_size, dpi, page_ranges):
         key = (test.url, viewport_size, dpi)
 
         if key not in self.screenshot_cache:
-            success, data = self.executor.screenshot(test, viewport_size, dpi)
+            success, data = self.get_screenshot_list(test, viewport_size, dpi, page_ranges)
 
             if not success:
                 return False, data
 
-            screenshot = data
-            hash_value = hash_screenshot(data)
-            self.screenshot_cache[key] = (hash_value, screenshot)
+            screenshots = data
+            hash_values = hash_screenshots(data)
+            self.screenshot_cache[key] = (hash_values, screenshots)
 
-            rv = (hash_value, screenshot)
+            rv = (hash_values, screenshots)
         else:
             rv = self.screenshot_cache[key]
 
@@ -360,28 +412,56 @@ class RefTestImplementation(object):
     def reset(self):
         self.screenshot_cache.clear()
 
-    def is_pass(self, hashes, screenshots, urls, relation, fuzzy):
-        assert relation in ("==", "!=")
-        if not fuzzy or fuzzy == ((0,0), (0,0)):
-            equal = hashes[0] == hashes[1]
-            # sometimes images can have different hashes, but pixels can be identical.
-            if not equal:
-                self.logger.info("Image hashes didn't match, checking pixel differences")
-                max_per_channel, pixels_different = self.get_differences(screenshots, urls)
-                equal = pixels_different == 0 and max_per_channel == 0
-        else:
-            max_per_channel, pixels_different = self.get_differences(screenshots, urls)
-            allowed_per_channel, allowed_different = fuzzy
-            self.logger.info("Allowed %s pixels different, maximum difference per channel %s" %
-                             ("-".join(str(item) for item in allowed_different),
-                              "-".join(str(item) for item in allowed_per_channel)))
-            equal = ((pixels_different == 0 and allowed_different[0] == 0) or
-                     (max_per_channel == 0 and allowed_per_channel[0] == 0) or
-                     (allowed_per_channel[0] <= max_per_channel <= allowed_per_channel[1] and
-                      allowed_different[0] <= pixels_different <= allowed_different[1]))
-        return equal if relation == "==" else not equal
+    def check_pass(self, hashes, screenshots, urls, relation, fuzzy):
+        """Check if a test passes, and return a tuple of (pass, page_idx),
+        where page_idx is the zero-based index of the first page on which a
+        difference occurs if any, or None if there are no differences"""
 
-    def get_differences(self, screenshots, urls):
+        assert relation in ("==", "!=")
+        lhs_hashes, rhs_hashes = hashes
+        lhs_screenshots, rhs_screenshots = screenshots
+
+        if len(lhs_hashes) != len(rhs_hashes):
+            self.logger.info("Got different number of pages")
+            return False
+
+        assert len(lhs_screenshots) == len(lhs_hashes) == len(rhs_screenshots) == len(rhs_hashes)
+
+        for (page_idx, (lhs_hash,
+                        rhs_hash,
+                        lhs_screenshot,
+                        rhs_screenshot)) in enumerate(zip(lhs_hashes,
+                                                          rhs_hashes,
+                                                          lhs_screenshots,
+                                                          rhs_screenshots)):
+            comparison_screenshots = (lhs_screenshot, rhs_screenshot)
+            if not fuzzy or fuzzy == ((0, 0), (0, 0)):
+                equal = lhs_hash == rhs_hash
+                # sometimes images can have different hashes, but pixels can be identical.
+                if not equal:
+                    self.logger.info("Image hashes didn't match%s, checking pixel differences" %
+                                     ("" if len(hashes) == 1 else " on page %i" % (page_idx + 1)))
+                    max_per_channel, pixels_different = self.get_differences(comparison_screenshots,
+                                                                             urls)
+                    equal = pixels_different == 0 and max_per_channel == 0
+            else:
+                max_per_channel, pixels_different = self.get_differences(comparison_screenshots,
+                                                                         urls,
+                                                                         page_idx if len(hashes) > 1 else None)
+                allowed_per_channel, allowed_different = fuzzy
+                self.logger.info("Allowed %s pixels different, maximum difference per channel %s" %
+                                 ("-".join(str(item) for item in allowed_different),
+                                  "-".join(str(item) for item in allowed_per_channel)))
+                equal = ((pixels_different == 0 and allowed_different[0] == 0) or
+                         (max_per_channel == 0 and allowed_per_channel[0] == 0) or
+                         (allowed_per_channel[0] <= max_per_channel <= allowed_per_channel[1] and
+                          allowed_different[0] <= pixels_different <= allowed_different[1]))
+            if not equal:
+                return (False if relation == "==" else True, page_idx)
+        # All screenshots were equal within the fuzziness
+        return (True if relation == "==" else False, None)
+
+    def get_differences(self, screenshots, urls, page_idx=None):
         from PIL import Image, ImageChops, ImageStat
 
         lhs = Image.open(io.BytesIO(base64.b64decode(screenshots[0]))).convert("RGB")
@@ -394,8 +474,10 @@ class RefTestImplementation(object):
         stat = ImageStat.Stat(minimal_diff, mask)
         per_channel = max(item[1] for item in stat.extrema)
         count = stat.count[0]
-        self.logger.info("Found %s pixels different, maximum difference per channel %s" %
-                         (count, per_channel))
+        self.logger.info("Found %s pixels different, maximum difference per channel %s%s" %
+                         (count,
+                          per_channel,
+                          "" if page_idx is None else " on page %i" % (page_idx + 1)))
         return per_channel, count
 
     def check_if_solid_color(self, image, url):
@@ -407,12 +489,15 @@ class RefTestImplementation(object):
     def run_test(self, test):
         viewport_size = test.viewport_size
         dpi = test.dpi
+        page_ranges = test.page_ranges
         self.message = []
+
 
         # Depth-first search of reference tree, with the goal
         # of reachings a leaf node with only pass results
 
         stack = list(((test, item[0]), item[1]) for item in reversed(test.references))
+        page_idx = None
         while stack:
             hashes = [None, None]
             screenshots = [None, None]
@@ -422,33 +507,42 @@ class RefTestImplementation(object):
             fuzzy = self.get_fuzzy(test, nodes, relation)
 
             for i, node in enumerate(nodes):
-                success, data = self.get_hash(node, viewport_size, dpi)
+                success, data = self.get_hash(node, viewport_size, dpi, page_ranges)
                 if success is False:
                     return {"status": data[0], "message": data[1]}
 
                 hashes[i], screenshots[i] = data
                 urls[i] = node.url
 
-            if self.is_pass(hashes, screenshots, urls, relation, fuzzy):
+            is_pass, page_idx = self.check_pass(hashes, screenshots, urls, relation, fuzzy)
+            if is_pass:
                 fuzzy = self.get_fuzzy(test, nodes, relation)
                 if nodes[1].references:
-                    stack.extend(list(((nodes[1], item[0]), item[1]) for item in reversed(nodes[1].references)))
+                    stack.extend(list(((nodes[1], item[0]), item[1])
+                                      for item in reversed(nodes[1].references)))
                 else:
                     # We passed
-                    return {"status":"PASS", "message": None}
+                    return {"status": "PASS", "message": None}
 
         # We failed, so construct a failure message
 
+        if page_idx is None:
+            # default to outputting the last page
+            page_idx = -1
         for i, (node, screenshot) in enumerate(zip(nodes, screenshots)):
             if screenshot is None:
-                success, screenshot = self.retake_screenshot(node, viewport_size, dpi)
+                success, screenshot = self.retake_screenshot(node, viewport_size, dpi, page_ranges)
                 if success:
                     screenshots[i] = screenshot
 
         log_data = [
-            {"url": nodes[0].url, "screenshot": screenshots[0], "hash": hashes[0]},
+            {"url": nodes[0].url,
+             "screenshot": screenshots[0][page_idx],
+             "hash": hashes[0][page_idx]},
             relation,
-            {"url": nodes[1].url, "screenshot": screenshots[1], "hash": hashes[1]},
+            {"url": nodes[1].url,
+             "screenshot": screenshots[1][page_idx],
+             "hash": hashes[1][page_idx]},
         ]
 
         return {"status": "FAIL",
@@ -474,8 +568,11 @@ class RefTestImplementation(object):
                 break
         return value
 
-    def retake_screenshot(self, node, viewport_size, dpi):
-        success, data = self.executor.screenshot(node, viewport_size, dpi)
+    def retake_screenshot(self, node, viewport_size, dpi, page_ranges):
+        success, data = self.get_screenshot_list(node,
+                                                 viewport_size,
+                                                 dpi,
+                                                 page_ranges)
         if not success:
             return False, data
 
@@ -484,16 +581,22 @@ class RefTestImplementation(object):
         self.screenshot_cache[key] = hash_val, data
         return True, data
 
+    def get_screenshot_list(self, node, viewport_size, dpi, page_ranges):
+        success, data = self.executor.screenshot(node, viewport_size, dpi, page_ranges)
+        if success and not isinstance(data, list):
+            return success, [data]
+        return success, data
+
 
 class WdspecExecutor(TestExecutor):
     convert_result = pytest_result_converter
     protocol_cls = None
 
-    def __init__(self, browser, server_config, webdriver_binary,
+    def __init__(self, logger, browser, server_config, webdriver_binary,
                  webdriver_args, timeout_multiplier=1, capabilities=None,
                  debug_info=None, **kwargs):
         self.do_delayed_imports()
-        TestExecutor.__init__(self, browser, server_config,
+        TestExecutor.__init__(self, logger, browser, server_config,
                               timeout_multiplier=timeout_multiplier,
                               debug_info=debug_info)
         self.webdriver_binary = webdriver_binary
@@ -503,7 +606,7 @@ class WdspecExecutor(TestExecutor):
         self.protocol = self.protocol_cls(self, browser)
 
     def is_alive(self):
-        return self.protocol.is_alive
+        return self.protocol.is_alive()
 
     def on_environment_change(self, new_environment):
         pass
@@ -566,13 +669,16 @@ class WdspecRun(object):
             message = getattr(e, "message")
             if message:
                 message += "\n"
-            message += traceback.format_exc(e)
+            message += traceback.format_exc()
             self.result = False, ("INTERNAL-ERROR", message)
         finally:
             self.result_flag.set()
 
 
 class ConnectionlessBaseProtocolPart(BaseProtocolPart):
+    def load(self, url):
+        pass
+
     def execute_script(self, script, asynchronous=False):
         pass
 
@@ -596,7 +702,7 @@ class ConnectionlessProtocol(Protocol):
         pass
 
 
-class WebDriverProtocol(Protocol):
+class WdspecProtocol(Protocol):
     server_cls = None
 
     implements = [ConnectionlessBaseProtocolPart]
@@ -626,10 +732,9 @@ class WebDriverProtocol(Protocol):
         pass
 
     def teardown(self):
-        if self.server is not None and self.server.is_alive:
+        if self.server is not None and self.server.is_alive():
             self.server.stop()
 
-    @property
     def is_alive(self):
         """Test that the connection is still alive.
 
@@ -665,20 +770,7 @@ class CallbackHandler(object):
             "complete": self.process_complete
         }
 
-        self.actions = {
-            "click": ClickAction(self.logger, self.protocol),
-            "send_keys": SendKeysAction(self.logger, self.protocol),
-            "action_sequence": ActionSequenceAction(self.logger, self.protocol),
-            "generate_test_report": GenerateTestReportAction(self.logger, self.protocol),
-            "set_permission": SetPermissionAction(self.logger, self.protocol),
-            "add_virtual_authenticator": AddVirtualAuthenticatorAction(self.logger, self.protocol),
-            "remove_virtual_authenticator": RemoveVirtualAuthenticatorAction(self.logger, self.protocol),
-            "add_credential": AddCredentialAction(self.logger, self.protocol),
-            "get_credentials": GetCredentialsAction(self.logger, self.protocol),
-            "remove_credential": RemoveCredentialAction(self.logger, self.protocol),
-            "remove_all_credentials": RemoveAllCredentialsAction(self.logger, self.protocol),
-            "set_user_verified": SetUserVerifiedAction(self.logger, self.protocol),
-        }
+        self.actions = {cls.name: cls(self.logger, self.protocol) for cls in actions}
 
     def __call__(self, result):
         url, command, payload = result
@@ -701,7 +793,8 @@ class CallbackHandler(object):
         except KeyError:
             raise ValueError("Unknown action %s" % action)
         try:
-            result = action_handler(payload)
+            with ActionContext(self.logger, self.protocol, payload.get("context")):
+                result = action_handler(payload)
         except self.unimplemented_exc:
             self.logger.warning("Action %s not implemented" % action)
             self._send_message("complete", "error", "Action %s not implemented" % action)
@@ -721,148 +814,34 @@ class CallbackHandler(object):
         self.protocol.testdriver.send_message(message_type, status, message=message)
 
 
-class ClickAction(object):
-    def __init__(self, logger, protocol):
+class ActionContext(object):
+    def __init__(self, logger, protocol, context):
         self.logger = logger
         self.protocol = protocol
+        self.context = context
+        self.initial_window = None
+        self.switched_frame = False
 
-    def __call__(self, payload):
-        selector = payload["selector"]
-        element = self.protocol.select.element_by_selector(selector)
-        self.logger.debug("Clicking element: %s" % selector)
-        self.protocol.click.element(element)
+    def __enter__(self):
+        if self.context is None:
+            return
 
+        window_id = self.context[0]
+        if window_id:
+            self.initial_window = self.protocol.base.current_window
+            self.logger.debug("Switching to window %s" % window_id)
+            self.protocol.testdriver.switch_to_window(window_id)
 
-class SendKeysAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
+        for frame_id in self.context[1:]:
+            self.switched_frame = True
+            self.logger.debug("Switching to frame %s" % frame_id)
+            self.protocol.testdriver.switch_to_frame(frame_id)
 
-    def __call__(self, payload):
-        selector = payload["selector"]
-        keys = payload["keys"]
-        element = self.protocol.select.element_by_selector(selector)
-        self.logger.debug("Sending keys to element: %s" % selector)
-        self.protocol.send_keys.send_keys(element, keys)
-
-
-class ActionSequenceAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        # TODO: some sort of shallow error checking
-        actions = payload["actions"]
-        for actionSequence in actions:
-            if actionSequence["type"] == "pointer":
-                for action in actionSequence["actions"]:
-                    if (action["type"] == "pointerMove" and
-                        isinstance(action["origin"], dict)):
-                        action["origin"] = self.get_element(action["origin"]["selector"], action["frame"]["frame"])
-        self.protocol.action_sequence.send_actions({"actions": actions})
-
-    def get_element(self, element_selector, frame):
-        element = self.protocol.select.element_by_selector(element_selector, frame)
-        return element
-
-class GenerateTestReportAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        message = payload["message"]
-        self.logger.debug("Generating test report: %s" % message)
-        self.protocol.generate_test_report.generate_test_report(message)
-
-class SetPermissionAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        permission_params = payload["permission_params"]
-        descriptor = permission_params["descriptor"]
-        name = descriptor["name"]
-        state = permission_params["state"]
-        one_realm = permission_params.get("oneRealm", False)
-        self.logger.debug("Setting permission %s to %s, oneRealm=%s" % (name, state, one_realm))
-        self.protocol.set_permission.set_permission(descriptor, state, one_realm)
-
-class AddVirtualAuthenticatorAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        self.logger.debug("Adding virtual authenticator")
-        config = payload["config"]
-        authenticator_id = self.protocol.virtual_authenticator.add_virtual_authenticator(config)
-        self.logger.debug("Authenticator created with ID %s" % authenticator_id)
-        return authenticator_id
-
-class RemoveVirtualAuthenticatorAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        authenticator_id = payload["authenticator_id"]
-        self.logger.debug("Removing virtual authenticator %s" % authenticator_id)
-        return self.protocol.virtual_authenticator.remove_virtual_authenticator(authenticator_id)
-
-
-class AddCredentialAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        authenticator_id = payload["authenticator_id"]
-        credential = payload["credential"]
-        self.logger.debug("Adding credential to virtual authenticator %s " % authenticator_id)
-        return self.protocol.virtual_authenticator.add_credential(authenticator_id, credential)
-
-class GetCredentialsAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        authenticator_id = payload["authenticator_id"]
-        self.logger.debug("Getting credentials from virtual authenticator %s " % authenticator_id)
-        return self.protocol.virtual_authenticator.get_credentials(authenticator_id)
-
-class RemoveCredentialAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        authenticator_id = payload["authenticator_id"]
-        credential_id = payload["credential_id"]
-        self.logger.debug("Removing credential %s from authenticator %s" % (credential_id, authenticator_id))
-        return self.protocol.virtual_authenticator.remove_credential(authenticator_id, credential_id)
-
-class RemoveAllCredentialsAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        authenticator_id = payload["authenticator_id"]
-        self.logger.debug("Removing all credentials from authenticator %s" % authenticator_id)
-        return self.protocol.virtual_authenticator.remove_all_credentials(authenticator_id)
-
-class SetUserVerifiedAction(object):
-    def __init__(self, logger, protocol):
-        self.logger = logger
-        self.protocol = protocol
-
-    def __call__(self, payload):
-        authenticator_id = payload["authenticator_id"]
-        uv = payload["uv"]
-        self.logger.debug(
-            "Setting user verified flag on authenticator %s to %s" % (authenticator_id, uv["isUserVerified"]))
-        return self.protocol.virtual_authenticator.set_user_verified(authenticator_id, uv)
+    def __exit__(self, *args):
+        if self.initial_window is not None:
+            self.logger.debug("Switching back to initial window")
+            self.protocol.base.set_window(self.initial_window)
+            self.initial_window = None
+        elif self.switched_frame:
+            self.protocol.testdriver.switch_to_frame(None)
+        self.switched_frame = False

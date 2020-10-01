@@ -40,7 +40,7 @@ def _ensure_directory_in_path(directory):
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'webdriver'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 
-from wptrunner.executors.base import WdspecExecutor, WebDriverProtocol
+from wptrunner.executors.base import WdspecExecutor, WdspecProtocol
 from wptrunner.webdriver_server import WebDriverServer
 
 pytest_runner = None
@@ -122,7 +122,7 @@ class WebKitDriverServer(WebDriverServer):
         return [self.binary, '--port=%s' % str(self.port)] + self._args
 
 
-class WebKitDriverProtocol(WebDriverProtocol):
+class WebKitDriverProtocol(WdspecProtocol):
     server_cls = WebKitDriverServer
 
 
@@ -137,7 +137,8 @@ class WebDriverW3CExecutor(WdspecExecutor):
                                      'alt':{ '': '127.0.0.1'}},
                          'ports': {'http': [str(server.port())]},
                          'doc_root': server.document_root()}
-        WdspecExecutor.__init__(self, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
+        self.runner = TestRunner()
+        WdspecExecutor.__init__(self, self.runner.logger, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
 
         self._timeout = timeout
         self._expectations = expectations
@@ -145,7 +146,6 @@ class WebDriverW3CExecutor(WdspecExecutor):
         self._result_queue = Queue()
 
     def setup(self):
-        self.runner = TestRunner()
         self.protocol.setup(self.runner)
         args = (self._test_queue,
                 self._result_queue,

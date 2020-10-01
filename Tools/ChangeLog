@@ -1,3 +1,12 @@
+2020-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebKitDriverProtocol):
+        (WebDriverW3CExecutor.__init__):
+        (WebDriverW3CExecutor.setup):
+
 2020-10-01  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Nightly runner requires user interaction

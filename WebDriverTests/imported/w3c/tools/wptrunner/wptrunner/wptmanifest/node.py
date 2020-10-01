@@ -1,3 +1,5 @@
+from six.moves import range
+
 class NodeVisitor(object):
     def visit(self, node):
         # This is ugly as hell, but we don't have multimethods and
@@ -57,7 +59,7 @@ class DataNode(Node):
             index = len(self.children)
             while index > 0 and isinstance(self.children[index - 1], DataNode):
                 index -= 1
-            for i in xrange(index):
+            for i in range(index):
                 if other.data == self.children[i].data:
                     raise ValueError("Duplicate key %s" % self.children[i].data)
             self.children.insert(index, other)

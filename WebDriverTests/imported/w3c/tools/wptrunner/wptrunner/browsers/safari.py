@@ -3,7 +3,8 @@ from .base import get_timeout_multiplier   # noqa: F401
 from ..webdriver_server import SafariDriverServer
 from ..executors import executor_kwargs as base_executor_kwargs
 from ..executors.executorwebdriver import (WebDriverTestharnessExecutor,  # noqa: F401
-                                           WebDriverRefTestExecutor)  # noqa: F401
+                                           WebDriverRefTestExecutor,  # noqa: F401
+                                           WebDriverCrashtestExecutor)  # noqa: F401
 from ..executors.executorsafari import SafariDriverWdspecExecutor  # noqa: F401
 
 
@@ -12,7 +13,8 @@ __wptrunner__ = {"product": "safari",
                  "browser": "SafariBrowser",
                  "executor": {"testharness": "WebDriverTestharnessExecutor",
                               "reftest": "WebDriverRefTestExecutor",
-                              "wdspec": "SafariDriverWdspecExecutor"},
+                              "wdspec": "SafariDriverWdspecExecutor",
+                              "crashtest": "WebDriverCrashtestExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -79,7 +81,7 @@ class SafariBrowser(Browser):
         # TODO(ato): This only indicates the driver is alive,
         # and doesn't say anything about whether a browser session
         # is active.
-        return self.server.is_alive
+        return self.server.is_alive()
 
     def cleanup(self):
         self.stop()

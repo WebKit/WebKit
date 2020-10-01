@@ -1,7 +1,7 @@
 import os
 from six.moves import cPickle as pickle  # noqa: N813
 
-here = os.path.abspath(os.path.split(__file__)[0])
+here = os.path.abspath(os.path.dirname(__file__))
 
 class BaseState(object):
     def __new__(cls, logger):
@@ -11,7 +11,7 @@ class BaseState(object):
             return rv
 
         logger.debug("No existing state found")
-        return object.__new__(cls, logger)
+        return super(BaseState, cls).__new__(cls)
 
     def __init__(self, logger):
         """Object containing state variables created when running Steps.

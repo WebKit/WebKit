@@ -1,11 +1,11 @@
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 import argparse
 import os
 import sys
 from collections import OrderedDict
 from distutils.spawn import find_executable
 from datetime import timedelta
-from six import iterkeys, itervalues, iteritems
+from six import ensure_text, iterkeys, itervalues, iteritems
 
 from . import config
 from . import wpttest
@@ -16,9 +16,9 @@ def abs_path(path):
 
 
 def url_or_path(path):
-    import urlparse
+    from six.moves.urllib.parse import urlparse
 
-    parsed = urlparse.urlparse(path)
+    parsed = urlparse(path)
     if len(parsed.scheme) > 2:
         return path
     else:
@@ -37,7 +37,7 @@ def require_arg(kwargs, name, value_func=None):
 def create_parser(product_choices=None):
     from mozlog import commandline
 
-    import products
+    from . import products
 
     if product_choices is None:
         config_data = config.load()
@@ -135,8 +135,18 @@ scheme host and port.""")
                                       help="URL prefix to exclude")
     test_selection_group.add_argument("--include-manifest", type=abs_path,
                                       help="Path to manifest listing tests to include")
+    test_selection_group.add_argument("--test-groups", dest="test_groups_file", type=abs_path,
+                                      help="Path to json file containing a mapping {group_name: [test_ids]}")
     test_selection_group.add_argument("--skip-timeout", action="store_true",
                                       help="Skip tests that are expected to time out")
+    test_selection_group.add_argument("--skip-implementation-status",
+                                      action="append",
+                                      choices=["not-implementing", "backlog", "implementing"],
+                                      help="Skip tests that have the given implementation status")
+    # TODO: Remove this when QUIC is enabled by default.
+    test_selection_group.add_argument("--enable-quic", action="store_true", default=False,
+                                      help="Enable tests that require QUIC server (default: false)")
+
     test_selection_group.add_argument("--tag", action="append", dest="tags",
                                       help="Labels applied to tests to include in the run. "
                                            "Labels starting dir: are equivalent to top-level directories.")
@@ -210,13 +220,17 @@ scheme host and port.""")
                               help="Path to config file")
     config_group.add_argument("--install-fonts", action="store_true",
                               default=None,
-                              help="Allow the wptrunner to install fonts on your system")
+                              help="Install additional system fonts on your system")
+    config_group.add_argument("--no-install-fonts", dest="install_fonts", action="store_false",
+                              help="Do not install additional system fonts on your system")
     config_group.add_argument("--font-dir", action="store", type=abs_path, dest="font_dir",
                               help="Path to local font installation directory", default=None)
     config_group.add_argument("--headless", action="store_true",
                               help="Run browser in headless mode", default=None)
     config_group.add_argument("--no-headless", action="store_false", dest="headless",
                               help="Don't run browser in headless mode")
+    config_group.add_argument("--instrument-to-file", action="store",
+                              help="Path to write instrumentation logs to")
 
     build_type = parser.add_mutually_exclusive_group()
     build_type.add_argument("--debug-build", dest="debug", action="store_true",
@@ -225,7 +239,6 @@ scheme host and port.""")
     build_type.add_argument("--release-build", dest="debug", action="store_false",
                             default=None,
                             help="Build is a release (overrides any mozinfo file)")
-
 
     chunking_group = parser.add_argument_group("Test Chunking")
     chunking_group.add_argument("--total-chunks", action="store", type=int, default=1,
@@ -237,30 +250,38 @@ scheme host and port.""")
 
     ssl_group = parser.add_argument_group("SSL/TLS")
     ssl_group.add_argument("--ssl-type", action="store", default=None,
-                        choices=["openssl", "pregenerated", "none"],
-                        help="Type of ssl support to enable (running without ssl may lead to spurious errors)")
+                           choices=["openssl", "pregenerated", "none"],
+                           help="Type of ssl support to enable (running without ssl may lead to spurious errors)")
 
     ssl_group.add_argument("--openssl-binary", action="store",
-                        help="Path to openssl binary", default="openssl")
+                           help="Path to openssl binary", default="openssl")
     ssl_group.add_argument("--certutil-binary", action="store",
-                        help="Path to certutil binary for use with Firefox + ssl")
+                           help="Path to certutil binary for use with Firefox + ssl")
 
     ssl_group.add_argument("--ca-cert-path", action="store", type=abs_path,
-                        help="Path to ca certificate when using pregenerated ssl certificates")
+                           help="Path to ca certificate when using pregenerated ssl certificates")
     ssl_group.add_argument("--host-key-path", action="store", type=abs_path,
-                        help="Path to host private key when using pregenerated ssl certificates")
+                           help="Path to host private key when using pregenerated ssl certificates")
     ssl_group.add_argument("--host-cert-path", action="store", type=abs_path,
-                        help="Path to host certificate when using pregenerated ssl certificates")
+                           help="Path to host certificate when using pregenerated ssl certificates")
 
     gecko_group = parser.add_argument_group("Gecko-specific")
     gecko_group.add_argument("--prefs-root", dest="prefs_root", action="store", type=abs_path,
                              help="Path to the folder containing browser prefs")
+    gecko_group.add_argument("--preload-browser", dest="preload_browser", action="store_true",
+                             default=None, help="Preload a gecko instance for faster restarts")
+    gecko_group.add_argument("--no-preload-browser", dest="preload_browser", action="store_false",
+                             default=None, help="Don't preload a gecko instance for faster restarts")
     gecko_group.add_argument("--disable-e10s", dest="gecko_e10s", action="store_false", default=True,
                              help="Run tests without electrolysis preferences")
     gecko_group.add_argument("--enable-webrender", dest="enable_webrender", action="store_true", default=None,
                              help="Enable the WebRender compositor in Gecko (defaults to disabled).")
     gecko_group.add_argument("--no-enable-webrender", dest="enable_webrender", action="store_false",
                              help="Disable the WebRender compositor in Gecko.")
+    gecko_group.add_argument("--enable-fission", dest="enable_fission", action="store_true", default=None,
+                             help="Enable fission in Gecko (defaults to disabled).")
+    gecko_group.add_argument("--no-enable-fission", dest="enable_fission", action="store_false",
+                             help="Disable fission in Gecko.")
     gecko_group.add_argument("--stackfix-dir", dest="stackfix_dir", action="store",
                              help="Path to directory containing assertion stack fixing scripts")
     gecko_group.add_argument("--setpref", dest="extra_prefs", action='append',
@@ -290,6 +311,11 @@ scheme host and port.""")
     servo_group.add_argument("--user-stylesheet",
                              default=[], action="append", dest="user_stylesheets",
                              help="Inject a user CSS stylesheet into every test.")
+
+    servo_group = parser.add_argument_group("Chrome-specific")
+    servo_group.add_argument("--enable-mojojs", action="store_true", default=False,
+                             help="Enable MojoJS for testing. Mojo bindings need to be available in "
+                             "_venv2/mojojs.")
 
     sauce_group = parser.add_argument_group("Sauce Labs-specific")
     sauce_group.add_argument("--sauce-browser", dest="sauce_browser",
@@ -322,9 +348,14 @@ scheme host and port.""")
                              help="Command-line argument to forward to the "
                                   "Sauce Connect binary (repeatable)")
 
+    taskcluster_group = parser.add_argument_group("Taskcluster-specific")
+    taskcluster_group.add_argument("--github-checks-text-file",
+                                   type=ensure_text,
+                                   help="Path to GitHub checks output file")
+
     webkit_group = parser.add_argument_group("WebKit-specific")
     webkit_group.add_argument("--webkit-port", dest="webkit_port",
-                             help="WebKit port")
+                              help="WebKit port")
 
     parser.add_argument("test_list", nargs="*",
                         help="List of URLs for tests to run, or paths including tests to run. "
@@ -484,6 +515,14 @@ def check_args(kwargs):
         else:
             kwargs["chunk_type"] = "none"
 
+    if kwargs["test_groups_file"] is not None:
+        if kwargs["run_by_dir"] is not False:
+            print("Can't pass --test-groups and --run-by-dir")
+            sys.exit(1)
+        if not os.path.exists(kwargs["test_groups_file"]):
+            print("--test-groups file %s not found" % kwargs["test_groups_file"])
+            sys.exit(1)
+
     if kwargs["processes"] is None:
         kwargs["processes"] = 1
 
@@ -534,9 +573,6 @@ def check_args(kwargs):
         kwargs["certutil_binary"] = path
 
     if kwargs['extra_prefs']:
-        # If a single pref is passed in as a string, make it a list
-        if type(kwargs['extra_prefs']) in (str, unicode):
-            kwargs['extra_prefs'] = [kwargs['extra_prefs']]
         missing = any('=' not in prefarg for prefarg in kwargs['extra_prefs'])
         if missing:
             print("Preferences via --setpref must be in key=value format", file=sys.stderr)
@@ -552,6 +588,10 @@ def check_args(kwargs):
 
     if kwargs["enable_webrender"] is None:
         kwargs["enable_webrender"] = False
+
+    if kwargs["preload_browser"] is None:
+        # Default to preloading a gecko instance if we're only running a single process
+        kwargs["preload_browser"] = kwargs["processes"] == 1
 
     return kwargs
 

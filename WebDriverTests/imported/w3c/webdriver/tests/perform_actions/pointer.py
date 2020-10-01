@@ -21,7 +21,12 @@ def test_null_response_value(session, mouse_chain):
     assert value is None
 
 
-def test_no_browsing_context(session, closed_window, mouse_chain):
+def test_no_top_browsing_context(session, closed_window, mouse_chain):
+    with pytest.raises(NoSuchWindowException):
+        mouse_chain.click().perform()
+
+
+def test_no_browsing_context(session, closed_frame, mouse_chain):
     with pytest.raises(NoSuchWindowException):
         mouse_chain.click().perform()
 
@@ -85,8 +90,8 @@ def test_click_element_center(session, test_actions_page, mouse_chain):
     assert ["mousemove", "mousedown", "mouseup", "click"] == event_types
     for e in events:
         if e["type"] != "mousemove":
-            assert e["pageX"] == pytest.approx(center["x"], abs = 1.0)
-            assert e["pageY"] == pytest.approx(center["y"], abs = 1.0)
+            assert e["pageX"] == pytest.approx(center["x"], abs=1.0)
+            assert e["pageY"] == pytest.approx(center["y"], abs=1.0)
             assert e["target"] == "outer"
 
 
@@ -135,9 +140,43 @@ def test_drag_and_drop(session,
     # mouseup that ends the drag is at the expected destination
     e = get_events(session)[1]
     assert e["type"] == "mouseup"
-    assert e["pageX"] == pytest.approx(initial_center["x"] + dx, abs = 1.0)
-    assert e["pageY"] == pytest.approx(initial_center["y"] + dy, abs = 1.0)
+    assert e["pageX"] == pytest.approx(initial_center["x"] + dx, abs=1.0)
+    assert e["pageY"] == pytest.approx(initial_center["y"] + dy, abs=1.0)
     # check resulting location of the dragged element
     final_rect = drag_target.rect
     assert initial_rect["x"] + dx == final_rect["x"]
     assert initial_rect["y"] + dy == final_rect["y"]
+
+
+@pytest.mark.parametrize("drag_duration", [0, 300, 800])
+def test_drag_and_drop_with_draggable_element(session_new_window,
+                       test_actions_page,
+                       mouse_chain,
+                       drag_duration):
+    new_session = session_new_window
+    drag_target = new_session.find.css("#draggable", all=False)
+    drop_target = new_session.find.css("#droppable", all=False)
+    # Conclude chain with extra move to allow time for last queued
+    # coordinate-update of drag_target and to test that drag_target is "dropped".
+    mouse_chain \
+        .pointer_move(0, 0, origin=drag_target) \
+        .pointer_down() \
+        .pointer_move(50,
+                      25,
+                      duration=drag_duration,
+                      origin=drop_target) \
+        .pointer_up() \
+        .pointer_move(80, 50, duration=100, origin="pointer") \
+        .perform()
+    # mouseup that ends the drag is at the expected destination
+    e = get_events(new_session)
+    assert len(e) >= 5
+    assert e[1]["type"] == "dragstart", "Events captured were {}".format(e)
+    assert e[2]["type"] == "dragover", "Events captured were {}".format(e)
+    drag_events_captured = [
+        ev["type"] for ev in e if ev["type"].startswith("drag") or ev["type"].startswith("drop")
+    ]
+    assert "dragend" in drag_events_captured
+    assert "dragenter" in drag_events_captured
+    assert "dragleave" in drag_events_captured
+    assert "drop" in drag_events_captured
