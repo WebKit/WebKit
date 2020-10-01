@@ -38,22 +38,6 @@ RunIterator::RunIterator(Run::PathVariant&& pathVariant)
 {
 }
 
-TextRunIterator& RunIterator::traverseNextTextRunInVisualOrder()
-{
-    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
-        path.traverseNextTextRunInVisualOrder();
-    });
-    return downcast<TextRunIterator>(*this);
-}
-
-TextRunIterator& RunIterator::traverseNextTextRunInTextOrder()
-{
-    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
-        path.traverseNextTextRunInTextOrder();
-    });
-    return downcast<TextRunIterator>(*this);
-}
-
 bool RunIterator::operator==(const RunIterator& other) const
 {
     if (m_run.m_pathVariant.index() != other.m_run.m_pathVariant.index())
@@ -74,6 +58,40 @@ bool RunIterator::atEnd() const
 TextRunIterator::TextRunIterator(Run::PathVariant&& pathVariant)
     : RunIterator(WTFMove(pathVariant))
 {
+}
+
+TextRunIterator& TextRunIterator::traverseNextTextRunInVisualOrder()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.traverseNextTextRunInVisualOrder();
+    });
+    return *this;
+}
+
+TextRunIterator& TextRunIterator::traverseNextTextRunInTextOrder()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.traverseNextTextRunInTextOrder();
+    });
+    return *this;
+}
+
+LineRunIterator::LineRunIterator(Run::PathVariant&& pathVariant)
+    : RunIterator(WTFMove(pathVariant))
+{
+}
+
+LineRunIterator::LineRunIterator(const RunIterator& runIterator)
+    : RunIterator(runIterator)
+{
+}
+
+LineRunIterator& LineRunIterator::traverseNextOnLine()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.traverseNextOnLine();
+    });
+    return *this;
 }
 
 static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject& renderer)
@@ -125,6 +143,21 @@ RunIterator runFor(const RenderLineBreak& renderElement)
     }
 
     return { LegacyPath(renderElement.inlineBoxWrapper()) };
+}
+
+LineRunIterator lineRun(const RunIterator& runIterator)
+{
+    return LineRunIterator(runIterator);
+}
+
+ModernPath& Run::modernPath()
+{
+    return WTF::get<ModernPath>(m_pathVariant);
+}
+
+LegacyPath& Run::legacyPath()
+{
+    return WTF::get<LegacyPath>(m_pathVariant);
 }
 
 }

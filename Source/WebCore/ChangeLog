@@ -1,3 +1,44 @@
+2020-10-01  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Add LineRunIterator
+        https://bugs.webkit.org/show_bug.cgi?id=217125
+
+        Reviewed by Zalan Bujtas.
+
+        Add LineRunIterator iterating line content.
+        Also remove end offset from modern path, instead set index to the content end position
+        in traversal functions.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::textRunsFor const):
+        (WebCore::LayoutIntegration::LineLayout::runFor const):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextTextRunInVisualOrder):
+        (WebCore::LayoutIntegration::TextRunIterator::traverseNextTextRunInTextOrder):
+        (WebCore::LayoutIntegration::LineRunIterator::LineRunIterator):
+        (WebCore::LayoutIntegration::LineRunIterator::traverseNextOnLine):
+        (WebCore::LayoutIntegration::lineRun):
+        (WebCore::LayoutIntegration::RunIterator::traverseNextTextRunInVisualOrder): Deleted.
+        (WebCore::LayoutIntegration::RunIterator::traverseNextTextRunInTextOrder): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::TextRun::legacyInlineBox const):
+        (WebCore::LayoutIntegration::LineRunIterator::LineRunIterator):
+        (WebCore::LayoutIntegration::LineRunIterator::operator++):
+        (WebCore::LayoutIntegration::Run::legacyInlineBox const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::traverseNextOnLine):
+        (WebCore::LayoutIntegration::LegacyPath::legacyInlineBox const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::ModernPath):
+        (WebCore::LayoutIntegration::ModernPath::isLastTextRunOnLine const):
+        (WebCore::LayoutIntegration::ModernPath::isLastTextRun const):
+        (WebCore::LayoutIntegration::ModernPath::traverseNextTextRunInVisualOrder):
+        (WebCore::LayoutIntegration::ModernPath::traverseNextTextRunInTextOrder):
+        (WebCore::LayoutIntegration::ModernPath::traverseNextOnLine):
+        (WebCore::LayoutIntegration::ModernPath::atEnd const):
+        (WebCore::LayoutIntegration::ModernPath::legacyInlineBox const):
+        (WebCore::LayoutIntegration::ModernPath::setAtEnd):
+
 2020-09-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Implement row-gap and column-gap for flex layout

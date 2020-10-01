@@ -79,8 +79,15 @@ public:
             ++m_sortedInlineTextBoxIndex;
     }
 
+    void traverseNextOnLine()
+    {
+        m_inlineBox = m_inlineBox->nextLeafOnLine();
+    }
+
     bool operator==(const LegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
     bool atEnd() const { return !m_inlineBox; }
+
+    InlineBox* legacyInlineBox() const { return const_cast<InlineBox*>(m_inlineBox); }
 
 private:
     const InlineTextBox* inlineTextBox() const { return downcast<InlineTextBox>(m_inlineBox); }

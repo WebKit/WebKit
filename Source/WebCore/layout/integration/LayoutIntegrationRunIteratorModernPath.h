@@ -40,11 +40,12 @@ static FloatPoint linePosition(float left, float top)
 
 class ModernPath {
 public:
-    ModernPath(const Display::InlineContent& inlineContent, size_t startIndex, size_t endIndex)
+    ModernPath(const Display::InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
-        , m_endIndex(endIndex)
         , m_runIndex(startIndex)
-    { }
+    {
+
+    }
     ModernPath(ModernPath&&) = default;
     ModernPath(const ModernPath&) = default;
     ModernPath& operator=(const ModernPath&) = default;
@@ -82,31 +83,68 @@ public:
     {
         if (isLastTextRun())
             return true;
+
         auto& next = runs()[m_runIndex + 1];
         return run().lineIndex() != next.lineIndex();
     }
+
     bool isLastTextRun() const
     {
-        return m_runIndex + 1 == m_endIndex;
+        ASSERT(!atEnd());
+        ASSERT(run().textContent());
+
+        if (m_runIndex + 1 == runs().size())
+            return true;
+        return &run().layoutBox() != &runs()[m_runIndex + 1].layoutBox();
     };
 
     void traverseNextTextRunInVisualOrder()
     {
         ASSERT(!atEnd());
+        ASSERT(run().textContent());
+
+        auto& layoutBox = run().layoutBox();
+
         ++m_runIndex;
+
+        if (!atEnd() && &layoutBox != &run().layoutBox())
+            setAtEnd();
     }
-    void traverseNextTextRunInTextOrder() {  traverseNextTextRunInVisualOrder(); }
+
+    void traverseNextTextRunInTextOrder()
+    {
+        // FIXME: No RTL in LFC.
+        traverseNextTextRunInVisualOrder();
+    }
+
+    void traverseNextOnLine()
+    {
+        ASSERT(!atEnd());
+
+        auto previouslineIndex = run().lineIndex();
+
+        ++m_runIndex;
+
+        if (!atEnd() && previouslineIndex != run().lineIndex())
+            setAtEnd();
+    }
 
     bool operator==(const ModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
-    bool atEnd() const { return m_runIndex == m_endIndex; }
+    bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
+
+    InlineBox* legacyInlineBox() const
+    {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
 private:
     const Display::InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Display::Run& run() const { return runs()[m_runIndex]; }
     const Display::Line& line() const { return m_inlineContent->lineForRun(run()); }
+    void setAtEnd() { m_runIndex = runs().size(); }
 
     RefPtr<const Display::InlineContent> m_inlineContent;
-    size_t m_endIndex { 0 };
     size_t m_runIndex { 0 };
 };
 

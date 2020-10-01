@@ -77,6 +77,8 @@ struct Run {
 
     CachedImage* image() const { return m_cachedImage; }
 
+    bool hasUnderlyingLayout() const { return !!m_layoutBox; }
+    
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return m_layoutBox->style(); }
 

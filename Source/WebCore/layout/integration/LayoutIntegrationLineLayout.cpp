@@ -302,21 +302,18 @@ TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
     auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderText);
     ASSERT(layoutBox);
 
-    Optional<size_t> firstIndex;
-    size_t lastIndex = 0;
-    for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
-        auto& run = inlineContent->runs[i];
-        if (&run.layoutBox() == layoutBox) {
-            if (!firstIndex)
-                firstIndex = i;
-            lastIndex = i;
-        } else if (firstIndex)
-            break;
-    }
+    auto firstIndex = [&]() -> Optional<size_t> {
+        for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
+            if (&inlineContent->runs[i].layoutBox() == layoutBox)
+                return i;
+        }
+        return { };
+    }();
+
     if (!firstIndex)
         return { };
 
-    return { LayoutIntegration::ModernPath(*inlineContent, *firstIndex, lastIndex + 1) };
+    return { LayoutIntegration::ModernPath(*inlineContent, *firstIndex) };
 }
 
 RunIterator LineLayout::runFor(const RenderElement& renderElement) const
@@ -330,7 +327,7 @@ RunIterator LineLayout::runFor(const RenderElement& renderElement) const
     for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
         auto& run =  inlineContent->runs[i];
         if (&run.layoutBox() == layoutBox)
-            return { LayoutIntegration::ModernPath(*inlineContent, i, i + 1) };
+            return { LayoutIntegration::ModernPath(*inlineContent, i) };
     }
 
     return { };

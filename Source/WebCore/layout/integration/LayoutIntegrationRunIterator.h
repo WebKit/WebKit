@@ -37,7 +37,7 @@ class RenderText;
 
 namespace LayoutIntegration {
 
-class ElementRunIterator;
+class LineRunIterator;
 class TextRunIterator;
 
 struct EndIterator { };
@@ -68,9 +68,17 @@ public:
     unsigned minimumCaretOffset() const;
     unsigned maximumCaretOffset() const;
 
+    // For intermediate porting steps only.
+    InlineBox* legacyInlineBox() const;
+
 protected:
     friend class RunIterator;
+    friend class LineRunIterator;
     friend class TextRunIterator;
+
+    // To help with debugging.
+    ModernPath& modernPath();
+    LegacyPath& legacyPath();
 
     PathVariant m_pathVariant;
 };
@@ -89,15 +97,14 @@ public:
 
     bool isLastTextRunOnLine() const;
     bool isLastTextRun() const;
+
+    InlineTextBox* legacyInlineBox() const { return downcast<InlineTextBox>(Run::legacyInlineBox()); }
 };
 
 class RunIterator {
 public:
     RunIterator() : m_run(LegacyPath { nullptr, { } }) { };
     RunIterator(Run::PathVariant&&);
-
-    TextRunIterator& traverseNextTextRunInVisualOrder();
-    TextRunIterator& traverseNextTextRunInTextOrder();
 
     explicit operator bool() const { return !atEnd(); }
 
@@ -126,8 +133,22 @@ public:
     const TextRun& operator*() const { return get(); }
     const TextRun* operator->() const { return &get(); }
 
+    TextRunIterator& traverseNextTextRunInVisualOrder();
+    TextRunIterator& traverseNextTextRunInTextOrder();
+
 private:
     const TextRun& get() const { return downcast<TextRun>(m_run); }
+};
+
+class LineRunIterator : public RunIterator {
+public:
+    LineRunIterator() { }
+    LineRunIterator(const RunIterator&);
+    LineRunIterator(Run::PathVariant&&);
+
+    LineRunIterator& operator++() { return traverseNextOnLine(); }
+
+    LineRunIterator& traverseNextOnLine();
 };
 
 class TextRunRange {
@@ -148,6 +169,7 @@ TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunRange textRunsFor(const RenderText&);
 RunIterator runFor(const RenderLineBreak&);
+LineRunIterator lineRun(const RunIterator&);
 
 // -----------------------------------------------
 
@@ -223,6 +245,13 @@ inline unsigned Run::maximumCaretOffset() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.maximumCaretOffset();
+    });
+}
+
+inline InlineBox* Run::legacyInlineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.legacyInlineBox();
     });
 }
 
