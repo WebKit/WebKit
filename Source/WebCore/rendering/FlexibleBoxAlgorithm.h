@@ -71,7 +71,7 @@ class FlexLayoutAlgorithm {
     WTF_MAKE_NONCOPYABLE(FlexLayoutAlgorithm);
 
 public:
-    FlexLayoutAlgorithm(const RenderStyle&, LayoutUnit lineBreakLength, const Vector<FlexItem>& allItems);
+    FlexLayoutAlgorithm(const RenderStyle&, LayoutUnit lineBreakLength, const Vector<FlexItem>& allItems, LayoutUnit gapBetweenItems, LayoutUnit gapBetweenLines);
 
     // The hypothetical main size of an item is the flex base size clamped
     // according to its min and max main size properties
@@ -83,6 +83,9 @@ private:
     const RenderStyle& m_style;
     LayoutUnit m_lineBreakLength;
     const Vector<FlexItem>& m_allItems;
+
+    const LayoutUnit m_gapBetweenItems;
+    const LayoutUnit m_gapBetweenLines;
 };
 
 } // namespace WebCore

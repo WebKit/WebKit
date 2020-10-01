@@ -91,10 +91,12 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     // honoring it though until the flex shorthand stops setting it to 0. See
     // https://bugs.webkit.org/show_bug.cgi?id=116117 and
     // https://crbug.com/240765.
+    size_t numItemsWithNormalLayout = 0;
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (child->isOutOfFlowPositioned() || child->isExcludedFromNormalLayout())
             continue;
-        
+        ++numItemsWithNormalLayout;
+
         LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*child);
         
         LayoutUnit minPreferredLogicalWidth;
@@ -117,7 +119,14 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
             maxLogicalWidth = std::max(maxPreferredLogicalWidth, maxLogicalWidth);
         }
     }
-    
+
+    if (!isColumnFlow() && numItemsWithNormalLayout > 1) {
+        LayoutUnit inlineGapSize = (numItemsWithNormalLayout - 1) * computeGap(GapType::BetweenItems);
+        maxLogicalWidth += inlineGapSize;
+        if (!isMultiline())
+            minLogicalWidth += inlineGapSize;
+    }
+
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
     
     // Due to negative margins, it is possible that we calculated a negative
@@ -345,7 +354,7 @@ void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& p
     }
 }
 
-void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(Vector<LineContext>& lineContexts, LayoutUnit gapBetweenLines)
 {
     LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? 0_lu : lineContexts[0].crossAxisOffset;
     // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
@@ -353,8 +362,8 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(Vector<LineCon
     if (!isMultiline() && !lineContexts.isEmpty())
         lineContexts[0].crossAxisExtent = crossAxisContentExtent();
 
-    alignFlexLines(lineContexts);
-    
+    alignFlexLines(lineContexts, gapBetweenLines);
+
     alignChildren(lineContexts);
     
     if (style().flexWrap() == FlexWrap::Reverse)
@@ -900,11 +909,15 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     m_hasDefiniteHeight = SizeDefiniteness::Unknown;
     
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
-    FlexLayoutAlgorithm flexAlgorithm(style(), lineBreakLength, allItems);
+    LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
+    LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
+    FlexLayoutAlgorithm flexAlgorithm(style(), lineBreakLength, allItems, gapBetweenItems, gapBetweenLines);
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     Vector<FlexItem> lineItems;
     size_t nextIndex = 0;
+    size_t numLines = 0;
     while (flexAlgorithm.computeNextFlexLine(nextIndex, lineItems, sumFlexBaseSize, totalFlexGrow, totalFlexShrink, totalWeightedFlexShrink, sumHypotheticalMainSize)) {
+        ++numLines;
         LayoutUnit containerMainInnerSize = mainAxisContentExtent(sumHypotheticalMainSize);
         // availableFreeSpace is the initial amount of free space in this flexbox.
         // remainingFreeSpace starts out at the same value but as we place and lay
@@ -929,8 +942,10 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
             ASSERT(!flexItem.box.isOutOfFlowPositioned());
             remainingFreeSpace -= flexItem.flexedMarginBoxSize();
         }
+        remainingFreeSpace -= (lineItems.size() - 1) * gapBetweenItems;
+
         // This will std::move lineItems into a newly-created LineContext.
-        layoutAndPlaceChildren(crossAxisOffset, lineItems, remainingFreeSpace, relayoutChildren, lineContexts);
+        layoutAndPlaceChildren(crossAxisOffset, lineItems, remainingFreeSpace, relayoutChildren, lineContexts, gapBetweenItems);
     }
 
     if (hasLineIfEmpty()) {
@@ -942,9 +957,12 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
         if (size().height() < minHeight)
             setLogicalHeight(minHeight);
     }
-    
+
+    if (!isColumnFlow() && numLines > 1)
+        setLogicalHeight(logicalHeight() + computeGap(GapType::BetweenLines) * (numLines - 1));
+
     updateLogicalHeight();
-    repositionLogicalHeightDependentFlexItems(lineContexts);
+    repositionLogicalHeightDependentFlexItems(lineContexts, gapBetweenLines);
 }
 
 LayoutUnit RenderFlexibleBox::autoMarginOffsetInMainAxis(const Vector<FlexItem>& children, LayoutUnit& availableFreeSpace)
@@ -1596,7 +1614,7 @@ bool RenderFlexibleBox::hasPercentHeightDescendants(const RenderBox& renderer) c
     return false;
 }
 
-void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>& children, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>& children, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>& lineContexts, LayoutUnit gapBetweenItems)
 {
     ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
@@ -1680,7 +1698,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
 
         if (i != children.size() - 1) {
             // The last item does not get extra space added.
-            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, children.size());
+            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, children.size()) + gapBetweenItems;
         }
 
         // FIXME: Deal with pagination.
@@ -1758,24 +1776,25 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
     }
     return 0_lu;
 }
-    
-void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
+
+void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts, LayoutUnit gapBetweenLines)
 {
     if (lineContexts.isEmpty() || !isMultiline())
         return;
 
     ContentPosition position = style().resolvedAlignContentPosition(contentAlignmentNormalBehavior());
     ContentDistribution distribution = style().resolvedAlignContentDistribution(contentAlignmentNormalBehavior());
-    
-    if (position == ContentPosition::FlexStart)
+
+    if (position == ContentPosition::FlexStart && !gapBetweenLines)
         return;
-    
-    LayoutUnit availableCrossAxisSpace = crossAxisContentExtent();
-    for (size_t i = 0; i < lineContexts.size(); ++i)
+
+    size_t numLines = lineContexts.size();
+    LayoutUnit availableCrossAxisSpace = crossAxisContentExtent() - (numLines - 1) * gapBetweenLines;
+    for (size_t i = 0; i < numLines; ++i)
         availableCrossAxisSpace -= lineContexts[i].crossAxisExtent;
-    
-    LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, position, distribution, lineContexts.size());
-    for (unsigned lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
+
+    LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, position, distribution, numLines);
+    for (unsigned lineNumber = 0; lineNumber < numLines; ++lineNumber) {
         LineContext& lineContext = lineContexts[lineNumber];
         lineContext.crossAxisOffset += lineOffset;
         for (size_t childNumber = 0; childNumber < lineContext.flexItems.size(); ++childNumber) {
@@ -1784,9 +1803,9 @@ void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
         }
         
         if (distribution == ContentDistribution::Stretch && availableCrossAxisSpace > 0)
-            lineContexts[lineNumber].crossAxisExtent += availableCrossAxisSpace / static_cast<unsigned>(lineContexts.size());
-        
-        lineOffset += alignContentSpaceBetweenChildren(availableCrossAxisSpace, distribution, lineContexts.size());
+            lineContexts[lineNumber].crossAxisExtent += availableCrossAxisSpace / static_cast<unsigned>(numLines);
+
+        lineOffset += alignContentSpaceBetweenChildren(availableCrossAxisSpace, distribution, numLines) + gapBetweenLines;
     }
 }
     
@@ -1949,4 +1968,15 @@ bool RenderFlexibleBox::isLeftLayoutOverflowAllowed() const
     return isHorizontalFlow();
 }
 
+LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) const
+{
+    // row-gap is used for gaps between flex items in column flows or for gaps between lines in row flows.
+    bool usesRowGap = (gapType == GapType::BetweenItems) == isColumnFlow();
+    auto& gapLength = usesRowGap ? style().rowGap() : style().columnGap();
+    if (LIKELY(gapLength.isNormal()))
+        return { };
+
+    auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().valueOr(0_lu) : contentLogicalWidth();
+    return minimumValueForLength(gapLength.length(), availableSize);
+}
 }

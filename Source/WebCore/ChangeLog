@@ -1,3 +1,27 @@
+2020-09-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Implement row-gap and column-gap for flex layout
+        https://bugs.webkit.org/show_bug.cgi?id=206767
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Implement row/column-gap for flexboxes which allow authors to define gutters between flex items and also between flex lines.
+
+        Inspired by Blink's crrev.com/c/2162149 and crrev.com/c/2172758 by <dgrogan@chromium.org>
+
+        * rendering/FlexibleBoxAlgorithm.cpp:
+        (WebCore::FlexLayoutAlgorithm::FlexLayoutAlgorithm): Takes two new parameters with row/column gap lengths.
+        (WebCore::FlexLayoutAlgorithm::computeNextFlexLine): Add gaps to hypothetical and flex base sizes in between items.
+        * rendering/FlexibleBoxAlgorithm.h: Added two new attributes to store gaps.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths const): Add gaps to the intrinsic width.
+        (WebCore::RenderFlexibleBox::repositionLogicalHeightDependentFlexItems): Take gap between lines as argument.
+        (WebCore::RenderFlexibleBox::layoutFlexItems): Take gap between lines as argument.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Compute gaps to reduce the remaining free space.
+        (WebCore::RenderFlexibleBox::alignFlexLines): Add gap between lines to the line offset.
+        (WebCore::RenderFlexibleBox::computeGap const): Returns either the row-gap or the column-gap depending on the flex direction.
+        * rendering/RenderFlexibleBox.h:
+
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
         [iOS] MediaRecorder incorrect screen orientation handling

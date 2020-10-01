@@ -1,9 +1,4 @@
 
 
-FAIL .button 1 assert_equals:
-<button class="button" data-expected-height="100">
-  <div class="item"></div>
-  <div class="item"></div>
-</button>
-height expected 100 but got 80
+PASS .button 1
 
