@@ -1,3 +1,15 @@
+2020-09-30  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Enable IPC message handlers of RemoteMediaSessionHelper
+        https://bugs.webkit.org/show_bug.cgi?id=217152
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        (WebKit::RemoteMediaSessionHelper::RemoteMediaSessionHelper):
+
 2020-09-30  John Wilander  <wilander@apple.com>
 
         Storage Access API: Enable per-page storage access scope and align test cases

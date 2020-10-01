@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
+#include "RemoteMediaSessionHelperMessages.h"
 #include "RemoteMediaSessionHelperProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/MediaPlaybackTargetCocoa.h>
@@ -44,6 +45,7 @@ using namespace WebCore;
 RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
     : m_process(process)
 {
+    m_process.ensureGPUProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
     connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
 }
 

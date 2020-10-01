@@ -146,12 +146,6 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         return true;
     }
 #endif
-#if PLATFORM(IOS_FAMILY)
-    if (decoder.messageReceiverName() == Messages::RemoteMediaSessionHelper::messageReceiverName()) {
-        // FIXME
-        return true;
-    }
-#endif
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
         WebProcess::singleton().supplement<RemoteCDMFactory>()->didReceiveSessionMessage(connection, decoder);
