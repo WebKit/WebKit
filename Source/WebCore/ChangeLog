@@ -1,5 +1,23 @@
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
+        [iOS] MediaRecorder incorrect screen orientation handling
+        https://bugs.webkit.org/show_bug.cgi?id=198912
+        <rdar://problem/51802521>
+
+        Reviewed by Eric Carlson.
+
+        We were setting the transform to the writer input too soon.
+        Buffer the transform when receiving the first frame and set it at creation of the writer input.
+
+        Covered by http/wpt/mediarecorder/video-rotation.html now actually passing.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::startAssetWriter):
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
         MediaRecorder should support isTypeSupported
         https://bugs.webkit.org/show_bug.cgi?id=216856
         <rdar://problem/69767695>

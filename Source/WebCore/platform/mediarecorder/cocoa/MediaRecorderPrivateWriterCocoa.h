@@ -133,6 +133,7 @@ private:
     bool m_isFlushingSamples { false };
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
+    Optional<CGAffineTransform> m_videoTransform;
     CMTime m_firstVideoSampleTime { kCMTimeZero };
     CMTime m_currentAudioSampleTime { kCMTimeZero };
 };
