@@ -1,3 +1,11 @@
+2020-09-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Missing bits from last gardening
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-09-30  John Wilander  <wilander@apple.com>
 
         Storage Access API: Enable per-page storage access scope and align test cases
