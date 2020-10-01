@@ -24,7 +24,8 @@ import re
 
 
 class Contributor(object):
-    GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>.*)>')
+    GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@]+@[^@]+)(@.*)?>')
+    AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
     SVN_AUTHOR_RE = re.compile(r'r\d+ \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
 
@@ -38,17 +39,26 @@ class Contributor(object):
 
     @classmethod
     def from_scm_log(cls, line):
+        email = None
         author = None
 
-        for expression in [cls.GIT_AUTHOR_RE, cls.SVN_AUTHOR_RE, cls.SVN_PATCH_FROM_RE]:
+        for expression in [cls.GIT_AUTHOR_RE, cls.SVN_AUTHOR_RE, cls.SVN_PATCH_FROM_RE, cls.AUTOMATED_CHECKIN_RE]:
             match = expression.match(line)
             if match:
                 if 'author' in expression.groupindex:
                     author = match.group('author')
-                email = match.group('email')
+                    if '(no author)' in author or 'Automated Checkin' in author:
+                        author = None
+                if 'email' in expression.groupindex:
+                    email = match.group('email')
+                    if '(no author)' in email:
+                        email = None
                 break
         else:
-            raise ValueError("'{}' does not match a known SCM log")
+            raise ValueError("'{}' does not match a known SCM log".format(line))
+
+        if not email and not author:
+            return None
 
         contributor = cls.by_name.get(author or email)
         if not contributor:

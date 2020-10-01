@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 0, 6)
+version = Version(0, 0, 7)
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit

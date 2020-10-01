@@ -33,6 +33,23 @@ class TestContributor(unittest.TestCase):
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
+    def test_git_svn_log(self):
+        Contributor.clear()
+        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>')
+
+        self.assertEqual(contributor.name, 'Jonathan Bedard')
+        self.assertEqual(contributor.emails, ['jbedard@apple.com'])
+
+    def test_git_no_author(self):
+        Contributor.clear()
+        contributor = Contributor.from_scm_log('Author: Automated Checkin <devnull>')
+        self.assertIsNone(contributor)
+
+    def test_git_svn_no_author(self):
+        Contributor.clear()
+        contributor = Contributor.from_scm_log('Author: (no author) <(no author)@268f45cc-cd09-0410-ab3c-d52691b4dbfc>')
+        self.assertIsNone(contributor)
+
     def test_svn_log(self):
         Contributor.clear()
         contributor = Contributor.from_scm_log('r266751 | jbedard@apple.com | 2020-09-08 14:33:42 -0700 (Tue, 08 Sep 2020) | 10 lines')

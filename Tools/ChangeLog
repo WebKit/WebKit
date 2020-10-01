@@ -1,3 +1,20 @@
+2020-10-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support git-svn committers
+        https://bugs.webkit.org/show_bug.cgi?id=217151
+        <rdar://problem/69812996>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version number.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor):
+        (Contributor.from_scm_log): Handle case where a commit does not contain an author.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor):
+        (TestContributor.test_git_no_author):
+        (TestContributor.test_git_svn_no_author):
+
 2020-10-01  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Rename type to factory in config.json
