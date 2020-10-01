@@ -77,7 +77,9 @@ protected:
     friend class TextRunIterator;
 
     // To help with debugging.
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     ModernPath& modernPath();
+#endif
     LegacyPath& legacyPath();
 
     PathVariant m_pathVariant;

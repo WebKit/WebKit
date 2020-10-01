@@ -1,3 +1,13 @@
+2020-10-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Add missing guard around ModernPath usage.
+
+        No new tests needed.
+
+        * layout/integration/LayoutIntegrationRunIterator.cpp: Add ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        guard around usage of the ModernPath type.
+        * layout/integration/LayoutIntegrationRunIterator.h: Ditto.
+
 2020-10-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove redundant "needs hyphen" flag from LineContent::PartialContent

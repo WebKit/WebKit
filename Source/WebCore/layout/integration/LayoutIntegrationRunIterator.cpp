@@ -150,10 +150,12 @@ LineRunIterator lineRun(const RunIterator& runIterator)
     return LineRunIterator(runIterator);
 }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 ModernPath& Run::modernPath()
 {
     return WTF::get<ModernPath>(m_pathVariant);
 }
+#endif
 
 LegacyPath& Run::legacyPath()
 {
