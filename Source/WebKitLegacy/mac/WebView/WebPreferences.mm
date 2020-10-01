@@ -2988,16 +2988,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:webSQLEnabled forKey:WebKitWebSQLEnabledPreferenceKey];
 }
 
-- (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
-}
-
-- (BOOL)cssIndividualTransformPropertiesEnabled
-{
-    return [self _boolValueForKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
-}
-
 @end
 
 @implementation WebPreferences (WebInternal)

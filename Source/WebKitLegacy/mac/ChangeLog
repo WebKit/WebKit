@@ -1,3 +1,17 @@
+2020-10-01  Sam Weinig  <weinig@apple.com>
+
+        Remove duplicate definitions of @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=217182
+
+        Reviewed by Alex Christensen.
+
+        When the fix for ​https://webkit.org/b/216271 was landed, it added two definitions of
+        the CSSIndividualTransformPropertiesEnabled property (though one getter was misnamed), leading 
+        to linker warnings. This removes one of them.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences cssIndividualTransformPropertiesEnabled]): Deleted.
+
 2020-10-01  Aditya Keerthi  <akeerthi@apple.com>
 
         [macCatalyst] Crash when attempting to display a select dropdown in a UIWebView
