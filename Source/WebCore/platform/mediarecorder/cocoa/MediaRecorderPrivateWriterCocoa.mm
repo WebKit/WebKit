@@ -594,6 +594,14 @@ void MediaRecorderPrivateWriter::appendData(Ref<SharedBuffer>&& buffer)
     m_data->append(WTFMove(buffer));
 }
 
+const String& MediaRecorderPrivateWriter::mimeType() const
+{
+    static NeverDestroyed<const String> audioMP4(MAKE_STATIC_STRING_IMPL("audio/mp4"));
+    static NeverDestroyed<const String> videoMP4(MAKE_STATIC_STRING_IMPL("video/mp4"));
+    // FIXME: we will need to support MIME type codecs parameter values.
+    return m_hasVideo ? videoMP4 : audioMP4;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)

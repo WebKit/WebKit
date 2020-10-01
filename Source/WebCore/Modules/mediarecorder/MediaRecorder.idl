@@ -35,7 +35,7 @@ enum RecordingState { "inactive", "recording", "paused" };
     // FIXME: Implement commented out methods/attributes.
 
     readonly attribute MediaStream stream;
-    // readonly attribute DOMString mimeType;
+    readonly attribute DOMString mimeType;
     readonly attribute RecordingState state;
     attribute EventHandler onstart;
     attribute EventHandler onstop;
@@ -53,7 +53,7 @@ enum RecordingState { "inactive", "recording", "paused" };
     // undefined resume();
     undefined requestData();
 
-    // static boolean isTypeSupported(DOMString type);
+    [CallWith=Document] static boolean isTypeSupported(DOMString type);
 };
 
 dictionary MediaRecorderOptions {

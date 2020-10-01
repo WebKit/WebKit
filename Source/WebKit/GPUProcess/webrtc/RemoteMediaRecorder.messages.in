@@ -27,7 +27,7 @@ messages -> RemoteMediaRecorder NotRefCounted {
     AudioSamplesStorageChanged(WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
     AudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
     VideoSampleAvailable(WebCore::RemoteVideoSample sample)
-    FetchData() -> (IPC::DataReference buffer, String mimeType) Async
+    FetchData() -> (IPC::DataReference buffer) Async
     StopRecording()
 }
 
