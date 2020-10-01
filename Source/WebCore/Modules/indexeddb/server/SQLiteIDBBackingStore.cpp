@@ -1128,17 +1128,6 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     return databaseInfo;
 }
 
-String SQLiteIDBBackingStore::databaseNameFromEncodedFilename(const String& encodedName)
-{
-    if (encodedName == "%00"_s)
-        return { };
-
-    String partiallyDecoded = encodedName;
-    partiallyDecoded.replace("%2E"_s, "."_s);
-
-    return FileSystem::decodeFromFilename(partiallyDecoded);
-}
-
 String SQLiteIDBBackingStore::filenameForDatabaseName() const
 {
     ASSERT(!m_identifier.databaseName().isNull());
@@ -1191,10 +1180,9 @@ Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersio
 
 String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
 {
-    auto databaseRootDirectory = this->databaseRootDirectoryIsolatedCopy();
-    String oldOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v0");
+    String oldOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v0");
     String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, filenameForDatabaseName());
-    String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory, "v1");
+    String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v1");
     String fileNameHash = SQLiteFileSystem::computeHashForFileName(m_identifier.databaseName());
     Vector<String> directoriesWithSameHash = FileSystem::listDirectory(newOriginDirectory, fileNameHash + "*");
     String newDatabaseDirectory = FileSystem::pathByAppendingComponent(newOriginDirectory, fileNameHash);
@@ -3044,7 +3032,7 @@ void SQLiteIDBBackingStore::deleteBackingStore()
 
     SQLiteFileSystem::deleteDatabaseFile(dbFilename);
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(databaseRootDirectoryIsolatedCopy()));
+    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory));
 }
 
 void SQLiteIDBBackingStore::unregisterCursor(SQLiteIDBCursor& cursor)

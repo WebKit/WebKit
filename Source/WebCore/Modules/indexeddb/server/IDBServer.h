@@ -116,8 +116,6 @@ public:
 
 private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
-    
-    String databaseDirectoryPathIsolatedCopy() const { return m_databaseDirectoryPath.isolatedCopy(); }
 
     void upgradeFilesIfNecessary();
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);

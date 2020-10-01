@@ -97,7 +97,6 @@ public:
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
-    static String databaseNameFromEncodedFilename(const String&);
     static uint64_t databasesSizeForDirectory(const String& directory);
 
     String databaseDirectory() const { return m_databaseDirectory; };
@@ -110,8 +109,6 @@ private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
-    
-    String databaseRootDirectoryIsolatedCopy() const { return m_databaseRootDirectory.isolatedCopy(); }
 
     bool ensureValidRecordsTable();
     bool ensureValidIndexRecordsTable();
