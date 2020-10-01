@@ -52,5 +52,13 @@
 			<string>Editor</string>
 		</dict>
 	</array>
+    <key>com.apple.security.device.camera</key>
+    <true/>
+    <key>com.apple.security.device.microphone</key>
+    <true/>
+    <key>NSCameraUsageDescription</key>
+    <string>Recording random videos</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Recording random audio</string>
 </dict>
 </plist>

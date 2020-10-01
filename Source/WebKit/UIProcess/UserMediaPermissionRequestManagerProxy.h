@@ -58,6 +58,8 @@ public:
 #if ENABLE(MEDIA_STREAM)
     static void forEach(const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
 #endif
+    static bool permittedToCaptureAudio();
+    static bool permittedToCaptureVideo();
 
     void invalidatePendingRequests();
 

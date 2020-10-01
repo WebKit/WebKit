@@ -1,3 +1,34 @@
+2020-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Prevent media capture unless the application has correct data for system permission prompt
+        https://bugs.webkit.org/show_bug.cgi?id=217104
+        <rdar://problem/69761929>
+
+        Reviewed by Darin Adler.
+
+        Tested manually with MiniBrowser.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::requestAVCaptureAccessForMediaType): Renamed from requestAccessForMediaType.
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Deny
+        requests of the application is not permitted to capture. Restructure logic to
+        make it easier to understand.
+        (WebKit::requestAccessForMediaType): Deleted.
+
+        * UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm: Added.
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio): Check
+        for required Info.plist string.
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo): Ditto.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm: Update for unified build.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio):
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-01  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Enable IPC message handlers of RemoteAudioSession

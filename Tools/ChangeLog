@@ -1,3 +1,17 @@
+2020-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Prevent media capture unless the application has correct data for system permission prompt
+        https://bugs.webkit.org/show_bug.cgi?id=217104
+        <rdar://problem/69761929>
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/mac/Info.plist: Add necessary entitlements and usage strings.
+
+        * MobileMiniBrowser/MobileMiniBrowserFramework/WebViewController.m:
+        (-[WebViewController createWebView]): Setting the private capture preference is
+        not necessary because we set configuration._mediaCaptureEnabled.
+
 2020-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URLs are not idempotent

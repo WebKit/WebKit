@@ -34,6 +34,7 @@
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
 #import "UserMediaPermissionCheckProxy.h"
+#import "UserMediaPermissionRequestManagerProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
@@ -940,7 +941,7 @@ static void requestUserMediaAuthorizationForFrame(const WebFrameProxy& frame, AP
     [delegate _webView:&webView requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
 }
 
-static void requestAccessForMediaType(CompletionHandler<void(BOOL authorized)>&& completionHandler, AVMediaType type)
+static void requestAVCaptureAccessForMediaType(CompletionHandler<void(BOOL authorized)>&& completionHandler, AVMediaType type)
 {
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
         if (!isMainThread()) {
@@ -973,61 +974,66 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     }
 
     bool usingMockCaptureDevices = page.preferences().mockCaptureDevicesEnabled();
-    auto requestCameraAuthorization = [weakThis = makeWeakPtr(this), frame = makeRef(frame), protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView), topLevelOrigin = makeRef(topLevelOrigin), usingMockCaptureDevices]() mutable {
+    if (!usingMockCaptureDevices) {
+        if (requiresAudioCapture && !UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()) {
+            request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+            return;
+        }
+        if (requiresVideoCapture && !UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()) {
+            request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+            return;
+        }
+    }
+
+    auto microphoneAuthorizationStatus = usingMockCaptureDevices || !requiresAudioCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeAudio];
+    if (microphoneAuthorizationStatus == AVAuthorizationStatusDenied || microphoneAuthorizationStatus == AVAuthorizationStatusRestricted) {
+        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+        return;
+    }
+    
+    auto cameraAuthorizationStatus = usingMockCaptureDevices || !requiresVideoCapture ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (cameraAuthorizationStatus == AVAuthorizationStatusDenied || cameraAuthorizationStatus == AVAuthorizationStatusRestricted) {
+        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+        return;
+    }
+    
+    auto requestCameraAuthorization = [weakThis = makeWeakPtr(this), frame = makeRef(frame), protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView), topLevelOrigin = makeRef(topLevelOrigin), cameraAuthorizationStatus]() mutable {
         if (!weakThis) {
             protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
             return;
         }
-        if (!protectedRequest->requiresVideoCapture()) {
+        if (!protectedRequest->requiresVideoCapture() || cameraAuthorizationStatus == AVAuthorizationStatusAuthorized) {
             requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)weakThis->m_uiDelegate.m_delegate.get(), *webView.get());
             return;
         }
-        AVAuthorizationStatus cameraAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeVideo];
-        switch (cameraAuthorizationStatus) {
-        case AVAuthorizationStatusAuthorized:
+
+        auto tccPromptCompletionHandler = [weakThis = WTFMove(weakThis), frame = WTFMove(frame), protectedRequest = WTFMove(protectedRequest), webView = WTFMove(webView), topLevelOrigin = WTFMove(topLevelOrigin)](BOOL authorized) {
+            if (!authorized || !weakThis) {
+                protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                return;
+            }
             requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)weakThis->m_uiDelegate.m_delegate.get(), *webView.get());
-            break;
-        case AVAuthorizationStatusDenied:
-        case AVAuthorizationStatusRestricted:
-            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        case AVAuthorizationStatusNotDetermined:
-            auto completionHandler = [weakThis = WTFMove(weakThis), frame = WTFMove(frame), protectedRequest = WTFMove(protectedRequest), webView = WTFMove(webView), topLevelOrigin = WTFMove(topLevelOrigin)](BOOL authorized) {
-                if (!authorized || !weakThis) {
-                    protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-                    return;
-                }
-                requestUserMediaAuthorizationForFrame(frame, topLevelOrigin, protectedRequest, (id <WKUIDelegatePrivate>)weakThis->m_uiDelegate.m_delegate.get(), *webView.get());
-            };
-            requestAccessForMediaType(WTFMove(completionHandler), AVMediaTypeVideo);
-            break;
-        }
+        };
+
+        ASSERT(cameraAuthorizationStatus == AVAuthorizationStatusNotDetermined);
+        requestAVCaptureAccessForMediaType(WTFMove(tccPromptCompletionHandler), AVMediaTypeVideo);
     };
 
-    if (requiresAudioCapture) {
-        AVAuthorizationStatus microphoneAuthorizationStatus = usingMockCaptureDevices ? AVAuthorizationStatusAuthorized : [PAL::getAVCaptureDeviceClass() authorizationStatusForMediaType:AVMediaTypeAudio];
-        switch (microphoneAuthorizationStatus) {
-        case AVAuthorizationStatusAuthorized:
-            requestCameraAuthorization();
-            break;
-        case AVAuthorizationStatusDenied:
-        case AVAuthorizationStatusRestricted:
-            request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        case AVAuthorizationStatusNotDetermined:
-            auto completionHandler = [protectedRequest = makeRef(request), requestCameraAuthorization = WTFMove(requestCameraAuthorization)](BOOL authorized) mutable {
-                if (!authorized) {
-                    protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-                    return;
-                }
-                requestCameraAuthorization();
-            };
-            requestAccessForMediaType(WTFMove(completionHandler), AVMediaTypeVideo);
-            break;
-        }
+    if (!requiresAudioCapture || microphoneAuthorizationStatus == AVAuthorizationStatusAuthorized) {
+        requestCameraAuthorization();
         return;
     }
-    requestCameraAuthorization();
+
+    auto tccPromptCompletionHandler = [protectedRequest = makeRef(request), requestCameraAuthorization = WTFMove(requestCameraAuthorization)](BOOL authorized) mutable {
+        if (!authorized) {
+            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+            return;
+        };
+        requestCameraAuthorization();
+    };
+
+    ASSERT(microphoneAuthorizationStatus == AVAuthorizationStatusNotDetermined);
+    requestAVCaptureAccessForMediaType(WTFMove(tccPromptCompletionHandler), AVMediaTypeAudio);
 #endif
 }
 

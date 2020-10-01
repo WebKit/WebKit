@@ -72,6 +72,18 @@ void UserMediaPermissionRequestManagerProxy::forEach(const WTF::Function<void(Us
 }
 #endif
 
+#if !PLATFORM(COCOA)
+bool UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio()
+{
+    return true;
+}
+
+bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
+{
+    return true;
+}
+#endif
+
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
     , m_rejectionTimer(RunLoop::main(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)

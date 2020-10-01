@@ -28,6 +28,7 @@
 
 #import "APIAttachment.h"
 #import "APIUIClient.h"
+#import "CocoaImage.h"
 #import "Connection.h"
 #import "DataDetectionResult.h"
 #import "InsertTextOptions.h"
@@ -58,6 +59,12 @@
 
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
+#endif
+
+#if USE(APPKIT)
+#import <AppKit/NSImage.h>
+#else
+#import <UIKit/UIImage.h>
 #endif
 
 #if PLATFORM(IOS)
