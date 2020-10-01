@@ -85,6 +85,7 @@ ALL PROPERTIES:
     findIndex
     includes
     copyWithin
+    item
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)
@@ -138,6 +139,7 @@ OWN PROPERTIES:
     findIndex
     includes
     copyWithin
+    item
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)
@@ -176,6 +178,7 @@ DISPLAYABLE PROPERTIES:
     findIndex
     includes
     copyWithin
+    item
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)
@@ -214,6 +217,7 @@ ALL PROPERTIES:
     findIndex
     includes
     copyWithin
+    item
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)

@@ -1,3 +1,13 @@
+2020-09-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement item method proposal
+        https://bugs.webkit.org/show_bug.cgi?id=217115
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/item-method.js: Added.
+        * test262/config.yaml: Unskip tests.
+
 2020-09-29  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update test262 (2020.09.29)

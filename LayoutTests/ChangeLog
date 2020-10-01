@@ -1,3 +1,15 @@
+2020-09-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement item method proposal
+        https://bugs.webkit.org/show_bug.cgi?id=217115
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        Adjust tests.
+
 2020-09-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable <wbr> content

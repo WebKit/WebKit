@@ -375,6 +375,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("some", typedArrayPrototypeSomeCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->subarray, typedArrayPrototypeSubarrayCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, typedArrayPrototypeToLocaleStringCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().itemPublicName(), typedArrayPrototypeItemCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSFunction* toStringTagFunction = JSFunction::create(vm, globalObject, 0, "get [Symbol.toStringTag]"_s, typedArrayViewProtoGetterFuncToStringTag, NoIntrinsic);
     GetterSetter* toStringTagAccessor = GetterSetter::create(vm, globalObject, toStringTagFunction, nullptr);

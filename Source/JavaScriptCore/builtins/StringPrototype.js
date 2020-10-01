@@ -340,6 +340,25 @@ function concat(arg /* ... */)
     return @tailCallForwardArguments(@stringConcatSlowPath, this);
 }
 
+// FIXME: This is extremely similar to charAt, so we should optimize it accordingly.
+//        https://bugs.webkit.org/show_bug.cgi?id=217139
+function item(index)
+{
+    "use strict";
+
+    if (@isUndefinedOrNull(this))
+        @throwTypeError("String.prototype.item requires that |this| not be null or undefined");
+
+    var string = @toString(this);
+    var length = string.length;
+
+    var k = @toInteger(index);
+    if (k < 0)
+        k += length;
+
+    return (k >= 0 && k < length) ? string[k] : @undefined;
+}
+
 @globalPrivate
 function createHTML(func, string, tag, attribute, value)
 {

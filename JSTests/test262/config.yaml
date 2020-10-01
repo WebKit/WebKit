@@ -25,10 +25,6 @@ skip:
     - regexp-match-indices
     - top-level-await
     - Intl.ListFormat
-
-    - Array.prototype.item
-    - String.prototype.item
-    - TypedArray.prototype.item
   paths:
     - test/built-ins/DataView/prototype/getBigInt64
     - test/built-ins/DataView/prototype/getBigUint64

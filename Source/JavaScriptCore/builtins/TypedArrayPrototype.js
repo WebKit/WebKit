@@ -370,3 +370,16 @@ function toLocaleString(/* locale, options */)
 
     return string;
 }
+
+function item(index)
+{
+    "use strict";
+
+    var length = @typedArrayLength(this);
+
+    var k = @toInteger(index);
+    if (k < 0)
+        k += length;
+
+    return (k >= 0 && k < length) ? this[k] : @undefined;
+}
