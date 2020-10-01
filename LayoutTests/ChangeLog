@@ -1,5 +1,21 @@
 2020-10-01  Youenn Fablet  <youenn@apple.com>
 
+        Add AVAssetWriter SPI header
+        https://bugs.webkit.org/show_bug.cgi?id=217169
+        <rdar://problem/69793050>
+
+        Reviewed by Eric Carlson.
+
+        Enable tests by default on Catalina+, disable them on Mojave and WK1.
+        Disable tests for iOS13.
+
+        * TestExpectations:
+        * platform/ios-13/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+2020-10-01  Youenn Fablet  <youenn@apple.com>
+
         RealtimeMediaSource should ignore ideal values outside the min/max range
         https://bugs.webkit.org/show_bug.cgi?id=217178
 

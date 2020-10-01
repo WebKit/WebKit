@@ -11,5 +11,10 @@ http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html 
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Skip ]
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Skip ]
 
+# MediaRecorder requires iOS14 only API.
+http/wpt/mediarecorder [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
+fast/history/page-cache-media-recorder.html [ Skip ]
+
 # This test requires the OS to have a font that supports the Ahom language.
 webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]

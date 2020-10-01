@@ -545,7 +545,7 @@
 #define HAVE_OS_SIGNPOST 1
 #endif
 
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || PLATFORM(IOS)) && (defined __has_include && __has_include(<AVFoundation/AVAssetWriter_Private.h>))
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000)
 #define HAVE_AVASSETWRITERDELEGATE 1
 #endif
 
