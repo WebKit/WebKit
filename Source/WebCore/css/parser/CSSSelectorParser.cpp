@@ -53,6 +53,7 @@ private:
     bool m_wasDisallowed;
 };
 
+static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
 CSSSelectorList parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet)
@@ -554,8 +555,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     if (token.type() != FunctionToken)
         return nullptr;
     
-    const auto& argumentStart = block.peek();
-    
     if (selector->match() == CSSSelector::PseudoClass) {
         switch (selector->pseudoClassType()) {
         case CSSSelector::PseudoClassNot: {
@@ -575,10 +574,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             if (!consumeANPlusB(block, ab))
                 return nullptr;
             block.consumeWhitespace();
-            const auto& argumentEnd = block.peek();
-            auto rangeOfANPlusB = block.makeSubRange(&argumentStart, &argumentEnd);
-            auto argument = rangeOfANPlusB.serialize();
-            selector->setArgument(argument.stripWhiteSpace());
+            // FIXME: We should be able to do this lazily. See: https://bugs.webkit.org/show_bug.cgi?id=217149
+            selector->setArgument(serializeANPlusB(ab));
             if (!block.atEnd()) {
                 if (block.peek().type() != IdentToken)
                     return nullptr;
@@ -755,6 +752,29 @@ CSSSelector::AttributeMatchType CSSSelectorParser::consumeAttributeFlags(CSSPars
         return CSSSelector::CaseInsensitive;
     m_failedParsing = true;
     return CSSSelector::CaseSensitive;
+}
+
+// <an+b> token sequences have special serialization rules: https://www.w3.org/TR/css-syntax-3/#serializing-anb
+static AtomString serializeANPlusB(const std::pair<int, int>& ab)
+{
+    if (!ab.first)
+        return AtomString::number(ab.second);
+
+    StringBuilder builder;
+
+    if (ab.first == -1)
+        builder.append('-');
+    else if (ab.first != 1)
+        builder.append(ab.first);
+    builder.append('n');
+
+    if (ab.second) {
+        if (ab.second > 0)
+            builder.append('+');
+        builder.append(ab.second);
+    }
+
+    return builder.toAtomString();
 }
 
 static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& result)

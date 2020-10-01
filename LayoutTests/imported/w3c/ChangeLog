@@ -1,3 +1,15 @@
+2020-09-30  Keith Miller  <keith_miller@apple.com>
+
+        CSS Selector an-plus-b serialization is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=217108
+
+        Reviewed by Darin Adler.
+
+        Rebasline tests for correct an-plus-b serialization
+
+        * web-platform-tests/css/cssom/selectorSerialize-expected.txt:
+        * web-platform-tests/css/selectors/anplusb-selector-parsing-expected.txt:
+
 2020-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r267788.

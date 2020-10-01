@@ -1,3 +1,24 @@
+2020-09-30  Keith Miller  <keith_miller@apple.com>
+
+        CSS Selector an-plus-b serialization is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=217108
+
+        Reviewed by Darin Adler.
+
+        Right now we don't differentiate our CSS serialization for
+        an-plus-b expressions from any other CSS sytnax. This is
+        incorrect, according to the CSS spec an-plus-b expressions have
+        custom serialization rules. See:
+        https://www.w3.org/TR/css-syntax-3/#serializing-anb
+
+        One thing of note is for constant an-plus-b expressions (i.e. a is
+        zero so the resulting string is just a number), we get the string
+        from JSC::VM's numeric string cache.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        (WebCore::serializeANPlusB):
+
 2020-09-30  James Darpinian  <jdarpinian@chromium.org>
 
         Expose pvrtc extension without vendor prefix and remove redundant WebGL 2 extensions
