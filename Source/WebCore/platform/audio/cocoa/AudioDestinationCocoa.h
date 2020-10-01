@@ -40,7 +40,7 @@ class AudioBus;
 class MultiChannelResampler;
 class PushPullFIFO;
 
-using CreateAudioDestinationCocoaOverride = std::unique_ptr<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
+using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 class AudioDestinationCocoa : public AudioDestination, public AudioSourceProvider {
@@ -65,11 +65,15 @@ protected:
 
     void setAudioStreamBasicDescription(AudioStreamBasicDescription&);
 
+    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
+
 private:
-    void start() override;
+    void start(Function<void(Function<void()>&&)>&&) override;
     void stop() override;
 
-    friend std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
+    void renderOnRenderingThead(size_t framesToRender);
+
+    friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
     
     // AudioSourceProvider.
     void provideInput(AudioBus*, size_t framesToProcess) final;
@@ -91,11 +95,14 @@ private:
     // Resolves the buffer size mismatch between the WebAudio engine and
     // the callback function from the actual audio device.
     UniqueRef<PushPullFIFO> m_fifo;
+    Lock m_fifoLock;
 
     std::unique_ptr<MultiChannelResampler> m_resampler;
     AudioIOPosition m_outputTimestamp;
 
     float m_contextSampleRate;
+
+    Lock m_isPlayingLock;
     bool m_isPlaying { false };
 };
 

@@ -37,12 +37,10 @@ Ref<WorkerEventLoop> WorkerEventLoop::create(WorkerGlobalScope& context)
     return adoptRef(*new WorkerEventLoop(context));
 }
 
-#if ENABLE(CSS_PAINTING_API)
 Ref<WorkerEventLoop> WorkerEventLoop::create(WorkletGlobalScope& context)
 {
     return adoptRef(*new WorkerEventLoop(context));
 }
-#endif
 
 WorkerEventLoop::WorkerEventLoop(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)

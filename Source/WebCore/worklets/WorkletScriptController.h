@@ -25,8 +25,7 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
+#include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <JavaScriptCore/Strong.h>
@@ -46,9 +45,11 @@ class WorkletConsoleClient;
 class WorkletGlobalScope;
 class WorkletConsoleClient;
 
-class WorkletScriptController {
+// FIXME: We should share more code with WorkerScriptController.
+class WorkletScriptController : public WorkerOrWorkletScriptController {
     WTF_MAKE_NONCOPYABLE(WorkletScriptController); WTF_MAKE_FAST_ALLOCATED;
 public:
+    explicit WorkletScriptController(WorkletGlobalScope*);
     WorkletScriptController(Ref<JSC::VM>&&, WorkletGlobalScope*);
     ~WorkletScriptController();
 
@@ -63,6 +64,15 @@ public:
 
     void disableEval(const String& errorMessage);
     void disableWebAssembly(const String& errorMessage);
+
+    void releaseHeapAccess() final;
+    void acquireHeapAccess() final;
+
+    void addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback) final;
+    void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback) final;
+
+    void scheduleExecutionTermination();
+    bool isTerminatingExecution() const final;
 
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
@@ -87,7 +97,8 @@ private:
     WorkletGlobalScope* m_workletGlobalScope;
     std::unique_ptr<WorkletConsoleClient> m_consoleClient;
     JSC::Strong<JSWorkletGlobalScope> m_workletGlobalScopeWrapper;
+    mutable Lock m_scheduledTerminationLock;
+    bool m_isTerminatingExecution { false };
 };
 
 } // namespace WebCore
-#endif

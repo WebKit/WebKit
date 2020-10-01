@@ -37,7 +37,7 @@ struct NowPlayingInfo;
 class WEBCORE_EXPORT MediaStrategy {
 public:
 #if ENABLE(WEB_AUDIO)
-    virtual std::unique_ptr<AudioDestination> createAudioDestination(
+    virtual Ref<AudioDestination> createAudioDestination(
         AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) = 0;
 #endif
 #if PLATFORM(COCOA)

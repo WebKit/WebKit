@@ -27,8 +27,6 @@
 #include "config.h"
 #include "JSWorkletGlobalScopeBase.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMGuardedObject.h"
@@ -151,4 +149,3 @@ JSWorkletGlobalScope* toJSWorkletGlobalScope(VM& vm, JSValue value)
 }
 
 } // namespace WebCore
-#endif

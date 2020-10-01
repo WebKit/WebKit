@@ -838,6 +838,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setAspectRatioOfImgFromWidthAndHeightEnabled:YES];
     [preferences setCSSOMViewSmoothScrollingEnabled:YES];
     [preferences setCSSIndividualTransformPropertiesEnabled:YES];
+    [preferences setAudioWorkletEnabled:YES];
 }
 
 // Called before each test.
@@ -931,7 +932,6 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setWebAudioEnabled:YES];
     [preferences setModernUnprefixedWebAudioEnabled:YES];
-    [preferences setAudioWorkletEnabled:YES];
     [preferences setMediaSourceEnabled:YES];
     [preferences setSourceBufferChangeTypeEnabled:YES];
 

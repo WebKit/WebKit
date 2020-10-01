@@ -775,7 +775,7 @@ sub ShouldUseGlobalObjectPrototype
 
     # For workers, the global object is a DedicatedWorkerGlobalScope.
     return 0 if $interface->type->name eq "WorkerGlobalScope";
-    # For worklets, the global object is a PaintWorkletGlobalScope.
+    # For worklets, the global object is a PaintWorkletGlobalScope or a AudioWorkletGlobalScope.
     return 0 if $interface->type->name eq "WorkletGlobalScope";
 
     return IsDOMGlobalObject($interface);

@@ -43,10 +43,10 @@ using AudioBus = WebCore::AudioBus;
 using AudioDestination = WebCore::AudioDestination;
 using AudioIOCallback = WebCore::AudioIOCallback;
 
-std::unique_ptr<AudioDestination> RemoteAudioDestinationProxy::create(AudioIOCallback& callback,
+Ref<AudioDestination> RemoteAudioDestinationProxy::create(AudioIOCallback& callback,
     const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
-    return makeUnique<RemoteAudioDestinationProxy>(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+    return adoptRef(*new RemoteAudioDestinationProxy(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate));
 }
 
 RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callback, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
@@ -77,8 +77,9 @@ RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
     });
 }
 
-void RemoteAudioDestinationProxy::start()
+void RemoteAudioDestinationProxy::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
 {
+    m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
     WebProcess::singleton().ensureGPUProcessConnection().connection().sendSync(
         Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID),
         Messages::RemoteAudioDestinationManager::StartAudioDestination::Reply(m_isPlaying), 0);
@@ -89,19 +90,31 @@ void RemoteAudioDestinationProxy::stop()
     WebProcess::singleton().ensureGPUProcessConnection().connection().sendSync(
         Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID),
         Messages::RemoteAudioDestinationManager::StopAudioDestination::Reply(m_isPlaying), 0);
+    m_dispatchToRenderThread = nullptr;
 }
 
 void RemoteAudioDestinationProxy::renderBuffer(const WebKit::RemoteAudioBusData& audioBusData, CompletionHandler<void()>&& completionHandler)
 {
+    // FIXME: This does rendering on the main thread when AudioWorklet is not active, which is likely not a good idea.
+    ASSERT(isMainThread());
     ASSERT(audioBusData.framesToProcess);
     ASSERT(audioBusData.channelBuffers.size());
     auto audioBus = AudioBus::create(audioBusData.channelBuffers.size(), audioBusData.framesToProcess, false);
     for (unsigned i = 0; i < audioBusData.channelBuffers.size(); ++i)
         audioBus->setChannelMemory(i, (float*)audioBusData.channelBuffers[i]->data(), audioBusData.framesToProcess);
 
-    m_callback.render(0, audioBus.get(), audioBusData.framesToProcess, audioBusData.outputPosition);
-
-    completionHandler();
+    auto doRender = [this, protectedThis = makeRef(*this), audioBus = WTFMove(audioBus), framesToProcess = audioBusData.framesToProcess, outputPosition = audioBusData.outputPosition] {
+        m_callback.render(0, audioBus.get(), framesToProcess, outputPosition);
+    };
+    if (m_dispatchToRenderThread) {
+        m_dispatchToRenderThread([doRender = WTFMove(doRender), completionHandler = WTFMove(completionHandler)]() mutable {
+            doRender();
+            callOnMainThread(WTFMove(completionHandler));
+        });
+    } else {
+        doRender();
+        completionHandler();
+    }
 }
 
 void RemoteAudioDestinationProxy::didChangeIsPlaying(bool isPlaying)

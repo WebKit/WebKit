@@ -32,6 +32,7 @@
 #include "ImageBitmap.h"
 #include "ScriptExecutionContext.h"
 #include "Supplementable.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include <wtf/URL.h>
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerMessagePortChannelProvider.h"
@@ -59,7 +60,7 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public Supplementable<WorkerGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData, public Base64Utilities {
+class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public Supplementable<WorkerGlobalScope>, public EventTargetWithInlineData, public Base64Utilities, public WorkerOrWorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(WorkerGlobalScope);
 public:
     virtual ~WorkerGlobalScope();
@@ -85,12 +86,14 @@ public:
     WorkerSWClientConnection& swClientConnection();
 #endif
 
-    WorkerScriptController* script() { return m_script.get(); }
+    WorkerScriptController* script() final { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
 
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     WorkerThread& thread() const { return m_thread; }
+
+    Thread* underlyingThread() const final;
 
     using ScriptExecutionContext::hasPendingActivity;
 
@@ -119,7 +122,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    bool isClosing() { return m_closing; }
+    bool isClosing() const final { return m_closing; }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 

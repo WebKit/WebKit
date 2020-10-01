@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WorkletConsoleClient.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "InspectorInstrumentation.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ScriptArguments.h>
@@ -71,4 +69,3 @@ void WorkletConsoleClient::recordEnd(JSC::JSGlobalObject*, Ref<ScriptArguments>&
 void WorkletConsoleClient::screenshot(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) { }
 
 } // namespace WebCore
-#endif

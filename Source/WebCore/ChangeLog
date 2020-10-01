@@ -1,3 +1,207 @@
+2020-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Add basic infrastructure for AudioWorklet
+        https://bugs.webkit.org/show_bug.cgi?id=217153
+
+        Reviewed by Sam Weinig.
+
+        Add basic infrastructure for AudioWorklet:
+        - https://www.w3.org/TR/webaudio/#audioworklet
+
+        In particular, this adds a partial but spec-compliant implementation of
+        Worklet.addModule(), as per:
+        - https://drafts.css-houdini.org/worklets/#dom-worklet-addmodule
+
+        When Worklet.addModule() is called, we create a AudioWorket thread and
+        a AudioWorkletGlobalScope with its VM. We then ask the AudioWorkletGlobalScope
+        to fetch and invoke the worklet script. Note that AudioWorkletGlobalScope
+        does NOT fetch or invoke the worklet script yet to reduce patch size.
+
+        Calling Worklet.addModule() activates the AudioWorklet and causes audio rendering
+        to occur on the AudioWorkletThread.
+
+        A few important things that are still missing in this patch:
+        - Fetching & invoking worklet scripts
+        - Pretty much all API exposed to AudioWorkletGlobalScopes
+        - AudioWorkletProcessor support
+
+        No new tests, no Web-facing behavior change yet.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files to projets.
+
+        * Modules/webaudio/AudioWorklet.cpp:
+        (WebCore::AudioWorklet::create):
+        (WebCore::AudioWorklet::AudioWorklet):
+        (WebCore::AudioWorklet::createGlobalScopes):
+        (WebCore::AudioWorklet::proxy const):
+        * Modules/webaudio/AudioWorklet.h:
+        When the Worklet needs to create a GlobalScope, AudioWorklet takes care of creating a AudioWorkletMessagingProxy.
+        The AudioWorkletMessagingProxy starts the AudioWorkletThread, which creates the AudioWorkletGlobalScope.
+        AudioWorkletMessagingProxy takes care of posting tasks from the main thread to the AudioWorkletThread as well.
+
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp: Added.
+        * Modules/webaudio/AudioWorkletGlobalScope.h: Added.
+        * Modules/webaudio/AudioWorkletGlobalScope.idl: Added.
+        Add basic implementation for AudioWorkletGlobalScope:
+        - https://www.w3.org/TR/webaudio/#audioworkletglobalscope
+        None of the Web API is exposed on the AudioWorkletGlobalScope yet.
+
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp: Added.
+        * Modules/webaudio/AudioWorkletMessagingProxy.h: Added.
+        Add new AudioWorkletMessagingProxy class (Similar to WorkerMessagingProxy) which starts to AudioWorkletThread
+        (which constructs the AudioWorkletGlobalScope on that thread) and takes care of posting tasks from the main
+        thread to the AudioWorkletThread.
+
+        * Modules/webaudio/AudioWorkletThread.cpp: Added.
+        * Modules/webaudio/AudioWorkletThread.h: Added.
+        Add new class which wraps the AudioThread used by AudioWorkets.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        Pass document when constructing the AudioWorklet since it is now an ActiveDOMObject.
+
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::enableInput):
+        (WebCore::Function<void):
+        (WebCore::DefaultAudioDestinationNode::startRendering):
+        (WebCore::DefaultAudioDestinationNode::resume):
+        (WebCore::DefaultAudioDestinationNode::setChannelCount):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        If AudioWorklet is active, pass a function to AudioDestination::start() that dispatches to the
+        AudioWorkletThread, so that the AudioDestination can do rendering on the AudioWorkletThead instead
+        of the device's rendering thread.
+
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        If AudioWorklet is active, use the AudioWorklet's AudioWorkletThread instead of a new audio thread
+        to do the offline rendering.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        Add AudioWorkletGlobalScope since it is exposed conditionally at runtime to AudioWorkets.
+
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * bindings/js/WebCoreJSClientData.h:
+        Add code to support AudioWorkletGlobalScope as a GlobalScope in our JS bindings.
+
+        * bindings/js/WorkerScriptController.h:
+        We now subclass WorkerOrWorkletScriptController interface. This allows WorkletScriptController
+        to reuse WorkerRunLoop.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldUseGlobalObjectPrototype):
+        * bindings/scripts/preprocess-idls.pl:
+        Add support for AudioWorkletGlobalScope as global scope in our JS bindings.
+
+        * css/DOMCSSPaintWorklet.cpp:
+        (WebCore::PaintWorklet::addModule):
+        (WebCore::PaintWorklet::createGlobalScopes):
+        * css/DOMCSSPaintWorklet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePaintWorklet):
+        Update PaintWorklet code so that it keeps building.
+
+        * platform/MediaStrategy.h:
+        * platform/audio/AudioDestination.h:
+        Make AudioDestination ThreadSafeRefCounted so that it can keep itself alive
+        when dispatching to the AudioWorkletThread for rendering.
+
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationCocoa::start):
+        (WebCore::AudioDestinationCocoa::stop):
+        (WebCore::AudioDestinationCocoa::setIsPlaying):
+        (WebCore::AudioDestinationCocoa::render):
+        (WebCore::AudioDestinationCocoa::renderOnRenderingThead):
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+        When we get a request to render audio, we now use the function provided by
+        the DefaultAudioDestinationNode to dispatch to the AudioWorkletThread when
+        needed (AudioWorklet is active) before doing the rendering.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::start):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        * platform/mock/MockAudioDestinationCocoa.cpp:
+        (WebCore::MockAudioDestinationCocoa::start):
+        * platform/mock/MockAudioDestinationCocoa.h:
+        Update code so that it keeps building.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::underlyingThread const):
+        * workers/WorkerGlobalScope.h:
+
+        * workers/WorkerOrWorkletGlobalScope.h: Added.
+        * workers/WorkerOrWorkletScriptController.h: Added.
+        Add new interfaces that are subclassed by Worker and Worklet implementation
+        classes in order to promote code sharing.
+
+        * workers/WorkerRunLoop.cpp:
+        * workers/WorkerRunLoop.h:
+        Update WorkerRunLoop to use WorkerOrWorkletGlobalScope so that it can be
+        reused by AudioWorkletThread.
+
+        * worklets/Worklet.cpp:
+        (WebCore::Worklet::Worklet):
+        (WebCore::Worklet::document):
+        (WebCore::Worklet::addModule):
+        (WebCore::Worklet::finishPendingTasks):
+        (WebCore::Worklet::activeDOMObjectName const):
+        * worklets/Worklet.h:
+        (WebCore::Worklet::proxies const):
+        * worklets/Worklet.idl:
+        Add initial implementation for addModule():
+        - https://drafts.css-houdini.org/worklets/#dom-worklet-addmodule
+        Make Worklet an ActiveDOMObject since it needs to resolve a JS promise asynchronously.
+
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+        (WebCore::WorkletGlobalScope::evaluate):
+        (WebCore::WorkletGlobalScope::completeURL const):
+        (WebCore::WorkletGlobalScope::fetchAndInvokeScript):
+        * worklets/WorkletGlobalScope.h:
+        (WebCore::WorkletGlobalScope::isAudioWorkletGlobalScope const):
+        * worklets/WorkletGlobalScope.idl:
+        Update WorkletGlobalScope so that it can be subclassed by AudioWorkletGlobalScope and not
+        be PaintWorklet-specific.
+
+        * worklets/WorkletGlobalScopeProxy.h: Added.
+        Add WorkletGlobalScopeProxy interface to interact with the WorkletGlobalScope interface.
+        The purpose of this class is to post tasks to the WorkletGlobalScope, abstracting away
+        potential threading complexity. Note that AudioWorkets use threading while PaintWorklets
+        do not.
+
+        * worklets/WorkletPendingTasks.cpp: Added.
+        (WebCore::WorkletPendingTasks::WorkletPendingTasks):
+        (WebCore::WorkletPendingTasks::abort):
+        (WebCore::WorkletPendingTasks::decrementCounter):
+        * worklets/WorkletPendingTasks.h: Added.
+        (WebCore::WorkletPendingTasks::create):
+        Add implementation for:
+        - https://drafts.css-houdini.org/worklets/#pending-tasks-struct
+        While it is not strictly needed right for AudioWorklet (because there is always a single
+        WorkletGlobalScope), it will be needed once we have proper support for PaintWorklets.
+        PaintWorklets can have several WorkletGlobalScopes. In the mean time, it allows us to
+        have code that matches the specification text more closely.
+
+        * worklets/WorkletScriptController.cpp:
+        (WebCore::WorkletScriptController::WorkletScriptController):
+        (WebCore::WorkletScriptController::initScript):
+        (WebCore::WorkletScriptController::releaseHeapAccess):
+        (WebCore::WorkletScriptController::acquireHeapAccess):
+        (WebCore::WorkletScriptController::addTimerSetNotification):
+        (WebCore::WorkletScriptController::removeTimerSetNotification):
+        (WebCore::WorkletScriptController::scheduleExecutionTermination):
+        (WebCore::WorkletScriptController::isTerminatingExecution const):
+        * worklets/WorkletScriptController.h:
+        Update WorkletScriptController so that it can be used by AudioWorklets and not just
+        PaintWorklets.
+
 2020-10-01  Adrian Perez de Castro <aperez@igalia.com> and Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early October 2020 edition

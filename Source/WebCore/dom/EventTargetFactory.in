@@ -55,7 +55,7 @@ WebGPUDevice conditional=WEBGPU
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket
 Worker
-WorkletGlobalScope conditional=CSS_PAINTING_API
+WorkletGlobalScope
 XMLHttpRequest
 XMLHttpRequestUpload
 WebXRLayer conditional=WEBXR

@@ -72,7 +72,7 @@ class BindingsTests:
             exit_code = e.exit_code
         return exit_code
 
-    def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
+    def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, audioworkletglobalscope_constructors_file, testglobalscope_constructors_file):
         idl_files_list = tempfile.mkstemp()
         for input_file in os.listdir(input_directory):
             (name, extension) = os.path.splitext(input_file)
@@ -98,6 +98,7 @@ class BindingsTests:
                '--serviceWorkerGlobalScopeConstructorsFile', serviceworkerglobalscope_constructors_file,
                '--workletGlobalScopeConstructorsFile', workletglobalscope_constructors_file,
                '--paintWorkletGlobalScopeConstructorsFile', paintworkletglobalscope_constructors_file,
+               '--audioWorkletGlobalScopeConstructorsFile', audioworkletglobalscope_constructors_file,
                '--testGlobalScopeConstructorsFile', testglobalscope_constructors_file,
                '--validateAgainstParser']
 
@@ -201,6 +202,7 @@ class BindingsTests:
         serviceworkerglobalscope_constructors_filename = 'ServiceWorkerGlobalScopeConstructors.idl'
         workletglobalscope_constructors_filename = 'WorkletGlobalScopeConstructors.idl'
         paintworkletglobalscope_constructors_filename = 'PaintWorkletGlobalScopeConstructors.idl'
+        audioworkletglobalscope_constructors_filename = 'AudioWorkletGlobalScopeConstructors.idl'
         testglobalscope_constructors_filename = 'BindingTestGlobalConstructors.idl'
 
         work_directory = tempfile.mkdtemp()
@@ -213,9 +215,10 @@ class BindingsTests:
         serviceworkerglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, serviceworkerglobalscope_constructors_filename)
         workletglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, workletglobalscope_constructors_filename)
         paintworkletglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, paintworkletglobalscope_constructors_filename)
+        audioworkletglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, audioworkletglobalscope_constructors_filename)
         testglobalscope_constructors_file = os.path.join(work_directory if not self.reset_results else input_directory, testglobalscope_constructors_filename)
 
-        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
+        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, audioworkletglobalscope_constructors_file, testglobalscope_constructors_file):
             print('Failed to generate a supplemental dependency file.')
             shutil.rmtree(work_directory)
             return -1
@@ -234,6 +237,8 @@ class BindingsTests:
             if self.detect_file_changes('globalscope', work_directory, input_directory, workletglobalscope_constructors_filename):
                 all_tests_passed = False
             if self.detect_file_changes('globalscope', work_directory, input_directory, paintworkletglobalscope_constructors_filename):
+                all_tests_passed = False
+            if self.detect_file_changes('globalscope', work_directory, input_directory, audioworkletglobalscope_constructors_filename):
                 all_tests_passed = False
             if self.detect_file_changes('globalscope', work_directory, input_directory, testglobalscope_constructors_filename):
                 all_tests_passed = False

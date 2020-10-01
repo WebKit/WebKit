@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <JavaScriptCore/Strong.h>
@@ -44,7 +45,7 @@ class ScriptSourceCode;
 class WorkerConsoleClient;
 class WorkerGlobalScope;
 
-class WorkerScriptController {
+class WorkerScriptController : public WorkerOrWorkletScriptController {
     WTF_MAKE_NONCOPYABLE(WorkerScriptController); WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerScriptController(WorkerGlobalScope*);
@@ -67,7 +68,7 @@ public:
     // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
     // Can be called from any thread.
     void scheduleExecutionTermination();
-    bool isTerminatingExecution() const;
+    bool isTerminatingExecution() const final;
 
     // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
     // or by Worker thread termination code to prevent future entry into JS.
@@ -79,11 +80,11 @@ public:
 
     JSC::VM& vm() { return *m_vm; }
     
-    void releaseHeapAccess();
-    void acquireHeapAccess();
+    void releaseHeapAccess() final;
+    void acquireHeapAccess() final;
 
-    void addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
-    void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
+    void addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback) final;
+    void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback) final;
 
     void attachDebugger(JSC::Debugger*);
     void detachDebugger(JSC::Debugger*);

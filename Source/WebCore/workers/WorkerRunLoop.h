@@ -38,7 +38,7 @@
 namespace WebCore {
 
     class ModePredicate;
-    class WorkerGlobalScope;
+    class WorkerOrWorkletGlobalScope;
     class WorkerSharedTimer;
 
     class WorkerRunLoop {
@@ -47,13 +47,13 @@ namespace WebCore {
         ~WorkerRunLoop();
         
         // Blocking call. Waits for tasks and timers, invokes the callbacks.
-        void run(WorkerGlobalScope*);
+        void run(WorkerOrWorkletGlobalScope*);
 
         enum WaitMode { WaitForMessage, DontWaitForMessage };
 
         // Waits for a single task and returns.
-        MessageQueueWaitResult runInMode(WorkerGlobalScope*, const String& mode, WaitMode = WaitForMessage);
-        MessageQueueWaitResult runInDebuggerMode(WorkerGlobalScope&);
+        MessageQueueWaitResult runInMode(WorkerOrWorkletGlobalScope*, const String& mode, WaitMode = WaitForMessage);
+        MessageQueueWaitResult runInDebuggerMode(WorkerOrWorkletGlobalScope&);
 
         void terminate();
         bool terminated() const { return m_messageQueue.killed(); }
@@ -73,7 +73,7 @@ namespace WebCore {
             const String& mode() const { return m_mode; }
 
         private:
-            void performTask(WorkerGlobalScope*);
+            void performTask(WorkerOrWorkletGlobalScope*);
 
             ScriptExecutionContext::Task m_task;
             String m_mode;
@@ -83,11 +83,11 @@ namespace WebCore {
 
     private:
         friend class RunLoopSetup;
-        MessageQueueWaitResult runInMode(WorkerGlobalScope*, const ModePredicate&, WaitMode);
+        MessageQueueWaitResult runInMode(WorkerOrWorkletGlobalScope*, const ModePredicate&, WaitMode);
 
         // Runs any clean up tasks that are currently in the queue and returns.
         // This should only be called when the context is closed or loop has been terminated.
-        void runCleanupTasks(WorkerGlobalScope*);
+        void runCleanupTasks(WorkerOrWorkletGlobalScope*);
 
         bool isBeingDebugged() const { return m_debugCount >= 1; }
 

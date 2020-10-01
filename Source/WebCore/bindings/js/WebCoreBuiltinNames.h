@@ -55,6 +55,7 @@ namespace WebCore {
     macro(AudioListener) \
     macro(AudioParamMap) \
     macro(AudioWorklet) \
+    macro(AudioWorkletGlobalScope) \
     macro(AudioWorkletNode) \
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \

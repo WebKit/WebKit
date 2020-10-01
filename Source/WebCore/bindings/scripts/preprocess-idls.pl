@@ -47,6 +47,7 @@ my $dedicatedWorkerGlobalScopeConstructorsFile;
 my $serviceWorkerGlobalScopeConstructorsFile;
 my $workletGlobalScopeConstructorsFile;
 my $paintWorkletGlobalScopeConstructorsFile;
+my $audioWorkletGlobalScopeConstructorsFile;
 my $testGlobalScopeConstructorsFile;
 my $supplementalMakefileDeps;
 my $idlAttributesFile;
@@ -69,6 +70,7 @@ GetOptions('defines=s' => \$defines,
            'serviceWorkerGlobalScopeConstructorsFile=s' => \$serviceWorkerGlobalScopeConstructorsFile,
            'workletGlobalScopeConstructorsFile=s' => \$workletGlobalScopeConstructorsFile,
            'paintWorkletGlobalScopeConstructorsFile=s' => \$paintWorkletGlobalScopeConstructorsFile,
+           'audioWorkletGlobalScopeConstructorsFile=s' => \$audioWorkletGlobalScopeConstructorsFile,
            'testGlobalScopeConstructorsFile=s' => \$testGlobalScopeConstructorsFile,
            'supplementalMakefileDeps=s' => \$supplementalMakefileDeps,
            'idlAttributesFile=s' => \$idlAttributesFile,
@@ -83,6 +85,7 @@ die('Must specify an output file using --dedicatedWorkerGlobalScopeConstructorsF
 die('Must specify an output file using --serviceWorkerGlobalScopeConstructorsFile.') unless defined($serviceWorkerGlobalScopeConstructorsFile);
 die('Must specify an output file using --workletGlobalScopeConstructorsFile.') unless defined($workletGlobalScopeConstructorsFile);
 die('Must specify an output file using --paintWorkletGlobalScopeConstructorsFile.') unless defined($paintWorkletGlobalScopeConstructorsFile);
+die('Must specify an output file using --audioWorkletGlobalScopeConstructorsFile.') unless defined($audioWorkletGlobalScopeConstructorsFile);
 die('Must specify an output file using --testGlobalScopeConstructorsFile.') unless defined($testGlobalScopeConstructorsFile) || !defined($testGlobalContextName);
 die('Must specify the file listing all IDLs using --idlFileNamesList.') unless defined($idlFileNamesList);
 die('Must specify IDL attributes file using --idlAttributesFile.') unless defined($idlAttributesFile);
@@ -95,6 +98,7 @@ $dedicatedWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($dedicatedWorke
 $serviceWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($serviceWorkerGlobalScopeConstructorsFile);
 $workletGlobalScopeConstructorsFile = CygwinPathIfNeeded($workletGlobalScopeConstructorsFile);
 $paintWorkletGlobalScopeConstructorsFile = CygwinPathIfNeeded($paintWorkletGlobalScopeConstructorsFile);
+$audioWorkletGlobalScopeConstructorsFile = CygwinPathIfNeeded($audioWorkletGlobalScopeConstructorsFile);
 $supplementalMakefileDeps = CygwinPathIfNeeded($supplementalMakefileDeps) if defined($supplementalMakefileDeps);
 
 my @idlFileNames;
@@ -135,6 +139,7 @@ my $dedicatedWorkerGlobalScopeConstructorsCode = "";
 my $serviceWorkerGlobalScopeConstructorsCode = "";
 my $workletGlobalScopeConstructorsCode = "";
 my $paintWorkletGlobalScopeConstructorsCode = "";
+my $audioWorkletGlobalScopeConstructorsCode = "";
 my $testGlobalScopeConstructorsCode = "";
 
 my $isoSubspacesHeaderCode = <<END;
@@ -237,6 +242,8 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
                 $workletGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "PaintWorklet") {
                 $paintWorkletGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "AudioWorklet") {
+                $audioWorkletGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq $testGlobalContextName) {
                 $testGlobalScopeConstructorsCode .= $attributeCode;
             } else {
@@ -254,6 +261,7 @@ GeneratePartialInterface("DedicatedWorkerGlobalScope", $dedicatedWorkerGlobalSco
 GeneratePartialInterface("ServiceWorkerGlobalScope", $serviceWorkerGlobalScopeConstructorsCode, $serviceWorkerGlobalScopeConstructorsFile);
 GeneratePartialInterface("WorkletGlobalScope", $workletGlobalScopeConstructorsCode, $workletGlobalScopeConstructorsFile);
 GeneratePartialInterface("PaintWorkletGlobalScope", $paintWorkletGlobalScopeConstructorsCode, $paintWorkletGlobalScopeConstructorsFile);
+GeneratePartialInterface("AudioWorkletGlobalScope", $audioWorkletGlobalScopeConstructorsCode, $audioWorkletGlobalScopeConstructorsFile);
 GeneratePartialInterface($testGlobalContextName, $testGlobalScopeConstructorsCode, $testGlobalScopeConstructorsFile) if defined($testGlobalContextName);
 
 if ($isoSubspacesHeaderFile) {

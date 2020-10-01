@@ -47,6 +47,8 @@ private:
     explicit DefaultAudioDestinationNode(BaseAudioContext&, Optional<float>);
     void createDestination();
 
+    Function<void(Function<void()>&&)> dispatchToRenderThreadFunction();
+
     void initialize() final;
     void uninitialize() final;
     ExceptionOr<void> setChannelCount(unsigned) final;
@@ -61,7 +63,7 @@ private:
     unsigned maxChannelCount() const final;
     bool isPlaying() final;
 
-    std::unique_ptr<AudioDestination> m_destination;
+    RefPtr<AudioDestination> m_destination;
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels { 0 };
     float m_sampleRate { 0 };

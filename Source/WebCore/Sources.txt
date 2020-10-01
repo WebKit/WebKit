@@ -205,7 +205,10 @@ Modules/webaudio/AudioProcessingEvent.cpp
 Modules/webaudio/AudioScheduledSourceNode.cpp
 Modules/webaudio/AudioSummingJunction.cpp
 Modules/webaudio/AudioWorklet.cpp
+Modules/webaudio/AudioWorkletGlobalScope.cpp
+Modules/webaudio/AudioWorkletMessagingProxy.cpp
 Modules/webaudio/AudioWorkletNode.cpp
+Modules/webaudio/AudioWorkletThread.cpp
 Modules/webaudio/BaseAudioContext.cpp
 Modules/webaudio/BiquadDSPKernel.cpp
 Modules/webaudio/BiquadFilterNode.cpp
@@ -2579,6 +2582,7 @@ worklets/PaintWorkletGlobalScope.cpp
 worklets/Worklet.cpp
 worklets/WorkletConsoleClient.cpp
 worklets/WorkletGlobalScope.cpp
+worklets/WorkletPendingTasks.cpp
 worklets/WorkletScriptController.cpp
 xml/CustomXPathNSResolver.cpp
 xml/DOMParser.cpp
@@ -2680,6 +2684,7 @@ JSAudioTimestamp.cpp
 JSAudioTrack.cpp
 JSAudioTrackList.cpp
 JSAudioWorklet.cpp
+JSAudioWorkletGlobalScope.cpp
 JSAudioWorkletNode.cpp
 JSAudioWorkletNodeOptions.cpp
 JSAuthenticationExtensionsClientInputs.cpp

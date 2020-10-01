@@ -41,15 +41,21 @@ class DOMCSSNamespace;
 
 class PaintWorklet final : public Worklet {
 public:
-    static Ref<PaintWorklet> create()
+    static Ref<PaintWorklet> create(Document& document)
     {
-        return adoptRef(*new PaintWorklet);
+        auto worklet = adoptRef(*new PaintWorklet(document));
+        worklet->suspendIfNeeded();
+        return worklet;
     }
 
-    void addModule(Document&, const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&) final;
+    // Worklet.
+    void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&) final;
+    Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
 
 private:
-    PaintWorklet() = default;
+    explicit PaintWorklet(Document& document)
+        : Worklet(document)
+    { }
 };
 
 class DOMCSSPaintWorklet final : public Supplement<DOMCSSNamespace> {

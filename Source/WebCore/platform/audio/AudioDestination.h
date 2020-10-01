@@ -30,6 +30,7 @@
 #define AudioDestination_h
 
 #include <memory>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,16 +41,16 @@ class AudioIOCallback;
 // The audio hardware periodically calls the AudioIOCallback render() method asking it to render/output the next render quantum of audio.
 // It optionally will pass in local/live audio input when it calls render().
 
-class AudioDestination {
+class AudioDestination : public ThreadSafeRefCounted<AudioDestination> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // Pass in (numberOfInputChannels > 0) if live/local audio input is desired.
     // Port-specific device identification information for live/local input streams can be passed in the inputDeviceId.
-    WEBCORE_EXPORT static std::unique_ptr<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
+    WEBCORE_EXPORT static Ref<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
     virtual ~AudioDestination() = default;
 
-    virtual void start() = 0;
+    virtual void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) = 0;
     virtual void stop() = 0;
     virtual bool isPlaying() = 0;
 

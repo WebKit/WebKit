@@ -126,7 +126,7 @@ BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-    , m_worklet(AudioWorklet::create())
+    , m_worklet(AudioWorklet::create(document))
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
     // According to spec AudioContext must die only after page navigate.
@@ -161,7 +161,7 @@ BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-    , m_worklet(AudioWorklet::create())
+    , m_worklet(AudioWorklet::create(document))
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
     , m_renderTarget(WTFMove(renderTarget))

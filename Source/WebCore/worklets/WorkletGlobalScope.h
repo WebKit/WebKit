@@ -26,30 +26,34 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "Document.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "FetchRequestCredentials.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
 #include "WorkerEventLoop.h"
+#include "WorkerOrWorkletGlobalScope.h"
+#include "WorkletScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
-#include <wtf/URL.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/Optional.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class EventLoopTaskGroup;
 class WorkerEventLoop;
-class WorkletScriptController;
+
+struct WorkletParameters;
 
 enum WorkletGlobalScopeIdentifierType { };
 using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
 
-class WorkletGlobalScope : public RefCounted<WorkletGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData {
+class WorkletGlobalScope : public RefCounted<WorkletGlobalScope>, public EventTargetWithInlineData, public WorkerOrWorkletGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(WorkletGlobalScope);
 public:
     virtual ~WorkletGlobalScope();
@@ -57,11 +61,16 @@ public:
     using WorkletGlobalScopesSet = HashSet<const WorkletGlobalScope*>;
     WEBCORE_EXPORT static WorkletGlobalScopesSet& allWorkletGlobalScopesSet();
 
+#if ENABLE(CSS_PAINTING_API)
     virtual bool isPaintWorkletGlobalScope() const { return false; }
+#endif
+#if ENABLE(WEB_AUDIO)
+    virtual bool isAudioWorkletGlobalScope() const { return false; }
+#endif
 
     EventLoopTaskGroup& eventLoop() final;
 
-    const URL& url() const final { return m_code.url(); }
+    const URL& url() const final { return m_url; }
 
     void evaluate();
 
@@ -70,7 +79,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    WorkletScriptController* script() { return m_script.get(); }
+    WorkletScriptController* script() final { return m_script.get(); }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 
@@ -79,6 +88,10 @@ public:
 
     SocketProvider* socketProvider() final { return nullptr; }
 
+    // WorkerOrWorkletGlobalScope.
+    Thread* underlyingThread() const override { return nullptr; }
+    bool isClosing() const final { return m_isClosing; }
+
     bool isContextThread() const final { return true; }
     bool isSecureContext() const final { return false; }
 
@@ -86,7 +99,10 @@ public:
 
     virtual void prepareForDestruction();
 
+    void fetchAndInvokeScript(const URL&, FetchRequestCredentials, CompletionHandler<void(Optional<Exception>&&)>&&);
+
 protected:
+    WorkletGlobalScope(const WorkletParameters&);
     WorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);
     WorkletGlobalScope(const WorkletGlobalScope&) = delete;
     WorkletGlobalScope(WorkletGlobalScope&&) = delete;
@@ -136,8 +152,10 @@ private:
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
 
+    URL m_url;
     JSC::RuntimeFlags m_jsRuntimeFlags;
-    ScriptSourceCode m_code;
+    Optional<ScriptSourceCode> m_code;
+    bool m_isClosing { false };
 };
 
 } // namespace WebCore
@@ -145,4 +163,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkletGlobalScope)
 static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isWorkletGlobalScope(); }
 SPECIALIZE_TYPE_TRAITS_END()
-#endif

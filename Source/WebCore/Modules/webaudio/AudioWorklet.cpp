@@ -31,15 +31,34 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorklet.h"
 
+#include "AudioWorkletMessagingProxy.h"
+
 namespace WebCore {
 
-Ref<AudioWorklet> AudioWorklet::create()
+Ref<AudioWorklet> AudioWorklet::create(Document& document)
 {
-    return adoptRef(*new AudioWorklet);
+    auto worklet = adoptRef(*new AudioWorklet(document));
+    worklet->suspendIfNeeded();
+    return worklet;
 }
 
-AudioWorklet::AudioWorklet()
+AudioWorklet::AudioWorklet(Document& document)
+    : Worklet(document)
 {
+}
+
+Vector<Ref<WorkletGlobalScopeProxy>> AudioWorklet::createGlobalScopes()
+{
+    // WebAudio uses a single global scope.
+    return { AudioWorkletMessagingProxy::create(*this) };
+}
+
+AudioWorkletMessagingProxy* AudioWorklet::proxy() const
+{
+    auto& proxies = this->proxies();
+    if (proxies.isEmpty())
+        return nullptr;
+    return downcast<AudioWorkletMessagingProxy>(proxies.first().ptr());
 }
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ constexpr size_t fifoSize = 96 * AudioUtilities::renderQuantumSize;
 
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 
-std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     // FIXME: make use of inputDeviceId as appropriate.
 
@@ -55,7 +55,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
     if (AudioDestinationCocoa::createOverride)
         return AudioDestinationCocoa::createOverride(callback, sampleRate);
 
-    auto destination = makeUnique<AudioDestinationCocoa>(callback, numberOfOutputChannels, sampleRate);
+    auto destination = adoptRef(*new AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate));
     destination->configure();
     return destination;
 }
@@ -103,9 +103,10 @@ unsigned AudioDestinationCocoa::framesPerBuffer() const
     return m_renderBus->length();
 }
 
-void AudioDestinationCocoa::start()
+void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
 {
     LOG(Media, "AudioDestinationCocoa::start");
+    m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
     OSStatus result = AudioOutputUnitStart(m_outputUnit);
 
     if (!result)
@@ -116,6 +117,7 @@ void AudioDestinationCocoa::stop()
 {
     LOG(Media, "AudioDestinationCocoa::stop");
     OSStatus result = AudioOutputUnitStop(m_outputUnit);
+    m_dispatchToRenderThread = nullptr;
 
     if (!result)
         setIsPlaying(false);
@@ -123,6 +125,7 @@ void AudioDestinationCocoa::stop()
 
 void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
 {
+    auto locker = holdLock(m_isPlayingLock);
     if (m_isPlaying == isPlaying)
         return;
 
@@ -173,18 +176,38 @@ OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 n
 
     // Associate the destination data array with the output bus then fill the FIFO.
     assignAudioBuffersToBus(buffers, m_outputBus.get(), numberOfBuffers, numberOfFrames, 0, numberOfFrames);
-    size_t framesToRender = m_fifo->pull(m_outputBus.ptr(), numberOfFrames);
+    size_t framesToRender;
 
+    {
+        auto locker = holdLock(m_fifoLock);
+        framesToRender = m_fifo->pull(m_outputBus.ptr(), numberOfFrames);
+    }
+
+    // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.
+    if (m_dispatchToRenderThread) {
+        m_dispatchToRenderThread([this, protectedThis = makeRef(*this), framesToRender]() mutable {
+            std::unique_lock<Lock> lock(m_isPlayingLock, std::try_to_lock);
+            if (lock.owns_lock() && m_isPlaying)
+                renderOnRenderingThead(framesToRender);
+        });
+    } else
+        renderOnRenderingThead(framesToRender);
+
+    return noErr;
+}
+
+// This runs on the AudioWorkletThread when AudioWorklet is enabled, on the audio device's rendering thread otherwise.
+void AudioDestinationCocoa::renderOnRenderingThead(size_t framesToRender)
+{
     for (size_t pushedFrames = 0; pushedFrames < framesToRender; pushedFrames += AudioUtilities::renderQuantumSize) {
         if (m_resampler)
             m_resampler->process(this, m_renderBus.ptr(), AudioUtilities::renderQuantumSize);
         else
             m_callback.render(0, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
 
+        auto locker = holdLock(m_fifoLock);
         m_fifo->push(m_renderBus.ptr());
     }
-
-    return noErr;
 }
 
 // DefaultOutputUnit callback

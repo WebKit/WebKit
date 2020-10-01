@@ -47,7 +47,7 @@ public:
     using AudioBus = WebCore::AudioBus;
     using AudioIOCallback = WebCore::AudioIOCallback;
 
-    static std::unique_ptr<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
+    static Ref<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
     RemoteAudioDestinationProxy(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
     ~RemoteAudioDestinationProxy();
@@ -59,7 +59,7 @@ public:
 
 private:
     // WebCore::AudioDestination
-    void start() override;
+    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) override;
     void stop() override;
     bool isPlaying() override { return m_isPlaying; }
     float sampleRate() const override { return m_sampleRate; }
@@ -73,6 +73,7 @@ private:
     unsigned m_framesPerBuffer { 0 };
     RemoteAudioDestinationIdentifier m_destinationID;
     bool m_isPlaying { false };
+    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
 };
 
 } // namespace WebKit

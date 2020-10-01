@@ -1,3 +1,12 @@
+2020-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Add basic infrastructure for AudioWorklet
+        https://bugs.webkit.org/show_bug.cgi?id=217153
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
 2020-10-01  Sam Weinig  <weinig@apple.com>
 
         Remove duplicate definitions of @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled

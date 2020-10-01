@@ -45,7 +45,7 @@ namespace WebKit {
 WebMediaStrategy::~WebMediaStrategy() = default;
 
 #if ENABLE(WEB_AUDIO)
-std::unique_ptr<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(WebCore::AudioIOCallback& callback, const String& inputDeviceId,
+Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(WebCore::AudioIOCallback& callback, const String& inputDeviceId,
     unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
 #if ENABLE(GPU_PROCESS)

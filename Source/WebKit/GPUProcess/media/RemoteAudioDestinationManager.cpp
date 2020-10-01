@@ -66,7 +66,7 @@ public:
         stop();
     }
 
-    void start() { m_destination->start(); }
+    void start() { m_destination->start({ }); }
     void stop() { m_destination->stop(); }
     bool isPlaying() { return m_destination->isPlaying(); }
     unsigned framesPerBuffer() const { return m_destination->framesPerBuffer() ; }
@@ -125,7 +125,7 @@ private:
 
     GPUConnectionToWebProcess& m_connection;
     RemoteAudioDestinationIdentifier m_id;
-    std::unique_ptr<AudioDestination> m_destination;
+    RefPtr<AudioDestination> m_destination;
     RefPtr<RemoteAudioDestination> m_protectThisDuringGracefulShutdown;
 };
 

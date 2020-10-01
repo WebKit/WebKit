@@ -48,7 +48,7 @@ static void autoAudioSinkChildAddedCallback(GstChildProxy*, GObject* object, gch
         g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
 }
 
-std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     // FIXME: make use of inputDeviceId as appropriate.
 
@@ -60,7 +60,7 @@ std::unique_ptr<AudioDestination> AudioDestination::create(AudioIOCallback& call
     if (numberOfOutputChannels != 2)
         LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled output channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    return makeUnique<AudioDestinationGStreamer>(callback, sampleRate);
+    return adoptRef(*new AudioDestinationGStreamer(callback, sampleRate));
 }
 
 float AudioDestination::hardwareSampleRate()
@@ -165,7 +165,7 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
     return TRUE;
 }
 
-void AudioDestinationGStreamer::start()
+void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&&)
 {
     ASSERT(m_audioSinkAvailable);
     if (!m_audioSinkAvailable)

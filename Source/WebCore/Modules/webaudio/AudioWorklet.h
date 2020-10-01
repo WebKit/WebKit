@@ -33,12 +33,19 @@
 
 namespace WebCore {
 
-class AudioWorklet : public Worklet {
+class AudioWorkletMessagingProxy;
+
+class AudioWorklet final : public Worklet {
 public:
-    static Ref<AudioWorklet> create();
+    static Ref<AudioWorklet> create(Document&);
+
+    AudioWorkletMessagingProxy* proxy() const;
 
 private:
-    AudioWorklet();
+    explicit AudioWorklet(Document&);
+
+    // Worklet.
+    Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
 };
 
 } // namespace WebCore

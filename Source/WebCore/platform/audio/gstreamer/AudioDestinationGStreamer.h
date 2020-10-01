@@ -34,7 +34,7 @@ public:
     AudioDestinationGStreamer(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationGStreamer();
 
-    void start() override;
+    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread) override;
     void stop() override;
 
     bool isPlaying() override { return m_isPlaying; }

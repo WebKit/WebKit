@@ -8439,7 +8439,7 @@ DeviceOrientationAndMotionAccessController& Document::deviceOrientationAndMotion
 PaintWorklet& Document::ensurePaintWorklet()
 {
     if (!m_paintWorklet)
-        m_paintWorklet = PaintWorklet::create();
+        m_paintWorklet = PaintWorklet::create(*this);
     return *m_paintWorklet;
 }
 

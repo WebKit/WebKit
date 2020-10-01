@@ -544,4 +544,9 @@ ReferrerPolicy WorkerGlobalScope::referrerPolicy() const
     return m_referrerPolicy;
 }
 
+Thread* WorkerGlobalScope::underlyingThread() const
+{
+    return m_thread.thread();
+}
+
 } // namespace WebCore

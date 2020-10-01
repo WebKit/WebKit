@@ -45,8 +45,9 @@ MockAudioDestinationCocoa::MockAudioDestinationCocoa(AudioIOCallback& callback, 
 
 MockAudioDestinationCocoa::~MockAudioDestinationCocoa() = default;
 
-void MockAudioDestinationCocoa::start()
+void MockAudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread)
 {
+    m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
     m_timer.startRepeating(Seconds { m_numberOfFramesToProcess / sampleRate() });
     setIsPlaying(true);
 }

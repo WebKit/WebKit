@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WorkletGlobalScope.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
 #include "JSWorkletGlobalScope.h"
@@ -36,7 +34,7 @@
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "WorkerEventLoop.h"
-#include "WorkletScriptController.h"
+#include "WorkletParameters.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -47,21 +45,34 @@ using namespace Inspector;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
+WorkletGlobalScope::WorkletGlobalScope(const WorkletParameters& parameters)
+    : m_script(makeUnique<WorkletScriptController>(this))
+    , m_topOrigin(SecurityOrigin::createUnique())
+    , m_url(parameters.windowURL)
+    , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
+{
+    auto addResult = allWorkletGlobalScopesSet().add(this);
+    ASSERT_UNUSED(addResult, addResult);
+
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(m_topOrigin.copyRef()));
+    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
+}
+
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
     : m_document(makeWeakPtr(document))
     , m_script(makeUnique<WorkletScriptController>(WTFMove(vm), this))
     , m_topOrigin(SecurityOrigin::createUnique())
+    , m_url(code.url())
+    , m_jsRuntimeFlags(document.settings().javaScriptRuntimeFlags())
     , m_code(WTFMove(code))
 {
     auto addResult = allWorkletGlobalScopesSet().add(this);
     ASSERT_UNUSED(addResult, addResult);
 
-    auto* frame = document.frame();
-    m_jsRuntimeFlags = frame ? frame->settings().javaScriptRuntimeFlags() : JSC::RuntimeFlags();
     ASSERT(document.page());
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(m_topOrigin.copyRef()));
-    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_code.url() }, *this));
+    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
 }
 
 WorkletGlobalScope::~WorkletGlobalScope()
@@ -113,7 +124,8 @@ String WorkletGlobalScope::userAgent(const URL& url) const
 
 void WorkletGlobalScope::evaluate()
 {
-    m_script->evaluate(m_code);
+    if (m_code)
+        m_script->evaluate(*m_code);
 }
 
 bool WorkletGlobalScope::isJSExecutionForbidden() const
@@ -135,7 +147,7 @@ URL WorkletGlobalScope::completeURL(const String& url, ForceUTF8) const
 {
     if (url.isNull())
         return URL();
-    return URL(m_code.url(), url);
+    return URL(this->url(), url);
 }
 
 void WorkletGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&& stack)
@@ -171,5 +183,11 @@ ReferrerPolicy WorkletGlobalScope::referrerPolicy() const
     return ReferrerPolicy::NoReferrer;
 }
 
+void WorkletGlobalScope::fetchAndInvokeScript(const URL&, FetchRequestCredentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+{
+    ASSERT(!isMainThread());
+    // FIXME: Add implementation.
+    completionHandler(WTF::nullopt);
+}
+
 } // namespace WebCore
-#endif

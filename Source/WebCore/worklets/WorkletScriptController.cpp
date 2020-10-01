@@ -26,8 +26,7 @@
 #include "config.h"
 #include "WorkletScriptController.h"
 
-#if ENABLE(CSS_PAINTING_API)
-
+#include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSEventTarget.h"
 #include "JSExecState.h"
@@ -54,6 +53,11 @@ WorkletScriptController::WorkletScriptController(Ref<VM>&& vm, WorkletGlobalScop
 {
     m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
     JSVMClientData::initNormalWorld(m_vm.get());
+}
+
+WorkletScriptController::WorkletScriptController(WorkletGlobalScope* workletGlobalScope)
+    : WorkletScriptController(VM::create(), workletGlobalScope)
+{
 }
 
 WorkletScriptController::~WorkletScriptController()
@@ -145,10 +149,19 @@ void WorkletScriptController::initScript()
     if (isExecutionForbidden())
         return;
 
+#if ENABLE(CSS_PAINTING_API)
     if (is<PaintWorkletGlobalScope>(m_workletGlobalScope)) {
         initScriptWithSubclass<JSPaintWorkletGlobalScopePrototype, JSPaintWorkletGlobalScope, PaintWorkletGlobalScope>();
         return;
     }
+#endif
+
+#if ENABLE(WEB_AUDIO)
+    if (is<AudioWorkletGlobalScope>(m_workletGlobalScope)) {
+        initScriptWithSubclass<JSAudioWorkletGlobalScopePrototype, JSAudioWorkletGlobalScope, AudioWorkletGlobalScope>();
+        return;
+    }
+#endif
 
     ASSERT_NOT_REACHED();
 }
@@ -196,5 +209,62 @@ void WorkletScriptController::setException(JSC::Exception* exception)
     throwException(lexicalGlobalObject, scope, exception);
 }
 
+void WorkletScriptController::releaseHeapAccess()
+{
+    m_vm->heap.releaseAccess();
+}
+
+void WorkletScriptController::acquireHeapAccess()
+{
+    m_vm->heap.acquireAccess();
+}
+
+void WorkletScriptController::addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback callback)
+{
+    auto processTimer = [&] (JSRunLoopTimer* timer) {
+        if (!timer)
+            return;
+        timer->addTimerSetNotification(callback);
+    };
+
+    processTimer(m_vm->heap.fullActivityCallback());
+    processTimer(m_vm->heap.edenActivityCallback());
+    processTimer(m_vm->deferredWorkTimer.ptr());
+}
+
+void WorkletScriptController::removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback callback)
+{
+    auto processTimer = [&] (JSRunLoopTimer* timer) {
+        if (!timer)
+            return;
+        timer->removeTimerSetNotification(callback);
+    };
+
+    processTimer(m_vm->heap.fullActivityCallback());
+    processTimer(m_vm->heap.edenActivityCallback());
+    processTimer(m_vm->deferredWorkTimer.ptr());
+}
+
+void WorkletScriptController::scheduleExecutionTermination()
+{
+    if (m_isTerminatingExecution)
+        return;
+
+    {
+        // The mutex provides a memory barrier to ensure that once
+        // termination is scheduled, isTerminatingExecution() will
+        // accurately reflect that lexicalGlobalObject when called from another thread.
+        auto locker = holdLock(m_scheduledTerminationLock);
+        m_isTerminatingExecution = true;
+    }
+    m_vm->notifyNeedTermination();
+}
+
+bool WorkletScriptController::isTerminatingExecution() const
+{
+    // See comments in scheduleExecutionTermination regarding mutex usage.
+    auto locker = holdLock(m_scheduledTerminationLock);
+    return m_isTerminatingExecution;
+}
+
 } // namespace WebCore
-#endif

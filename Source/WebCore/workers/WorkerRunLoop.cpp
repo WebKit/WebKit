@@ -36,7 +36,7 @@
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
 #include "WorkerRunLoop.h"
-#include "WorkerGlobalScope.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"
 
 #if USE(GLIB)
@@ -132,7 +132,7 @@ private:
     IsForDebugging m_isForDebugging { IsForDebugging::No };
 };
 
-void WorkerRunLoop::run(WorkerGlobalScope* context)
+void WorkerRunLoop::run(WorkerOrWorkletGlobalScope* context)
 {
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::No);
     ModePredicate modePredicate(defaultMode());
@@ -143,13 +143,13 @@ void WorkerRunLoop::run(WorkerGlobalScope* context)
     runCleanupTasks(context);
 }
 
-MessageQueueWaitResult WorkerRunLoop::runInDebuggerMode(WorkerGlobalScope& context)
+MessageQueueWaitResult WorkerRunLoop::runInDebuggerMode(WorkerOrWorkletGlobalScope& context)
 {
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::Yes);
     return runInMode(&context, ModePredicate { debuggerMode() }, WaitForMessage);
 }
 
-MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, const String& mode, WaitMode waitMode)
+MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, const String& mode, WaitMode waitMode)
 {
     ASSERT(mode != debuggerMode());
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::No);
@@ -158,10 +158,10 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     return result;
 }
 
-MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, const ModePredicate& predicate, WaitMode waitMode)
+MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, const ModePredicate& predicate, WaitMode waitMode)
 {
     ASSERT(context);
-    ASSERT(context->thread().thread() == &Thread::current());
+    ASSERT(context->underlyingThread() == &Thread::current());
 
     JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = WTF::createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this] {
         // We don't actually do anything here, we just want to loop around runInMode
@@ -186,13 +186,13 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     if (waitMode == WaitForMessage && predicate.isDefaultMode() && m_sharedTimer->isActive())
         timeoutDelay = std::min(timeoutDelay, m_sharedTimer->fireTimeDelay());
 
-    if (WorkerScriptController* script = context->script()) {
+    if (auto* script = context->script()) {
         script->releaseHeapAccess();
         script->addTimerSetNotification(timerAddedTask);
     }
     MessageQueueWaitResult result;
     auto task = m_messageQueue.waitForMessageFilteredWithTimeout(result, predicate, timeoutDelay);
-    if (WorkerScriptController* script = context->script()) {
+    if (auto* script = context->script()) {
         script->acquireHeapAccess();
         script->removeTimerSetNotification(timerAddedTask);
     }
@@ -223,10 +223,10 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     return result;
 }
 
-void WorkerRunLoop::runCleanupTasks(WorkerGlobalScope* context)
+void WorkerRunLoop::runCleanupTasks(WorkerOrWorkletGlobalScope* context)
 {
     ASSERT(context);
-    ASSERT(context->thread().thread() == &Thread::current());
+    ASSERT(context->underlyingThread() == &Thread::current());
     ASSERT(m_messageQueue.killed());
 
     while (true) {
@@ -262,7 +262,7 @@ void WorkerRunLoop::postDebuggerTask(ScriptExecutionContext::Task&& task)
     postTaskForMode(WTFMove(task), debuggerMode());
 }
 
-void WorkerRunLoop::Task::performTask(WorkerGlobalScope* context)
+void WorkerRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* context)
 {
     if ((!context->isClosing() && context->script() && !context->script()->isTerminatingExecution()) || m_task.isCleanupTask())
         m_task.performTask(*context);

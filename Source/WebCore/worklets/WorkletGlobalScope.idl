@@ -26,8 +26,6 @@
 [
     CustomProxyToJSObject,
     Exposed=Worklet,
-    EnabledAtRuntime=CSSPaintingAPI,
-    Conditional=CSS_PAINTING_API,
     JSLegacyParent=JSWorkletGlobalScopeBase,
     ImplicitThis,
     IsImmutablePrototypeExoticObject,

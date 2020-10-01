@@ -31,6 +31,7 @@
 #include "DOMCSSNamespace.h"
 #include "Document.h"
 #include "PaintWorkletGlobalScope.h"
+#include "WorkletGlobalScopeProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -56,11 +57,18 @@ const char* DOMCSSPaintWorklet::supplementName()
     return "DOMCSSPaintWorklet";
 }
 
-void PaintWorklet::addModule(Document& document, const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
+// FIXME: Get rid of this override and rely on the standard-compliant Worklet::addModule() instead.
+void PaintWorklet::addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&& promise)
 {
+    auto* document = this->document();
+    if (!document) {
+        promise.reject(Exception { InvalidStateError, "This frame is detached"_s });
+        return;
+    }
+
     // FIXME: We should download the source from the URL
     // https://bugs.webkit.org/show_bug.cgi?id=191136
-    auto maybeContext = PaintWorkletGlobalScope::tryCreate(document, ScriptSourceCode(moduleURL));
+    auto maybeContext = PaintWorkletGlobalScope::tryCreate(*document, ScriptSourceCode(moduleURL));
     if (UNLIKELY(!maybeContext)) {
         promise.reject(Exception { OutOfMemoryError });
         return;
@@ -70,8 +78,14 @@ void PaintWorklet::addModule(Document& document, const String& moduleURL, Workle
 
     auto locker = holdLock(context->paintDefinitionLock());
     for (auto& name : context->paintDefinitionMap().keys())
-        document.setPaintWorkletGlobalScopeForName(name, makeRef(context.get()));
+        document->setPaintWorkletGlobalScopeForName(name, makeRef(context.get()));
     promise.resolve();
+}
+
+Vector<Ref<WorkletGlobalScopeProxy>> PaintWorklet::createGlobalScopes()
+{
+    // FIXME: Add implementation.
+    return { };
 }
 
 }

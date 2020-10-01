@@ -24,8 +24,10 @@
 */
 
 [
+    ActiveDOMObject,
     Exposed=Window,
+    Global=Worklet,
     SkipVTableValidation
 ] interface Worklet {
-    [CallWith=Document] Promise<undefined> addModule(USVString moduleURL, optional WorkletOptions options);
+    Promise<undefined> addModule(USVString moduleURL, optional WorkletOptions options);
 };

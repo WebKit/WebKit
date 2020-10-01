@@ -30,10 +30,13 @@
 
 #include "AudioContext.h"
 #include "AudioDestination.h"
+#include "AudioWorklet.h"
+#include "AudioWorkletMessagingProxy.h"
 #include "Logging.h"
 #include "MediaStrategy.h"
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
+#include "WorkerRunLoop.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
@@ -99,9 +102,21 @@ void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
             // Re-create destination.
             m_destination->stop();
             createDestination();
-            m_destination->start();
+            m_destination->start(dispatchToRenderThreadFunction());
         }
     }
+}
+
+Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRenderThreadFunction()
+{
+    if (auto* workletProxy = context().audioWorklet().proxy()) {
+        return [workletProxy = makeRef(*workletProxy)](Function<void()>&& function) {
+            workletProxy->postTaskForModeToWorkletGlobalScope([function = WTFMove(function)](ScriptExecutionContext&) mutable {
+                function();
+            }, WorkerRunLoop::defaultMode());
+        };
+    }
+    return { };
 }
 
 ExceptionOr<void> DefaultAudioDestinationNode::startRendering()
@@ -110,7 +125,7 @@ ExceptionOr<void> DefaultAudioDestinationNode::startRendering()
     if (!isInitialized())
         return Exception { InvalidStateError };
 
-    m_destination->start();
+    m_destination->start(dispatchToRenderThreadFunction());
     return { };
 }
 
@@ -118,7 +133,7 @@ void DefaultAudioDestinationNode::resume(Function<void ()>&& function)
 {
     ASSERT(isInitialized());
     if (isInitialized())
-        m_destination->start();
+        m_destination->start(dispatchToRenderThreadFunction());
     context().postTask(WTFMove(function));
 }
 
@@ -163,7 +178,7 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
         // Re-create destination.
         m_destination->stop();
         createDestination();
-        m_destination->start();
+        m_destination->start(dispatchToRenderThreadFunction());
     }
 
     return { };

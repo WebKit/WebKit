@@ -37,10 +37,7 @@ class WorkerEventLoop final : public EventLoop, private ContextDestructionObserv
 public:
     // Explicitly take WorkerGlobalScope and WorkletGlobalScope for documentation purposes.
     static Ref<WorkerEventLoop> create(WorkerGlobalScope&);
-
-#if ENABLE(CSS_PAINTING_API)
     static Ref<WorkerEventLoop> create(WorkletGlobalScope&);
-#endif
 
     virtual ~WorkerEventLoop();
 

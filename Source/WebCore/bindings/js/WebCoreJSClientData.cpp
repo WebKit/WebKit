@@ -28,6 +28,7 @@
 
 #include "DOMGCOutputConstraint.h"
 #include "DOMIsoSubspaces.h"
+#include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
 #include "JSDOMWindow.h"
@@ -68,9 +69,12 @@ JSVMClientData::JSVMClientData(VM& vm)
 #if ENABLE(SERVICE_WORKER)
     , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::create<JSServiceWorkerGlobalScope>())
 #endif
+    , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::create<JSWorkletGlobalScope>())
 #if ENABLE(CSS_PAINTING_API)
     , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::create<JSPaintWorkletGlobalScope>())
-    , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::create<JSWorkletGlobalScope>())
+#endif
+#if ENABLE(WEB_AUDIO)
+    , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::create<JSAudioWorkletGlobalScope>())
 #endif
 #if ENABLE(INDEXED_DATABASE)
     , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::create<JSIDBSerializationGlobalObject>())

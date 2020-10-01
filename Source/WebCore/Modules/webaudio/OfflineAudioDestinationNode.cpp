@@ -31,7 +31,10 @@
 #include "AudioBus.h"
 #include "AudioContext.h"
 #include "AudioUtilities.h"
+#include "AudioWorklet.h"
+#include "AudioWorkletMessagingProxy.h"
 #include "HRTFDatabaseLoader.h"
+#include "WorkerRunLoop.h"
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -96,9 +99,7 @@ ExceptionOr<void> OfflineAudioDestinationNode::startRendering()
     m_startedRendering = true;
     auto protectedThis = makeRef(*this);
 
-    // FIXME: Should we call lazyInitialize here?
-    // FIXME: We should probably limit the number of threads we create for offline audio.
-    m_renderThread = Thread::create("offline renderer", [this, protectedThis = WTFMove(protectedThis)]() mutable {
+    auto offThreadRendering = [this, protectedThis = WTFMove(protectedThis)]() mutable {
         auto result = offlineRender();
         callOnMainThread([this, result, currentSampleFrame = m_currentSampleFrame, protectedThis = WTFMove(protectedThis)] {
             m_startedRendering = false;
@@ -114,7 +115,17 @@ ExceptionOr<void> OfflineAudioDestinationNode::startRendering()
                 break;
             }
         });
-    }, ThreadType::Audio);
+    };
+
+    if (auto* workletProxy = context().audioWorklet().proxy()) {
+        workletProxy->postTaskForModeToWorkletGlobalScope([offThreadRendering = WTFMove(offThreadRendering)](ScriptExecutionContext&) mutable {
+            offThreadRendering();
+        }, WorkerRunLoop::defaultMode());
+        return { };
+    }
+
+    // FIXME: We should probably limit the number of threads we create for offline audio.
+    m_renderThread = Thread::create("offline renderer", WTFMove(offThreadRendering), ThreadType::Audio);
     return { };
 }
 
