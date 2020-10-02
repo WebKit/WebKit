@@ -1,3 +1,9 @@
+2020-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed Gardening. Remove expectations for tests fixed in r267872
+
+        * TestExpectations.json:
+
 2020-10-01  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Gardening no_browsing_context failures.
