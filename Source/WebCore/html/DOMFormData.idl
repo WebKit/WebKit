@@ -37,7 +37,7 @@ typedef (File or USVString) FormDataEntryValue;
     InterfaceName=FormData,
     ImplementationLacksVTable,
 ] interface DOMFormData {
-    constructor(optional HTMLFormElement? form);
+    constructor(optional HTMLFormElement form);
 
     undefined append(USVString name, USVString value);
     undefined append(USVString name, Blob blobValue, optional USVString filename);

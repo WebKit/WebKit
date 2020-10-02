@@ -2,7 +2,7 @@
 
 
 
-FAIL Constructors should throw a type error assert_throws_js: function "() => { new FormData(null); }" did not throw
+PASS Constructors should throw a type error
 PASS empty formdata
 PASS formdata with string
 PASS formdata with named string

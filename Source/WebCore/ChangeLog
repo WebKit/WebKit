@@ -1,3 +1,21 @@
+2020-10-01  Rob Buis  <rbuis@igalia.com>
+
+        update FormData to latest spec webidl
+        https://bugs.webkit.org/show_bug.cgi?id=171589
+
+        Reviewed by Alex Christensen.
+
+        Change FormData contructor to not take optional, nullable
+        parameter.
+
+        Test: imported/w3c/web-platform-tests/xhr/formdata.html
+
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::DOMFormData):
+        * html/DOMFormData.h:
+        (WebCore::DOMFormData::create):
+        * html/DOMFormData.idl:
+
 2020-10-01  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Add support for non-nullable optional wrapper type arguments to operations
