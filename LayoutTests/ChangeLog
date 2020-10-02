@@ -1,3 +1,15 @@
+2020-10-01  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Add support for non-nullable optional wrapper type arguments to operations
+        https://bugs.webkit.org/show_bug.cgi?id=217162
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/Geolocation/argument-types.html:
+        * fast/dom/Geolocation/argument-types-expected.txt:
+        Update tests now that the second argument to Geolocation.getCurrentPosition
+        and Geolocation.watchPosition are non-nullable.
+
 2020-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Support drawing text in 2D canvas with font features

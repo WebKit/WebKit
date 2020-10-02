@@ -30,14 +30,12 @@
     GenerateIsReachable=ReachableFromNavigator,
     Exposed=Window
 ] interface Geolocation {
-    // FIXME: PositionErrorCallback should not be nullable
     undefined getCurrentPosition(PositionCallback successCallback,
-                            optional PositionErrorCallback? errorCallback,
+                            optional PositionErrorCallback errorCallback,
                             optional PositionOptions options);
 
-    // FIXME: PositionErrorCallback should not be nullable
     long watchPosition(PositionCallback successCallback,
-                       optional PositionErrorCallback? errorCallback,
+                       optional PositionErrorCallback errorCallback,
                        optional PositionOptions options);
 
     undefined clearWatch(long watchId);

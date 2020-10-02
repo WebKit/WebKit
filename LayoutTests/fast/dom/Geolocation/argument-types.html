@@ -56,7 +56,7 @@ test('navigator.geolocation.getCurrentPosition(-Infinity)', true, "TypeError: Ar
 test('navigator.geolocation.getCurrentPosition("string")', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined)', false);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, null)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, null)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
 test('navigator.geolocation.getCurrentPosition(emptyFunction, {})', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
 test('navigator.geolocation.getCurrentPosition(emptyFunction, objectThrowingException)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
 test('navigator.geolocation.getCurrentPosition(emptyFunction, emptyFunction)', false);

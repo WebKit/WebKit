@@ -17,7 +17,7 @@ PASS navigator.geolocation.getCurrentPosition(Infinity) threw exception TypeErro
 PASS navigator.geolocation.getCurrentPosition(-Infinity) threw exception TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function.
 PASS navigator.geolocation.getCurrentPosition("string") threw exception TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, undefined) did not throw exception.
-PASS navigator.geolocation.getCurrentPosition(emptyFunction, null) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, null) threw exception TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, {}) threw exception TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, objectThrowingException) threw exception TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, emptyFunction) did not throw exception.

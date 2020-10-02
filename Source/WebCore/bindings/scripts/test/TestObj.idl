@@ -241,6 +241,7 @@ enum TestConfidence { "high", "kinda-low" };
     undefined    methodWithOptionalBooleanIsFalse(optional boolean b = false);
     undefined    methodWithOptionalAny(optional any a);
     undefined    methodWithOptionalObject(optional object a);
+    undefined    methodWithOptionalWrapper(optional TestObj obj);
     undefined    methodWithOptionalNullableWrapper(optional TestObj? obj);
     undefined    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
     undefined    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
@@ -248,14 +249,18 @@ enum TestConfidence { "high", "kinda-low" };
     undefined    methodWithOptionalPromise(optional Promise<undefined> promise);
 
     // Callback interface parameters.
-    undefined    methodWithCallbackArg(TestCallbackInterface callback);
-    undefined    methodWithNonCallbackArgAndCallbackArg(long nonCallback, TestCallbackInterface callback);
-    undefined    methodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
+    undefined    methodWithCallbackInterfaceArg(TestCallbackInterface callback);
+    undefined    methodWithNullableCallbackInterfaceArg(TestCallbackInterface? callback);
+    undefined    methodWithNonCallbackInterfaceArgAndCallbackInterfaceArg(long nonCallback, TestCallbackInterface callback);
+    undefined    methodWithOptionalCallbackInterfaceArg(optional TestCallbackInterface callback);
+    undefined    methodWithOptionalNullableCallbackInterfaceArg(optional TestCallbackInterface? callback);
 
     // Callback function parameters.
     undefined    methodWithCallbackFunctionArg(TestCallbackFunction callback);
+    undefined    methodWithNullableCallbackFunctionArg(TestCallbackFunction? callback);
     undefined    methodWithNonCallbackArgAndCallbackFunctionArg(long nonCallback, TestCallbackFunction callback);
-    undefined    methodWithCallbackFunctionAndOptionalArg(optional TestCallbackFunction? callback);
+    undefined    methodWithOptionalCallbackFunctionArg(optional TestCallbackFunction callback);
+    undefined    methodWithOptionalNullableCallbackFunctionArg(optional TestCallbackFunction? callback);
 
     // static methods with 'Callback' extended attribute
     static undefined    staticMethodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);

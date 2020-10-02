@@ -1824,8 +1824,21 @@ sub PassArgumentExpression
         return "${name}.releaseNonNull()";
     }
 
-    return "${name}.releaseNonNull()" if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type) || ($codeGenerator->IsPromiseType($type) && (ref($context) ne "IDLArgument" || !$context->isOptional));
-    return "*${name}" if $codeGenerator->IsWrapperType($type);
+    if ($codeGenerator->IsPromiseType($type)) {
+        return "WTFMove(${name})" if ref($context) eq "IDLArgument" && $context->isOptional;
+        return "${name}.releaseNonNull()";
+    }
+
+    if ($codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type)) {
+        return "WTFMove(${name})" if ref($context) eq "IDLArgument" && $context->isOptional;
+        return "${name}.releaseNonNull()";
+    }
+
+    if ($codeGenerator->IsWrapperType($type)) {
+        return "${name}" if ref($context) eq "IDLArgument" && $context->isOptional;
+        return "*${name}";
+    }
+
     return "WTFMove(${name})";
 }
 
@@ -6191,8 +6204,6 @@ sub GenerateParametersCheck
     foreach my $argument (@{$operation->arguments}) {
         my $type = $argument->type;
 
-        assert "Optional arguments of non-nullable wrapper types are not supported (" . $operation->name . ")" if $argument->isOptional && !$type->isNullable && $codeGenerator->IsWrapperType($type);
-
         if ($argument->isOptional && !defined($argument->default)) {
             # As per Web IDL, optional dictionary arguments are always considered to have a default value of an empty dictionary, unless otherwise specified.
             $argument->default("[]") if $codeGenerator->IsDictionaryType($type);
@@ -6209,9 +6220,6 @@ sub GenerateParametersCheck
             # As per Web IDL, passing undefined for a nullable argument is treated as null. Therefore, use null as
             # default value for nullable arguments unless otherwise specified.
             $argument->default("null") if $type->isNullable;
-
-            # For callback arguments, the generated bindings treat undefined as null, so use null as implicit default value.
-            $argument->default("null") if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type);
         }
 
         my $name = $argument->name;
@@ -6246,7 +6254,9 @@ sub GenerateParametersCheck
                     my $argumentIDLType = GetIDLType($interface, $argument->type);
 
                     my $defaultValue;
-                    if ($codeGenerator->IsPromiseType($argument->type)) {
+                    if ($codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type)) {
+                        $defaultValue = "Converter<$argumentIDLType>::ReturnType()";
+                    } elsif ($codeGenerator->IsPromiseType($argument->type) || $codeGenerator->IsWrapperType($type)) {
                         $defaultValue = "nullptr";
                     } else {
                         $defaultValue = "Optional<Converter<$argumentIDLType>::ReturnType>()";
