@@ -46,7 +46,7 @@ FontPlatformData::FontPlatformData()
 {
 }
 
-FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, CreationData* creationData)
+FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
     : m_size(size)
     , m_orientation(orientation)
     , m_widthVariant(widthVariant)
@@ -54,8 +54,6 @@ FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheti
     , m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
 {
-    if (creationData)
-        m_creationData = *creationData;
 }
 
 #if !USE(FREETYPE)

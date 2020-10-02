@@ -26,24 +26,21 @@
 #import "config.h"
 #import "WebCoreArgumentCoders.h"
 
-#import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
-#import <CoreText/CoreText.h>
+#import "CocoaFont.h"
 #import <WebCore/AttributedString.h>
 #import <WebCore/DictionaryPopupInfo.h>
 #import <WebCore/Font.h>
 #import <WebCore/FontAttributes.h>
-#import <WebCore/FontCustomPlatformData.h>
-#import <pal/spi/cocoa/CoreTextSPI.h>
-
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIFont.h>
-#endif
 
 #if ENABLE(APPLE_PAY)
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIFont.h>
 #endif
 
 namespace IPC {
@@ -512,135 +509,26 @@ Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformD
 
 void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
-    const auto& platformData = font->platformData();
-    encoder << platformData.orientation();
-    encoder << platformData.widthVariant();
-    encoder << platformData.textRenderingMode();
-    encoder << platformData.size();
-    encoder << platformData.syntheticBold();
-    encoder << platformData.syntheticOblique();
-
-    auto ctFont = platformData.font();
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
-    auto attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
-    IPC::encode(encoder, attributes.get());
-
-    const auto& creationData = platformData.creationData();
-    encoder << static_cast<bool>(creationData);
-    if (creationData) {
-        encoder << creationData->fontFaceData;
-        encoder << creationData->itemInCollection;
-    } else {
-        auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(ctFont, kCTFontReferenceURLAttribute)));
-        auto string = CFURLGetString(referenceURL.get());
-        encoder << String(string);
-        encoder << String(adoptCF(CTFontCopyPostScriptName(ctFont)).get());
-    }
+    auto ctFont = !font->fontFaceData() ? font->getCTFont() : nil;
+    encoder << static_cast<bool>(ctFont);
+    if (ctFont)
+        encoder << (__bridge CocoaFont *)ctFont;
 }
 
-static RetainPtr<CTFontDescriptorRef> findFontDescriptor(const String& referenceURL, const String& postScriptName)
+Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder, Optional<Ref<WebCore::Font>>&& existingFont)
 {
-    auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL.createCFString().get(), nullptr));
-    if (!url)
-        return nullptr;
-    auto fontDescriptors = adoptCF(CTFontManagerCreateFontDescriptorsFromURL(url.get()));
-    if (!fontDescriptors || !CFArrayGetCount(fontDescriptors.get()))
-        return nullptr;
-    if (CFArrayGetCount(fontDescriptors.get()) == 1)
-        return static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), 0));
-
-    // There's supposed to only be a single item in the array, but we can be defensive here.
-    for (CFIndex i = 0; i < CFArrayGetCount(fontDescriptors.get()); ++i) {
-        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), i));
-        auto currentPostScriptName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontNameAttribute)));
-        if (String(currentPostScriptName.get()) == postScriptName)
-            return fontDescriptor;
-    }
-    return nullptr;
-}
-
-Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
-{
-    Optional<FontOrientation> orientation;
-    decoder >> orientation;
-    if (!orientation.hasValue())
+    bool hasPlatformFont;
+    if (!decoder.decode(hasPlatformFont))
         return WTF::nullopt;
 
-    Optional<FontWidthVariant> widthVariant;
-    decoder >> widthVariant;
-    if (!widthVariant.hasValue())
+    if (!hasPlatformFont)
+        return WTFMove(existingFont);
+
+    RetainPtr<CocoaFont> font;
+    if (!IPC::decode(decoder, font))
         return WTF::nullopt;
 
-    Optional<TextRenderingMode> textRenderingMode;
-    decoder >> textRenderingMode;
-    if (!textRenderingMode.hasValue())
-        return WTF::nullopt;
-
-    Optional<float> size;
-    decoder >> size;
-    if (!size.hasValue())
-        return WTF::nullopt;
-
-    Optional<bool> syntheticBold;
-    decoder >> syntheticBold;
-    if (!syntheticBold.hasValue())
-        return WTF::nullopt;
-
-    Optional<bool> syntheticOblique;
-    decoder >> syntheticOblique;
-    if (!syntheticOblique.hasValue())
-        return WTF::nullopt;
-
-    RetainPtr<CFDictionaryRef> attributes;
-    if (!IPC::decode(decoder, attributes))
-        return WTF::nullopt;
-
-    Optional<bool> includesCreationData;
-    decoder >> includesCreationData;
-    if (!includesCreationData.hasValue())
-        return WTF::nullopt;
-
-    if (includesCreationData.value()) {
-        Optional<Ref<SharedBuffer>> fontFaceData;
-        decoder >> fontFaceData;
-        if (!fontFaceData.hasValue())
-            return WTF::nullopt;
-
-        Optional<String> itemInCollection;
-        decoder >> itemInCollection;
-        if (!itemInCollection.hasValue())
-            return WTF::nullopt;
-
-        auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
-        if (!fontCustomPlatformData)
-            return WTF::nullopt;
-        auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
-        if (!baseFontDescriptor)
-            return WTF::nullopt;
-        auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes.get()));
-        auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
-
-        auto creationData = FontPlatformData::CreationData { fontFaceData.value(), itemInCollection.value() };
-        return FontPlatformData(ctFont.get(), size.value(), syntheticBold.value(), syntheticOblique.value(), orientation.value(), widthVariant.value(), textRenderingMode.value(), &creationData);
-    }
-
-    Optional<String> referenceURL;
-    decoder >> referenceURL;
-    if (!referenceURL.hasValue())
-        return WTF::nullopt;
-
-    Optional<String> postScriptName;
-    decoder >> postScriptName;
-    if (!postScriptName.hasValue())
-        return WTF::nullopt;
-
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = findFontDescriptor(referenceURL.value(), postScriptName.value());
-    if (!fontDescriptor)
-        return WTF::nullopt;
-    fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes.get()));
-    auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
-
-    return FontPlatformData(ctFont.get(), size.value(), syntheticBold.value(), syntheticOblique.value(), orientation.value(), widthVariant.value(), textRenderingMode.value());
+    return Font::create({ (__bridge CTFontRef)font.get(), static_cast<float>([font pointSize]) });
 }
 
 } // namespace IPC

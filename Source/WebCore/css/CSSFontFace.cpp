@@ -678,8 +678,11 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
             return Font::create(FontCache::singleton().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::Interstitial::Yes, visibility);
         }
         case CSSFontFaceSource::Status::Success:
-            if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_fontSelectionCapabilities))
+            if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_fontSelectionCapabilities)) {
+                auto* cachedFont = source->cachedFont();
+                result->setFontFaceData(cachedFont ? cachedFont->resourceBuffer() : nullptr);
                 return result;
+            }
             break;
         case CSSFontFaceSource::Status::Failure:
             break;

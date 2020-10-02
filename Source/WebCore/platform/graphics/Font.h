@@ -223,6 +223,9 @@ public:
     static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
 #endif
 
+    SharedBuffer* fontFaceData() const { return m_fontFaceData.get(); }
+    void setFontFaceData(RefPtr<SharedBuffer>&&);
+
 private:
     WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback);
 
@@ -294,6 +297,8 @@ private:
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif
 
+    RefPtr<SharedBuffer> m_fontFaceData;
+
     Glyph m_spaceGlyph { 0 };
     Glyph m_zeroGlyph { 0 };
     Glyph m_zeroWidthSpaceGlyph { 0 };
@@ -322,8 +327,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;
 #endif
-
-    // Adding any non-derived information to Font needs a parallel change in WebCoreArgumentCoders.cpp.
 };
 
 #if PLATFORM(IOS_FAMILY)
@@ -378,38 +381,5 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::Font::Origin> {
-    using values = EnumValues<
-        WebCore::Font::Origin,
-        WebCore::Font::Origin::Remote,
-        WebCore::Font::Origin::Local
-    >;
-};
-template<> struct EnumTraits<WebCore::Font::Interstitial> {
-    using values = EnumValues<
-        WebCore::Font::Interstitial,
-        WebCore::Font::Interstitial::Yes,
-        WebCore::Font::Interstitial::No
-    >;
-};
-template<> struct EnumTraits<WebCore::Font::Visibility> {
-    using values = EnumValues<
-        WebCore::Font::Visibility,
-        WebCore::Font::Visibility::Visible,
-        WebCore::Font::Visibility::Invisible
-    >;
-};
-template<> struct EnumTraits<WebCore::Font::OrientationFallback> {
-    using values = EnumValues<
-        WebCore::Font::OrientationFallback,
-        WebCore::Font::OrientationFallback::Yes,
-        WebCore::Font::OrientationFallback::No
-    >;
-};
-
-}
 
 #endif // Font_h

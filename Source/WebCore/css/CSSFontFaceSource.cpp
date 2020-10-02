@@ -212,6 +212,9 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
     return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities), Font::Origin::Remote);
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
