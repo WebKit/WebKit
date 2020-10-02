@@ -1,3 +1,23 @@
+2020-10-02  Sam Weinig  <weinig@apple.com>
+
+        Re-align HTMLElement with the HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=217202
+
+        Reviewed by Darin Adler.
+
+        * fast/events/DocumentAndElementEventHandlers-expected.txt:
+        * fast/events/DocumentAndElementEventHandlers.html:
+        Update test to match spec by checking on the HTMLElement prototype, not the 
+        Element prototype.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        Update more now passing results.
+
 2020-09-30  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS translate property

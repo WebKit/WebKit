@@ -745,8 +745,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DocumentOrShadowRoot+PointerLock.idl \
     $(WebCore)/dom/DocumentType.idl \
     $(WebCore)/dom/DragEvent.idl \
-    $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/Element+DOMParsing.idl \
+    $(WebCore)/dom/Element.idl \
+    $(WebCore)/dom/ElementContentEditable.idl \
     $(WebCore)/dom/ErrorEvent.idl \
     $(WebCore)/dom/Event.idl \
     $(WebCore)/dom/EventInit.idl \
@@ -844,6 +845,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLDirectoryElement.idl \
     $(WebCore)/html/HTMLDivElement.idl \
     $(WebCore)/html/HTMLDocument.idl \
+    $(WebCore)/html/HTMLElement+CSSOMView.idl \
     $(WebCore)/html/HTMLElement.idl \
     $(WebCore)/html/HTMLEmbedElement.idl \
     $(WebCore)/html/HTMLFieldSetElement.idl \

@@ -30,7 +30,7 @@
 ] interface MathMLElement : Element {
 };
 
-MathMLElement includes ElementCSSInlineStyle;
 MathMLElement includes GlobalEventHandlers;
 MathMLElement includes DocumentAndElementEventHandlers;
 MathMLElement includes HTMLOrForeignElement;
+MathMLElement includes ElementCSSInlineStyle;

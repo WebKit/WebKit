@@ -24,6 +24,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString cols;
     [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
 
+    // Non-standard
     [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onfocus;

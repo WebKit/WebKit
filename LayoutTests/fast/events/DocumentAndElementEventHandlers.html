@@ -14,19 +14,19 @@ function testOnDocument(eventHandler, description)
     }, description);
 }
 
-function testOnElement(eventHandler, description)
+function testOnHTMLElement(eventHandler, description)
 {
     test(function() {
         assert_idl_attribute(document.body, eventHandler, "element has " + eventHandler + " IDL attribute");
-        assert_own_property(Element.prototype, eventHandler, eventHandler + " on Element prototype");
+        assert_own_property(HTMLElement.prototype, eventHandler, eventHandler + " on HTMLElement prototype");
         assert_true(eventHandler in document.body, eventHandler + " in element is true");
-        assert_true(Object.getOwnPropertyDescriptor(Element.prototype, eventHandler).enumerable, "element." + eventHandler + " is enumerable");
+        assert_true(Object.getOwnPropertyDescriptor(HTMLElement.prototype, eventHandler).enumerable, "element." + eventHandler + " is enumerable");
    }, description);
 }
 
 for (let eventHandler of ["oncopy", "oncut", "onpaste"]) {
     testOnDocument(eventHandler, eventHandler + " EventHandler on Document");
-    testOnElement(eventHandler, eventHandler + " EventHander on Element");
+    testOnHTMLElement(eventHandler, eventHandler + " EventHander on HTMLElement");
 }
 </script>
 </body>

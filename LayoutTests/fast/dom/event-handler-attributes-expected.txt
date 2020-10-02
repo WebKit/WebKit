@@ -858,10 +858,10 @@ PASS testElementAttribute(nonHTMLElement, "abort") is "none"
 PASS testElementAttribute(nonHTMLElement, "animationend") is "none"
 PASS testElementAttribute(nonHTMLElement, "animationiteration") is "none"
 PASS testElementAttribute(nonHTMLElement, "animationstart") is "none"
-FAIL testElementAttribute(nonHTMLElement, "beforecopy") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "beforecut") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "beforecopy") is "none"
+PASS testElementAttribute(nonHTMLElement, "beforecut") is "none"
 FAIL testElementAttribute(nonHTMLElement, "beforeload") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "beforepaste") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "beforepaste") is "none"
 PASS testElementAttribute(nonHTMLElement, "beforeunload") is "none"
 PASS testElementAttribute(nonHTMLElement, "blur") is "none"
 PASS testElementAttribute(nonHTMLElement, "canplay") is "none"
@@ -869,8 +869,8 @@ PASS testElementAttribute(nonHTMLElement, "canplaythrough") is "none"
 PASS testElementAttribute(nonHTMLElement, "change") is "none"
 PASS testElementAttribute(nonHTMLElement, "click") is "none"
 PASS testElementAttribute(nonHTMLElement, "contextmenu") is "none"
-FAIL testElementAttribute(nonHTMLElement, "copy") should be none. Was script: target; content: none.
-FAIL testElementAttribute(nonHTMLElement, "cut") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "copy") is "none"
+PASS testElementAttribute(nonHTMLElement, "cut") is "none"
 PASS testElementAttribute(nonHTMLElement, "dblclick") is "none"
 PASS testElementAttribute(nonHTMLElement, "drag") is "none"
 PASS testElementAttribute(nonHTMLElement, "dragend") is "none"
@@ -910,7 +910,7 @@ PASS testElementAttribute(nonHTMLElement, "offline") is "none"
 PASS testElementAttribute(nonHTMLElement, "online") is "none"
 PASS testElementAttribute(nonHTMLElement, "pagehide") is "none"
 PASS testElementAttribute(nonHTMLElement, "pageshow") is "none"
-FAIL testElementAttribute(nonHTMLElement, "paste") should be none. Was script: target; content: none.
+PASS testElementAttribute(nonHTMLElement, "paste") is "none"
 PASS testElementAttribute(nonHTMLElement, "pause") is "none"
 PASS testElementAttribute(nonHTMLElement, "play") is "none"
 PASS testElementAttribute(nonHTMLElement, "playing") is "none"

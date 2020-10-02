@@ -715,6 +715,7 @@ $(PROJECT_DIR)/dom/DocumentType.idl
 $(PROJECT_DIR)/dom/DragEvent.idl
 $(PROJECT_DIR)/dom/Element+DOMParsing.idl
 $(PROJECT_DIR)/dom/Element.idl
+$(PROJECT_DIR)/dom/ElementContentEditable.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
 $(PROJECT_DIR)/dom/Event.idl
 $(PROJECT_DIR)/dom/EventInit.idl
@@ -824,6 +825,7 @@ $(PROJECT_DIR)/html/HTMLDialogElement.idl
 $(PROJECT_DIR)/html/HTMLDirectoryElement.idl
 $(PROJECT_DIR)/html/HTMLDivElement.idl
 $(PROJECT_DIR)/html/HTMLDocument.idl
+$(PROJECT_DIR)/html/HTMLElement+CSSOMView.idl
 $(PROJECT_DIR)/html/HTMLElement.idl
 $(PROJECT_DIR)/html/HTMLEmbedElement.idl
 $(PROJECT_DIR)/html/HTMLFieldSetElement.idl

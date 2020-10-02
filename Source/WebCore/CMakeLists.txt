@@ -795,6 +795,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DragEvent.idl
     dom/Element+DOMParsing.idl
     dom/Element.idl
+    dom/ElementContentEditable.idl
     dom/ErrorEvent.idl
     dom/Event.idl
     dom/EventInit.idl
@@ -896,6 +897,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLDirectoryElement.idl
     html/HTMLDivElement.idl
     html/HTMLDocument.idl
+    html/HTMLElement+CSSOMView.idl
     html/HTMLElement.idl
     html/HTMLEmbedElement.idl
     html/HTMLFieldSetElement.idl

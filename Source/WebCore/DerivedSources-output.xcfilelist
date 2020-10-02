@@ -693,8 +693,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementCSSInlineStyle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementCSSInlineStyle.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementDOMParsing.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementDOMParsing.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementContentEditable.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementContentEditable.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEndingType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEndingType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.cpp
@@ -929,6 +929,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLDivElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLDivElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLDocument.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLDocument.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLElement+CSSOMView.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLElement+CSSOMView.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp

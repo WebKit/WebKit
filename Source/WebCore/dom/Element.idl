@@ -147,7 +147,6 @@ Element includes AccessibilityRole;
 Element includes AriaAttributes;
 Element includes Animatable;
 Element includes ChildNode;
-Element includes DocumentAndElementEventHandlers;
 Element includes NonDocumentTypeChildNode;
 Element includes ParentNode;
 Element includes Slotable;

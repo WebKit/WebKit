@@ -1,3 +1,36 @@
+2020-10-02  Sam Weinig  <weinig@apple.com>
+
+        Re-align HTMLElement with the HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=217202
+
+        Reviewed by Darin Adler.
+
+        - Stops including DocumentAndElementEventHandlers in Element, and instead matches spec
+          and other browsers by having HTMLElement, SVGElement and MathMLElement include it.
+        - Splits out ElementContentEditable from HTMLElement and has HTMLElement include it.
+        - Splits CSSOM View parts of HTMLElement out into HTMLElement+CSSOMView.idl
+        - Re-orders includes to more closely match spec'd order. Has no real effect but made
+          me happy.
+        
+        Updates results to existing tests that are now passing, all due to the change to 
+        include DocumentAndElementEventHandlers in the Element subclasses, not Element itself.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.idl:
+        * dom/ElementContentEditable.idl: Added.
+        * html/HTMLBodyElement.idl:
+        * html/HTMLElement+CSSOMView.idl: Added.
+        * html/HTMLElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLMediaElement+AudioOutput.idl: Added.
+        * html/HTMLMediaElementAudioOutput.idl: Removed.
+        * mathml/MathMLElement.idl:
+        * svg/SVGElement.idl:
+
 2020-10-02  Chris Dumez  <cdumez@apple.com>
 
         Add stubs for AudioWorkletProcessor and AudioWorkletGlobalScope

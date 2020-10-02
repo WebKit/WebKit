@@ -323,9 +323,9 @@ PASS HTMLElement interface: attribute onwebkitanimationiteration
 PASS HTMLElement interface: attribute onwebkitanimationstart
 PASS HTMLElement interface: attribute onwebkittransitionend
 PASS HTMLElement interface: attribute onwheel
-FAIL HTMLElement interface: attribute oncopy assert_own_property: expected property "oncopy" missing
-FAIL HTMLElement interface: attribute oncut assert_own_property: expected property "oncut" missing
-FAIL HTMLElement interface: attribute onpaste assert_own_property: expected property "onpaste" missing
+PASS HTMLElement interface: attribute oncopy
+PASS HTMLElement interface: attribute oncut
+PASS HTMLElement interface: attribute onpaste
 PASS HTMLElement interface: attribute contentEditable
 PASS HTMLElement interface: attribute enterKeyHint
 PASS HTMLElement interface: attribute isContentEditable
@@ -5260,9 +5260,9 @@ PASS SVGElement interface: attribute onwebkitanimationiteration
 PASS SVGElement interface: attribute onwebkitanimationstart
 PASS SVGElement interface: attribute onwebkittransitionend
 PASS SVGElement interface: attribute onwheel
-FAIL SVGElement interface: attribute oncopy assert_own_property: expected property "oncopy" missing
-FAIL SVGElement interface: attribute oncut assert_own_property: expected property "oncut" missing
-FAIL SVGElement interface: attribute onpaste assert_own_property: expected property "onpaste" missing
+PASS SVGElement interface: attribute oncopy
+PASS SVGElement interface: attribute oncut
+PASS SVGElement interface: attribute onpaste
 PASS SVGElement interface: attribute dataset
 FAIL SVGElement interface: attribute nonce assert_true: The prototype object must have a property "nonce" expected true got false
 FAIL SVGElement interface: attribute autofocus assert_true: The prototype object must have a property "autofocus" expected true got false
