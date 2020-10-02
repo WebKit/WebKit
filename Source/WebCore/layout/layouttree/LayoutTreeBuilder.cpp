@@ -106,7 +106,7 @@ static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontC
         return false;
 
     for (unsigned i = 0; i < content.length(); ++i) {
-        if ((!whitespaceIsCollapsed && content[i] == '\t') || content[i] == noBreakSpace || content[i] >= HiraganaLetterSmallA)
+        if ((!whitespaceIsCollapsed && content[i] == '\t') || content[i] == noBreakSpace || content[i] == softHyphen || content[i] >= HiraganaLetterSmallA)
             return false;
     }
     return true;

@@ -1,3 +1,17 @@
+2020-10-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not use simplified text measuring when soft hyphen is present
+        https://bugs.webkit.org/show_bug.cgi?id=217224
+
+        Reviewed by Antti Koivisto.
+
+        Specifically the monospaced fast codepath computes incorrect widht value when soft hyphens are present.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::canUseSimplifiedTextMeasuring):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeCanUseSimplifiedTextMeasuring const):
+
 2020-10-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Layout Test accessibility/mac/html5-input-number.html is flaky.
