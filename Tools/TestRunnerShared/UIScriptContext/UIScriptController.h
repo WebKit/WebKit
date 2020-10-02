@@ -67,22 +67,22 @@ public:
 
     // Transaction helpers
     
-    virtual void doAsyncTask(JSValueRef callback) { notImplemented(); }
+    virtual void doAsyncTask(JSValueRef) { notImplemented(); }
     virtual void doAfterPresentationUpdate(JSValueRef callback) { doAsyncTask(callback); }
     virtual void doAfterNextStablePresentationUpdate(JSValueRef callback) { doAsyncTask(callback); }
-    virtual void ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback) { doAsyncTask(callback); }
+    virtual void ensurePositionInformationIsUpToDateAt(long, long, JSValueRef callback) { doAsyncTask(callback); }
     virtual void doAfterVisibleContentRectUpdate(JSValueRef callback) { doAsyncTask(callback); }
 
     virtual void doAfterDoubleTapDelay(JSValueRef callback) { doAsyncTask(callback); }
 
     // Preferences
 
-    virtual void overridePreference(JSStringRef preference, JSStringRef value) { notImplemented(); }
+    virtual void overridePreference(JSStringRef, JSStringRef) { notImplemented(); }
 
     // Zooming
 
-    virtual void zoomToScale(double scale, JSValueRef callback) { notImplemented(); }
-    virtual void immediateZoomToScale(double scale) { notImplemented(); }
+    virtual void zoomToScale(double, JSValueRef) { notImplemented(); }
+    virtual void immediateZoomToScale(double) { notImplemented(); }
     virtual void setViewScale(double) { notImplemented(); }
     virtual double zoomScale() const { notImplemented(); return 1; }
     virtual double minimumZoomScale() const { notImplemented(); return 1; }
@@ -98,7 +98,7 @@ public:
 
     virtual JSObjectRef contentVisibleRect() const { notImplemented(); return nullptr; }
     
-    virtual void setSafeAreaInsets(double top, double right, double bottom, double left) { notImplemented(); }
+    virtual void setSafeAreaInsets(double, double, double, double) { notImplemented(); }
 
     // View Parenting and Visibility
 
@@ -126,17 +126,17 @@ public:
 
     // Compositing
 
-    virtual JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const { notImplemented(); return nullptr; }
+    virtual JSObjectRef propertiesOfLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
 
     // Scrolling
 
     virtual bool scrollUpdatesDisabled() const { notImplemented(); return false; }
     virtual void setScrollUpdatesDisabled(bool) { notImplemented(); }
 
-    virtual void scrollToOffset(long x, long y) { notImplemented(); }
+    virtual void scrollToOffset(long, long) { notImplemented(); }
 
-    virtual void immediateScrollToOffset(long x, long y) { notImplemented(); }
-    virtual void immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset) { notImplemented(); }
+    virtual void immediateScrollToOffset(long, long) { notImplemented(); }
+    virtual void immediateScrollElementAtContentPointToOffset(long, long, long, long) { notImplemented(); }
 
     virtual double contentOffsetX() const { notImplemented(); return 0; }
     virtual double contentOffsetY() const { notImplemented(); return 0; }
@@ -145,24 +145,24 @@ public:
 
     // Touches
 
-    virtual void touchDownAtPoint(long x, long y, long touchCount, JSValueRef callback) { notImplemented(); }
-    virtual void liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback) { notImplemented(); }
-    virtual void singleTapAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
-    virtual void singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback) { notImplemented(); }
-    virtual void twoFingerSingleTapAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
-    virtual void doubleTapAtPoint(long x, long y, float delay, JSValueRef callback) { notImplemented(); }
-    virtual void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback) { notImplemented(); }
-    virtual void longPressAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
+    virtual void touchDownAtPoint(long, long, long, JSValueRef) { notImplemented(); }
+    virtual void liftUpAtPoint(long, long, long, JSValueRef) { notImplemented(); }
+    virtual void singleTapAtPoint(long, long, JSValueRef) { notImplemented(); }
+    virtual void singleTapAtPointWithModifiers(long, long, JSValueRef, JSValueRef) { notImplemented(); }
+    virtual void twoFingerSingleTapAtPoint(long, long, JSValueRef) { notImplemented(); }
+    virtual void doubleTapAtPoint(long, long, float, JSValueRef) { notImplemented(); }
+    virtual void dragFromPointToPoint(long, long, long, long, double, JSValueRef) { notImplemented(); }
+    virtual void longPressAtPoint(long, long, JSValueRef) { notImplemented(); }
 
-    virtual void activateAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
+    virtual void activateAtPoint(long, long, JSValueRef) { notImplemented(); }
 
     // Keyboard
 
     virtual void enterText(JSStringRef) { notImplemented(); }
-    virtual void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback) { notImplemented(); }
+    virtual void typeCharacterUsingHardwareKeyboard(JSStringRef, JSValueRef) { notImplemented(); }
 
-    virtual void keyDown(JSStringRef character, JSValueRef modifierArray) { notImplemented(); }
-    virtual void toggleCapsLock(JSValueRef callback) { notImplemented(); }
+    virtual void keyDown(JSStringRef, JSValueRef) { notImplemented(); }
+    virtual void toggleCapsLock(JSValueRef) { notImplemented(); }
     virtual void setContinuousSpellCheckingEnabled(bool) { notImplemented(); }
     virtual void setSpellCheckerResults(JSValueRef) { notImplemented(); }
     virtual bool keyboardIsAutomaticallyShifted() const
@@ -177,7 +177,7 @@ public:
     virtual void keyboardAccessoryBarNext() { notImplemented(); }
     virtual void keyboardAccessoryBarPrevious() { notImplemented(); }
 
-    virtual void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback) { notImplemented(); }
+    virtual void applyAutocorrection(JSStringRef, JSStringRef, JSValueRef) { notImplemented(); }
 
     virtual bool isShowingKeyboard() const { notImplemented(); return false; }
     virtual bool hasInputSession() const { notImplemented(); return false; }
@@ -186,59 +186,59 @@ public:
 
     virtual void setKeyboardInputModeIdentifier(JSStringRef) { notImplemented(); }
 
-    virtual void replaceTextAtRange(JSStringRef, int location, int length) { notImplemented(); }
+    virtual void replaceTextAtRange(JSStringRef, int, int) { notImplemented(); }
 
     virtual bool windowIsKey() const { notImplemented(); return false; }
     virtual void setWindowIsKey(bool) { notImplemented(); }
 
     // Stylus
 
-    virtual void stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback) { notImplemented(); }
-    virtual void stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback) { notImplemented(); }
-    virtual void stylusUpAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
-    virtual void stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback) { notImplemented(); }
-    virtual void stylusTapAtPointWithModifiers(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef modifierArray, JSValueRef callback) { notImplemented(); }
+    virtual void stylusDownAtPoint(long, long, float, float, float, JSValueRef) { notImplemented(); }
+    virtual void stylusMoveToPoint(long, long, float, float, float, JSValueRef) { notImplemented(); }
+    virtual void stylusUpAtPoint(long, long, JSValueRef) { notImplemented(); }
+    virtual void stylusTapAtPoint(long, long, float, float, float, JSValueRef) { notImplemented(); }
+    virtual void stylusTapAtPointWithModifiers(long, long, float, float, float, JSValueRef, JSValueRef) { notImplemented(); }
 
     // Event Stream
 
-    virtual void sendEventStream(JSStringRef eventsJSON, JSValueRef callback) { notImplemented(); }
-    virtual void playBackEventStream(JSStringRef stream, JSValueRef callback) { notImplemented(); }
+    virtual void sendEventStream(JSStringRef, JSValueRef) { notImplemented(); }
+    virtual void playBackEventStream(JSStringRef, JSValueRef) { notImplemented(); }
 
     // Form Controls
     
-    virtual void dismissFilePicker(JSValueRef callback) { notImplemented(); }
+    virtual void dismissFilePicker(JSValueRef) { notImplemented(); }
     virtual void dismissFormAccessoryView() { notImplemented(); }
     virtual void selectFormAccessoryPickerRow(long) { notImplemented(); }
     virtual bool selectFormAccessoryHasCheckedItemAtRow(long) const { return false; }
     virtual JSRetainPtr<JSStringRef> textContentType() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> selectFormPopoverTitle() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> formInputLabel() const { notImplemented(); return nullptr; }
-    virtual void setTimePickerValue(long hour, long minute) { notImplemented(); }
+    virtual void setTimePickerValue(long, long) { notImplemented(); }
     virtual double timePickerValueHour() const { notImplemented(); return -1; }
     virtual double timePickerValueMinute() const { notImplemented(); return -1; }
     virtual bool isShowingDateTimePicker() const { notImplemented(); return false; }
     virtual double dateTimePickerValue() const { notImplemented(); return 0; }
     virtual bool isShowingDataListSuggestions() const { notImplemented(); return false; }
     virtual JSObjectRef calendarType() const { notImplemented(); return nullptr; }
-    virtual void setDefaultCalendarType(JSStringRef calendarIdentifier, JSStringRef localeIdentifier) { notImplemented(); }
+    virtual void setDefaultCalendarType(JSStringRef, JSStringRef) { notImplemented(); }
     virtual JSObjectRef inputViewBounds() const { notImplemented(); return nullptr; }
     virtual void activateDataListSuggestion(unsigned, JSValueRef) { notImplemented(); }
 
     // Find in Page
 
-    virtual void findString(JSStringRef, unsigned long options, unsigned long maxCount) { notImplemented(); }
+    virtual void findString(JSStringRef, unsigned long, unsigned long) { notImplemented(); }
 
     // Accessibility
 
-    virtual void simulateAccessibilitySettingsChangeNotification(JSValueRef callback) { notImplemented(); }
+    virtual void simulateAccessibilitySettingsChangeNotification(JSValueRef) { notImplemented(); }
     virtual void retrieveSpeakSelectionContent(JSValueRef) { notImplemented(); }
     virtual JSRetainPtr<JSStringRef> accessibilitySpeakSelectionContent() const { notImplemented(); return nullptr; }
     virtual JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const { notImplemented(); return nullptr; }
 
     // Swipe
 
-    virtual void beginBackSwipe(JSValueRef callback) { notImplemented(); }
-    virtual void completeBackSwipe(JSValueRef callback) { notImplemented(); }
+    virtual void beginBackSwipe(JSValueRef) { notImplemented(); }
+    virtual void completeBackSwipe(JSValueRef) { notImplemented(); }
 
     // Child View Controllers
 
@@ -249,7 +249,7 @@ public:
 
     virtual bool isDismissingMenu() const { notImplemented(); return false; }
     virtual bool isShowingMenu() const { notImplemented(); return false; }
-    virtual JSObjectRef rectForMenuAction(JSStringRef action) const { notImplemented(); return nullptr; }
+    virtual JSObjectRef rectForMenuAction(JSStringRef) const { notImplemented(); return nullptr; }
     virtual JSObjectRef menuRect() const { notImplemented(); return nullptr; }
     virtual bool isShowingContextMenu() const { notImplemented(); return false; }
 
@@ -274,8 +274,8 @@ public:
 
     // Attachment Elements
 
-    virtual JSObjectRef attachmentInfo(JSStringRef attachmentIdentifier) { notImplemented(); return nullptr; }
-    virtual void insertAttachmentForFilePath(JSStringRef filePath, JSStringRef contentType, JSValueRef callback) { notImplemented(); }
+    virtual JSObjectRef attachmentInfo(JSStringRef) { notImplemented(); return nullptr; }
+    virtual void insertAttachmentForFilePath(JSStringRef, JSStringRef, JSValueRef) { notImplemented(); }
 
     // Callbacks
     

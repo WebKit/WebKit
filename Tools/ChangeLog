@@ -1,3 +1,55 @@
+2020-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] unused variable warning spam in UIScriptController.h
+        https://bugs.webkit.org/show_bug.cgi?id=217176
+
+        Reviewed by Adrian Perez de Castro.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        (_generateImplementationFile): Generate macros for unused variables.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h: Remove unused variable names declarations.
+        (WTR::UIScriptController::doAsyncTask):
+        (WTR::UIScriptController::ensurePositionInformationIsUpToDateAt):
+        (WTR::UIScriptController::overridePreference):
+        (WTR::UIScriptController::zoomToScale):
+        (WTR::UIScriptController::immediateZoomToScale):
+        (WTR::UIScriptController::setSafeAreaInsets):
+        (WTR::UIScriptController::propertiesOfLayerWithID const):
+        (WTR::UIScriptController::scrollToOffset):
+        (WTR::UIScriptController::immediateScrollToOffset):
+        (WTR::UIScriptController::immediateScrollElementAtContentPointToOffset):
+        (WTR::UIScriptController::touchDownAtPoint):
+        (WTR::UIScriptController::liftUpAtPoint):
+        (WTR::UIScriptController::singleTapAtPoint):
+        (WTR::UIScriptController::singleTapAtPointWithModifiers):
+        (WTR::UIScriptController::twoFingerSingleTapAtPoint):
+        (WTR::UIScriptController::doubleTapAtPoint):
+        (WTR::UIScriptController::dragFromPointToPoint):
+        (WTR::UIScriptController::longPressAtPoint):
+        (WTR::UIScriptController::activateAtPoint):
+        (WTR::UIScriptController::typeCharacterUsingHardwareKeyboard):
+        (WTR::UIScriptController::keyDown):
+        (WTR::UIScriptController::toggleCapsLock):
+        (WTR::UIScriptController::applyAutocorrection):
+        (WTR::UIScriptController::replaceTextAtRange):
+        (WTR::UIScriptController::stylusDownAtPoint):
+        (WTR::UIScriptController::stylusMoveToPoint):
+        (WTR::UIScriptController::stylusUpAtPoint):
+        (WTR::UIScriptController::stylusTapAtPoint):
+        (WTR::UIScriptController::stylusTapAtPointWithModifiers):
+        (WTR::UIScriptController::sendEventStream):
+        (WTR::UIScriptController::playBackEventStream):
+        (WTR::UIScriptController::dismissFilePicker):
+        (WTR::UIScriptController::setTimePickerValue):
+        (WTR::UIScriptController::setDefaultCalendarType):
+        (WTR::UIScriptController::findString):
+        (WTR::UIScriptController::simulateAccessibilitySettingsChangeNotification):
+        (WTR::UIScriptController::beginBackSwipe):
+        (WTR::UIScriptController::completeBackSwipe):
+        (WTR::UIScriptController::rectForMenuAction const):
+        (WTR::UIScriptController::attachmentInfo):
+        (WTR::UIScriptController::insertAttachmentForFilePath):
+
 2020-10-02  Jonathan Bedard  <jbedard@apple.com>
 
         Update my information in contributors.json

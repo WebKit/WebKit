@@ -290,6 +290,12 @@ EOF
                     push(@arguments, "context");
                 }
 
+                if (!@specifiedArguments) {
+                    push(@contents, "    UNUSED_VARIABLE(argumentCount);\n");
+                    push(@contents, "    UNUSED_VARIABLE(arguments);\n");
+                }
+                push(@contents, "    UNUSED_VARIABLE(exception);\n");
+
                 foreach my $i (0..$#specifiedArguments) {
                     my $argument = $specifiedArguments[$i];
 
@@ -320,6 +326,7 @@ EOF
 
 JSValueRef ${className}::${getterName}(JSContextRef context, JSObjectRef object, JSStringRef, JSValueRef* exception)
 {
+    UNUSED_VARIABLE(exception);
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
     if (!impl)
         return JSValueMakeUndefined(context);
@@ -333,6 +340,7 @@ EOF
 
 bool ${className}::@{[$self->_setterName($attribute)]}(JSContextRef context, JSObjectRef object, JSStringRef, JSValueRef value, JSValueRef* exception)
 {
+    UNUSED_VARIABLE(exception);
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
     if (!impl)
         return false;
