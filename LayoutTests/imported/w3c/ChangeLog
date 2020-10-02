@@ -1,3 +1,15 @@
+2020-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Copy host from base file URL
+        https://bugs.webkit.org/show_bug.cgi?id=217170
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+
 2020-10-02  Sam Weinig  <weinig@apple.com>
 
         Re-align HTMLElement with the HTML spec

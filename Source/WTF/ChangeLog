@@ -1,3 +1,27 @@
+2020-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Copy host from base file URL
+        https://bugs.webkit.org/show_bug.cgi?id=217170
+
+        Reviewed by Brady Eidson.
+
+        This matches Chrome and the URL specification.
+        Covered by newly passing web platform tests.
+
+        I also updated the web platform tests from https://github.com/web-platform-tests/wpt/pull/25716
+        which aligns with Safari in cases except copying of the host from base file URLs.
+
+        The implementation pushes copying from the base URL downstream in the parsing process to where it is in the URL specification
+        so that we can properly decide how much of the base URL to copy and so we can copy it into the right place in the result URL.
+
+        I also updated an assertion that makes sure that we re-use the input String if possible because there are cases where we copy
+        part of the parent URL, which is a "syntax violation" (meaning we copy the string parts and assemble a new one), then re-assemble
+        a new String that is equal to the input string.  This is not a problem, it just needed to be reflected in the assertion.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::URLParser):
+        (WTF::URLParser::parse):
+
 2020-10-02  Youenn Fablet  <youenn@apple.com>
 
         Add AVAssetWriter SPI header

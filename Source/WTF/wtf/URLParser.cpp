@@ -1074,8 +1074,8 @@ URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding
 
     ASSERT(!m_url.m_isValid
         || m_didSeeSyntaxViolation == (m_url.string() != input)
-        || (input.isAllSpecialCharacters<isC0ControlOrSpace>()
-            && m_url.m_string == base.m_string.left(base.m_queryEnd)));
+        || (input.isAllSpecialCharacters<isC0ControlOrSpace>() && m_url.m_string == base.m_string.left(base.m_queryEnd))
+        || (base.isValid() && base.protocolIs("file")));
     ASSERT(internalValuesConsistent(m_url));
 #if ASSERT_ENABLED
     if (!m_didSeeSyntaxViolation) {
@@ -1265,8 +1265,6 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 state = State::Relative;
                 break;
             }
-            copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
-            appendToASCIIBuffer(':');
             state = State::File;
             break;
         case State::SpecialRelativeOrAuthority:
@@ -1529,13 +1527,26 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 if (base.isValid() && base.protocolIs("file") && shouldCopyFileURL(c))
                     copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c, nonUTF8QueryEncoding);
                 else {
-                    appendToASCIIBuffer("///", 3);
-                    m_url.m_userStart = currentPosition(c) - 1;
-                    m_url.m_userEnd = m_url.m_userStart;
-                    m_url.m_passwordEnd = m_url.m_userStart;
-                    m_url.m_hostEnd = m_url.m_userStart;
-                    m_url.m_portLength = 0;
-                    m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                    bool copiedHost = false;
+                    if (base.isValid() && base.protocolIs("file")) {
+                        if (base.host().isEmpty()) {
+                            copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
+                            appendToASCIIBuffer(":///", 4);
+                        } else {
+                            copyURLPartsUntil(base, URLPart::PortEnd, c, nonUTF8QueryEncoding);
+                            appendToASCIIBuffer('/');
+                            copiedHost = true;
+                        }
+                    } else
+                        appendToASCIIBuffer("///", 3);
+                    if (!copiedHost) {
+                        m_url.m_userStart = currentPosition(c) - 1;
+                        m_url.m_userEnd = m_url.m_userStart;
+                        m_url.m_passwordEnd = m_url.m_userStart;
+                        m_url.m_hostEnd = m_url.m_userStart;
+                        m_url.m_portLength = 0;
+                    }
+                    m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
                     if (isWindowsDriveLetter(c))
                         appendWindowsDriveLetter(c);
                 }
@@ -1548,6 +1559,10 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             if (LIKELY(*c == '/' || *c == '\\')) {
                 if (UNLIKELY(*c == '\\'))
                     syntaxViolation(c);
+                if (base.isValid() && base.protocolIs("file")) {
+                    copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
+                    appendToASCIIBuffer(":/", 2);
+                }
                 appendToASCIIBuffer('/');
                 advance(c);
                 m_url.m_userStart = currentPosition(c);
@@ -1559,21 +1574,37 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 state = State::FileHost;
                 break;
             }
-            syntaxViolation(c);
-            appendToASCIIBuffer("//", 2);
-            m_url.m_userStart = currentPosition(c) - 1;
-            m_url.m_userEnd = m_url.m_userStart;
-            m_url.m_passwordEnd = m_url.m_userStart;
-            m_url.m_hostEnd = m_url.m_userStart;
-            m_url.m_portLength = 0;
+            {
+                bool copiedHost = false;
+                if (base.isValid() && base.protocolIs("file")) {
+                    if (base.host().isEmpty()) {
+                        copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
+                        appendToASCIIBuffer(":///", 4);
+                    } else {
+                        copyURLPartsUntil(base, URLPart::PortEnd, c, nonUTF8QueryEncoding);
+                        appendToASCIIBuffer('/');
+                        copiedHost = true;
+                    }
+                } else {
+                    syntaxViolation(c);
+                    appendToASCIIBuffer("//", 2);
+                }
+                if (!copiedHost) {
+                    m_url.m_userStart = currentPosition(c) - 1;
+                    m_url.m_userEnd = m_url.m_userStart;
+                    m_url.m_passwordEnd = m_url.m_userStart;
+                    m_url.m_hostEnd = m_url.m_userStart;
+                    m_url.m_portLength = 0;
+                }
+            }
             if (isWindowsDriveLetter(c)) {
                 appendWindowsDriveLetter(c);
-                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
             } else if (copyBaseWindowsDriveLetter(base)) {
                 appendToASCIIBuffer('/');
-                m_url.m_pathAfterLastSlash = m_url.m_userStart + 4;
+                m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 4;
             } else
-                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
             state = State::Path;
             break;
         case State::FileHost:
@@ -1864,17 +1895,32 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     case State::FileSlash:
         LOG_FINAL_STATE("FileSlash");
         syntaxViolation(c);
-        m_url.m_userStart = currentPosition(c) + 1;
-        appendToASCIIBuffer("//", 2);
-        m_url.m_userEnd = m_url.m_userStart;
-        m_url.m_passwordEnd = m_url.m_userStart;
-        m_url.m_hostEnd = m_url.m_userStart;
-        m_url.m_portLength = 0;
+        {
+            bool copiedHost = false;
+            if (base.isValid() && base.protocolIs("file")) {
+                if (base.host().isEmpty()) {
+                    copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
+                    appendToASCIIBuffer(":/", 2);
+                } else {
+                    copyURLPartsUntil(base, URLPart::PortEnd, c, nonUTF8QueryEncoding);
+                    appendToASCIIBuffer('/');
+                    copiedHost = true;
+                }
+            }
+            if (!copiedHost) {
+                m_url.m_userStart = currentPosition(c) + 1;
+                appendToASCIIBuffer("//", 2);
+                m_url.m_userEnd = m_url.m_userStart;
+                m_url.m_passwordEnd = m_url.m_userStart;
+                m_url.m_hostEnd = m_url.m_userStart;
+                m_url.m_portLength = 0;
+            }
+        }
         if (copyBaseWindowsDriveLetter(base)) {
             appendToASCIIBuffer('/');
-            m_url.m_pathAfterLastSlash = m_url.m_userStart + 4;
+            m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 4;
         } else
-            m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+            m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
         m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
         m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
         break;
@@ -1956,7 +2002,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     } else
         m_url.m_string = String::adopt(WTFMove(m_asciiBuffer));
     m_url.m_isValid = true;
-    URL_PARSER_LOG("Parsed URL <%s>", m_url.m_string.utf8().data());
+    URL_PARSER_LOG("Parsed URL <%s>\n\n", m_url.m_string.utf8().data());
 }
 
 template<typename CharacterType>
