@@ -83,6 +83,7 @@
                     break;
                 case "#step4":
                     document.location.hash = "step5";
+                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
                     let iframeElement = document.createElement("iframe");
                     iframeElement.onload = function() {
                         activateElement("TheIframeThatRequestsStorageAccess");
@@ -98,6 +99,7 @@
                     break;
                 case "#step6":
                     testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                        internals.settings.setStorageAccessAPIPerPageScopeEnabled(false);
                         setEnableFeature(false, finishJSTest);
                     });
                     break;

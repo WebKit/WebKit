@@ -197,8 +197,8 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    if (!page->settings().storageAccessAPIPerPageScopeEnabled())
-        m_storageAccessScope = StorageAccessScope::PerFrame;
+    if (page->settings().storageAccessAPIPerPageScopeEnabled())
+        m_storageAccessScope = StorageAccessScope::PerPage;
 
     page->chrome().client().requestStorageAccess(RegistrableDomain::uncheckedCreateFromHost(m_document.securityOrigin().host()), RegistrableDomain::uncheckedCreateFromHost(m_document.topDocument().securityOrigin().host()), *frame, m_storageAccessScope, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (RequestStorageAccessResult result) mutable {
         if (!weakThis)

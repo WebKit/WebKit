@@ -704,7 +704,7 @@ storageAccessAPIEnabled:
   initial: true
 
 storageAccessAPIPerPageScopeEnabled:
-  initial: true
+  initial: false
 
 timeWithoutMouseMovementBeforeHidingControls:
   type: Seconds
