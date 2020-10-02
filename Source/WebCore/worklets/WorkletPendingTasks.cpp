@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WorkletPendingTasks.h"
 
+#include "Worklet.h"
+
 namespace WebCore {
 
 WorkletPendingTasks::WorkletPendingTasks(Worklet& worklet, DOMPromiseDeferred<void>&& promise, int counter)

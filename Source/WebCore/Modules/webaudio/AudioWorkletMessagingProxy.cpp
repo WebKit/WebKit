@@ -31,6 +31,7 @@
 #include "AudioWorkletMessagingProxy.h"
 
 #include "AudioWorklet.h"
+#include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletThread.h"
 #include "Document.h"
 #include "Frame.h"

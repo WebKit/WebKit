@@ -1,3 +1,12 @@
+2020-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fix.
+
+        No new tests needed.
+
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp: Add missing AudioWorkletGlobalScope.h header.
+        * worklets/WorkletPendingTasks.cpp: Add missing Worklet.h header.
+
 2020-10-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r267864.
