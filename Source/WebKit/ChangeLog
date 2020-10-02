@@ -1,3 +1,18 @@
+2020-10-02  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Remove requiresTextTrackRepresentation in RemoteMediaPlayerState
+        https://bugs.webkit.org/show_bug.cgi?id=217230
+
+        Reviewed by Jer Noble.
+
+        A Web process can figure out whether the fullscreen/picture-in-picture subtitle
+        layer (for text track representation) is required by itself, so it does not need
+        to get the information from the GPU process.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const):
+        (WebKit::RemoteMediaPlayerState::decode):
+
 2020-10-02  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: add an ObjC protocol for extension support

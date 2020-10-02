@@ -65,7 +65,6 @@ struct RemoteMediaPlayerState {
     bool wirelessVideoPlaybackDisabled { false };
     bool hasSingleSecurityOrigin { false };
     bool didPassCORSAccessCheck { false };
-    bool requiresTextTrackRepresentation { false };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -100,7 +99,6 @@ struct RemoteMediaPlayerState {
         encoder << wirelessVideoPlaybackDisabled;
         encoder << hasSingleSecurityOrigin;
         encoder << didPassCORSAccessCheck;
-        encoder << requiresTextTrackRepresentation;
     }
 
     template <class Decoder>
@@ -252,11 +250,6 @@ struct RemoteMediaPlayerState {
         if (!didPassCORSAccessCheck)
             return WTF::nullopt;
 
-        Optional<bool> requiresTextTrackRepresentation;
-        decoder >> requiresTextTrackRepresentation;
-        if (!requiresTextTrackRepresentation)
-            return WTF::nullopt;
-
         return {{
             WTFMove(*currentTime),
             WTFMove(*duration),
@@ -287,8 +280,7 @@ struct RemoteMediaPlayerState {
             *hasAvailableVideoFrame,
             *wirelessVideoPlaybackDisabled,
             *hasSingleSecurityOrigin,
-            *didPassCORSAccessCheck,
-            *requiresTextTrackRepresentation,
+            *didPassCORSAccessCheck
         }};
     }
 
