@@ -289,6 +289,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     addSupplement<WebGeolocationManagerProxy>();
     addSupplement<WebNotificationManagerProxy>();
+#if ENABLE(MEDIA_SESSION)
+    addSupplement<WebMediaSessionFocusManager>();
+#endif
 
     processPools().append(this);
 

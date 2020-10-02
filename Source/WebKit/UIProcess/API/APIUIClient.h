@@ -60,6 +60,10 @@ class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 struct NavigationActionData;
+
+#if ENABLE(MEDIA_SESSION)
+class WebMediaSessionMetadata;
+#endif
 }
 
 namespace API {
@@ -156,6 +160,10 @@ public:
     virtual void isPlayingMediaDidChange(WebKit::WebPageProxy&) { }
     virtual void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) { }
     virtual void handleAutoplayEvent(WebKit::WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) { }
+
+#if ENABLE(MEDIA_SESSION)
+    virtual void mediaSessionMetadataDidChange(WebKit::WebPageProxy&, WebKit::WebMediaSessionMetadata*) { }
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)

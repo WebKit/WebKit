@@ -62,6 +62,10 @@
 #include "ApplicationManifest.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSessionEvents.h"
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetContext.h"
 #endif
@@ -655,6 +659,11 @@ public:
 
     void setCanUseCredentialStorage(bool canUse) { m_canUseCredentialStorage = canUse; }
     bool canUseCredentialStorage() const { return m_canUseCredentialStorage; }
+
+#if ENABLE(MEDIA_SESSION)
+    WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
+    WEBCORE_EXPORT void setVolumeOfMediaElement(double, uint64_t);
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier);

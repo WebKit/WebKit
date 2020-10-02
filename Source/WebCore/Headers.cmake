@@ -1,6 +1,4 @@
 set(WebCore_PRIVATE_FRAMEWORK_HEADERS
-    Modules/airplay/PlaybackTargetClientContextIdentifier.h
-
     Modules/applepay/ApplePaySessionPaymentRequest.h
     Modules/applepay/Payment.h
     Modules/applepay/PaymentAuthorizationStatus.h
@@ -88,6 +86,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/shared/IDBTransactionInfo.h
 
     Modules/mediarecorder/MediaRecorderProvider.h
+
+    Modules/mediasession/MediaSessionEvents.h
+    Modules/mediasession/MediaSessionMetadata.h
+    Modules/mediasession/PlaybackTargetClientContextIdentifier.h
+    Modules/mediasession/WebMediaSessionManager.h
+    Modules/mediasession/WebMediaSessionManagerClient.h
 
     Modules/mediasource/SampleMap.h
 

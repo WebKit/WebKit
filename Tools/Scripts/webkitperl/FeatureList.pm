@@ -119,6 +119,7 @@ my (
     $mathmlSupport,
     $mediaCaptureSupport,
     $mediaControlsScriptSupport,
+    $mediaSessionSupport,
     $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
@@ -397,6 +398,9 @@ my @features = (
 
     { option => "media-controls-script", desc => "Toggle definition of media controls in Javascript",
       define => "ENABLE_MEDIA_CONTROLS_SCRIPT", value => \$mediaControlsScriptSupport },
+
+    { option => "media-session", desc => "Toggle Media Session support",
+      define => "ENABLE_MEDIA_SESSION", value => \$mediaSessionSupport },
 
     { option => "media-source", desc => "Toggle Media Source support",
       define => "ENABLE_MEDIA_SOURCE", value => \$mediaSourceSupport },

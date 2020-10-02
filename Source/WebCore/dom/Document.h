@@ -177,6 +177,7 @@ class MediaPlaybackTarget;
 class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
+class MediaSession;
 class MessagePortChannelProvider;
 class MouseEventWithHitTestResults;
 class NodeFilter;
@@ -1096,6 +1097,10 @@ public:
     bool videoPlaybackRequiresUserGesture() const;
     bool mediaDataLoadsAutomatically() const;
 
+#if ENABLE(MEDIA_SESSION)
+    MediaSession& defaultMediaSession();
+#endif
+
     void privateBrowsingStateDidChange(PAL::SessionID);
 
     void storageBlockingStateDidChange();
@@ -1945,6 +1950,10 @@ private:
     TargetIdToClientMap m_idToClientMap;
     using TargetClientToIdMap = HashMap<WebCore::MediaPlaybackTargetClient*, PlaybackTargetClientContextIdentifier>;
     TargetClientToIdMap m_clientToIDMap;
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+    RefPtr<MediaSession> m_defaultMediaSession;
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
