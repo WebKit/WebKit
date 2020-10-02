@@ -2596,13 +2596,13 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         new_failures_to_display = list(new_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         new_failures_string = ', '.join(new_failures_to_display)
 
-        self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
-        self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(second_run_failures))
-        self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures))
-        self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures))
+        self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(list(first_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
+        self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(list(second_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
+        self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
+        self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures_string))
 
         if new_failures:
-            self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures))
+            self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures_string))
             self.finished(FAILURE)
             self.build.results = FAILURE
             pluralSuffix = 's' if len(new_failures) > 1 else ''
