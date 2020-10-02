@@ -1,3 +1,14 @@
+2020-10-02  Youenn Fablet  <youenn@apple.com>
+
+        Add AVAssetWriter SPI header
+        https://bugs.webkit.org/show_bug.cgi?id=217169
+        <rdar://problem/69793050>
+
+        Reviewed by Eric Carlson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/AVAssetWriterSPI.h: Added.
+
 2020-10-01  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r267841.
