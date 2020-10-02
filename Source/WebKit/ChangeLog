@@ -1,3 +1,21 @@
+2020-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] fast/canvas/canvas-createPattern-video-loading.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=217227
+
+        Reviewed by Eric Carlson.
+
+        Even after supporting `createPattern` with video elements using the GPU process for both media and canvas
+        rendering, we still fail this test due to a security error that is thrown when consulting
+        `CanvasRenderingContext::wouldTaintOrigin`. This, in turn, is due to the fact that we never attempt to update
+        cached `wouldTaintDocumentSecurityOrigin` state on `MediaPlayerPrivateRemote`, so it remains `true`.
+
+        This change will be covered by fast/canvas/canvas-createPattern-video-loading.html, which should now fail with a
+        text diff instead of timing out due to lack of support for creating a `CanvasPattern` out of a video element.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+
 2020-10-02  Sam Weinig  <weinig@apple.com>
 
         Remove code behind ENABLE(MEDIA_SESSION), no ports enable it

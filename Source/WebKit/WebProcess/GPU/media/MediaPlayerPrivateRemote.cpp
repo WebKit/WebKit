@@ -409,6 +409,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.wirelessVideoPlaybackDisabled = state.wirelessVideoPlaybackDisabled;
     m_cachedState.hasSingleSecurityOrigin = state.hasSingleSecurityOrigin;
     m_cachedState.didPassCORSAccessCheck = state.didPassCORSAccessCheck;
+    m_cachedState.wouldTaintDocumentSecurityOrigin = state.wouldTaintDocumentSecurityOrigin;
 
     if (state.bufferedRanges.length())
         m_cachedBufferedTimeRanges = makeUnique<PlatformTimeRanges>(state.bufferedRanges);
