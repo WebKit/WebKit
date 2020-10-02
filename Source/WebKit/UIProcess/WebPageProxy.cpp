@@ -6026,6 +6026,7 @@ void WebPageProxy::stopAllMediaPlayback()
 
 void WebPageProxy::suspendAllMediaPlayback()
 {
+    m_suspendMediaPlaybackCounter++;
     if (m_mediaPlaybackIsSuspended)
         return;
     m_mediaPlaybackIsSuspended = true;
@@ -6038,7 +6039,10 @@ void WebPageProxy::suspendAllMediaPlayback()
 
 void WebPageProxy::resumeAllMediaPlayback()
 {
-    if (!m_mediaPlaybackIsSuspended)
+    if (m_suspendMediaPlaybackCounter > 0)
+        m_suspendMediaPlaybackCounter--;
+
+    if (!m_mediaPlaybackIsSuspended || m_suspendMediaPlaybackCounter)
         return;
     m_mediaPlaybackIsSuspended = false;
 

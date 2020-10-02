@@ -296,4 +296,9 @@
     _page->addActivityStateUpdateCompletionHandler(makeBlockPtr(completionHandler));
 }
 
+- (NSNumber *)_suspendMediaPlaybackCounter
+{
+    return @(_page->suspendMediaPlaybackCounter());
+}
+
 @end

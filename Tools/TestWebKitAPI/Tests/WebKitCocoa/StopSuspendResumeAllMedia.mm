@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -75,7 +76,59 @@ TEST(WKWebView, SuspendResumeAllMediaPlayback)
 
     __block bool didReject = false;
     [webView performAfterReceivingMessage:@"rejected" action:^{ didReject = true; }];
-    [webView evaluateJavaScript:@"document.querySelector('video').play().catch(() = { window.webkit.messageHandlers.testHandler.postMessage('rejected'); })" completionHandler:nil];
+    [webView evaluateJavaScript:@"document.querySelector('video').play().catch(() => { window.webkit.messageHandlers.testHandler.postMessage('rejected'); })" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didReject);
+
+    didBeginPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
+    [webView _resumeAllMediaPlayback];
+    TestWebKitAPI::Util::run(&didBeginPlaying);
+}
+
+TEST(WKWebView, SuspendResumeAllMediaPlaybackMultipleTimes)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadHTMLString:@"<video src=\"video-with-audio.mp4\" webkit-playsinline></video>"];
+
+    [webView objectByEvaluatingJavaScript:@"function eventToMessage(event){window.webkit.messageHandlers.testHandler.postMessage(event.type);} var video = document.querySelector('video'); video.addEventListener('playing', eventToMessage); video.addEventListener('pause', eventToMessage);"];
+
+    __block bool didBeginPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
+    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didBeginPlaying);
+
+    __block bool didPause = false;
+    [webView performAfterReceivingMessage:@"pause" action:^{ didPause = true; }];
+    [webView _suspendAllMediaPlayback];
+    TestWebKitAPI::Util::run(&didPause);
+
+    __block bool didReject = false;
+    [webView performAfterReceivingMessage:@"rejected" action:^{ didReject = true; }];
+    [webView evaluateJavaScript:@"document.querySelector('video').play().catch(() => { window.webkit.messageHandlers.testHandler.postMessage('rejected'); })" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didReject);
+
+    // Suspend again to increment the counter.
+    [webView _suspendAllMediaPlayback];
+    do {
+        if ([webView _suspendMediaPlaybackCounter].intValue >= 2)
+            break;
+        TestWebKitAPI::Util::spinRunLoop(1);
+    } while (true);
+
+    [webView _resumeAllMediaPlayback];
+    do {
+        if ([webView _suspendMediaPlaybackCounter].intValue <= 1)
+            break;
+        TestWebKitAPI::Util::spinRunLoop(1);
+    } while (true);
+
+    // Make sure the media is still suspended.
+    didReject = false;
+    [webView performAfterReceivingMessage:@"rejected" action:^{ didReject = true; }];
+    [webView evaluateJavaScript:@"document.querySelector('video').play().catch(() => { window.webkit.messageHandlers.testHandler.postMessage('rejected'); })" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didReject);
 
     didBeginPlaying = false;
     [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];

@@ -1810,6 +1810,7 @@ public:
 
     Seconds mediaCaptureReportingDelay() const { return m_mediaCaptureReportingDelay; }
     void setMediaCaptureReportingDelay(Seconds captureReportingDelay) { m_mediaCaptureReportingDelay = captureReportingDelay; }
+    size_t suspendMediaPlaybackCounter() { return m_suspendMediaPlaybackCounter; }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2877,6 +2878,8 @@ private:
     bool m_userScriptsNotified { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
     bool m_canUseCredentialStorage { true };
+
+    size_t m_suspendMediaPlaybackCounter { 0 };
 };
 
 } // namespace WebKit

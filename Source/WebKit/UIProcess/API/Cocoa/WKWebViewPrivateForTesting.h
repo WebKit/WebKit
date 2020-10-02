@@ -79,4 +79,6 @@ typedef enum {
 - (double)_audioRoutingArbitrationUpdateTime;
 
 - (void)_doAfterActivityStateUpdate:(void (^)(void))completionHandler;
+
+- (NSNumber *)_suspendMediaPlaybackCounter WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
