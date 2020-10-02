@@ -218,6 +218,16 @@ int main(int argc, char *argv[])
 
     auto* manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(nullptr);
     webkit_website_data_manager_set_itp_enabled(manager, enableITP);
+
+    if (proxy) {
+        auto* webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
+        webkit_website_data_manager_set_network_proxy_settings(manager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
+        webkit_network_proxy_settings_free(webkitProxySettings);
+    }
+
+    if (ignoreTLSErrors)
+        webkit_website_data_manager_set_tls_errors_policy(manager, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
     auto* webContext = webkit_web_context_new_with_website_data_manager(manager);
     g_object_unref(manager);
 
@@ -234,12 +244,6 @@ int main(int argc, char *argv[])
         auto* cookieManager = webkit_web_context_get_cookie_manager(webContext);
         auto storageType = g_str_has_suffix(cookiesFile, ".txt") ? WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT : WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE;
         webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
-    }
-
-    if (proxy) {
-        auto* webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
-        webkit_web_context_set_network_proxy_settings(webContext, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
-        webkit_network_proxy_settings_free(webkitProxySettings);
     }
 
     const char* singleprocess = g_getenv("MINIBROWSER_SINGLEPROCESS");
@@ -308,9 +312,6 @@ int main(int argc, char *argv[])
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), nullptr);
     g_signal_connect(webView, "close", G_CALLBACK(webViewClose), nullptr);
     g_hash_table_add(openViews, webView);
-
-    if (ignoreTLSErrors)
-        webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     WebKitColor color;
     if (bgColor && webkit_color_parse(&color, bgColor))

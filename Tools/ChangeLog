@@ -1,3 +1,20 @@
+2020-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Fix MiniBrowser compilation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=217208
+
+        Reviewed by Carlos Garcia Campos.
+
+        webkit_web_context_set_network_proxy_settings() is deprecated in favor of
+        webkit_website_data_manager_set_network_proxy_settings().
+        webkit_web_context_set_tls_errors_policy() is deprecated in favor of
+        webkit_website_data_manager_set_tls_errors_policy().
+
+        * MiniBrowser/gtk/main.c:
+        (activate):
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+
 2020-10-02  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         [iOS WK1] Crashes when using ANGLE WebGL from another thread

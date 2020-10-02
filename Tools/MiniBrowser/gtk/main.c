@@ -626,6 +626,16 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     }
 
     webkit_website_data_manager_set_itp_enabled(manager, enableITP);
+
+    if (proxy) {
+        WebKitNetworkProxySettings *webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
+        webkit_website_data_manager_set_network_proxy_settings(manager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
+        webkit_network_proxy_settings_free(webkitProxySettings);
+    }
+
+    if (ignoreTLSErrors)
+        webkit_website_data_manager_set_tls_errors_policy(manager, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, "process-swap-on-cross-site-navigation-enabled", TRUE,
 #if !GTK_CHECK_VERSION(3, 98, 0)
         "use-system-appearance-for-scrollbars", FALSE,
@@ -646,12 +656,6 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         WebKitCookieManager *cookieManager = webkit_web_context_get_cookie_manager(webContext);
         WebKitCookiePersistentStorage storageType = g_str_has_suffix(cookiesFile, ".txt") ? WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT : WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE;
         webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
-    }
-
-    if (proxy) {
-        WebKitNetworkProxySettings *webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
-        webkit_web_context_set_network_proxy_settings(webContext, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
-        webkit_network_proxy_settings_free(webkitProxySettings);
     }
 
     // Enable the favicon database, by specifying the default directory.
@@ -693,9 +697,6 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), application);
-
-    if (ignoreTLSErrors)
-        webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
     gtk_application_add_window(GTK_APPLICATION(application), GTK_WINDOW(mainWindow));
