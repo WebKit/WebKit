@@ -57,13 +57,14 @@ public:
 
     float baseline() const { return line().baseline(); }
 
-    bool isLeftToRightDirection() const { return true; }
     bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
     bool isLineBreak() const { return run().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? localStartOffset() : 0; }
     unsigned maximumCaretOffset() const { return isText() ? localStartOffset() : 1; }
+
+    unsigned char bidiLevel() const { return 0; }
 
     bool useLineBreakBoxRenderTreeDumpQuirk() const
     {
@@ -121,16 +122,31 @@ public:
     {
         ASSERT(!atEnd());
 
-        auto previouslineIndex = run().lineIndex();
+        auto oldLineIndex = run().lineIndex();
 
         ++m_runIndex;
 
-        if (!atEnd() && previouslineIndex != run().lineIndex())
+        if (!atEnd() && oldLineIndex != run().lineIndex())
+            setAtEnd();
+    }
+
+    void traversePreviousOnLine()
+    {
+        ASSERT(!atEnd());
+        ASSERT(m_runIndex);
+
+        auto oldLineIndex = run().lineIndex();
+
+        --m_runIndex;
+
+        if (oldLineIndex != run().lineIndex())
             setAtEnd();
     }
 
     bool operator==(const ModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
     bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
+
+    void setAtEnd() { m_runIndex = runs().size(); }
 
     InlineBox* legacyInlineBox() const
     {
@@ -142,7 +158,6 @@ private:
     const Display::InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Display::Run& run() const { return runs()[m_runIndex]; }
     const Display::Line& line() const { return m_inlineContent->lineForRun(run()); }
-    void setAtEnd() { m_runIndex = runs().size(); }
 
     RefPtr<const Display::InlineContent> m_inlineContent;
     size_t m_runIndex { 0 };

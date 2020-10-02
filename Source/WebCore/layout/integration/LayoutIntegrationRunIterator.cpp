@@ -55,9 +55,31 @@ bool RunIterator::atEnd() const
     });
 }
 
+void RunIterator::setAtEnd()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.setAtEnd();
+    });
+}
+
 LineRunIterator RunIterator::nextOnLine() const
 {
     return LineRunIterator(*this).traverseNextOnLine();
+}
+
+LineRunIterator RunIterator::previousOnLine() const
+{
+    return LineRunIterator(*this).traversePreviousOnLine();
+}
+
+LineRunIterator RunIterator::nextOnLineIgnoringLineBreak() const
+{
+    return LineRunIterator(*this).traverseNextOnLineIgnoringLineBreak();
+}
+
+LineRunIterator RunIterator::previousOnLineIgnoringLineBreak() const
+{
+    return LineRunIterator(*this).traversePreviousOnLineIgnoringLineBreak();
 }
 
 TextRunIterator::TextRunIterator(Run::PathVariant&& pathVariant)
@@ -96,6 +118,30 @@ LineRunIterator& LineRunIterator::traverseNextOnLine()
     WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
         path.traverseNextOnLine();
     });
+    return *this;
+}
+
+LineRunIterator& LineRunIterator::traversePreviousOnLine()
+{
+    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
+        path.traversePreviousOnLine();
+    });
+    return *this;
+}
+
+LineRunIterator& LineRunIterator::traverseNextOnLineIgnoringLineBreak()
+{
+    traverseNextOnLine();
+    if (!atEnd() && m_run.isLineBreak())
+        setAtEnd();
+    return *this;
+}
+
+LineRunIterator& LineRunIterator::traversePreviousOnLineIgnoringLineBreak()
+{
+    traversePreviousOnLine();
+    if (!atEnd() && m_run.isLineBreak())
+        setAtEnd();
     return *this;
 }
 

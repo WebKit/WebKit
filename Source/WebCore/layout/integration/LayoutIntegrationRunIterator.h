@@ -59,7 +59,6 @@ public:
 
     float baseline() const;
 
-    bool isLeftToRightDirection() const;
     bool isHorizontal() const;
     bool dirOverride() const;
     bool isLineBreak() const;
@@ -67,6 +66,12 @@ public:
 
     unsigned minimumCaretOffset() const;
     unsigned maximumCaretOffset() const;
+    unsigned leftmostCaretOffset() const { return isLeftToRightDirection() ? minimumCaretOffset() : maximumCaretOffset(); }
+    unsigned rightmostCaretOffset() const { return isLeftToRightDirection() ? maximumCaretOffset() : minimumCaretOffset(); }
+
+    unsigned char bidiLevel() const;
+    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
+    bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
 
     // For intermediate porting steps only.
     InlineBox* legacyInlineBox() const;
@@ -122,8 +127,13 @@ public:
     bool atEnd() const;
 
     LineRunIterator nextOnLine() const;
+    LineRunIterator previousOnLine() const;
+    LineRunIterator nextOnLineIgnoringLineBreak() const;
+    LineRunIterator previousOnLineIgnoringLineBreak() const;
 
 protected:
+    void setAtEnd();
+
     Run m_run;
 };
 
@@ -156,6 +166,9 @@ public:
     LineRunIterator& operator++() { return traverseNextOnLine(); }
 
     LineRunIterator& traverseNextOnLine();
+    LineRunIterator& traversePreviousOnLine();
+    LineRunIterator& traverseNextOnLineIgnoringLineBreak();
+    LineRunIterator& traversePreviousOnLineIgnoringLineBreak();
 };
 
 class TextRunRange {
@@ -207,13 +220,6 @@ inline float Run::baseline() const
     });
 }
 
-inline bool Run::isLeftToRightDirection() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isLeftToRightDirection();
-    });
-}
-
 inline bool Run::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
@@ -253,6 +259,13 @@ inline unsigned Run::maximumCaretOffset() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.maximumCaretOffset();
+    });
+}
+
+inline unsigned char Run::bidiLevel() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) {
+        return path.bidiLevel();
     });
 }
 

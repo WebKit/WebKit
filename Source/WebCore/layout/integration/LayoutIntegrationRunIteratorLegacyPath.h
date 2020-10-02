@@ -44,7 +44,6 @@ public:
 
     FloatRect rect() const { return m_inlineBox->frameRect(); }
 
-    bool isLeftToRightDirection() const { return m_inlineBox->isLeftToRightDirection(); }
     bool isHorizontal() const { return m_inlineBox->isHorizontal(); }
     bool dirOverride() const { return m_inlineBox->dirOverride(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
@@ -52,6 +51,8 @@ public:
 
     unsigned minimumCaretOffset() const { return m_inlineBox->caretMinOffset(); }
     unsigned maximumCaretOffset() const { return m_inlineBox->caretMaxOffset(); }
+
+    unsigned char bidiLevel() const { return m_inlineBox->bidiLevel(); }
 
     bool useLineBreakBoxRenderTreeDumpQuirk() const
     {
@@ -84,8 +85,15 @@ public:
         m_inlineBox = m_inlineBox->nextLeafOnLine();
     }
 
+    void traversePreviousOnLine()
+    {
+        m_inlineBox = m_inlineBox->previousLeafOnLine();
+    }
+
     bool operator==(const LegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
     bool atEnd() const { return !m_inlineBox; }
+
+    void setAtEnd() { m_inlineBox = nullptr; }
 
     InlineBox* legacyInlineBox() const { return const_cast<InlineBox*>(m_inlineBox); }
 

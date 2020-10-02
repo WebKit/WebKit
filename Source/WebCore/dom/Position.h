@@ -43,6 +43,10 @@ class Text;
 struct BoundaryPoint;
 struct SimpleRange;
 
+namespace LayoutIntegration {
+class RunIterator;
+}
+
 enum PositionMoveType {
     CodePoint,       // Move by a single code point.
     Character,       // Move to the next Unicode character break.
@@ -50,6 +54,8 @@ enum PositionMoveType {
 };
 
 struct InlineBoxAndOffset {
+    InlineBoxAndOffset(LayoutIntegration::RunIterator, unsigned offset);
+
     InlineBox* box { nullptr };
     int offset { 0 };
 };

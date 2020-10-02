@@ -1,3 +1,43 @@
+2020-10-02  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Convert rest of Position::inlineBoxAndOffset to use iterator
+        https://bugs.webkit.org/show_bug.cgi?id=217214
+
+        Reviewed by Zalan Bujtas.
+
+        Progress towards allowing Position construction in all cases without forcing legacy inline layout.
+
+        * dom/Position.cpp:
+        (WebCore::InlineBoxAndOffset::InlineBoxAndOffset):
+        (WebCore::Position::inlineBoxAndOffset const):
+        * dom/Position.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::setAtEnd):
+        (WebCore::LayoutIntegration::RunIterator::previousOnLine const):
+        (WebCore::LayoutIntegration::RunIterator::nextOnLineIgnoringLineBreak const):
+        (WebCore::LayoutIntegration::RunIterator::previousOnLineIgnoringLineBreak const):
+        (WebCore::LayoutIntegration::LineRunIterator::traversePreviousOnLine):
+        (WebCore::LayoutIntegration::LineRunIterator::traverseNextOnLineIgnoringLineBreak):
+        (WebCore::LayoutIntegration::LineRunIterator::traversePreviousOnLineIgnoringLineBreak):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::Run::leftmostCaretOffset const):
+        (WebCore::LayoutIntegration::Run::rightmostCaretOffset const):
+        (WebCore::LayoutIntegration::Run::direction const):
+        (WebCore::LayoutIntegration::Run::isLeftToRightDirection const):
+        (WebCore::LayoutIntegration::Run::bidiLevel const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::bidiLevel const):
+        (WebCore::LayoutIntegration::LegacyPath::traversePreviousOnLine):
+        (WebCore::LayoutIntegration::LegacyPath::setAtEnd):
+        (WebCore::LayoutIntegration::LegacyPath::isLeftToRightDirection const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::bidiLevel const):
+        (WebCore::LayoutIntegration::ModernPath::traverseNextOnLine):
+        (WebCore::LayoutIntegration::ModernPath::traversePreviousOnLine):
+        (WebCore::LayoutIntegration::ModernPath::setAtEnd):
+        (WebCore::LayoutIntegration::ModernPath::line const):
+        (WebCore::LayoutIntegration::ModernPath::isLeftToRightDirection const): Deleted.
+
 2020-10-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fix.
