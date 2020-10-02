@@ -1,3 +1,22 @@
+2020-10-01  Megan Gardner  <megan_gardner@apple.com>
+
+        Repaint as needed when adding and removing highlights
+        https://bugs.webkit.org/show_bug.cgi?id=217116
+        <rdar://problem/59076190>
+
+        Reviewed by Simon Fraser.
+
+        When adding and removing psudo highlights, make sure that the
+        right areas are repainted.
+
+        Test: http/wpt/css/css-highlight-api/highlight-text-repaint.html
+
+        * Modules/highlight/HighlightRangeGroup.cpp:
+        (WebCore::repaintRange):
+        (WebCore::HighlightRangeGroup::removeFromSetLike):
+        (WebCore::HighlightRangeGroup::clearFromSetLike):
+        (WebCore::HighlightRangeGroup::addToSetLike):
+
 2020-10-01  Chris Dumez  <cdumez@apple.com>
 
         Add basic infrastructure for AudioWorklet

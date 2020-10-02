@@ -1,3 +1,14 @@
+2020-10-01  Megan Gardner  <megan_gardner@apple.com>
+
+        Repaint as needed when adding and removing highlights
+        https://bugs.webkit.org/show_bug.cgi?id=217116
+
+        Reviewed by Simon Fraser.
+
+        * http/wpt/css/css-highlight-api/highlight-text-repaint-expected.txt: Added.
+        * http/wpt/css/css-highlight-api/highlight-text-repaint.html: Added.
+        * http/wpt/css/css-highlight-api/highlight-text-replace-expected.html: Removed.
+
 2020-10-01  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r267814): [ Mojave+ release wk2 ] inspector/console/queryHolders.html is a flaky failure

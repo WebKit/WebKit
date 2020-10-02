@@ -29,7 +29,9 @@
 #include "IDLTypes.h"
 #include "JSDOMSetLike.h"
 #include "JSStaticRange.h"
+#include "NodeTraversal.h"
 #include "PropertySetCSSStyleDeclaration.h"
+#include "RenderObject.h"
 #include "StaticRange.h"
 #include "StyleProperties.h"
 #include <wtf/Ref.h>
@@ -53,15 +55,42 @@ void HighlightRangeGroup::initializeSetLike(DOMSetAdapter& set)
         set.add<IDLInterface<StaticRange>>(rangeData->range);
 }
 
+static void repaintRange(const StaticRange& range)
+{
+    auto* startNode = &range.startContainer();
+    auto* endNode = &range.endContainer();
+    auto ordering = documentOrder(*startNode, *endNode);
+    if (is_eq(ordering)) {
+        if (auto renderer = startNode->renderer())
+            renderer->repaint();
+        return;
+    }
+    if (is_gt(ordering)) {
+        startNode = &range.endContainer();
+        endNode = &range.startContainer();
+    }
+
+    auto node = startNode;
+    while (node != endNode) {
+        if (auto renderer = node->renderer())
+            renderer->repaint();
+        node = NodeTraversal::next(*node);
+    }
+}
+
 bool HighlightRangeGroup::removeFromSetLike(const StaticRange& range)
 {
     return m_rangesData.removeFirstMatching([&range](const Ref<HighlightRangeData>& current) {
+        repaintRange(range);
         return current.get().range.get() == range;
     });
 }
 
 void HighlightRangeGroup::clearFromSetLike()
 {
+    for (auto& data : m_rangesData)
+        repaintRange(data->range);
+
     m_rangesData.clear();
 }
 
@@ -69,6 +98,7 @@ bool HighlightRangeGroup::addToSetLike(StaticRange& range)
 {
     if (notFound != m_rangesData.findMatching([&range](const Ref<HighlightRangeData>& current) { return current.get().range.get() == range; }))
         return false;
+    repaintRange(range);
     m_rangesData.append(HighlightRangeData::create(range));
     
     return true;

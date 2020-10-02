@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Multiple custom highlight pseudo elements.</title>
+    <link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#creating-highlights">
+    <link rel="match" href="highlight-text-expected.html">
+    <meta name="assert" content="Highlight Ranges should be able to be added and removed from the HighlightRangeGroup.">
+    <style>
+        ::highlight(example-highlight) {
+            background-color: blue;
+            color:red;
+        }
+        #text1
+        {
+            font: 20px Ahem;
+        }
+    </style>
+</head>
+<body>
+    <span id="text1">One two three</span>
+    <pre id="repaintRects"></pre>
+
+    <script>
+        function repaintTest()
+        {
+            if (!window.testRunner) {
+                alert('This test requires testRunner to run!');
+                return;
+            }
+
+            if (!window.internals) {
+                 alert('This test requires window.interals to run!');
+                 return;
+            }
+            window.internals.startTrackingRepaints();
+            window.testRunner.dumpAsText(false);
+
+            let textElement = document.getElementById('text1');
+
+            let range1 = new StaticRange({startContainer: textElement.childNodes[0], startOffset: 1, endContainer: textElement.childNodes[0], endOffset: 2})
+            let range2 = new StaticRange({startContainer: textElement.childNodes[0], startOffset: 3, endContainer: textElement.childNodes[0], endOffset: 4});
+            let range3 = new StaticRange({startContainer: textElement.childNodes[0], startOffset: 8, endContainer: textElement.childNodes[0], endOffset: 12});
+
+            let highlightRangeGroup1 = new HighlightRangeGroup(range1);
+            CSS.highlights.set("example-highlight", highlightRangeGroup1);
+
+            highlightRangeGroup1.add(range2);
+            highlightRangeGroup1.delete(range1);
+            highlightRangeGroup1.add(range3);
+
+            var repaintRects = window.internals.repaintRectsAsText();
+            window.internals.stopTrackingRepaints();
+
+            var pre = document.getElementById('repaintRects');
+            pre.innerHTML = repaintRects;
+        }
+        window.addEventListener('load', repaintTest, false);
+    </script>
+</body>
+</html>
