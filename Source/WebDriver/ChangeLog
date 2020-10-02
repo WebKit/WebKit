@@ -1,3 +1,54 @@
+2020-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: check the right browser context is open in all commands
+        https://bugs.webkit.org/show_bug.cgi?id=217177
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We currently check the top level browsing context for all commands, but the current browsing context should be
+        checked instead in some of them. New tests added to check this are now failing. This patch changes the way we
+        were handling the current browsing context, considering nullopt to be the main frame of the current top level
+        browsing context. Now the null string is used for that, matching what automation expects in the browser and
+        nullopt means the browser context is closed. That way we can check if the current browser context has been
+        closed.
+
+        * Session.cpp:
+        (WebDriver::Session::close): Also close the current browsing context.
+        (WebDriver::Session::switchToTopLevelBrowsingContext): Initialize the current browsing context to null string.
+        (WebDriver::Session::switchToBrowsingContext): Just set the given context now.
+        (WebDriver::Session::go): Pass null string to switchToBrowsingContext().
+        (WebDriver::Session::back): Ditto.
+        (WebDriver::Session::forward): Ditto.
+        (WebDriver::Session::refresh): Ditto.
+        (WebDriver::Session::closeWindow): Close the current browsing context too.
+        (WebDriver::Session::switchToFrame): If frame is null check top level browsing context is open, otherwise check
+        current browsing context.
+        (WebDriver::Session::findElements): Check current browsing context is open instead of toplevel one.
+        (WebDriver::Session::getActiveElement): Ditto.
+        (WebDriver::Session::isElementSelected): Ditto.
+        (WebDriver::Session::getElementText): Ditto.
+        (WebDriver::Session::getElementTagName): Ditto.
+        (WebDriver::Session::getElementRect): Ditto.
+        (WebDriver::Session::isElementEnabled): Ditto.
+        (WebDriver::Session::getElementAttribute): Ditto.
+        (WebDriver::Session::getElementProperty): Ditto.
+        (WebDriver::Session::getElementCSSValue): Ditto.
+        (WebDriver::Session::waitForNavigationToComplete): Ditto. Also close the current browsing context when the
+        window or the frame are closed to do the navigation.
+        (WebDriver::Session::elementClick): Check current browsing context is open instead of toplevel one.
+        (WebDriver::Session::elementClear): Ditto.
+        (WebDriver::Session::elementSendKeys): Ditto.
+        (WebDriver::Session::getPageSource): Ditto.
+        (WebDriver::Session::executeScript): Ditto.
+        (WebDriver::Session::getAllCookies): Ditto.
+        (WebDriver::Session::addCookie): Ditto.
+        (WebDriver::Session::deleteCookie): Ditto.
+        (WebDriver::Session::deleteAllCookies): Ditto.
+        (WebDriver::Session::performActions): Ditto.
+        (WebDriver::Session::takeScreenshot): Check current browsing context is open instead of toplevel one when an
+        element is given.
+        * Session.h:
+
 2020-09-30  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation][WinCairo] Enable WebDriver target on PlayStation and client for WinCairo
