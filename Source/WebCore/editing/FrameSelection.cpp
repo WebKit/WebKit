@@ -2057,7 +2057,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
     if (RenderView* view = m_document->renderView())
-        view->selection().repaint();
+        view->selection().repaintSelection();
 
     // Caret appears in the active frame.
     if (activeAndFocused)

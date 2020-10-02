@@ -85,7 +85,7 @@ public:
     void clearSelection();
     IntRect bounds() const { return collectBounds(ClipToVisibleContent::No); }
     IntRect boundsClippedToVisibleContent() const { return collectBounds(ClipToVisibleContent::Yes); }
-    void repaint() const;
+    void repaintSelection() const;
     
     RenderObject::HighlightState highlightStateForRenderer(RenderObject&);
 

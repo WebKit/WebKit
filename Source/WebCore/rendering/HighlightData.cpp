@@ -213,7 +213,7 @@ void HighlightData::clearSelection()
     setSelection({ }, HighlightData::RepaintMode::NewMinusOld);
 }
 
-void HighlightData::repaint() const
+void HighlightData::repaintSelection() const
 {
     HashSet<RenderBlock*> processedBlocks;
     RenderObject* end = nullptr;
