@@ -41,7 +41,8 @@ namespace JSC {
 
 #if ENABLE(MASM_PROBE)
 
-extern "C" void ctiMasmProbeTrampoline();
+extern "C" JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
+JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampoline, ctiMasmProbeTrampoline);
 
 using namespace ARM64Registers;
 
@@ -541,14 +542,14 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     storePair64(x24, x25, sp, TrustedImm32(offsetof(IncomingProbeRecord, x24)));
     storePair64(x26, x27, sp, TrustedImm32(offsetof(IncomingProbeRecord, x26)));
     storePair64(x28, x30, sp, TrustedImm32(offsetof(IncomingProbeRecord, x28))); // Note: x30 is lr.
-    move(TrustedImmPtr(tagCFunction<JITProbeTrampolinePtrTag>(ctiMasmProbeTrampoline)), x26);
+    move(TrustedImmPtr(tagCFunction<OperationPtrTag>(ctiMasmProbeTrampoline)), x26);
     move(TrustedImmPtr(tagCFunction<JITProbeExecutorPtrTag>(Probe::executeProbe)), x28);
 #if CPU(ARM64E)
     ASSERT(isTaggedWith(function, JITProbePtrTag));
 #endif
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), x24);
     move(TrustedImmPtr(arg), x25);
-    call(x26, JITProbeTrampolinePtrTag);
+    call(x26, OperationPtrTag);
 
     // ctiMasmProbeTrampoline should have restored every register except for lr and the sp.
     load64(Address(sp, offsetof(LRRestorationRecord, lr)), lr);

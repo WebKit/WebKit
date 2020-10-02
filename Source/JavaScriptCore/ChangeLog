@@ -1,3 +1,20 @@
+2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Masm probe should invoke JIT operation function
+        https://bugs.webkit.org/show_bug.cgi?id=217199
+
+        Reviewed by Mark Lam.
+
+        Masm probe function should be invoked via OperationPtrTag since it is invoked from JIT code, and it is native code.
+        And we should register probe trampoline as JIT operation.
+
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerMIPS.cpp:
+        * assembler/MacroAssemblerX86Common.cpp:
+        * runtime/JSCPtrTag.h:
+
 2020-10-01  Adrian Perez de Castro <aperez@igalia.com> and Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, early October 2020 edition

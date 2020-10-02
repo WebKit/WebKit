@@ -39,7 +39,6 @@ using PtrTag = WTF::PtrTag;
     v(ExceptionHandlerPtrTag) \
     v(ExecutableMemoryPtrTag) \
     v(JITProbePtrTag) \
-    v(JITProbeTrampolinePtrTag) \
     v(JITProbeExecutorPtrTag) \
     v(JITProbeStackInitializationFunctionPtrTag) \
     v(JITThunkPtrTag) \
