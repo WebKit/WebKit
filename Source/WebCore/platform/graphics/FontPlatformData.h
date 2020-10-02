@@ -24,10 +24,10 @@
 
 #pragma once
 
+#include "SharedBuffer.h"
 #include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
-
 
 #if PLATFORM(WIN)
 #include "COMPtr.h"
@@ -77,13 +77,15 @@ class SharedBuffer;
 class FontPlatformData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    struct CreationData;
+
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
 
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering, CreationData* = nullptr);
 
 #if USE(CORE_TEXT)
-    WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
+    WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering, CreationData* = nullptr);
 #endif
 
 #if PLATFORM(WIN)
@@ -199,6 +201,16 @@ public:
 
     String description() const;
 
+    struct CreationData {
+        Ref<SharedBuffer> fontFaceData;
+        String itemInCollection;
+    };
+
+    const Optional<CreationData>& creationData() const
+    {
+        return m_creationData;
+    }
+
 private:
     bool platformIsEqual(const FontPlatformData&) const;
 
@@ -245,6 +257,8 @@ private:
     FontWidthVariant m_widthVariant { FontWidthVariant::RegularWidth };
     TextRenderingMode m_textRenderingMode { TextRenderingMode::AutoTextRendering };
 
+    Optional<CreationData> m_creationData;
+
     bool m_syntheticBold { false };
     bool m_syntheticOblique { false };
     bool m_isColorBitmapFont { false };
@@ -264,6 +278,8 @@ private:
 #if USE(FREETYPE)
     bool m_fixedWidth { false };
 #endif
+
+    // Adding any non-derived information to FontPlatformData needs a parallel change in WebCoreArgumentCodersCocoa.cpp.
 };
 
 #if USE(CORE_TEXT)

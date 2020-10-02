@@ -1,3 +1,20 @@
+2020-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Support drawing text in 2D canvas with font features
+        https://bugs.webkit.org/show_bug.cgi?id=206118
+
+        Reviewed by Wenson Hsieh.
+
+        Simply serialize and deserialize all the non-derived data in Font and PlatformFontData.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<Ref<Font>>::encodePlatformData):
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<Font>>::encode):
+        (IPC::ArgumentCoder<Ref<Font>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2020-10-01  Chris Dumez  <cdumez@apple.com>
 
         Add basic infrastructure for AudioWorklet

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "SpecialFont";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<p>You should see a row of 3 check marks followed by a row of 3 crosses below.</p>
+<canvas width="400" height="400"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async function() {
+    await document.fonts.load("80px SpecialFont");
+    const context = document.querySelector("canvas").getContext("2d");
+    context.font = "80px SpecialFont";
+    context.fillText("AAA", 100, 100);
+    context.fillText("BBB", 100, 200);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

@@ -1,3 +1,44 @@
+2020-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Support drawing text in 2D canvas with font features
+        https://bugs.webkit.org/show_bug.cgi?id=206118
+
+        Reviewed by Wenson Hsieh.
+
+        This patch simply serializes all the non-derived data in Font and FontPlatformData.
+
+        Serializing a CTFont involves serializing its font descriptor's attributes. However,
+        there's an extra step for web fonts, since the font descriptor's attributes don't include
+        the raw bytes of the font file. This was previously being saved in Font, but this patch
+        moves that into FontPlatformData because of layering, and adds the SharedBuffer to the
+        serialization routine for web fonts.
+
+        Test: fast/canvas/fill-text-with-font-features.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font): Fonts and FontPlatformDatas are supposed to be immutable, so
+        having a setter for the FontFaceData is incorrect. This object is moved into the constructor
+        instead.
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font): Deleting dead code.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::setFontFaceData): Deleted.
+        * platform/graphics/Font.h:
+        (WebCore::Font::fontFaceData const): Deleted. Moved to FontPlatformData
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::creationData const): Moved from Font.
+        * platform/graphics/coretext/FontPlatformDataCoreText.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): FontCustomPlatformData is a struct, so
+        there's no need for the m_ prefixes.
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Ditto.
+
 2020-10-01  Megan Gardner  <megan_gardner@apple.com>
 
         Repaint as needed when adding and removing highlights

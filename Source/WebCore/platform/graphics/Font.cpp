@@ -715,9 +715,4 @@ const Path& Font::pathForGlyph(Glyph glyph) const
     return *m_glyphPathMap.existingMetricsForGlyph(glyph);
 }
 
-void Font::setFontFaceData(RefPtr<SharedBuffer>&& fontFaceData)
-{
-    m_fontFaceData = WTFMove(fontFaceData);
-}
-
 } // namespace WebCore
