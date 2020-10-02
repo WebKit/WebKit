@@ -474,12 +474,6 @@ messages -> WebPageProxy {
     IsPlayingMediaDidChange(unsigned state, uint64_t sourceElementID)
     HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
-#if ENABLE(MEDIA_SESSION)
-    HasMediaSessionWithActiveMediaElementsDidChange(bool state)
-    MediaSessionMetadataDidChange(WebCore::MediaSessionMetadata metadata);
-    FocusedContentMediaElementDidChange(uint64_t elementID)
-#endif
-
 #if PLATFORM(MAC)
     DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData)
 #endif

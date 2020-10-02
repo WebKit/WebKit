@@ -156,9 +156,6 @@ $(PROJECT_DIR)/Modules/mediacontrols/MediaControlsHost.idl
 $(PROJECT_DIR)/Modules/mediarecorder/BlobEvent.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorder.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorderErrorEvent.idl
-$(PROJECT_DIR)/Modules/mediasession/HTMLMediaElement+MediaSession.idl
-$(PROJECT_DIR)/Modules/mediasession/MediaRemoteControls.idl
-$(PROJECT_DIR)/Modules/mediasession/MediaSession.idl
 $(PROJECT_DIR)/Modules/mediasource/AudioTrack+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/DOMURL+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSource.idl

@@ -686,7 +686,7 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(
 void WKWebsiteDataStoreSetAppBoundDomainsForTesting(WKArrayRef originURLsRef, void* context, WKWebsiteDataStoreSetAppBoundDomainsForTestingFunction completionHandler)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    RefPtr<API::Array> originURLsArray = toImpl(originURLsRef);
+    RefPtr<API::Array> originURLsArray = WebKit::toImpl(originURLsRef);
     size_t newSize = originURLsArray ? originURLsArray->size() : 0;
     HashSet<WebCore::RegistrableDomain> domains;
     domains.reserveInitialCapacity(newSize);

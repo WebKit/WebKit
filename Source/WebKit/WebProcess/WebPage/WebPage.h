@@ -967,11 +967,6 @@ public:
     void setMayStartMediaWhenInWindow(bool);
     void stopMediaCapture();
 
-#if ENABLE(MEDIA_SESSION)
-    void handleMediaEvent(uint32_t /* WebCore::MediaEventType */);
-    void setVolumeOfMediaElement(double, uint64_t);
-#endif
-
     void updateMainFrameScrollOffsetPinning();
 
     bool mainFrameHasCustomContentProvider() const;

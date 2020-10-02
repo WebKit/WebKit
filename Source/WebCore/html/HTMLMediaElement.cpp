@@ -137,10 +137,6 @@
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSession.h"
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
 #include "DOMWindow.h"
 #include "MediaSource.h"
@@ -318,30 +314,6 @@ HashSet<HTMLMediaElement*>& HTMLMediaElement::allMediaElements()
     return elements;
 }
 
-#if ENABLE(MEDIA_SESSION)
-typedef HashMap<uint64_t, HTMLMediaElement*> IDToElementMap;
-
-static IDToElementMap& elementIDsToElements()
-{
-    static NeverDestroyed<IDToElementMap> map;
-    return map;
-}
-
-HTMLMediaElement* HTMLMediaElement::elementWithID(uint64_t id)
-{
-    if (id == HTMLMediaElementInvalidID)
-        return nullptr;
-
-    return elementIDsToElements().get(id);
-}
-
-static uint64_t nextElementID()
-{
-    static uint64_t elementID = 0;
-    return ++elementID;
-}
-#endif
-
 struct MediaElementSessionInfo {
     const MediaElementSession* session;
     MediaElementSession::PlaybackControlsPurpose purpose;
@@ -517,13 +489,6 @@ void HTMLMediaElement::finishInitialization()
     }
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-    m_elementID = nextElementID();
-    elementIDsToElements().add(m_elementID, this);
-
-    setSessionInternal(document.defaultMediaSession());
-#endif
-
     registerWithDocument(document);
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -587,15 +552,6 @@ HTMLMediaElement::~HTMLMediaElement()
 
     if (m_isolatedWorld)
         m_isolatedWorld->clearWrappers();
-
-#if ENABLE(MEDIA_SESSION)
-    if (m_session) {
-        m_session->removeMediaElement(*this);
-        m_session = nullptr;
-    }
-
-    elementIDsToElements().remove(m_elementID);
-#endif
 
     m_seekTaskQueue.close();
     m_resumeTaskQueue.close();
@@ -3495,31 +3451,6 @@ void HTMLMediaElement::playInternal()
 
         scheduleEvent(eventNames().playEvent);
 
-#if ENABLE(MEDIA_SESSION)
-        // 6.3 Activating a media session from a media element
-        // When the play() method is invoked, the paused attribute is true, and the readyState attribute has the value
-        // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA, then
-        // 1. Let media session be the value of the current media session.
-        // 2. If we are not currently in media session's list of active participating media elements then append
-        //    ourselves to this list.
-        // 3. Let activated be the result of running the media session invocation algorithm for media session.
-        // 4. If activated is failure, pause ourselves.
-        if (m_readyState == HAVE_ENOUGH_DATA || m_readyState == HAVE_FUTURE_DATA) {
-            if (m_session) {
-                m_session->addActiveMediaElement(*this);
-
-                if (m_session->kind() == MediaSessionKind::Content) {
-                    if (Page* page = document().page())
-                        page->chrome().client().focusedContentMediaElementDidChange(m_elementID);
-                }
-
-                if (!m_session->invoke()) {
-                    pause();
-                    return;
-                }
-            }
-        }
-#endif
         if (m_readyState <= HAVE_CURRENT_DATA)
             scheduleEvent(eventNames().waitingEvent);
     } else if (m_readyState >= HAVE_FUTURE_DATA)
@@ -3722,11 +3653,7 @@ void HTMLMediaElement::setMuted(bool muted)
 
         updateShouldPlay();
 
-#if ENABLE(MEDIA_SESSION)
-        document().updateIsPlayingMedia(m_elementID);
-#else
         document().updateIsPlayingMedia();
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         scheduleUpdateMediaState();
@@ -5115,11 +5042,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
 
-#if ENABLE(MEDIA_SESSION)
-    document().updateIsPlayingMedia(m_elementID);
-#else
     document().updateIsPlayingMedia();
-#endif
 
     checkForAudioAndVideo();
     updateSleepDisabling();
@@ -5292,12 +5215,7 @@ void HTMLMediaElement::updateVolume()
         m_player->setVolume(effectiveVolume());
     }
 
-#if ENABLE(MEDIA_SESSION)
-    document().updateIsPlayingMedia(m_elementID);
-#else
     document().updateIsPlayingMedia();
-#endif
-
 #endif // PLATFORM(IOS_FAMILY)
 }
 
@@ -5414,11 +5332,7 @@ void HTMLMediaElement::setPlaying(bool playing)
     if (m_playing)
         scheduleNotifyAboutPlaying();
 
-#if ENABLE(MEDIA_SESSION)
-    document().updateIsPlayingMedia(m_elementID);
-#else
     document().updateIsPlayingMedia();
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     scheduleUpdateMediaState();
@@ -7640,11 +7554,8 @@ void HTMLMediaElement::updateMediaState()
 
     m_mediaState = state;
     m_mediaSession->mediaStateDidChange(m_mediaState);
-#if ENABLE(MEDIA_SESSION)
-    document().updateIsPlayingMedia(m_elementID);
-#else
+
     document().updateIsPlayingMedia();
-#endif
 }
 #endif
 
@@ -7749,11 +7660,6 @@ double HTMLMediaElement::effectiveVolume() const
     double volumeMultiplier = page ? page->mediaVolume() : 1;
     if (m_mediaController)
         volumeMultiplier *= m_mediaController->volume();
-#if ENABLE(MEDIA_SESSION)
-    if (m_shouldDuck)
-        volumeMultiplier *= 0.25;
-#endif
-
     return m_volume * volumeMultiplier;
 }
 
@@ -7813,70 +7719,6 @@ bool HTMLMediaElement::canSaveMediaData() const
 
     return false;
 }
-
-#if ENABLE(MEDIA_SESSION)
-
-double HTMLMediaElement::playerVolume() const
-{
-    return m_player ? m_player->volume() : 0;
-}
-
-MediaSession* HTMLMediaElement::session() const
-{
-    RefPtr<MediaSession> session = m_session.get();
-    if (session && session == &document().defaultMediaSession())
-        return nullptr;
-
-    return session.get();
-}
-
-void HTMLMediaElement::setSession(MediaSession* session)
-{
-    // 6.1. Extensions to the HTMLMediaElement interface
-    // 1. Let m be the media element in question.
-    // 2. Let old media session be m’s current media session, if it has one, and null otherwise.
-    // 3. Let m’s current media session be the new value or the top-level browsing context’s media session if the new value is null.
-    // 4. Let new media session be m’s current media session.
-
-    // 5. Update media sessions: If old media session and new media session are the same (whether both null or both the same media session), then terminate these steps.
-    if (m_session.get() == session)
-        return;
-
-    if (m_session) {
-        // 6. If m is an audio-producing participant of old media session, then pause m and remove m from old media session’s list of audio-producing participants.
-        if (m_session->isMediaElementActive(*this))
-            pause();
-
-        m_session->removeMediaElement(*this);
-
-        // 7. If old media session is not null and no longer has one or more audio-producing participants, then run the media session deactivation algorithm for old media session.
-        if (!m_session->hasActiveMediaElements())
-            m_session->deactivate();
-    }
-
-    if (session)
-        setSessionInternal(*session);
-    else
-        setSessionInternal(document().defaultMediaSession());
-}
-
-void HTMLMediaElement::setSessionInternal(MediaSession& session)
-{
-    m_session = &session;
-    session.addMediaElement(*this);
-    m_kind = session.kind();
-}
-
-void HTMLMediaElement::setShouldDuck(bool duck)
-{
-    if (m_shouldDuck == duck)
-        return;
-
-    m_shouldDuck = duck;
-    updateVolume();
-}
-
-#endif
 
 void HTMLMediaElement::allowsMediaDocumentInlinePlaybackChanged()
 {

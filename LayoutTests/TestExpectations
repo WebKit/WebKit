@@ -1931,9 +1931,6 @@ fast/images/animated-webp.html [ Skip ]
 
 webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [ Pass Failure ]
 
-# Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
-media/session [ Skip ]
-
 # Experimental H265 support.
 webrtc/h265.html [ Pass Failure ]
 

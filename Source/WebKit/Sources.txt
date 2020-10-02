@@ -197,7 +197,6 @@ Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
 Shared/WebKeyboardEvent.cpp @no-unify
 Shared/WebKit2Initialize.cpp @no-unify
-Shared/WebMediaSessionMetadata.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp @no-unify
 Shared/WebPageCreationParameters.cpp
@@ -379,7 +378,6 @@ UIProcess/API/C/WKHitTestResult.cpp
 UIProcess/API/C/WKIconDatabase.cpp
 UIProcess/API/C/WKInspector.cpp
 UIProcess/API/C/WKKeyValueStorageManager.cpp
-UIProcess/API/C/WKMediaSessionMetadata.cpp
 UIProcess/API/C/WKMessageListener.cpp
 UIProcess/API/C/WKMockDisplay.cpp
 UIProcess/API/C/WKMockMediaDevice.cpp

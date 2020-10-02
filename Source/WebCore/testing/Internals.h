@@ -41,10 +41,6 @@
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/Optional.h>
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSessionInterruptionProvider.h"
-#endif
-
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"
 #endif
@@ -664,15 +660,6 @@ public:
     void setMediaElementRestrictions(HTMLMediaElement&, StringView restrictionsString);
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
     bool elementIsBlockingDisplaySleep(HTMLMediaElement&) const;
-#endif
-
-#if ENABLE(MEDIA_SESSION)
-    void sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory);
-    void sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory);
-    String mediaSessionCurrentState(MediaSession&) const;
-    double mediaElementPlayerVolume(HTMLMediaElement&) const;
-    enum class MediaControlEvent { PlayPause, NextTrack, PreviousTrack };
-    void sendMediaControlEvent(MediaControlEvent);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

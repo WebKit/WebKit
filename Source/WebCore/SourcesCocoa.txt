@@ -58,6 +58,7 @@ JSApplePayShippingMethod.cpp
 JSApplePayShippingMethodSelectedEvent.cpp
 JSApplePayShippingMethodUpdate.cpp
 JSApplePayValidateMerchantEvent.cpp
+Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay/ApplePayCancelEvent.cpp
 Modules/applepay/ApplePayContactField.cpp
 Modules/applepay/ApplePayError.cpp
@@ -88,7 +89,6 @@ Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm
 Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm
 Modules/async-clipboard/mac/ClipboardImageReaderMac.mm
-Modules/mediasession/WebMediaSessionManager.cpp
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm
@@ -521,7 +521,6 @@ platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
 platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm
-platform/mediasession/mac/MediaSessionInterruptionProviderMac.mm
 platform/mediastream/ios/AVAudioSessionCaptureDevice.mm
 platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify

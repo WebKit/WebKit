@@ -109,10 +109,6 @@
 #include <WebCore/MediaPlaybackTargetContext.h>
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include <WebCore/MediaSessionMetadata.h>
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/MediaConstraints.h>
@@ -2105,32 +2101,6 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
     userStyleSheet = UserStyleSheet(source, url, WTFMove(allowlist), WTFMove(blocklist), injectedFrames, level, WTFMove(*pageID));
     return true;
 }
-
-#if ENABLE(MEDIA_SESSION)
-void ArgumentCoder<MediaSessionMetadata>::encode(Encoder& encoder, const MediaSessionMetadata& result)
-{
-    encoder << result.artist();
-    encoder << result.album();
-    encoder << result.title();
-    encoder << result.artworkURL();
-}
-
-bool ArgumentCoder<MediaSessionMetadata>::decode(Decoder& decoder, MediaSessionMetadata& result)
-{
-    String artist, album, title;
-    URL artworkURL;
-    if (!decoder.decode(artist))
-        return false;
-    if (!decoder.decode(album))
-        return false;
-    if (!decoder.decode(title))
-        return false;
-    if (!decoder.decode(artworkURL))
-        return false;
-    result = MediaSessionMetadata(title, artist, album, artworkURL);
-    return true;
-}
-#endif
 
 void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const ScrollableAreaParameters& parameters)
 {

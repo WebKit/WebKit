@@ -154,10 +154,6 @@
 #include "ServicesOverlayController.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSessionManager.h"
-#endif
-
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBConnectionToServer.h"
 #endif
@@ -2096,31 +2092,6 @@ void Page::resumeAllMediaBuffering()
     });
 #endif
 }
-
-#if ENABLE(MEDIA_SESSION)
-
-void Page::handleMediaEvent(MediaEventType eventType)
-{
-    switch (eventType) {
-    case MediaEventType::PlayPause:
-        MediaSessionManager::singleton().togglePlayback();
-        break;
-    case MediaEventType::TrackNext:
-        MediaSessionManager::singleton().skipToNextTrack();
-        break;
-    case MediaEventType::TrackPrevious:
-        MediaSessionManager::singleton().skipToPreviousTrack();
-        break;
-    }
-}
-
-void Page::setVolumeOfMediaElement(double volume, uint64_t elementID)
-{
-    if (HTMLMediaElement* element = HTMLMediaElement::elementWithID(elementID))
-        element->setVolume(volume, ASSERT_NO_EXCEPTION);
-}
-
-#endif
 
 unsigned Page::subframeCount() const
 {

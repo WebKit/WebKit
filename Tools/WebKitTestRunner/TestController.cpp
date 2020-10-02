@@ -381,7 +381,7 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
         0, // runJavaScriptAlert
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
-        0, // mediaSessionMetadataDidChange
+        0, // unused5
         createOtherPage,
         runJavaScriptAlert,
         0, // runJavaScriptConfirm
@@ -714,7 +714,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // runJavaScriptAlert
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
-        0, // mediaSessionMetadataDidChange
+        0, // unused5
         createOtherPage,
         runJavaScriptAlert,
         0, // runJavaScriptConfirm

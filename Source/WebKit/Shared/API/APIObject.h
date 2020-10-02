@@ -179,11 +179,6 @@ public:
         WebsitePolicies,
         WindowFeatures,
 
-#if ENABLE(MEDIA_SESSION)
-        MediaSessionFocusManager,
-        MediaSessionMetadata,
-#endif
-
 #if ENABLE(WEB_AUTHN)
         WebAuthenticationAssertionResponse,
         WebAuthenticationPanel,
@@ -427,11 +422,6 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::WebsiteDataStoreConfiguration,
         API::Object::Type::WebsitePolicies,
         API::Object::Type::WindowFeatures,
-
-#if ENABLE(MEDIA_SESSION)
-        API::Object::Type::MediaSessionFocusManager,
-        API::Object::Type::MediaSessionMetadata,
-#endif
 
 #if ENABLE(WEB_AUTHN)
         API::Object::Type::WebAuthenticationAssertionResponse,

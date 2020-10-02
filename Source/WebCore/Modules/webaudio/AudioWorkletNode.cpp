@@ -31,6 +31,8 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorkletNode.h"
 
+#include "AudioContext.h"
+#include "AudioNodeOutput.h"
 #include "AudioParamMap.h"
 #include "AudioWorkletNodeOptions.h"
 #include "BaseAudioContext.h"

@@ -151,18 +151,7 @@ enum {
 };
 typedef uint32_t WKMediaState;
 
-
 WK_EXPORT WKMediaState WKPageGetMediaState(WKPageRef page);
-
-enum {
-    kWKMediaEventTypePlayPause,
-    kWKMediaEventTypeTrackNext,
-    kWKMediaEventTypeTrackPrevious
-};
-typedef uint32_t WKMediaEventType;
-
-WK_EXPORT bool WKPageHasMediaSessionWithActiveMediaElements(WKPageRef page);
-WK_EXPORT void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType event);
 
 WK_EXPORT void WKPageLoadURLWithShouldOpenExternalURLsPolicy(WKPageRef page, WKURLRef url, bool shouldOpenExternalURLs);
 

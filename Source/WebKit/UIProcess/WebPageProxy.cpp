@@ -244,12 +244,6 @@
 #include <WebCore/WebMediaSessionManager.h>
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "WebMediaSessionFocusManager.h"
-#include "WebMediaSessionMetadata.h"
-#include <WebCore/MediaSessionMetadata.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManagerProxy.h"
 #endif
@@ -6054,24 +6048,6 @@ void WebPageProxy::resumeAllMediaPlayback()
     send(Messages::WebPage::ResumeAllMediaPlayback());
 }
 
-#if ENABLE(MEDIA_SESSION)
-void WebPageProxy::handleMediaEvent(MediaEventType eventType)
-{
-    if (!hasRunningProcess())
-        return;
-    
-    send(Messages::WebPage::HandleMediaEvent(eventType));
-}
-
-void WebPageProxy::setVolumeOfMediaElement(double volume, uint64_t elementID)
-{
-    if (!hasRunningProcess())
-        return;
-
-    send(Messages::WebPage::SetVolumeOfMediaElement(volume, elementID));
-}
-#endif
-
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
 {
     if (mayStartMedia == m_mayStartMediaWhenInWindow)
@@ -8976,12 +8952,6 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
 
 void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newState, uint64_t sourceElementID)
 {
-#if ENABLE(MEDIA_SESSION)
-    WebMediaSessionFocusManager* focusManager = process().processPool().supplement<WebMediaSessionFocusManager>();
-    ASSERT(focusManager);
-    focusManager->updatePlaybackAttributesFromMediaState(this, sourceElementID, newState);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     if (!m_process->throttler().shouldBeRunnable())
         return;
@@ -9127,26 +9097,6 @@ void WebPageProxy::nowPlayingInfoCallback(bool hasActiveSession, bool registered
     }
 
     callback->performCallbackWithReturnValue(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
-}
-#endif
-
-#if ENABLE(MEDIA_SESSION)
-void WebPageProxy::hasMediaSessionWithActiveMediaElementsDidChange(bool state)
-{
-    m_hasMediaSessionWithActiveMediaElements = state;
-}
-
-void WebPageProxy::mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata& metadata)
-{
-    Ref<WebMediaSessionMetadata> webMetadata = WebMediaSessionMetadata::create(metadata);
-    m_uiClient->mediaSessionMetadataDidChange(*this, webMetadata.ptr());
-}
-
-void WebPageProxy::focusedContentMediaElementDidChange(uint64_t elementID)
-{
-    WebMediaSessionFocusManager* focusManager = process().processPool().supplement<WebMediaSessionFocusManager>();
-    ASSERT(focusManager);
-    focusManager->setFocusedMediaElement(*this, elementID);
 }
 #endif
 

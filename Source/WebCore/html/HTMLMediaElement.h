@@ -485,21 +485,6 @@ public:
     void mediaLoadingFailed(MediaPlayer::NetworkState);
     void mediaLoadingFailedFatally(MediaPlayer::NetworkState);
 
-#if ENABLE(MEDIA_SESSION)
-    WEBCORE_EXPORT double playerVolume() const;
-
-    const String& kind() const { return m_kind; }
-    void setKind(const String& kind) { m_kind = kind; }
-
-    MediaSession* session() const;
-    void setSession(MediaSession*);
-
-    void setShouldDuck(bool);
-
-    static HTMLMediaElement* elementWithID(uint64_t);
-    uint64_t elementID() const { return m_elementID; }
-#endif
-
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
@@ -708,10 +693,6 @@ private:
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
-#endif
-
-#if ENABLE(MEDIA_SESSION)
-    void setSessionInternal(MediaSession&);
 #endif
 
     String mediaPlayerReferrer() const override;
@@ -1044,13 +1025,6 @@ private:
     // Counter incremented while processing a callback from the media player, so we can avoid
     // calling the media engine recursively.
     int m_processingMediaPlayerCallback { 0 };
-
-#if ENABLE(MEDIA_SESSION)
-    String m_kind;
-    RefPtr<MediaSession> m_session;
-    bool m_shouldDuck { false };
-    uint64_t m_elementID;
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSource> m_mediaSource;

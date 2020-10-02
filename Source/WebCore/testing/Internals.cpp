@@ -285,11 +285,6 @@
 #include "WebKitAudioContext.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSession.h"
-#include "MediaSessionManager.h"
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetContext.h"
 #endif
@@ -4286,56 +4281,7 @@ bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const
 {
     return element.isDisablingSleep();
 }
-
 #endif // ENABLE(VIDEO)
-
-#if ENABLE(MEDIA_SESSION)
-
-void Internals::sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory category)
-{
-    MediaSessionManager::singleton().didReceiveStartOfInterruptionNotification(category);
-}
-
-void Internals::sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory category)
-{
-    MediaSessionManager::singleton().didReceiveEndOfInterruptionNotification(category);
-}
-
-String Internals::mediaSessionCurrentState(MediaSession* session) const
-{
-    switch (session->currentState()) {
-    case MediaSession::State::Active:
-        return "active";
-    case MediaSession::State::Interrupted:
-        return "interrupted";
-    case MediaSession::State::Idle:
-        return "idle";
-    }
-}
-
-double Internals::mediaElementPlayerVolume(HTMLMediaElement* element) const
-{
-    ASSERT_ARG(element, element);
-    return element->playerVolume();
-}
-
-void Internals::sendMediaControlEvent(MediaControlEvent event)
-{
-    // FIXME: No good reason to use a single function with an argument instead of three functions.
-    switch (event) {
-    case MediControlEvent::PlayPause:
-        MediaSessionManager::singleton().togglePlayback();
-        break;
-    case MediControlEvent::NextTrack:
-        MediaSessionManager::singleton().skipToNextTrack();
-        break;
-    case MediControlEvent::PreviousTrack:
-        MediaSessionManager::singleton().skipToPreviousTrack();
-        break;
-    }
-}
-
-#endif // ENABLE(MEDIA_SESSION)
 
 #if ENABLE(WEB_AUDIO)
 void Internals::setAudioContextRestrictions(const Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)

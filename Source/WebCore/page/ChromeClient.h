@@ -464,12 +464,6 @@ public:
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags, uint64_t) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
-#if ENABLE(MEDIA_SESSION)
-    virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) { }
-    virtual void mediaSessionMetadataDidChange(const MediaSessionMetadata&) { }
-    virtual void focusedContentMediaElementDidChange(uint64_t) { }
-#endif
-
 #if ENABLE(WEB_CRYPTO)
     virtual bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
     virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
