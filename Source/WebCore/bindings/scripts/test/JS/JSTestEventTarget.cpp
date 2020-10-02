@@ -89,21 +89,21 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEventTargetPrototype, JSTestEventTargetPrototype::Base);
 
-using JSTestEventTargetConstructor = JSDOMConstructorNotConstructable<JSTestEventTarget>;
+using JSTestEventTargetDOMConstructor = JSDOMConstructorNotConstructable<JSTestEventTarget>;
 
-template<> JSValue JSTestEventTargetConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestEventTargetDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestEventTargetConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestEventTargetDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEventTarget::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEventTarget"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTarget", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
+template<> const ClassInfo JSTestEventTargetDOMConstructor::s_info = { "TestEventTarget", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTargetDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -150,7 +150,7 @@ JSObject* JSTestEventTarget::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestEventTarget::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventTargetConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventTargetDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)

@@ -80,27 +80,27 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestClassWithJSBuiltinConstructorPrototype, JSTestClassWithJSBuiltinConstructorPrototype::Base);
 
-using JSTestClassWithJSBuiltinConstructorConstructor = JSDOMBuiltinConstructor<JSTestClassWithJSBuiltinConstructor>;
+using JSTestClassWithJSBuiltinConstructorDOMConstructor = JSDOMBuiltinConstructor<JSTestClassWithJSBuiltinConstructor>;
 
-template<> JSValue JSTestClassWithJSBuiltinConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestClassWithJSBuiltinConstructorDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestClassWithJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestClassWithJSBuiltinConstructorDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestClassWithJSBuiltinConstructor::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestClassWithJSBuiltinConstructor"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> FunctionExecutable* JSTestClassWithJSBuiltinConstructorConstructor::initializeExecutable(VM& vm)
+template<> FunctionExecutable* JSTestClassWithJSBuiltinConstructorDOMConstructor::initializeExecutable(VM& vm)
 {
     return testClassWithJSBuiltinConstructorInitializeTestClassWithJSBuiltinConstructorCodeGenerator(vm);
 }
 
-template<> const ClassInfo JSTestClassWithJSBuiltinConstructorConstructor::s_info = { "TestClassWithJSBuiltinConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorConstructor) };
+template<> const ClassInfo JSTestClassWithJSBuiltinConstructorDOMConstructor::s_info = { "TestClassWithJSBuiltinConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructorDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -146,7 +146,7 @@ JSObject* JSTestClassWithJSBuiltinConstructor::prototype(VM& vm, JSDOMGlobalObje
 
 JSValue JSTestClassWithJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestClassWithJSBuiltinConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestClassWithJSBuiltinConstructorDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestClassWithJSBuiltinConstructor::destroy(JSC::JSCell* cell)

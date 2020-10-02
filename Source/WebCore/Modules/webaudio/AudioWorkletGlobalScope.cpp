@@ -31,6 +31,7 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorkletGlobalScope.h"
 
+#include "AudioWorkletProcessorConstructor.h"
 #include "AudioWorkletThread.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -46,6 +47,12 @@ AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, con
 }
 
 AudioWorkletGlobalScope::~AudioWorkletGlobalScope() = default;
+
+void AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<AudioWorkletProcessorConstructor>&&)
+{
+    // FIXME: Implement this.
+    UNUSED_PARAM(name);
+}
 
 Thread* AudioWorkletGlobalScope::underlyingThread() const
 {

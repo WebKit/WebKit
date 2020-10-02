@@ -82,22 +82,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestInterfaceLeadingUnderscorePrototype, JSTestInterfaceLeadingUnderscorePrototype::Base);
 
-using JSTestInterfaceLeadingUnderscoreConstructor = JSDOMConstructorNotConstructable<JSTestInterfaceLeadingUnderscore>;
+using JSTestInterfaceLeadingUnderscoreDOMConstructor = JSDOMConstructorNotConstructable<JSTestInterfaceLeadingUnderscore>;
 
-template<> JSValue JSTestInterfaceLeadingUnderscoreConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestInterfaceLeadingUnderscoreDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestInterfaceLeadingUnderscoreConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestInterfaceLeadingUnderscoreDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestInterfaceLeadingUnderscore::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestInterfaceLeadingUnderscore"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestInterfaceLeadingUnderscoreConstructor::s_info = { "TestInterfaceLeadingUnderscore", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscoreConstructor) };
+template<> const ClassInfo JSTestInterfaceLeadingUnderscoreDOMConstructor::s_info = { "TestInterfaceLeadingUnderscore", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscoreDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -144,7 +144,7 @@ JSObject* JSTestInterfaceLeadingUnderscore::prototype(VM& vm, JSDOMGlobalObject&
 
 JSValue JSTestInterfaceLeadingUnderscore::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceLeadingUnderscoreConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceLeadingUnderscoreDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)

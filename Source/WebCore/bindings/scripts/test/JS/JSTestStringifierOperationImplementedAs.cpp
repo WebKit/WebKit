@@ -86,22 +86,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierOperationImplementedAsPrototype, JSTestStringifierOperationImplementedAsPrototype::Base);
 
-using JSTestStringifierOperationImplementedAsConstructor = JSDOMConstructorNotConstructable<JSTestStringifierOperationImplementedAs>;
+using JSTestStringifierOperationImplementedAsDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifierOperationImplementedAs>;
 
-template<> JSValue JSTestStringifierOperationImplementedAsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestStringifierOperationImplementedAsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestStringifierOperationImplementedAsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestStringifierOperationImplementedAsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestStringifierOperationImplementedAs::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestStringifierOperationImplementedAs"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestStringifierOperationImplementedAsConstructor::s_info = { "TestStringifierOperationImplementedAs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierOperationImplementedAsConstructor) };
+template<> const ClassInfo JSTestStringifierOperationImplementedAsDOMConstructor::s_info = { "TestStringifierOperationImplementedAs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierOperationImplementedAsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -149,7 +149,7 @@ JSObject* JSTestStringifierOperationImplementedAs::prototype(VM& vm, JSDOMGlobal
 
 JSValue JSTestStringifierOperationImplementedAs::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierOperationImplementedAsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierOperationImplementedAsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestStringifierOperationImplementedAs::destroy(JSC::JSCell* cell)

@@ -104,22 +104,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCEReactionsPrototype, JSTestCEReactionsPrototype::Base);
 
-using JSTestCEReactionsConstructor = JSDOMConstructorNotConstructable<JSTestCEReactions>;
+using JSTestCEReactionsDOMConstructor = JSDOMConstructorNotConstructable<JSTestCEReactions>;
 
-template<> JSValue JSTestCEReactionsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestCEReactionsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestCEReactionsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestCEReactionsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCEReactions::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCEReactions"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestCEReactionsConstructor::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsConstructor) };
+template<> const ClassInfo JSTestCEReactionsDOMConstructor::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -173,7 +173,7 @@ JSObject* JSTestCEReactions::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestCEReactions::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCEReactionsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCEReactionsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestCEReactions::destroy(JSC::JSCell* cell)

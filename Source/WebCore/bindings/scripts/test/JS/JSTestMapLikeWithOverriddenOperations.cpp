@@ -100,22 +100,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestMapLikeWithOverriddenOperationsPrototype, JSTestMapLikeWithOverriddenOperationsPrototype::Base);
 
-using JSTestMapLikeWithOverriddenOperationsConstructor = JSDOMConstructorNotConstructable<JSTestMapLikeWithOverriddenOperations>;
+using JSTestMapLikeWithOverriddenOperationsDOMConstructor = JSDOMConstructorNotConstructable<JSTestMapLikeWithOverriddenOperations>;
 
-template<> JSValue JSTestMapLikeWithOverriddenOperationsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestMapLikeWithOverriddenOperationsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestMapLikeWithOverriddenOperationsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestMapLikeWithOverriddenOperationsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestMapLikeWithOverriddenOperations::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestMapLikeWithOverriddenOperations"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestMapLikeWithOverriddenOperationsConstructor::s_info = { "TestMapLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeWithOverriddenOperationsConstructor) };
+template<> const ClassInfo JSTestMapLikeWithOverriddenOperationsDOMConstructor::s_info = { "TestMapLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeWithOverriddenOperationsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -172,7 +172,7 @@ JSObject* JSTestMapLikeWithOverriddenOperations::prototype(VM& vm, JSDOMGlobalOb
 
 JSValue JSTestMapLikeWithOverriddenOperations::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMapLikeWithOverriddenOperationsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMapLikeWithOverriddenOperationsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestMapLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)

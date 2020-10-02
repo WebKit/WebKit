@@ -78,21 +78,21 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONIndirectInheritancePrototype, JSTestDefaultToJSONIndirectInheritancePrototype::Base);
 
-using JSTestDefaultToJSONIndirectInheritanceConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONIndirectInheritance>;
+using JSTestDefaultToJSONIndirectInheritanceDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONIndirectInheritance>;
 
-template<> JSValue JSTestDefaultToJSONIndirectInheritanceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDefaultToJSONIndirectInheritanceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSTestDefaultToJSONInherit::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestDefaultToJSONIndirectInheritanceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDefaultToJSONIndirectInheritanceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDefaultToJSONIndirectInheritance::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSONIndirectInheritance"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDefaultToJSONIndirectInheritanceConstructor::s_info = { "TestDefaultToJSONIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritanceConstructor) };
+template<> const ClassInfo JSTestDefaultToJSONIndirectInheritanceDOMConstructor::s_info = { "TestDefaultToJSONIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritanceDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -138,7 +138,7 @@ JSObject* JSTestDefaultToJSONIndirectInheritance::prototype(VM& vm, JSDOMGlobalO
 
 JSValue JSTestDefaultToJSONIndirectInheritance::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONIndirectInheritanceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONIndirectInheritanceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONIndirectInheritanceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))

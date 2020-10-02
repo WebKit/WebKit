@@ -194,7 +194,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestInterfacePrototype, JSTestInterfacePrototype::Base);
 
-using JSTestInterfaceConstructor = JSDOMConstructor<JSTestInterface>;
+using JSTestInterfaceDOMConstructor = JSDOMConstructor<JSTestInterface>;
 
 /* Hash table for constructor */
 
@@ -258,11 +258,11 @@ static_assert(TestSupplemental::SUPPLEMENTALCONSTANT1 == 1, "SUPPLEMENTALCONSTAN
 static_assert(TestSupplemental::CONST_IMPL == 2, "CONST_IMPL in TestSupplemental does not match value from IDL");
 #endif
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestInterfaceConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestInterfaceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -284,15 +284,15 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceConstructor::c
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
-JSC_ANNOTATE_HOST_FUNCTION(JSTestInterfaceConstructorConstruct, JSTestInterfaceConstructor::construct);
+JSC_ANNOTATE_HOST_FUNCTION(JSTestInterfaceDOMConstructorConstruct, JSTestInterfaceDOMConstructor::construct);
 
-template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestInterfaceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestInterfaceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestInterface::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestInterface"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -300,7 +300,7 @@ template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGl
     reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfaceConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
+template<> const ClassInfo JSTestInterfaceDOMConstructor::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -498,7 +498,7 @@ JSObject* JSTestInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestInterface::destroy(JSC::JSCell* cell)

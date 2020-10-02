@@ -51,7 +51,7 @@ JSC_DECLARE_CUSTOM_SETTER(setJSPaintWorkletGlobalScopeConstructor);
 JSC_DECLARE_CUSTOM_GETTER(jsPaintWorkletGlobalScopePaintWorkletGlobalScopeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSPaintWorkletGlobalScopePaintWorkletGlobalScopeConstructor);
 
-using JSPaintWorkletGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSPaintWorkletGlobalScope>;
+using JSPaintWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSPaintWorkletGlobalScope>;
 
 /* Hash table */
 
@@ -67,19 +67,19 @@ static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
 };
 
 static const HashTable JSPaintWorkletGlobalScopeTable = { 1, 1, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
-template<> JSValue JSPaintWorkletGlobalScopeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSPaintWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSWorkletGlobalScope::getConstructor(vm, &globalObject);
 }
 
-template<> void JSPaintWorkletGlobalScopeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSPaintWorkletGlobalScopeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "PaintWorkletGlobalScope"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSPaintWorkletGlobalScopeConstructor::s_info = { "PaintWorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeConstructor) };
+template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -121,7 +121,7 @@ void JSPaintWorkletGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 
 JSValue JSPaintWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSPaintWorkletGlobalScopeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSPaintWorkletGlobalScopeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSPaintWorkletGlobalScope* IDLAttribute<JSPaintWorkletGlobalScope>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

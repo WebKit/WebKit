@@ -477,6 +477,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioWorkletGlobalScope.idl
     Modules/webaudio/AudioWorkletNode.idl
     Modules/webaudio/AudioWorkletNodeOptions.idl
+    Modules/webaudio/AudioWorkletProcessor.idl
+    Modules/webaudio/AudioWorkletProcessorConstructor.idl
     Modules/webaudio/BaseAudioContext.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/BiquadFilterOptions.idl

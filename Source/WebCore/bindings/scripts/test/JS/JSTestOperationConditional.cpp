@@ -92,22 +92,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestOperationConditionalPrototype, JSTestOperationConditionalPrototype::Base);
 
-using JSTestOperationConditionalConstructor = JSDOMConstructorNotConstructable<JSTestOperationConditional>;
+using JSTestOperationConditionalDOMConstructor = JSDOMConstructorNotConstructable<JSTestOperationConditional>;
 
-template<> JSValue JSTestOperationConditionalConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestOperationConditionalDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestOperationConditionalConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestOperationConditionalDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestOperationConditional::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestOperationConditional"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestOperationConditionalConstructor::s_info = { "TestOperationConditional", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalConstructor) };
+template<> const ClassInfo JSTestOperationConditionalDOMConstructor::s_info = { "TestOperationConditional", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -163,7 +163,7 @@ JSObject* JSTestOperationConditional::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSTestOperationConditional::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOperationConditionalConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOperationConditionalDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestOperationConditional::destroy(JSC::JSCell* cell)

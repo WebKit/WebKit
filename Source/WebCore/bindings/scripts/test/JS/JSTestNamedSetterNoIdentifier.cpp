@@ -81,22 +81,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterNoIdentifierPrototype, JSTestNamedSetterNoIdentifierPrototype::Base);
 
-using JSTestNamedSetterNoIdentifierConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterNoIdentifier>;
+using JSTestNamedSetterNoIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterNoIdentifier>;
 
-template<> JSValue JSTestNamedSetterNoIdentifierConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNamedSetterNoIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestNamedSetterNoIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNamedSetterNoIdentifierDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterNoIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterNoIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedSetterNoIdentifierConstructor::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierConstructor) };
+template<> const ClassInfo JSTestNamedSetterNoIdentifierDOMConstructor::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -142,7 +142,7 @@ JSObject* JSTestNamedSetterNoIdentifier::prototype(VM& vm, JSDOMGlobalObject& gl
 
 JSValue JSTestNamedSetterNoIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedSetterNoIdentifierConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedSetterNoIdentifierDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedSetterNoIdentifier::destroy(JSC::JSCell* cell)

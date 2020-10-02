@@ -140,7 +140,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestConditionalIncludesPrototype, JSTestConditionalIncludesPrototype::Base);
 
-using JSTestConditionalIncludesConstructor = JSDOMConstructorNotConstructable<JSTestConditionalIncludes>;
+using JSTestConditionalIncludesDOMConstructor = JSDOMConstructorNotConstructable<JSTestConditionalIncludes>;
 
 /* Hash table for constructor */
 
@@ -173,13 +173,13 @@ static_assert(TestConditionalIncludes::CONST_IMPL == 2, "CONST_IMPL in TestCondi
 static_assert(TestConditionalIncludes::PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL == 5, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL in TestConditionalIncludes does not match value from IDL");
 #endif
 
-template<> JSValue JSTestConditionalIncludesConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestConditionalIncludesDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestConditionalIncludesConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestConditionalIncludes::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestConditionalIncludes"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -211,7 +211,7 @@ template<> void JSTestConditionalIncludesConstructor::initializeProperties(VM& v
 #endif
 }
 
-template<> const ClassInfo JSTestConditionalIncludesConstructor::s_info = { "TestConditionalIncludes", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesConstructor) };
+template<> const ClassInfo JSTestConditionalIncludesDOMConstructor::s_info = { "TestConditionalIncludes", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -471,7 +471,7 @@ JSObject* JSTestConditionalIncludes::prototype(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestConditionalIncludes::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestConditionalIncludesConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestConditionalIncludesDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestConditionalIncludes::destroy(JSC::JSCell* cell)

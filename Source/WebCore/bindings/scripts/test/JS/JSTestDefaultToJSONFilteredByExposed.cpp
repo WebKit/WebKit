@@ -91,22 +91,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONFilteredByExposedPrototype, JSTestDefaultToJSONFilteredByExposedPrototype::Base);
 
-using JSTestDefaultToJSONFilteredByExposedConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONFilteredByExposed>;
+using JSTestDefaultToJSONFilteredByExposedDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONFilteredByExposed>;
 
-template<> JSValue JSTestDefaultToJSONFilteredByExposedConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDefaultToJSONFilteredByExposedDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestDefaultToJSONFilteredByExposedConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDefaultToJSONFilteredByExposedDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDefaultToJSONFilteredByExposed::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSONFilteredByExposed"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDefaultToJSONFilteredByExposedConstructor::s_info = { "TestDefaultToJSONFilteredByExposed", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposedConstructor) };
+template<> const ClassInfo JSTestDefaultToJSONFilteredByExposedDOMConstructor::s_info = { "TestDefaultToJSONFilteredByExposed", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposedDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -173,7 +173,7 @@ JSObject* JSTestDefaultToJSONFilteredByExposed::prototype(VM& vm, JSDOMGlobalObj
 
 JSValue JSTestDefaultToJSONFilteredByExposed::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONFilteredByExposedConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONFilteredByExposedDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDefaultToJSONFilteredByExposed::destroy(JSC::JSCell* cell)

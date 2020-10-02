@@ -82,22 +82,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedAndIndexedSetterThrowingExceptionPrototype, JSTestNamedAndIndexedSetterThrowingExceptionPrototype::Base);
 
-using JSTestNamedAndIndexedSetterThrowingExceptionConstructor = JSDOMConstructorNotConstructable<JSTestNamedAndIndexedSetterThrowingException>;
+using JSTestNamedAndIndexedSetterThrowingExceptionDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedAndIndexedSetterThrowingException>;
 
-template<> JSValue JSTestNamedAndIndexedSetterThrowingExceptionConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNamedAndIndexedSetterThrowingExceptionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestNamedAndIndexedSetterThrowingExceptionConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNamedAndIndexedSetterThrowingExceptionDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedAndIndexedSetterThrowingException::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedAndIndexedSetterThrowingException"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedAndIndexedSetterThrowingExceptionConstructor::s_info = { "TestNamedAndIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterThrowingExceptionConstructor) };
+template<> const ClassInfo JSTestNamedAndIndexedSetterThrowingExceptionDOMConstructor::s_info = { "TestNamedAndIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterThrowingExceptionDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -143,7 +143,7 @@ JSObject* JSTestNamedAndIndexedSetterThrowingException::prototype(VM& vm, JSDOMG
 
 JSValue JSTestNamedAndIndexedSetterThrowingException::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedAndIndexedSetterThrowingExceptionConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedAndIndexedSetterThrowingExceptionDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedAndIndexedSetterThrowingException::destroy(JSC::JSCell* cell)

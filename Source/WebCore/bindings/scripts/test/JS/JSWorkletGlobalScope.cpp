@@ -51,7 +51,7 @@ JSC_DECLARE_CUSTOM_SETTER(setJSWorkletGlobalScopeConstructor);
 JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScopeWorkletGlobalScopeConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSWorkletGlobalScopeWorkletGlobalScopeConstructor);
 
-using JSWorkletGlobalScopeConstructor = JSDOMConstructorNotConstructable<JSWorkletGlobalScope>;
+using JSWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSWorkletGlobalScope>;
 
 /* Hash table */
 
@@ -67,19 +67,19 @@ static const HashTableValue JSWorkletGlobalScopeTableValues[] =
 };
 
 static const HashTable JSWorkletGlobalScopeTable = { 1, 1, true, JSWorkletGlobalScope::info(), JSWorkletGlobalScopeTableValues, JSWorkletGlobalScopeTableIndex };
-template<> JSValue JSWorkletGlobalScopeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
 }
 
-template<> void JSWorkletGlobalScopeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSWorkletGlobalScopeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSWorkletGlobalScope::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "WorkletGlobalScope"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSWorkletGlobalScopeConstructor::s_info = { "WorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeConstructor) };
+template<> const ClassInfo JSWorkletGlobalScopeDOMConstructor::s_info = { "WorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -131,7 +131,7 @@ JSObject* JSWorkletGlobalScope::prototype(VM& vm, JSDOMGlobalObject& globalObjec
 
 JSValue JSWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSWorkletGlobalScopeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSWorkletGlobalScopeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSWorkletGlobalScope* IDLAttribute<JSWorkletGlobalScope>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

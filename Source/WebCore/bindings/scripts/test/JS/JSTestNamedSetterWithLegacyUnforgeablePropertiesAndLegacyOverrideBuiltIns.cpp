@@ -88,7 +88,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsPrototype::Base);
 
-using JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>;
+using JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>;
 
 /* Hash table */
 
@@ -107,20 +107,20 @@ static const HashTableValue JSTestNamedSetterWithLegacyUnforgeablePropertiesAndL
 };
 
 static const HashTable JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTable = { 2, 3, true, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::info(), JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableValues, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsTableIndex };
-template<> JSValue JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor::s_info = { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor) };
+template<> const ClassInfo JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -166,7 +166,7 @@ JSObject* JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuilt
 
 JSValue JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::destroy(JSC::JSCell* cell)

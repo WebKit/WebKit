@@ -142,22 +142,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONPrototype, JSTestDefaultToJSONPrototype::Base);
 
-using JSTestDefaultToJSONConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSON>;
+using JSTestDefaultToJSONDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSON>;
 
-template<> JSValue JSTestDefaultToJSONConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDefaultToJSONDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestDefaultToJSONConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDefaultToJSONDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDefaultToJSON::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSON"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDefaultToJSONConstructor::s_info = { "TestDefaultToJSON", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONConstructor) };
+template<> const ClassInfo JSTestDefaultToJSONDOMConstructor::s_info = { "TestDefaultToJSON", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -242,7 +242,7 @@ JSObject* JSTestDefaultToJSON::prototype(VM& vm, JSDOMGlobalObject& globalObject
 
 JSValue JSTestDefaultToJSON::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)

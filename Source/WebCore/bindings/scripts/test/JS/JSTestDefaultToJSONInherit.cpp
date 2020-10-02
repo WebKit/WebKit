@@ -107,21 +107,21 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONInheritPrototype, JSTestDefaultToJSONInheritPrototype::Base);
 
-using JSTestDefaultToJSONInheritConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInherit>;
+using JSTestDefaultToJSONInheritDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInherit>;
 
-template<> JSValue JSTestDefaultToJSONInheritConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDefaultToJSONInheritDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSTestDefaultToJSON::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestDefaultToJSONInheritConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDefaultToJSONInheritDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDefaultToJSONInherit::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSONInherit"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDefaultToJSONInheritConstructor::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritConstructor) };
+template<> const ClassInfo JSTestDefaultToJSONInheritDOMConstructor::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -169,7 +169,7 @@ JSObject* JSTestDefaultToJSONInherit::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSTestDefaultToJSONInherit::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONInheritConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONInheritDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSTestDefaultToJSONInherit* IDLAttribute<JSTestDefaultToJSONInherit>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

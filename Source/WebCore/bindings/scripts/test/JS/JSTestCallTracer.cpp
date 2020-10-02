@@ -109,7 +109,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCallTracerPrototype, JSTestCallTracerPrototype::Base);
 
-using JSTestCallTracerConstructor = JSDOMConstructorNotConstructable<JSTestCallTracer>;
+using JSTestCallTracerDOMConstructor = JSDOMConstructorNotConstructable<JSTestCallTracer>;
 
 /* Hash table for constructor */
 
@@ -120,13 +120,13 @@ static const HashTableValue JSTestCallTracerConstructorTableValues[] =
 
 static_assert(TestCallTracer::testConstValue == false, "testConstValue in TestCallTracer does not match value from IDL");
 
-template<> JSValue JSTestCallTracerConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestCallTracerDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestCallTracerConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestCallTracerDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCallTracer::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCallTracer"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -134,7 +134,7 @@ template<> void JSTestCallTracerConstructor::initializeProperties(VM& vm, JSDOMG
     reifyStaticProperties(vm, JSTestCallTracer::info(), JSTestCallTracerConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestCallTracerConstructor::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerConstructor) };
+template<> const ClassInfo JSTestCallTracerDOMConstructor::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -193,7 +193,7 @@ JSObject* JSTestCallTracer::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestCallTracer::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallTracerConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallTracerDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestCallTracer::destroy(JSC::JSCell* cell)

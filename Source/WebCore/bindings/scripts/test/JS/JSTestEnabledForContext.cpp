@@ -85,22 +85,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEnabledForContextPrototype, JSTestEnabledForContextPrototype::Base);
 
-using JSTestEnabledForContextConstructor = JSDOMConstructorNotConstructable<JSTestEnabledForContext>;
+using JSTestEnabledForContextDOMConstructor = JSDOMConstructorNotConstructable<JSTestEnabledForContext>;
 
-template<> JSValue JSTestEnabledForContextConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestEnabledForContextDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestEnabledForContextConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestEnabledForContextDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEnabledForContext::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEnabledForContext"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestEnabledForContextConstructor::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextConstructor) };
+template<> const ClassInfo JSTestEnabledForContextDOMConstructor::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -148,7 +148,7 @@ JSObject* JSTestEnabledForContext::prototype(VM& vm, JSDOMGlobalObject& globalOb
 
 JSValue JSTestEnabledForContext::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEnabledForContextConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEnabledForContextDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestEnabledForContext::destroy(JSC::JSCell* cell)

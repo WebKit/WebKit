@@ -84,13 +84,13 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestOverloadedConstructorsWithSequencePrototype, JSTestOverloadedConstructorsWithSequencePrototype::Base);
 
-using JSTestOverloadedConstructorsWithSequenceConstructor = JSDOMConstructor<JSTestOverloadedConstructorsWithSequence>;
+using JSTestOverloadedConstructorsWithSequenceDOMConstructor = JSDOMConstructor<JSTestOverloadedConstructorsWithSequence>;
 
 static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
     auto sequenceOfStrings = argument0.value().isUndefined() ? Converter<IDLSequence<IDLDOMString>>::ReturnType{ } : convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
@@ -109,7 +109,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto string = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
@@ -124,7 +124,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     return JSValue::encode(jsValue);
 }
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsWithSequenceConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsWithSequenceDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -145,20 +145,20 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsW
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestOverloadedConstructorsWithSequenceConstructorConstruct, JSTestOverloadedConstructorsWithSequenceConstructor::construct);
 
-template<> JSValue JSTestOverloadedConstructorsWithSequenceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestOverloadedConstructorsWithSequenceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestOverloadedConstructorsWithSequenceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestOverloadedConstructorsWithSequenceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructorsWithSequence::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestOverloadedConstructorsWithSequence"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestOverloadedConstructorsWithSequenceConstructor::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequenceConstructor) };
+template<> const ClassInfo JSTestOverloadedConstructorsWithSequenceDOMConstructor::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequenceDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -204,7 +204,7 @@ JSObject* JSTestOverloadedConstructorsWithSequence::prototype(VM& vm, JSDOMGloba
 
 JSValue JSTestOverloadedConstructorsWithSequence::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOverloadedConstructorsWithSequenceConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOverloadedConstructorsWithSequenceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestOverloadedConstructorsWithSequence::destroy(JSC::JSCell* cell)

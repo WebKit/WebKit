@@ -82,22 +82,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestGenerateIsReachablePrototype, JSTestGenerateIsReachablePrototype::Base);
 
-using JSTestGenerateIsReachableConstructor = JSDOMConstructorNotConstructable<JSTestGenerateIsReachable>;
+using JSTestGenerateIsReachableDOMConstructor = JSDOMConstructorNotConstructable<JSTestGenerateIsReachable>;
 
-template<> JSValue JSTestGenerateIsReachableConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestGenerateIsReachableDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestGenerateIsReachableConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestGenerateIsReachableDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestGenerateIsReachable"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "TestGenerateIsReachable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachableConstructor) };
+template<> const ClassInfo JSTestGenerateIsReachableDOMConstructor::s_info = { "TestGenerateIsReachable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachableDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -154,7 +154,7 @@ JSObject* JSTestGenerateIsReachable::prototype(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGenerateIsReachableDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)

@@ -333,6 +333,8 @@ $(PROJECT_DIR)/Modules/webaudio/AudioWorklet.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioWorkletGlobalScope.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioWorkletNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioWorkletNodeOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioWorkletProcessor.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioWorkletProcessorConstructor.idl
 $(PROJECT_DIR)/Modules/webaudio/BaseAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterOptions.idl

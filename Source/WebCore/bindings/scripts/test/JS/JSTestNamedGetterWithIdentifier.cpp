@@ -86,22 +86,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedGetterWithIdentifierPrototype, JSTestNamedGetterWithIdentifierPrototype::Base);
 
-using JSTestNamedGetterWithIdentifierConstructor = JSDOMConstructorNotConstructable<JSTestNamedGetterWithIdentifier>;
+using JSTestNamedGetterWithIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedGetterWithIdentifier>;
 
-template<> JSValue JSTestNamedGetterWithIdentifierConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNamedGetterWithIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestNamedGetterWithIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNamedGetterWithIdentifierDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedGetterWithIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedGetterWithIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedGetterWithIdentifierConstructor::s_info = { "TestNamedGetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifierConstructor) };
+template<> const ClassInfo JSTestNamedGetterWithIdentifierDOMConstructor::s_info = { "TestNamedGetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifierDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -148,7 +148,7 @@ JSObject* JSTestNamedGetterWithIdentifier::prototype(VM& vm, JSDOMGlobalObject& 
 
 JSValue JSTestNamedGetterWithIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedGetterWithIdentifierConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedGetterWithIdentifierDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedGetterWithIdentifier::destroy(JSC::JSCell* cell)

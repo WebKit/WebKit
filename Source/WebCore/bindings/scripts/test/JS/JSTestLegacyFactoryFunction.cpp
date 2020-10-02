@@ -83,23 +83,23 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyFactoryFunctionPrototype, JSTestLegacyFactoryFunctionPrototype::Base);
 
-using JSTestLegacyFactoryFunctionConstructor = JSDOMConstructorNotConstructable<JSTestLegacyFactoryFunction>;
+using JSTestLegacyFactoryFunctionDOMConstructor = JSDOMConstructorNotConstructable<JSTestLegacyFactoryFunction>;
 using JSTestLegacyFactoryFunctionLegacyFactoryFunction = JSDOMLegacyFactoryFunction<JSTestLegacyFactoryFunction>;
 
-template<> JSValue JSTestLegacyFactoryFunctionConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestLegacyFactoryFunctionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestLegacyFactoryFunctionConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestLegacyFactoryFunctionDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestLegacyFactoryFunction::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestLegacyFactoryFunction"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestLegacyFactoryFunctionConstructor::s_info = { "TestLegacyFactoryFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionConstructor) };
+template<> const ClassInfo JSTestLegacyFactoryFunctionDOMConstructor::s_info = { "TestLegacyFactoryFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionDOMConstructor) };
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLegacyFactoryFunction::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
@@ -193,7 +193,7 @@ JSObject* JSTestLegacyFactoryFunction::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestLegacyFactoryFunction::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 JSValue JSTestLegacyFactoryFunction::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)

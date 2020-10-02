@@ -81,22 +81,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedDeleterNoIdentifierPrototype, JSTestNamedDeleterNoIdentifierPrototype::Base);
 
-using JSTestNamedDeleterNoIdentifierConstructor = JSDOMConstructorNotConstructable<JSTestNamedDeleterNoIdentifier>;
+using JSTestNamedDeleterNoIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedDeleterNoIdentifier>;
 
-template<> JSValue JSTestNamedDeleterNoIdentifierConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNamedDeleterNoIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestNamedDeleterNoIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNamedDeleterNoIdentifierDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedDeleterNoIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedDeleterNoIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedDeleterNoIdentifierConstructor::s_info = { "TestNamedDeleterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterNoIdentifierConstructor) };
+template<> const ClassInfo JSTestNamedDeleterNoIdentifierDOMConstructor::s_info = { "TestNamedDeleterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterNoIdentifierDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -142,7 +142,7 @@ JSObject* JSTestNamedDeleterNoIdentifier::prototype(VM& vm, JSDOMGlobalObject& g
 
 JSValue JSTestNamedDeleterNoIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedDeleterNoIdentifierConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedDeleterNoIdentifierDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedDeleterNoIdentifier::destroy(JSC::JSCell* cell)

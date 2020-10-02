@@ -502,21 +502,21 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDOMJITPrototype, JSTestDOMJITPrototype::Base);
 
-using JSTestDOMJITConstructor = JSDOMConstructorNotConstructable<JSTestDOMJIT>;
+using JSTestDOMJITDOMConstructor = JSDOMConstructorNotConstructable<JSTestDOMJIT>;
 
-template<> JSValue JSTestDOMJITConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDOMJITDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSNode::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestDOMJITConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDOMJITDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDOMJIT::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDOMJIT"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDOMJITConstructor::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJITConstructor) };
+template<> const ClassInfo JSTestDOMJITDOMConstructor::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJITDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -602,7 +602,7 @@ JSObject* JSTestDOMJIT::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestDOMJIT::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDOMJITConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDOMJITDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSTestDOMJIT* IDLAttribute<JSTestDOMJIT>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

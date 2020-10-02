@@ -109,21 +109,21 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONInheritFinalPrototype, JSTestDefaultToJSONInheritFinalPrototype::Base);
 
-using JSTestDefaultToJSONInheritFinalConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInheritFinal>;
+using JSTestDefaultToJSONInheritFinalDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInheritFinal>;
 
-template<> JSValue JSTestDefaultToJSONInheritFinalConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDefaultToJSONInheritFinalDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSTestDefaultToJSONInherit::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestDefaultToJSONInheritFinalConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDefaultToJSONInheritFinalDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDefaultToJSONInheritFinal::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSONInheritFinal"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDefaultToJSONInheritFinalConstructor::s_info = { "TestDefaultToJSONInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritFinalConstructor) };
+template<> const ClassInfo JSTestDefaultToJSONInheritFinalDOMConstructor::s_info = { "TestDefaultToJSONInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritFinalDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -172,7 +172,7 @@ JSObject* JSTestDefaultToJSONInheritFinal::prototype(VM& vm, JSDOMGlobalObject& 
 
 JSValue JSTestDefaultToJSONInheritFinal::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONInheritFinalConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONInheritFinalDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSTestDefaultToJSONInheritFinal* IDLAttribute<JSTestDefaultToJSONInheritFinal>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

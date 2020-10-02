@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class AudioWorkletProcessorConstructor;
 class AudioWorkletThread;
 
 struct WorkletParameters;
@@ -45,6 +46,11 @@ public:
         return adoptRef(*new AudioWorkletGlobalScope(thread, parameters));
     }
     ~AudioWorkletGlobalScope();
+
+    void registerProcessor(String&& name, Ref<AudioWorkletProcessorConstructor>&&);
+    size_t currentFrame() { return 0; }
+    double currentTime() const { return 0; }
+    float sampleRate() const { return 44100; }
 
     Thread* underlyingThread() const final;
 

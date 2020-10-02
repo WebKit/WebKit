@@ -88,22 +88,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierReadWriteAttributePrototype, JSTestStringifierReadWriteAttributePrototype::Base);
 
-using JSTestStringifierReadWriteAttributeConstructor = JSDOMConstructorNotConstructable<JSTestStringifierReadWriteAttribute>;
+using JSTestStringifierReadWriteAttributeDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifierReadWriteAttribute>;
 
-template<> JSValue JSTestStringifierReadWriteAttributeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestStringifierReadWriteAttributeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestStringifierReadWriteAttributeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestStringifierReadWriteAttributeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestStringifierReadWriteAttribute::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestStringifierReadWriteAttribute"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestStringifierReadWriteAttributeConstructor::s_info = { "TestStringifierReadWriteAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttributeConstructor) };
+template<> const ClassInfo JSTestStringifierReadWriteAttributeDOMConstructor::s_info = { "TestStringifierReadWriteAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttributeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -151,7 +151,7 @@ JSObject* JSTestStringifierReadWriteAttribute::prototype(VM& vm, JSDOMGlobalObje
 
 JSValue JSTestStringifierReadWriteAttribute::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierReadWriteAttributeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierReadWriteAttributeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestStringifierReadWriteAttribute::destroy(JSC::JSCell* cell)

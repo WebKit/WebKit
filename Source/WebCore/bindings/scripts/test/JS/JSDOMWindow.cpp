@@ -89,7 +89,7 @@ JSC_DECLARE_CUSTOM_SETTER(setJSDOMWindowTestObjectConstructor);
 JSC_DECLARE_CUSTOM_GETTER(jsDOMWindowTestPromiseRejectionEventConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSDOMWindowTestPromiseRejectionEventConstructor);
 
-using JSDOMWindowConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
+using JSDOMWindowDOMConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
 /* Hash table */
 
@@ -154,19 +154,19 @@ static const HashTableValue JSDOMWindowTableValues[] =
 };
 
 static const HashTable JSDOMWindowTable = { 11, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
-template<> JSValue JSDOMWindowConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
 }
 
-template<> void JSDOMWindowConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSDOMWindowDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "DOMWindow"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSDOMWindowConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowConstructor) };
+template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -210,7 +210,7 @@ void JSDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
 
 JSValue JSDOMWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSDOMWindowConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSDOMWindowDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSDOMWindow* IDLAttribute<JSDOMWindow>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

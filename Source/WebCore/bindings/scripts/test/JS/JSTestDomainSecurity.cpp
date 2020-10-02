@@ -94,7 +94,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDomainSecurityPrototype, JSTestDomainSecurityPrototype::Base);
 
-using JSTestDomainSecurityConstructor = JSDOMConstructorNotConstructable<JSTestDomainSecurity>;
+using JSTestDomainSecurityDOMConstructor = JSDOMConstructorNotConstructable<JSTestDomainSecurity>;
 
 /* Hash table */
 
@@ -110,20 +110,20 @@ static const HashTableValue JSTestDomainSecurityTableValues[] =
 };
 
 static const HashTable JSTestDomainSecurityTable = { 1, 1, true, JSTestDomainSecurity::info(), JSTestDomainSecurityTableValues, JSTestDomainSecurityTableIndex };
-template<> JSValue JSTestDomainSecurityConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestDomainSecurityDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestDomainSecurityConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestDomainSecurityDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestDomainSecurity::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDomainSecurity"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestDomainSecurityConstructor::s_info = { "TestDomainSecurity", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurityConstructor) };
+template<> const ClassInfo JSTestDomainSecurityDOMConstructor::s_info = { "TestDomainSecurity", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurityDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -172,7 +172,7 @@ JSObject* JSTestDomainSecurity::prototype(VM& vm, JSDOMGlobalObject& globalObjec
 
 JSValue JSTestDomainSecurity::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDomainSecurityConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDomainSecurityDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDomainSecurity::destroy(JSC::JSCell* cell)

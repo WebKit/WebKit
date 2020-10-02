@@ -410,6 +410,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AudioWorkletGlobalScope.idl \
     $(WebCore)/Modules/webaudio/AudioWorkletNode.idl \
     $(WebCore)/Modules/webaudio/AudioWorkletNodeOptions.idl \
+    $(WebCore)/Modules/webaudio/AudioWorkletProcessor.idl \
+    $(WebCore)/Modules/webaudio/AudioWorkletProcessorConstructor.idl \
     $(WebCore)/Modules/webaudio/BaseAudioContext.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterOptions.idl \

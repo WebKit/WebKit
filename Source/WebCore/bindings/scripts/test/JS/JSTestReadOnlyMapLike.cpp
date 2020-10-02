@@ -95,22 +95,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReadOnlyMapLikePrototype, JSTestReadOnlyMapLikePrototype::Base);
 
-using JSTestReadOnlyMapLikeConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlyMapLike>;
+using JSTestReadOnlyMapLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlyMapLike>;
 
-template<> JSValue JSTestReadOnlyMapLikeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestReadOnlyMapLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestReadOnlyMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestReadOnlyMapLikeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestReadOnlyMapLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestReadOnlyMapLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestReadOnlyMapLikeConstructor::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikeConstructor) };
+template<> const ClassInfo JSTestReadOnlyMapLikeDOMConstructor::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -164,7 +164,7 @@ JSObject* JSTestReadOnlyMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObje
 
 JSValue JSTestReadOnlyMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestReadOnlyMapLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestReadOnlyMapLikeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestReadOnlyMapLike::destroy(JSC::JSCell* cell)

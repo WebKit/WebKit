@@ -79,22 +79,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReportExtraMemoryCostPrototype, JSTestReportExtraMemoryCostPrototype::Base);
 
-using JSTestReportExtraMemoryCostConstructor = JSDOMConstructorNotConstructable<JSTestReportExtraMemoryCost>;
+using JSTestReportExtraMemoryCostDOMConstructor = JSDOMConstructorNotConstructable<JSTestReportExtraMemoryCost>;
 
-template<> JSValue JSTestReportExtraMemoryCostConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestReportExtraMemoryCostDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestReportExtraMemoryCostConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestReportExtraMemoryCostDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestReportExtraMemoryCost::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestReportExtraMemoryCost"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestReportExtraMemoryCostConstructor::s_info = { "TestReportExtraMemoryCost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostConstructor) };
+template<> const ClassInfo JSTestReportExtraMemoryCostDOMConstructor::s_info = { "TestReportExtraMemoryCost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -141,7 +141,7 @@ JSObject* JSTestReportExtraMemoryCost::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestReportExtraMemoryCost::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestReportExtraMemoryCostConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestReportExtraMemoryCostDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestReportExtraMemoryCost::destroy(JSC::JSCell* cell)

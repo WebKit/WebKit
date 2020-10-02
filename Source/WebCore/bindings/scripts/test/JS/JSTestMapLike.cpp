@@ -98,22 +98,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestMapLikePrototype, JSTestMapLikePrototype::Base);
 
-using JSTestMapLikeConstructor = JSDOMConstructorNotConstructable<JSTestMapLike>;
+using JSTestMapLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestMapLike>;
 
-template<> JSValue JSTestMapLikeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestMapLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestMapLikeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestMapLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestMapLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestMapLikeConstructor::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeConstructor) };
+template<> const ClassInfo JSTestMapLikeDOMConstructor::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -170,7 +170,7 @@ JSObject* JSTestMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMapLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMapLikeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestMapLike::destroy(JSC::JSCell* cell)

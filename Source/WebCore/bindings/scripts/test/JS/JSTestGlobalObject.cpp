@@ -290,7 +290,7 @@ JSC_DECLARE_CUSTOM_SETTER(setJSTestGlobalObjectTestStringifierReadWriteAttribute
 JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObjectTestTypedefsConstructor);
 JSC_DECLARE_CUSTOM_SETTER(setJSTestGlobalObjectTestTypedefsConstructor);
 
-using JSTestGlobalObjectConstructor = JSDOMConstructorNotConstructable<JSTestGlobalObject>;
+using JSTestGlobalObjectDOMConstructor = JSDOMConstructorNotConstructable<JSTestGlobalObject>;
 
 /* Hash table */
 
@@ -662,13 +662,13 @@ static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
 #endif
 };
 
-template<> JSValue JSTestGlobalObjectConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestGlobalObjectDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestGlobalObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestGlobalObjectDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestGlobalObject"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -676,7 +676,7 @@ template<> void JSTestGlobalObjectConstructor::initializeProperties(VM& vm, JSDO
     reifyStaticProperties(vm, JSTestGlobalObject::info(), JSTestGlobalObjectConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestGlobalObjectConstructor::s_info = { "TestGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectConstructor) };
+template<> const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -756,7 +756,7 @@ void JSTestGlobalObject::finishCreation(VM& vm)
 
 JSValue JSTestGlobalObject::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGlobalObjectConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGlobalObjectDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestGlobalObject::destroy(JSC::JSCell* cell)

@@ -1829,7 +1829,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestObjPrototype, JSTestObjPrototype::Base);
 
-using JSTestObjConstructor = JSDOMConstructor<JSTestObj>;
+using JSTestObjDOMConstructor = JSDOMConstructor<JSTestObj>;
 
 /* Hash table */
 
@@ -1942,11 +1942,11 @@ static_assert(TestObj::CONST_VALUE_14 == 0x1abc, "CONST_VALUE_14 in TestObj does
 static_assert(TestObj::CONST_IMPL == 15, "CONST_IMPL in TestObj does not match value from IDL");
 static_assert(TestObj::readonly == 0, "readonly in TestObj does not match value from IDL");
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestObjConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestObjDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -1970,15 +1970,15 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjConstructor::constru
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
-JSC_ANNOTATE_HOST_FUNCTION(JSTestObjConstructorConstruct, JSTestObjConstructor::construct);
+JSC_ANNOTATE_HOST_FUNCTION(JSTestObjDOMConstructorConstruct, JSTestObjDOMConstructor::construct);
 
-template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestObjDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestObj::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestObject"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -2002,7 +2002,7 @@ template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalOb
 #endif
 }
 
-template<> const ClassInfo JSTestObjConstructor::s_info = { "TestObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjConstructor) };
+template<> const ClassInfo JSTestObjDOMConstructor::s_info = { "TestObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -2467,7 +2467,7 @@ JSObject* JSTestObj::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestObjConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestObjDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestObj::destroy(JSC::JSCell* cell)

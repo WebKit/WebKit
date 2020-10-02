@@ -94,22 +94,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReadOnlySetLikePrototype, JSTestReadOnlySetLikePrototype::Base);
 
-using JSTestReadOnlySetLikeConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlySetLike>;
+using JSTestReadOnlySetLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlySetLike>;
 
-template<> JSValue JSTestReadOnlySetLikeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestReadOnlySetLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestReadOnlySetLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestReadOnlySetLikeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestReadOnlySetLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestReadOnlySetLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestReadOnlySetLikeConstructor::s_info = { "TestReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLikeConstructor) };
+template<> const ClassInfo JSTestReadOnlySetLikeDOMConstructor::s_info = { "TestReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlySetLikeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -162,7 +162,7 @@ JSObject* JSTestReadOnlySetLike::prototype(VM& vm, JSDOMGlobalObject& globalObje
 
 JSValue JSTestReadOnlySetLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestReadOnlySetLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestReadOnlySetLikeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestReadOnlySetLike::destroy(JSC::JSCell* cell)

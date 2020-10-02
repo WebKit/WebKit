@@ -115,7 +115,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestConditionallyReadWritePrototype, JSTestConditionallyReadWritePrototype::Base);
 
-using JSTestConditionallyReadWriteConstructor = JSDOMConstructorNotConstructable<JSTestConditionallyReadWrite>;
+using JSTestConditionallyReadWriteDOMConstructor = JSDOMConstructorNotConstructable<JSTestConditionallyReadWrite>;
 
 /* Hash table */
 
@@ -138,20 +138,20 @@ static const HashTableValue JSTestConditionallyReadWriteTableValues[] =
 };
 
 static const HashTable JSTestConditionallyReadWriteTable = { 2, 7, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWriteTableValues, JSTestConditionallyReadWriteTableIndex };
-template<> JSValue JSTestConditionallyReadWriteConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestConditionallyReadWriteDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestConditionallyReadWriteConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestConditionallyReadWriteDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestConditionallyReadWrite::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestConditionallyReadWrite"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestConditionallyReadWriteConstructor::s_info = { "TestConditionallyReadWrite", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWriteConstructor) };
+template<> const ClassInfo JSTestConditionallyReadWriteDOMConstructor::s_info = { "TestConditionallyReadWrite", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWriteDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -260,7 +260,7 @@ JSObject* JSTestConditionallyReadWrite::prototype(VM& vm, JSDOMGlobalObject& glo
 
 JSValue JSTestConditionallyReadWrite::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestConditionallyReadWriteConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestConditionallyReadWriteDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestConditionallyReadWrite::destroy(JSC::JSCell* cell)

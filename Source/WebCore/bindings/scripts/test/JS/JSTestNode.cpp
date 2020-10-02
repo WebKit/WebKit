@@ -106,13 +106,13 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNodePrototype, JSTestNodePrototype::Base);
 
-using JSTestNodeConstructor = JSDOMConstructor<JSTestNode>;
+using JSTestNodeDOMConstructor = JSDOMConstructor<JSTestNode>;
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestNodeConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestNodeDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestNodeConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestNodeDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto object = TestNode::create();
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
@@ -123,21 +123,21 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestNodeConstructor::constr
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
-JSC_ANNOTATE_HOST_FUNCTION(JSTestNodeConstructorConstruct, JSTestNodeConstructor::construct);
+JSC_ANNOTATE_HOST_FUNCTION(JSTestNodeDOMConstructorConstruct, JSTestNodeDOMConstructor::construct);
 
-template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNodeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSNode::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestNodeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNodeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNode::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNode"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNodeConstructor::s_info = { "TestNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
+template<> const ClassInfo JSTestNodeDOMConstructor::s_info = { "TestNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNodeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -252,7 +252,7 @@ JSObject* JSTestNode::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNodeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSTestNode* IDLAttribute<JSTestNode>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

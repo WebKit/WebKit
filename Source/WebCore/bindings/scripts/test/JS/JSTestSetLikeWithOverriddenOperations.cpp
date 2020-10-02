@@ -99,22 +99,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestSetLikeWithOverriddenOperationsPrototype, JSTestSetLikeWithOverriddenOperationsPrototype::Base);
 
-using JSTestSetLikeWithOverriddenOperationsConstructor = JSDOMConstructorNotConstructable<JSTestSetLikeWithOverriddenOperations>;
+using JSTestSetLikeWithOverriddenOperationsDOMConstructor = JSDOMConstructorNotConstructable<JSTestSetLikeWithOverriddenOperations>;
 
-template<> JSValue JSTestSetLikeWithOverriddenOperationsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestSetLikeWithOverriddenOperationsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestSetLikeWithOverriddenOperationsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestSetLikeWithOverriddenOperationsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSetLikeWithOverriddenOperations::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSetLikeWithOverriddenOperations"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestSetLikeWithOverriddenOperationsConstructor::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsConstructor) };
+template<> const ClassInfo JSTestSetLikeWithOverriddenOperationsDOMConstructor::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -170,7 +170,7 @@ JSObject* JSTestSetLikeWithOverriddenOperations::prototype(VM& vm, JSDOMGlobalOb
 
 JSValue JSTestSetLikeWithOverriddenOperations::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSetLikeWithOverriddenOperationsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSetLikeWithOverriddenOperationsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestSetLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)

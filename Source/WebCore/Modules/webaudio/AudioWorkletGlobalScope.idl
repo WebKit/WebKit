@@ -35,5 +35,8 @@
     IsImmutablePrototypeExoticObjectOnPrototype,
     Global=(Worklet,AudioWorklet),
 ] interface AudioWorkletGlobalScope : WorkletGlobalScope {
-    // Implement API.
+    undefined registerProcessor(DOMString name, AudioWorkletProcessorConstructor processorCtor);
+    readonly attribute unsigned long long currentFrame;
+    readonly attribute double currentTime;
+    readonly attribute float sampleRate;
 };

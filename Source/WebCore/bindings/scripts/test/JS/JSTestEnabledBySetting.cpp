@@ -104,7 +104,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEnabledBySettingPrototype, JSTestEnabledBySettingPrototype::Base);
 
-using JSTestEnabledBySettingConstructor = JSDOMConstructorNotConstructable<JSTestEnabledBySetting>;
+using JSTestEnabledBySettingDOMConstructor = JSDOMConstructorNotConstructable<JSTestEnabledBySetting>;
 
 /* Hash table for constructor */
 
@@ -115,13 +115,13 @@ static const HashTableValue JSTestEnabledBySettingConstructorTableValues[] =
 
 static_assert(TestEnabledBySetting::enabledBySettingConstant == 0, "enabledBySettingConstant in TestEnabledBySetting does not match value from IDL");
 
-template<> JSValue JSTestEnabledBySettingConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestEnabledBySettingDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestEnabledBySettingConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestEnabledBySettingDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEnabledBySetting::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEnabledBySetting"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -135,7 +135,7 @@ template<> void JSTestEnabledBySettingConstructor::initializeProperties(VM& vm, 
     }
 }
 
-template<> const ClassInfo JSTestEnabledBySettingConstructor::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingConstructor) };
+template<> const ClassInfo JSTestEnabledBySettingDOMConstructor::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -244,7 +244,7 @@ JSObject* JSTestEnabledBySetting::prototype(VM& vm, JSDOMGlobalObject& globalObj
 
 JSValue JSTestEnabledBySetting::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEnabledBySettingConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEnabledBySettingDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestEnabledBySetting::destroy(JSC::JSCell* cell)

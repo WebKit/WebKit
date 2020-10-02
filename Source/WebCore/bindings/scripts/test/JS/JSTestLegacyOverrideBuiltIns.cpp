@@ -89,22 +89,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyOverrideBuiltInsPrototype, JSTestLegacyOverrideBuiltInsPrototype::Base);
 
-using JSTestLegacyOverrideBuiltInsConstructor = JSDOMConstructorNotConstructable<JSTestLegacyOverrideBuiltIns>;
+using JSTestLegacyOverrideBuiltInsDOMConstructor = JSDOMConstructorNotConstructable<JSTestLegacyOverrideBuiltIns>;
 
-template<> JSValue JSTestLegacyOverrideBuiltInsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestLegacyOverrideBuiltInsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestLegacyOverrideBuiltInsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestLegacyOverrideBuiltInsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestLegacyOverrideBuiltIns::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestLegacyOverrideBuiltIns"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestLegacyOverrideBuiltInsConstructor::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsConstructor) };
+template<> const ClassInfo JSTestLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -151,7 +151,7 @@ JSObject* JSTestLegacyOverrideBuiltIns::prototype(VM& vm, JSDOMGlobalObject& glo
 
 JSValue JSTestLegacyOverrideBuiltIns::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyOverrideBuiltInsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyOverrideBuiltInsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestLegacyOverrideBuiltIns::destroy(JSC::JSCell* cell)

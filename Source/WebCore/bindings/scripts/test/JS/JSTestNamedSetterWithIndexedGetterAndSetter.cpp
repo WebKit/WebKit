@@ -89,22 +89,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterWithIndexedGetterAndSetterPrototype, JSTestNamedSetterWithIndexedGetterAndSetterPrototype::Base);
 
-using JSTestNamedSetterWithIndexedGetterAndSetterConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithIndexedGetterAndSetter>;
+using JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithIndexedGetterAndSetter>;
 
-template<> JSValue JSTestNamedSetterWithIndexedGetterAndSetterConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestNamedSetterWithIndexedGetterAndSetterConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterWithIndexedGetterAndSetter::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithIndexedGetterAndSetter"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestNamedSetterWithIndexedGetterAndSetterConstructor::s_info = { "TestNamedSetterWithIndexedGetterAndSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetterAndSetterConstructor) };
+template<> const ClassInfo JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor::s_info = { "TestNamedSetterWithIndexedGetterAndSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -152,7 +152,7 @@ JSObject* JSTestNamedSetterWithIndexedGetterAndSetter::prototype(VM& vm, JSDOMGl
 
 JSValue JSTestNamedSetterWithIndexedGetterAndSetter::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedSetterWithIndexedGetterAndSetterConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedSetterWithIndexedGetterAndSetterDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedSetterWithIndexedGetterAndSetter::destroy(JSC::JSCell* cell)

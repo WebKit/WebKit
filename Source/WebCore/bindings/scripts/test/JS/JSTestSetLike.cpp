@@ -97,22 +97,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestSetLikePrototype, JSTestSetLikePrototype::Base);
 
-using JSTestSetLikeConstructor = JSDOMConstructorNotConstructable<JSTestSetLike>;
+using JSTestSetLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestSetLike>;
 
-template<> JSValue JSTestSetLikeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestSetLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestSetLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestSetLikeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSetLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSetLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestSetLikeConstructor::s_info = { "TestSetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeConstructor) };
+template<> const ClassInfo JSTestSetLikeDOMConstructor::s_info = { "TestSetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -168,7 +168,7 @@ JSObject* JSTestSetLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestSetLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSetLikeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSetLikeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestSetLike::destroy(JSC::JSCell* cell)

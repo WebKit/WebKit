@@ -87,22 +87,22 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierReadOnlyAttributePrototype, JSTestStringifierReadOnlyAttributePrototype::Base);
 
-using JSTestStringifierReadOnlyAttributeConstructor = JSDOMConstructorNotConstructable<JSTestStringifierReadOnlyAttribute>;
+using JSTestStringifierReadOnlyAttributeDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifierReadOnlyAttribute>;
 
-template<> JSValue JSTestStringifierReadOnlyAttributeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestStringifierReadOnlyAttributeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestStringifierReadOnlyAttributeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestStringifierReadOnlyAttributeDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestStringifierReadOnlyAttribute::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestStringifierReadOnlyAttribute"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestStringifierReadOnlyAttributeConstructor::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttributeConstructor) };
+template<> const ClassInfo JSTestStringifierReadOnlyAttributeDOMConstructor::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttributeDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -150,7 +150,7 @@ JSObject* JSTestStringifierReadOnlyAttribute::prototype(VM& vm, JSDOMGlobalObjec
 
 JSValue JSTestStringifierReadOnlyAttribute::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierReadOnlyAttributeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierReadOnlyAttributeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestStringifierReadOnlyAttribute::destroy(JSC::JSCell* cell)

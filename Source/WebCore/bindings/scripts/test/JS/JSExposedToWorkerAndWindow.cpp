@@ -126,13 +126,13 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSExposedToWorkerAndWindowPrototype, JSExposedToWorkerAndWindowPrototype::Base);
 
-using JSExposedToWorkerAndWindowConstructor = JSDOMConstructor<JSExposedToWorkerAndWindow>;
+using JSExposedToWorkerAndWindowDOMConstructor = JSDOMConstructor<JSExposedToWorkerAndWindow>;
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSExposedToWorkerAndWindowConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSExposedToWorkerAndWindowDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto object = ExposedToWorkerAndWindow::create();
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
@@ -143,22 +143,22 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowCon
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
-JSC_ANNOTATE_HOST_FUNCTION(JSExposedToWorkerAndWindowConstructorConstruct, JSExposedToWorkerAndWindowConstructor::construct);
+JSC_ANNOTATE_HOST_FUNCTION(JSExposedToWorkerAndWindowDOMConstructorConstruct, JSExposedToWorkerAndWindowDOMConstructor::construct);
 
-template<> JSValue JSExposedToWorkerAndWindowConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSExposedToWorkerAndWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSExposedToWorkerAndWindowConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSExposedToWorkerAndWindowDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSExposedToWorkerAndWindow::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "ExposedToWorkerAndWindow"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSExposedToWorkerAndWindowConstructor::s_info = { "ExposedToWorkerAndWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindowConstructor) };
+template<> const ClassInfo JSExposedToWorkerAndWindowDOMConstructor::s_info = { "ExposedToWorkerAndWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindowDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -205,7 +205,7 @@ JSObject* JSExposedToWorkerAndWindow::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSExposedToWorkerAndWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSExposedToWorkerAndWindowConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSExposedToWorkerAndWindowDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)

@@ -131,7 +131,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestTypedefsPrototype, JSTestTypedefsPrototype::Base);
 
-using JSTestTypedefsConstructor = JSDOMConstructor<JSTestTypedefs>;
+using JSTestTypedefsDOMConstructor = JSDOMConstructor<JSTestTypedefs>;
 
 /* Hash table */
 
@@ -154,11 +154,11 @@ static const HashTableValue JSTestTypedefsConstructorTableValues[] =
     { "TestSubObj", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestTypedefsConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestTypedefsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 3))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -180,15 +180,15 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsConstructor::co
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
-JSC_ANNOTATE_HOST_FUNCTION(JSTestTypedefsConstructorConstruct, JSTestTypedefsConstructor::construct);
+JSC_ANNOTATE_HOST_FUNCTION(JSTestTypedefsDOMConstructorConstruct, JSTestTypedefsDOMConstructor::construct);
 
-template<> JSValue JSTestTypedefsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestTypedefsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
     return globalObject.functionPrototype();
 }
 
-template<> void JSTestTypedefsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestTypedefsDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestTypedefs"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
@@ -196,7 +196,7 @@ template<> void JSTestTypedefsConstructor::initializeProperties(VM& vm, JSDOMGlo
     reifyStaticProperties(vm, JSTestTypedefs::info(), JSTestTypedefsConstructorTableValues, *this);
 }
 
-template<> const ClassInfo JSTestTypedefsConstructor::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsConstructor) };
+template<> const ClassInfo JSTestTypedefsDOMConstructor::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -263,7 +263,7 @@ JSObject* JSTestTypedefs::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestTypedefs::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestTypedefsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestTypedefsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestTypedefs::destroy(JSC::JSCell* cell)

@@ -214,6 +214,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNodeOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletNodeOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletProcessor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletProcessor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletProcessorConstructor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioWorkletProcessorConstructor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientInputs.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientInputs.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticationExtensionsClientOutputs.cpp

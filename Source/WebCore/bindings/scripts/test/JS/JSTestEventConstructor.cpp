@@ -163,13 +163,13 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEventConstructorPrototype, JSTestEventConstructorPrototype::Base);
 
-using JSTestEventConstructorConstructor = JSDOMConstructor<JSTestEventConstructor>;
+using JSTestEventConstructorDOMConstructor = JSDOMConstructor<JSTestEventConstructor>;
 
-template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestEventConstructorConstructor*>(callFrame->jsCallee());
+    auto* castedThis = jsCast<JSTestEventConstructorDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -188,21 +188,21 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorConstru
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
-JSC_ANNOTATE_HOST_FUNCTION(JSTestEventConstructorConstructorConstruct, JSTestEventConstructorConstructor::construct);
+JSC_ANNOTATE_HOST_FUNCTION(JSTestEventConstructorDOMConstructorConstruct, JSTestEventConstructorDOMConstructor::construct);
 
-template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+template<> JSValue JSTestEventConstructorDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEvent::getConstructor(vm, &globalObject);
 }
 
-template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+template<> void JSTestEventConstructorDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEventConstructor"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-template<> const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
+template<> const ClassInfo JSTestEventConstructorDOMConstructor::s_info = { "TestEventConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructorDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -255,7 +255,7 @@ JSObject* JSTestEventConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObj
 
 JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventConstructorDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 template<> inline JSTestEventConstructor* IDLAttribute<JSTestEventConstructor>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

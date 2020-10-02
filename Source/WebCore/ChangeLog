@@ -1,3 +1,49 @@
+2020-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Add stubs for AudioWorkletProcessor and AudioWorkletGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=217194
+
+        Reviewed by Sam Weinig.
+
+        Add stubs for AudioWorkletProcessor and AudioWorkletGlobalScope:
+        - https://www.w3.org/TR/webaudio/#audioworkletprocessor
+        - https://www.w3.org/TR/webaudio/#audioworkletglobalscope
+
+        I had to make some changes to the generated bindings to avoid a naming conflict because there was already a class
+        named JSAudioWorkletProcessorConstructor (the DOM constructor for JSAudioWorkletProcessor) before I introduced
+        AudioWorkletProcessorConstructor.idl. We now use "DOMConstructor" suffix in the generated bindings instead of
+        "Constructor" to avoid the naming conflict.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::registerProcessor):
+        * Modules/webaudio/AudioWorkletGlobalScope.h:
+        (WebCore::AudioWorkletGlobalScope::currentFrame):
+        (WebCore::AudioWorkletGlobalScope::currentTime const):
+        (WebCore::AudioWorkletGlobalScope::sampleRate const):
+        * Modules/webaudio/AudioWorkletGlobalScope.idl:
+        * Modules/webaudio/AudioWorkletProcessor.cpp: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        (WebCore::AudioWorkletProcessor::AudioWorkletProcessor):
+        * Modules/webaudio/AudioWorkletProcessor.h: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        (WebCore::AudioWorkletProcessor::create):
+        (WebCore::AudioWorkletProcessor::port):
+        * Modules/webaudio/AudioWorkletProcessor.idl: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        * Modules/webaudio/AudioWorkletProcessorConstructor.h: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.cpp.
+        * Modules/webaudio/AudioWorkletProcessorConstructor.idl: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateRuntimeEnableConditionalStringForExposed):
+        (GenerateImplementation):
+        (GenerateCallbackImplementationContent):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorDefinitions):
+        (GenerateConstructorDefinition):
+        (GenerateConstructorHelperMethods):
+
 2020-09-30  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS translate property

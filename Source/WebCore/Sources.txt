@@ -208,6 +208,7 @@ Modules/webaudio/AudioWorklet.cpp
 Modules/webaudio/AudioWorkletGlobalScope.cpp
 Modules/webaudio/AudioWorkletMessagingProxy.cpp
 Modules/webaudio/AudioWorkletNode.cpp
+Modules/webaudio/AudioWorkletProcessor.cpp
 Modules/webaudio/AudioWorkletThread.cpp
 Modules/webaudio/BaseAudioContext.cpp
 Modules/webaudio/BiquadDSPKernel.cpp
@@ -2687,6 +2688,8 @@ JSAudioWorklet.cpp
 JSAudioWorkletGlobalScope.cpp
 JSAudioWorkletNode.cpp
 JSAudioWorkletNodeOptions.cpp
+JSAudioWorkletProcessor.cpp
+JSAudioWorkletProcessorConstructor.cpp 
 JSAuthenticationExtensionsClientInputs.cpp
 JSAuthenticationExtensionsClientOutputs.cpp
 JSAuthenticatorAssertionResponse.cpp
