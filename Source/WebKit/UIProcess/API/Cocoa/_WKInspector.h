@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol _WKInspectorExtensionHost
+- (void)close;
+@end
+
 WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
-@interface _WKInspector : NSObject
+@interface _WKInspector : NSObject <_WKInspectorExtensionHost>
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -49,7 +53,6 @@ WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 - (void)connect;
 - (void)show;
 - (void)hide;
-- (void)close;
 - (void)showConsole;
 - (void)showResources;
 - (void)showMainResourceForFrame:(_WKFrameHandle *)frame;

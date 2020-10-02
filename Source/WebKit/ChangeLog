@@ -1,3 +1,13 @@
+2020-10-02  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: add an ObjC protocol for extension support
+        https://bugs.webkit.org/show_bug.cgi?id=217191
+        <rdar://problem/69797960>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/API/Cocoa/_WKInspector.h:
+
 2020-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] fast/canvas/canvas-createPattern-video-loading.html times out
