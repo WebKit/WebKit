@@ -105,7 +105,8 @@ EGLBoolean EGLAPIENTRY EGL_Terminate(EGLDisplay dpy)
     egl::Display *display = static_cast<egl::Display *>(dpy);
     ANGLE_EGL_TRY_RETURN(thread, ValidateTerminate(display), "eglTerminate",
                          GetDisplayIfValid(display), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglTerminate",
+                         GetDisplayIfValid(display), EGL_FALSE);
     ANGLE_EGL_TRY_RETURN(thread, display->makeCurrent(thread, nullptr, nullptr, nullptr),
                          "eglTerminate", GetDisplayIfValid(display), EGL_FALSE);
     SetContextCurrent(thread, nullptr);
@@ -126,6 +127,8 @@ const char *EGLAPIENTRY EGL_QueryString(EGLDisplay dpy, EGLint name)
     if (!(display == EGL_NO_DISPLAY && name == EGL_EXTENSIONS))
     {
         ANGLE_EGL_TRY_RETURN(thread, ValidateDisplay(display), "eglQueryString",
+                             GetDisplayIfValid(display), nullptr);
+        ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglQueryString",
                              GetDisplayIfValid(display), nullptr);
     }
 
@@ -255,6 +258,8 @@ EGLSurface EGLAPIENTRY EGL_CreateWindowSurface(EGLDisplay dpy,
     ANGLE_EGL_TRY_RETURN(thread,
                          ValidateCreateWindowSurface(display, configuration, win, attributes),
                          "eglCreateWindowSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreateWindowSurface",
+                         GetDisplayIfValid(display), EGL_NO_SURFACE);
 
     egl::Surface *surface = nullptr;
     ANGLE_EGL_TRY_RETURN(thread,
@@ -281,7 +286,8 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferSurface(EGLDisplay dpy,
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateCreatePbufferSurface(display, configuration, attributes),
                          "eglCreatePbufferSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreatePbufferSurface",
+                         GetDisplayIfValid(display), EGL_NO_SURFACE);
     egl::Surface *surface = nullptr;
     ANGLE_EGL_TRY_RETURN(thread, display->createPbufferSurface(configuration, attributes, &surface),
                          "eglCreatePbufferSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
@@ -310,7 +316,8 @@ EGLSurface EGLAPIENTRY EGL_CreatePixmapSurface(EGLDisplay dpy,
     ANGLE_EGL_TRY_RETURN(thread,
                          ValidateCreatePixmapSurface(display, configuration, pixmap, attributes),
                          "eglCreatePixmapSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreatePixmapSurface",
+                         GetDisplayIfValid(display), EGL_NO_SURFACE);
     egl::Surface *surface = nullptr;
     ANGLE_EGL_TRY_RETURN(thread,
                          display->createPixmapSurface(configuration, pixmap, attributes, &surface),
@@ -332,7 +339,8 @@ EGLBoolean EGLAPIENTRY EGL_DestroySurface(EGLDisplay dpy, EGLSurface surface)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateDestroySurface(display, eglSurface, surface),
                          "eglDestroySurface", GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglDestroySurface",
+                         GetDisplayIfValid(display), EGL_FALSE);
     ANGLE_EGL_TRY_RETURN(thread, display->destroySurface(eglSurface), "eglDestroySurface",
                          GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
 
@@ -352,12 +360,13 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface(EGLDisplay dpy,
                (uintptr_t)dpy, (uintptr_t)surface, attribute, (uintptr_t)value);
     Thread *thread = egl::GetCurrentThread();
 
-    const egl::Display *display = static_cast<const egl::Display *>(dpy);
+    egl::Display *display = static_cast<egl::Display *>(dpy);
     const Surface *eglSurface   = static_cast<const Surface *>(surface);
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateQuerySurface(display, eglSurface, attribute, value),
                          "eglQuerySurface", GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglQuerySurface",
+                         GetDisplayIfValid(display), EGL_FALSE);
     ANGLE_EGL_TRY_RETURN(thread, QuerySurfaceAttrib(display, eglSurface, attribute, value),
                          "eglQuerySurface", GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
 
@@ -385,7 +394,8 @@ EGLContext EGLAPIENTRY EGL_CreateContext(EGLDisplay dpy,
     ANGLE_EGL_TRY_RETURN(thread,
                          ValidateCreateContext(display, configuration, sharedGLContext, attributes),
                          "eglCreateContext", GetDisplayIfValid(display), EGL_NO_CONTEXT);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreateContext",
+                         GetDisplayIfValid(display), EGL_NO_CONTEXT);
     gl::Context *context = nullptr;
     ANGLE_EGL_TRY_RETURN(thread,
                          display->createContext(configuration, sharedGLContext, thread->getAPI(),
@@ -408,7 +418,8 @@ EGLBoolean EGLAPIENTRY EGL_DestroyContext(EGLDisplay dpy, EGLContext ctx)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateDestroyContext(display, context, ctx), "eglDestroyContext",
                          GetContextIfValid(display, context), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglDestroyContext",
+                         GetDisplayIfValid(display), EGL_FALSE);
     bool contextWasCurrent = context == thread->getContext();
 
     ANGLE_EGL_TRY_RETURN(thread, display->destroyContext(thread, context), "eglDestroyContext",
@@ -443,7 +454,8 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateMakeCurrent(display, drawSurface, readSurface, context),
                          "eglMakeCurrent", GetContextIfValid(display, context), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglMakeCurrent",
+                         GetDisplayIfValid(display), EGL_FALSE);
     Surface *previousDraw        = thread->getCurrentDrawSurface();
     Surface *previousRead        = thread->getCurrentReadSurface();
     gl::Context *previousContext = thread->getContext();
@@ -517,7 +529,8 @@ EGLBoolean EGLAPIENTRY EGL_QueryContext(EGLDisplay dpy,
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateQueryContext(display, context, attribute, value),
                          "eglQueryContext", GetContextIfValid(display, context), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglQueryContext",
+                         GetDisplayIfValid(display), EGL_FALSE);
     QueryContextAttrib(context, attribute, value);
 
     thread->setSuccess();
@@ -534,6 +547,8 @@ EGLBoolean EGLAPIENTRY EGL_WaitGL(void)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateDisplay(display), "eglWaitGL", GetDisplayIfValid(display),
                          EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglWaitGL",
+                         GetDisplayIfValid(display), EGL_FALSE);
 
     // eglWaitGL like calling eglWaitClient with the OpenGL ES API bound. Since we only implement
     // OpenGL ES we can do the call directly.
@@ -554,6 +569,8 @@ EGLBoolean EGLAPIENTRY EGL_WaitNative(EGLint engine)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateWaitNative(display, engine), "eglWaitNative",
                          GetThreadIfValid(thread), EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglWaitNative",
+                         GetDisplayIfValid(display), EGL_FALSE);
 
     ANGLE_EGL_TRY_RETURN(thread, display->waitNative(thread->getContext(), engine), "eglWaitNative",
                          GetThreadIfValid(thread), EGL_FALSE);
@@ -574,6 +591,8 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffers(EGLDisplay dpy, EGLSurface surface)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateSwapBuffers(thread, display, eglSurface), "eglSwapBuffers",
                          GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglSwapBuffers",
+                         GetDisplayIfValid(display), EGL_FALSE);
 
     ANGLE_EGL_TRY_RETURN(thread, eglSurface->swap(thread->getContext()), "eglSwapBuffers",
                          GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
@@ -598,7 +617,8 @@ EGLBoolean EGLAPIENTRY EGL_CopyBuffers(EGLDisplay dpy,
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateCopyBuffers(display, eglSurface), "eglCopyBuffers",
                          GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCopyBuffers",
+                         GetDisplayIfValid(display), EGL_FALSE);
     UNIMPLEMENTED();  // FIXME
 
     thread->setSuccess();
@@ -622,7 +642,8 @@ EGLBoolean EGLAPIENTRY EGL_BindTexImage(EGLDisplay dpy, EGLSurface surface, EGLi
     ANGLE_EGL_TRY_RETURN(
         thread, ValidateBindTexImage(display, eglSurface, surface, buffer, context, &textureObject),
         "eglBindTexImage", GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglBindTexImage",
+                         GetDisplayIfValid(display), EGL_FALSE);
     if (context)
     {
         ANGLE_EGL_TRY_RETURN(thread, eglSurface->bindTexImage(context, textureObject, buffer),
@@ -650,7 +671,8 @@ EGLBoolean EGLAPIENTRY EGL_SurfaceAttrib(EGLDisplay dpy,
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateSurfaceAttrib(display, eglSurface, attribute, value),
                          "eglSurfaceAttrib", GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglSurfaceAttrib",
+                         GetDisplayIfValid(display), EGL_FALSE);
     SetSurfaceAttrib(eglSurface, attribute, value);
 
     thread->setSuccess();
@@ -671,6 +693,8 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseTexImage(EGLDisplay dpy, EGLSurface surface, E
     ANGLE_EGL_TRY_RETURN(thread, ValidateReleaseTexImage(display, eglSurface, surface, buffer),
                          "eglReleaseTexImage", GetSurfaceIfValid(display, eglSurface), EGL_FALSE);
 
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglReleaseTexImage",
+                         GetDisplayIfValid(display), EGL_FALSE);
     gl::Texture *texture = eglSurface->getBoundTexture();
 
     if (texture)
@@ -697,7 +721,8 @@ EGLBoolean EGLAPIENTRY EGL_SwapInterval(EGLDisplay dpy, EGLint interval)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateSwapInterval(display, draw_surface, context),
                          "eglSwapInterval", GetDisplayIfValid(display), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglSwapInterval",
+                         GetDisplayIfValid(display), EGL_FALSE);
     const egl::Config *surfaceConfig = draw_surface->getConfig();
     EGLint clampedInterval           = std::min(std::max(interval, surfaceConfig->minSwapInterval),
                                       surfaceConfig->maxSwapInterval);
@@ -759,7 +784,8 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferFromClientBuffer(EGLDisplay dpy,
         thread,
         ValidateCreatePbufferFromClientBuffer(display, buftype, buffer, configuration, attributes),
         "eglCreatePbufferFromClientBuffer", GetDisplayIfValid(display), EGL_NO_SURFACE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreatePbufferFromClientBuffer",
+                         GetDisplayIfValid(display), EGL_NO_SURFACE);
     egl::Surface *surface = nullptr;
     ANGLE_EGL_TRY_RETURN(thread,
                          display->createPbufferFromClientBuffer(configuration, buftype, buffer,
@@ -781,16 +807,19 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseThread(void)
     gl::Context *previousContext  = thread->getContext();
     egl::Display *previousDisplay = thread->getDisplay();
 
-    // Only call makeCurrent if the context or surfaces have changed.
-    if (previousDraw != EGL_NO_SURFACE || previousRead != EGL_NO_SURFACE ||
-        previousContext != EGL_NO_CONTEXT)
-    {
-        if (previousDisplay != EGL_NO_DISPLAY)
+    if (previousDisplay != EGL_NO_DISPLAY) {
+        ANGLE_EGL_TRY_RETURN(thread, previousDisplay->prepareForCall(), "eglReleaseThread",
+                             GetDisplayIfValid(previousDisplay), EGL_FALSE);
+        // Only call makeCurrent if the context or surfaces have changed.
+        if (previousDraw != EGL_NO_SURFACE || previousRead != EGL_NO_SURFACE ||
+            previousContext != EGL_NO_CONTEXT)
         {
             ANGLE_EGL_TRY_RETURN(thread,
                                  previousDisplay->makeCurrent(thread, nullptr, nullptr, nullptr),
                                  "eglReleaseThread", nullptr, EGL_FALSE);
         }
+        ANGLE_EGL_TRY_RETURN(thread, previousDisplay->releaseThread(), "eglReleaseThread",
+                             GetDisplayIfValid(previousDisplay), EGL_FALSE);
 
         SetContextCurrent(thread, nullptr);
     }
@@ -810,7 +839,8 @@ EGLBoolean EGLAPIENTRY EGL_WaitClient(void)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateDisplay(display), "eglWaitClient",
                          GetContextIfValid(display, context), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglWaitClient",
+                         GetDisplayIfValid(display), EGL_FALSE);
     ANGLE_EGL_TRY_RETURN(thread, display->waitClient(context), "eglWaitClient",
                          GetContextIfValid(display, context), EGL_FALSE);
 
@@ -849,7 +879,8 @@ EGLSync EGLAPIENTRY EGL_CreateSync(EGLDisplay dpy, EGLenum type, const EGLAttrib
     ANGLE_EGL_TRY_RETURN(
         thread, ValidateCreateSync(display, type, attributes, currentDisplay, currentContext),
         "eglCreateSync", GetDisplayIfValid(display), EGL_NO_SYNC);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreateSync",
+                         GetDisplayIfValid(display), EGL_FALSE);
     egl::Sync *syncObject = nullptr;
     ANGLE_EGL_TRY_RETURN(thread, display->createSync(currentContext, type, attributes, &syncObject),
                          "eglCreateSync", GetDisplayIfValid(display), EGL_NO_SYNC);
@@ -870,7 +901,8 @@ EGLBoolean EGLAPIENTRY EGL_DestroySync(EGLDisplay dpy, EGLSync sync)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateDestroySync(display, syncObject), "eglDestroySync",
                          GetDisplayIfValid(display), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglDestroySync",
+                         GetDisplayIfValid(display), EGL_FALSE);
     display->destroySync(syncObject);
 
     thread->setSuccess();
@@ -891,7 +923,8 @@ EGLint EGLAPIENTRY EGL_ClientWaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateClientWaitSync(display, syncObject, flags, timeout),
                          "eglClientWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglClientWaitSync",
+                         GetDisplayIfValid(display), EGL_FALSE);
     gl::Context *currentContext = thread->getContext();
     EGLint syncStatus           = EGL_FALSE;
     ANGLE_EGL_TRY_RETURN(
@@ -954,6 +987,8 @@ EGLImage EGLAPIENTRY EGL_CreateImage(EGLDisplay dpy,
         thread->setError(error, GetDebug(), "eglCreateImage", GetDisplayIfValid(display));
         return EGL_NO_IMAGE;
     }
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreateImage",
+                         GetDisplayIfValid(display), EGL_FALSE);
 
     Image *image = nullptr;
     error        = display->createImage(context, target, buffer, attributes, &image);
@@ -982,7 +1017,8 @@ EGLBoolean EGLAPIENTRY EGL_DestroyImage(EGLDisplay dpy, EGLImage image)
         thread->setError(error, GetDebug(), "eglDestroyImage", GetImageIfValid(display, img));
         return EGL_FALSE;
     }
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglDestroyImage",
+                         GetDisplayIfValid(display), EGL_FALSE);
     display->destroyImage(img);
 
     thread->setSuccess();
@@ -1043,12 +1079,13 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurface(EGLDisplay dpy,
 
     ANGLE_EGL_TRY_RETURN(thread,
                          ValidateCreateWindowSurface(display, configuration, win, attributes),
-                         "eglCreateWindowSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
-
+                         "eglPlatformCreateWindowSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreateWindowSurface",
+                         GetDisplayIfValid(display), EGL_NO_SURFACE);
     egl::Surface *surface = nullptr;
     ANGLE_EGL_TRY_RETURN(thread,
                          display->createWindowSurface(configuration, win, attributes, &surface),
-                         "eglCreateWindowSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
+                         "eglPlatformCreateWindowSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
 
     return static_cast<EGLSurface>(surface);
 }
@@ -1075,7 +1112,8 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurface(EGLDisplay dpy,
     ANGLE_EGL_TRY_RETURN(
         thread, ValidateCreatePixmapSurface(display, configuration, pixmap, attributes),
         "eglCreatePlatformPixmapSurface", GetDisplayIfValid(display), EGL_NO_SURFACE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreatePlatformPixmapSurface",
+                         GetDisplayIfValid(display), EGL_NO_SURFACE);
     egl::Surface *surface = nullptr;
     ANGLE_EGL_TRY_RETURN(
         thread, display->createPixmapSurface(configuration, pixmap, attributes, &surface),
@@ -1099,7 +1137,8 @@ EGLBoolean EGLAPIENTRY EGL_WaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags)
 
     ANGLE_EGL_TRY_RETURN(thread, ValidateWaitSync(display, context, syncObject, flags),
                          "eglWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
-
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglWaitSync",
+                         GetDisplayIfValid(display), EGL_FALSE);
     gl::Context *currentContext = thread->getContext();
     ANGLE_EGL_TRY_RETURN(thread, syncObject->serverWait(display, currentContext, flags),
                          "eglWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);

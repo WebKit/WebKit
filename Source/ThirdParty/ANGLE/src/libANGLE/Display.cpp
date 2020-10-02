@@ -955,6 +955,16 @@ Error Display::terminate(const Thread *thread)
     return NoError();
 }
 
+Error Display::prepareForCall()
+{
+    return mImplementation->prepareForCall();
+}
+
+Error Display::releaseThread()
+{
+    return mImplementation->releaseThread();
+}
+
 std::vector<const Config *> Display::getConfigs(const egl::AttributeMap &attribs) const
 {
     return mConfigSet.filter(attribs);
@@ -1542,6 +1552,14 @@ static ClientExtensions GenerateClientExtensions()
 
 #if defined(ANGLE_PLATFORM_LINUX)
     extensions.platformANGLEDeviceTypeEGLANGLE = true;
+#endif
+
+#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+    extensions.platformANGLEDeviceContextVolatileEagl = true;
+#endif
+
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+    extensions.platformANGLEDeviceContextVolatileCgl = true;
 #endif
 
     extensions.clientGetAllProcAddresses = true;

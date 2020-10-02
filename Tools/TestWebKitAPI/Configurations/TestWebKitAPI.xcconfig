@@ -61,7 +61,17 @@ WK_HID_LDFLAGS_MACOS_SINCE_1015 = -framework HID;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_PDFKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_maccatalyst = -framework OpenGL;
+WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_watchos = $(WK_OPENGL_LDFLAGS_iphoneos);
+WK_OPENGL_LDFLAGS_watchsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
+WK_OPENGL_LDFLAGS_appletvos = $(WK_OPENGL_LDFLAGS_iphoneos);
+WK_OPENGL_LDFLAGS_appletvsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
+WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+
+OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_PDFKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.

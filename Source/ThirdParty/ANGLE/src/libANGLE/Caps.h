@@ -1145,6 +1145,12 @@ struct ClientExtensions
     // EGL_ANGLE_platform_angle_context_virtualization
     bool platformANGLEContextVirtualization = false;
 
+    // EGL_ANGLE_platform_angle_device_context_volatile_eagl
+    bool platformANGLEDeviceContextVolatileEagl = false;
+
+    // EGL_ANGLE_platform_angle_device_context_volatile_cgl
+    bool platformANGLEDeviceContextVolatileCgl = false;
+
     // EGL_ANGLE_device_creation
     bool deviceCreation = false;
 

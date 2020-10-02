@@ -1,3 +1,24 @@
+2020-10-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        [iOS WK1] Crashes when using ANGLE WebGL from another thread
+        https://bugs.webkit.org/show_bug.cgi?id=216106
+        <rdar://problem/68602452>
+
+        Reviewed by Kenneth Russell.
+
+        Add a WK1 test which runs WebGL code both in
+        client main thread and in web thread.
+        This tests the case where ANGLE EGL context is
+        not being held current in one thread while the
+        other thread runs WebGL and thus ANGLE EGL code.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLNoCrashOnOtherThreadAccess.mm: Added.
+        (-[WebGLNoCrashOnOtherThreadAccessWebViewDelegate webViewDidFinishLoad:]):
+        (-[WebGLNoCrashOnOtherThreadAccessWebViewDelegate webView:shouldStartLoadWithRequest:navigationType:]):
+        (TestWebKitAPI::TEST):
+
 2020-10-01  Aakash Jain  <aakash_jain@apple.com>
 
         Limit number of tests to log in case of large number of API test failures

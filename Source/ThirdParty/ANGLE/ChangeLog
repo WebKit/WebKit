@@ -1,3 +1,60 @@
+2020-10-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        [iOS WK1] Crashes when using ANGLE WebGL from another thread
+        https://bugs.webkit.org/show_bug.cgi?id=216106
+        <rdar://problem/68602452>
+
+        Reviewed by Kenneth Russell.
+
+        Add two extensions for EAGL and CGL backends to declare the
+        underlying platform context being "volatile". It means that
+        the thread-global current context is being modified behind
+        ANGLE. If ANGLE context is marked volatile for a particular
+        API, it will sync the underlying context for every EGL
+        function that needs the context. Most intuitive use is
+        for the client to call eglMakeCurrent before calling any
+        gl function if the client knowns the platform state might
+        be dirty.
+
+        Implement eglReleaseThread for EAGL and CGL backends.
+        Releasing thread will unset the platform current context.
+
+        Fix a bug of omitting EGL_ANGLE_device_eagl from being
+        advertised.
+
+        * extensions/EGL_ANGLE_platform_angle_device_context_volatile_cgl.txt: Added.
+        * extensions/EGL_ANGLE_platform_angle_device_context_volatile_eagl.txt: Added.
+        * include/EGL/eglext_angle.h:
+        * src/libANGLE/Caps.cpp:
+        (egl::DeviceExtensions::getStrings const):
+        (egl::ClientExtensions::getStrings const):
+        * src/libANGLE/Caps.h:
+        * src/libANGLE/Display.cpp:
+        (egl::Display::prepareForCall):
+        (egl::Display::releaseThread):
+        (egl::GenerateClientExtensions):
+        * src/libANGLE/Display.h:
+        * src/libANGLE/renderer/DisplayImpl.cpp:
+        (rx::DisplayImpl::prepareForCall):
+        (rx::DisplayImpl::releaseThread):
+        * src/libANGLE/renderer/DisplayImpl.h:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.h:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+        (rx::DisplayCGL::initialize):
+        (rx::DisplayCGL::terminate):
+        (rx::DisplayCGL::prepareForCall):
+        (rx::DisplayCGL::releaseThread):
+        (rx::DisplayCGL::makeCurrent):
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.h:
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+        (rx::DisplayEAGL::initialize):
+        (rx::DisplayEAGL::terminate):
+        (rx::DisplayEAGL::prepareForCall):
+        (rx::DisplayEAGL::releaseThread):
+        * src/libANGLE/validationEGL.cpp:
+        * src/libGLESv2/entry_points_egl.cpp:
+        * src/libGLESv2/entry_points_egl_ext.cpp:
+
 2020-09-29  James Darpinian  <jdarpinian@chromium.org>
 
         Fix EXT_color_buffer_half_float on iOS

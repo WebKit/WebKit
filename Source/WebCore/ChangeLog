@@ -1,3 +1,75 @@
+2020-10-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        [iOS WK1] Crashes when using ANGLE WebGL from another thread
+        https://bugs.webkit.org/show_bug.cgi?id=216106
+        <rdar://problem/68602452>
+
+        Reviewed by Kenneth Russell.
+
+        Source of the bug comes from following:
+          - WK1 might run WebKit code in client main thread.
+          - WK1 might run Webkit code in web thread.
+          - WebKit code might run WebGL payload, notably access
+            GraphicsContextGL classes.
+            Client is able to modify EAGL/CGL current context.
+
+        The change to ANGLE incurred two distinct behavior changes
+        compared to raw EAGL / CGL:
+        1) Before: context was set current before any GL call
+        After: context was set current only if EGL current context
+        had been changed. (Explicit code as well as ANGLE implementation
+        optimization.)
+
+        2) Before: context being used was able to be current in
+        multiple threads at the same time. (EAGL/CGL feature)
+        After: context cannot be current in multiple threads
+        at the same time. (EGL feature)
+
+        Change in behavior 1) caused ANGLE to sometimes use
+        the EAGL/CGL context of the client instead of
+        the real context that ANGLE created.
+        Fix this by introducing
+        EGL_ANGLE_platform_angle_device_context_volatile_eagl
+        and
+        EGL_ANGLE_platform_angle_device_context_volatile_cgl
+        which make ANGLE sync the context on each eglMakeCurrent
+        eglReleaseThread and eglTerminate.
+
+        Change in behavior 2) caused ANGLE to use uninitialized
+        context object from one thread, if the real context object
+        was current in another thread.
+        Fix this by considering "GraphicsContextGLOpenGL current context"
+        as part of "data that is owned by WebCoreThread lock".
+        The current context is set with lock held, implicitly.
+        The current context is released when lock is released.
+        When the lock is not held, GraphicsContextGLOpenGL current context
+        is nullptr.
+
+        Adds soft linking for EAGL for the purpose of testing this in
+        TestWebKitAPI. The case of Apple Silicon Mac may sometimes
+        use CGL and sometimes EAGL, and the test should test that
+        client overriding both contexts will not cause problems.
+
+        Fix ANGLE header include path:
+         - Do not include ANGLE in the path, as files are included with ANGLE/
+         - Add WK_ALTERNATE_FRAMEWORKS_DIR so that SDK_VARIANT=iosmac
+           e.g. maccatalyst builds work
+        Previously the ANGLE was not included from ThirdParty/ANGLE, rather
+        "WebKit SDK".
+
+        * Configurations/WebCore.xcconfig:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+        (WebCore::GraphicsContextGLOpenGL::releaseCurrentContext):
+        (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+        (WebCore::GraphicsContextGLOpenGL::allowOfflineRenderers const):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadUnlockFromAnyThread):
+        (_WebThreadUnlock):
+
 2020-10-01  Rob Buis  <rbuis@igalia.com>
 
         update FormData to latest spec webidl

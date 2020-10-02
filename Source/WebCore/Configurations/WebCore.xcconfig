@@ -48,7 +48,7 @@ WK_LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWO
 LIBRARY_SEARCH_PATHS = $(inherited) "$(WK_LIBWEBRTC_LIBRARY_DIR)";
 
 WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions $(SDKROOT)/usr/local/include/WebKitAdditions;
-ANGLE_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/ANGLE $(SDKROOT)/usr/local/include/ANGLE;
+ANGLE_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/local/include/ $(SDKROOT)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/local/include/;
 LIBWEBRTC_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc $(SDKROOT)/usr/local/include/webrtc $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc/sdk/objc/Framework/Headers $(SDKROOT)/usr/local/include/webrtc/sdk/objc/Framework/Headers;
 
 HEADER_SEARCH_PATHS = PAL ForwardingHeaders /usr/include/libxslt /usr/include/libxml2 "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore" "$(BUILT_PRODUCTS_DIR)/usr/local/include" $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(ANGLE_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS) $(SRCROOT);
