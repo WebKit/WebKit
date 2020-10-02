@@ -99,6 +99,10 @@
 #include <crt_externs.h>
 #endif
 
+#if PLATFORM(GTK)
+#include <locale.h>
+#endif
+
 #if HAVE(READLINE)
 // readline/history.h has a Function typedef which conflicts with the WTF::Function template from WTF/Forward.h
 // We #define it to something else to avoid this conflict.

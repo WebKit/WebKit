@@ -1,3 +1,10 @@
+2020-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. [GTK] Add missing locale.h header needed for setlocale()
+
+        * jsc.cpp: Add missing locale.h header for the GTK port, which is needed to get the
+        definition for setlocale() in scope.
+
 2020-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Masm probe should invoke JIT operation function
