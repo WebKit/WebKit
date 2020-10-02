@@ -3064,11 +3064,13 @@
    },
    "Jonathan Bedard" : {
       "emails" : [
-         "jbedard@apple.com"
+         "jbedard@apple.com",
+         "jbedard@webkit.org"
       ],
-      "expertise" : "webkitpy",
+      "expertise" : "webkitpy, Python, testing",
       "nicks" : [
-         "jbedard"
+         "jbedard",
+         "JonWBedard"
       ],
       "status" : "reviewer"
    },
