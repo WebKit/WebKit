@@ -1,3 +1,15 @@
+2020-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Build broken with ENABLE_MEDIA_STREAM enabled and ENABLE_WEB_RTC_DISABLED
+        https://bugs.webkit.org/show_bug.cgi?id=217128
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/GStreamerChecks.cmake: Only enable USE_LIBWEBRTC when both
+        ENABLE_MEDIA_STREAM and ENABLE_WEB_RTC is defined. This prevents trying to
+        build code that uses libwebrtc types when ENABLE_WEB_RTC is disabled but
+        ENABLE_MEDIA_STREAM is enabled.
+
 2020-09-30  Sam Weinig  <weinig@apple.com>
 
         Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
