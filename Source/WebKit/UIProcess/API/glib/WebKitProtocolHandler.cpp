@@ -252,8 +252,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             "  <td><div class=\"titlename\">WPE version</div></td>"
             "  <td>%d.%d.%d (using fdo backend %d.%d.%d)</td>"
             " </tbody></tr>",
-            WPE_FDO_MAJOR_VERSION, WPE_FDO_MINOR_VERSION, WPE_FDO_MICRO_VERSION,
-            WPE_MAJOR_VERSION, WPE_MINOR_VERSION, WPE_MICRO_VERSION);
+            WPE_MAJOR_VERSION, WPE_MINOR_VERSION, WPE_MICRO_VERSION,
+            WPE_FDO_MAJOR_VERSION, WPE_FDO_MINOR_VERSION, WPE_FDO_MICRO_VERSION);
     }
 #endif
 #endif
