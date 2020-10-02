@@ -65,7 +65,7 @@ private:
     AccessibilitySpinButtonPart();
     
     bool press() override;
-    AccessibilityRole roleValue() const override { return AccessibilityRole::Button; }
+    AccessibilityRole roleValue() const override { return AccessibilityRole::SpinButtonPart; }
     bool isSpinButtonPart() const override { return true; }
     LayoutRect elementRect() const override;
 

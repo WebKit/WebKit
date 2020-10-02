@@ -1,3 +1,17 @@
+2020-10-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Layout Test accessibility/mac/html5-input-number.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=180560
+        <rdar://problem/36029379>
+
+        Reviewed by Chris Fleizach.
+
+        Dispatch the computation of the role and subrole to secondary AX thread in isolated tree mode = 2.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::role):
+        (WTR::AccessibilityUIElement::subrole):
+
 2020-10-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Fix MiniBrowser compilation warnings

@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -13,52 +14,52 @@
 <div id="console"></div>
 
 <script>
-
     description("This tests that input type='number' exposes the accessibility of it's stepper correctly");
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
-        
         document.getElementById("number").focus();
-        var textfield = accessibilityController.accessibleElementById("number");
+        window.textfield = accessibilityController.accessibleElementById("number");
 
-        // Verify that the click point is the same as the child.
-        shouldBe("textfield.childrenCount", "1");
+        setTimeout(async function() {
+            // Verify that the click point is the same as the child.
+            shouldBe("textfield.childrenCount", "1");
 
-        var incrementor = textfield.childAtIndex(0);
+            window.incrementor = textfield.childAtIndex(0);
 
-        shouldBe("incrementor.role", "'AXRole: AXIncrementor'");
-        shouldBeTrue("incrementor.width > 0");
-        shouldBeTrue("incrementor.height > 0");
-        shouldBe("incrementor.childrenCount", "2");
+            shouldBe("incrementor.role", "'AXRole: AXIncrementor'");
+            shouldBeTrue("incrementor.width > 0");
+            shouldBeTrue("incrementor.height > 0");
+            shouldBe("incrementor.childrenCount", "2");
 
-        shouldBe("incrementor.childAtIndex(0).role", "'AXRole: AXButton'");
-        shouldBe("incrementor.childAtIndex(0).subrole", "'AXSubrole: AXIncrementArrow'");
-        shouldBeTrue("incrementor.childAtIndex(0).width > 0");
-        shouldBeTrue("incrementor.childAtIndex(0).height > 0");
-        shouldBeTrue("incrementor.childAtIndex(0).isEnabled");
+            shouldBe("incrementor.childAtIndex(0).role", "'AXRole: AXIncrementorArrow'");
+            shouldBe("incrementor.childAtIndex(0).subrole", "'AXSubrole: AXIncrementArrow'");
+            shouldBeTrue("incrementor.childAtIndex(0).width > 0");
+            shouldBeTrue("incrementor.childAtIndex(0).height > 0");
+            shouldBeTrue("incrementor.childAtIndex(0).isEnabled");
 
-        // Increment.
-        incrementor.childAtIndex(0).press();
-        setTimeout(function() {
+            // Increment.
+            incrementor.childAtIndex(0).press();
+            await waitFor(() => {
+                return textfield.stringValue == "AXValue: 1";
+            });
             shouldBe("textfield.stringValue", "'AXValue: 1'");
-            shouldBe("incrementor.childAtIndex(1).role", "'AXRole: AXButton'");
+            shouldBe("incrementor.childAtIndex(1).role", "'AXRole: AXIncrementorArrow'");
             shouldBe("incrementor.childAtIndex(1).subrole", "'AXSubrole: AXDecrementArrow'");
             shouldBeTrue("incrementor.childAtIndex(1).width > 0");
             shouldBeTrue("incrementor.childAtIndex(1).height > 0");
             shouldBeTrue("incrementor.childAtIndex(1).isEnabled");
-            
+
             // Decrement.
             incrementor.childAtIndex(1).press();
-            setTimeout(function() {
-                shouldBe("textfield.stringValue", "'AXValue: 0'");
-                finishJSTest();
-            }, 10);
-        }, 10);
+            await waitFor(() => {
+                return textfield.stringValue == "AXValue: 0";
+            });
+            shouldBe("textfield.stringValue", "'AXValue: 0'");
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -659,18 +659,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString *role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityRoleAttribute], m_element.get());
+    NSString *role = descriptionOfValue(attributeValue(m_element.get(), NSAccessibilityRoleAttribute), m_element.get());
     return concatenateAttributeAndValue(@"AXRole", role);
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSString* role = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilitySubroleAttribute], m_element.get());
-    return concatenateAttributeAndValue(@"AXSubrole", role);
+    NSString *subrole = descriptionOfValue(attributeValue(m_element.get(), NSAccessibilitySubroleAttribute), m_element.get());
+    return concatenateAttributeAndValue(@"AXSubrole", subrole);
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

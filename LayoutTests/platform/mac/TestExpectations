@@ -1425,8 +1425,6 @@ webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-co
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
 
-webkit.org/b/180560 accessibility/mac/html5-input-number.html [ Pass Failure ]
-
 webkit.org/b/180675 accessibility/mac/search-field-cancel-button.html [ Pass Failure ]
 
 webkit.org/b/181098 fast/workers/worker-terminate.html [ Pass Timeout ]

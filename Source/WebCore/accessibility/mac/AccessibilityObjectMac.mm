@@ -373,6 +373,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Div, NSAccessibilityGroupRole },
         { AccessibilityRole::Form, NSAccessibilityGroupRole },
         { AccessibilityRole::SpinButton, NSAccessibilityIncrementorRole },
+        { AccessibilityRole::SpinButtonPart, @"AXIncrementorArrow" },
         { AccessibilityRole::Footer, NSAccessibilityGroupRole },
         { AccessibilityRole::ToggleButton, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::Canvas, NSAccessibilityImageRole },

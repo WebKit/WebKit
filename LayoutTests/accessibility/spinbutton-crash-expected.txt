@@ -4,7 +4,7 @@ This tests that a spin button won't access invalid attributes when its already d
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-spinner incrementer: AXRole: AXButton
+spinner incrementer: AXRole: AXIncrementorArrow
 PASS document.getElementById('number').value is '10'
 PASS document.getElementById('number').value is '5'
 PASS document.getElementById('number').value is ''

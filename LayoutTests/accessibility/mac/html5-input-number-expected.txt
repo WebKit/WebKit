@@ -9,13 +9,13 @@ PASS incrementor.role is 'AXRole: AXIncrementor'
 PASS incrementor.width > 0 is true
 PASS incrementor.height > 0 is true
 PASS incrementor.childrenCount is 2
-PASS incrementor.childAtIndex(0).role is 'AXRole: AXButton'
+PASS incrementor.childAtIndex(0).role is 'AXRole: AXIncrementorArrow'
 PASS incrementor.childAtIndex(0).subrole is 'AXSubrole: AXIncrementArrow'
 PASS incrementor.childAtIndex(0).width > 0 is true
 PASS incrementor.childAtIndex(0).height > 0 is true
 PASS incrementor.childAtIndex(0).isEnabled is true
 PASS textfield.stringValue is 'AXValue: 1'
-PASS incrementor.childAtIndex(1).role is 'AXRole: AXButton'
+PASS incrementor.childAtIndex(1).role is 'AXRole: AXIncrementorArrow'
 PASS incrementor.childAtIndex(1).subrole is 'AXSubrole: AXDecrementArrow'
 PASS incrementor.childAtIndex(1).width > 0 is true
 PASS incrementor.childAtIndex(1).height > 0 is true
