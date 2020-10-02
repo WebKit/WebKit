@@ -1,3 +1,11 @@
+2020-10-01  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Gardening no_browsing_context failures.
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
