@@ -66,8 +66,7 @@ public:
 #endif
     bool deferredCSSParserEnabled { false };
     bool scrollBehaviorEnabled { false };
-    bool individualTransformPropertiesEnabled { false };
-
+    
     // This is only needed to support getMatchedCSSRules.
     bool hasDocumentSecurityOrigin { false };
     
@@ -110,8 +109,7 @@ struct CSSParserContextHash {
             & key.attachmentEnabled                         << 11
 #endif
             & key.scrollBehaviorEnabled                     << 12
-            & key.individualTransformPropertiesEnabled      << 13
-            & key.mode                                      << 14; // Keep this last.
+            & key.mode                                      << 13; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

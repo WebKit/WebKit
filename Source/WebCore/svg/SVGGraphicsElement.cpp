@@ -73,13 +73,11 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
     AffineTransform matrix;
-
     auto* style = renderer() ? &renderer()->style() : nullptr;
-    bool hasSpecifiedTransform = style && style->hasTransform();
 
-    // Honor any of the transform-related CSS properties if set.
-    if (hasSpecifiedTransform || (style && style->translate())) {
-
+    // If CSS property was set, use that, otherwise fallback to attribute (if set).
+    if (style && style->hasTransform()) {
+        
         FloatRect boundingBox;
         switch (style->transformBox()) {
         case TransformBox::BorderBox:
@@ -115,11 +113,8 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
             matrix.setF(matrix.f() / zoom);
         }
 
-    }
-
-    // If we didn't have the CSS "transform" property set, we must account for the "transform" attribute.
-    if (!hasSpecifiedTransform)
-        matrix *= transform().concatenate();
+    } else
+        matrix = transform().concatenate();
 
     if (m_supplementalTransform)
         return *m_supplementalTransform * matrix;

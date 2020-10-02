@@ -434,7 +434,7 @@ public:
     bool hasOverflowClip() const { return m_bitfields.hasOverflowClip(); }
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
-    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate()); }
+    bool hasTransform() const { return hasTransformRelatedProperty() && style().hasTransform(); }
 
     inline bool preservesNewline() const;
 

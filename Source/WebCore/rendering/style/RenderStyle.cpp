@@ -1269,11 +1269,6 @@ void RenderStyle::setWillChange(RefPtr<WillChangeData>&& willChangeData)
     m_rareNonInheritedData.access().willChange = WTFMove(willChangeData);
 }
 
-void RenderStyle::setTranslate(RefPtr<TranslateTransformOperation>&& t)
-{
-    m_rareNonInheritedData.access().translate = WTFMove(t);
-}
-
 void RenderStyle::clearCursorList()
 {
     if (m_rareInheritedData->cursorData)
@@ -1388,14 +1383,9 @@ static inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation
 
 void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, ApplyTransformOrigin applyOrigin) const
 {
-    // https://www.w3.org/TR/css-transforms-2/#ctm
-    // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
-    // 1. Start with the identity matrix.
-
     auto& operations = m_rareNonInheritedData->transform->operations.operations();
     bool applyTransformOrigin = requireTransformOrigin(operations, applyOrigin);
-
-    // 2. Translate by the computed X, Y, and Z values of transform-origin.
+    
     FloatPoint3D originTranslate;
     if (applyTransformOrigin) {
         originTranslate.setXY(boundingBox.location() + floatPointForLengthPoint(transformOriginXY(), boundingBox.size()));
@@ -1403,19 +1393,9 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
         transform.translate3d(originTranslate.x(), originTranslate.y(), originTranslate.z());
     }
 
-    // 3. Translate by the computed X, Y, and Z values of translate.
-    if (TransformOperation* translate = m_rareNonInheritedData->translate.get())
-        translate->apply(transform, boundingBox.size());
-
-    // 4. Rotate by the computed <angle> about the specified axis of rotate. (FIXME: we don't support the rotate property)
-    // 5. Scale by the computed X, Y, and Z values of scale. (FIXME: we don't support the scale property)
-    // 6. Translate and rotate by the transform specified by offset. (FIXME: we don't support the offset property)
-
-    // 7. Multiply by each of the transform functions in transform from left to right.
     for (auto& operation : operations)
         operation->apply(transform, boundingBox.size());
 
-    // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     if (applyTransformOrigin)
         transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
 }

@@ -1256,7 +1256,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/transforms/TransformOperation.h
     platform/graphics/transforms/TransformOperations.h
     platform/graphics/transforms/TransformationMatrix.h
-    platform/graphics/transforms/TranslateTransformOperation.h
 
     platform/mediarecorder/MediaRecorderPrivate.h
 

@@ -65,7 +65,6 @@
 #include "ThemeTypes.h"
 #include "TouchAction.h"
 #include "TransformOperations.h"
-#include "TranslateTransformOperation.h"
 #include "UnicodeBidi.h"
 #include <memory>
 #include <wtf/DataRef.h>
@@ -622,8 +621,6 @@ public:
 
     TransformBox transformBox() const { return m_rareNonInheritedData->transform->transformBox; }
 
-    TranslateTransformOperation* translate() const { return m_rareNonInheritedData->translate.get(); }
-
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
     TextEmphasisMark textEmphasisMark() const;
     const AtomString& textEmphasisCustomMark() const { return m_rareInheritedData->textEmphasisCustomMark; }
@@ -643,9 +640,9 @@ public:
     ObjectFit objectFit() const { return static_cast<ObjectFit>(m_rareNonInheritedData->objectFit); }
     LengthPoint objectPosition() const { return m_rareNonInheritedData->objectPosition; }
 
-    // Return true if any transform related property (currently transform, translate, transformStyle3D or perspective)
+    // Return true if any transform related property (currently transform, transformStyle3D or perspective)
     // indicates that we are transforming.
-    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || preserves3D() || hasPerspective(); }
+    bool hasTransformRelatedProperty() const { return hasTransform() || preserves3D() || hasPerspective(); }
 
     enum ApplyTransformOrigin { IncludeTransformOrigin, ExcludeTransformOrigin };
     void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, ApplyTransformOrigin = IncludeTransformOrigin) const;
@@ -1181,8 +1178,6 @@ public:
     void setTransformOriginZ(float f) { SET_NESTED_VAR(m_rareNonInheritedData, transform, z, f); }
     void setTransformBox(TransformBox box) { SET_NESTED_VAR(m_rareNonInheritedData, transform, transformBox, box); }
 
-    void setTranslate(RefPtr<TranslateTransformOperation>&&);
-
     void setSpeakAs(OptionSet<SpeakAs> s) { SET_VAR(m_rareInheritedData, speakAs, s.toRaw()); }
     void setTextCombine(TextCombine v) { SET_VAR(m_rareNonInheritedData, textCombine, static_cast<unsigned>(v)); }
     void setTextDecorationColor(const Color& c) { SET_VAR(m_rareNonInheritedData, textDecorationColor, c); }
@@ -1604,7 +1599,6 @@ public:
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
     static TransformBox initialTransformBox() { return TransformBox::ViewBox; }
-    static TranslateTransformOperation* initialTranslate() { return nullptr; }
     static PointerEvents initialPointerEvents() { return PointerEvents::Auto; }
     static float initialTransformOriginZ() { return 0; }
     static TransformStyle3D initialTransformStyle3D() { return TransformStyle3D::Flat; }

@@ -6474,16 +6474,6 @@
                 "comment": "Keeping -webkit-transform-style around is how we'll detect legacy content. At that point, we'll have to add a custom builder and a new TransformStyle3D type. FIXME: this never happened."
             }
         },
-        "translate": {
-            "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
-                "converter": "Translate"
-            },
-            "specification": {
-                "category": "css-transforms",
-                "url": "https://drafts.csswg.org/css-transforms-2/#propdef-translate"
-            }
-        },
         "-webkit-user-drag": {
             "values": [
                 "auto",
