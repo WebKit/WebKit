@@ -36,6 +36,7 @@
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
 #include "TouchAction.h"
+#include "TranslateTransformOperation.h"
 #include "WillChangeData.h"
 #include <memory>
 #include <wtf/DataRef.h>
@@ -176,6 +177,8 @@ public:
 
     DataRef<StyleCustomPropertyData> customProperties;
     std::unique_ptr<HashSet<String>> customPaintWatchedProperties;
+
+    RefPtr<TranslateTransformOperation> translate;
 
     OptionSet<TouchAction> touchActions;
 

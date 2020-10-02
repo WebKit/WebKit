@@ -31,6 +31,7 @@
 
 #include "Length.h"
 #include "TransformOperations.h"
+#include "TranslateTransformOperation.h"
 
 namespace WebCore {
 
@@ -40,5 +41,6 @@ class CSSValue;
 
 bool transformsForValue(const CSSValue&, const CSSToLengthConversionData&, TransformOperations&);
 Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
+RefPtr<TranslateTransformOperation> translateForValue(const CSSValue&, const CSSToLengthConversionData&);
 
 } // namespace WebCore

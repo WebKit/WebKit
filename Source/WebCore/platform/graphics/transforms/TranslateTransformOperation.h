@@ -56,18 +56,18 @@ public:
     Length y() const { return m_y; }
     Length z() const { return m_z; }
 
+    bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const final
+    {
+        transform.translate3d(x(borderBoxSize), y(borderBoxSize), z(borderBoxSize));
+        return m_x.isPercent() || m_y.isPercent();
+    }
+
 private:
     bool isIdentity() const override { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
 
     bool isRepresentableIn2D() const final { return m_z.isZero(); }
 
     bool operator==(const TransformOperation&) const override;
-
-    bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const override
-    {
-        transform.translate3d(x(borderBoxSize), y(borderBoxSize), z(borderBoxSize));
-        return m_x.isPercent() || m_y.isPercent();
-    }
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 

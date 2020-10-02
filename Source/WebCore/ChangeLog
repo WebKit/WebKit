@@ -1,3 +1,60 @@
+2020-09-30  Antoine Quint  <graouts@webkit.org>
+
+        Add non-animated support for the CSS translate property
+        https://bugs.webkit.org/show_bug.cgi?id=216997
+        <rdar://problem/69597083>
+
+        Reviewed by Simon Fraser.
+
+        We add non-animated support for the CSS "translate" property as specifed in by the CSS Transforms Level 2
+        specification (https://drafts.csswg.org/css-transforms-2/#propdef-translate).
+
+        Tests: transforms/2d/translate-and-transform-attribute-in-svg.svg
+               transforms/2d/translate-and-transform-css-property-in-svg.svg
+               transforms/2d/translate-in-svg.svg
+               transforms/2d/translate-transform-order.html
+               transforms/2d/translate-transform-origin-order.html
+
+        * Headers.cmake:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTranslate): Create a CSSValueList to print out the computed value for the "translate" property.
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json: Define the "translate" property with the condition that the runtime setting for individual
+        CSS transform properties is set.
+        * css/TransformFunctions.cpp:
+        (WebCore::translateForValue): Convert a CSSValue to a TranslateTransformOperation when parsing a "translate" property value.
+        * css/TransformFunctions.h:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext): Add a new flag indicating whether the runtime setting for individual
+        CSS transform properties is set.
+        (WebCore::operator==):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTranslate): Create a CSSValueList when parsing a "translate" property value.
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * platform/graphics/transforms/TranslateTransformOperation.h: Promote the apply() method to be public so that it can be called
+        from Style::ComputedStyleExtractor::valueForPropertyInStyle().
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransform const): Consider that having the "translate" property is akin to having a "transform" property
+        in the render tree.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTranslate):
+        (WebCore::RenderStyle::applyTransform const): Account for the RenderStyle::translate() value in the right order, after applying the
+        transform origin, but before applying the main transform. 
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::translate const):
+        (WebCore::RenderStyle::hasTransformRelatedProperty const):
+        (WebCore::RenderStyle::initialTranslate):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertTranslate):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const): Account for the RenderStyle::translate() value when rendering SVG, ensuring
+        that it is applied before the transform specified by either the "transform" CSS property or SVG attribute.
+
 2020-10-02  Sam Weinig  <weinig@apple.com>
 
         Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
