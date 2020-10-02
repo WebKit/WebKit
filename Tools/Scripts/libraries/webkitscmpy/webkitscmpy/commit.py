@@ -30,7 +30,7 @@ from webkitscmpy import Contributor
 class Commit(object):
     HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
     REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
-    IDENTIFIER_RE = re.compile(r'^[Ii]?((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S+))?$')
+    IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d+)\.)?(?P<identifier>-?\d+)(@(?P<branch>\S+))?$')
     NUMBER_RE = re.compile(r'^-?\d*$')
 
     @classmethod
@@ -195,9 +195,11 @@ class Commit(object):
                 result += ' on {}'.format(self.branch)
             result += '\n'
         if self.identifier:
-            result += '    identifier: i{}'.format(self.identifier)
-            if self.identifier:
+            result += '    identifier: {}'.format(self.identifier)
+            if self.branch:
                 result += ' on {}'.format(self.branch)
+            if self.branch_point:
+                result += ' branched from {}'.format(self.branch_point)
             result += '\n'
         if self.author:
             result += '    by {}'.format(self.author)
@@ -213,15 +215,15 @@ class Commit(object):
 
     def __repr__(self):
         if self.branch_point and self.identifier and self.branch:
-            return 'i{}.{}@{}'.format(self.branch_point, self.identifier, self.branch)
+            return '{}.{}@{}'.format(self.branch_point, self.identifier, self.branch)
         if self.identifier and self.branch:
-            return 'i{}@{}'.format(self.identifier, self.branch)
+            return '{}@{}'.format(self.identifier, self.branch)
         if self.revision:
             return 'r{}'.format(self.revision)
         if self.hash:
             return self.hash[:12]
         if self.identifier:
-            return 'i{}'.format(self.identifier)
+            return str(self.identifier)
         raise ValueError('Incomplete commit format')
 
     def __hash__(self):

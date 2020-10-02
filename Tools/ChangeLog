@@ -1,3 +1,21 @@
+2020-10-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Remove "i" from canonical identifier
+        https://bugs.webkit.org/show_bug.cgi?id=217238
+        <rdar://problem/69888017>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/commit.py:
+        (Commit):
+        (Commit.pretty_print): Remove "i" from canonical identifier, add branch point.
+        (Commit.__repr__): Remove "i" from canonical identifier.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/commit_unittest.py:
+        (TestCommit.test_parse_revision):
+        (TestCommit.test_parse_identifier):
+        (TestCommit.test_parse):
+        (TestCommit.test_pretty_print):
+
 2020-10-02  Philippe Normand  <pnormand@igalia.com>
 
         [CMake] unused variable warning spam in UIScriptController.h

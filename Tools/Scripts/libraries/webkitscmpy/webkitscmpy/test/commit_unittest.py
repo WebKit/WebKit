@@ -46,7 +46,6 @@ class TestCommit(unittest.TestCase):
         self.assertEqual(266896, Commit._parse_revision('266896'))
         self.assertEqual(266896, Commit._parse_revision(266896))
 
-        self.assertEqual(None, Commit._parse_revision('i1234'))
         self.assertEqual(None, Commit._parse_revision('c3bd784f8b88bd03'))
         self.assertEqual(None, Commit._parse_revision('0'))
         self.assertEqual(None, Commit._parse_revision('-1'))
@@ -54,42 +53,26 @@ class TestCommit(unittest.TestCase):
         self.assertEqual(None, Commit._parse_revision(3.141592))
 
     def test_parse_identifier(self):
-        self.assertEqual((None, 1234, None), Commit._parse_identifier('i1234'))
-        self.assertEqual((None, 1234, None), Commit._parse_identifier('I1234'))
         self.assertEqual((None, 1234, None), Commit._parse_identifier('1234'))
         self.assertEqual((None, 1234, None), Commit._parse_identifier(1234))
 
-        self.assertEqual((None, 1234, 'main'), Commit._parse_identifier('i1234@main'))
-        self.assertEqual((None, 1234, 'main'), Commit._parse_identifier('I1234@main'))
         self.assertEqual((None, 1234, 'main'), Commit._parse_identifier('1234@main'))
-
-        self.assertEqual((None, 1234, 'eng/bug'), Commit._parse_identifier('i1234@eng/bug'))
-        self.assertEqual((None, 1234, 'eng/bug'), Commit._parse_identifier('I1234@eng/bug'))
         self.assertEqual((None, 1234, 'eng/bug'), Commit._parse_identifier('1234@eng/bug'))
-
-        self.assertEqual((1234, 1, 'eng/bug'), Commit._parse_identifier('i1234.1@eng/bug'))
-        self.assertEqual((1234, 1, 'eng/bug'), Commit._parse_identifier('I1234.1@eng/bug'))
         self.assertEqual((1234, 1, 'eng/bug'), Commit._parse_identifier('1234.1@eng/bug'))
 
         self.assertEqual((None, 0, None), Commit._parse_identifier('0'))
         self.assertEqual((None, -1, None), Commit._parse_identifier('-1'))
 
-        self.assertEqual((None, 0, 'eng/bug'), Commit._parse_identifier('i0@eng/bug'))
-        self.assertEqual((None, 0, 'eng/bug'), Commit._parse_identifier('I0@eng/bug'))
         self.assertEqual((None, 0, 'eng/bug'), Commit._parse_identifier('0@eng/bug'))
-
-        self.assertEqual((None, -1, 'eng/bug'), Commit._parse_identifier('i-1@eng/bug'))
-        self.assertEqual((None, -1, 'eng/bug'), Commit._parse_identifier('I-1@eng/bug'))
         self.assertEqual((None, -1, 'eng/bug'), Commit._parse_identifier('-1@eng/bug'))
 
-        self.assertEqual(None, Commit._parse_identifier('i1234-invalid'))
+        self.assertEqual(None, Commit._parse_identifier('1234-invalid'))
         self.assertEqual(None, Commit._parse_identifier('r266896'))
         self.assertEqual(None, Commit._parse_identifier('c3bd784f8b88bd03'))
         self.assertEqual(None, Commit._parse_identifier(3.141592))
 
     def test_parse(self):
-        self.assertEqual(Commit.parse('i123@main'), Commit(identifier=123, branch='main'))
-        self.assertEqual(Commit.parse('i123'), Commit(identifier=123))
+        self.assertEqual(Commit.parse('123@main'), Commit(identifier=123, branch='main'))
         self.assertEqual(Commit.parse('123'), Commit(identifier=123))
 
         self.assertEqual(Commit.parse('r123'), Commit(revision=123))
@@ -102,44 +85,59 @@ class TestCommit(unittest.TestCase):
     def test_pretty_print(self):
         self.assertEqual(
             Commit(
-                identifier='i123@master',
+                identifier='123@master',
                 hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
                 author=Contributor('Jonathan Bedard', ['jbedard@apple.com']),
                 message='NOT PRINTED',
             ).pretty_print(),
-            '''i123@master
+            '''123@master
     git hash: c3bd784f8b88 on master
-    identifier: i123 on master
+    identifier: 123 on master
     by Jonathan Bedard <jbedard@apple.com>
 ''',
         )
 
         self.assertEqual(
             Commit(
-                identifier='i123@trunk',
+                identifier='123@trunk',
                 revision='r123',
                 author=Contributor('Jonathan Bedard', ['jbedard@apple.com']),
                 timestamp=1000,
                 message='NOT PRINTED',
             ).pretty_print(),
-            '''i123@trunk
+            '''123@trunk
     SVN revision: r123 on trunk
-    identifier: i123 on trunk
+    identifier: 123 on trunk
     by Jonathan Bedard <jbedard@apple.com> @ {}
 '''.format(datetime.utcfromtimestamp(1000)),
         )
 
         self.assertEqual(
             Commit(
-                identifier='i123@trunk',
+                identifier='123.1@branch-a',
+                revision='r124',
+                author=Contributor('Jonathan Bedard', ['jbedard@apple.com']),
+                timestamp=1000,
+                message='NOT PRINTED',
+            ).pretty_print(),
+            '''123.1@branch-a
+    SVN revision: r124 on branch-a
+    identifier: 1 on branch-a branched from 123
+    by Jonathan Bedard <jbedard@apple.com> @ {}
+'''.format(datetime.utcfromtimestamp(1000)),
+        )
+
+        self.assertEqual(
+            Commit(
+                identifier='123@trunk',
                 revision='r123',
                 author=Contributor('Jonathan Bedard', ['jbedard@apple.com']),
                 timestamp=1000,
                 message='PRINTED\n',
             ).pretty_print(message=True),
-            '''i123@trunk
+            '''123@trunk
     SVN revision: r123 on trunk
-    identifier: i123 on trunk
+    identifier: 123 on trunk
     by Jonathan Bedard <jbedard@apple.com> @ {}
 
 PRINTED
@@ -147,9 +145,9 @@ PRINTED
         )
 
     def test_repr(self):
-        self.assertEqual(str(Commit(identifier=123, branch='main')), 'i123@main')
-        self.assertEqual(str(Commit(branch_point=1234, identifier=1, branch='eng/1234')), 'i1234.1@eng/1234')
-        self.assertEqual(str(Commit(identifier=123)), 'i123')
+        self.assertEqual(str(Commit(identifier=123, branch='main')), '123@main')
+        self.assertEqual(str(Commit(branch_point=1234, identifier=1, branch='eng/1234')), '1234.1@eng/1234')
+        self.assertEqual(str(Commit(identifier=123)), '123')
 
         self.assertEqual(str(Commit(revision=123)), 'r123')
 
