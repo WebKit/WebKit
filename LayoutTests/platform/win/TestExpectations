@@ -2488,7 +2488,6 @@ webkit.org/b/140947 [ Debug ] js/slow-stress [ Skip ]
 
 webkit.org/b/127492 js/dom/date-big-constructor.html [ Failure ]
 webkit.org/b/140847 js/dom/date-negative-setmonth.html [ Failure ]
-js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 webkit.org/b/48999 js/dom/exceptions-thrown-in-callbacks.html [ Skip ]
 webkit.org/b/140947 js/slow-stress/Int32Array-alloc-huge.html [ Pass Failure ]
 webkit.org/b/140947 js/slow-stress/Int32Array-alloc-huge-long-lived.html [ Pass Failure ]

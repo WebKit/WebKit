@@ -1,3 +1,30 @@
+2020-10-02  Sam Weinig  <weinig@apple.com>
+
+        Remove unhelpful dom-static-property-for-in-iteration.html test
+        https://bugs.webkit.org/show_bug.cgi?id=217204
+
+        Reviewed by Chris Dumez.
+
+        Iteration order for builtin attributes, operations and constants of WebIDL 
+        objects is not currently defined, so the test dom-static-property-for-in-iteration.html,
+        is just testing what we happen to currently do. This is largely unhelpful
+        and frustrating to maintain as different ports enabling/disabling features
+        means each port needed a seperate result, and any time something was added, removed
+        or moved, all the results need to be updated. There are plenty of other tests
+        that ensure we have these properties, so removing this is not a loss.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * js/dom/dom-static-property-for-in-iteration.html: Removed.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/win/js/dom/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt: Removed.
+
 2020-10-02  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r267796.
