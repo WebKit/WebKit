@@ -1326,3 +1326,4 @@ webkit.org/b/217001 [ Catalina ] fast/scrolling/latching/latched-scroll-into-non
 
 webkit.org/b/217193 [ Mojave+ Release ] inspector/console/queryHolders.html [ Pass Failure ]
 
+webkit.org/b/217262 [ Catalina ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
