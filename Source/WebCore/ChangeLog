@@ -1,3 +1,17 @@
+2020-10-03  Sam Weinig  <weinig@apple.com>
+
+        Simplify and harden idl_files.tmp generation
+        https://bugs.webkit.org/show_bug.cgi?id=217247
+
+        Reviewed by Darin Adler.
+
+        We sometimes see idl_files.tmp not getting deleted and on the next
+        compile things failing. Instead of relying on the delete happening,
+        we now just completely regenerate the file, now renamed to 
+        IDLFileNamesList.txt, each time in one shot.
+
+        * DerivedSources.make:
+
 2020-10-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Rename InlineContentBreaker::Result::Action::Push to Wrap
