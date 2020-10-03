@@ -114,11 +114,30 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             continue;
         }
 
-        auto length = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-        ASSERT(length);
-        auto hasTrailingSoftHyphen = text[currentPosition + length - 1] == softHyphen;
-        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, currentPosition, length, hasTrailingSoftHyphen, inlineItemWidth(currentPosition, length)));
-        currentPosition += length;
+        auto hasTrailingSoftHyphen = false;
+        auto initialNonWhitespacePosition = currentPosition;
+        auto isAtSoftHyphen = [&](auto position) {
+            return text[position] == softHyphen;
+        };
+        if (style.hyphens() == Hyphens::None) {
+            // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
+            while (currentPosition < text.length()) {
+                auto nonWhiteSpaceLength = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
+                ASSERT(nonWhiteSpaceLength);
+                currentPosition += nonWhiteSpaceLength;
+                if (!isAtSoftHyphen(currentPosition - 1))
+                    break;
+            }
+        } else {
+            auto nonWhiteSpaceLength = moveToNextBreakablePosition(initialNonWhitespacePosition, lineBreakIterator, style);
+            ASSERT(nonWhiteSpaceLength);
+            currentPosition += nonWhiteSpaceLength;
+            hasTrailingSoftHyphen = isAtSoftHyphen(currentPosition - 1);
+        }
+        ASSERT(initialNonWhitespacePosition < currentPosition);
+        ASSERT_IMPLIES(style.hyphens() == Hyphens::None, !hasTrailingSoftHyphen);
+        auto length = currentPosition - initialNonWhitespacePosition;
+        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, initialNonWhitespacePosition, length, hasTrailingSoftHyphen, inlineItemWidth(initialNonWhitespacePosition, length)));
     }
 }
 
