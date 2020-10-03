@@ -604,7 +604,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
         commitFloats(lineCandidate);
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
-    if (result.action == InlineContentBreaker::Result::Action::Push) {
+    if (result.action == InlineContentBreaker::Result::Action::Wrap) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
         return { InlineContentBreaker::IsEndOfLine::Yes };

@@ -99,7 +99,7 @@ static inline Optional<size_t> lastContentRunIndex(const InlineContentBreaker::C
 
 static inline bool isWrappingAllowed(const RenderStyle& style)
 {
-    // Do not try to push overflown 'pre' and 'no-wrap' content to next line.
+    // Do not try to wrap overflown 'pre' and 'no-wrap' content to next line.
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
@@ -169,8 +169,8 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
                 m_hasWrapOpportunityAtPreviousPosition = true;
             }
         }
-    } else if (result.action == Result::Action::Push && lineStatus.trailingSoftHyphenWidth) {
-        // A trailing soft hyphen may turn action "Push" to action "Revert".
+    } else if (result.action == Result::Action::Wrap && lineStatus.trailingSoftHyphenWidth) {
+        // A trailing soft hyphen may turn action "Wrap" to action "Revert".
         if (*lineStatus.trailingSoftHyphenWidth > lineStatus.availableWidth && isTextContentOnly(candidateContent))
             result = { Result::Action::RevertToLastNonOverflowingWrapOpportunity, IsEndOfLine::Yes };
     }
@@ -216,10 +216,10 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         if (auto trailingContent = processOverflowingTextContent(continuousContent, lineStatus)) {
             if (!trailingContent->runIndex && trailingContent->hasOverflow) {
                 // We tried to break the content but the available space can't even accommodate the first character.
-                // 1. Push the content over to the next line when we've got content on the line already.
+                // 1. Wrap the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
                 if (!lineStatus.isEmpty)
-                    return { Result::Action::Push, IsEndOfLine::Yes };
+                    return { Result::Action::Wrap, IsEndOfLine::Yes };
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
                 auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
                 ASSERT(inlineTextItem.length());
@@ -233,14 +233,14 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
             return { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };
         }
     }
-    // If we are not allowed to break this overflowing content, we still need to decide whether keep it or push it to the next line.
+    // If we are not allowed to break this overflowing content, we still need to decide whether keep it or wrap it to the next line.
     if (lineStatus.isEmpty) {
         ASSERT(!m_hasWrapOpportunityAtPreviousPosition);
         return { Result::Action::Keep, IsEndOfLine::No };
     }
     // Now either wrap here or at an earlier position, or not wrap at all.
     if (isContentWrappingAllowed(continuousContent))
-        return { Result::Action::Push, IsEndOfLine::Yes };
+        return { Result::Action::Wrap, IsEndOfLine::Yes };
     if (m_hasWrapOpportunityAtPreviousPosition)
         return { Result::Action::RevertToLastWrapOpportunity, IsEndOfLine::Yes };
     return { Result::Action::Keep, IsEndOfLine::No };

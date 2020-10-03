@@ -50,7 +50,7 @@ public:
         enum class Action {
             Keep, // Keep content on the current line.
             Break, // Partial content is on the current line.
-            Push, // Content is pushed to the next line.
+            Wrap, // Content is wrapped to the next line.
             // The current content overflows and can't get broken up into smaller bits.
             RevertToLastWrapOpportunity, // The content needs to be reverted back to the last wrap opportunity.
             RevertToLastNonOverflowingWrapOpportunity // The content needs to be reverted back to a wrap opportunity that still fits the line.
