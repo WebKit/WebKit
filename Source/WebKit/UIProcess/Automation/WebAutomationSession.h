@@ -216,6 +216,8 @@ public:
     void markEventAsSynthesizedForAutomation(NSEvent *);
 #endif
 
+    void didDestroyFrame(WebCore::FrameIdentifier);
+
 private:
     WebPageProxy* webPageProxyForHandle(const String&);
     String handleForWebPageProxy(const WebPageProxy&);

@@ -111,6 +111,7 @@ void Session::close(Function<void (CommandResult&&)>&& completionHandler)
 {
     m_toplevelBrowsingContext = WTF::nullopt;
     m_currentBrowsingContext = WTF::nullopt;
+    m_currentParentBrowsingContext = WTF::nullopt;
     getWindowHandles([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
@@ -151,11 +152,26 @@ void Session::switchToTopLevelBrowsingContext(const String& toplevelBrowsingCont
 {
     m_toplevelBrowsingContext = toplevelBrowsingContext;
     m_currentBrowsingContext = String();
+    m_currentParentBrowsingContext = String();
 }
 
-void Session::switchToBrowsingContext(const String& browsingContext)
+void Session::switchToBrowsingContext(const String& browsingContext, Function<void(CommandResult&&)>&& completionHandler)
 {
     m_currentBrowsingContext = browsingContext;
+    if (browsingContext.isEmpty()) {
+        m_currentParentBrowsingContext = String();
+        completionHandler(CommandResult::success());
+        return;
+    }
+
+    auto parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
+    m_host->sendCommandToBackend("resolveParentFrameHandle"_s, WTFMove(parameters), [this, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (!response.isError && response.responseObject)
+            m_currentParentBrowsingContext = response.responseObject->getString("result"_s);
+        completionHandler(CommandResult::success());
+    });
 }
 
 Optional<String> Session::pageLoadStrategyString() const
@@ -305,13 +321,12 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
         parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("navigateBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            switchToBrowsingContext({ });
-            completionHandler(CommandResult::success());
+            switchToBrowsingContext({ }, WTFMove(completionHandler));
         });
     });
 }
@@ -371,13 +386,12 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("goBackInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            switchToBrowsingContext({ });
-            completionHandler(CommandResult::success());
+            switchToBrowsingContext({ }, WTFMove(completionHandler));
         });
     });
 }
@@ -399,13 +413,12 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("goForwardInBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            switchToBrowsingContext({ });
-            completionHandler(CommandResult::success());
+            switchToBrowsingContext({ }, WTFMove(completionHandler));
         });
     });
 }
@@ -427,13 +440,12 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
         parameters->setDouble("pageLoadTimeout"_s, m_pageLoadTimeout);
         if (auto pageLoadStrategy = pageLoadStrategyString())
             parameters->setString("pageLoadStrategy"_s, pageLoadStrategy.value());
-        m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("reloadBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            switchToBrowsingContext({ });
-            completionHandler(CommandResult::success());
+            switchToBrowsingContext({ }, WTFMove(completionHandler));
         });
     });
 }
@@ -548,17 +560,30 @@ void Session::closeWindow(Function<void (CommandResult&&)>&& completionHandler)
         }
         auto toplevelBrowsingContext = std::exchange(m_toplevelBrowsingContext, WTF::nullopt);
         m_currentBrowsingContext = WTF::nullopt;
+        m_currentParentBrowsingContext = WTF::nullopt;
         closeTopLevelBrowsingContext(toplevelBrowsingContext.value(), WTFMove(completionHandler));
     });
 }
 
-void Session::switchToWindow(const String& windowHandle, Function<void (CommandResult&&)>&& completionHandler)
+void Session::switchToBrowsingContext(const String& toplevelBrowsingContext, const String& browsingContext, Function<void(CommandResult&&)>&& completionHandler)
 {
     auto parameters = JSON::Object::create();
-    parameters->setString("browsingContextHandle"_s, windowHandle);
-    m_host->sendCommandToBackend("switchToBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), windowHandle, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+    parameters->setString("browsingContextHandle"_s, toplevelBrowsingContext);
+    parameters->setString("frameHandle"_s, browsingContext);
+    m_host->sendCommandToBackend("switchToBrowsingContext"_s, WTFMove(parameters), [this, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        completionHandler(CommandResult::success());
+    });
+}
+
+void Session::switchToWindow(const String& windowHandle, Function<void(CommandResult&&)>&& completionHandler)
+{
+    switchToBrowsingContext(windowHandle, { }, [this, protectedThis = makeRef(*this), windowHandle, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
             return;
         }
         switchToTopLevelBrowsingContext(windowHandle);
@@ -651,8 +676,7 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
             return;
         }
-        switchToBrowsingContext({ });
-        completionHandler(CommandResult::success());
+        switchToBrowsingContext({ }, WTFMove(completionHandler));
         return;
     }
 
@@ -680,7 +704,7 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
             parameters->setString("nodeHandle"_s, frameElementID);
         }
 
-        m_host->sendCommandToBackend("resolveChildFrameHandle"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("resolveChildFrameHandle"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -692,21 +716,21 @@ void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (Comman
                 return;
             }
 
-            switchToBrowsingContext(frameHandle);
-            completionHandler(CommandResult::success());
+            switchToBrowsingContext(m_toplevelBrowsingContext.value(), frameHandle, [this, protectedThis, frameHandle, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                if (result.isError()) {
+                    completionHandler(WTFMove(result));
+                    return;
+                }
+                switchToBrowsingContext(frameHandle, WTFMove(completionHandler));
+            });
         });
     });
 }
 
 void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!m_toplevelBrowsingContext) {
+    if (!m_currentParentBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
-    if (!m_currentBrowsingContext) {
-        completionHandler(CommandResult::success());
         return;
     }
 
@@ -715,23 +739,17 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
             completionHandler(WTFMove(result));
             return;
         }
-        auto parameters = JSON::Object::create();
-        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        m_host->sendCommandToBackend("resolveParentFrameHandle"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-            if (response.isError || !response.responseObject) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+
+        switchToBrowsingContext(m_toplevelBrowsingContext.value(), m_currentParentBrowsingContext.value(), [this, protectedThis, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            if (result.isError()) {
+                if (result.errorCode() == CommandResult::ErrorCode::NoSuchFrame)
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+                else
+                    completionHandler(WTFMove(result));
                 return;
             }
 
-            auto frameHandle = response.responseObject->getString("result"_s);
-            if (!frameHandle) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-                return;
-            }
-
-            switchToBrowsingContext(frameHandle);
-            completionHandler(CommandResult::success());
+            switchToBrowsingContext(m_currentParentBrowsingContext.value(), WTFMove(completionHandler));
         });
     });
 }
@@ -1599,6 +1617,7 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
                 // Window was closed, reset the top level browsing context and ignore the error.
                 m_toplevelBrowsingContext = WTF::nullopt;
                 m_currentBrowsingContext = WTF::nullopt;
+                m_currentParentBrowsingContext = WTF::nullopt;
                 break;
             case CommandResult::ErrorCode::NoSuchFrame:
                 // Navigation destroyed the current frame, reset the current browsing context and ignore the error.

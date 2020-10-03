@@ -1,3 +1,18 @@
+2020-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: several issues when switching to new browser context
+        https://bugs.webkit.org/show_bug.cgi?id=217217
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::didDestroyFrame): Remove the frame references from maps.
+        (WebKit::WebAutomationSession::navigationOccurredForFrame): Only clear the frame references from the maps for
+        the frames in the given frame's page.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didDestroyFrame): Notify automation session about frame being destroyed.
+
 2020-10-02  Simon Fraser  <simon.fraser@apple.com>
 
         Move WebEvent subclass declarations to their own files

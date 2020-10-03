@@ -1018,6 +1018,8 @@ void WebProcessProxy::didDestroyFrame(FrameIdentifier frameID)
             page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
     }
 #endif
+    if (auto* automationSession = m_processPool->automationSession())
+        automationSession->didDestroyFrame(frameID);
     m_frameMap.remove(frameID);
 }
 

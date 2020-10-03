@@ -1,5 +1,42 @@
 2020-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: several issues when switching to new browser context
+        https://bugs.webkit.org/show_bug.cgi?id=217217
+
+        Reviewed by Brian Burg.
+
+        There are several issues to fix when switching to a browser context:
+
+          1- The spec has changed and now we should always keep the current parent browsing context.
+          2- The spec says we should focus the new frame after switching to a frame or parent frame, but we are just
+             resolving the frame and updating the handle internally.
+          3- We are keeping stale frame handles and ids in the automation session, they should be removed when frames
+             are destroyed.
+          4- We are clearing all frame references in the automation session when a navigation happens in any main
+             frame. We should only clear the frames of the page that completed the navigation.
+
+        All theses cases are covered by new tests added to imported/w3c/webdriver/tests/switch_to_parent_frame/
+
+        * Session.cpp:
+        (WebDriver::Session::close): Close the current parent browsing context too.
+        (WebDriver::Session::switchToTopLevelBrowsingContext): Initialize the current parent browsing context too.
+        (WebDriver::Session::switchToBrowsingContext): Resolve the parent frame handle and set the current parent browsing context.
+        (WebDriver::Session::go): Pass completion handler to switchToBrowsingContext().
+        (WebDriver::Session::back): Ditto.
+        (WebDriver::Session::forward): Ditto.
+        (WebDriver::Session::refresh): Ditto.
+        (WebDriver::Session::closeWindow): Close the current parent browsing context too.
+        (WebDriver::Session::switchToBrowsingContext): Send switchToBrowsingContext message to the browser.
+        (WebDriver::Session::switchToWindow): Use switchToBrowsingContext() to send the message to the browser.
+        (WebDriver::Session::switchToFrame): Call switchToBrowsingContext() after the child frame handle is resolved.
+        (WebDriver::Session::switchToParentFrame): Check current parent browsing context is still open and call
+        switchToBrowsingContext() to switch to the current parent browsing context.
+        (WebDriver::Session::waitForNavigationToComplete): Close the current parent browsing context too when the window
+        is closed due to the navigation.
+        * Session.h: Add m_currentParentBrowsingContext.
+
+2020-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: check the right browser context is open in all commands
         https://bugs.webkit.org/show_bug.cgi?id=217177
 
