@@ -90,6 +90,8 @@ public:
     void advanceSkippingChildren();
 
 private:
+    void enforceEndInvariant();
+
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastLastNode;
 };

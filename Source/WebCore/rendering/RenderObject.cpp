@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "Editing.h"
+#include "ElementAncestorIterator.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -52,6 +53,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
@@ -680,7 +682,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
         }
     }
 
-    paintInfo.context().setURLForRect(node->document().completeURL(href), urlRect);
+    paintInfo.context().setURLForRect(element.document().completeURL(href), urlRect);
 
 }
 
@@ -1900,35 +1902,150 @@ bool RenderObject::hasNonEmptyVisibleRectRespectingParentFrames() const
     return false;
 }
 
-Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, bool useSelectionHeight)
+Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, OptionSet<RenderObject::BoundingRectBehavior> behavior)
 {
     Vector<FloatQuad> quads;
     for (auto& node : intersectingNodes(range)) {
         auto renderer = node.renderer();
         if (renderer && renderer->isBR())
-            renderer->absoluteQuads(quads);
+            downcast<RenderLineBreak>(*renderer).absoluteQuads(quads);
         else if (is<RenderText>(renderer)) {
             auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node));
-            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, useSelectionHeight));
+            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(BoundingRectBehavior::UseSelectionHeight)));
         }
     }
     return quads;
 }
 
-Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, bool useSelectionHeight)
+static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, Text& node, OptionSet<RenderObject::BoundingRectBehavior> behavior)
 {
+    auto renderer = node.renderer();
+    if (!renderer)
+        return { };
+
+    auto offsetRange = characterDataOffsetRange(range, node);
+    auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight), behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
+
+    if (behavior.contains(RenderObject::BoundingRectBehavior::RespectClipping)) {
+        auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRect();
+        Vector<FloatRect> clippedRects;
+        clippedRects.reserveInitialCapacity(textQuads.size());
+        for (auto& quad : textQuads) {
+            auto clippedRect = intersection(quad.boundingBox(), absoluteClippedOverflowRect);
+            if (!clippedRect.isEmpty())
+                clippedRects.uncheckedAppend(clippedRect);
+        }
+        return clippedRects;
+    }
+
+    return boundingBoxes(textQuads);
+}
+
+// FIXME: This should return Vector<FloatRect> like the other similar functions.
+// FIXME: Find a way to share with absoluteTextQuads rather than repeating so much of the logic from that function.
+Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, OptionSet<BoundingRectBehavior> behavior)
+{
+    ASSERT(!behavior.contains(BoundingRectBehavior::UseVisibleBounds));
+    ASSERT(!behavior.contains(BoundingRectBehavior::IgnoreTinyRects));
     Vector<IntRect> rects;
     for (auto& node : intersectingNodes(range)) {
         auto renderer = node.renderer();
         if (renderer && renderer->isBR())
-            renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
-        else if (is<RenderText>(renderer)) {
-            auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node));
-            for (auto& quad : downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, useSelectionHeight))
-                rects.append(quad.enclosingBoundingBox());
+            downcast<RenderLineBreak>(*renderer).absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
+        else if (is<Text>(node)) {
+            for (auto& rect : absoluteRectsForRangeInText(range, downcast<Text>(node), behavior))
+                rects.append(enclosingIntRect(rect));
         }
     }
     return rects;
+}
+
+static RefPtr<Node> nodeBefore(const BoundaryPoint& point)
+{
+    if (point.offset) {
+        if (auto node = point.container->traverseToChildAt(point.offset - 1))
+            return node;
+    }
+    return point.container.ptr();
+}
+
+enum class CoordinateSpace { Client, Absolute };
+
+static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, CoordinateSpace space, OptionSet<RenderObject::BoundingRectBehavior> behavior)
+{
+    Vector<FloatRect> rects;
+
+    range.start.container->document().updateLayoutIgnorePendingStylesheets();
+
+    bool useVisibleBounds = behavior.contains(RenderObject::BoundingRectBehavior::UseVisibleBounds);
+
+    HashSet<Element*> selectedElementsSet;
+    for (auto& node : intersectingNodes(range)) {
+        if (is<Element>(node))
+            selectedElementsSet.add(&downcast<Element>(node));
+    }
+
+    // Don't include elements at the end of the range that are only partially selected.
+    // FIXME: What about the start of the range? The asymmetry here does not make sense. Seems likely this logic is not quite right in other respects, too.
+    if (auto lastNode = nodeBefore(range.end)) {
+        for (auto& ancestor : ancestorsOfType<Element>(*lastNode))
+            selectedElementsSet.remove(&ancestor);
+    }
+
+    constexpr OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = {
+        RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection,
+        RenderObject::VisibleRectContextOption::ApplyCompositedClips,
+        RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls
+    };
+
+    for (auto& node : intersectingNodes(range)) {
+        if (is<Element>(node) && selectedElementsSet.contains(&downcast<Element>(node)) && (useVisibleBounds || !node.parentElement() || !selectedElementsSet.contains(node.parentElement()))) {
+            if (auto renderer = downcast<Element>(node).renderBoxModelObject()) {
+                if (useVisibleBounds) {
+                    auto localBounds = renderer->borderBoundingBox();
+                    auto rootClippedBounds = renderer->computeVisibleRectInContainer(localBounds, &renderer->view(), { false, false, visibleRectOptions });
+                    if (!rootClippedBounds)
+                        continue;
+                    auto snappedBounds = snapRectToDevicePixels(*rootClippedBounds, node.document().deviceScaleFactor());
+                    if (space == CoordinateSpace::Client)
+                        node.document().convertAbsoluteToClientRect(snappedBounds, renderer->style());
+                    rects.append(snappedBounds);
+                    continue;
+                }
+
+                Vector<FloatQuad> elementQuads;
+                renderer->absoluteQuads(elementQuads);
+                if (space == CoordinateSpace::Client)
+                    node.document().convertAbsoluteToClientQuads(elementQuads, renderer->style());
+                rects.appendVector(boundingBoxes(elementQuads));
+            }
+        } else if (is<Text>(node)) {
+            if (auto renderer = downcast<Text>(node).renderer()) {
+                auto clippedRects = absoluteRectsForRangeInText(range, downcast<Text>(node), behavior);
+                if (space == CoordinateSpace::Client)
+                    node.document().convertAbsoluteToClientRects(clippedRects, renderer->style());
+                rects.appendVector(clippedRects);
+            }
+        }
+    }
+
+    if (behavior.contains(RenderObject::BoundingRectBehavior::IgnoreTinyRects)) {
+        rects.removeAllMatching([&] (const FloatRect& rect) -> bool {
+            return rect.area() <= 1;
+        });
+    }
+
+    return rects;
+}
+
+Vector<FloatRect> RenderObject::absoluteBorderAndTextRects(const SimpleRange& range, OptionSet<BoundingRectBehavior> behavior)
+{
+    return borderAndTextRects(range, CoordinateSpace::Absolute, behavior);
+}
+
+Vector<FloatRect> RenderObject::clientBorderAndTextRects(const SimpleRange& range)
+{
+    return borderAndTextRects(range, CoordinateSpace::Client, { });
 }
 
 #if PLATFORM(IOS_FAMILY)
