@@ -44,9 +44,4 @@ interface mixin WindowEventHandlers {
     [WindowEventHandler] attribute EventHandler onstorage;
     [WindowEventHandler] attribute EventHandler onunhandledrejection;
     [WindowEventHandler] attribute EventHandler onunload;
-
-
-    // Additions that are not yet part of the standard.
-
-    [NotEnumerable, WindowEventHandler, Conditional=ORIENTATION_EVENTS] attribute EventHandler onorientationchange;
 };

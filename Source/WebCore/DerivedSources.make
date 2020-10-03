@@ -745,7 +745,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DocumentOrShadowRoot+PointerLock.idl \
     $(WebCore)/dom/DocumentType.idl \
     $(WebCore)/dom/DragEvent.idl \
+    $(WebCore)/dom/Element+CSSOMView.idl \
     $(WebCore)/dom/Element+DOMParsing.idl \
+    $(WebCore)/dom/Element+Fullscreen.idl \
+    $(WebCore)/dom/Element+PointerEvents.idl \
+    $(WebCore)/dom/Element+PointerLock.idl \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ElementContentEditable.idl \
     $(WebCore)/dom/ErrorEvent.idl \
@@ -755,8 +759,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/EventModifierInit.idl \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
-    $(WebCore)/dom/GlobalEventHandlers.idl \
     $(WebCore)/dom/GlobalEventHandlers+PointerEvents.idl \
+    $(WebCore)/dom/GlobalEventHandlers.idl \
     $(WebCore)/dom/HashChangeEvent.idl \
     $(WebCore)/dom/IdleDeadline.idl \
     $(WebCore)/dom/IdleRequestCallback.idl \
@@ -789,6 +793,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/ProcessingInstruction.idl \
     $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/PromiseRejectionEvent.idl \
+    $(WebCore)/dom/Range+CSSOMView.idl \
+    $(WebCore)/dom/Range+DOMParsing.idl \
     $(WebCore)/dom/Range.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
@@ -833,6 +839,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLAudioElement.idl \
     $(WebCore)/html/HTMLBRElement.idl \
     $(WebCore)/html/HTMLBaseElement.idl \
+    $(WebCore)/html/HTMLBodyElement+Compat.idl \
     $(WebCore)/html/HTMLBodyElement.idl \
     $(WebCore)/html/HTMLButtonElement.idl \
     $(WebCore)/html/HTMLCanvasElement.idl \
@@ -860,6 +867,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLHtmlElement.idl \
     $(WebCore)/html/HTMLHyperlinkElementUtils.idl \
     $(WebCore)/html/HTMLIFrameElement.idl \
+    $(WebCore)/html/HTMLImageElement+CSSOMView.idl \
     $(WebCore)/html/HTMLImageElement.idl \
     $(WebCore)/html/HTMLInputElement.idl \
     $(WebCore)/html/HTMLKeygenElement.idl \
@@ -869,8 +877,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLLinkElement.idl \
     $(WebCore)/html/HTMLMapElement.idl \
     $(WebCore)/html/HTMLMarqueeElement.idl \
+    $(WebCore)/html/HTMLMediaElement+AudioOutput.idl \
     $(WebCore)/html/HTMLMediaElement.idl \
-    $(WebCore)/html/HTMLMediaElementAudioOutput.idl \
     $(WebCore)/html/HTMLMenuElement.idl \
     $(WebCore)/html/HTMLMenuItemElement.idl \
     $(WebCore)/html/HTMLMetaElement.idl \
@@ -1029,10 +1037,16 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/BarProp.idl \
     $(WebCore)/page/Crypto.idl \
     $(WebCore)/page/DOMSelection.idl \
+    $(WebCore)/page/DOMWindow+CSSOM.idl \
+    $(WebCore)/page/DOMWindow+CSSOMView.idl \
+    $(WebCore)/page/DOMWindow+Compat.idl \
+    $(WebCore)/page/DOMWindow+DeviceMotion.idl \
+    $(WebCore)/page/DOMWindow+DeviceOrientation.idl \
+    $(WebCore)/page/DOMWindow+RequestIdleCallback.idl \
+    $(WebCore)/page/DOMWindow+Selection.idl \
+    $(WebCore)/page/DOMWindow+VisualViewport.idl \
     $(WebCore)/page/DOMWindow.idl \
     $(WebCore)/page/EventSource.idl \
-    $(WebCore)/page/GlobalCrypto.idl \
-    $(WebCore)/page/GlobalPerformance.idl \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/IntersectionObserver.idl \
     $(WebCore)/page/IntersectionObserverCallback.idl \
@@ -1085,7 +1099,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/WebKitNamespace.idl \
     $(WebCore)/page/WebKitPoint.idl \
     $(WebCore)/page/WindowEventHandlers.idl \
+    $(WebCore)/page/WindowLocalStorage.idl \
+    $(WebCore)/page/WindowOrWorkerGlobalScope+Crypto.idl \
+    $(WebCore)/page/WindowOrWorkerGlobalScope+Performance.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
+    $(WebCore)/page/WindowSessionStorage.idl \
     $(WebCore)/page/WorkerNavigator.idl \
     $(WebCore)/plugins/DOMMimeType.idl \
     $(WebCore)/plugins/DOMMimeTypeArray.idl \

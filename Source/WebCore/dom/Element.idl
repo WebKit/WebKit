@@ -70,71 +70,34 @@
     [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
     [MayThrowException] undefined insertAdjacentText(DOMString where, DOMString data); // Historical.
 
-    // CSSOM-view extensions (https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface).
-    DOMRectList getClientRects();
-    [NewObject] DOMRect getBoundingClientRect();
-    undefined scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg);
-    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options);
-    [ImplementedAs=scrollTo] undefined scroll(unrestricted double x, unrestricted double y);
-    undefined scrollTo(optional ScrollToOptions options);
-    undefined scrollTo(unrestricted double x, unrestricted double y);
-    undefined scrollBy(optional ScrollToOptions option);
-    undefined scrollBy(unrestricted double x, unrestricted double y);
-    attribute long scrollTop; // FIXME(webkit.org/b/188045): should be unrestricted double.
-    attribute long scrollLeft; // FIXME(webkit.org/b/188045): should be unrestricted double.
-    readonly attribute long scrollWidth;
-    readonly attribute long scrollHeight;
-    readonly attribute double clientTop; // FIXME: Should be of type long.
-    readonly attribute double clientLeft; // FIXME: Should be of type long.
-    readonly attribute double clientWidth; // FIXME: Should be of type long.
-    readonly attribute double clientHeight; // FIXME: Should be of type long.
-
-    // Extensions from Full Screen API (https://fullscreen.spec.whatwg.org/#api).
-    // FIXME: Should we add unprefixed versions?
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitRequestFullscreen, DisabledByQuirk=shouldDisableElementFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] undefined webkitRequestFullscreen(); // Prefixed W3C version.
-
-    // Extensions from Pointer Events API (https://w3c.github.io/pointerevents/#extensions-to-the-element-interface).
-    [MayThrowException] undefined setPointerCapture(long pointerId);
-    [MayThrowException] undefined releasePointerCapture(long pointerId);
-    boolean hasPointerCapture(long pointerId);
-
-    // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-element-interface).
-    [Conditional=POINTER_LOCK] undefined requestPointerLock();
-
-    // Non standard API (https://www.w3.org/Bugs/Public/show_bug.cgi?id=17152).
-    undefined scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
+    
+    // FIXME: Most of the following non-standard event handlers probably make more sense as part of the GlobalEventHandlers mixin.
 
     // Event handler from Selection API (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
-    // FIXME: Should be moved to GlobalEventHandlers.
     [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.
 
-    // Non-standard WebKit API (https://developer.apple.com/reference/webkitjs/gestureevent).
+    // Non-standard: Cannot find these in the latest specification (https://w3c.github.io/uievents/#events-focus-types).
+    [NotEnumerable] attribute EventHandler onfocusin;
+    [NotEnumerable] attribute EventHandler onfocusout;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/gestureevent.
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
-    // FIXME: These event handlers should only be on Document (https://fullscreen.spec.whatwg.org/#api).
-    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] attribute EventHandler onwebkitfullscreenerror;
-
-    // FIXME: Cannot find those EventHandlers in the latest specification (https://w3c.github.io/uievents/#events-focus-types).
-    [NotEnumerable] attribute EventHandler onfocusin;
-    [NotEnumerable] attribute EventHandler onfocusout;
-
-    // Non standard event handler (https://developer.apple.com/reference/webkitjs/element/1633146-onbeforeload).
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1633146-onbeforeload.
     [NotEnumerable] attribute EventHandler onbeforeload;
 
-    // Non standard event handler (https://developer.apple.com/reference/webkitjs/element/1634205-onwebkitneedkey).
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1634205-onwebkitneedkey.
     [NotEnumerable, Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPI] attribute EventHandler onwebkitneedkey;
 
-    // Non standard event handler (https://developer.apple.com/reference/webkitjs/element/1633943-onwebkitpresentationmodechanged).
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1633943-onwebkitpresentationmodechanged.
     [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;
 
-    // Non standard event handler (https://developer.apple.com/reference/webkitjs/element/1630042-onwebkitcurrentplaybacktargetisw).
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1630042-onwebkitcurrentplaybacktargetisw.
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
 
-    // Non standard event handler (https://developer.apple.com/reference/webkitjs/element/1629580-onwebkitplaybacktargetavailabili).
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1629580-onwebkitplaybacktargetavailabili.
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
 };
 

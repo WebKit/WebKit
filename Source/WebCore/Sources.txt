@@ -2950,8 +2950,6 @@ JSGeolocationCoordinates.cpp
 JSGeolocationPosition.cpp
 JSGeolocationPositionError.cpp
 JSGetAnimationsOptions.cpp
-JSGlobalCrypto.cpp
-JSGlobalPerformance.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAnchorElement.cpp
 JSHTMLAppletElement.cpp

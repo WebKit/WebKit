@@ -65,18 +65,10 @@
 
     stringifier;
 
-    // Extensions from CSSOM-view (https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface).
-    DOMRectList getClientRects();
-    [NewObject] DOMRect getBoundingClientRect();
-
-    // Extensions from DOMParsing and Serialization specification (https://w3c.github.io/DOM-Parsing/#extensions-to-the-range-interface).
-    [CEReactions, MayThrowException, NewObject] DocumentFragment createContextualFragment(DOMString fragment);
-
-    // Non-standard extension.
-    // FIXME: We should eventually drop this since no other browser supports it.
+    // Non-standard: We should eventually drop this since no other browser supports it
     [MayThrowException] undefined expand(optional DOMString unit);
 
-    // FIXME: We should likely drop this since we added it for Firefox interoperability, but now no other browser supports it.
+    // Non-standard: We should likely drop this since we added it for Firefox interoperability, but now no other browser supports it.
     [MayThrowException] short compareNode(Node node);
     const unsigned short NODE_BEFORE = 0;
     const unsigned short NODE_AFTER = 1;

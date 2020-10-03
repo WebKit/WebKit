@@ -47,6 +47,4 @@
     attribute EventHandler onunhandledrejection;
 };
 
-WorkerGlobalScope includes GlobalCrypto;
-WorkerGlobalScope includes GlobalPerformance;
 WorkerGlobalScope includes WindowOrWorkerGlobalScope;

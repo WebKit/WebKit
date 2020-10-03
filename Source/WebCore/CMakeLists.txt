@@ -793,7 +793,11 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentOrShadowRoot.idl
     dom/DocumentType.idl
     dom/DragEvent.idl
+    dom/Element+CSSOMView.idl
     dom/Element+DOMParsing.idl
+    dom/Element+Fullscreen.idl
+    dom/Element+PointerEvents.idl
+    dom/Element+PointerLock.idl
     dom/Element.idl
     dom/ElementContentEditable.idl
     dom/ErrorEvent.idl
@@ -836,6 +840,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
     dom/PromiseRejectionEvent.idl
+    dom/Range+CSSOMView.idl
+    dom/Range+DOMParsing.idl
     dom/Range.idl
     dom/RequestAnimationFrameCallback.idl
     dom/SecurityPolicyViolationEvent.idl
@@ -885,6 +891,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLAudioElement.idl
     html/HTMLBRElement.idl
     html/HTMLBaseElement.idl
+    html/HTMLBodyElement+Compat.idl
     html/HTMLBodyElement.idl
     html/HTMLButtonElement.idl
     html/HTMLCanvasElement.idl
@@ -912,6 +919,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLHtmlElement.idl
     html/HTMLHyperlinkElementUtils.idl
     html/HTMLIFrameElement.idl
+    html/HTMLImageElement+CSSOMView.idl
     html/HTMLImageElement.idl
     html/HTMLInputElement.idl
     html/HTMLKeygenElement.idl
@@ -921,8 +929,8 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLLinkElement.idl
     html/HTMLMapElement.idl
     html/HTMLMarqueeElement.idl
+    html/HTMLMediaElement+AudioOutput.idl
     html/HTMLMediaElement.idl
-    html/HTMLMediaElementAudioOutput.idl
     html/HTMLMenuElement.idl
     html/HTMLMenuItemElement.idl
     html/HTMLMetaElement.idl
@@ -1036,10 +1044,16 @@ set(WebCore_NON_SVG_IDL_FILES
     page/BarProp.idl
     page/Crypto.idl
     page/DOMSelection.idl
+    page/DOMWindow+CSSOM.idl
+    page/DOMWindow+CSSOMView.idl
+    page/DOMWindow+Compat.idl
+    page/DOMWindow+DeviceMotion.idl
+    page/DOMWindow+DeviceOrientation.idl
+    page/DOMWindow+RequestIdleCallback.idl
+    page/DOMWindow+Selection.idl
+    page/DOMWindow+VisualViewport.idl
     page/DOMWindow.idl
     page/EventSource.idl
-    page/GlobalCrypto.idl
-    page/GlobalPerformance.idl
     page/History.idl
     page/IntersectionObserver.idl
     page/IntersectionObserverCallback.idl
@@ -1088,7 +1102,11 @@ set(WebCore_NON_SVG_IDL_FILES
     page/VisualViewport.idl
     page/WebKitPoint.idl
     page/WindowEventHandlers.idl
+    page/WindowLocalStorage.idl
+    page/WindowOrWorkerGlobalScope+Crypto.idl
+    page/WindowOrWorkerGlobalScope+Performance.idl
     page/WindowOrWorkerGlobalScope.idl
+    page/WindowSessionStorage.idl
     page/WorkerNavigator.idl
 
     plugins/DOMMimeType.idl

@@ -28,6 +28,7 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString text;
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString vLink;
 
+    // Non-standard
     [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onfocus;

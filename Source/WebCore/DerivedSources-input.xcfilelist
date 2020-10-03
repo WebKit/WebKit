@@ -713,7 +713,11 @@ $(PROJECT_DIR)/dom/DocumentOrShadowRoot+PointerLock.idl
 $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
 $(PROJECT_DIR)/dom/DragEvent.idl
+$(PROJECT_DIR)/dom/Element+CSSOMView.idl
 $(PROJECT_DIR)/dom/Element+DOMParsing.idl
+$(PROJECT_DIR)/dom/Element+Fullscreen.idl
+$(PROJECT_DIR)/dom/Element+PointerEvents.idl
+$(PROJECT_DIR)/dom/Element+PointerLock.idl
 $(PROJECT_DIR)/dom/Element.idl
 $(PROJECT_DIR)/dom/ElementContentEditable.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
@@ -759,6 +763,8 @@ $(PROJECT_DIR)/dom/PopStateEvent.idl
 $(PROJECT_DIR)/dom/ProcessingInstruction.idl
 $(PROJECT_DIR)/dom/ProgressEvent.idl
 $(PROJECT_DIR)/dom/PromiseRejectionEvent.idl
+$(PROJECT_DIR)/dom/Range+CSSOMView.idl
+$(PROJECT_DIR)/dom/Range+DOMParsing.idl
 $(PROJECT_DIR)/dom/Range.idl
 $(PROJECT_DIR)/dom/RequestAnimationFrameCallback.idl
 $(PROJECT_DIR)/dom/SecurityPolicyViolationEvent.idl
@@ -813,6 +819,7 @@ $(PROJECT_DIR)/html/HTMLAttributeNames.in
 $(PROJECT_DIR)/html/HTMLAudioElement.idl
 $(PROJECT_DIR)/html/HTMLBRElement.idl
 $(PROJECT_DIR)/html/HTMLBaseElement.idl
+$(PROJECT_DIR)/html/HTMLBodyElement+Compat.idl
 $(PROJECT_DIR)/html/HTMLBodyElement.idl
 $(PROJECT_DIR)/html/HTMLButtonElement.idl
 $(PROJECT_DIR)/html/HTMLCanvasElement.idl
@@ -840,6 +847,7 @@ $(PROJECT_DIR)/html/HTMLHeadingElement.idl
 $(PROJECT_DIR)/html/HTMLHtmlElement.idl
 $(PROJECT_DIR)/html/HTMLHyperlinkElementUtils.idl
 $(PROJECT_DIR)/html/HTMLIFrameElement.idl
+$(PROJECT_DIR)/html/HTMLImageElement+CSSOMView.idl
 $(PROJECT_DIR)/html/HTMLImageElement.idl
 $(PROJECT_DIR)/html/HTMLInputElement.idl
 $(PROJECT_DIR)/html/HTMLKeygenElement.idl
@@ -849,8 +857,8 @@ $(PROJECT_DIR)/html/HTMLLegendElement.idl
 $(PROJECT_DIR)/html/HTMLLinkElement.idl
 $(PROJECT_DIR)/html/HTMLMapElement.idl
 $(PROJECT_DIR)/html/HTMLMarqueeElement.idl
+$(PROJECT_DIR)/html/HTMLMediaElement+AudioOutput.idl
 $(PROJECT_DIR)/html/HTMLMediaElement.idl
-$(PROJECT_DIR)/html/HTMLMediaElementAudioOutput.idl
 $(PROJECT_DIR)/html/HTMLMenuElement.idl
 $(PROJECT_DIR)/html/HTMLMenuItemElement.idl
 $(PROJECT_DIR)/html/HTMLMetaElement.idl
@@ -1018,10 +1026,16 @@ $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl
 $(PROJECT_DIR)/page/Crypto.idl
 $(PROJECT_DIR)/page/DOMSelection.idl
+$(PROJECT_DIR)/page/DOMWindow+CSSOM.idl
+$(PROJECT_DIR)/page/DOMWindow+CSSOMView.idl
+$(PROJECT_DIR)/page/DOMWindow+Compat.idl
+$(PROJECT_DIR)/page/DOMWindow+DeviceMotion.idl
+$(PROJECT_DIR)/page/DOMWindow+DeviceOrientation.idl
+$(PROJECT_DIR)/page/DOMWindow+RequestIdleCallback.idl
+$(PROJECT_DIR)/page/DOMWindow+Selection.idl
+$(PROJECT_DIR)/page/DOMWindow+VisualViewport.idl
 $(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/EventSource.idl
-$(PROJECT_DIR)/page/GlobalCrypto.idl
-$(PROJECT_DIR)/page/GlobalPerformance.idl
 $(PROJECT_DIR)/page/History.idl
 $(PROJECT_DIR)/page/IntersectionObserver.idl
 $(PROJECT_DIR)/page/IntersectionObserverCallback.idl
@@ -1075,7 +1089,11 @@ $(PROJECT_DIR)/page/VisualViewport.idl
 $(PROJECT_DIR)/page/WebKitNamespace.idl
 $(PROJECT_DIR)/page/WebKitPoint.idl
 $(PROJECT_DIR)/page/WindowEventHandlers.idl
+$(PROJECT_DIR)/page/WindowLocalStorage.idl
+$(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Crypto.idl
+$(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Performance.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope.idl
+$(PROJECT_DIR)/page/WindowSessionStorage.idl
 $(PROJECT_DIR)/page/WorkerNavigator.idl
 $(PROJECT_DIR)/platform/ColorData.gperf
 $(PROJECT_DIR)/platform/network/HTTPHeaderNames.in

@@ -1,3 +1,58 @@
+2020-10-03  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Split more IDL files by spec
+        https://bugs.webkit.org/show_bug.cgi?id=217279
+
+        Reviewed by Darin Adler.
+
+        - Splits out more partial and mixin interfaces from Element, Range,
+          HTMLBodyElement, HTMLImageElement and DOMWindow.
+        
+        - Renames HTMLMediaElementAudioOutput.idl to HTMLMediaElement+AudioOutput.idl
+          for consistency with all other partial interfaces.
+        
+        - Replace GlobalCrypto and GlobalPerformance with WindowOrWorkerGlobalScope
+          partials as currently speced.
+          
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.idl:
+        * dom/Element+CSSOMView.idl: Added.
+        * dom/Element+Fullscreen.idl: Added.
+        * dom/Element+PointerEvents.idl: Added.
+        * dom/Element+PointerLock.idl: Added.
+        * dom/Element.idl:
+        * dom/Range+CSSOMView.idl: Added.
+        * dom/Range+DOMParsing.idl: Added.
+        * dom/Range.idl:
+        * html/HTMLBodyElement+Compat.idl: Added.
+        * html/HTMLBodyElement.idl:
+        * html/HTMLImageElement+CSSOMView.idl: Added.
+        * html/HTMLImageElement.idl:
+        * html/HTMLMediaElement+AudioOutput.idl: Added.
+        * html/HTMLMediaElementAudioOutput.idl: Removed.
+        * page/DOMWindow+CSSOM.idl: Added.
+        * page/DOMWindow+CSSOMView.idl: Added.
+        * page/DOMWindow+Compat.idl: Added.
+        * page/DOMWindow+DeviceMotion.idl: Added.
+        * page/DOMWindow+DeviceOrientation.idl: Added.
+        * page/DOMWindow+RequestIdleCallback.idl: Added.
+        * page/DOMWindow+Selection.idl: Added.
+        * page/DOMWindow+VisualViewport.idl: Added.
+        * page/DOMWindow.idl:
+        * page/GlobalCrypto.idl: Removed.
+        * page/GlobalPerformance.idl: Removed.
+        * page/WindowEventHandlers.idl:
+        * page/WindowLocalStorage.idl: Added.
+        * page/WindowOrWorkerGlobalScope+Crypto.idl: Added.
+        * page/WindowOrWorkerGlobalScope+Performance.idl: Added.
+        * page/WindowSessionStorage.idl: Added.
+        * workers/WorkerGlobalScope.idl:
+
 2020-10-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Build broken with ENABLE_MEDIA_STREAM enabled and ENABLE_WEB_RTC_DISABLED
