@@ -2341,8 +2341,12 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
     if (!range)
         return;
 
+    OptionSet<RenderObject::BoundingRectBehavior> behavior;
+    if (textRectHeight == TextRectangleHeight::SelectionHeight)
+        behavior.add(RenderObject::BoundingRectBehavior::UseSelectionHeight);
+
     auto visibleContentRect = m_document->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-    for (auto& rect : boundingBoxes(RenderObject::absoluteTextQuads(*range, textRectHeight == TextRectangleHeight::SelectionHeight))) {
+    for (auto& rect : boundingBoxes(RenderObject::absoluteTextQuads(*range, behavior))) {
         auto intersectionRect = intersection(rect, visibleContentRect);
         if (!intersectionRect.isEmpty())
             rectangles.append(intersectionRect);

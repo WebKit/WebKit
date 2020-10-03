@@ -36,6 +36,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/JSRange.h>
@@ -101,9 +102,8 @@ Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()
 
 WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() const
 {
-    FloatRect boundingRect = m_range->absoluteBoundingRect();
     Frame* frame = m_range->ownerDocument().frame();
-    return frame->view()->contentsToWindow(enclosingIntRect(boundingRect));
+    return frame->view()->contentsToWindow(enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(makeSimpleRange(m_range)))));
 }
 
 RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions options)
@@ -127,7 +127,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     frame->selection().setSelection(makeSimpleRange(m_range));
 
     float scaleFactor = (options & SnapshotOptionsExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
-    IntRect paintRect = enclosingIntRect(m_range->absoluteBoundingRect());
+    IntRect paintRect = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(makeSimpleRange(m_range))));
     IntSize backingStoreSize = paintRect.size();
     backingStoreSize.scale(scaleFactor);
 
