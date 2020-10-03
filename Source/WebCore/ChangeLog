@@ -1,3 +1,36 @@
+2020-10-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Build broken with ENABLE_MEDIA_STREAM enabled and ENABLE_WEB_RTC_DISABLED
+        https://bugs.webkit.org/show_bug.cgi?id=217128
+
+        Remove USE(LIBWEBRTC) guards from media stream code, as it does not actually
+        depend on libwebrtc and can be built by itself. This allows using e.g. live
+        audio recording inputs with WebAudio.
+
+        Reviewed by Philippe Normand.
+
+        No new tests needed.
+
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.h:
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp:
+        (WebCore::GStreamerAudioCapturer::GStreamerAudioCapturer):
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.h:
+        * platform/mediastream/gstreamer/GStreamerAudioStreamDescription.h:
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp:
+        * platform/mediastream/gstreamer/GStreamerCapturer.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.h:
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp:
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.h:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.h:
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+
 2020-10-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC][Soft hyphen] Mark the last run on the line when hyphenation is required.

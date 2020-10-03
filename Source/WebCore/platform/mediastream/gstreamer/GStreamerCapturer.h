@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  * Author: Thibault Saunier <tsaunier@igalia.com>
  * Author: Alejandro G. Castro <alex@igalia.com>
  *
@@ -21,11 +22,10 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
 #include "GStreamerCaptureDevice.h"
 #include "GStreamerCommon.h"
-#include "LibWebRTCMacros.h"
 
 #include <gst/gst.h>
 
@@ -70,4 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

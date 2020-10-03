@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  * Author: Thibault Saunier <tsaunier@igalia.com>
  * Author: Alejandro G. Castro  <alex@igalia.com>
  *
@@ -21,22 +22,30 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "GStreamerAudioCapturer.h"
 
+#if USE(LIBWEBRTC)
 #include "LibWebRTCAudioFormat.h"
+#endif
 
 #include <gst/app/gstappsink.h>
 
 namespace WebCore {
 
+#if USE(LIBWEBRTC)
+static constexpr size_t AudioCaptureSampleRate = LibWebRTCAudioFormat::sampleRate;
+#else
+static constexpr size_t AudioCaptureSampleRate = 48000;
+#endif
+
 GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice device)
-    : GStreamerCapturer(device, adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, LibWebRTCAudioFormat::sampleRate, nullptr)))
+    : GStreamerCapturer(device, adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, AudioCaptureSampleRate, nullptr)))
 {
 }
 
 GStreamerAudioCapturer::GStreamerAudioCapturer()
-    : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, LibWebRTCAudioFormat::sampleRate, nullptr)))
+    : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, AudioCaptureSampleRate, nullptr)))
 {
 }
 
@@ -71,4 +80,4 @@ bool GStreamerAudioCapturer::setSampleRate(int sampleRate)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
