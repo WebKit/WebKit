@@ -1896,3 +1896,7 @@ webkit.org/b/217258 svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
 webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Failure ]
 
 webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
+
+webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
+
+webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
