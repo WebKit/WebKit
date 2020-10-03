@@ -169,10 +169,14 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
                 m_hasWrapOpportunityAtPreviousPosition = true;
             }
         }
-    } else if (result.action == Result::Action::Wrap && lineStatus.trailingSoftHyphenWidth) {
-        // A trailing soft hyphen may turn action "Wrap" to action "Revert".
-        if (*lineStatus.trailingSoftHyphenWidth > lineStatus.availableWidth && isTextContentOnly(candidateContent))
-            result = { Result::Action::RevertToLastNonOverflowingWrapOpportunity, IsEndOfLine::Yes };
+    } else if (result.action == Result::Action::Wrap) {
+        if (lineStatus.trailingSoftHyphenWidth && isTextContentOnly(candidateContent)) {
+            // A trailing soft hyphen with a wrapped text content turns into a visible hyphen.
+            // Let's check if there's enough space for the hyphen character.
+            auto hyphenOverflows = *lineStatus.trailingSoftHyphenWidth > lineStatus.availableWidth; 
+            auto action = hyphenOverflows ? Result::Action::RevertToLastNonOverflowingWrapOpportunity : Result::Action::WrapWithHyphen;
+            result = { action, IsEndOfLine::Yes };
+        }
     }
     return result;
 }

@@ -51,6 +51,7 @@ public:
             Keep, // Keep content on the current line.
             Break, // Partial content is on the current line.
             Wrap, // Content is wrapped to the next line.
+            WrapWithHyphen, // Content is wrapped to the next line and the current line ends with a visible hyphen.
             // The current content overflows and can't get broken up into smaller bits.
             RevertToLastWrapOpportunity, // The content needs to be reverted back to the last wrap opportunity.
             RevertToLastNonOverflowingWrapOpportunity // The content needs to be reverted back to a wrap opportunity that still fits the line.
@@ -60,7 +61,6 @@ public:
             Optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
         };
         Action action { Action::Keep };
-    
         IsEndOfLine isEndOfLine { IsEndOfLine::No };
         Optional<PartialTrailingContent> partialTrailingContent { };
         const InlineItem* lastWrapOpportunityItem { nullptr };

@@ -57,6 +57,7 @@ public:
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
     Optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
+    void addTrailingHyphen();
 
     void moveLogicalLeft(InlineLayoutUnit);
     void moveLogicalRight(InlineLayoutUnit);

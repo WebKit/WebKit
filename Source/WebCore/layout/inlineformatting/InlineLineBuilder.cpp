@@ -609,6 +609,13 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
         return { InlineContentBreaker::IsEndOfLine::Yes };
     }
+    if (result.action == InlineContentBreaker::Result::Action::WrapWithHyphen) {
+        ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
+        // This continuous content can't be placed on the current line, nothing to commit.
+        // However we need to make sure that the current line gains a trailing hyphen.
+        m_line.addTrailingHyphen();
+        return { InlineContentBreaker::IsEndOfLine::Yes };
+    }
     if (result.action == InlineContentBreaker::Result::Action::RevertToLastWrapOpportunity) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
@@ -696,8 +703,12 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         // while watching the available width very closely.
         auto index = rebuildLine(layoutRange, softWrapOpportunityItem);
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
-        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= m_line.availableWidth())
+        // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
+        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= m_line.availableWidth()) {
+            if (trailingSoftHyphenWidth)
+                m_line.addTrailingHyphen();
             return index;
+        }
     }
     // Have at least some content on the line.
     return rebuildLine(layoutRange, *m_wrapOpportunityList.first());

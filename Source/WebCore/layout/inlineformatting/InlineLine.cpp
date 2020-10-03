@@ -395,6 +395,13 @@ bool Line::isRunVisuallyNonEmpty(const Run& run) const
     return false;
 }
 
+void Line::addTrailingHyphen()
+{
+    ASSERT(!m_runs.isEmpty());
+    ASSERT(trailingSoftHyphenWidth());
+    m_runs.last().setNeedsHyphen();
+}
+
 const InlineFormattingContext& Line::formattingContext() const
 {
     return m_inlineFormattingContext;
