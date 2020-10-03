@@ -76,6 +76,8 @@ private:
 
     WebProcess& m_process;
     RemoteAudioSessionConfiguration m_configuration;
+    WebCore::AudioSession::CategoryType m_category;
+    WebCore::RouteSharingPolicy m_routeSharingPolicy;
 };
 
 }

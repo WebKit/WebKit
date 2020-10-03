@@ -582,8 +582,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     updatePreferences(parameters.store);
 
 #if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
-    if (!m_page->settings().useGPUProcessForMediaEnabled())
-        DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
+    DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
     m_backgroundColor = parameters.backgroundColor;
