@@ -59,6 +59,7 @@ public:
     // FIXME: Remove the need for this.
     static const int64_t InvalidId = -1;
 
+    void setIdentifier(uint64_t identifier) { m_identifier = identifier; }
 private:
     uint64_t m_identifier { 0 };
     uint64_t m_objectStoreIdentifier { 0 };

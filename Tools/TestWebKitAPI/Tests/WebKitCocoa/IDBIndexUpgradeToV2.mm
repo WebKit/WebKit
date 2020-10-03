@@ -83,3 +83,42 @@ TEST(IndexedDB, IndexUpgradeToV2)
 
     EXPECT_WK_STREQ(@"Object expected to be a blob: [object Blob]", [lastScriptMessage body]);
 }
+
+static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
+{
+    RetainPtr<IDBIndexUpgradeToV2MessageHandler> handler = adoptNS([[IDBIndexUpgradeToV2MessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    [configuration.get().processPool _terminateNetworkProcess];
+
+    NSURL *url = [[NSBundle mainBundle] URLForResource:databaseName withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+
+    NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test");
+    NSString *originDirectory = @"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
+    NSString *databaseDirectory = [[originDirectory stringByAppendingString:hash] stringByExpandingTildeInPath];
+    NSURL *targetURL = [NSURL fileURLWithPath:databaseDirectory];
+    [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
+
+    [[NSFileManager defaultManager] copyItemAtURL:url toURL:[targetURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBIndexUpgradeToV2WithMultipleIndices" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    EXPECT_WK_STREQ(@"Get object: {\"name\":\"apple\",\"color\":\"red\"}", [lastScriptMessage body]);
+}
+
+TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndices)
+{
+    runMultipleIndicesTestWithDatabase(@"IndexUpgradeWithMultipleIndices");
+}
+
+TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndicesHaveSameID)
+{
+    runMultipleIndicesTestWithDatabase(@"IndexUpgradeWithMultipleIndicesHaveSameID");
+}

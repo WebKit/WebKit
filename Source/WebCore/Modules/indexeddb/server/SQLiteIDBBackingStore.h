@@ -127,7 +127,7 @@ private:
     IDBError uncheckedSetKeyGeneratorValue(int64_t objectStoreID, uint64_t value);
 
     IDBError updateAllIndexesForAddRecord(const IDBObjectStoreInfo&, const IDBKeyData&, const IndexIDToIndexKeyMap&, int64_t recordID);
-    IDBError updateOneIndexForAddRecord(const IDBIndexInfo&, const IDBKeyData&, const ThreadSafeDataBuffer& value, int64_t recordID);
+    IDBError updateOneIndexForAddRecord(IDBObjectStoreInfo&, const IDBIndexInfo&, const IDBKeyData&, const ThreadSafeDataBuffer& value, int64_t recordID);
     IDBError uncheckedPutIndexKey(const IDBIndexInfo&, const IDBKeyData& keyValue, const IndexKey&, int64_t recordID);
     IDBError uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const IDBKeyData& keyValue, const IDBKeyData& indexKey, int64_t recordID);
     IDBError uncheckedHasIndexRecord(const IDBIndexInfo&, const IDBKeyData&, bool& hasRecord);
@@ -140,6 +140,13 @@ private:
 
     void closeSQLiteDB();
     void close() final;
+
+    bool migrateIndexInfoTableForIDUpdate(const HashMap<std::pair<uint64_t, uint64_t>, uint64_t>& indexIDMap);
+    bool migrateIndexRecordsTableForIDUpdate(const HashMap<std::pair<uint64_t, uint64_t>, uint64_t>& indexIDMap);
+
+    bool removeExistingIndex(uint64_t indexID);
+    bool addExistingIndex(IDBObjectStoreInfo&, const IDBIndexInfo&);
+    bool handleDuplicateIndexIDs(const HashMap<uint64_t, Vector<IDBIndexInfo>>&, IDBDatabaseInfo&);
 
     enum class SQL : size_t {
         CreateObjectStoreInfo,
@@ -154,9 +161,12 @@ private:
         ClearObjectStoreRecords,
         ClearObjectStoreIndexRecords,
         CreateIndexInfo,
+        CreateTempIndexInfo,
         DeleteIndexInfo,
+        RemoveIndexInfo,
         HasIndexRecord,
         PutIndexRecord,
+        PutTempIndexRecord,
         GetIndexRecordForOneKey,
         DeleteIndexRecords,
         RenameIndex,
@@ -174,6 +184,7 @@ private:
         GetBlobURL,
         GetKeyGeneratorValue,
         SetKeyGeneratorValue,
+        GetObjectStoreRecords,
         GetAllKeyRecordsLowerOpenUpperOpen,
         GetAllKeyRecordsLowerOpenUpperClosed,
         GetAllKeyRecordsLowerClosedUpperOpen,
