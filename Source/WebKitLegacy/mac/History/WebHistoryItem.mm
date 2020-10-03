@@ -47,6 +47,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
@@ -127,6 +128,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 }
 

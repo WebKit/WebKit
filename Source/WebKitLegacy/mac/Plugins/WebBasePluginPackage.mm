@@ -34,6 +34,7 @@
 #import "WebPluginPackage.h"
 #import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <algorithm>
 #import <mach-o/arch.h>
 #import <mach-o/fat.h>
@@ -61,6 +62,7 @@
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 }
 

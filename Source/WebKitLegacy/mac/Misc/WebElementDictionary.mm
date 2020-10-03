@@ -41,6 +41,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitLegacy/DOMCore.h>
 #import <WebKitLegacy/DOMExtensions.h>
@@ -69,6 +70,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 }
 

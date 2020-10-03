@@ -37,6 +37,8 @@ public:
     // Usually defined for each specialization class.
     static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
+    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
+
 private:
     JSDOMBuiltinConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
         : Base(structure, globalObject)
@@ -45,7 +47,6 @@ private:
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
     static JSC::CallData getConstructData(JSC::JSCell*);
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&);
     JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject*);

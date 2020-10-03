@@ -221,6 +221,7 @@
 #import <WebCore/UserScript.h>
 #import <WebCore/UserStyleSheet.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
@@ -5244,6 +5245,7 @@ IGNORE_WARNINGS_END
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();

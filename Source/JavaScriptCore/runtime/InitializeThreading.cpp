@@ -30,6 +30,7 @@
 #include "InitializeThreading.h"
 
 #include "ExecutableAllocator.h"
+#include "JITOperationList.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
 #include "LLIntData.h"
@@ -64,6 +65,7 @@ void initialize()
 #endif
         {
             Options::AllowUnfinalizedAccessScope scope;
+            JITOperationList::initialize();
             ExecutableAllocator::initialize();
             VM::computeCanUseJIT();
             if (!g_jscConfig.vm.canUseJIT) {
@@ -72,6 +74,8 @@ void initialize()
             }
         }
         Options::finalize();
+
+        JITOperationList::populatePointersInJavaScriptCore();
 
         if (Options::useSigillCrashAnalyzer())
             enableSigillCrashAnalyzer();

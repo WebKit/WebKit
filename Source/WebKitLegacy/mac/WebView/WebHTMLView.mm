@@ -127,6 +127,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreNSFontManagerExtras.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
@@ -1033,6 +1034,7 @@ static NSControlStateValue kit(TriState state)
 
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 
     if (!oldSetCursorForMouseLocationIMP) {
         Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
@@ -2568,6 +2570,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 }
 
 #endif

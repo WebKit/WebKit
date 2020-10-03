@@ -35,6 +35,7 @@
 #import "JSHTMLElement.h"
 #import "JSPluginElementFunctions.h"
 #import "ObjCRuntimeObject.h"
+#import "WebCoreJITOperations.h"
 #import "WebCoreObjCExtras.h"
 #import "objc_instance.h"
 #import "runtime_object.h"
@@ -166,6 +167,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 #if !USE(WEB_THREAD)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 }
 

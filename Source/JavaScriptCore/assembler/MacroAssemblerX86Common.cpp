@@ -40,7 +40,7 @@ namespace JSC {
 #if ENABLE(MASM_PROBE)
 
 extern "C" JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
-JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampoline, ctiMasmProbeTrampoline);
+JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampolineId, ctiMasmProbeTrampoline);
 
 // The following are offsets for Probe::State fields accessed by the ctiMasmProbeTrampoline stub.
 

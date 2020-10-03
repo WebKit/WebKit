@@ -1,3 +1,13 @@
+2020-10-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JITOperationList to validate JIT-caged pointers
+        https://bugs.webkit.org/show_bug.cgi?id=217261
+
+        Reviewed by Saam Barati.
+
+        * wtf/PlatformCallingConventions.h:
+        * wtf/PlatformEnable.h:
+
 2020-10-03  Alex Christensen  <achristensen@webkit.org>
 
         Add extra slash after empty host copied from base URL if path is also empty

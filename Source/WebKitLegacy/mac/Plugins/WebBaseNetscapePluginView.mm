@@ -54,6 +54,7 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
@@ -72,6 +73,7 @@ using namespace WebCore;
 {
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
     WebKit::sendUserChangeNotifications();
 }
 

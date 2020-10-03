@@ -26,6 +26,7 @@
 #import "config.h"
 #import "SharedBuffer.h"
 
+#import "WebCoreJITOperations.h"
 #import "WebCoreObjCExtras.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <string.h>
@@ -46,6 +47,7 @@
 #if !USE(WEB_THREAD)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif // !USE(WEB_THREAD)
 }
 

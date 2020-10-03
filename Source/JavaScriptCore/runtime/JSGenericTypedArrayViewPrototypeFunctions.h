@@ -100,7 +100,7 @@ inline unsigned argumentClampedIndexFromStartOrEnd(JSGlobalObject* globalObject,
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncSet, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -147,7 +147,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncSet, (VM& vm, JSGlobalObj
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncCopyWithin, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncCopyWithin(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -179,7 +179,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncCopyWithin, (VM& vm, JSGl
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncIncludes, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -224,7 +224,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncIncludes, (VM& vm, JSGlob
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncIndexOf, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -261,7 +261,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncIndexOf, (VM& vm, JSGloba
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncJoin, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -300,7 +300,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncJoin, (VM& vm, JSGlobalOb
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncLastIndexOf, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -350,7 +350,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncLastIndexOf, (VM& vm, JSG
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncBuffer, (VM&, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoGetterFuncBuffer(VM&, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     // 22.2.3.3
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
@@ -359,7 +359,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncBuffer, (VM&, JSGlo
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncLength, (VM&, JSGlobalObject*, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoGetterFuncLength(VM&, JSGlobalObject*, CallFrame* callFrame)
 {
     // 22.2.3.17
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
@@ -368,7 +368,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncLength, (VM&, JSGlo
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncByteLength, (VM&, JSGlobalObject*, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoGetterFuncByteLength(VM&, JSGlobalObject*, CallFrame* callFrame)
 {
     // 22.2.3.2
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
@@ -377,7 +377,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncByteLength, (VM&, J
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncByteOffset, (VM&, JSGlobalObject*, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoGetterFuncByteOffset(VM&, JSGlobalObject*, CallFrame* callFrame)
 {
     // 22.2.3.3
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
@@ -386,7 +386,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoGetterFuncByteOffset, (VM&, J
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncReverse, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncReverse(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
 //    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -403,7 +403,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncReverse, (VM& vm, JSGloba
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewPrivateFuncSort, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSort(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
 //    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -419,7 +419,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewPrivateFuncSort, (VM& vm, JSGlobal
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncSlice, (VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -510,7 +510,7 @@ JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewProtoFuncSlice, (VM& vm, JSGlobalO
 }
 
 template<typename ViewClass>
-JSC_DEFINE_HOST_FUNCTION(genericTypedArrayViewPrivateFuncSubarrayCreate, (VM&vm, JSGlobalObject* globalObject, CallFrame* callFrame))
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM&vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 

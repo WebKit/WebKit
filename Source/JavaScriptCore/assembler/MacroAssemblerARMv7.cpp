@@ -36,7 +36,7 @@ namespace JSC {
 #if ENABLE(MASM_PROBE)
 
 extern "C" JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
-JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampoline, ctiMasmProbeTrampoline);
+JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampolineId, ctiMasmProbeTrampoline);
 
 using namespace ARMRegisters;
 

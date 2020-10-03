@@ -140,6 +140,8 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
     return snippet;
 }
 
+namespace DOMJIT {
+
 extern "C" {
 
 JSC_DEFINE_JIT_OPERATION(operationToJSElement, JSC::EncodedJSValue, (JSC::JSGlobalObject* globalObject, void* result))
@@ -194,6 +196,6 @@ JSC_DEFINE_JIT_OPERATION(operationToJSContainerNode, JSC::EncodedJSValue, (JSC::
 
 }
 
-}
+} }
 
 #endif

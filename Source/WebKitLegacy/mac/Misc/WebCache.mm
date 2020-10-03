@@ -40,6 +40,7 @@
 #import <WebCore/MemoryCache.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/StorageSessionProvider.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
@@ -65,6 +66,7 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 }
 

@@ -47,6 +47,7 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/runtime_root.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Assertions.h>
@@ -107,6 +108,7 @@ extern "C" {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
     sendUserChangeNotifications();
 }

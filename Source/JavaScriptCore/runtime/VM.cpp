@@ -78,6 +78,7 @@
 #include "IsoHeapCellType.h"
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
+#include "JITOperationList.h"
 #include "JITThunks.h"
 #include "JITWorklist.h"
 #include "JSAPIGlobalObject.h"
@@ -831,6 +832,7 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {
+        JITOperationList::assertIsHostFunction(function);
         return jitStubs->hostFunctionStub(
             *this, function, constructor,
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : nullptr,

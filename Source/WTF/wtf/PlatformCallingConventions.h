@@ -42,13 +42,20 @@
 #define JSC_HOST_CALL_ATTRIBUTES
 #endif
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
+#define JSC_ANNOTATE_HOST_FUNCTION(functionId, function) \
+    constexpr auto functionId __attribute__((used, section("__DATA_CONST,__jsc_host"))) = function;
+#else
+#define JSC_ANNOTATE_HOST_FUNCTION(functionId, function)
+#endif
+
 #define JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionName, attributes, parameters) \
+    JSC_ANNOTATE_HOST_FUNCTION(_JITTarget_##functionName, static_cast<JSC::EncodedJSValue(*)parameters>(functionName)); \
     attributes JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName parameters
 #define JSC_DEFINE_HOST_FUNCTION(functionName, parameters) \
     JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionName, , parameters)
 #define JSC_DECLARE_HOST_FUNCTION(functionName) \
     JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES functionName(JSC::JSGlobalObject*, JSC::CallFrame*)
-#define JSC_ANNOTATE_HOST_FUNCTION(functionId, function)
 
 #if CPU(X86) && OS(WINDOWS)
 #define CALLING_CONVENTION_IS_STDCALL 1
@@ -82,14 +89,20 @@
 #define JIT_OPERATION_ATTRIBUTES
 #endif
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
+#define JSC_ANNOTATE_JIT_OPERATION(functionId, function) \
+    constexpr auto  functionId __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = function;
+#else
+#define JSC_ANNOTATE_JIT_OPERATION(functionId, function)
+#endif
 
 #define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
+    JSC_ANNOTATE_JIT_OPERATION(_JITTarget_##functionName, static_cast<returnType(*)parameters>(functionName)); \
     attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters
 #define JSC_DEFINE_JIT_OPERATION(functionName, returnType, parameters) \
     JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, , returnType, parameters)
 #define JSC_DECLARE_JIT_OPERATION(functionName, returnType, parameters) \
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM WTF_INTERNAL
-#define JSC_ANNOTATE_JIT_OPERATION(functionId, function)
 
 #define JSC_DECLARE_CUSTOM_GETTER(functionName) JSC_DECLARE_JIT_OPERATION(functionName, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName))
 #define JSC_DECLARE_CUSTOM_SETTER(functionName) JSC_DECLARE_JIT_OPERATION(functionName, bool, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue))

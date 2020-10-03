@@ -34,6 +34,7 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/Image.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
@@ -99,6 +100,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 }
 
 + (WebIconDatabase *)sharedIconDatabase

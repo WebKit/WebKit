@@ -44,6 +44,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Settings.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
@@ -100,6 +101,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 #if !PLATFORM(IOS_FAMILY)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 }
 

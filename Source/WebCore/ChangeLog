@@ -1,3 +1,35 @@
+2020-10-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JITOperationList to validate JIT-caged pointers
+        https://bugs.webkit.org/show_bug.cgi?id=217261
+
+        Reviewed by Saam Barati.
+
+        We should have WebCore::initialize(). It is filed in https://bugs.webkit.org/show_bug.cgi?id=217270.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        * bindings/js/JSDOMConstructor.h:
+        * bindings/js/JSDOMLegacyFactoryFunction.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initializeMainThread):
+        * bindings/js/WebCoreJITOperations.cpp: Copied from Source/WebKit/Shared/WebKit2Initialize.cpp.
+        (WebCore::populateJITOperations):
+        * bindings/js/WebCoreJITOperations.h: Copied from Source/WebKit/Shared/WebKit2Initialize.cpp.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinitions):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bridge/objc/WebScriptObject.mm:
+        (+[WebScriptObject initialize]):
+        * domjit/JSDocumentDOMJIT.cpp:
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (+[WebCoreSharedBufferData initialize]):
+        * platform/ios/wak/WebCoreThread.mm:
+        (RunWebThread):
+
 2020-10-03  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS translate property

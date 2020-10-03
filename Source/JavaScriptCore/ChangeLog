@@ -1,3 +1,54 @@
+2020-10-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JITOperationList to validate JIT-caged pointers
+        https://bugs.webkit.org/show_bug.cgi?id=217261
+
+        Reviewed by Saam Barati.
+
+        This patch adds JITOperationList, which manages all the host-function & jit-operation pointers.
+        And we can now query whether the given pointer is registered in this table.
+        Currently, as a test, we are verifying that host-function is registered in this table when creating NativeExecutable in debug build.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/JITOperationList.cpp: Added.
+        (JSC::JITOperationList::initialize):
+        (JSC::addPointers):
+        (JSC::JITOperationList::populatePointersInJavaScriptCore):
+        (JSC::JITOperationList::populatePointersInEmbedder):
+        * assembler/JITOperationList.h: Added.
+        (JSC::JITOperationList::contains const):
+        (JSC::JITOperationList::assertIsHostFunction):
+        (JSC::JITOperationList::assertIsJITOperation):
+        (JSC::JITOperationList::instance):
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerMIPS.cpp:
+        * assembler/MacroAssemblerX86Common.cpp:
+        * jsc.cpp:
+        (jscmain):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initialize):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoGetterFuncBuffer):
+        (JSC::genericTypedArrayViewProtoGetterFuncLength):
+        (JSC::genericTypedArrayViewProtoGetterFuncByteLength):
+        (JSC::genericTypedArrayViewProtoGetterFuncByteOffset):
+        (JSC::genericTypedArrayViewProtoFuncReverse):
+        (JSC::genericTypedArrayViewPrivateFuncSort):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        (JSC::JSC_DEFINE_HOST_FUNCTION): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+
 2020-10-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add Array#item to @@unscopables

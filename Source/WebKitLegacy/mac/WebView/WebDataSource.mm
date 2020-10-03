@@ -55,6 +55,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebKitLegacy/DOMHTML.h>
@@ -155,6 +156,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 #if !PLATFORM(IOS_FAMILY)
         JSC::initialize();
         WTF::initializeMainThread();
+        WebCore::populateJITOperations();
 #endif
     }
 }

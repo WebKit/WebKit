@@ -46,6 +46,7 @@ API/OpaqueJSString.cpp
 assembler/AbstractMacroAssembler.cpp
 assembler/AssemblerBuffer.cpp
 assembler/CPU.cpp
+assembler/JITOperationList.cpp
 assembler/LinkBuffer.cpp
 assembler/MacroAssembler.cpp
 assembler/MacroAssemblerARM64.cpp

@@ -7719,7 +7719,7 @@ sub GenerateConstructorDefinitions
             GenerateOverloadDispatcher(@{$interface->constructors}[0], $interface, $overloadFunctionPrefix, "", "lexicalGlobalObject, callFrame");
 
             push(@implContent, "}\n");
-            push(@implContent, "JSC_ANNOTATE_HOST_FUNCTION(${className}ConstructorConstruct, ${className}Constructor::construct);\n\n");
+            push(@implContent, "JSC_ANNOTATE_HOST_FUNCTION(${className}ConstructorConstruct, ${className}DOMConstructor::construct);\n\n");
         } elsif (@constructors == 1) {
             GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
         } else {

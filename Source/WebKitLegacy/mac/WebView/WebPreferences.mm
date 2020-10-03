@@ -48,6 +48,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextEncodingRegistry.h>
+#import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -376,6 +377,7 @@ public:
 #if PLATFORM(MAC)
     JSC::initialize();
     WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 #endif
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
