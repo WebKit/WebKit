@@ -50,12 +50,20 @@ bool LineWidth::fitsOnLine(bool ignoringTrailingSpace) const
 
 bool LineWidth::fitsOnLineIncludingExtraWidth(float extra) const
 {
-    return currentWidth() + extra <= m_availableWidth;
+    auto adjustedCurrentWidth = currentWidth() + extra;
+    return adjustedCurrentWidth < m_availableWidth || WTF::areEssentiallyEqual(adjustedCurrentWidth, m_availableWidth);
 }
 
 bool LineWidth::fitsOnLineExcludingTrailingWhitespace(float extra) const
 {
-    return currentWidth() - m_trailingWhitespaceWidth + extra <= m_availableWidth;
+    auto adjustedCurrentWidth = currentWidth() - m_trailingWhitespaceWidth + extra;
+    return adjustedCurrentWidth < m_availableWidth || WTF::areEssentiallyEqual(adjustedCurrentWidth, m_availableWidth);
+}
+
+bool LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace() const
+{
+    auto adjustedCurrentWidth = currentWidth() - m_trailingCollapsedWhitespaceWidth;
+    return adjustedCurrentWidth < m_availableWidth || WTF::areEssentiallyEqual(adjustedCurrentWidth, m_availableWidth);
 }
 
 void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
@@ -224,11 +232,6 @@ void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float bord
 void LineWidth::computeAvailableWidthFromLeftAndRight()
 {
     m_availableWidth = std::max<float>(0, m_right - m_left) + m_overhangWidth;
-}
-
-bool LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace() const
-{
-    return currentWidth() - m_trailingCollapsedWhitespaceWidth <= m_availableWidth;
 }
 
 IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle& style)

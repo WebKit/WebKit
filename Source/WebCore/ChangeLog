@@ -1,5 +1,22 @@
 2020-10-03  Zalan Bujtas  <zalan@apple.com>
 
+        Floating-point math causes shrink-wrapped content to line wrap sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=217136
+        <rdar://problem/69801790>
+
+        Reviewed by Antti Koivisto.
+
+        Since the preferred width computation and the actual inline layout run though different codepaths,
+        they may compute slightly different content width due to the limited floating point precision.
+        Use WTF::areEssentiallyEqual when deciding if the content overflows the current line.
+
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::fitsOnLineIncludingExtraWidth const):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingWhitespace const):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace const):
+
+2020-10-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC][Soft hyphen] Do not split InlineItems at soft hyphens when hyphenations is disabled
         https://bugs.webkit.org/show_bug.cgi?id=217266
 
