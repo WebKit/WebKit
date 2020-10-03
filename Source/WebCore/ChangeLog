@@ -1,5 +1,33 @@
 2020-10-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC][Soft hyphen] InlineContentBreaker should return Action::Revert when the trailing soft hyphen does not fit
+        https://bugs.webkit.org/show_bug.cgi?id=217269
+
+        Reviewed by Antti Koivisto.
+
+        A trailing soft hyphen turns action "Push" to action "Revert" when the hyphen overflows.
+        e.g <div>1&shy;2&shy;3&shy;4</div>
+        line has: 123&shy; and when '4' overflows InlineContentBreaker normally returns with Action::Push ('4' is pushed over to the next line).
+        However Action::Push turns the trailing soft hyphen into a visible hyphen and now we need to check if 'Push' is actually a 'Revert' instead.
+
+        * layout/inlineformatting/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::processInlineContent):
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const):
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+        * layout/inlineformatting/InlineContentBreaker.h:
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::initialize):
+        (WebCore::Layout::Line::appendWith):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendLineBreak):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::trailingSoftHyphenWidth const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+
+2020-10-03  Zalan Bujtas  <zalan@apple.com>
+
         Floating-point math causes shrink-wrapped content to line wrap sometimes
         https://bugs.webkit.org/show_bug.cgi?id=217136
         <rdar://problem/69801790>

@@ -61,6 +61,7 @@ void Line::initialize(InlineLayoutUnit horizontalConstraint)
     m_contentLogicalWidth = { };
     m_isVisuallyEmpty = true;
     m_runs.clear();
+    m_trailingSoftHyphenWidth = { };
     m_trimmableTrailingContent.reset();
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
 }
@@ -238,7 +239,7 @@ void Line::appendWith(const InlineItem& inlineItem, const InlineRunDetails& inli
     else
         ASSERT_NOT_REACHED();
 
-    // Check if this freshly appended content makes the line visually non-empty.
+    // Check if this newly appended content makes the line visually non-empty.
     if (m_isVisuallyEmpty && !m_runs.isEmpty() && isRunVisuallyNonEmpty(m_runs.last()))
         m_isVisuallyEmpty = false;
 }
@@ -271,6 +272,7 @@ void Line::appendInlineContainerEnd(const InlineItem& inlineItem, InlineLayoutUn
 
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth, bool needsHyphen)
 {
+    auto& style = inlineTextItem.style();
     auto willCollapseCompletely = [&] {
         if (!inlineTextItem.isCollapsible())
             return false;
@@ -290,7 +292,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
             ASSERT(run.isContainerStart() || run.isContainerEnd() || run.isWordBreakOpportunity());
         }
         // Leading whitespace.
-        return !isWhitespacePreserved(inlineTextItem.style());
+        return !isWhitespacePreserved(style);
     };
 
     if (willCollapseCompletely())
@@ -312,7 +314,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
         m_runs.append({ inlineTextItem, contentLogicalWidth(), logicalWidth, needsHyphen });
     m_contentLogicalWidth += logicalWidth;
     // Set the trailing trimmable content.
-    if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style())) {
+    if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(style)) {
         m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, logicalWidth);
         // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
         if (m_trimmableTrailingContent.isEmpty())
@@ -321,8 +323,10 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     }
     // Any non-whitespace, no-trimmable content resets the existing trimmable.
     m_trimmableTrailingContent.reset();
-    if (!formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing() && !inlineTextItem.isWhitespace() && inlineTextItem.style().letterSpacing() > 0)
-        m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, inlineTextItem.style().letterSpacing());
+    if (!formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing() && !inlineTextItem.isWhitespace() && style.letterSpacing() > 0)
+        m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, style.letterSpacing());
+    if (inlineTextItem.hasTrailingSoftHyphen())
+        m_trailingSoftHyphenWidth = InlineLayoutUnit { style.fontCascade().width(TextRun { StringView { style.hyphenString() } }) };
 }
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
@@ -333,6 +337,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayout
     m_runs.append({ inlineItem, contentLogicalWidth() + horizontalMargin.start, logicalWidth });
     m_contentLogicalWidth += logicalWidth + horizontalMargin.start + horizontalMargin.end;
     m_trimmableTrailingContent.reset();
+    m_trailingSoftHyphenWidth = { };
 }
 
 void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
@@ -344,6 +349,7 @@ void Line::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUni
 
 void Line::appendLineBreak(const InlineItem& inlineItem)
 {
+    m_trailingSoftHyphenWidth = { };
     if (inlineItem.isHardLineBreak())
         return m_runs.append({ inlineItem, contentLogicalWidth(), 0_lu });
     // Soft line breaks (preserved new line characters) require inline text boxes for compatibility reasons.

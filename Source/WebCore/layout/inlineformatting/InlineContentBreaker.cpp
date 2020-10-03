@@ -159,7 +159,7 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
         if (auto lastLineWrapOpportunityIndex = lastWrapOpportunityIndex(candidateContent.runs())) {
             auto isEligibleLineWrapOpportunity = [&] (auto& candidateItem) {
                 // Just check for leading collapsible whitespace for now.
-                if (!lineStatus.lineIsEmpty || !candidateItem.isText() || !downcast<InlineTextItem>(candidateItem).isWhitespace())
+                if (!lineStatus.isEmpty || !candidateItem.isText() || !downcast<InlineTextItem>(candidateItem).isWhitespace())
                     return true;
                 return shouldKeepBeginningOfLineWhitespace(candidateItem.style());
             };
@@ -169,6 +169,10 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
                 m_hasWrapOpportunityAtPreviousPosition = true;
             }
         }
+    } else if (result.action == Result::Action::Push && lineStatus.trailingSoftHyphenWidth) {
+        // A trailing soft hyphen may turn action "Push" to action "Revert".
+        if (*lineStatus.trailingSoftHyphenWidth > lineStatus.availableWidth && isTextContentOnly(candidateContent))
+            result = { Result::Action::RevertToLastNonOverflowingWrapOpportunity, IsEndOfLine::Yes };
     }
     return result;
 }
@@ -192,7 +196,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
             return { Result::Action::Keep, IsEndOfLine };
         // Now check if we can trim the line too.
-        if (lineStatus.lineHasFullyCollapsibleTrailingRun && continuousContent.isFullyCollapsible()) {
+        if (lineStatus.hasFullyCollapsibleTrailingRun && continuousContent.isFullyCollapsible()) {
             // If this new content is fully collapsible, it should surely fit.
             return { Result::Action::Keep, IsEndOfLine };
         }
@@ -214,8 +218,8 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 // We tried to break the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
-                if (!lineStatus.lineIsEmpty)
-                    return { Result::Action::Push, IsEndOfLine::Yes, { } };
+                if (!lineStatus.isEmpty)
+                    return { Result::Action::Push, IsEndOfLine::Yes };
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
                 auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
                 ASSERT(inlineTextItem.length());
@@ -230,7 +234,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         }
     }
     // If we are not allowed to break this overflowing content, we still need to decide whether keep it or push it to the next line.
-    if (lineStatus.lineIsEmpty) {
+    if (lineStatus.isEmpty) {
         ASSERT(!m_hasWrapOpportunityAtPreviousPosition);
         return { Result::Action::Keep, IsEndOfLine::No };
     }
@@ -359,7 +363,6 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
             return { };
 
         unsigned leftSideLength = runLength;
-        // FIXME: We might want to cache the hyphen width.
         auto& fontCascade = style.fontCascade();
         auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
         if (!findLastBreakablePosition) {

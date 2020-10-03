@@ -56,6 +56,8 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
+    Optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
+
     void moveLogicalLeft(InlineLayoutUnit);
     void moveLogicalRight(InlineLayoutUnit);
 
@@ -183,6 +185,7 @@ private:
     InlineLayoutUnit m_lineLogicalLeft { 0 };
     InlineLayoutUnit m_horizontalConstraint { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
+    Optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
     bool m_isVisuallyEmpty { true };
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
 };

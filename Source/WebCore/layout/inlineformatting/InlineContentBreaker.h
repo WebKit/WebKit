@@ -51,7 +51,9 @@ public:
             Keep, // Keep content on the current line.
             Break, // Partial content is on the current line.
             Push, // Content is pushed to the next line.
-            RevertToLastWrapOpportunity // The current content overflows and can't get wrapped. The content needs to be reverted back to the last wrapping opportunity.
+            // The current content overflows and can't get broken up into smaller bits.
+            RevertToLastWrapOpportunity, // The content needs to be reverted back to the last wrap opportunity.
+            RevertToLastNonOverflowingWrapOpportunity // The content needs to be reverted back to a wrap opportunity that still fits the line.
         };
         struct PartialTrailingContent {
             size_t trailingRunIndex { 0 };
@@ -107,8 +109,9 @@ public:
     struct LineStatus {
         InlineLayoutUnit availableWidth { 0 };
         InlineLayoutUnit collapsibleWidth { 0 };
-        bool lineHasFullyCollapsibleTrailingRun { false };
-        bool lineIsEmpty { true };
+        Optional<InlineLayoutUnit> trailingSoftHyphenWidth;
+        bool hasFullyCollapsibleTrailingRun { false };
+        bool isEmpty { true };
     };
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
 
