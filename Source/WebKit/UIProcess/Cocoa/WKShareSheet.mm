@@ -177,6 +177,11 @@
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:sharingItems applicationActivities:nil]);
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
         _didShareSuccessfully |= completed;
+
+        // Make sure that we're actually not presented anymore (-completionWithItemsHandler can be called multiple times
+        // before the share sheet is actually dismissed), and if so, clean up.
+        if (![_shareSheetViewController presentingViewController])
+            [self dismiss];
     }];
 
     UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
@@ -185,8 +190,6 @@
         popoverController.sourceRect = *rect;
     } else
         popoverController._centersPopoverIfSourceViewNotSet = YES;
-
-    [_shareSheetViewController presentationController].delegate = self;
 
     if ([_delegate respondsToSelector:@selector(shareSheet:willShowActivityItems:)])
         [_delegate shareSheet:self willShowActivityItems:sharingItems];
@@ -225,13 +228,6 @@
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
-{
-    [self dismiss];
-}
-#endif
-
 - (void)dismiss
 {
     auto completionHandler = WTFMove(_completionHandler);
@@ -263,8 +259,10 @@
         return;
 
     UIViewController *currentPresentedViewController = [_presentationViewController presentedViewController];
-    if (currentPresentedViewController != _shareSheetViewController)
+    if (currentPresentedViewController != _shareSheetViewController) {
+        dispatchDidDismiss();
         return;
+    }
 
     [currentPresentedViewController dismissViewControllerAnimated:YES completion:^{
         dispatchDidDismiss();
