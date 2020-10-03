@@ -15,6 +15,7 @@ let expectedEntries = [
     "flat",
     "flatMap",
     "includes",
+    "item",
     "keys",
     "values"
 ];

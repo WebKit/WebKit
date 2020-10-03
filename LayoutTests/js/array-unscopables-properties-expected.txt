@@ -42,6 +42,10 @@ PASS Array.prototype[Symbol.unscopables]["includes"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "includes").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "includes").enumerable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "includes").configurable is true
+PASS Array.prototype[Symbol.unscopables]["item"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "item").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "item").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "item").configurable is true
 PASS Array.prototype[Symbol.unscopables]["keys"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "keys").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "keys").enumerable is true

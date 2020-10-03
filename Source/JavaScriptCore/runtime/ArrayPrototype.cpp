@@ -129,6 +129,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         &vm.propertyNames->builtinNames().flatPublicName(),
         &vm.propertyNames->builtinNames().flatMapPublicName(),
         &vm.propertyNames->builtinNames().includesPublicName(),
+        &vm.propertyNames->builtinNames().itemPublicName(),
         &vm.propertyNames->builtinNames().keysPublicName(),
         &vm.propertyNames->builtinNames().valuesPublicName()
     };

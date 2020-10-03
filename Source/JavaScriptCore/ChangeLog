@@ -1,3 +1,19 @@
+2020-10-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add Array#item to @@unscopables
+        https://bugs.webkit.org/show_bug.cgi?id=217243
+
+        Reviewed by Yusuke Suzuki.
+
+        ES2015+ Array methods must be listed in Array.prototype[@@unscopables] per the note here:
+        https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+
+        The Array#item spec doesn't currently make this explicit, but I created an issue to ensure it isn't overlooked:
+        https://github.com/tc39/proposal-item-method/issues/30 
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+
 2020-10-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. [GTK] Add missing locale.h header needed for setlocale()

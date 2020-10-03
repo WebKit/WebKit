@@ -1,3 +1,13 @@
+2020-10-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add Array#item to @@unscopables
+        https://bugs.webkit.org/show_bug.cgi?id=217243
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/unscopables.js:
+        Update test.
+
 2020-09-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Implement item method proposal
