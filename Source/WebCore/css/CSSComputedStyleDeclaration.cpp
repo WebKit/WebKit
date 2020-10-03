@@ -587,10 +587,15 @@ static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& tr
     return transformValue.releaseNonNull();
 }
 
-static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle& style)
+static bool rendererCanBeTransformed(RenderObject* renderer)
 {
     // Inline renderers do not support transforms.
-    if (!renderer || is<RenderInline>(*renderer) || !style.hasTransform())
+    return renderer && !is<RenderInline>(*renderer);
+}
+
+static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle& style)
+{
+    if (!rendererCanBeTransformed(renderer) || !style.hasTransform())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     FloatRect pixelSnappedRect;
@@ -604,6 +609,31 @@ static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
     auto list = CSSValueList::createSpaceSeparated();
     list->append(matrixTransformValue(transform, style));
+    return list;
+}
+
+static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
+{
+    if (!rendererCanBeTransformed(renderer) || is<RenderInline>(*renderer) || !style.translate())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+
+    FloatRect pixelSnappedRect;
+    if (is<RenderBox>(*renderer))
+        pixelSnappedRect = snapRectToDevicePixels(downcast<RenderBox>(*renderer).borderBoxRect(), renderer->document().deviceScaleFactor());
+
+    TransformationMatrix transform;
+    style.translate()->apply(transform, pixelSnappedRect.size());
+
+    auto list = CSSValueList::createSpaceSeparated();
+    if (transform.isAffine()) {
+        list->append(zoomAdjustedNumberValue(transform.e(), style));
+        list->append(zoomAdjustedNumberValue(transform.f(), style));
+    } else {
+        list->append(zoomAdjustedNumberValue(transform.m41(), style));
+        list->append(zoomAdjustedNumberValue(transform.m42(), style));
+        list->append(zoomAdjustedNumberValue(transform.m43(), style));
+    }
+
     return list;
 }
 
@@ -3514,6 +3544,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTransformStyle:
         case CSSPropertyWebkitTransformStyle:
             return cssValuePool.createIdentifierValue((style.transformStyle3D() == TransformStyle3D::Preserve3D) ? CSSValuePreserve3d : CSSValueFlat);
+        case CSSPropertyTranslate:
+            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+                return nullptr;
+            return computedTranslate(renderer, style);
         case CSSPropertyTransitionDelay:
             return delayValue(style.transitions());
         case CSSPropertyTransitionDuration:

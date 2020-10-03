@@ -83,6 +83,7 @@ public:
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(BuilderState&, CSSValue&);
     static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
     static TransformOperations convertTransform(BuilderState&, const CSSValue&);
+    static RefPtr<TranslateTransformOperation> convertTranslate(BuilderState&, const CSSValue&);
 #if ENABLE(DARK_MODE_CSS)
     static StyleColorScheme convertColorScheme(BuilderState&, const CSSValue&);
 #endif
@@ -479,6 +480,11 @@ inline TransformOperations BuilderConverter::convertTransform(BuilderState& buil
     TransformOperations operations;
     transformsForValue(value, builderState.cssToLengthConversionData(), operations);
     return operations;
+}
+
+inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)
+{
+    return translateForValue(value, builderState.cssToLengthConversionData());
 }
 
 #if ENABLE(DARK_MODE_CSS)

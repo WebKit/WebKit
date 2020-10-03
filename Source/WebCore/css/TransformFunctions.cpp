@@ -348,4 +348,34 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
     return true;
 }
 
+RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
+{
+    if (!is<CSSValueList>(value))
+        return nullptr;
+
+    auto& valueList = downcast<CSSValueList>(value);
+    if (!valueList.length())
+        return nullptr;
+
+    auto type = TransformOperation::TRANSLATE;
+    Length tx = Length(0, Fixed);
+    Length ty = Length(0, Fixed);
+    Length tz = Length(0, Fixed);
+    for (unsigned i = 0; i < valueList.length(); ++i) {
+        auto* valueItem = valueList.itemWithoutBoundsCheck(i);
+        if (!is<CSSPrimitiveValue>(valueItem))
+            return nullptr;
+        if (!i)
+            tx = convertToFloatLength(downcast<CSSPrimitiveValue>(valueItem), conversionData);
+        else if (i == 1)
+            ty = convertToFloatLength(downcast<CSSPrimitiveValue>(valueItem), conversionData);
+        else if (i == 2) {
+            type = TransformOperation::TRANSLATE_3D;
+            tz = convertToFloatLength(downcast<CSSPrimitiveValue>(valueItem), conversionData);
+        }
+    }
+
+    return TranslateTransformOperation::create(tx, ty, tz, type);
+}
+
 }
