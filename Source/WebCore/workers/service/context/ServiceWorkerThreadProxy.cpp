@@ -49,11 +49,7 @@ namespace WebCore {
 
 static URL topOriginURL(const SecurityOrigin& origin)
 {
-    URL url;
-    url.setProtocol(origin.protocol());
-    url.setHost(origin.host());
-    url.setPort(origin.port());
-    return url;
+    return URL { URL { }, origin.toRawString() };
 }
 
 static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)

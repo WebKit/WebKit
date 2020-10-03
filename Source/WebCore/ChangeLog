@@ -1,3 +1,14 @@
+2020-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        "http:" should not be a valid URL
+        https://bugs.webkit.org/show_bug.cgi?id=217250
+
+        Reviewed by Brady Eidson.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::topOriginURL):
+        Fix strange code written in r226257 that relied on the ability to assemble URLs starting with the protocol only.
+
 2020-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Support drawing text in 2D canvas with font features

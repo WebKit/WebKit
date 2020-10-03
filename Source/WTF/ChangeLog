@@ -1,3 +1,16 @@
+2020-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        "http:" should not be a valid URL
+        https://bugs.webkit.org/show_bug.cgi?id=217250
+
+        Reviewed by Brady Eidson.
+
+        Same with https, ws, wss, and for some reason ftp.
+        This matches the URL specification and Chrome and Firefox.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parse):
+
 2020-10-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Enable date, time, and datetime-local input types

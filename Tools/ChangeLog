@@ -1,3 +1,13 @@
+2020-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        "http:" should not be a valid URL
+        https://bugs.webkit.org/show_bug.cgi?id=217250
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-10-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Enable date, time, and datetime-local input types

@@ -388,9 +388,7 @@ a\rg> against <about:blank>
 PASS Parsing: <?a=b&c=d> against <http://example.org/foo/bar>
 PASS Parsing: <??a=b&c=d> against <http://example.org/foo/bar>
 PASS Parsing: <http:> against <http://example.org/foo/bar>
-FAIL Parsing: <http:> against <https://example.org/foo/bar> assert_throws_js: function "function () {
-          bURL(expected.input, expected.base)
-        }" did not throw
+PASS Parsing: <http:> against <https://example.org/foo/bar>
 PASS Parsing: <sc:> against <https://example.org/foo/bar>
 PASS Parsing: <http://foo.bar/baz?qux#foobar> against <about:blank>
 PASS Parsing: <http://foo.bar/baz?qux#foo"bar> against <about:blank>

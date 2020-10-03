@@ -1823,15 +1823,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         break;
     case State::SpecialAuthoritySlashes:
         LOG_FINAL_STATE("SpecialAuthoritySlashes");
-        m_url.m_userStart = currentPosition(c);
-        m_url.m_userEnd = m_url.m_userStart;
-        m_url.m_passwordEnd = m_url.m_userStart;
-        m_url.m_hostEnd = m_url.m_userStart;
-        m_url.m_portLength = 0;
-        m_url.m_pathAfterLastSlash = m_url.m_userStart;
-        m_url.m_pathEnd = m_url.m_userStart;
-        m_url.m_queryEnd = m_url.m_userStart;
-        break;
+        failure();
+        return;
     case State::SpecialAuthorityIgnoreSlashes:
         LOG_FINAL_STATE("SpecialAuthorityIgnoreSlashes");
         failure();
