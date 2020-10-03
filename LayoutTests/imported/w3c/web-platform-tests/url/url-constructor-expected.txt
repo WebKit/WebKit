@@ -565,7 +565,7 @@ PASS Parsing: <a//> against <about:blank>
 PASS Parsing: <test-a-colon.html> against <a:>
 PASS Parsing: <test-a-colon-b.html> against <a:b>
 PASS Parsing: <test-a-colon-slash.html> against <a:/>
-FAIL Parsing: <test-a-colon-slash-slash.html> against <a://> assert_equals: href expected "a:///test-a-colon-slash-slash.html" but got "a://test-a-colon-slash-slash.html"
+PASS Parsing: <test-a-colon-slash-slash.html> against <a://>
 PASS Parsing: <test-a-colon-slash-b.html> against <a:/b>
 PASS Parsing: <test-a-colon-slash-slash-b.html> against <a://b>
 PASS Parsing: <http://example.org/test?a#b\0c> against <about:blank>

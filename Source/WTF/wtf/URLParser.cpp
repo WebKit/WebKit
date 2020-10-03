@@ -1330,7 +1330,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 break;
             default:
                 copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c, nonUTF8QueryEncoding);
-                if (currentPosition(c) && parsedDataView(currentPosition(c) - 1) != '/') {
+                if ((currentPosition(c) && parsedDataView(currentPosition(c) - 1) != '/')
+                    || (base.host().isEmpty() && base.path().isEmpty())) {
                     appendToASCIIBuffer('/');
                     m_url.m_pathAfterLastSlash = currentPosition(c);
                 }

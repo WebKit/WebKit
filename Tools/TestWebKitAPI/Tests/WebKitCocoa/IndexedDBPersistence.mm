@@ -367,7 +367,7 @@ TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
             response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
             data = [NSData dataWithBytes:workerFrameBytes length:strlen(workerFrameBytes)];
         } else {
-            EXPECT_WK_STREQ("iframe://worker.js", requestURL.absoluteString);
+            EXPECT_WK_STREQ("iframe:///worker.js", requestURL.absoluteString);
             response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/javascript" expectedContentLength:0 textEncodingName:nil]);
             data = [NSData dataWithBytes:workerBytes length:strlen(workerBytes)];
         }

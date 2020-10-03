@@ -1,5 +1,15 @@
 2020-10-03  Alex Christensen  <achristensen@webkit.org>
 
+        Add extra slash after empty host copied from base URL if path is also empty
+        https://bugs.webkit.org/show_bug.cgi?id=217278
+
+        Reviewed by Darin Adler.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::parse):
+
+2020-10-03  Alex Christensen  <achristensen@webkit.org>
+
         "http:" should not be a valid URL
         https://bugs.webkit.org/show_bug.cgi?id=217250
 
