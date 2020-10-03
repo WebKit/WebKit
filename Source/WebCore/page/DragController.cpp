@@ -46,6 +46,7 @@
 #include "EditorClient.h"
 #include "ElementAncestorIterator.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -1493,11 +1494,15 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
     caretController.setCaretPosition(makeDeprecatedLegacyPosition(m_droppedImagePlaceholderRange->start));
 }
 
-void DragController::finalizeDroppedImagePlaceholder(HTMLImageElement& placeholder)
+void DragController::finalizeDroppedImagePlaceholder(HTMLImageElement& placeholder, CompletionHandler<void()>&& completion)
 {
-    ASSERT(placeholder.isDroppedImagePlaceholder());
-    placeholder.removeAttribute(HTMLNames::heightAttr);
-    placeholder.removeInlineStyleProperty(CSSPropertyBackgroundColor);
+    placeholder.document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [completion = WTFMove(completion), placeholder = makeRefPtr(placeholder)] () mutable {
+        if (placeholder->isDroppedImagePlaceholder()) {
+            placeholder->removeAttribute(HTMLNames::heightAttr);
+            placeholder->removeInlineStyleProperty(CSSPropertyBackgroundColor);
+        }
+        completion();
+    });
 }
 
 // Manual drag caret manipulation

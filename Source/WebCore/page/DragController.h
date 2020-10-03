@@ -30,6 +30,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "SimpleRange.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -92,7 +93,7 @@ public:
     const Vector<Ref<HTMLImageElement>>& droppedImagePlaceholders() const { return m_droppedImagePlaceholders; }
     const Optional<SimpleRange>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
 
-    WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
+    WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
 
     void prepareForDragStart(Frame& sourceFrame, OptionSet<DragSourceAction>, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;

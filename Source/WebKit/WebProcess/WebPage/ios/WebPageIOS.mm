@@ -1014,16 +1014,12 @@ void WebPage::didConcludeEditDrag()
 
 void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element)
 {
-    if (element.isDroppedImagePlaceholder())
-        m_page->dragController().finalizeDroppedImagePlaceholder(element);
-
-    if (m_pendingImageElementsForDropSnapshot.isEmpty())
-        return;
-
     m_pendingImageElementsForDropSnapshot.remove(&element);
-
-    if (m_pendingImageElementsForDropSnapshot.isEmpty())
-        computeAndSendEditDragSnapshot();
+    bool shouldSendSnapshot = m_pendingImageElementsForDropSnapshot.isEmpty();
+    m_page->dragController().finalizeDroppedImagePlaceholder(element, [protectedThis = makeRefPtr(this), shouldSendSnapshot] {
+        if (shouldSendSnapshot)
+            protectedThis->computeAndSendEditDragSnapshot();
+    });
 }
 
 void WebPage::computeAndSendEditDragSnapshot()
