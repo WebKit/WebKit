@@ -1178,56 +1178,42 @@ bool ArgumentCoder<NativeImageHandle>::decode(Decoder& decoder, NativeImageHandl
 
 void ArgumentCoder<Ref<Font>>::encode(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
-    auto* fontFaceData = font->fontFaceData();
-    encoder << static_cast<bool>(fontFaceData);
-    if (fontFaceData) {
-        encodeSharedBuffer(encoder, fontFaceData);
-        auto& data = font->platformData();
-        encoder << data.size();
-        encoder << data.syntheticBold();
-        encoder << data.syntheticOblique();
-    }
+    encoder << font->origin();
+    encoder << (font->isInterstitial() ? Font::Interstitial::Yes : Font::Interstitial::No);
+    encoder << font->visibility();
+    encoder << (font->isTextOrientationFallback() ? Font::OrientationFallback::Yes : Font::OrientationFallback::No);
+    // Intentionally don't encode m_isBrokenIdeographFallback because it doesn't affect drawGlyphs().
 
     encodePlatformData(encoder, font);
 }
 
 Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decode(Decoder& decoder)
 {
-    Optional<bool> hasFontFaceData;
-    decoder >> hasFontFaceData;
-    if (!hasFontFaceData.hasValue())
+    Optional<Font::Origin> origin;
+    decoder >> origin;
+    if (!origin.hasValue())
         return WTF::nullopt;
 
-    Optional<Ref<WebCore::Font>> result;
-    if (hasFontFaceData.value()) {
-        RefPtr<SharedBuffer> fontFaceData;
-        if (!decodeSharedBuffer(decoder, fontFaceData))
-            return WTF::nullopt;
+    Optional<Font::Interstitial> isInterstitial;
+    decoder >> isInterstitial;
+    if (!isInterstitial.hasValue())
+        return WTF::nullopt;
 
-        if (!fontFaceData)
-            return WTF::nullopt;
+    Optional<Font::Visibility> visibility;
+    decoder >> visibility;
+    if (!visibility.hasValue())
+        return WTF::nullopt;
 
-        Optional<float> fontSize;
-        decoder >> fontSize;
-        if (!fontSize)
-            return WTF::nullopt;
+    Optional<Font::OrientationFallback> isTextOrientationFallback;
+    decoder >> isTextOrientationFallback;
+    if (!isTextOrientationFallback.hasValue())
+        return WTF::nullopt;
 
-        Optional<bool> syntheticBold;
-        decoder >> syntheticBold;
-        if (!syntheticBold)
-            return WTF::nullopt;
+    auto platformData = decodePlatformData(decoder);
+    if (!platformData.hasValue())
+        return WTF::nullopt;
 
-        Optional<bool> syntheticItalic;
-        decoder >> syntheticItalic;
-        if (!syntheticItalic)
-            return WTF::nullopt;
-
-        FontDescription description;
-        description.setComputedSize(*fontSize);
-        result = Font::create(fontFaceData.releaseNonNull(), Font::Origin::Remote, *fontSize, *syntheticBold, *syntheticItalic);
-    }
-
-    return decodePlatformData(decoder, WTFMove(result));
+    return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value());
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)

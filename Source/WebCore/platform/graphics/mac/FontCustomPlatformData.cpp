@@ -39,7 +39,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 {
     auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     addAttributesForWebFonts(attributes.get(), fontDescription.shouldAllowUserInstalledFonts());
-    auto modifiedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(m_fontDescriptor.get(), attributes.get()));
+    auto modifiedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes.get()));
     ASSERT(modifiedFontDescriptor);
 
     int size = fontDescription.computedPixelSize();
@@ -48,7 +48,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     auto font = adoptCF(CTFontCreateWithFontDescriptor(modifiedFontDescriptor.get(), size, nullptr));
     font = preparePlatformFont(font.get(), fontDescription, &fontFaceFeatures, fontFaceCapabilities);
     ASSERT(font);
-    return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
+    return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), &creationData);
 }
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
@@ -85,7 +85,8 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
         return nullptr;
 #endif
 
-    return makeUnique<FontCustomPlatformData>(fontDescriptor.get());
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
+    return makeUnique<FontCustomPlatformData>(fontDescriptor.get(), WTFMove(creationData));
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

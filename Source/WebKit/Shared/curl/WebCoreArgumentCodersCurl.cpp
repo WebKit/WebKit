@@ -240,7 +240,7 @@ void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
     ASSERT_NOT_REACHED();
 }
 
-Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&, Optional<Ref<WebCore::Font>>&&)
+Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
 {
     ASSERT_NOT_REACHED();
     return WTF::nullopt;
