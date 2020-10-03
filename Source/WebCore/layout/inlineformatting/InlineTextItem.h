@@ -45,6 +45,7 @@ public:
 
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
     bool isCollapsible() const { return m_isCollapsible; }
+    bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
     Optional<InlineLayoutUnit> width() const { return m_hasWidth ? makeOptional(m_width) : Optional<InlineLayoutUnit> { }; }
     bool isEmptyContent() const;
 
@@ -56,22 +57,22 @@ public:
 private:
     using InlineItem::TextItemType;
 
-    InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType);
+    InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, Optional<InlineLayoutUnit> width, TextItemType);
     InlineTextItem(const InlineTextBox&);
 
     static InlineTextItem createWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
-    static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, Optional<InlineLayoutUnit> width);
+    static InlineTextItem createNonWhitespaceItem(const InlineTextBox&, unsigned start, unsigned length, bool hasTrailingSoftHyphen, Optional<InlineLayoutUnit> width);
     static InlineTextItem createEmptyItem(const InlineTextBox&);
 };
 
 inline InlineTextItem InlineTextItem::createWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
 {
-    return { inlineTextBox, start, length, width, TextItemType::Whitespace };
+    return { inlineTextBox, start, length, false, width, TextItemType::Whitespace };
 }
 
-inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width)
+inline InlineTextItem InlineTextItem::createNonWhitespaceItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, Optional<InlineLayoutUnit> width)
 {
-    return { inlineTextBox, start, length, width, TextItemType::NonWhitespace };
+    return { inlineTextBox, start, length, hasTrailingSoftHyphen, width, TextItemType::NonWhitespace };
 }
 
 inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlineTextBox)
@@ -79,12 +80,13 @@ inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlin
     return { inlineTextBox };
 }
 
-inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, Optional<InlineLayoutUnit> width, TextItemType textItemType)
+inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, bool hasTrailingSoftHyphen, Optional<InlineLayoutUnit> width, TextItemType textItemType)
     : InlineItem(inlineTextBox, Type::Text)
 {
     m_startOrPosition = start;
     m_length = length;
     m_hasWidth = !!width;
+    m_hasTrailingSoftHyphen = hasTrailingSoftHyphen;
     m_isCollapsible = textItemType == TextItemType::Whitespace && inlineTextBox.style().collapseWhiteSpace();
     m_width = width.valueOr(0);
     m_textItemType = textItemType;
@@ -100,7 +102,7 @@ inline InlineTextItem InlineTextItem::left(unsigned length) const
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
     ASSERT(length);
-    return { inlineTextBox(), start(), length, WTF::nullopt, m_textItemType };
+    return { inlineTextBox(), start(), length, false, WTF::nullopt, m_textItemType };
 }
 
 inline InlineTextItem InlineTextItem::right(unsigned length) const
@@ -108,7 +110,7 @@ inline InlineTextItem InlineTextItem::right(unsigned length) const
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
     ASSERT(length);
-    return { inlineTextBox(), end() - length, length, WTF::nullopt, m_textItemType };
+    return { inlineTextBox(), end() - length, length, hasTrailingSoftHyphen(), WTF::nullopt, m_textItemType };
 }
 
 }

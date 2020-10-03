@@ -115,7 +115,9 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         }
 
         auto length = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
+        ASSERT(length);
+        auto hasTrailingSoftHyphen = text[currentPosition + length - 1] == softHyphen;
+        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, currentPosition, length, hasTrailingSoftHyphen, inlineItemWidth(currentPosition, length)));
         currentPosition += length;
     }
 }

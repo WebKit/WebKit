@@ -1,3 +1,27 @@
+2020-10-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC][Soft hyphen] Soft hyphen is always the trailing character
+        https://bugs.webkit.org/show_bug.cgi?id=217264
+
+        Reviewed by Antti Koivisto.
+
+        Soft hyphen is a word wrap opportunity. An InlineTextItem can only have one trailing soft hyphen.
+        e.g <span>before&shy;after</span> generates 2 separate InlineTextItems: [before-][after].
+
+        InlineTextItem should be able to tell if it ends with a soft hyphen.
+
+        * layout/inlineformatting/InlineItem.cpp:
+        * layout/inlineformatting/InlineItem.h:
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::hasTrailingSoftHyphen const):
+        (WebCore::Layout::InlineTextItem::createWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::createNonWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::InlineTextItem):
+        (WebCore::Layout::InlineTextItem::left const):
+        (WebCore::Layout::InlineTextItem::right const):
+
 2020-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         std::once_flag must be allocated in static storage
