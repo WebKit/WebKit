@@ -1,3 +1,22 @@
+2020-10-02  Keith Rollin  <krollin@apple.com>
+
+        Seeing "usage: basename string [suffix]" spam when using make to build
+        https://bugs.webkit.org/show_bug.cgi?id=217231
+        <rdar://problem/69889138>
+
+        Reviewed by Darin Adler.
+
+        The name of the project being built is no longer displayed when using
+        XCBuild. Therefore, https://bugs.webkit.org/show_bug.cgi?id=216865
+        taught the Makefile to perform this logging. The approach took
+        advantage of a `make` variable (PATH_FROM_ROOT) that tracks the
+        relative path from the root of the build hierarchy to the current
+        project. However, that variable may not be initialized if the build is
+        not initiated from the root. Therefore, don't count on that variable,
+        and get the name of the current project by invoking `pwd`.
+
+        * Makefile.shared:
+
 2020-10-02  Sam Weinig  <weinig@apple.com>
 
         Remove code behind ENABLE(MEDIA_SESSION), no ports enable it
