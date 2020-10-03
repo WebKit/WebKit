@@ -2395,6 +2395,10 @@ static Optional<Session::Cookie> parseAutomationCookie(const JSON::Object& cooki
             cookie.expiry = *expiry;
     }
 
+    auto sameSite = cookieObject.getString("sameSite"_s);
+    if (!!sameSite)
+        cookie.sameSite = sameSite;
+
     return cookie;
 }
 
@@ -2409,6 +2413,7 @@ static Ref<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
     cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.valueOr(false));
     cookieObject->setBoolean("session"_s, !cookie.expiry);
     cookieObject->setDouble("expires"_s, cookie.expiry.valueOr(0));
+    cookieObject->setString("sameSite"_s, cookie.sameSite.valueOr("None"));
     return cookieObject;
 }
 
@@ -2427,6 +2432,8 @@ static Ref<JSON::Object> serializeCookie(const Session::Cookie& cookie)
         cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value());
     if (cookie.expiry)
         cookieObject->setInteger("expiry"_s, cookie.expiry.value());
+    if (cookie.sameSite)
+        cookieObject->setString("sameSite"_s, cookie.sameSite.value());
     return cookieObject;
 }
 

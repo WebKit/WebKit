@@ -67,6 +67,7 @@ public:
         Optional<bool> secure;
         Optional<bool> httpOnly;
         Optional<uint64_t> expiry;
+        Optional<String> sameSite;
     };
 
     InputSource& getOrCreateInputSource(const String& id, InputSource::Type, Optional<PointerType>);

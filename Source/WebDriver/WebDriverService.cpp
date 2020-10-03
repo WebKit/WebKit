@@ -1760,6 +1760,12 @@ static Optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObject)
             return WTF::nullopt;
         cookie.expiry = expiry.value();
     }
+    if (auto value = cookieObject.getValue("sameSite"_s)) {
+        auto sameSite = value->asString();
+        if (sameSite != "None"_s && sameSite != "Lax"_s && sameSite != "Strict"_s)
+            return WTF::nullopt;
+        cookie.sameSite = sameSite;
+    }
 
     return cookie;
 }
