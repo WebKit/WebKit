@@ -613,12 +613,12 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
         ASSERT(!m_wrapOpportunityList.isEmpty());
-        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange), true } };
+        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange, *m_wrapOpportunityList.last()), true } };
     }
     if (result.action == InlineContentBreaker::Result::Action::RevertToLastNonOverflowingWrapOpportunity) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return { InlineContentBreaker::IsEndOfLine::Yes, { } };
+        ASSERT(!m_wrapOpportunityList.isEmpty());
+        return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLineForTrailingSoftHyphen(layoutRange), true } };
     }
     if (result.action == InlineContentBreaker::Result::Action::Break) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
@@ -664,32 +664,43 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
     }
 }
 
-size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange)
+size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const InlineItem& lastInlineItemToAdd)
 {
     ASSERT(!m_wrapOpportunityList.isEmpty());
     // We might already have added intrusive floats. They shrink the avilable horizontal space for the line.
     // Let's just reuse what the line has at this point.
     m_line.initialize(m_line.horizontalConstraint());
-    auto* lastWrapOpportunityItem = m_wrapOpportunityList.last();
     auto currentItemIndex = layoutRange.start;
-    auto logicalRight = InlineLayoutUnit { };
     if (m_partialLeadingTextItem) {
-        auto logicalWidth = inlineItemWidth(*m_partialLeadingTextItem, logicalRight);
-        m_line.append(*m_partialLeadingTextItem, logicalWidth);
-        logicalRight += logicalWidth;
-        if (&m_partialLeadingTextItem.value() == lastWrapOpportunityItem)
+        m_line.append(*m_partialLeadingTextItem, inlineItemWidth(*m_partialLeadingTextItem, { }));
+        if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
             return 1;
         ++currentItemIndex;
     }
     for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
         auto& inlineItem = m_inlineItems[currentItemIndex];
-        auto logicalWidth = inlineItemWidth(inlineItem, logicalRight);
-        m_line.append(inlineItem, logicalWidth);
-        logicalRight += logicalWidth;
-        if (&inlineItem == lastWrapOpportunityItem)
+        m_line.append(inlineItem, inlineItemWidth(inlineItem, m_line.contentLogicalWidth()));
+        if (&inlineItem == &lastInlineItemToAdd)
             return currentItemIndex - layoutRange.start + 1;
     }
     return layoutRange.size();
+}
+
+size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange)
+{
+    ASSERT(!m_wrapOpportunityList.isEmpty());
+    // Revert all the way back to a wrap opportunity when either a soft hyphen fits or no hyphen is required.
+    for (auto i = m_wrapOpportunityList.size(); i-- > 1;) {
+        auto& softWrapOpportunityItem = *m_wrapOpportunityList[i];
+        // FIXME: If this turns out to be a perf issue, we could also traverse the wrap list and keep adding the items
+        // while watching the available width very closely.
+        auto index = rebuildLine(layoutRange, softWrapOpportunityItem);
+        auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
+        if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= m_line.availableWidth())
+            return index;
+    }
+    // Have at least some content on the line.
+    return rebuildLine(layoutRange, *m_wrapOpportunityList.first());
 }
 
 bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const

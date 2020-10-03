@@ -1,5 +1,24 @@
 2020-10-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC][Soft hyphen] Rebuild the line when need to revert to a previous wrap opportunity due to soft hyphens
+        https://bugs.webkit.org/show_bug.cgi?id=217272
+
+        Reviewed by Antti Koivisto.
+
+        This patch reverts the line to a previous wrap opportunity where
+        1. the trailing soft hyphen fits or
+        2. no need for soft hyphen (we reverted back to a non-text inline content, where we don't need a hyphen) or
+        3. reverted all the way back to the beginning of the line.
+        (We still don't paint hyphens at the soft hyphen locations.)
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        (WebCore::Layout::LineBuilder::rebuildLine):
+        (WebCore::Layout::LineBuilder::rebuildLineForTrailingSoftHyphen):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
+2020-10-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC][Soft hyphen] InlineContentBreaker should return Action::Revert when the trailing soft hyphen does not fit
         https://bugs.webkit.org/show_bug.cgi?id=217269
 
