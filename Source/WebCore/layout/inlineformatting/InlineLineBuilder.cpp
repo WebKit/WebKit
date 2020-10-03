@@ -340,7 +340,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints)
 {
     m_floats.clear();
     m_partialLeadingTextItem = { };
-    m_lastWrapOpportunityItem = { };
+    m_wrapOpportunityList.clear();
 
     m_line.initialize(lineConstraints.availableLogicalWidth);
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
@@ -595,7 +595,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
     auto lineStatus = InlineContentBreaker::LineStatus { availableWidth, m_line.trimmableTrailingWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
-        m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
+        m_wrapOpportunityList.append(result.lastWrapOpportunityItem);
     auto& candidateRuns = continuousInlineContent.runs();
     if (result.action == InlineContentBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line including non-intrusive floats.
@@ -612,7 +612,7 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
     if (result.action == InlineContentBreaker::Result::Action::RevertToLastWrapOpportunity) {
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
-        ASSERT(m_lastWrapOpportunityItem);
+        ASSERT(!m_wrapOpportunityList.isEmpty());
         return { InlineContentBreaker::IsEndOfLine::Yes, { rebuildLine(layoutRange), true } };
     }
     if (result.action == InlineContentBreaker::Result::Action::Break) {
@@ -661,17 +661,18 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
 
 size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange)
 {
-    ASSERT(m_lastWrapOpportunityItem);
+    ASSERT(!m_wrapOpportunityList.isEmpty());
     // We might already have added intrusive floats. They shrink the avilable horizontal space for the line.
     // Let's just reuse what the line has at this point.
     m_line.initialize(m_line.horizontalConstraint());
+    auto* lastWrapOpportunityItem = m_wrapOpportunityList.last();
     auto currentItemIndex = layoutRange.start;
     auto logicalRight = InlineLayoutUnit { };
     if (m_partialLeadingTextItem) {
         auto logicalWidth = inlineItemWidth(*m_partialLeadingTextItem, logicalRight);
         m_line.append(*m_partialLeadingTextItem, logicalWidth);
         logicalRight += logicalWidth;
-        if (&m_partialLeadingTextItem.value() == m_lastWrapOpportunityItem)
+        if (&m_partialLeadingTextItem.value() == lastWrapOpportunityItem)
             return 1;
         ++currentItemIndex;
     }
@@ -680,7 +681,7 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange)
         auto logicalWidth = inlineItemWidth(inlineItem, logicalRight);
         m_line.append(inlineItem, logicalWidth);
         logicalRight += logicalWidth;
-        if (&inlineItem == m_lastWrapOpportunityItem)
+        if (&inlineItem == lastWrapOpportunityItem)
             return currentItemIndex - layoutRange.start + 1;
     }
     return layoutRange.size();

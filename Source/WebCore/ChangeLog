@@ -1,5 +1,31 @@
 2020-10-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC][Soft hyphen] LineBuilder should hold on to all the wrap opportunities
+        https://bugs.webkit.org/show_bug.cgi?id=217265
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding support for reverting content when the soft hyphen
+        overflows the line so as the last wrap opportunity InlineTextItem.
+        In such cases we need to go further back(front) on the line and revert even more content.
+        e.g <div>1&shy;2&shy;3&shy;4</div>
+        Depending on the horizontal constraint the first line may be:
+        1-
+        12-
+        123-
+        1234
+        If character '4' overflows the line, we would go with '123-' by reverting to the last wrap opportunity.
+        However in case of a wide hyphen, '123-' may overflow the line as well and we have to revert
+        the content further back to e.g. '12-' or even '1-'.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::handleFloatsAndInlineContent):
+        (WebCore::Layout::LineBuilder::rebuildLine):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
+2020-10-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC][Soft hyphen] Soft hyphen is always the trailing character
         https://bugs.webkit.org/show_bug.cgi?id=217264
 

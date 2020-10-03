@@ -116,7 +116,7 @@ private:
     const InlineItems& m_inlineItems;
     LineContent::FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
-    const InlineItem* m_lastWrapOpportunityItem { nullptr };
+    Vector<const InlineItem*> m_wrapOpportunityList;
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_contentIsConstrainedByFloat { false };
 };
