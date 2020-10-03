@@ -300,8 +300,8 @@ InputTypeDateEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
-      default: false
+      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      default: true
   
 InputTypeDateTimeLocalEnabled:
   type: bool
@@ -312,8 +312,8 @@ InputTypeDateTimeLocalEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
-      default: false
+      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      default: true
 
 InputTypeMonthEnabled:
   type: bool
@@ -336,8 +336,8 @@ InputTypeTimeEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
-      default: false
+      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      default: true
 
 InputTypeWeekEnabled:
   type: bool

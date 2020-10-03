@@ -1,3 +1,18 @@
+2020-10-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Enable date, time, and datetime-local input types
+        https://bugs.webkit.org/show_bug.cgi?id=217229
+        <rdar://problem/69882757>
+
+        Reviewed by Sam Weinig.
+
+        Update test expectations now that these input types no longer fallback
+        to text fields. Also removed the test for input type=datetime, as it
+        has been removed from the spec.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InjectedBundleNodeHandleIsTextField.mm:
+        (-[InjectedBundleNodeHandleIsTextField webProcessPlugIn:didCreateBrowserContextController:]):
+
 2020-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         std::once_flag must be allocated in static storage
