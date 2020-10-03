@@ -1,3 +1,31 @@
+2020-10-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] showLayoutTree should group line runs under individual lines
+        https://bugs.webkit.org/show_bug.cgi?id=217282
+
+        Reviewed by Simon Fraser.
+
+        Let's improve inline run output by grouping runs:
+
+        line at (0.00,0.00) size 0.00x18.00 baseline at (14.00)
+            text run at (0.00,0.00) size 15.10x18.00 run(0, 2)
+            text run at (15.10,0.00) size 0.00x18.00 run(0, 1)
+        line at (0.00,18.00) size 0.00x18.00 baseline at (14.00)
+            text run at (0.00,0.00) size 39.09x18.00 run(0, 5)
+
+        instead of:
+
+        line at (0.00,0.00) size 0.00x18.00 baseline at (14.00)
+        line at (0.00,18.00) size 0.00x18.00 baseline at (14.00)
+            text run at (0.00,0.00) size 15.10x18.00 run(0, 2)
+            text run at (15.10,0.00) size 0.00x18.00 run(0, 1)
+            text run at (0.00,0.00) size 39.09x18.00 run(0, 5)
+
+        So that we can tell which run belongs to which line.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+
 2020-10-03  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Split more IDL files by spec

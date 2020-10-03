@@ -383,27 +383,30 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
     auto& lines = inlineFormattingState.lines();
 
-    for (auto& line : lines) {
+    for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         size_t printedCharacters = 0;
         while (++printedCharacters <= depth * 2)
             stream << " ";
-        stream << "    line at (" << line.logicalLeft() << "," << line.logicalTop() << ") size " << line.logicalWidth() << "x" << line.logicalHeight() << " baseline at (" << line.baseline() << ")";
+        auto& line = lines[lineIndex];
+        stream << "line at (" << line.logicalLeft() << "," << line.logicalTop() << ") size " << line.logicalWidth() << "x" << line.logicalHeight() << " baseline at (" << line.baseline() << ")";
         stream.nextLine();
-    }
+        for (auto& run : inlineFormattingState.lineRuns()) {
+            if (run.lineIndex() != lineIndex)
+                continue;
+            unsigned printedCharacters = 0;
+            while (++printedCharacters <= depth * 2)
+                stream << " ";
+            stream << "    ";
+            if (run.text())
+                stream << "text run";
+            else
+                stream << "box run";
+            stream << " at (" << run.logicalLeft() << "," << run.logicalTop() << ") size " << run.logicalWidth() << "x" << run.logicalHeight();
+            if (run.text())
+                stream << " run(" << run.text()->start() << ", " << run.text()->end() << ")";
+            stream.nextLine();
+        }
 
-    for (auto& run : inlineFormattingState.lineRuns()) {
-        unsigned printedCharacters = 0;
-        while (++printedCharacters <= depth * 2)
-            stream << " ";
-        stream << "  ";
-        if (run.text())
-            stream << "text run";
-        else
-            stream << "box run";
-        stream << " at (" << run.logicalLeft() << "," << run.logicalTop() << ") size " << run.logicalWidth() << "x" << run.logicalHeight();
-        if (run.text())
-            stream << " run(" << run.text()->start() << ", " << run.text()->end() << ")";
-        stream.nextLine();
     }
 }
 
