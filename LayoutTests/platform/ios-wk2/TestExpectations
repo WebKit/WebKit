@@ -1892,3 +1892,7 @@ webkit.org/b/217118 [ Release ] imported/w3c/web-platform-tests/user-timing/meas
 webkit.org/b/217257 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 
 webkit.org/b/217258 svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
+
+webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Failure ]
+
+webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
