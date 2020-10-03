@@ -91,6 +91,8 @@ webkit.org/b/215405 [ Debug ] accessibility/canvas-fallback-content.html [ Crash
 
 webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 
+webkit.org/b/217260 accessibility/spinbutton-crash.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +241,7 @@ webkit.org/b/98937 http/tests/misc/gamepads-insecure.html [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
-webkit.org/b/79203  fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
+webkit.org/b/79203 webkit.org/b/217163 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 webkit.org/b/191886 webkit.org/b/210800 [ Release ] fast/mediastream/MediaStream-removeTrack-while-playing.html [ Pass Crash ]
@@ -495,6 +497,12 @@ webkit.org/b/217163 fast/mediastream/RTCPeerConnection-media-setup-single-dialog
 webkit.org/b/217163 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Crash ]
 webkit.org/b/217163 webrtc/missing-exception-checks-RTCPeerConnection-generateCertificate.html [ Pass Crash ]
 webkit.org/b/217163 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Crash ]
+webkit.org/b/217163 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass Crash ]
+
+webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
+webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure ]
+webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
+webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
