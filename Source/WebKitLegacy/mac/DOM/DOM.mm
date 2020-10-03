@@ -42,6 +42,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/Frame.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLLinkElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLParserIdioms.h>
@@ -572,7 +573,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     auto& range = *core(self);
     range.ownerDocument().updateLayoutIgnorePendingStylesheets();
-    return range.absoluteBoundingBox();
+    return unionRect(RenderObject::absoluteTextRects(makeSimpleRange(range)));
 }
 
 #if PLATFORM(MAC)
