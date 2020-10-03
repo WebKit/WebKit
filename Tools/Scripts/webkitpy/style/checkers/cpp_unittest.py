@@ -5623,6 +5623,75 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/lock_guard] [4]",
             'foo.mm')
 
+    def test_once_flag(self):
+        self.assert_lint(
+            'static std::once_flag onceKey;',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'std::once_flag onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            '    std::once_flag onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'static std::once_flag onceKey;',
+            '',
+            'foo.mm')
+
+        self.assert_lint(
+            'std::once_flag onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            '    std::once_flag onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            'static dispatch_once_t onceKey;',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'dispatch_once_t onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            '    dispatch_once_t onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'static dispatch_once_t onceKey;',
+            '',
+            'foo.mm')
+
+        self.assert_lint(
+            'dispatch_once_t onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            '    dispatch_once_t onceKey;',
+            "std::once_flag / dispatch_once_t should be in `static` storage."
+            "  [runtime/once_flag] [4]",
+            'foo.mm')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',

@@ -2506,6 +2506,29 @@ def check_enum_casing(clean_lines, line_number, enum_state, error):
               'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.')
 
 
+def check_once_flag(clean_lines, line_number, enum_state, error):
+    """Looks for non-static std::once_flag / dispatch_once_t.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      enum_state: A _EnumState instance which maintains enum declaration state.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_std_once_flag = search(r'std::once_flag|dispatch_once_t', line)
+    if not using_std_once_flag:
+        return
+
+    using_std_once_flag_with_static = search(r'static\s+(?:std::once_flag|dispatch_once_t)', line)
+    if using_std_once_flag_with_static:
+        return
+
+    error(line_number, 'runtime/once_flag', 4, "std::once_flag / dispatch_once_t should be in `static` storage.")
+
+
 def check_directive_indentation(clean_lines, line_number, file_state, error):
     """Looks for indentation of preprocessor directives.
 
@@ -3342,6 +3365,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_soft_link_class_alloc(clean_lines, line_number, error)
     check_indentation_amount(clean_lines, line_number, error)
     check_enum_casing(clean_lines, line_number, enum_state, error)
+    check_once_flag(clean_lines, line_number, file_state, error)
     check_min_versions_of_wk_api_available(clean_lines, line_number, error)
 
 
@@ -4514,6 +4538,7 @@ class CppChecker(object):
         'runtime/lock_guard',
         'runtime/max_min_macros',
         'runtime/memset',
+        'runtime/once_flag',
         'runtime/printf',
         'runtime/printf_format',
         'runtime/references',

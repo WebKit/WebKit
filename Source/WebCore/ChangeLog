@@ -1,3 +1,15 @@
+2020-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        std::once_flag must be allocated in static storage
+        https://bugs.webkit.org/show_bug.cgi?id=217271
+
+        Reviewed by Mark Lam.
+
+        If the std::once_flag is a non-static variable, it will not prevent us from calling it multiple times.
+
+        * platform/text/TextCodecSingleByte.cpp:
+        (WebCore::tableForEncoding):
+
 2020-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ iOS ] ASSERTION FAILED: ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree

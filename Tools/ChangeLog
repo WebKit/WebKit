@@ -1,3 +1,19 @@
+2020-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        std::once_flag must be allocated in static storage
+        https://bugs.webkit.org/show_bug.cgi?id=217271
+
+        Reviewed by Mark Lam.
+
+        Added cpplint rule for non-static std::once_flag / dispatch_once_t.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_once_flag):
+        (check_style):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_once_flag):
+
 2020-10-02  Kate Cheney  <katherine_cheney@apple.com>
 
         Multiple calls to suspend media playback for the same page may result in resuming media playback too soon
