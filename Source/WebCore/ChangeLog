@@ -1,5 +1,42 @@
 2020-10-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267612. rdar://problem/69904365
+
+    Crunchyroll playback controls do not work on iPad with trackpad
+    https://bugs.webkit.org/show_bug.cgi?id=217000
+    <rdar://problem/66362029>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    * platform/RuntimeApplicationChecks.h:
+    * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+    (WebCore::IOSApplication::isCrunchyroll):
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (applicationIsKnownToIgnoreMouseEvents):
+    Add it to the list.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267612 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-09-25  Tim Horton  <timothy_horton@apple.com>
+
+            Crunchyroll playback controls do not work on iPad with trackpad
+            https://bugs.webkit.org/show_bug.cgi?id=217000
+            <rdar://problem/66362029>
+
+            Reviewed by Wenson Hsieh.
+
+            * platform/RuntimeApplicationChecks.h:
+            * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+            (WebCore::IOSApplication::isCrunchyroll):
+
+2020-10-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r266028. rdar://problem/69904377
 
     Move node geometry functions from Range to RenderObject

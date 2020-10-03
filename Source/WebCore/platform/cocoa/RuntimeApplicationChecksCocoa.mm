@@ -434,6 +434,12 @@ bool IOSApplication::isPaperIO()
     return isPaperIO;
 }
 
+bool IOSApplication::isCrunchyroll()
+{
+    static bool isCrunchyroll = applicationBundleIsEqualTo("com.crunchyroll.iphone"_s);
+    return isCrunchyroll;
+}
+
 #endif
 
 } // namespace WebCore
