@@ -39,9 +39,11 @@
 #include "PluginProcessConnectionManager.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebEvent.h"
+#include "WebKeyboardEvent.h"
+#include "WebMouseEvent.h"
 #include "WebProcess.h"
 #include "WebProcessConnectionMessages.h"
+#include "WebWheelEvent.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/SharedBuffer.h>
 

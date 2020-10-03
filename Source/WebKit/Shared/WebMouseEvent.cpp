@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebEvent.h"
+#include "WebMouseEvent.h"
 
 #include "WebCoreArgumentCoders.h"
 

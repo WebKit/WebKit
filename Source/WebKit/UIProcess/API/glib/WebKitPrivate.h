@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebEvent.h"
 #include "WebKitNavigationAction.h"
+#include "WebMouseEvent.h"
 #include <WebCore/FrameLoaderTypes.h>
 
 unsigned toPlatformModifiers(OptionSet<WebKit::WebEvent::Modifier>);

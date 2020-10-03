@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "WebEvent.h"
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>

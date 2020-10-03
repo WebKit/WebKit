@@ -27,7 +27,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "WebEvent.h"
+#import "WebKeyboardEvent.h"
+#import "WebMouseEvent.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebEvent.h>
 

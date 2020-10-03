@@ -27,11 +27,12 @@
 #include "EventDispatcher.h"
 
 #include "EventDispatcherMessages.h"
-#include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebTouchEvent.h"
+#include "WebWheelEvent.h"
 #include <WebCore/Page.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/MainThread.h>

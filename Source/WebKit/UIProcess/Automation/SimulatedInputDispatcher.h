@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
 
-#include "WebEvent.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntPoint.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>

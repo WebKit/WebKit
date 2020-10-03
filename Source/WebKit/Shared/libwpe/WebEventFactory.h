@@ -25,7 +25,13 @@
 
 #pragma once
 
-#include "WebEvent.h"
+#include "WebKeyboardEvent.h"
+#include "WebMouseEvent.h"
+#include "WebWheelEvent.h"
+
+#if ENABLE(TOUCH_EVENTS)
+#include "WebTouchEvent.h"
+#endif
 
 struct wpe_input_axis_event;
 struct wpe_input_keyboard_event;

@@ -1,3 +1,201 @@
+2020-10-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Move WebEvent subclass declarations to their own files
+        https://bugs.webkit.org/show_bug.cgi?id=217259
+
+        Reviewed by Tim Horton.
+
+        Make new header files for WebMouseEvent, WebKeyboardEvent, WebWheelEvent, WebTouchEvent and
+        fix the fallout.
+
+        * Scripts/webkit/messages.py:
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/NativeWebGestureEvent.h:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/NavigationActionData.h:
+        * Shared/WebEvent.cpp:
+        (WebKit::WebTouchEvent::allTouchPointsAreReleased const): Deleted.
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::button const): Deleted.
+        (WebKit::WebMouseEvent::buttons const): Deleted.
+        (WebKit::WebMouseEvent::position const): Deleted.
+        (WebKit::WebMouseEvent::globalPosition const): Deleted.
+        (WebKit::WebMouseEvent::deltaX const): Deleted.
+        (WebKit::WebMouseEvent::deltaY const): Deleted.
+        (WebKit::WebMouseEvent::deltaZ const): Deleted.
+        (WebKit::WebMouseEvent::clickCount const): Deleted.
+        (WebKit::WebMouseEvent::eventNumber const): Deleted.
+        (WebKit::WebMouseEvent::menuTypeForEvent const): Deleted.
+        (WebKit::WebMouseEvent::force const): Deleted.
+        (WebKit::WebMouseEvent::syntheticClickType const): Deleted.
+        (WebKit::WebWheelEvent::position const): Deleted.
+        (WebKit::WebWheelEvent::globalPosition const): Deleted.
+        (WebKit::WebWheelEvent::delta const): Deleted.
+        (WebKit::WebWheelEvent::wheelTicks const): Deleted.
+        (WebKit::WebWheelEvent::granularity const): Deleted.
+        (WebKit::WebWheelEvent::directionInvertedFromDevice const): Deleted.
+        (WebKit::WebWheelEvent::phase const): Deleted.
+        (WebKit::WebWheelEvent::momentumPhase const): Deleted.
+        (WebKit::WebWheelEvent::hasPreciseScrollingDeltas const): Deleted.
+        (WebKit::WebWheelEvent::scrollCount const): Deleted.
+        (WebKit::WebWheelEvent::unacceleratedScrollingDelta const): Deleted.
+        (WebKit::WebKeyboardEvent::text const): Deleted.
+        (WebKit::WebKeyboardEvent::unmodifiedText const): Deleted.
+        (WebKit::WebKeyboardEvent::key const): Deleted.
+        (WebKit::WebKeyboardEvent::code const): Deleted.
+        (WebKit::WebKeyboardEvent::keyIdentifier const): Deleted.
+        (WebKit::WebKeyboardEvent::windowsVirtualKeyCode const): Deleted.
+        (WebKit::WebKeyboardEvent::nativeVirtualKeyCode const): Deleted.
+        (WebKit::WebKeyboardEvent::macCharCode const): Deleted.
+        (WebKit::WebKeyboardEvent::handledByInputMethod const): Deleted.
+        (WebKit::WebKeyboardEvent::preeditUnderlines const): Deleted.
+        (WebKit::WebKeyboardEvent::preeditSelectionRange const): Deleted.
+        (WebKit::WebKeyboardEvent::commands const): Deleted.
+        (WebKit::WebKeyboardEvent::isAutoRepeat const): Deleted.
+        (WebKit::WebKeyboardEvent::isKeypad const): Deleted.
+        (WebKit::WebKeyboardEvent::isSystemKey const): Deleted.
+        (WebKit::WebPlatformTouchPoint::WebPlatformTouchPoint): Deleted.
+        (WebKit::WebPlatformTouchPoint::identifier const): Deleted.
+        (WebKit::WebPlatformTouchPoint::location const): Deleted.
+        (WebKit::WebPlatformTouchPoint::phase const): Deleted.
+        (WebKit::WebPlatformTouchPoint::state const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setRadiusX): Deleted.
+        (WebKit::WebPlatformTouchPoint::radiusX const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setRadiusY): Deleted.
+        (WebKit::WebPlatformTouchPoint::radiusY const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setRotationAngle): Deleted.
+        (WebKit::WebPlatformTouchPoint::rotationAngle const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setForce): Deleted.
+        (WebKit::WebPlatformTouchPoint::force const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setAltitudeAngle): Deleted.
+        (WebKit::WebPlatformTouchPoint::altitudeAngle const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setAzimuthAngle): Deleted.
+        (WebKit::WebPlatformTouchPoint::azimuthAngle const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setTouchType): Deleted.
+        (WebKit::WebPlatformTouchPoint::touchType const): Deleted.
+        (WebKit::WebTouchEvent::WebTouchEvent): Deleted.
+        (WebKit::WebTouchEvent::touchPoints const): Deleted.
+        (WebKit::WebTouchEvent::position const): Deleted.
+        (WebKit::WebTouchEvent::isPotentialTap const): Deleted.
+        (WebKit::WebTouchEvent::isGesture const): Deleted.
+        (WebKit::WebTouchEvent::gestureScale const): Deleted.
+        (WebKit::WebTouchEvent::gestureRotation const): Deleted.
+        (WebKit::WebTouchEvent::canPreventNativeGestures const): Deleted.
+        (WebKit::WebTouchEvent::setCanPreventNativeGestures): Deleted.
+        (WebKit::WebPlatformTouchPoint::id const): Deleted.
+        (WebKit::WebPlatformTouchPoint::screenPosition const): Deleted.
+        (WebKit::WebPlatformTouchPoint::position const): Deleted.
+        (WebKit::WebPlatformTouchPoint::radius const): Deleted.
+        (WebKit::WebPlatformTouchPoint::setState): Deleted.
+        * Shared/WebEventConversion.cpp:
+        * Shared/WebKeyboardEvent.cpp:
+        * Shared/WebKeyboardEvent.h: Added.
+        (WebKit::WebKeyboardEvent::text const):
+        (WebKit::WebKeyboardEvent::unmodifiedText const):
+        (WebKit::WebKeyboardEvent::key const):
+        (WebKit::WebKeyboardEvent::code const):
+        (WebKit::WebKeyboardEvent::keyIdentifier const):
+        (WebKit::WebKeyboardEvent::windowsVirtualKeyCode const):
+        (WebKit::WebKeyboardEvent::nativeVirtualKeyCode const):
+        (WebKit::WebKeyboardEvent::macCharCode const):
+        (WebKit::WebKeyboardEvent::handledByInputMethod const):
+        (WebKit::WebKeyboardEvent::preeditUnderlines const):
+        (WebKit::WebKeyboardEvent::preeditSelectionRange const):
+        (WebKit::WebKeyboardEvent::commands const):
+        (WebKit::WebKeyboardEvent::isAutoRepeat const):
+        (WebKit::WebKeyboardEvent::isKeypad const):
+        (WebKit::WebKeyboardEvent::isSystemKey const):
+        * Shared/WebMouseEvent.cpp:
+        * Shared/WebMouseEvent.h: Added.
+        (WebKit::WebMouseEvent::button const):
+        (WebKit::WebMouseEvent::buttons const):
+        (WebKit::WebMouseEvent::position const):
+        (WebKit::WebMouseEvent::globalPosition const):
+        (WebKit::WebMouseEvent::deltaX const):
+        (WebKit::WebMouseEvent::deltaY const):
+        (WebKit::WebMouseEvent::deltaZ const):
+        (WebKit::WebMouseEvent::clickCount const):
+        (WebKit::WebMouseEvent::eventNumber const):
+        (WebKit::WebMouseEvent::menuTypeForEvent const):
+        (WebKit::WebMouseEvent::force const):
+        (WebKit::WebMouseEvent::syntheticClickType const):
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::allTouchPointsAreReleased const):
+        * Shared/WebTouchEvent.h: Added.
+        (WebKit::WebPlatformTouchPoint::WebPlatformTouchPoint):
+        (WebKit::WebPlatformTouchPoint::identifier const):
+        (WebKit::WebPlatformTouchPoint::location const):
+        (WebKit::WebPlatformTouchPoint::phase const):
+        (WebKit::WebPlatformTouchPoint::state const):
+        (WebKit::WebPlatformTouchPoint::setRadiusX):
+        (WebKit::WebPlatformTouchPoint::radiusX const):
+        (WebKit::WebPlatformTouchPoint::setRadiusY):
+        (WebKit::WebPlatformTouchPoint::radiusY const):
+        (WebKit::WebPlatformTouchPoint::setRotationAngle):
+        (WebKit::WebPlatformTouchPoint::rotationAngle const):
+        (WebKit::WebPlatformTouchPoint::setForce):
+        (WebKit::WebPlatformTouchPoint::force const):
+        (WebKit::WebPlatformTouchPoint::setAltitudeAngle):
+        (WebKit::WebPlatformTouchPoint::altitudeAngle const):
+        (WebKit::WebPlatformTouchPoint::setAzimuthAngle):
+        (WebKit::WebPlatformTouchPoint::azimuthAngle const):
+        (WebKit::WebPlatformTouchPoint::setTouchType):
+        (WebKit::WebPlatformTouchPoint::touchType const):
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        (WebKit::WebTouchEvent::touchPoints const):
+        (WebKit::WebTouchEvent::position const):
+        (WebKit::WebTouchEvent::isPotentialTap const):
+        (WebKit::WebTouchEvent::isGesture const):
+        (WebKit::WebTouchEvent::gestureScale const):
+        (WebKit::WebTouchEvent::gestureRotation const):
+        (WebKit::WebTouchEvent::canPreventNativeGestures const):
+        (WebKit::WebTouchEvent::setCanPreventNativeGestures):
+        (WebKit::WebPlatformTouchPoint::id const):
+        (WebKit::WebPlatformTouchPoint::screenPosition const):
+        (WebKit::WebPlatformTouchPoint::position const):
+        (WebKit::WebPlatformTouchPoint::radius const):
+        (WebKit::WebPlatformTouchPoint::setState):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        * Shared/WebWheelEvent.h: Added.
+        (WebKit::WebWheelEvent::position const):
+        (WebKit::WebWheelEvent::globalPosition const):
+        (WebKit::WebWheelEvent::delta const):
+        (WebKit::WebWheelEvent::wheelTicks const):
+        (WebKit::WebWheelEvent::granularity const):
+        (WebKit::WebWheelEvent::directionInvertedFromDevice const):
+        (WebKit::WebWheelEvent::phase const):
+        (WebKit::WebWheelEvent::momentumPhase const):
+        (WebKit::WebWheelEvent::hasPreciseScrollingDeltas const):
+        (WebKit::WebWheelEvent::scrollCount const):
+        (WebKit::WebWheelEvent::unacceleratedScrollingDelta const):
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        * Shared/ios/WebTouchEventIOS.cpp:
+        * Shared/mac/NativeWebGestureEventMac.mm:
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebGestureEvent.h:
+        * UIProcess/API/APINavigationClient.h:
+        * UIProcess/API/APIPolicyClient.h:
+        * UIProcess/Automation/SimulatedInputDispatcher.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/PageBanner.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2020-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ iOS ] ASSERTION FAILED: ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree

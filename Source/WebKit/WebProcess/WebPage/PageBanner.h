@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageBanner_h
-#define PageBanner_h
+#pragma once
 
 #include "APIObject.h"
-#include "WebEvent.h"
+#include "WebMouseEvent.h"
 
 #if PLATFORM(MAC)
 OBJC_CLASS CALayer;
@@ -96,5 +95,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // PageBanner_h

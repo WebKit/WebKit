@@ -28,7 +28,6 @@
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 
-#import "WebEvent.h"
 #import "WebGestureEvent.h"
 #import <WebCore/IntPoint.h>
 #import <WebCore/PlatformEventFactoryMac.h>

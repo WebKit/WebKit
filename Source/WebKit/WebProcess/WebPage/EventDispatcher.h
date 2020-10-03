@@ -51,6 +51,10 @@ namespace WebKit {
 class WebPage;
 class WebWheelEvent;
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+class WebTouchEvent;
+#endif
+
 class EventDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<EventDispatcher> create();

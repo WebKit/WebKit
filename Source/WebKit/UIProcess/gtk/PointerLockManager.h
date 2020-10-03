@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebEvent.h"
+#include "WebMouseEvent.h"
 #include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
 

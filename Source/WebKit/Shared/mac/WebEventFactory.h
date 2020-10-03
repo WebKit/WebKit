@@ -25,7 +25,9 @@
 
 #pragma once
 
-#import "WebEvent.h"
+#import "WebKeyboardEvent.h"
+#import "WebMouseEvent.h"
+#import "WebWheelEvent.h"
 
 #if USE(APPKIT)
 #if defined(__OBJC__)

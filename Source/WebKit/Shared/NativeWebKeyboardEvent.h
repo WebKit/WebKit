@@ -26,19 +26,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebKeyboardEvent_h
-#define NativeWebKeyboardEvent_h
+#pragma once
 
-#include "WebEvent.h"
+#include "WebKeyboardEvent.h"
 
 #if USE(APPKIT)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
-
-namespace WebCore {
-struct CompositionUnderline;
-struct KeypressCommand;
-}
 #endif
 
 #if PLATFORM(GTK)
@@ -113,5 +107,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // NativeWebKeyboardEvent_h

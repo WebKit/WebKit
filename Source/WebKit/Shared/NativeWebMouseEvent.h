@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebMouseEvent_h
-#define NativeWebMouseEvent_h
+#pragma once
 
-#include "WebEvent.h"
+#include "WebMouseEvent.h"
 
 #if USE(APPKIT)
 #include <wtf/RetainPtr.h>
@@ -102,5 +101,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // NativeWebMouseEvent_h

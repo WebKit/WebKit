@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebEvent.h"
+#include "WebWheelEvent.h"
 #include <wpe/wpe.h>
 
 namespace WebKit {

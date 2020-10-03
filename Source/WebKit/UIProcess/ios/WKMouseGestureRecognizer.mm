@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/Compiler.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/Optional.h>
 
 static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags flags)

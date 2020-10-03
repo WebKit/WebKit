@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebEvent.h"
+#include "WebKeyboardEvent.h"
 
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/KeypressCommand.h>

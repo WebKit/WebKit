@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKSharedAPICast_h
-#define WKSharedAPICast_h
+#pragma once
 
 #include "APIError.h"
 #include "APINumber.h"
@@ -47,8 +46,8 @@
 #include "WKPageVisibilityTypes.h"
 #include "WKUserContentInjectedFrames.h"
 #include "WKUserScriptInjectionTime.h"
-#include "WebEvent.h"
 #include "WebFindOptions.h"
+#include "WebMouseEvent.h"
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/DiagnosticLoggingResultType.h>
 #include <WebCore/FloatRect.h>
@@ -1034,5 +1033,3 @@ inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserCont
 }
 
 } // namespace WebKit
-
-#endif // WKSharedAPICast_h

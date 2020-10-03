@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGestureEvent_h
-#define WebGestureEvent_h
+#pragma once
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 
@@ -73,5 +72,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)
-
-#endif // WebGestureEvent_h

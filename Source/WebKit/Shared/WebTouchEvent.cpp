@@ -24,13 +24,15 @@
  */
 
 #include "config.h"
-#include "WebEvent.h"
+#include "WebTouchEvent.h"
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS)
 
 #include "ArgumentCoders.h"
 
 namespace WebKit {
+
+#if !PLATFORM(IOS_FAMILY)
 
 WebTouchEvent::WebTouchEvent(WebEvent::Type type, Vector<WebPlatformTouchPoint>&& touchPoints, OptionSet<Modifier> modifiers, WallTime timestamp)
     : WebEvent(type, modifiers, timestamp)
@@ -61,7 +63,19 @@ bool WebTouchEvent::isTouchEventType(Type type)
 {
     return type == TouchStart || type == TouchMove || type == TouchEnd || type == TouchCancel;
 }
-    
+
+#endif // !PLATFORM(IOS_FAMILY)
+
+bool WebTouchEvent::allTouchPointsAreReleased() const
+{
+    for (const auto& touchPoint : touchPoints()) {
+        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
+            return false;
+    }
+
+    return true;
+}
+
 } // namespace WebKit
 
-#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(TOUCH_EVENTS)

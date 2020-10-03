@@ -30,11 +30,13 @@
 #include "Plugin.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebEvent.h"
+#include "WebKeyboardEvent.h"
 #include "WebLoaderStrategy.h"
+#include "WebMouseEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebWheelEvent.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>

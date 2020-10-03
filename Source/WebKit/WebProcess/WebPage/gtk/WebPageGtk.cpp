@@ -28,8 +28,8 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "WebEvent.h"
 #include "WebFrame.h"
+#include "WebKeyboardEvent.h"
 #include "WebKitWebPageAccessibilityObject.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"

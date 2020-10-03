@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebEvent.h"
+#include "WebTouchEvent.h"
 
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
 #include <UIKit/UIKit.h>

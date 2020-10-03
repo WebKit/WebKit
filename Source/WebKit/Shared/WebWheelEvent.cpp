@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebEvent.h"
+#include "WebWheelEvent.h"
 
 #include "WebCoreArgumentCoders.h"
 
@@ -39,11 +39,6 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_delta(delta)
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
-    , m_directionInvertedFromDevice(false)
-#if PLATFORM(COCOA)
-    , m_hasPreciseScrollingDeltas(false)
-    , m_scrollCount(0)
-#endif
 {
     ASSERT(isWheelEventType(type));
 }
@@ -56,9 +51,9 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_delta(delta)
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
-    , m_directionInvertedFromDevice(directionInvertedFromDevice)
     , m_phase(phase)
     , m_momentumPhase(momentumPhase)
+    , m_directionInvertedFromDevice(directionInvertedFromDevice)
     , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
     , m_scrollCount(scrollCount)
     , m_unacceleratedScrollingDelta(unacceleratedScrollingDelta)
@@ -73,7 +68,6 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_delta(delta)
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
-    , m_directionInvertedFromDevice(false)
     , m_phase(phase)
     , m_momentumPhase(momentumPhase)
 {

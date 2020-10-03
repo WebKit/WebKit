@@ -23,20 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleNavigationAction_h
-#define InjectedBundleNavigationAction_h
+#pragma once
 
 #include "APIObject.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
-#include "WebEvent.h"
+#include "WebMouseEvent.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    class FormState;
-    class NavigationAction;
+class FormState;
+class NavigationAction;
 }
 
 namespace WebKit {
@@ -80,5 +79,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // InjectedBundleNavigationAction_h

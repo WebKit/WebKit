@@ -33,7 +33,6 @@
 #include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
 #include "SameDocumentNavigationType.h"
-#include "WebEvent.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>

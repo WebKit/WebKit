@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WebEvent.h"
+#include "WebTouchEvent.h"
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
 

@@ -26,7 +26,14 @@
 
 #pragma once
 
-#include "WebEvent.h"
+#include "WebKeyboardEvent.h"
+#include "WebMouseEvent.h"
+#include "WebWheelEvent.h"
+
+#if ENABLE(TOUCH_EVENTS)
+#include "WebTouchEvent.h"
+#endif
+
 #include <windows.h>
 
 namespace WebKit {

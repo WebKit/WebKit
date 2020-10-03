@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebEvent.h"
+#include "WebMouseEvent.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>

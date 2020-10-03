@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebGestureEvent_h
-#define NativeWebGestureEvent_h
+#pragma once
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 
-#include "WebEvent.h"
 #include "WebGestureEvent.h"
 
 OBJC_CLASS NSEvent;
@@ -48,5 +46,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)
-
-#endif // NativeWebGestureEvent_h
