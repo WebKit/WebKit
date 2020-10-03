@@ -1,3 +1,16 @@
+2020-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Calling suspend() on audio context with no node does not prevent auto transition to running when first node is created
+        https://bugs.webkit.org/show_bug.cgi?id=216972
+        <rdar://problem/69878834>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/suspend-context-before-first-node-creation-expected.txt: Added.
+        * webaudio/suspend-context-before-first-node-creation.html: Added.
+
 2020-10-02  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS ] 2 mediacapture-record tests are a constant failure

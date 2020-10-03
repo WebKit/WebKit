@@ -465,6 +465,10 @@ private:
 
     AudioIOPosition m_outputPosition;
 
+    // [[suspended by user]] flag in the specification:
+    // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
+    bool m_wasSuspendedByScript { false };
+
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.
     RefPtr<PeriodicWave> m_cachedPeriodicWaveSine;

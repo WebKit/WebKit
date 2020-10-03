@@ -1081,7 +1081,7 @@ bool BaseAudioContext::willPausePlayback()
 void BaseAudioContext::startRendering()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_isStopScheduled || !willBeginPlayback())
+    if (m_isStopScheduled || !willBeginPlayback() || m_wasSuspendedByScript)
         return;
 
     makePendingActivity();
@@ -1186,13 +1186,14 @@ void BaseAudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (m_state == State::Suspended) {
-        promise.resolve();
+    if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
+        promise.reject();
         return;
     }
 
-    if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
-        promise.reject();
+    m_wasSuspendedByScript = true;
+    if (m_state == State::Suspended) {
+        promise.resolve();
         return;
     }
 
@@ -1231,6 +1232,7 @@ void BaseAudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
     }
 
     addReaction(State::Running, WTFMove(promise));
+    m_wasSuspendedByScript = false;
 
     if (!willBeginPlayback())
         return;

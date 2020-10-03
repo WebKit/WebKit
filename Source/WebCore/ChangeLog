@@ -1,3 +1,33 @@
+2020-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Calling suspend() on audio context with no node does not prevent auto transition to running when first node is created
+        https://bugs.webkit.org/show_bug.cgi?id=216972
+        <rdar://problem/69878834>
+
+        Reviewed by Darin Adler.
+
+        Add support for the [[suspended by user]] flag in the WebAudio specification:
+        - https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
+
+        We set this flag when the script calls AudioContext.suspend():
+        - https://www.w3.org/TR/webaudio/#ref-for-dom-audiocontext-suspended-by-user-slot①
+
+        We clear this flag when the script calls AudioContext.resume():
+        - https://www.w3.org/TR/webaudio/#ref-for-dom-audiocontext-suspended-by-user-slot
+
+        We then prevent automated transition of the AudioContext to "rendering" when this
+        flag is set:
+        - https://www.w3.org/TR/webaudio/#ref-for-dom-audiocontext-suspended-by-user-slot②
+        - https://www.w3.org/TR/webaudio/#ref-for-dom-audiocontext-suspended-by-user-slot③
+
+        Test: webaudio/suspend-context-before-first-node-creation.html
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::startRendering):
+        (WebCore::BaseAudioContext::suspendRendering):
+        (WebCore::BaseAudioContext::resumeRendering):
+        * Modules/webaudio/BaseAudioContext.h:
+
 2020-10-02  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r267887.

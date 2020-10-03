@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that calling an AudioContext does not start rendering when adding a node if suspend() was called right after creation.");
+jsTestIsAsync = true;
+
+async function test() {
+    audioContext = new AudioContext();
+    shouldBeEqualToString("audioContext.state", "suspended");
+    await audioContext.suspend();
+    shouldBeEqualToString("audioContext.state", "suspended");
+    node = audioContext.createOscillator();
+    shouldBeEqualToString("audioContext.state", "suspended");
+
+    setTimeout(() => {
+        shouldBeEqualToString("audioContext.state", "suspended");
+        finishJSTest();
+    }, 10);
+}
+
+test();
+</script>
+</body>
+</html>
