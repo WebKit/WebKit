@@ -1,5 +1,26 @@
 2020-10-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Remove Line::appendPartialTrailingTextItem special case
+        https://bugs.webkit.org/show_bug.cgi?id=217287
+
+        Reviewed by Antti Koivisto.
+
+        Use the newly added Line::addTrailingHyphen to display hyphen for partial content.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::append):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::Line::appendPartialTrailingTextItem): Deleted.
+        (WebCore::Layout::Line::appendWith): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::commitPartialContent):
+        * layout/inlineformatting/InlineLineRun.h:
+        (WebCore::Layout::LineRun::Text::Text):
+
+2020-10-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC][Soft hyphen] Reset Line::m_trailingSoftHyphenWidth when the text content does not end with a soft hyphen
         https://bugs.webkit.org/show_bug.cgi?id=217292
 

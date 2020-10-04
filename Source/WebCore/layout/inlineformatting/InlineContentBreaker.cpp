@@ -230,7 +230,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 if (inlineTextItem.length() == 1)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
-                auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
+                auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
                 return { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
             }
             auto trailingPartialContent = Result::PartialTrailingContent { trailingContent->runIndex, trailingContent->partialRun };
@@ -349,10 +349,10 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
             // let's just return the entire run when it is intended to fit on the line.
             ASSERT(inlineTextItem.length());
             auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end() - 1, logicalLeft);
-            return PartialRun { inlineTextItem.length() - 1, trailingPartialRunWidth, false };
+            return PartialRun { inlineTextItem.length() - 1, trailingPartialRunWidth };
         }
         auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowingRun.logicalWidth, availableWidth, logicalLeft);
-        return PartialRun { splitData.length, splitData.logicalWidth, false };
+        return PartialRun { splitData.length, splitData.logicalWidth };
     }
 
     if (breakRule == WordBreakRule::OnlyHyphenationAllowed) {
@@ -383,8 +383,8 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
         if (!hyphenLocation || hyphenLocation < limitBefore)
             return { };
         // hyphenLocation is relative to the start of this InlineItemText.
-        auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation) + hyphenWidth; 
-        return PartialRun { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
+        auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation); 
+        return PartialRun { hyphenLocation, trailingPartialRunWidthWithHyphen, hyphenWidth };
     }
 
     ASSERT(breakRule == WordBreakRule::NoBreak);

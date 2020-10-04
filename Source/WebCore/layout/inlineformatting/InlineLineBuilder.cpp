@@ -616,7 +616,8 @@ LineBuilder::Result LineBuilder::handleFloatsAndInlineContent(InlineContentBreak
         ASSERT(result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
         // This continuous content can't be placed on the current line, nothing to commit.
         // However we need to make sure that the current line gains a trailing hyphen.
-        m_line.addTrailingHyphen();
+        ASSERT(m_line.trailingSoftHyphenWidth());
+        m_line.addTrailingHyphen(*m_line.trailingSoftHyphenWidth());
         return { InlineContentBreaker::IsEndOfLine::Yes };
     }
     if (result.action == InlineContentBreaker::Result::Action::RevertToLastWrapOpportunity) {
@@ -663,7 +664,9 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
             if (auto partialRun = partialTrailingContent.partialRun) {
                 auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent.trailingRunIndex].inlineItem);
                 auto partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
-                m_line.appendPartialTrailingTextItem(partialTrailingTextItem, partialRun->logicalWidth, partialRun->needsHyphen);
+                m_line.append(partialTrailingTextItem, partialRun->logicalWidth);
+                if (auto hyphenWidth = partialRun->hyphenWidth)
+                    m_line.addTrailingHyphen(*hyphenWidth);
                 return;
             }
             // The partial run is the last content to commit.
@@ -709,7 +712,7 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
         if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= m_line.availableWidth()) {
             if (trailingSoftHyphenWidth)
-                m_line.addTrailingHyphen();
+                m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
             return index;
         }
     }

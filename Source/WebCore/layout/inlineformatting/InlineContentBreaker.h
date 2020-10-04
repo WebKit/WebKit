@@ -43,7 +43,7 @@ public:
     struct PartialRun {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
-        bool needsHyphen { false };
+        Optional<InlineLayoutUnit> hyphenWidth { };
     };
     enum class IsEndOfLine { No, Yes };
     struct Result {
