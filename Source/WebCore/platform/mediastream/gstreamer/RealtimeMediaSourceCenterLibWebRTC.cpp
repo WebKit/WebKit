@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  * Author: Thibault Saunier <tsaunier@igalia.com>
  * Author: Alejandro G. Castro <alex@igalia.com>
  *
@@ -21,7 +22,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)
+#if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSourceCenter.h"
 
 #include "GStreamerAudioCaptureSource.h"
@@ -48,4 +49,4 @@ DisplayCaptureFactory& RealtimeMediaSourceCenter::defaultDisplayCaptureFactory()
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)
+#endif // ENABLE(MEDIA_STREAM)

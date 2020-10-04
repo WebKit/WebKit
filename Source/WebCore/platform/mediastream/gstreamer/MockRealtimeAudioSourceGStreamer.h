@@ -22,7 +22,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
 #include "GStreamerAudioData.h"
 #include "GStreamerAudioStreamDescription.h"
@@ -54,4 +54,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

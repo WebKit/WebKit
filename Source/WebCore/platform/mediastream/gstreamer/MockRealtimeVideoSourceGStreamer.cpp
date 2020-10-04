@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "MockRealtimeVideoSourceGStreamer.h"
 
 #include "MediaSampleGStreamer.h"
@@ -80,4 +80,4 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

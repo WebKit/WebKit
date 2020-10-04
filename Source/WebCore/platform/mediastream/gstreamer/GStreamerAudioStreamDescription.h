@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L. All rights reserved.
+ * Copyright (C) 2018, 2020 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +20,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
 #include "AudioStreamDescription.h"
 #include "GStreamerCommon.h"
@@ -103,4 +103,4 @@ private:
 
 } // WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
