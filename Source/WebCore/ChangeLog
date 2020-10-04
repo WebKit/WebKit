@@ -1,3 +1,24 @@
+2020-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC][Soft hyphen] endsWithSoftWrapOpportunity should check if hyphenation is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=217288
+
+        Reviewed by Antti Koivisto.
+
+        This is very similar InlineTextItem::createAndAppendTextItems where we
+        also construct a LazyLineBreakIterator to check for word wrap opportunities.
+
+        * layout/inlineformatting/InlineContentBreaker.cpp:
+        (WebCore::Layout::isTextContent): The trailing "only" is misleading since we can't have a mixture of text and non-text content
+        within a continuous content (there's always a word wrap opportunity between a text and a non-text content).
+        (WebCore::Layout::isVisuallyEmptyWhitespaceContent):
+        (WebCore::Layout::InlineContentBreaker::processInlineContent):
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const):
+        (WebCore::Layout::isTextContentOnly): Deleted.
+        (WebCore::Layout::isVisuallyEmptyWhitespaceContentOnly): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+
 2020-10-04  Youenn Fablet  <youenn@apple.com>
 
         Make sure MediaRecorder does not call fetchData until the last fetchData is completed

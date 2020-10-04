@@ -34,6 +34,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutState.h"
 #include "TextUtil.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 namespace Layout {
@@ -56,6 +57,8 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
     UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
+    if (lastCharacter == softHyphen && currentTextItem.style().hyphens() == Hyphens::None)
+        return false;
     UChar secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
     lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
     // Now check if we can break right at the inline item boundary.

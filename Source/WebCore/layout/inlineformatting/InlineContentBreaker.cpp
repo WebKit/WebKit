@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool isTextContentOnly(const InlineContentBreaker::ContinuousContent& continuousContent)
+static inline bool isTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     // <span>text</span> is considered a text run even with the [container start][container end] inline items.
     // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
@@ -50,7 +50,7 @@ static inline bool isTextContentOnly(const InlineContentBreaker::ContinuousConte
     return false;
 }
 
-static inline bool isVisuallyEmptyWhitespaceContentOnly(const InlineContentBreaker::ContinuousContent& continuousContent)
+static inline bool isVisuallyEmptyWhitespaceContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
     // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
@@ -170,7 +170,7 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
             }
         }
     } else if (result.action == Result::Action::Wrap) {
-        if (lineStatus.trailingSoftHyphenWidth && isTextContentOnly(candidateContent)) {
+        if (lineStatus.trailingSoftHyphenWidth && isTextContent(candidateContent)) {
             // A trailing soft hyphen with a wrapped text content turns into a visible hyphen.
             // Let's check if there's enough space for the hyphen character.
             auto hyphenOverflows = *lineStatus.trailingSoftHyphenWidth > lineStatus.availableWidth; 
@@ -194,7 +194,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
     if (continuousContent.hasTrailingCollapsibleContent()) {
-        ASSERT(isTextContentOnly(continuousContent));
+        ASSERT(isTextContent(continuousContent));
         auto IsEndOfLine = isContentWrappingAllowed(continuousContent) ? IsEndOfLine::Yes : IsEndOfLine::No;
         // First check if the content fits without the trailing collapsible part.
         if (continuousContent.nonCollapsibleLogicalWidth() <= lineStatus.availableWidth)
@@ -210,13 +210,13 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
             return { Result::Action::Keep };
     }
-    if (isVisuallyEmptyWhitespaceContentOnly(continuousContent) && shouldKeepEndOfLineWhitespace(continuousContent)) {
+    if (isVisuallyEmptyWhitespaceContent(continuousContent) && shouldKeepEndOfLineWhitespace(continuousContent)) {
         // This overflowing content apparently falls into the remove/hang end-of-line-spaces category.
         // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
         return { Result::Action::Keep };
     }
 
-    if (isTextContentOnly(continuousContent)) {
+    if (isTextContent(continuousContent)) {
         if (auto trailingContent = processOverflowingTextContent(continuousContent, lineStatus)) {
             if (!trailingContent->runIndex && trailingContent->hasOverflow) {
                 // We tried to break the content but the available space can't even accommodate the first character.
