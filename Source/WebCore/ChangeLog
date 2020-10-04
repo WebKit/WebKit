@@ -1,5 +1,15 @@
 2020-10-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC][Soft hyphen] Fix the case when the first content overflows with hyphen
+        https://bugs.webkit.org/show_bug.cgi?id=217295
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::rebuildLineForTrailingSoftHyphen):
+
+2020-10-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Remove Line::appendPartialTrailingTextItem special case
         https://bugs.webkit.org/show_bug.cgi?id=217287
 

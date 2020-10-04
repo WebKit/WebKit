@@ -707,17 +707,20 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
         auto& softWrapOpportunityItem = *m_wrapOpportunityList[i];
         // FIXME: If this turns out to be a perf issue, we could also traverse the wrap list and keep adding the items
         // while watching the available width very closely.
-        auto index = rebuildLine(layoutRange, softWrapOpportunityItem);
+        auto committedCount = rebuildLine(layoutRange, softWrapOpportunityItem);
         auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth();
         // Check if the trailing hyphen now fits the line (or we don't need hyhen anymore).
         if (!trailingSoftHyphenWidth || trailingSoftHyphenWidth <= m_line.availableWidth()) {
             if (trailingSoftHyphenWidth)
                 m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
-            return index;
+            return committedCount;
         }
     }
     // Have at least some content on the line.
-    return rebuildLine(layoutRange, *m_wrapOpportunityList.first());
+    auto committedCount = rebuildLine(layoutRange, *m_wrapOpportunityList.first());
+    if (auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth())
+        m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
+    return committedCount;
 }
 
 bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const
