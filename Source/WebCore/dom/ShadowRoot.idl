@@ -29,8 +29,7 @@
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute ShadowRootMode mode;
     readonly attribute Element host;
-    // FIXME: Implement 'onslotchange'.
-    // attribute EventHandler onslotchange;
+    attribute EventHandler onslotchange;
 };
 
 ShadowRoot includes DocumentOrShadowRoot;

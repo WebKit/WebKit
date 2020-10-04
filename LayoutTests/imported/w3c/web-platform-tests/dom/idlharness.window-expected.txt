@@ -865,7 +865,7 @@ PASS ShadowRoot interface: existence and properties of interface prototype objec
 PASS ShadowRoot interface: existence and properties of interface prototype object's @@unscopables property
 PASS ShadowRoot interface: attribute mode
 PASS ShadowRoot interface: attribute host
-FAIL ShadowRoot interface: attribute onslotchange assert_true: The prototype object must have a property "onslotchange" expected true got false
+PASS ShadowRoot interface: attribute onslotchange
 PASS Element interface: existence and properties of interface object
 PASS Element interface object length
 PASS Element interface object name

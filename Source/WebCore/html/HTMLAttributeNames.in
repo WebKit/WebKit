@@ -294,6 +294,7 @@ onseeking
 onselect
 onselectstart
 onselectionchange
+onslotchange
 onwebkitspeechchange
 onwheel
 onstalled

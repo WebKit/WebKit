@@ -312,6 +312,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onseekingAttr.get(),
         &onselectAttr.get(),
         &onselectstartAttr.get(),
+        &onslotchangeAttr.get(),
         &onstalledAttr.get(),
         &onsubmitAttr.get(),
         &onsuspendAttr.get(),

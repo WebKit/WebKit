@@ -91,7 +91,7 @@ FAIL securitypolicyviolation is unaffected on a windowless body assert_equals: e
 PASS seeked is unaffected on a windowless body
 PASS seeking is unaffected on a windowless body
 PASS select is unaffected on a windowless body
-FAIL slotchange is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
+PASS slotchange is unaffected on a windowless body
 PASS stalled is unaffected on a windowless body
 PASS submit is unaffected on a windowless body
 PASS suspend is unaffected on a windowless body
@@ -199,7 +199,7 @@ FAIL securitypolicyviolation is unaffected on a windowless frameset assert_equal
 PASS seeked is unaffected on a windowless frameset
 PASS seeking is unaffected on a windowless frameset
 PASS select is unaffected on a windowless frameset
-FAIL slotchange is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+PASS slotchange is unaffected on a windowless frameset
 PASS stalled is unaffected on a windowless frameset
 PASS submit is unaffected on a windowless frameset
 PASS suspend is unaffected on a windowless frameset
