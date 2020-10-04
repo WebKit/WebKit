@@ -1655,6 +1655,9 @@ webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailu
 [ Mojave ] imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 [ Mojave ] fast/history/page-cache-media-recorder.html [ Skip ]
 
+[ Catalina+ ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
+[ Catalina+ ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
+
 webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
 
 # rdar://55405851 ([ macOS ] Layout tests webgpu/*-triangle-strip.html are flaky failures. (201827))

@@ -1,3 +1,17 @@
+2020-10-04  Youenn Fablet  <youenn@apple.com>
+
+        Make sure MediaRecorder does not call fetchData until the last fetchData is completed
+        https://bugs.webkit.org/show_bug.cgi?id=217276
+
+        Reviewed by Darin Adler.
+
+        Add test to cover patch
+        Update some test expectations according bot results.
+
+        * http/wpt/mediarecorder/MediaRecorder-dataavailable-expected.txt:
+        * http/wpt/mediarecorder/MediaRecorder-dataavailable.html:
+        * platform/mac/TestExpectations:
+
 2020-10-03  Oriol Brufau  <obrufau@igalia.com>
 
         [css-lists] Implement list-style-type: <string>

@@ -1,3 +1,29 @@
+2020-10-04  Youenn Fablet  <youenn@apple.com>
+
+        Make sure MediaRecorder does not call fetchData until the last fetchData is completed
+        https://bugs.webkit.org/show_bug.cgi?id=217276
+
+        Reviewed by Darin Adler.
+
+        When fetchData is called while an existing fetchData is inflight, enqueue the callback in a deque.
+        When the inflight fetchData completes, call the enqueued callbacks in order with a null blob.
+
+        Add ASSERT in MediaRecorderPrivateWriter to make sure we do not call requestMediaDataWhenReadyOnQueue too many times.
+
+        Covered by updated http/wpt/mediarecorder/MediaRecorder-dataavailable.html.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::requestData):
+        Do not enable the timer if MediaRecorder is not active as a small optimization.
+        (WebCore::MediaRecorder::fetchData):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::flushCompressedSampleBuffers):
+
 2020-10-03  Oriol Brufau  <obrufau@igalia.com>
 
         [css-lists] Implement list-style-type: <string>
