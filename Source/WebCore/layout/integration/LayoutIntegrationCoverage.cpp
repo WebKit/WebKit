@@ -123,9 +123,6 @@ static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsig
         if (FontCascade::treatAsSpace(character))
             continue;
 
-        if (character == softHyphen)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSoftHyphen, reasons, includeReasons);
-
         auto characterReasons = canUseForCharacter(character, textIsJustified, includeReasons);
         if (characterReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);

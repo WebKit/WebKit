@@ -1,3 +1,17 @@
+2020-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable soft hyphen
+        https://bugs.webkit.org/show_bug.cgi?id=217293
+
+        Reviewed by Antti Koivisto.
+
+        * fast/parser/entities-in-html-expected.txt: Progression? Now soft hyphen "renders". 
+        * fast/text/softHyphen-expected.html: Added. Text-dumping soft hyphens seems defective in some cases.
+        In this test case there should not be any hyphenation triggered by soft hyphens,
+        so let's use a reftest instead (which should have been used the first place). 
+        * platform/mac/fast/text/softHyphen-expected.png: Removed.
+        * platform/mac/fast/text/softHyphen-expected.txt: Removed.
+
 2020-10-04  Youenn Fablet  <youenn@apple.com>
 
         Make sure MediaRecorder does not call fetchData until the last fetchData is completed
