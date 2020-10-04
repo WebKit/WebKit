@@ -2831,6 +2831,9 @@
                 "katakana-iroha",
                 "none"
             ],
+            "codegen-properties": {
+                "custom": "All"
+            },
             "specification": {
                 "category": "css-lists",
                 "url": "https://www.w3.org/TR/css-lists-3/#propdef-list-style-type"

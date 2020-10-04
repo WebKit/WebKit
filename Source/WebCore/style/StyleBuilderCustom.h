@@ -92,6 +92,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ListStyleType);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
@@ -745,6 +746,30 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 }
 
 #endif
+
+inline void BuilderCustom::applyInheritListStyleType(BuilderState& builderState)
+{
+    builderState.style().setListStyleType(builderState.parentStyle().listStyleType());
+    builderState.style().setListStyleStringValue(builderState.parentStyle().listStyleStringValue());
+}
+
+inline void BuilderCustom::applyInitialListStyleType(BuilderState& builderState)
+{
+    builderState.style().setListStyleType(RenderStyle::initialListStyleType());
+    builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
+}
+
+inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isValueID()) {
+        builderState.style().setListStyleType(primitiveValue);
+        builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
+        return;
+    }
+    builderState.style().setListStyleType(ListStyleType::String);
+    builderState.style().setListStyleStringValue(primitiveValue.stringValue());
+}
 
 inline void BuilderCustom::applyInheritOutlineStyle(BuilderState& builderState)
 {

@@ -439,6 +439,7 @@ public:
     EmptyCell emptyCells() const { return static_cast<EmptyCell>(m_inheritedFlags.emptyCells); }
     CaptionSide captionSide() const { return static_cast<CaptionSide>(m_inheritedFlags.captionSide); }
 
+    const AtomString& listStyleStringValue() const { return m_rareInheritedData->listStyleStringValue; }
     ListStyleType listStyleType() const { return static_cast<ListStyleType>(m_inheritedFlags.listStyleType); }
     StyleImage* listStyleImage() const;
     ListStylePosition listStylePosition() const { return static_cast<ListStylePosition>(m_inheritedFlags.listStylePosition); }
@@ -998,6 +999,7 @@ public:
     void setAspectRatioDenominator(float v) { SET_VAR(m_rareNonInheritedData, aspectRatioDenominator, v); }
     void setAspectRatioNumerator(float v) { SET_VAR(m_rareNonInheritedData, aspectRatioNumerator, v); }
 
+    void setListStyleStringValue(const AtomString& value) { SET_VAR(m_rareInheritedData, listStyleStringValue, value); }
     void setListStyleType(ListStyleType v) { m_inheritedFlags.listStyleType = static_cast<unsigned>(v); }
     void setListStyleImage(RefPtr<StyleImage>&&);
     void setListStylePosition(ListStylePosition v) { m_inheritedFlags.listStylePosition = static_cast<unsigned>(v); }
@@ -1506,6 +1508,7 @@ public:
     static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, Percent), Length(50.0f, Percent)); }
     static EmptyCell initialEmptyCells() { return EmptyCell::Show; }
     static ListStylePosition initialListStylePosition() { return ListStylePosition::Outside; }
+    static const AtomString& initialListStyleStringValue() { return nullAtom(); }
     static ListStyleType initialListStyleType() { return ListStyleType::Disc; }
     static TextTransform initialTextTransform() { return TextTransform::None; }
     static Visibility initialVisibility() { return Visibility::Visible; }

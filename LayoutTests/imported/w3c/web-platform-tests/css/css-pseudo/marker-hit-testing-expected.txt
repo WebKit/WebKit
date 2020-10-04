@@ -9,7 +9,8 @@ FAIL outside string ::marker's content assert_equals: event.target expected Elem
 FAIL outside string ::marker assert_equals: event.target expected Element node <li class="string"></li> but got Element node <li class="image"></li>
 FAIL outside marker ::marker's content assert_equals: event.target expected Element node <li class="marker"></li> but got Element node <ol class="outside" data-x="-65">
   <li class="image"></l...
-FAIL outside marker ::marker assert_equals: event.target expected Element node <li class="marker"></li> but got Element node <li class="string"></li>
+FAIL outside marker ::marker assert_equals: event.target expected Element node <li class="marker"></li> but got Element node <ol class="outside" data-x="-65">
+  <li class="image"></l...
 FAIL outside nested image ::marker's content assert_equals: event.target expected Element node <li class="nested image"></li> but got Element node <ol class="outside" data-x="-65">
   <li class="image"></l...
 FAIL outside nested image ::marker assert_equals: event.target expected Element node <li class="nested image"></li> but got Element node <li class="marker"></li>

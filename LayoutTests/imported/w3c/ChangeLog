@@ -1,3 +1,18 @@
+2020-10-03  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-lists] Implement list-style-type: <string>
+        https://bugs.webkit.org/show_bug.cgi?id=167729
+
+        Reviewed by Darin Adler.
+
+        Update test expectations, and await document.fonts.ready in a test with Ahem.
+
+        * web-platform-tests/css/css-lists/parsing/list-style-type-computed-expected.txt:
+        * web-platform-tests/css/css-lists/parsing/list-style-type-valid-expected.txt:
+        * web-platform-tests/css/css-pseudo/marker-hit-testing-expected.txt:
+        * web-platform-tests/css/css-pseudo/marker-intrinsic-contribution-001-expected.txt:
+        * web-platform-tests/css/css-pseudo/marker-intrinsic-contribution-001.html:
+
 2020-10-03  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Add onslotchange on ShadowRoot and GlobalEventHandlers

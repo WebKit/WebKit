@@ -3878,10 +3878,12 @@ static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(property, m_range.peek().id(), m_context))
-            return nullptr;
+        if (CSSParserFastPaths::isValidKeywordPropertyAndValue(property, m_range.peek().id(), m_context))
+            return consumeIdent(m_range);
 
-        return consumeIdent(m_range);
+        // Some properties need to fall back onto the regular parser.
+        if (!CSSParserFastPaths::isPartialKeywordPropertyID(property))
+            return nullptr;
     }
     switch (property) {
     case CSSPropertyWillChange:
@@ -4337,6 +4339,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyColorScheme:
         return consumeColorScheme(m_range);
 #endif
+    case CSSPropertyListStyleType:
+        // All the keyword values for the list-style-type property are handled by the CSSParserFastPaths.
+        return consumeString(m_range);
     default:
         return nullptr;
     }

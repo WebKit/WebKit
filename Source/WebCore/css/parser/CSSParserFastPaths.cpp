@@ -1060,6 +1060,16 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
+bool CSSParserFastPaths::isPartialKeywordPropertyID(CSSPropertyID propertyId)
+{
+    switch (propertyId) {
+    case CSSPropertyListStyleType:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isUniversalKeyword(StringView string)
 {
     // These keywords can be used for all properties.

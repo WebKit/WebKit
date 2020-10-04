@@ -2228,3 +2228,7 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ S
 [ arm64 ] webaudio/convolution-mono-mono.html [ Failure ]
 
 webkit.org/b/217118 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html [ Pass Failure ]
+
+# These tests fail in Mac due to subpixel differences for the marker position
+imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-004.html [ ImageOnlyFailure ]
