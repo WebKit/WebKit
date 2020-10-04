@@ -325,8 +325,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     m_trimmableTrailingContent.reset();
     if (!formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing() && !inlineTextItem.isWhitespace() && style.letterSpacing() > 0)
         m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, style.letterSpacing());
-    if (inlineTextItem.hasTrailingSoftHyphen())
-        m_trailingSoftHyphenWidth = InlineLayoutUnit { style.fontCascade().width(TextRun { StringView { style.hyphenString() } }) };
+    m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? makeOptional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : WTF::nullopt;
 }
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
