@@ -519,6 +519,15 @@ void WebInspectorProxy::closeFrontendPageAndWindow()
     if (!m_inspectorPage)
         return;
 
+    // Guard against calls to close() made by the client while already closing.
+    if (m_closing)
+        return;
+    
+    SetForScope<bool> reentrancyProtector(m_closing, true);
+    
+    // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
+    m_inspectedPage->uiClient().willCloseLocalInspector(*m_inspectedPage, *this);
+
     m_isVisible = false;
     m_isProfilingPage = false;
     m_showMessageSent = false;

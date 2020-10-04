@@ -125,6 +125,7 @@ private:
         void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
         void didAttachLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
+        void willCloseLocalInspector(WebPageProxy&, WebInspectorProxy&) final;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
         void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
@@ -201,6 +202,7 @@ private:
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
         bool webViewDidAttachLocalInspector : 1;
+        bool webViewWillCloseLocalInspector : 1;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
         bool webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler : 1;

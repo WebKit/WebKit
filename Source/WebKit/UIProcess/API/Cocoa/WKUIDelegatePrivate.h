@@ -253,6 +253,12 @@ struct UIEdgeInsets;
  */
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
+/*! @abstract Called before closing the Web Inspector instance for this WKWebView. This is not called in the case of remote inspection.
+    @param webView The WKWebView instance being inspected.
+    @param inspector The Web Inspector instance being closed.
+ */
+- (void)_webView:(WKWebView *)webView willCloseLocalInspector:(_WKInspector *)inspector WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 #endif // !TARGET_OS_IPHONE
 
 @end

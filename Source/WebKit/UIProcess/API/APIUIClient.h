@@ -195,6 +195,7 @@ public:
 #endif
 
     virtual void didAttachLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorProxy&) { }
+    virtual void willCloseLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorProxy&) { }
 };
 
 } // namespace API

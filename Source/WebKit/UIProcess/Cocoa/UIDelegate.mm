@@ -132,6 +132,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
     m_delegateMethods.webViewDidAttachLocalInspector = [delegate respondsToSelector:@selector(_webView:didAttachLocalInspector:)];
+    m_delegateMethods.webViewWillCloseLocalInspector = [delegate respondsToSelector:@selector(_webView:willCloseLocalInspector:)];
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
     m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:)];
@@ -826,6 +827,18 @@ void UIDelegate::UIClient::didAttachLocalInspector(WebPageProxy&, WebInspectorPr
         return;
 
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didAttachLocalInspector:wrapper(inspector)];
+}
+
+void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorProxy& inspector)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewWillCloseLocalInspector)
+        return;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView willCloseLocalInspector:wrapper(inspector)];
 }
 
 bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)

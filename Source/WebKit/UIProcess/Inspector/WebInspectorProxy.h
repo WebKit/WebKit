@@ -296,6 +296,7 @@ private:
     bool m_elementSelectionActive { false };
     bool m_ignoreElementSelectionChange { false };
     bool m_isActiveFrontend { false };
+    bool m_closing { false };
 
     AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
 

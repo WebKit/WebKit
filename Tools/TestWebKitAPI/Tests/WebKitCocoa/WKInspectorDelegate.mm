@@ -34,14 +34,17 @@
 #import <WebKit/_WKInspectorDelegate.h>
 #import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SetForScope.h>
 
 #if PLATFORM(MAC)
 
 @class InspectorDelegate;
 
 static bool didAttachLocalInspectorCalled = false;
+static bool willCloseLocalInspectorCalled = false;
 static bool browserDomainEnabledForInspectorCalled = false;
 static bool browserDomainDisabledForInspectorCalled = false;
+static bool shouldCallInspectorCloseReentrantly = false;
 static bool openURLExternallyCalled = false;
 static RetainPtr<id <_WKInspectorDelegate>> sharedInspectorDelegate;
 static RetainPtr<NSURL> urlToOpen;
@@ -54,10 +57,6 @@ static RetainPtr<NSURL> urlToOpen;
 - (void)inspectorDidEnableBrowserDomain:(_WKInspector *)inspector
 {
     browserDomainEnabledForInspectorCalled = true;
-
-    // Wait for the Browser domain to be enabled before closing Web Inspector, which will
-    // automatically disable the domain.
-    [inspector close];
 }
 
 - (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector
@@ -81,6 +80,7 @@ static RetainPtr<NSURL> urlToOpen;
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
     didAttachLocalInspectorCalled = false;
+    willCloseLocalInspectorCalled = false;
     browserDomainEnabledForInspectorCalled = false;
     browserDomainDisabledForInspectorCalled = false;
 
@@ -92,9 +92,18 @@ static RetainPtr<NSURL> urlToOpen;
     didAttachLocalInspectorCalled = true;
 }
 
+- (void)_webView:(WKWebView *)webView willCloseLocalInspector:(_WKInspector *)inspector
+{
+    EXPECT_EQ(webView._inspector, inspector);
+    willCloseLocalInspectorCalled = true;
+
+    if (shouldCallInspectorCloseReentrantly)
+        [inspector close];
+}
+
 @end
 
-TEST(WKInspectorDelegate, DidNotifyForLocalInspector)
+TEST(WKInspectorDelegate, InspectorLifecycleCallbacks)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
@@ -110,7 +119,32 @@ TEST(WKInspectorDelegate, DidNotifyForLocalInspector)
 
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
     TestWebKitAPI::Util::run(&browserDomainEnabledForInspectorCalled);
+
+    [[webView _inspector] close];
     TestWebKitAPI::Util::run(&browserDomainDisabledForInspectorCalled);
+    TestWebKitAPI::Util::run(&willCloseLocalInspectorCalled);
+}
+
+TEST(WKInspectorDelegate, InspectorCloseCalledReentrantly)
+{
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto uiDelegate = adoptNS([UIDelegate new]);
+
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    EXPECT_FALSE(webView.get()._hasInspectorFrontend);
+
+    [[webView _inspector] show];
+    TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
+
+    {
+        SetForScope<bool> closeReentrantlyFromDelegate(shouldCallInspectorCloseReentrantly, true);
+        [[webView _inspector] close];
+        TestWebKitAPI::Util::run(&willCloseLocalInspectorCalled);
+    }
 }
 
 TEST(WKInspectorDelegate, ShowURLExternally)
