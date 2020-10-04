@@ -139,4 +139,7 @@ endif
 clean:
 	@$(call invoke_xcode,,-alltargets clean)
 
+installsrc:
+	@$(call invoke_xcode,,-alltargets installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+
 force: ;

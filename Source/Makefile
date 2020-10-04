@@ -38,3 +38,6 @@ analyze:
 
 clean:
 	@$(build_target_for_each_module)
+
+installsrc:
+	@$(build_target_for_each_module)

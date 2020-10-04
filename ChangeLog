@@ -1,3 +1,18 @@
+2020-10-04  Ryan Hostetler  <rhost@apple.com>
+
+        Submission failure with "make: *** No rule to make target `installsrc'. Stop"
+        https://bugs.webkit.org/show_bug.cgi?id=214696
+        <rdar://problem/62268104>
+
+        Reviewed by Darin Adler.
+
+        Add installsrc phase to support xbs submitproject for WebKit repository.
+        This change allows internal tools to submit and build in a single step.
+
+        * Makefile:
+        * Makefile.shared:
+        * Source/Makefile:
+
 2020-10-02  Keith Rollin  <krollin@apple.com>
 
         Seeing "usage: basename string [suffix]" spam when using make to build

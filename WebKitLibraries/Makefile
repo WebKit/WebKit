@@ -36,3 +36,6 @@ analyze:
 
 clean:
 	@$(MAKE) cleanlibs
+
+installsrc:
+	@true
