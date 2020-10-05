@@ -32,6 +32,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSPaintImageValue.h"
+#include "CSSPendingSubstitutionValue.h"
 #include "CSSValuePool.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
@@ -369,6 +370,12 @@ Ref<CSSValue> Builder::resolveValue(CSSPropertyID propertyID, CSSValue& value)
 
 RefPtr<CSSValue> Builder::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value)
 {
+    if (value.isPendingSubstitutionValue()) {
+        auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(value);
+        CSSParser parser(CSSParserContext(m_state.document(), substitutionValue.baseURL()));
+        return parser.parseValueWithVariableReferences(propID, value, m_state);
+    }
+    
     CSSParser parser(m_state.document());
     return parser.parseValueWithVariableReferences(propID, value, m_state);
 }

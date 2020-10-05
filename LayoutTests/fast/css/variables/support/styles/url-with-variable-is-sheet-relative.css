@@ -1,0 +1,19 @@
+:root {
+    --red: red;
+}
+
+section {
+    height: 600px;
+    width: 600px;
+    margin: 20px;
+}
+
+.test-with-var {
+    background: url('../images/600x600-green-square.png') var(--red);
+    background-size: 100%;
+}
+
+.test-without-var {
+    background: url('../images/600x600-green-square.png') red;
+    background-size: 100%;
+}

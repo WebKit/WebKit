@@ -327,7 +327,7 @@ bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important
     if (CSSVariableParser::containsValidVariableReferences(originalRange, m_context)) {
         auto variable = CSSVariableReferenceValue::create(originalRange);
         if (isShorthand)
-            addExpandedPropertyForValue(propertyID, CSSPendingSubstitutionValue::create(propertyID, WTFMove(variable)), important);
+            addExpandedPropertyForValue(propertyID, CSSPendingSubstitutionValue::create(propertyID, WTFMove(variable), m_context.baseURL), important);
         else
             addProperty(propertyID, CSSPropertyInvalid, WTFMove(variable), important);
         return true;

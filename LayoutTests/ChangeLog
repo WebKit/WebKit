@@ -1,3 +1,19 @@
+2020-10-04  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Presence of CSS variable causes a background url() to get resolved with a different base
+        https://bugs.webkit.org/show_bug.cgi?id=198512
+
+        Reviewed by Darin Adler.
+
+        Add test ensuring shorthands containing `url()` and CSS variable(s)
+        resolve the `url()` relative to the stylesheet the rule is present in, 
+        not the document root.
+
+        * fast/css/variables/support/images/600x600-green-square.png: Added.
+        * fast/css/variables/support/styles/url-with-variable-is-sheet-relative.css: Added.
+        * fast/css/variables/url-with-variable-is-sheet-relative-expected.html: Added.
+        * fast/css/variables/url-with-variable-is-sheet-relative.html: Added.
+
 2020-10-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable soft hyphen

@@ -1,3 +1,37 @@
+2020-10-04  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Presence of CSS variable causes a background url() to get resolved with a different base
+        https://bugs.webkit.org/show_bug.cgi?id=198512
+
+        Reviewed by Darin Adler.
+
+        Prior to this patch, `url()`s within `CSSPendingSubstitutionValue`s
+        were resolved relative to the document root rather than the stylesheet
+        they were created from, which is wrong.
+
+        With this patch, when `CSSPendingSubstitutionValue`s are created, they
+        now store the base URL that should be used when they are later
+        resolved in `StyleBuilder`.
+
+        Test: fast/css/variables/url-with-variable-is-sheet-relative.html
+
+        * css/CSSPendingSubstitutionValue.h: Store `baseURL` for later
+        resolution.
+        (WebCore::CSSPendingSubstitutionValue::create): Add `baseURL`
+        parameter.
+        (WebCore::CSSPendingSubstitutionValue::baseURL const): Add `m_baseURL`
+        getter.
+        (WebCore::CSSPendingSubstitutionValue::CSSPendingSubstitutionValue):
+        Add `baseURL` parameter.
+        * css/parser/CSSPropertyParser.cpp: 
+        (WebCore::CSSPropertyParser::parseValueStart): When creating a
+        `CSSPendingSubstitutionValue`, also pass along the `baseURL` from this
+        context for later resolution.
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::resolvedVariableValue): If the value
+        we are resolving is a `CSSPendingSubstitutionValue`, resolve it
+        relative to the `baseURL` it has stored.
+
 2020-10-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable soft hyphen
