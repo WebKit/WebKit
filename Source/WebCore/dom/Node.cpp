@@ -1032,10 +1032,17 @@ bool Node::isDescendantOf(const Node& other) const
     return false;
 }
 
-bool Node::isDescendantOrShadowDescendantOf(const Node* other) const
+bool Node::isDescendantOrShadowDescendantOf(const Node& other) const
 {
-    // FIXME: Correctly handle the case where the shadow host is itself in a shadow tree.
-    return other && (isDescendantOf(*other) || other->contains(shadowHost()));
+    if (isDescendantOf(other))
+        return true;
+
+    for (auto host = shadowHost(); host; host = host->shadowHost()) {
+        if (other.contains(*host))
+            return true;
+    }
+    
+    return false;
 }
 
 bool Node::contains(const Node& node) const

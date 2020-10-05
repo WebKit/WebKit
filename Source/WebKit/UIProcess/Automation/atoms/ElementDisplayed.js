@@ -27,18 +27,8 @@ function isShown(element) {
     "use strict";
 
     function nodeIsElement(node) {
-        if (!node)
-            return false;
-
-        switch (node.nodeType) {
-        case Node.ELEMENT_NODE:
-        case Node.DOCUMENT_NODE:
-        case Node.DOCUMENT_FRAGMENT_NODE:
-            return true;
-
-        default:
-            return false;
-        }
+        return !!node && node.nodeType === Node.ELEMENT_NODE;
+        
     }
 
     function parentElementForElement(element) {
@@ -49,7 +39,7 @@ function isShown(element) {
     }
 
     function enclosingNodeOrSelfMatchingPredicate(targetNode, predicate) {
-        for (let node = targetNode; node && node !== targetNode.ownerDocument; node = node.parentNode)
+        for (let node = targetNode; node && node !== targetNode.getRootNode(); node = node.parentNode)
             if (predicate(node))
                 return node;
 
@@ -57,7 +47,7 @@ function isShown(element) {
     }
 
     function enclosingElementOrSelfMatchingPredicate(targetElement, predicate) {
-        for (let element = targetElement; element && element !== targetElement.ownerDocument; element = parentElementForElement(element))
+        for (let element = targetElement; element && element !== targetElement.getRootNode(); element = parentElementForElement(element))
             if (predicate(element))
                 return element;
 

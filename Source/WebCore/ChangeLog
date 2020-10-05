@@ -1,3 +1,17 @@
+2020-10-05  Nitzan Uziely  <nitzan@testim.io>
+
+        WebDriver Input clear/value commands fails when target is inside shadow dom
+        https://bugs.webkit.org/show_bug.cgi?id=209233
+
+        Reviewed by Brian Burg.
+
+        Add support for nested shadow DOM in isDescendantOrShadowDescendantOf,
+
+        * dom/Node.cpp:
+        (WebCore::Node::isDescendantOrShadowDescendantOf const):
+        * dom/Node.h:
+        (WebCore::Node::isDescendantOrShadowDescendantOf const):
+
 2020-10-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Enable per-page storage access scope and align test cases

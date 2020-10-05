@@ -1,3 +1,26 @@
+2020-10-05  Nitzan Uziely  <nitzan@testim.io>
+
+        WebDriver Input clear/value commands fails when target is inside shadow dom
+        https://bugs.webkit.org/show_bug.cgi?id=209233
+
+        Reviewed by Brian Burg.
+
+        Fixed nodeIsElement which would return true for non-element nodes,
+        which caused an exception to be thrown when getComputedStyle was called
+        on non shadow elements.
+
+        Fixed computeElementLayout to consider shadow root descendants as descendants
+        when executing elementsAtPoint.
+
+        Test for WPT (https://github.com/web-platform-tests/wpt/pull/25962)
+
+        * UIProcess/Automation/atoms/ElementDisplayed.js:
+        (isShown.nodeIsElement):
+        (isShown.enclosingNodeOrSelfMatchingPredicate):
+        (isShown.enclosingElementOrSelfMatchingPredicate):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+
 2020-10-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Enable per-page storage access scope and align test cases

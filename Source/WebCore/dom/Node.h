@@ -374,7 +374,8 @@ public:
     WEBCORE_EXPORT bool contains(const Node&) const;
     bool contains(const Node* other) const { return other && contains(*other); }
 
-    bool isDescendantOrShadowDescendantOf(const Node*) const;
+    WEBCORE_EXPORT bool isDescendantOrShadowDescendantOf(const Node&) const;
+    bool isDescendantOrShadowDescendantOf(const Node* other) const { return other && isDescendantOrShadowDescendantOf(*other); } 
     WEBCORE_EXPORT bool containsIncludingShadowDOM(const Node*) const;
 
     // Whether or not a selection can be started in this object
