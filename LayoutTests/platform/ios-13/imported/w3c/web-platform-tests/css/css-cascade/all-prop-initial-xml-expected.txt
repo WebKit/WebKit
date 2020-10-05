@@ -215,6 +215,7 @@ PASS quotes
 PASS r
 PASS resize
 PASS right
+PASS rotate
 PASS row-gap
 PASS rx
 PASS ry

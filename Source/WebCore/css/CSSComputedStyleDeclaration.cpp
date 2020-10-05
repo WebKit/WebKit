@@ -649,6 +649,23 @@ static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& st
     list->append(cssValuePool.createValue(scale->y(), CSSUnitType::CSS_NUMBER));
     if (scale->is3DOperation())
         list->append(cssValuePool.createValue(scale->z(), CSSUnitType::CSS_NUMBER));
+    return list;
+}
+
+static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& style)
+{
+    auto* rotate = style.rotate();
+    if (!rotate || !rendererCanBeTransformed(renderer))
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+
+    auto& cssValuePool = CSSValuePool::singleton();
+    auto list = CSSValueList::createSpaceSeparated();
+    if (rotate->x() || rotate->y() || rotate->z() != 1) {
+        list->append(cssValuePool.createValue(rotate->x(), CSSUnitType::CSS_NUMBER));
+        list->append(cssValuePool.createValue(rotate->y(), CSSUnitType::CSS_NUMBER));
+        list->append(cssValuePool.createValue(rotate->z(), CSSUnitType::CSS_NUMBER));
+    }
+    list->append(cssValuePool.createValue(rotate->angle(), CSSUnitType::CSS_DEG));
 
     return list;
 }
@@ -3570,6 +3587,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedScale(renderer, style);
+        case CSSPropertyRotate:
+            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+                return nullptr;
+            return computedRotate(renderer, style);
         case CSSPropertyTransitionDelay:
             return delayValue(style.transitions());
         case CSSPropertyTransitionDuration:

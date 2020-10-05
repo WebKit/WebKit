@@ -51,12 +51,12 @@ public:
     double z() const { return m_z; }
     double angle() const { return m_angle; }
 
+    bool operator==(const TransformOperation&) const override;
+
 private:
     bool isIdentity() const override { return m_angle == 0; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
     bool isRepresentableIn2D() const final { return (!m_x && !m_y) || !m_angle; }
-
-    bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const override
     {

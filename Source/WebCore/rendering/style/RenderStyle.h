@@ -44,6 +44,7 @@
 #include "NinePieceImage.h"
 #include "Pagination.h"
 #include "RenderStyleConstants.h"
+#include "RotateTransformOperation.h"
 #include "RoundedRect.h"
 #include "SVGRenderStyle.h"
 #include "ScaleTransformOperation.h"
@@ -624,6 +625,7 @@ public:
 
     TransformBox transformBox() const { return m_rareNonInheritedData->transform->transformBox; }
 
+    RotateTransformOperation* rotate() const { return m_rareNonInheritedData->rotate.get(); }
     ScaleTransformOperation* scale() const { return m_rareNonInheritedData->scale.get(); }
     TranslateTransformOperation* translate() const { return m_rareNonInheritedData->translate.get(); }
 
@@ -646,9 +648,9 @@ public:
     ObjectFit objectFit() const { return static_cast<ObjectFit>(m_rareNonInheritedData->objectFit); }
     LengthPoint objectPosition() const { return m_rareNonInheritedData->objectPosition; }
 
-    // Return true if any transform related property (currently transform, translate, scale, transformStyle3D or perspective)
+    // Return true if any transform related property (currently transform, translate, scale, rotate, transformStyle3D or perspective)
     // indicates that we are transforming.
-    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || scale() || preserves3D() || hasPerspective(); }
+    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || scale() || rotate() || preserves3D() || hasPerspective(); }
 
     enum ApplyTransformOrigin { IncludeTransformOrigin, ExcludeTransformOrigin };
     void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, ApplyTransformOrigin = IncludeTransformOrigin) const;
@@ -1185,6 +1187,7 @@ public:
     void setTransformOriginZ(float f) { SET_NESTED_VAR(m_rareNonInheritedData, transform, z, f); }
     void setTransformBox(TransformBox box) { SET_NESTED_VAR(m_rareNonInheritedData, transform, transformBox, box); }
 
+    void setRotate(RefPtr<RotateTransformOperation>&&);
     void setScale(RefPtr<ScaleTransformOperation>&&);
     void setTranslate(RefPtr<TranslateTransformOperation>&&);
 
@@ -1610,6 +1613,7 @@ public:
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
     static TransformBox initialTransformBox() { return TransformBox::ViewBox; }
+    static RotateTransformOperation* initialRotate() { return nullptr; }
     static ScaleTransformOperation* initialScale() { return nullptr; }
     static TranslateTransformOperation* initialTranslate() { return nullptr; }
     static PointerEvents initialPointerEvents() { return PointerEvents::Auto; }

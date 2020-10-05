@@ -1139,8 +1139,8 @@ elements
 // -webkit-scroll-snap-type
 mandatory
 proximity
-x
-y
+// x
+// y
 #endif
 
 break
@@ -1459,3 +1459,8 @@ selector
 // math-style
 // normal
 compact
+
+// rotate
+x
+y
+z

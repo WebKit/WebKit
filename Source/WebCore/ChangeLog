@@ -1,3 +1,62 @@
+2020-10-05  Antoine Quint  <graouts@webkit.org>
+
+        Add non-animated support for the CSS rotate property
+        https://bugs.webkit.org/show_bug.cgi?id=217320
+        <rdar://problem/69956248>
+
+        Reviewed by Dean Jackson.
+
+        We add non-animated support for the CSS "rotate" property as specifed in by the CSS Transforms Level 2
+        specification (​​https://drafts.csswg.org/css-transforms-2/#propdef-rotate).
+
+        Tests: transforms/2d/rotate-and-scale-and-translate-order.html
+               transforms/2d/rotate-and-transform-attribute-in-svg-expected.svg
+               transforms/2d/rotate-and-transform-attribute-in-svg.svg
+               transforms/2d/rotate-and-transform-css-property-in-svg-expected.svg
+               transforms/2d/rotate-and-transform-css-property-in-svg.svg
+               transforms/2d/rotate-and-translate-in-svg-expected.svg
+               transforms/2d/rotate-and-translate-in-svg.svg
+               transforms/2d/rotate-and-translate-order.html
+               transforms/2d/rotate-in-svg-expected.svg
+               transforms/2d/rotate-in-svg.svg
+               transforms/2d/rotate-transform-order.html
+               transforms/2d/rotate-transform-origin-order.html
+
+        * Headers.cmake:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedRotate): Create a CSSValueList to print out the computed value for the "rotate" property.
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json: Define the "rotate" property with the condition that the runtime setting for individual
+        CSS transform properties is set.
+        * css/CSSValueKeywords.in: Define the "z" value for the "rotate" property and ensure the "x" and "y" values are
+        defined as well since -webkit-scroll-snap-type may not be enabled.
+        * css/TransformFunctions.cpp:
+        (WebCore::rotateForValue): Convert a CSSValue to a RotateTransformOperation when parsing a "rotate" property value.
+        * css/TransformFunctions.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeRotate): Create a CSSValueList when parsing a "rotate" property value.
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransform const): Consider that having the "rotate" property is akin to having a "transform" property
+        in the render tree.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setRotate):
+        (WebCore::RenderStyle::applyTransform const): Account for the RenderStyle::rotate() value in the right order, after applying the
+        transform origin and translate, but before applying the scale and main transform.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::rotate const):
+        (WebCore::RenderStyle::hasTransformRelatedProperty const):
+        (WebCore::RenderStyle::initialRotate):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertRotate):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const): Account for the RenderStyle::rotate() value when rendering SVG, ensuring
+        that it is applied before the transform specified by either the "transform" CSS property or SVG attribute.
+
 2020-10-05  Nitzan Uziely  <nitzan@testim.io>
 
         WebDriver Input clear/value commands fails when target is inside shadow dom

@@ -78,7 +78,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     bool hasSpecifiedTransform = style && style->hasTransform();
 
     // Honor any of the transform-related CSS properties if set.
-    if (hasSpecifiedTransform || (style && (style->translate() || style->scale()))) {
+    if (hasSpecifiedTransform || (style && (style->translate() || style->scale() || style->rotate()))) {
 
         FloatRect boundingBox;
         switch (style->transformBox()) {

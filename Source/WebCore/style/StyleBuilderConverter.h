@@ -83,6 +83,7 @@ public:
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(BuilderState&, CSSValue&);
     static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
     static TransformOperations convertTransform(BuilderState&, const CSSValue&);
+    static RefPtr<RotateTransformOperation> convertRotate(BuilderState&, const CSSValue&);
     static RefPtr<ScaleTransformOperation> convertScale(BuilderState&, const CSSValue&);
     static RefPtr<TranslateTransformOperation> convertTranslate(BuilderState&, const CSSValue&);
 #if ENABLE(DARK_MODE_CSS)
@@ -486,6 +487,11 @@ inline TransformOperations BuilderConverter::convertTransform(BuilderState& buil
 inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)
 {
     return translateForValue(value, builderState.cssToLengthConversionData());
+}
+
+inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState&, const CSSValue& value)
+{
+    return rotateForValue(value);
 }
 
 inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(BuilderState&, const CSSValue& value)

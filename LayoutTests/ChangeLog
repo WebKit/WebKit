@@ -1,3 +1,34 @@
+2020-10-05  Antoine Quint  <graouts@webkit.org>
+
+        Add non-animated support for the CSS rotate property
+        https://bugs.webkit.org/show_bug.cgi?id=217320
+        <rdar://problem/69956248>
+
+        Reviewed by Dean Jackson.
+
+        Add tests checking that the "rotate" CSS property is applied in the correct order related to
+        "transform-origin", "transform", "scale" and "translate". We also check that it is applied
+        in SVG as well.
+
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * transforms/2d/rotate-and-scale-and-translate-order-expected.html: Added.
+        * transforms/2d/rotate-and-scale-and-translate-order.html: Added.
+        * transforms/2d/rotate-and-transform-attribute-in-svg-expected.svg: Added.
+        * transforms/2d/rotate-and-transform-attribute-in-svg.svg: Added.
+        * transforms/2d/rotate-and-transform-css-property-in-svg-expected.svg: Added.
+        * transforms/2d/rotate-and-transform-css-property-in-svg.svg: Added.
+        * transforms/2d/rotate-and-translate-in-svg-expected.svg: Added.
+        * transforms/2d/rotate-and-translate-in-svg.svg: Added.
+        * transforms/2d/rotate-and-translate-order-expected.html: Added.
+        * transforms/2d/rotate-and-translate-order.html: Added.
+        * transforms/2d/rotate-in-svg-expected.svg: Added.
+        * transforms/2d/rotate-in-svg.svg: Added.
+        * transforms/2d/rotate-transform-order-expected.html: Added.
+        * transforms/2d/rotate-transform-order.html: Added.
+        * transforms/2d/rotate-transform-origin-order-expected.html: Added.
+        * transforms/2d/rotate-transform-origin-order.html: Added.
+
 2020-10-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Move tests also timing out in WPE to GLIB test expectations.

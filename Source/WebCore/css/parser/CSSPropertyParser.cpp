@@ -2117,6 +2117,101 @@ static RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, CSSParserMode)
     return list;
 }
 
+static RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+
+    // https://www.w3.org/TR/css-transforms-2/#propdef-rotate
+    //
+    // The rotate property accepts an angle to rotate an element, and optionally an axis to rotate it around.
+    //
+    // If the axis is omitted, this specifies a 2d rotation, equivalent to the rotate() function.
+    //
+    // Otherwise, it specifies a 3d rotation: if x, y, or z is given, it specifies a rotation around that axis,
+    // equivalent to the rotateX()/etc 3d transform functions. Alternately, the axis can be specified explicitly
+    // by giving three numbers representing the x, y, and z components of an origin-centered vector, equivalent
+    // to the rotate3d() function.
+
+    RefPtr<CSSValue> angle;
+    RefPtr<CSSValue> axisIdentifier;
+
+    while (!range.atEnd()) {
+        // First, attempt to parse a number, which might be in a series of 3 specifying the rotation axis.
+        RefPtr<CSSValue> parsedValue = consumeNumber(range, ValueRangeAll);
+        if (parsedValue) {
+            // If we've encountered an axis identifier, then this valus is invalid.
+            if (axisIdentifier)
+                return nullptr;
+            list->append(*parsedValue);
+            range.consumeWhitespace();
+            continue;
+        }
+
+        // Then, attempt to parse an angle. We try this as a fallback rather than the first option because
+        // a unitless 0 angle would be consumed as an angle.
+        parsedValue = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid);
+        if (parsedValue) {
+            // If we had already parsed an angle or numbers but not 3 in a row, this value is invalid.
+            if (angle || (list->length() && list->length() != 3))
+                return nullptr;
+            angle = parsedValue;
+            range.consumeWhitespace();
+            continue;
+        }
+
+        // Finally, attempt to parse one of the axis identifiers.
+        parsedValue = consumeIdent<CSSValueX, CSSValueY, CSSValueZ>(range);
+        // If we failed to find one of those identifiers or one was already specified, or we'd previously
+        // encountered numbers to specify a rotation axis, then this value is invalid.
+        if (!parsedValue || axisIdentifier || list->length())
+            return nullptr;
+        axisIdentifier = parsedValue;
+        range.consumeWhitespace();
+    }
+
+    // We must have an angle to have a valid value.
+    if (!angle)
+        return nullptr;
+
+    if (list->length() == 3) {
+        // The first valid case is if we have 3 items in the list, meaning we parsed three consecutive number values
+        // to specify the rotation axis. In that case, we must not also have encountered an axis identifier.
+        ASSERT(!axisIdentifier);
+
+        // No we must check the values since if we have a vector in the x, y or z axis alone we must serialize to the
+        // matching identifier.
+        auto x = downcast<CSSPrimitiveValue>(*list->itemWithoutBoundsCheck(0)).doubleValue();
+        auto y = downcast<CSSPrimitiveValue>(*list->itemWithoutBoundsCheck(1)).doubleValue();
+        auto z = downcast<CSSPrimitiveValue>(*list->itemWithoutBoundsCheck(2)).doubleValue();
+
+        if (x == 1 && !y && !z) {
+            list = CSSValueList::createSpaceSeparated();
+            list->append(CSSPrimitiveValue::createIdentifier(CSSValueX));
+        } else if (!x && y == 1 && !z) {
+            list = CSSValueList::createSpaceSeparated();
+            list->append(CSSPrimitiveValue::createIdentifier(CSSValueY));
+        } else if (!x && !y && z == 1) {
+            list = CSSValueList::createSpaceSeparated();
+            list->append(CSSPrimitiveValue::createIdentifier(CSSValueZ));
+        }
+
+        // Finally, we must append the angle.
+        list->append(*angle);
+    } else if (!list->length()) {
+        // The second valid case is if we have no item in the list, meaning we have either an optional rotation axis
+        // using an identifier. In that case, we must add the axis identifier is specified and then add the angle.
+        if (axisIdentifier)
+            list->append(*axisIdentifier);
+        list->append(*angle);
+    } else
+        return nullptr;
+
+    return list;
+}
+
 template <CSSValueID start, CSSValueID end>
 static RefPtr<CSSPrimitiveValue> consumePositionLonghand(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
@@ -4207,6 +4302,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.individualTransformPropertiesEnabled)
             return nullptr;
         return consumeScale(m_range, m_context.mode);
+    case CSSPropertyRotate:
+        if (!m_context.individualTransformPropertiesEnabled)
+            return nullptr;
+        return consumeRotate(m_range, m_context.mode);
     case CSSPropertyFill:
     case CSSPropertyStroke:
         return consumePaintStroke(m_range, m_context.mode);

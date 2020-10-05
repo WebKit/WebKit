@@ -6495,6 +6495,17 @@
             "specification": {
                 "category": "css-transforms",
                 "url": "https://drafts.csswg.org/css-transforms-2/#propdef-scale"
+
+            }
+        },
+        "rotate": {
+            "codegen-properties": {
+                "settings-flag": "cssIndividualTransformProperties",
+                "converter": "Rotate"
+            },
+            "specification": {
+                "category": "css-transforms",
+                "url": "https://drafts.csswg.org/css-transforms-2/#propdef-rotate"
             }
         },
         "-webkit-user-drag": {
