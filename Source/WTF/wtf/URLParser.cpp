@@ -371,16 +371,16 @@ bool URLParser::takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType> iterat
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
 {
+    // https://url.spec.whatwg.org/#start-with-a-windows-drive-letter
     if (iterator.atEnd() || !isASCIIAlpha(*iterator))
         return false;
     advance<CharacterType, ReportSyntaxViolation::No>(iterator);
     if (iterator.atEnd())
         return false;
-    if (*iterator == ':')
-        return true;
-    if (UNLIKELY(*iterator == '|'))
-        return true;
-    return false;
+    if (*iterator != ':' && *iterator != '|')
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+    return iterator.atEnd() || *iterator == '/' || *iterator == '\\' || *iterator == '?' || *iterator == '#';
 }
 
 ALWAYS_INLINE void URLParser::appendToASCIIBuffer(UChar32 codePoint)
@@ -399,6 +399,12 @@ ALWAYS_INLINE void URLParser::appendToASCIIBuffer(const char* characters, size_t
 template<typename CharacterType>
 void URLParser::appendWindowsDriveLetter(CodePointIterator<CharacterType>& iterator)
 {
+    auto lengthWithOnlyOneSlashInPath = m_url.m_hostEnd + m_url.m_portLength + 1;
+    if (m_url.m_pathAfterLastSlash > lengthWithOnlyOneSlashInPath) {
+        syntaxViolation(iterator);
+        m_url.m_pathAfterLastSlash = lengthWithOnlyOneSlashInPath;
+        m_asciiBuffer.resize(lengthWithOnlyOneSlashInPath);
+    }
     ASSERT(isWindowsDriveLetter(iterator));
     appendToASCIIBuffer(*iterator);
     advance(iterator);
@@ -1548,9 +1554,9 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                         m_url.m_portLength = 0;
                     }
                     m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
-                    if (isWindowsDriveLetter(c))
-                        appendWindowsDriveLetter(c);
                 }
+                if (isWindowsDriveLetter(c))
+                    appendWindowsDriveLetter(c);
                 state = State::Path;
                 break;
             }

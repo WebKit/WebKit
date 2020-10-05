@@ -1,5 +1,20 @@
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        When appending a Windows drive letter to a file URL, remove any path we may have copied from the base URL
+        https://bugs.webkit.org/show_bug.cgi?id=217284
+
+        Reviewed by Darin Adler.
+
+        This fixes a web platform test and adds another to verify that we remove the entire path, not just the last segment like we do with ..
+        Edge has implemented this, and in order to have a platform-independent URL we should do it too.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::isWindowsDriveLetter):
+        (WTF::URLParser::appendWindowsDriveLetter):
+        (WTF::URLParser::parse):
+
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
         Fix UTF-8 encoding in URL parsing
         https://bugs.webkit.org/show_bug.cgi?id=217289
 

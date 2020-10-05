@@ -5684,6 +5684,20 @@
     "hash": ""
   },
   {
+    "input": "C|",
+    "base": "file://host/D:/dir1/dir2/file",
+    "href": "file://host/C:",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "host",
+    "hostname": "host",
+    "port": "",
+    "pathname": "/C:",
+    "search": "",
+    "hash": ""
+  },
+  {
     "input": "C|#",
     "base": "file://host/dir/file",
     "href": "file://host/C:#",

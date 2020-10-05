@@ -447,7 +447,8 @@ PASS Parsing: </..//localhost//pig> against <file://lion/>
 PASS Parsing: <file://> against <file://ape/>
 PASS Parsing: </rooibos> against <file://tea/>
 PASS Parsing: </?chai> against <file://tea/>
-FAIL Parsing: <C|> against <file://host/dir/file> assert_equals: href expected "file://host/C:" but got "file://host/dir/C|"
+PASS Parsing: <C|> against <file://host/dir/file>
+PASS Parsing: <C|> against <file://host/D:/dir1/dir2/file>
 PASS Parsing: <C|#> against <file://host/dir/file>
 PASS Parsing: <C|?> against <file://host/dir/file>
 PASS Parsing: <C|/> against <file://host/dir/file>
