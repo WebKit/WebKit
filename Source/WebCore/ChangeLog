@@ -1,3 +1,18 @@
+2020-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Do not assert when right aligned float overflows the containing block on the left
+        https://bugs.webkit.org/show_bug.cgi?id=217305
+
+        Reviewed by Antti Koivisto.
+
+        It's okay for a float: right; to overflow the containing block on the left.
+        In such cases let's just constrain the logical right value by the logical left edge.  
+
+        Test: fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::constraintsForLine):
+
 2020-10-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] WebSocket tests are failing since r267931

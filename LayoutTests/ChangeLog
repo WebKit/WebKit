@@ -1,3 +1,13 @@
+2020-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Do not assert when right aligned float overflows the containing block on the left
+        https://bugs.webkit.org/show_bug.cgi?id=217305
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space-expected.html: Added.
+        * fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html: Added.
+
 2020-10-04  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Presence of CSS variable causes a background url() to get resolved with a different base

@@ -430,7 +430,7 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
     if (!m_floatingContext.isEmpty()) {
         // FIXME: Add support for variable line height, where the intrusive floats should be probed as the line height grows.
         auto floatConstraints = m_floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + *initialConstraints.vertical.logicalHeight));
-        // Check if these constraints actually put limitation on the line.
+        // Check if these values actually constrain the line.
         if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
 
@@ -447,8 +447,8 @@ LineBuilder::UsedConstraints LineBuilder::constraintsForLine(const FormattingCon
             ASSERT(floatConstraints.left->x >= lineLogicalLeft);
             lineLogicalLeft = floatConstraints.left->x;
         } else if (floatConstraints.right) {
-            ASSERT(floatConstraints.right->x >= lineLogicalLeft);
-            lineLogicalRight = floatConstraints.right->x;
+            // Right float boxes may overflow the containing block on the left.
+            lineLogicalRight = std::max(lineLogicalLeft, floatConstraints.right->x);
         }
     }
 
