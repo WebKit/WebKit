@@ -1,3 +1,10 @@
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix tvOS and watchOS build
+
+        * NetworkProcess/NetworkProcess.cpp:
+        I noticed it was broken in an EWS build, and it is missing this include.
+
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Rename DrawingArea::scheduleRenderingUpdate()
