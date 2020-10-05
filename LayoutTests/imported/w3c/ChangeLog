@@ -1,5 +1,18 @@
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should fail to parse URLs with hosts containing invalid punycode encodings
+        https://bugs.webkit.org/show_bug.cgi?id=217285
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/toascii.window-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
         When appending a Windows drive letter to a file URL, remove any path we may have copied from the base URL
         https://bugs.webkit.org/show_bug.cgi?id=217284
 

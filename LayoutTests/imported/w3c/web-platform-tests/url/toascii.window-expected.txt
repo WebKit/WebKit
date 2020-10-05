@@ -99,24 +99,24 @@ FAIL x..β (using <a>.hostname) assert_equals: expected "x..xn--nxa" but got "x"
 FAIL x..β (using <area>) Type error
 FAIL x..β (using <area>.host) assert_equals: expected "x..xn--nxa" but got "x"
 FAIL x..β (using <area>.hostname) assert_equals: expected "x..xn--nxa" but got "x"
-FAIL xn--a (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn--a (using URL.host) assert_equals: expected "x" but got "xn--a"
-FAIL xn--a (using URL.hostname) assert_equals: expected "x" but got "xn--a"
-FAIL xn--a (using <a>) assert_equals: expected "" but got "xn--a"
-FAIL xn--a (using <a>.host) assert_equals: expected "x" but got "xn--a"
-FAIL xn--a (using <a>.hostname) assert_equals: expected "x" but got "xn--a"
-FAIL xn--a (using <area>) assert_equals: expected "" but got "xn--a"
-FAIL xn--a (using <area>.host) assert_equals: expected "x" but got "xn--a"
-FAIL xn--a (using <area>.hostname) assert_equals: expected "x" but got "xn--a"
-FAIL xn--a.xn--nxa (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn--a.xn--nxa (using URL.host) assert_equals: expected "x" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using URL.hostname) assert_equals: expected "x" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using <a>) assert_equals: expected "" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using <a>.host) assert_equals: expected "x" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using <a>.hostname) assert_equals: expected "x" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using <area>) assert_equals: expected "" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using <area>.host) assert_equals: expected "x" but got "xn--a.xn--nxa"
-FAIL xn--a.xn--nxa (using <area>.hostname) assert_equals: expected "x" but got "xn--a.xn--nxa"
+PASS xn--a (using URL)
+PASS xn--a (using URL.host)
+PASS xn--a (using URL.hostname)
+PASS xn--a (using <a>)
+PASS xn--a (using <a>.host)
+PASS xn--a (using <a>.hostname)
+PASS xn--a (using <area>)
+PASS xn--a (using <area>.host)
+PASS xn--a (using <area>.hostname)
+PASS xn--a.xn--nxa (using URL)
+PASS xn--a.xn--nxa (using URL.host)
+PASS xn--a.xn--nxa (using URL.hostname)
+PASS xn--a.xn--nxa (using <a>)
+PASS xn--a.xn--nxa (using <a>.host)
+PASS xn--a.xn--nxa (using <a>.hostname)
+PASS xn--a.xn--nxa (using <area>)
+PASS xn--a.xn--nxa (using <area>.host)
+PASS xn--a.xn--nxa (using <area>.hostname)
 PASS xn--a.β (using URL)
 PASS xn--a.β (using URL.host)
 PASS xn--a.β (using URL.hostname)
@@ -171,15 +171,15 @@ PASS ‍.example (using <a>.hostname)
 PASS ‍.example (using <area>)
 PASS ‍.example (using <area>.host)
 PASS ‍.example (using <area>.hostname)
-FAIL xn--1ug.example (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn--1ug.example (using URL.host) assert_equals: expected "x" but got "xn--1ug.example"
-FAIL xn--1ug.example (using URL.hostname) assert_equals: expected "x" but got "xn--1ug.example"
-FAIL xn--1ug.example (using <a>) assert_equals: expected "" but got "xn--1ug.example"
-FAIL xn--1ug.example (using <a>.host) assert_equals: expected "x" but got "xn--1ug.example"
-FAIL xn--1ug.example (using <a>.hostname) assert_equals: expected "x" but got "xn--1ug.example"
-FAIL xn--1ug.example (using <area>) assert_equals: expected "" but got "xn--1ug.example"
-FAIL xn--1ug.example (using <area>.host) assert_equals: expected "x" but got "xn--1ug.example"
-FAIL xn--1ug.example (using <area>.hostname) assert_equals: expected "x" but got "xn--1ug.example"
+PASS xn--1ug.example (using URL)
+PASS xn--1ug.example (using URL.host)
+PASS xn--1ug.example (using URL.hostname)
+PASS xn--1ug.example (using <a>)
+PASS xn--1ug.example (using <a>.host)
+PASS xn--1ug.example (using <a>.hostname)
+PASS xn--1ug.example (using <area>)
+PASS xn--1ug.example (using <area>.host)
+PASS xn--1ug.example (using <area>.hostname)
 PASS يa (using URL)
 PASS يa (using URL.host)
 PASS يa (using URL.hostname)
@@ -189,15 +189,15 @@ PASS يa (using <a>.hostname)
 PASS يa (using <area>)
 PASS يa (using <area>.host)
 PASS يa (using <area>.hostname)
-FAIL xn--a-yoc (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn--a-yoc (using URL.host) assert_equals: expected "x" but got "xn--a-yoc"
-FAIL xn--a-yoc (using URL.hostname) assert_equals: expected "x" but got "xn--a-yoc"
-FAIL xn--a-yoc (using <a>) assert_equals: expected "" but got "xn--a-yoc"
-FAIL xn--a-yoc (using <a>.host) assert_equals: expected "x" but got "xn--a-yoc"
-FAIL xn--a-yoc (using <a>.hostname) assert_equals: expected "x" but got "xn--a-yoc"
-FAIL xn--a-yoc (using <area>) assert_equals: expected "" but got "xn--a-yoc"
-FAIL xn--a-yoc (using <area>.host) assert_equals: expected "x" but got "xn--a-yoc"
-FAIL xn--a-yoc (using <area>.hostname) assert_equals: expected "x" but got "xn--a-yoc"
+PASS xn--a-yoc (using URL)
+PASS xn--a-yoc (using URL.host)
+PASS xn--a-yoc (using URL.hostname)
+PASS xn--a-yoc (using <a>)
+PASS xn--a-yoc (using <a>.host)
+PASS xn--a-yoc (using <a>.hostname)
+PASS xn--a-yoc (using <area>)
+PASS xn--a-yoc (using <area>.host)
+PASS xn--a-yoc (using <area>.hostname)
 PASS ශ්‍රී (using URL)
 PASS ශ්‍රී (using URL.host)
 PASS ශ්‍රී (using URL.hostname)
@@ -225,15 +225,15 @@ PASS �.com (using <a>.hostname)
 PASS �.com (using <area>)
 PASS �.com (using <area>.host)
 PASS �.com (using <area>.hostname)
-FAIL xn--zn7c.com (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn--zn7c.com (using URL.host) assert_equals: expected "x" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using URL.hostname) assert_equals: expected "x" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using <a>) assert_equals: expected "" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using <a>.host) assert_equals: expected "x" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using <a>.hostname) assert_equals: expected "x" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using <area>) assert_equals: expected "" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using <area>.host) assert_equals: expected "x" but got "xn--zn7c.com"
-FAIL xn--zn7c.com (using <area>.hostname) assert_equals: expected "x" but got "xn--zn7c.com"
+PASS xn--zn7c.com (using URL)
+PASS xn--zn7c.com (using URL.host)
+PASS xn--zn7c.com (using URL.hostname)
+PASS xn--zn7c.com (using <a>)
+PASS xn--zn7c.com (using <a>.host)
+PASS xn--zn7c.com (using <a>.hostname)
+PASS xn--zn7c.com (using <area>)
+PASS xn--zn7c.com (using <area>.host)
+PASS xn--zn7c.com (using <area>.hostname)
 PASS x01234567890123456789012345678901234567890123456789012345678901x (using URL)
 PASS x01234567890123456789012345678901234567890123456789012345678901x (using URL.host)
 PASS x01234567890123456789012345678901234567890123456789012345678901x (using URL.hostname)
@@ -333,13 +333,13 @@ PASS %C2%AD (using <a>.hostname)
 PASS %C2%AD (using <area>)
 PASS %C2%AD (using <area>.host)
 PASS %C2%AD (using <area>.hostname)
-FAIL xn-- (using URL) assert_throws_js: function "() => makeURL("url", hostTest.input)" did not throw
-FAIL xn-- (using URL.host) assert_equals: expected "x" but got "xn--"
-FAIL xn-- (using URL.hostname) assert_equals: expected "x" but got "xn--"
-FAIL xn-- (using <a>) assert_equals: expected "" but got "xn--"
-FAIL xn-- (using <a>.host) assert_equals: expected "x" but got "xn--"
-FAIL xn-- (using <a>.hostname) assert_equals: expected "x" but got "xn--"
-FAIL xn-- (using <area>) assert_equals: expected "" but got "xn--"
-FAIL xn-- (using <area>.host) assert_equals: expected "x" but got "xn--"
-FAIL xn-- (using <area>.hostname) assert_equals: expected "x" but got "xn--"
+PASS xn-- (using URL)
+PASS xn-- (using URL.host)
+PASS xn-- (using URL.hostname)
+PASS xn-- (using <a>)
+PASS xn-- (using <a>.host)
+PASS xn-- (using <a>.hostname)
+PASS xn-- (using <area>)
+PASS xn-- (using <area>.host)
+PASS xn-- (using <area>.hostname)
 

@@ -2517,7 +2517,7 @@ void URLParser::addNonSpecialDotSlash()
 template<typename CharacterType> Optional<URLParser::LCharBuffer> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
     LCharBuffer ascii;
-    if (domain.isAllASCII()) {
+    if (domain.isAllASCII() && !startsWithLettersIgnoringASCIICase(domain, "xn--")) {
         size_t length = domain.length();
         if (domain.is8Bit()) {
             const LChar* characters = domain.characters8();
@@ -2625,6 +2625,23 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
 }
 
 template<typename CharacterType>
+bool URLParser::startsWithXNDashDash(CodePointIterator<CharacterType> iterator)
+{
+    if (iterator.atEnd() || (*iterator != 'x' && *iterator != 'X'))
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+    if (iterator.atEnd() || (*iterator != 'n' && *iterator != 'N'))
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+    if (iterator.atEnd() || *iterator != '-')
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+    if (iterator.atEnd() || *iterator != '-')
+        return false;
+    return true;
+}
+
+template<typename CharacterType>
 bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd())
@@ -2673,7 +2690,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         return parsePort(iterator);
     }
     
-    if (LIKELY(!m_hostHasPercentOrNonASCII)) {
+    if (LIKELY(!m_hostHasPercentOrNonASCII && !startsWithXNDashDash(iterator))) {
         auto hostIterator = iterator;
         for (; !iterator.atEnd(); ++iterator) {
             if (isTabOrNewline(*iterator))
