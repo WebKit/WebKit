@@ -920,6 +920,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
     prefsPrivate->setRequestIdleCallbackEnabled(options.enableRequestIdleCallback);
     prefsPrivate->setAsyncClipboardAPIEnabled(options.enableAsyncClipboardAPI);
+    prefsPrivate->setContactPickerAPIEnabled(options.enableContactPickerAPI);
     prefsPrivate->setWebSQLEnabled(options.enableWebSQL);
     prefsPrivate->setAllowTopNavigationToDataURLs(options.allowTopNavigationToDataURLs);
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);

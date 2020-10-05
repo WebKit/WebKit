@@ -64,6 +64,11 @@ $(PROJECT_DIR)/Modules/cache/DOMCache.idl
 $(PROJECT_DIR)/Modules/cache/DOMCacheStorage.idl
 $(PROJECT_DIR)/Modules/cache/DOMWindow+Caches.idl
 $(PROJECT_DIR)/Modules/cache/WorkerGlobalScope+Caches.idl
+$(PROJECT_DIR)/Modules/contact-picker/ContactInfo.idl
+$(PROJECT_DIR)/Modules/contact-picker/ContactProperty.idl
+$(PROJECT_DIR)/Modules/contact-picker/ContactsManager.idl
+$(PROJECT_DIR)/Modules/contact-picker/ContactsSelectOptions.idl
+$(PROJECT_DIR)/Modules/contact-picker/Navigator+Contacts.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/BasicCredential.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialRequestOptions.idl

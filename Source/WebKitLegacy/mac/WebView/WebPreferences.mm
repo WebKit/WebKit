@@ -3075,6 +3075,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitAsyncClipboardAPIEnabledPreferenceKey];
 }
 
+- (BOOL)contactPickerAPIEnabled
+{
+    return [self _boolValueForKey:WebKitContactPickerAPIEnabledPreferenceKey];
+}
+
+- (void)setContactPickerAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitContactPickerAPIEnabledPreferenceKey];
+}
+
 - (BOOL)intersectionObserverEnabled
 {
     return [self _boolValueForKey:WebKitIntersectionObserverEnabledPreferenceKey];

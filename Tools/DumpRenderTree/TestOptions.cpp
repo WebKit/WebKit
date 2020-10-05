@@ -156,6 +156,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableAspectRatioOfImgFromWidthAndHeight = parseBooleanTestHeaderValue(value);
         else if (key == "allowTopNavigationToDataURLs")
             allowTopNavigationToDataURLs = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:ContactPickerAPIEnabled")
+            enableContactPickerAPI = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

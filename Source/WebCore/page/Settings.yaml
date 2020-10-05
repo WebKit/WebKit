@@ -1049,6 +1049,9 @@ webShareFileAPIEnabled:
 undoManagerAPIEnabled:
   initial: false
 
+contactPickerAPIEnabled:
+  initial: false
+
 intersectionObserverEnabled:
   initial: false
   conditional: ENABLE(INTERSECTION_OBSERVER)

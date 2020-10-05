@@ -53,6 +53,7 @@ struct TestOptions {
     bool enableCoreMathML { false };
     bool enableRequestIdleCallback { false };
     bool enableAsyncClipboardAPI { false };
+    bool enableContactPickerAPI { false };
     bool layoutFormattingContextIntegrationEnabled { true };
     bool enableAspectRatioOfImgFromWidthAndHeight { false };
     bool enableWebSQL { true };

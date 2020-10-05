@@ -1,3 +1,51 @@
+2020-10-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Contact Picker API] Introduce bindings for the Contact Picker API
+        https://bugs.webkit.org/show_bug.cgi?id=216793
+        <rdar://problem/69317957>
+
+        Reviewed by Wenson Hsieh.
+
+        Added IDL for the Contact Picker API, with the exception of the address
+        and icon contact properties (which will be added after an initial
+        implemention is complete). See: https://wicg.github.io/contact-api/spec/
+        for more information.
+
+        Test: contact-picker/contacts-interfaces.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/contact-picker/ContactInfo.h: Added.
+        * Modules/contact-picker/ContactInfo.idl: Added.
+        * Modules/contact-picker/ContactProperty.h: Added.
+        * Modules/contact-picker/ContactProperty.idl: Added.
+        * Modules/contact-picker/ContactsManager.cpp: Added.
+        (WebCore::ContactsManager::create):
+        (WebCore::ContactsManager::ContactsManager):
+        (WebCore::ContactsManager::navigator):
+        (WebCore::ContactsManager::getProperties):
+        (WebCore::ContactsManager::select):
+
+        Stub out these API calls for now by immediately rejecting the given promise.
+
+        * Modules/contact-picker/ContactsManager.h: Added.
+        * Modules/contact-picker/ContactsManager.idl: Added.
+        * Modules/contact-picker/ContactsSelectOptions.h: Added.
+        * Modules/contact-picker/ContactsSelectOptions.idl: Added.
+        * Modules/contact-picker/NavigatorContacts.cpp: Added.
+        (WebCore::NavigatorContacts::NavigatorContacts):
+        (WebCore::NavigatorContacts::contacts):
+        (WebCore::NavigatorContacts::from):
+        (WebCore::NavigatorContacts::supplementName):
+        * Modules/contact-picker/NavigatorContacts.h: Added.
+        * Modules/contact-picker/Navigator+Contacts.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/Settings.yaml:
+
 2020-10-05  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should respect enabled and muted tracks

@@ -394,6 +394,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactInfo.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactInfo.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactProperty.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactProperty.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactsManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactsManager.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactsSelectOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSContactsSelectOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverOptions.cpp
@@ -1327,6 +1335,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Beacon.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Contacts.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Contacts.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Credentials.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Credentials.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+EME.cpp

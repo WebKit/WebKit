@@ -305,6 +305,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAllowTopNavigationToDataURLs(BOOL);
     virtual HRESULT STDMETHODCALLTYPE modernUnprefixedWebAudioEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setModernUnprefixedWebAudioEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE contactPickerAPIEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setContactPickerAPIEnabled(BOOL);
 
     // WebPreferences
 

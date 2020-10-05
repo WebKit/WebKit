@@ -5642,6 +5642,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setAsyncClipboardAPIEnabled(!!enabled);
 
+    hr = prefsPrivate->contactPickerAPIEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setContactPickerAPIEnabled(!!enabled);
+
     hr = prefsPrivate->aspectRatioOfImgFromWidthAndHeightEnabled(&enabled);
     if (FAILED(hr))
         return hr;

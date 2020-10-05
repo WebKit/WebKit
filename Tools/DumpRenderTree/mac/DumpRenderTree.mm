@@ -992,6 +992,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.layoutFormattingContextIntegrationEnabled = options.layoutFormattingContextIntegrationEnabled;
     preferences.aspectRatioOfImgFromWidthAndHeightEnabled = options.enableAspectRatioOfImgFromWidthAndHeight;
     preferences.allowTopNavigationToDataURLs = options.allowTopNavigationToDataURLs;
+    preferences.contactPickerAPIEnabled = options.enableContactPickerAPI;
 }
 
 // Called once on DumpRenderTree startup.

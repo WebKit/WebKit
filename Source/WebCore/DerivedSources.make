@@ -57,6 +57,7 @@ VPATH = \
     $(WebCore)/Modules/async-clipboard \
     $(WebCore)/Modules/beacon \
     $(WebCore)/Modules/cache \
+    $(WebCore)/Modules/contact-picker \
     $(WebCore)/Modules/credentialmanagement \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/encryptedmedia/legacy \
@@ -166,6 +167,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/cache/DOMCacheStorage.idl \
     $(WebCore)/Modules/cache/DOMWindow+Caches.idl \
     $(WebCore)/Modules/cache/WorkerGlobalScope+Caches.idl \
+    $(WebCore)/Modules/contact-picker/ContactInfo.idl \
+    $(WebCore)/Modules/contact-picker/ContactProperty.idl \
+    $(WebCore)/Modules/contact-picker/ContactsManager.idl \
+    $(WebCore)/Modules/contact-picker/ContactsSelectOptions.idl \
+    $(WebCore)/Modules/contact-picker/Navigator+Contacts.idl \
     $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \

@@ -1,3 +1,26 @@
+2020-10-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Contact Picker API] Introduce bindings for the Contact Picker API
+        https://bugs.webkit.org/show_bug.cgi?id=216793
+        <rdar://problem/69317957>
+
+        Reviewed by Wenson Hsieh.
+
+        * contact-picker/contacts-interfaces-expected.txt: Added.
+        * contact-picker/contacts-interfaces.html: Added.
+
+        Added a new test to verify the new API interfaces.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wincairo/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wpe/fast/dom/navigator-detached-no-crash-expected.txt:
+
+        Updated an existing test to include "navigator.contacts".
+
 2020-10-05  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder should respect enabled and muted tracks

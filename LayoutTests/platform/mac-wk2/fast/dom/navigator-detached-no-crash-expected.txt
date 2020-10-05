@@ -5,6 +5,7 @@ navigator.appName is OK
 navigator.appVersion is OK
 navigator.canShare() is OK
 navigator.clipboard is OK
+navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
@@ -36,6 +37,7 @@ navigator.appName is OK
 navigator.appVersion is OK
 navigator.canShare() is OK
 navigator.clipboard is OK
+navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK

@@ -29,6 +29,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/async-clipboard"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/cache"
+    "${WEBCORE_DIR}/Modules/contact-picker"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
@@ -232,6 +233,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/cache/DOMCacheStorage.idl
     Modules/cache/DOMWindow+Caches.idl
     Modules/cache/WorkerGlobalScope+Caches.idl
+
+    Modules/contact-picker/ContactInfo.idl
+    Modules/contact-picker/ContactProperty.idl
+    Modules/contact-picker/ContactsManager.idl
+    Modules/contact-picker/ContactsSelectOptions.idl
+    Modules/contact-picker/Navigator+Contacts.idl
 
     Modules/credentialmanagement/BasicCredential.idl
     Modules/credentialmanagement/CredentialCreationOptions.idl

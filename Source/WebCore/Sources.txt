@@ -37,6 +37,8 @@ Modules/cache/DOMCacheStorage.cpp
 Modules/cache/DOMWindowCaches.cpp
 Modules/cache/WorkerCacheStorageConnection.cpp
 Modules/cache/WorkerGlobalScopeCaches.cpp
+Modules/contact-picker/ContactsManager.cpp
+Modules/contact-picker/NavigatorContacts.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
@@ -2779,6 +2781,10 @@ JSCompositionEvent.cpp
 JSComputedEffectTiming.cpp
 JSConstantSourceNode.cpp
 JSConstantSourceOptions.cpp
+JSContactInfo.cpp
+JSContactProperty.cpp
+JSContactsManager.cpp
+JSContactsSelectOptions.cpp
 JSConvolverNode.cpp
 JSConvolverOptions.cpp
 JSCountQueuingStrategy.cpp

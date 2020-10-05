@@ -160,6 +160,16 @@ CSSTypedOMEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
+ContactPickerAPIEnabled:
+  type: bool
+  humanReadableName: "Contact Picker API"
+  humanReadableDescription: "Enable the Contact Picker API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 CoreImageAcceleratedFilterRenderEnabled:
   type: bool
   humanReadableName: "CoreImage-Accelerated Filter Rendering"

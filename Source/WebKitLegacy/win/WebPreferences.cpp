@@ -339,6 +339,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAsyncClipboardAPIEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitContactPickerAPIEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
@@ -2306,6 +2308,20 @@ HRESULT WebPreferences::asyncClipboardAPIEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setAsyncClipboardAPIEnabled(BOOL enabled)
 {
     setBoolValue(WebKitAsyncClipboardAPIEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::contactPickerAPIEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitContactPickerAPIEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setContactPickerAPIEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitContactPickerAPIEnabledPreferenceKey, enabled);
     return S_OK;
 }
 
