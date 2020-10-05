@@ -1,5 +1,207 @@
 2020-10-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267869. rdar://problem/69904332
+
+    [iOS WK1] Crashes when using ANGLE WebGL from another thread
+    https://bugs.webkit.org/show_bug.cgi?id=216106
+    <rdar://problem/68602452>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2020-10-02
+    Reviewed by Kenneth Russell.
+    
+    Source/ThirdParty/ANGLE:
+    
+    Add two extensions for EAGL and CGL backends to declare the
+    underlying platform context being "volatile". It means that
+    the thread-global current context is being modified behind
+    ANGLE. If ANGLE context is marked volatile for a particular
+    API, it will sync the underlying context for every EGL
+    function that needs the context. Most intuitive use is
+    for the client to call eglMakeCurrent before calling any
+    gl function if the client knowns the platform state might
+    be dirty.
+    
+    Implement eglReleaseThread for EAGL and CGL backends.
+    Releasing thread will unset the platform current context.
+    
+    Fix a bug of omitting EGL_ANGLE_device_eagl from being
+    advertised.
+    
+    * extensions/EGL_ANGLE_platform_angle_device_context_volatile_cgl.txt: Added.
+    * extensions/EGL_ANGLE_platform_angle_device_context_volatile_eagl.txt: Added.
+    * include/EGL/eglext_angle.h:
+    * src/libANGLE/Caps.cpp:
+    (egl::DeviceExtensions::getStrings const):
+    (egl::ClientExtensions::getStrings const):
+    * src/libANGLE/Caps.h:
+    * src/libANGLE/Display.cpp:
+    (egl::Display::prepareForCall):
+    (egl::Display::releaseThread):
+    (egl::GenerateClientExtensions):
+    * src/libANGLE/Display.h:
+    * src/libANGLE/renderer/DisplayImpl.cpp:
+    (rx::DisplayImpl::prepareForCall):
+    (rx::DisplayImpl::releaseThread):
+    * src/libANGLE/renderer/DisplayImpl.h:
+    * src/libANGLE/renderer/gl/cgl/DisplayCGL.h:
+    * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+    (rx::DisplayCGL::initialize):
+    (rx::DisplayCGL::terminate):
+    (rx::DisplayCGL::prepareForCall):
+    (rx::DisplayCGL::releaseThread):
+    (rx::DisplayCGL::makeCurrent):
+    * src/libANGLE/renderer/gl/eagl/DisplayEAGL.h:
+    * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+    (rx::DisplayEAGL::initialize):
+    (rx::DisplayEAGL::terminate):
+    (rx::DisplayEAGL::prepareForCall):
+    (rx::DisplayEAGL::releaseThread):
+    * src/libANGLE/validationEGL.cpp:
+    * src/libGLESv2/entry_points_egl.cpp:
+    * src/libGLESv2/entry_points_egl_ext.cpp:
+    
+    Source/WebCore:
+    
+    Source of the bug comes from following:
+      - WK1 might run WebKit code in client main thread.
+      - WK1 might run Webkit code in web thread.
+      - WebKit code might run WebGL payload, notably access
+        GraphicsContextGL classes.
+        Client is able to modify EAGL/CGL current context.
+    
+    The change to ANGLE incurred two distinct behavior changes
+    compared to raw EAGL / CGL:
+    1) Before: context was set current before any GL call
+    After: context was set current only if EGL current context
+    had been changed. (Explicit code as well as ANGLE implementation
+    optimization.)
+    
+    2) Before: context being used was able to be current in
+    multiple threads at the same time. (EAGL/CGL feature)
+    After: context cannot be current in multiple threads
+    at the same time. (EGL feature)
+    
+    Change in behavior 1) caused ANGLE to sometimes use
+    the EAGL/CGL context of the client instead of
+    the real context that ANGLE created.
+    Fix this by introducing
+    EGL_ANGLE_platform_angle_device_context_volatile_eagl
+    and
+    EGL_ANGLE_platform_angle_device_context_volatile_cgl
+    which make ANGLE sync the context on each eglMakeCurrent
+    eglReleaseThread and eglTerminate.
+    
+    Change in behavior 2) caused ANGLE to use uninitialized
+    context object from one thread, if the real context object
+    was current in another thread.
+    Fix this by considering "GraphicsContextGLOpenGL current context"
+    as part of "data that is owned by WebCoreThread lock".
+    The current context is set with lock held, implicitly.
+    The current context is released when lock is released.
+    When the lock is not held, GraphicsContextGLOpenGL current context
+    is nullptr.
+    
+    Adds soft linking for EAGL for the purpose of testing this in
+    TestWebKitAPI. The case of Apple Silicon Mac may sometimes
+    use CGL and sometimes EAGL, and the test should test that
+    client overriding both contexts will not cause problems.
+    
+    Fix ANGLE header include path:
+     - Do not include ANGLE in the path, as files are included with ANGLE/
+     - Add WK_ALTERNATE_FRAMEWORKS_DIR so that SDK_VARIANT=iosmac
+       e.g. maccatalyst builds work
+    Previously the ANGLE was not included from ThirdParty/ANGLE, rather
+    "WebKit SDK".
+    
+    * Configurations/WebCore.xcconfig:
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+    (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+    (WebCore::GraphicsContextGLOpenGL::releaseCurrentContext):
+    (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+    (WebCore::GraphicsContextGLOpenGL::allowOfflineRenderers const):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/ios/wak/WebCoreThread.mm:
+    (WebThreadUnlockFromAnyThread):
+    (_WebThreadUnlock):
+    
+    Tools:
+    
+    Add a WK1 test which runs WebGL code both in
+    client main thread and in web thread.
+    This tests the case where ANGLE EGL context is
+    not being held current in one thread while the
+    other thread runs WebGL and thus ANGLE EGL code.
+    
+    * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLNoCrashOnOtherThreadAccess.mm: Added.
+    (-[WebGLNoCrashOnOtherThreadAccessWebViewDelegate webViewDidFinishLoad:]):
+    (-[WebGLNoCrashOnOtherThreadAccessWebViewDelegate webView:shouldStartLoadWithRequest:navigationType:]):
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267869 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            [iOS WK1] Crashes when using ANGLE WebGL from another thread
+            https://bugs.webkit.org/show_bug.cgi?id=216106
+            <rdar://problem/68602452>
+
+            Reviewed by Kenneth Russell.
+
+            Add two extensions for EAGL and CGL backends to declare the
+            underlying platform context being "volatile". It means that
+            the thread-global current context is being modified behind
+            ANGLE. If ANGLE context is marked volatile for a particular
+            API, it will sync the underlying context for every EGL
+            function that needs the context. Most intuitive use is
+            for the client to call eglMakeCurrent before calling any
+            gl function if the client knowns the platform state might
+            be dirty.
+
+            Implement eglReleaseThread for EAGL and CGL backends.
+            Releasing thread will unset the platform current context.
+
+            Fix a bug of omitting EGL_ANGLE_device_eagl from being
+            advertised.
+
+            * extensions/EGL_ANGLE_platform_angle_device_context_volatile_cgl.txt: Added.
+            * extensions/EGL_ANGLE_platform_angle_device_context_volatile_eagl.txt: Added.
+            * include/EGL/eglext_angle.h:
+            * src/libANGLE/Caps.cpp:
+            (egl::DeviceExtensions::getStrings const):
+            (egl::ClientExtensions::getStrings const):
+            * src/libANGLE/Caps.h:
+            * src/libANGLE/Display.cpp:
+            (egl::Display::prepareForCall):
+            (egl::Display::releaseThread):
+            (egl::GenerateClientExtensions):
+            * src/libANGLE/Display.h:
+            * src/libANGLE/renderer/DisplayImpl.cpp:
+            (rx::DisplayImpl::prepareForCall):
+            (rx::DisplayImpl::releaseThread):
+            * src/libANGLE/renderer/DisplayImpl.h:
+            * src/libANGLE/renderer/gl/cgl/DisplayCGL.h:
+            * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+            (rx::DisplayCGL::initialize):
+            (rx::DisplayCGL::terminate):
+            (rx::DisplayCGL::prepareForCall):
+            (rx::DisplayCGL::releaseThread):
+            (rx::DisplayCGL::makeCurrent):
+            * src/libANGLE/renderer/gl/eagl/DisplayEAGL.h:
+            * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+            (rx::DisplayEAGL::initialize):
+            (rx::DisplayEAGL::terminate):
+            (rx::DisplayEAGL::prepareForCall):
+            (rx::DisplayEAGL::releaseThread):
+            * src/libANGLE/validationEGL.cpp:
+            * src/libGLESv2/entry_points_egl.cpp:
+            * src/libGLESv2/entry_points_egl_ext.cpp:
+
+2020-10-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267602. rdar://problem/69904386
 
     WebGL should use GLES in iOS apps running on Apple Silicon
