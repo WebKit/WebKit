@@ -739,7 +739,7 @@ void* VideoTextureCopierCV::attachIOSurfaceToTexture(GCGLenum target, GCGLenum i
         LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
         return nullptr;
     }
-    if (eglTextureTarget != GraphicsContextGL::EGLIOSurfaceTextureTarget) {
+    if (eglTextureTarget != GraphicsContextGL::EGLIOSurfaceTextureTarget()) {
         LOG(WebGL, "Mismatch in EGL texture target %d.", static_cast<int>(target));
         return nullptr;
     }
@@ -858,7 +858,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
 #elif USE(OPENGL)
     GCGLenum videoTextureTarget = GraphicsContextGL::TEXTURE_RECTANGLE_ARB;
 #elif USE(ANGLE)
-    GCGLenum videoTextureTarget = GraphicsContextGL::IOSurfaceTextureTarget;
+    GCGLenum videoTextureTarget = GraphicsContextGL::IOSurfaceTextureTarget();
 #else
 #error Unsupported configuration
 #endif
