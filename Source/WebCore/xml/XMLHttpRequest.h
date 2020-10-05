@@ -90,7 +90,8 @@ public:
     String getResponseHeader(const String& name) const;
     ExceptionOr<OwnedString> responseText();
     String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
-    String responseMIMEType() const;
+    enum class FinalMIMEType { Yes, No };
+    String responseMIMEType(FinalMIMEType = FinalMIMEType::No) const;
 
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
     ExceptionOr<Document*> responseXML();

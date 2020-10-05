@@ -1,3 +1,26 @@
+2020-10-05  Rob Buis  <rbuis@igalia.com>
+
+        Make xhr.response more conforming to the specification
+        https://bugs.webkit.org/show_bug.cgi?id=217296
+
+        Reviewed by Darin Adler.
+
+        Make xhr.response more conforming to the specification when dealing
+        with Blob type responses, the type for the Blob should be computed
+        by the "get a final MIME type" algorithm [1, 2].
+
+        Behavior matches Firefox.
+
+        Test: imported/w3c/web-platform-tests/xhr/overridemimetype-blob.html
+
+        [1] https://xhr.spec.whatwg.org/#ref-for-final-mime-type③
+        [2] https://xhr.spec.whatwg.org/#final-mime-type
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createResponseBlob):
+        (WebCore::XMLHttpRequest::responseMIMEType const):
+        * xml/XMLHttpRequest.h:
+
 2020-10-04  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS scale property
