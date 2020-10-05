@@ -43,17 +43,21 @@ void JITOperationList::initialize()
 }
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-static ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations)
+static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations)
 {
     for (const uintptr_t* current = beginHost; current != endHost; ++current) {
         void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
-        auto result = map.add(codePtr, tagCodePtr(codePtr, JSEntryPtrTag));
-        ASSERT(result.isNewEntry);
+        if (codePtr) {
+            auto result = map.add(codePtr, tagCodePtr(codePtr, JSEntryPtrTag));
+            ASSERT(result.isNewEntry);
+        }
     }
     for (const uintptr_t* current = beginOperations; current != endOperations; ++current) {
         void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
-        auto result = map.add(codePtr, tagCodePtr(codePtr, OperationPtrTag));
-        ASSERT(result.isNewEntry);
+        if (codePtr) {
+            auto result = map.add(codePtr, tagCodePtr(codePtr, OperationPtrTag));
+            ASSERT(result.isNewEntry);
+        }
     }
 }
 #endif

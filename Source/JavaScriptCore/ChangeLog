@@ -1,3 +1,16 @@
+2020-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unrevewed, fix crash for ASan debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=217261
+
+        Reviewed by Saam Barati.
+
+        This function touches memory region which ASan cannot understand whether this is safe.
+        And ASan makes pointer fat so that it will see some null pointers.
+
+        * assembler/JITOperationList.cpp:
+        (JSC::addPointers):
+
 2020-10-05  Keith Miller  <keith_miller@apple.com>
 
         Add JSC option to trigger a hardware breakpoint when debugger expressions are reached.
