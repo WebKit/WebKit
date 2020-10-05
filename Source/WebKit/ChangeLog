@@ -1,3 +1,30 @@
+2020-10-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Disable media capture if an app's entitlements won't allow access to capture devices
+        https://bugs.webkit.org/show_bug.cgi?id=217319
+        <rdar://problem/69956112>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, tested manually with MiniBrowser and Safari.
+
+        * UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm:
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureAudio): If the
+        app is sandboxed, check for the entitlement required for audio capture. Don't
+        bother checking for usage string if TCC has already authorized capture.
+        (WebKit::UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo): Ditto
+        for video capture.
+
+        * UIProcess/Cocoa/WebPreferencesCocoa.mm:
+        (WebKit::WebPreferences::platformInitializeStore): Initialize `mediaDevicesEnabled`
+        manually because its default value is always `false` in the WebProcess and may be
+        `true` in the UIProcess. WebPreferences assumes the default will always be the same
+        in both processes, and so has an optimization that only sends values to the
+        WebProcess if they differ from the default value. This means if the default in the
+        UIProcess is true it won't be pushed to the WebProcess, so capture won't work.
+
+        * Platform/spi/ios/TCCSPI.h: Update TCCAccessPreflightResult.
+
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply for DecideDestinationWithSuggestedFilename
