@@ -1,3 +1,15 @@
+2020-10-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Update baselines of two touch-events tests after r266649.
+
+        Unreviewed test gardening.
+
+        General baselines are updated because WPE is the only port running
+        these tests. They're skipped in all other ports.
+
+        * web-platform-tests/touch-events/historical-expected.txt:
+        * web-platform-tests/touch-events/idlharness.window-expected.txt:
+
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused -expected.txt file
