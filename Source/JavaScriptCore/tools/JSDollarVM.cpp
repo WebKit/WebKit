@@ -2477,8 +2477,7 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
 }
 #endif // ENABLE(MASM_PROBE)
 
-SUPPRESS_ASAN
-JSC_DEFINE_HOST_FUNCTION(functionCallWithStackSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASAN, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();

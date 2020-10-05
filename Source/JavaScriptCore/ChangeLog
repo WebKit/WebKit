@@ -1,3 +1,14 @@
+2020-10-05  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix: Use JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES() with SUPPRESS_ASAN
+        <rdar://problem/69954783>
+
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES):
+        - Change `SUPPRESS_ASAN JSC_DEFINE_HOST_FUNCTION()` to
+          `JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(..., SUPPRESS_ASAN, ...)`
+          to fix the build.
+
 2020-10-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JITOperationList to validate JIT-caged pointers
