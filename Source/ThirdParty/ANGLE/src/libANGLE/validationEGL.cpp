@@ -643,6 +643,34 @@ Error ValidateGetPlatformDisplayCommon(EGLenum platform,
                 case EGL_PLATFORM_ANGLE_D3D_LUID_LOW_ANGLE:
                     luidSpecified = true;
                     break;
+                case EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE:
+                    // The property does not have an effect if it's not active, so do not check
+                    // for non-support.
+                    switch (value)
+                    {
+                        case EGL_FALSE:
+                        case EGL_TRUE:
+                            break;
+                        default:
+                            return EglBadAttribute() << "Invalid value for "
+                                                        "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
+                                                        "EAGL_ANGLE attrib";
+                    }
+                    break;
+                case EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE:
+                    // The property does not have an effect if it's not active, so do not check
+                    // for non-support.
+                    switch (value)
+                    {
+                        case EGL_FALSE:
+                        case EGL_TRUE:
+                            break;
+                        default:
+                            return EglBadAttribute() << "Invalid value for "
+                                                        "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
+                                                        "CGL_ANGLE attrib";
+                    }
+                    break;
                 default:
                     break;
             }
