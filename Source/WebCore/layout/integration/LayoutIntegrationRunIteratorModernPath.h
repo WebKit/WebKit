@@ -144,8 +144,9 @@ public:
     }
 
     bool operator==(const ModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
-    bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
+    bool onSameLine(const ModernPath& other) const { return run().lineIndex() == other.run().lineIndex(); }
 
+    bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
     void setAtEnd() { m_runIndex = runs().size(); }
 
     InlineBox* legacyInlineBox() const

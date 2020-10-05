@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
+#include "Position.h"
 #include "RenderElement.h"
 #include "RenderView.h"
 #include "SimpleRange.h"

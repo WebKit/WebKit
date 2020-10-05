@@ -37,6 +37,7 @@
 #include "HTMLTableElement.h"
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
+#include "InlineRunAndOffset.h"
 #include "InlineTextBox.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
@@ -101,9 +102,9 @@ static Node* previousRenderedEditable(Node* node)
     return nullptr;
 }
 
-InlineBoxAndOffset::InlineBoxAndOffset(LayoutIntegration::RunIterator run, unsigned offset)
-    : box(run ? run->legacyInlineBox() : nullptr)
-    , offset(offset)
+InlineBoxAndOffset::InlineBoxAndOffset(InlineRunAndOffset runAndOffset)
+    : box(runAndOffset.run ? runAndOffset.run->legacyInlineBox() : nullptr)
+    , offset(runAndOffset.offset)
 {
 }
 
@@ -1071,21 +1072,21 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (renderer == positionRenderer && thisRenderedOffset == positionRenderedOffset)
         return false;
 
-    auto b1 = inlineBoxAndOffset(Affinity::Downstream).box;
-    auto b2 = position.inlineBoxAndOffset(Affinity::Downstream).box;
+    auto run1 = inlineRunAndOffset(Affinity::Downstream).run;
+    auto run2 = position.inlineRunAndOffset(Affinity::Downstream).run;
 
-    LOG(Editing, "renderer:               %p [%p]\n", renderer, b1);
+    LOG(Editing, "renderer:               %p\n", renderer);
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
-    LOG(Editing, "posRenderer:            %p [%p]\n", positionRenderer, b2);
+    LOG(Editing, "posRenderer:            %p\n", positionRenderer);
     LOG(Editing, "posRenderedOffset:      %d\n", positionRenderedOffset);
     LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(*deprecatedNode()), caretMaxOffset(*deprecatedNode()));
     LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(*position.deprecatedNode()), caretMaxOffset(*position.deprecatedNode()));
     LOG(Editing, "----------------------------------------------------------------------\n");
 
-    if (!b1 || !b2)
+    if (!run1 || !run2)
         return false;
 
-    if (&b1->root() != &b2->root())
+    if (!run1->onSameLine(*run2))
         return true;
 
     if (nextRenderedEditable(deprecatedNode()) == position.deprecatedNode()
@@ -1140,9 +1141,9 @@ Position Position::trailingWhitespacePosition(Affinity, bool considerNonCollapsi
     return { };
 }
 
-InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity) const
+InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity) const
 {
-    return inlineBoxAndOffset(affinity, primaryDirection());
+    return inlineRunAndOffset(affinity, primaryDirection());
 }
 
 static bool isNonTextLeafChild(RenderObject& object)
@@ -1191,7 +1192,7 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
     return position;
 }
 
-InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection primaryDirection) const
+InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection primaryDirection) const
 {
     auto caretOffset = static_cast<unsigned>(deprecatedEditingOffset());
 
@@ -1206,12 +1207,10 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
 
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
-        lineBreakRenderer.ensureLineBoxes();
         if (!caretOffset)
             run = LayoutIntegration::runFor(lineBreakRenderer);
     } else if (is<RenderText>(*renderer)) {
         auto& textRenderer = downcast<RenderText>(*renderer);
-        textRenderer.ensureLineBoxes();
 
         auto textRun = LayoutIntegration::firstTextRunFor(textRenderer);
         LayoutIntegration::TextRunIterator candidate;
@@ -1261,7 +1260,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
                     return { { }, caretOffset };
             }
 
-            return equivalent.inlineBoxAndOffset(Affinity::Upstream, primaryDirection);
+            return equivalent.inlineRunAndOffset(Affinity::Upstream, primaryDirection);
         }
         if (is<RenderBox>(*renderer)) {
             run = LayoutIntegration::runFor(downcast<RenderBox>(*renderer));
@@ -1367,6 +1366,35 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
     }
 
     return { run, caretOffset };
+}
+
+InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity) const
+{
+    return inlineBoxAndOffset(affinity, primaryDirection());
+}
+
+InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection primaryDirection) const
+{
+    ensureLineBoxes();
+
+    return { inlineRunAndOffset(affinity, primaryDirection) };
+}
+
+void Position::ensureLineBoxes() const
+{
+    auto node = deprecatedNode();
+    if (!node)
+        return;
+    auto renderer = node->renderer();
+    if (!renderer)
+        return;
+
+    if (renderer->isBR()) {
+        downcast<RenderLineBreak>(*renderer).ensureLineBoxes();
+        return;
+    }
+    if (is<RenderText>(*renderer))
+        downcast<RenderText>(*renderer).ensureLineBoxes();
 }
 
 TextDirection Position::primaryDirection() const

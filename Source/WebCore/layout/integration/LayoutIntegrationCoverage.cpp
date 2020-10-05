@@ -177,7 +177,7 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBlockFlow& fl
             // No need to check the code path at this point. We already know it can't be simple.
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
         } else {
-            TextRun run(String(textRenderer.text()));
+            WebCore::TextRun run(String(textRenderer.text()));
             run.setCharacterScanForCodePath(false);
             if (style.fontCascade().codePath(run) != FontCascade::Simple)
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);

@@ -27,13 +27,13 @@
 
 #include "LayoutRect.h"
 #include "RenderObject.h"
-#include "VisiblePosition.h"
 
 namespace WebCore {
 
 class InlineTextBox;
 class RenderStyle;
 class RenderText;
+class VisiblePosition;
 
 class RenderTextLineBoxes {
 public:

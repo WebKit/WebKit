@@ -1,3 +1,40 @@
+2020-10-05  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Avoid ensureLineBoxes for some call sites of inlineBoxAndOffset
+        https://bugs.webkit.org/show_bug.cgi?id=217225
+
+        Reviewed by Zalan Bujtas.
+
+        Separate inlineRunAndOffset from inlineBoxAndOffset.
+        The formet returns iterator while the later forces the legacy path.
+
+        Use inlineRunAndOffset in a few places.
+
+        * dom/Position.cpp:
+        (WebCore::Position::rendersInDifferentPosition const):
+        (WebCore::Position::inlineRunAndOffset const):
+        (WebCore::Position::inlineBoxAndOffset const):
+        (WebCore::Position::ensureLineBoxes const):
+        (WebCore::InlineBoxAndOffset::InlineBoxAndOffset): Deleted.
+        * dom/Position.h:
+        (WebCore::InlineBoxAndOffset::InlineBoxAndOffset):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::directionOfSelection):
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::inlineRunAndOffset const):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForFontAndText):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::Run::onSameLine const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::onSameLine const):
+        (WebCore::LayoutIntegration::LegacyPath::atEnd const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::onSameLine const):
+        (WebCore::LayoutIntegration::ModernPath::atEnd const):
+        * platform/DragImage.cpp:
+        * rendering/RenderTextLineBoxes.h:
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         Make xhr.response more conforming to the specification

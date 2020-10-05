@@ -526,6 +526,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/FontShadow.h
     editing/FrameSelection.h
     editing/HTMLInterchange.h
+    editing/InlineRunAndOffset.h
     editing/SelectionRectGatherer.h
     editing/SerializedAttachmentData.h
     editing/SmartReplace.h

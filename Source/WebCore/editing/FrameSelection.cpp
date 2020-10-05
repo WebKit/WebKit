@@ -52,6 +52,7 @@
 #include "HTMLSelectElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineRunAndOffset.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "Page.h"
@@ -637,10 +638,10 @@ TextDirection FrameSelection::directionOfSelection()
     // can cause layout, which has the potential to invalidate lineboxes.
     auto startPosition = m_selection.visibleStart();
     auto endPosition = m_selection.visibleEnd();
-    auto startBox = startPosition.inlineBoxAndOffset().box;
-    auto endBox = endPosition.inlineBoxAndOffset().box;
-    if (startBox && endBox && startBox->direction() == endBox->direction())
-        return startBox->direction();
+    auto startRun = startPosition.inlineRunAndOffset().run;
+    auto endRun = endPosition.inlineRunAndOffset().run;
+    if (startRun && endRun && startRun->direction() == endRun->direction())
+        return startRun->direction();
     return directionOfEnclosingBlock();
 }
 

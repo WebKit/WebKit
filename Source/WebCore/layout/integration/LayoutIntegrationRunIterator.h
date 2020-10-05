@@ -73,6 +73,8 @@ public:
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
 
+    bool onSameLine(const Run&) const;
+
     // For intermediate porting steps only.
     InlineBox* legacyInlineBox() const;
 
@@ -266,6 +268,16 @@ inline unsigned char Run::bidiLevel() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.bidiLevel();
+    });
+}
+
+inline bool Run::onSameLine(const Run& other) const
+{
+    if (m_pathVariant.index() != other.m_pathVariant.index())
+        return false;
+
+    return WTF::switchOn(m_pathVariant, [&](const auto& path) {
+        return path.onSameLine(WTF::get<std::decay_t<decltype(path)>>(other.m_pathVariant));
     });
 }
 

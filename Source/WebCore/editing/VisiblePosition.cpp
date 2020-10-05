@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "InlineRunAndOffset.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "Range.h"
@@ -619,6 +620,16 @@ UChar32 VisiblePosition::characterAfter() const
     UChar32 ch;
     U16_NEXT(textNode->data(), offset, length, ch);
     return ch;
+}
+
+InlineRunAndOffset VisiblePosition::inlineRunAndOffset() const
+{
+    return m_deepPosition.inlineRunAndOffset(m_affinity);
+}
+
+InlineRunAndOffset VisiblePosition::inlineRunAndOffset(TextDirection primaryDirection) const
+{
+    return m_deepPosition.inlineRunAndOffset(m_affinity, primaryDirection);
 }
 
 auto VisiblePosition::localCaretRect() const -> LocalCaretRect

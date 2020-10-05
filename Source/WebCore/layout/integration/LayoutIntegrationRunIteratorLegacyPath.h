@@ -91,8 +91,9 @@ public:
     }
 
     bool operator==(const LegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
-    bool atEnd() const { return !m_inlineBox; }
+    bool onSameLine(const LegacyPath& other) const { return &m_inlineBox->root() == &other.m_inlineBox->root(); }
 
+    bool atEnd() const { return !m_inlineBox; }
     void setAtEnd() { m_inlineBox = nullptr; }
 
     InlineBox* legacyInlineBox() const { return const_cast<InlineBox*>(m_inlineBox); }
