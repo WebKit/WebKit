@@ -1,5 +1,12 @@
 2020-10-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed assertion fix after r268006.
+
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::vsvesq):
+
+2020-10-05  Chris Dumez  <cdumez@apple.com>
+
         [Cocoa] Vectorize linear to decibels conversion in RealtimeAnalyser
         https://bugs.webkit.org/show_bug.cgi?id=217322
 

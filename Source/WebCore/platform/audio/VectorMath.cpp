@@ -588,6 +588,8 @@ void zvmul(const float* realVector1, const float* imagVector1, const float* real
 
 void vsvesq(const float* inputVector, int inputStride, float* sum, size_t numberOfElementsToProcess)
 {
+    ASSERT(sum);
+
     int n = numberOfElementsToProcess;
     *sum = 0;
 
@@ -646,8 +648,6 @@ void vsvesq(const float* inputVector, int inputStride, float* sum, size_t number
         *sum += sample * sample;
         inputVector += inputStride;
     }
-
-    ASSERT(*sum);
 }
 
 void vmaxmgv(const float* inputVector, int inputStride, float* maximumValue, size_t numberOfElementsToProcess)
