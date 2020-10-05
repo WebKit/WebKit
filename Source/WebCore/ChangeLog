@@ -1,3 +1,15 @@
+2020-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable non-uniform line height content with floats
+        https://bugs.webkit.org/show_bug.cgi?id=217306
+
+        Reviewed by Antti Koivisto.
+
+        Expand coverage now that we support non-uniform line heights.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Unify linkedOnOrAfter duplicate code and use SPI/WebCoreTestSupport instead of NSUserDefaults
