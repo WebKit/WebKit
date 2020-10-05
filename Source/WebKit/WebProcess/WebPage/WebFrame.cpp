@@ -282,10 +282,11 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)
 {
-    ASSERT(m_policyDownloadID.downloadID());
-
-    auto policyDownloadID = m_policyDownloadID;
-    m_policyDownloadID = { };
+    if (!m_policyDownloadID) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto policyDownloadID = *std::exchange(m_policyDownloadID, WTF::nullopt);
 
     Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;
@@ -294,10 +295,11 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
-    ASSERT(m_policyDownloadID.downloadID());
-
-    auto policyDownloadID = m_policyDownloadID;
-    m_policyDownloadID = { };
+    if (!m_policyDownloadID) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto policyDownloadID = *std::exchange(m_policyDownloadID, WTF::nullopt);
 
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 

@@ -59,7 +59,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
     , m_suggestedName(suggestedName)
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
-    ASSERT(m_downloadID.downloadID());
+    ASSERT(m_downloadID);
 
     m_downloadManager.didCreateDownload();
 }
@@ -74,7 +74,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSUR
     , m_suggestedName(suggestedName)
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
-    ASSERT(m_downloadID.downloadID());
+    ASSERT(m_downloadID);
 
     m_downloadManager.didCreateDownload();
 }
@@ -120,7 +120,7 @@ void Download::didCreateDestination(const String& path)
 void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
     if (!m_hasReceivedData) {
-        RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().downloadID());
+        RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().toUInt64());
         m_hasReceivedData = true;
     }
     
@@ -131,7 +131,7 @@ void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten,
 
 void Download::didFinish()
 {
-    RELEASE_LOG_IF_ALLOWED("didFinish: (id = %" PRIu64 ")", downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("didFinish: (id = %" PRIu64 ")", downloadID().toUInt64());
 
     send(Messages::DownloadProxy::DidFinish());
 
@@ -146,7 +146,7 @@ void Download::didFinish()
 void Download::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
     RELEASE_LOG_IF_ALLOWED("didFail: (id = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)",
-        downloadID().downloadID(), error.isTimeout(), error.isCancellation(), error.errorCode());
+        downloadID().toUInt64(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
     send(Messages::DownloadProxy::DidFail(error, resumeData));
 
@@ -159,7 +159,7 @@ void Download::didFail(const ResourceError& error, const IPC::DataReference& res
 
 void Download::didCancel(const IPC::DataReference& resumeData)
 {
-    RELEASE_LOG_IF_ALLOWED("didCancel: (id = %" PRIu64 ")", downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
 
     send(Messages::DownloadProxy::DidCancel(resumeData));
 
@@ -177,7 +177,7 @@ IPC::Connection* Download::messageSenderConnection() const
 
 uint64_t Download::messageSenderDestinationID() const
 {
-    return m_downloadID.downloadID();
+    return m_downloadID.toUInt64();
 }
 
 bool Download::isAlwaysOnLoggingAllowed() const

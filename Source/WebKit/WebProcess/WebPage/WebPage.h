@@ -34,6 +34,7 @@
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "ContentAsStringIncludesChildFrames.h"
+#include "DownloadID.h"
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
 #include "FocusedElementInformation.h"
@@ -232,7 +233,6 @@ class HTMLAttachmentElement;
 namespace WebKit {
 
 class DrawingArea;
-class DownloadID;
 class FindController;
 class GamepadData;
 class GeolocationPermissionRequestManager;

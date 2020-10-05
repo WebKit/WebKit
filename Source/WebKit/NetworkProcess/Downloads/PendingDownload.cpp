@@ -111,7 +111,7 @@ void PendingDownload::didReceiveResponse(WebCore::ResourceResponse&& response, R
 
 uint64_t PendingDownload::messageSenderDestinationID() const
 {
-    return m_networkLoad->pendingDownloadID().downloadID();
+    return m_networkLoad->pendingDownloadID().toUInt64();
 }
     
 }

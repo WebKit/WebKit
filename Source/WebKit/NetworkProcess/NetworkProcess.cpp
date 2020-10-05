@@ -2090,12 +2090,12 @@ void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::Res
 
 void NetworkProcess::pendingDownloadCanceled(DownloadID downloadID)
 {
-    downloadProxyConnection()->send(Messages::DownloadProxy::DidCancel({ }), downloadID.downloadID());
+    downloadProxyConnection()->send(Messages::DownloadProxy::DidCancel({ }), downloadID.toUInt64());
 }
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
-    uint64_t destinationID = networkDataTask.pendingDownloadID().downloadID();
+    uint64_t destinationID = networkDataTask.pendingDownloadID().toUInt64();
     downloadProxyConnection()->send(Messages::DownloadProxy::DidReceiveResponse(response), destinationID);
 
     // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header

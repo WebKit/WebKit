@@ -110,8 +110,8 @@ public:
     PendingDownload* pendingDownload() const { return m_pendingDownload; }
     void setPendingDownloadID(DownloadID downloadID)
     {
-        ASSERT(!m_pendingDownloadID.downloadID());
-        ASSERT(downloadID.downloadID());
+        ASSERT(!m_pendingDownloadID);
+        ASSERT(downloadID);
         m_pendingDownloadID = downloadID;
     }
     void setPendingDownload(PendingDownload& pendingDownload)
@@ -122,7 +122,7 @@ public:
 
     virtual void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
     const String& pendingDownloadLocation() const { return m_pendingDownloadLocation; }
-    bool isDownload() const { return !!m_pendingDownloadID.downloadID(); }
+    bool isDownload() const { return !!m_pendingDownloadID; }
 
     const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }
     virtual String suggestedFilename() const { return String(); }

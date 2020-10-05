@@ -48,17 +48,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t generateDownloadID()
-{
-    static uint64_t uniqueDownloadID = 0;
-    return ++uniqueDownloadID;
-}
-
 DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfoData, WebPageProxy* originatingPage)
     : m_downloadProxyMap(downloadProxyMap)
     , m_dataStore(&dataStore)
     , m_processPool(&processPool)
-    , m_downloadID(generateDownloadID())
+    , m_downloadID(DownloadID::generate())
     , m_request(resourceRequest)
     , m_originatingPage(makeWeakPtr(originatingPage))
     , m_frameInfo(API::FrameInfo::create(FrameInfoData { frameInfoData }, originatingPage))

@@ -38,7 +38,7 @@ struct PolicyDecision {
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { WTF::nullopt };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
     uint64_t navigationID { 0 };
-    DownloadID downloadID { 0 };
+    Optional<DownloadID> downloadID { WTF::nullopt };
     Optional<WebsitePoliciesData> websitePoliciesData { WTF::nullopt };
     Optional<SandboxExtension::Handle> sandboxExtensionHandle { WTF::nullopt };
 
@@ -77,7 +77,7 @@ struct PolicyDecision {
         if (!decodedNavigationID)
             return WTF::nullopt;
 
-        Optional<DownloadID> decodedDownloadID;
+        Optional<Optional<DownloadID>> decodedDownloadID;
         decoder >> decodedDownloadID;
         if (!decodedDownloadID)
             return WTF::nullopt;

@@ -748,7 +748,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         if (!_sessionWrapper)
             return;
         auto downloadID = _sessionWrapper->downloadMap.take(task.taskIdentifier);
-        if (!downloadID.downloadID())
+        if (!downloadID)
             return;
         if (!_session)
             return;
@@ -945,7 +945,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     if (!_sessionWrapper)
         return;
     auto downloadID = _sessionWrapper->downloadMap.take([downloadTask taskIdentifier]);
-    if (!downloadID.downloadID())
+    if (!downloadID)
         return;
     if (!_session)
         return;
@@ -962,7 +962,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     if (!_sessionWrapper)
         return;
     auto downloadID = _sessionWrapper->downloadMap.get([downloadTask taskIdentifier]);
-    if (!downloadID.downloadID())
+    if (!downloadID)
         return;
     if (!_session)
         return;
@@ -1538,7 +1538,7 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
         }
 #endif
         auto downloadID = sessionWrapper.downloadMap.get(taskIdentifier);
-        if (downloadID.downloadID()) {
+        if (downloadID) {
             if (auto* download = networkProcess().downloadManager().download(downloadID)) {
                 WebCore::AuthenticationChallenge authenticationChallenge { challenge };
                 // Received an authentication challenge for a download being resumed.

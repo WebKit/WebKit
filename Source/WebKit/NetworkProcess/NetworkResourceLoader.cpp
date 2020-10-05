@@ -463,7 +463,7 @@ void NetworkResourceLoader::cleanup(LoadResult result)
 
 void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    RELEASE_LOG_IF_ALLOWED("convertToDownload: (downloadID=%" PRIu64 ", hasNetworkLoad=%d, hasResponseCompletionHandler=%d)", downloadID.downloadID(), !!m_networkLoad, !!m_responseCompletionHandler);
+    RELEASE_LOG_IF_ALLOWED("convertToDownload: (downloadID=%" PRIu64 ", hasNetworkLoad=%d, hasResponseCompletionHandler=%d)", downloadID.toUInt64(), !!m_networkLoad, !!m_responseCompletionHandler);
 
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {

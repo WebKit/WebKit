@@ -93,14 +93,14 @@ void DownloadMonitor::downloadReceivedBytes(uint64_t bytesReceived)
 
 void DownloadMonitor::applicationWillEnterForeground()
 {
-    RELEASE_LOG_IF_ALLOWED("applicationWillEnterForeground (id = %" PRIu64 ")", m_download.downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("applicationWillEnterForeground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
     m_timer.stop();
     m_interval = 0;
 }
 
 void DownloadMonitor::applicationDidEnterBackground()
 {
-    RELEASE_LOG_IF_ALLOWED("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().downloadID());
+    RELEASE_LOG_IF_ALLOWED("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
     ASSERT(!m_timer.isActive());
     ASSERT(!m_interval);
     m_timer.startOneShot(throughputIntervals[0].time / testSpeedMultiplier());
@@ -117,13 +117,13 @@ void DownloadMonitor::timerFired()
 
     RELEASE_ASSERT(m_interval < WTF_ARRAY_LENGTH(throughputIntervals));
     if (measuredThroughputRate() < throughputIntervals[m_interval].bytesPerSecond) {
-        RELEASE_LOG_IF_ALLOWED("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().downloadID());
+        RELEASE_LOG_IF_ALLOWED("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
         m_download.cancel();
     } else if (m_interval + 1 < WTF_ARRAY_LENGTH(throughputIntervals)) {
-        RELEASE_LOG_IF_ALLOWED("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().downloadID());
+        RELEASE_LOG_IF_ALLOWED("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
         m_timer.startOneShot(timeUntilNextInterval(m_interval++) / testSpeedMultiplier());
     } else
-        RELEASE_LOG_IF_ALLOWED("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().downloadID());
+        RELEASE_LOG_IF_ALLOWED("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
 }
 
 } // namespace WebKit
