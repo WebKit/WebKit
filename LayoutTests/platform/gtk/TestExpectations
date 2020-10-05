@@ -78,10 +78,6 @@ webkit.org/b/216777 media/video-display-toggle.html [ Pass Crash ]
 webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
 webkit.org/b/196542 printing/printing-events.html [ Crash ]
 
-# Reftest-wait timeouts
-webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Timeout ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Timeout ]
-
 # ResourceLoading
 webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
 webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]

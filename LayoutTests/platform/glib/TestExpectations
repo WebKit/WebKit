@@ -833,6 +833,10 @@ webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style.html [ Failure Pass ]
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html [ Failure Pass ]
 
+# Reftest-wait timeouts
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Timeout ]
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Timeout ]
+
 webkit.org/b/186485 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html [ Failure ]
 webkit.org/b/186486 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Failure ]
 webkit.org/b/186488 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Failure ]
