@@ -41,12 +41,8 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
 
     m_curlHandle = WTF::makeUnique<CurlHandle>();
 
-    // Libcurl is not responsible for the protocol handling. It just handles connection.
-    // Only scheme, host and port is required.
-    URL urlForConnection;
-    urlForConnection.setProtocol(url.protocolIs("wss") ? "https" : "http");
-    urlForConnection.setHostAndPort(url.hostAndPort());
-    m_curlHandle->setUrl(urlForConnection);
+    url.setProtocol(url.protocolIs("wss") ? "https" : "http");
+    m_curlHandle->setUrl(WTFMove(url));
 
     m_curlHandle->enableConnectionOnly();
 

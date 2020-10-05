@@ -1,3 +1,18 @@
+2020-10-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] WebSocket tests are failing since r267931
+        https://bugs.webkit.org/show_bug.cgi?id=217298
+
+        Reviewed by Darin Adler.
+
+        "http:" is a invalid URL since r267931. Change the way how to
+        construct a URL for libcurl.
+
+        * platform/network/curl/CurlStream.cpp:
+        (WebCore::CurlStream::CurlStream): Construct the URL just by
+        replacing the scheme part. Removed a local variable
+        urlForConnection.
+
 2020-10-04  Sam Weinig  <weinig@apple.com>
 
         [WebIDL] Address consistency around [SameObject] extended attributes
