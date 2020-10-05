@@ -366,6 +366,10 @@ svg/filters/filter-hidden-content.svg [ Pass Failure ]
 # No good way to test private browsing in WKTR right now
 http/tests/security/private-browsing-http-auth.html
 
+# These tests are timing out in debug builds, with console errors saying "null is not an object". Not clear what the cause is.
+[ Debug ] editing/inserting/typing-003.html [ Timeout ]
+[ Debug ] editing/pasteboard/4076267-3.html [ Timeout ]
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

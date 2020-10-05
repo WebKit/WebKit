@@ -13,7 +13,7 @@ Copied content:
 |   onclick="sayHello()"
 |   ondblclick="sayHello()"
 |   style="width: 100px;"
-|   "<#selection-anchor>Hello"
+|   "Hello"
 | <a>
 |   href="http://www.bing.com/search?q=cnn"
 |   id="anchor1"
@@ -48,7 +48,7 @@ Copied content:
 |   "This is a form. "
 |   <button>
 |     formaction="javascript:sayHello()"
-|     "Submit.<#selection-focus>"
+|     "Submit."
 | "
 
 "
@@ -79,7 +79,7 @@ Pasted content:
 |   "This is a form."
 |   " "
 |   <button>
-|     "Submit.<#selection-caret>"
+|     "Submit."
 
 FRAME 0:
 | <head>

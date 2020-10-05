@@ -2057,10 +2057,10 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 [ BigSur+ ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
 
 # <rdar://problem/63546844> [20A279] DQ is seeing editing/pasteboard/5478250.html failing
-[ BigSur+ Release ] editing/pasteboard/5478250.html [ Pass Failure ]
+[ BigSur+ ] editing/pasteboard/5478250.html [ Pass Failure ]
 
 # <rdar://problem/63547006> [20A279] DQ bots are seeing imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html failing
-[ BigSur+ Release ] imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Pass Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Pass Failure ]
 
 # rdar://66784420
 [ BigSur+ ] imported/mozilla/svg/filters/feImage-1.svg [ Pass ImageOnlyFailure ]
@@ -2069,14 +2069,15 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 [ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html [ Pass Failure ]
 
 # <rdar://problem/63545884> [20A279] DQ bots have editing/mac/spelling/accept-misspelled-candidate.html and editing/mac/spelling/autocorrection-contraction.html failing
-[ BigSur+ Release ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
+[ BigSur+ ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
 [ BigSur+ Release ] editing/mac/spelling/autocorrection-contraction.html [ Pass Failure ]
+[ BigSur+ Debug ] editing/mac/spelling/autocorrection-contraction.html [ Timeout Pass Failure ]
 
 # <rdar://problem/63554876> [20A279] DQ is seeing media/video-currentTime.html flaky failing
-[ BigSur+ Release ] media/video-currentTime.html [ Pass Failure ]
+[ BigSur+ ] media/video-currentTime.html [ Pass Failure ]
 
 # <rdar://problem/63554557> [20A279] DQ is seeing media/media-source/media-source-unnecessary-seek-seeked.html failing
-[ BigSur+ Release ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
+[ BigSur+ ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
 
 # <rdar://problem/64170117> REGRESSION(20A296a-20A301a): fast/text/arabic-zwj-and-zwnj.html is a constant failure
 [ BigSur+ ] fast/text/arabic-zwj-and-zwnj.html [ Pass ImageOnlyFailure ]

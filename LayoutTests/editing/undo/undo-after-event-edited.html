@@ -35,7 +35,7 @@ document.addEventListener("DOMCharacterDataModified", function () {
 
 window.addEventListener("load", function() {
   document.execCommand("SelectAll", false)
-  var documentFragment = getSelection().getRangeAt(0).extractContents();
+  document.execCommand("Delete", false)
   document.execCommand('Undo', false);
 });
 

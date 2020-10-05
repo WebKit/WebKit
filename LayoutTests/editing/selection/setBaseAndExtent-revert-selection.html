@@ -4,8 +4,11 @@
       var output = '';
    
       function selectNodes(a, b) {
-        window.getSelection().setBaseAndExtent(a, 1, b, 1);
-        output += window.getSelection().anchorNode.parentNode.id + ' ';   
+        getSelection().setBaseAndExtent(a, 1, b, 1);
+        let node = getSelection().anchorNode;
+        if (node.nodeType == Node.TEXT_NODE)
+          node = node.parentNode;
+        output += node.id + ' ';
       }
 
       if (window.testRunner)

@@ -27,7 +27,7 @@ function runTest() {
         if (selection.toString) {
             var string = selection.toString();
             if (string != "\nbbbb")
-                throw("toString returned unexpected result");
+                throw("toString returned unexpected result: \"" + string.replace("\n", "\\n") + "\"");
             log("success");
         } else
             throw("Selection::toString() not supported");

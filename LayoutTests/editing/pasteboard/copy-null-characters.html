@@ -60,6 +60,8 @@ function runTest()
     destinationPlainText.focus();
     document.execCommand("Paste");
 
+    sel.empty();
+
     var expectedPlainTextValue2 = "Copy paste mebold\n\nCopy paste me\ngreen";
     if (expectedPlainTextValue2 != destinationPlainText.value) {
         results.innerText = "Plain text field has the wrong value (expected " +

@@ -1,3 +1,89 @@
+2020-10-04  Darin Adler  <darin@apple.com>
+
+        Selection API: Fix more editing tests that rely on non-standard selection API behavior
+        https://bugs.webkit.org/show_bug.cgi?id=217301
+
+        Reviewed by Sam Weinig.
+
+        These changes do not change what the tests are testing. They remove
+        dependencies in these tests on "canonicalization" of selection points.
+        This is often always a change to the setup for the test, not the test substance.
+
+        In other cases, tests that are not trying to test selection are leaving unimportant
+        remnants of the selection in their results: clear the selection for those.
+
+        Patch also includes a few other expectations fixes so all the tests in the editing
+        directory pass for me on my development machine.
+
+        * editing/pasteboard/copy-null-characters-expected.txt: Remove expected selection.
+        * editing/pasteboard/copy-null-characters.html: Clear the selection after one part
+        of this test so the markup dump doesn't contain selection endpoints.
+
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt: Remove expected selection.
+        * editing/pasteboard/paste-noscript-xhtml.xhtml: Clear the selection at two points
+        in this test so the markup dump doesn't contain selection endpoints.
+
+        * editing/selection/extend-by-sentence-002.html: Check the selected string rather
+        than checking the DOM node and offset of the selection. Keeps the substance of this
+        test without depending on the selection object selecting differently than what we
+        tell it to do.
+
+        * editing/selection/extend-selection-enclosing-block-mac.html: Set the position
+        at the start of a text node instead of before the text node.
+        * editing/selection/extend-selection-enclosing-block-win.html: Ditto.
+
+        * editing/selection/home-end.html: Added a setPositionAfterLeadingWhitespace
+        function and use it to set the position at the point the test results are
+        expecting. Before this change, the code relied on the Selection API to adjust the
+        selection to the first non-whitespace character, even though that is both non-standard
+        and not what we are testing. Doing this lets us keep the expected test results the same.
+
+        * editing/selection/move-by-word-visually-multi-line-expected.txt: Updated to
+        expect moving across the word, even the one that was preceded by a collapsed newline.
+        * editing/selection/move-by-word-visually-multi-line.html: Ditto.
+
+        * editing/selection/resources/extend-selection.js:
+        (setPositionAfterLeadingWhitespace): Added.
+        (runSelectionTestsWithGranularity): Use setPositionAfterLeadingWhitespace here
+        for the same purpose as in home-end.html above, to preserve the existing tests
+        without relying on non-standard Selection API behavior.
+
+        * editing/selection/resources/move-by-word-visually.js:
+        (setPositionAfterCollapsedLeadingWhitespace): Added.
+        (moveByWordForEveryPosition): Same as above, use the function.
+
+        * editing/selection/setBaseAndExtent-revert-selection.html: Fix the output function
+        to properly write out the node ID when the node is a text node within the node with
+        the ID. Before, the test could fail if the anchor node returned the text node we
+        passed in, but that relies on non-standard Selection API changes to the passed-in node.
+
+        * editing/selection/toString-1.html: Write out the unexpected result when the test
+        fails. It's not failing, but at one point it was, and this made it easier to diagnose.
+
+        * editing/undo/undo-after-event-edited.html: Use the Delete command to do a deletion
+        that we later undo. The old code was using the Selection API extractContents method,
+        which is not an undoable editing operation.
+
+        * platform/gtk/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+        * platform/ios/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+        * platform/mac-bigsur-wk1/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+        * platform/mac-bigsur/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+        * platform/win/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+        * platform/wincairo/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+        These unused files were incorrectly left behind when we converted this into a reftest.
+
+        * platform/mac-wk1/TestExpectations: Changed retro-correction-spelling-markers.html
+        to "[ Pass Failure ]" since it's a flaky test, not a reliable failure.
+
+        * platform/mac/TestExpectations: Changed some flakiness expectations that were marked
+        Release-only to be in effect in Debug builds too. For autocorrection-contraction.html,
+        expect a timeout on BigSur+ Debug. Not sure exactly what is causing it, but it's happening
+        both locally for me and on the bots.
+
+        * platform/wk2/TestExpectations: Expect a timeout in Debug builds for two tests that are
+        timing out both for me and on the Modern WebKit Debug bots, but not Legacy WebKit and not
+        Release bots.
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         WebKit doesn't parse "#" as delimiter for fragment identifier in data URIs

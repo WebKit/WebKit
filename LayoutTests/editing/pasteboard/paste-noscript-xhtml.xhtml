@@ -20,11 +20,13 @@ function runTest() {
     getSelection().setPosition(doc.body, 0);
     doc.execCommand("SelectAll");
     doc.execCommand("Copy");
+    frames[0].getSelection().empty();
 
     Markup.dump(doc.body, 'Copied content');
 
     getSelection().setPosition(document.getElementById("pastehere"), 0);
     document.execCommand("Paste");
+    getSelection().empty();
     Markup.dump('pastehere', 'Pasted content');
 
     Markup.notifyDone();

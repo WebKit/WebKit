@@ -149,6 +149,15 @@ function extendAndLogSelectionToEnd(direction, granularity)
     return extendAndLogSelection(extendSelectionToEnd, direction, granularity);
 }
 
+function setPositionAfterLeadingWhitespace(node)
+{
+    let textNode = node.firstChild;
+    if (!textNode || textNode.nodeType != Node.TEXT_NODE)
+        getSelection().setPosition(node, 0);
+    else
+        getSelection().setPosition(textNode, Math.max(textNode.data.search(/\S/), 0));
+}
+
 function runSelectionTestsWithGranularity(testNodes, granularity)
 {
     for (var i = 0; i < testNodes.length; ++i) {
@@ -158,14 +167,14 @@ function runSelectionTestsWithGranularity(testNodes, granularity)
         testNode.style.direction = "ltr";
 
         log("  Extending right:    ");
-        getSelection().setPosition(testNode);
+        setPositionAfterLeadingWhitespace(testNode);
         var ltrRightPos = extendAndLogSelectionToEnd("right", granularity);
 
         log("  Extending left:     ");
         var ltrLeftPos = extendAndLogSelectionToEnd("left", granularity);
 
         log("  Extending forward:  ");
-        getSelection().setPosition(testNode);
+        setPositionAfterLeadingWhitespace(testNode);
         var ltrForwardPos = extendAndLogSelectionToEnd("forward", granularity);
 
         log("  Extending backward: ");
@@ -175,14 +184,14 @@ function runSelectionTestsWithGranularity(testNodes, granularity)
         testNode.style.direction = "rtl";
 
         log("  Extending left:     ");
-        getSelection().setPosition(testNode);
+        setPositionAfterLeadingWhitespace(testNode);
         var rtlLeftPos = extendAndLogSelectionToEnd("left", granularity);
 
         log("  Extending right:    ");
         var rtlRightPos = extendAndLogSelectionToEnd("right", granularity);
 
         log("  Extending forward:  ");
-        getSelection().setPosition(testNode);
+        setPositionAfterLeadingWhitespace(testNode);
         var rtlForwardPos = extendAndLogSelectionToEnd("forward", granularity);
 
         log("  Extending backward: ");

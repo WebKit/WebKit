@@ -92,7 +92,7 @@ Move left by one word
 <DIV>[0]
 Test 19, LTR:
 Move right by one word
-"\n00"[3]
+"\n00"[1, 3]
 Move left by one word
 "\n00"[3, 1]
 

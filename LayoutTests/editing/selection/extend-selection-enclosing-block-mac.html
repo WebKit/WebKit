@@ -14,7 +14,7 @@ if (window.internals)
 function runSelectionTestsWithGranularityForEnclosingBlock(testNodes, granularity)
 {
     for (var i = 0; i < testNodes.length; ++i) {
-        getSelection().setPosition(testNodes[i], 0);
+        getSelection().setPosition(testNodes[i].firstChild, 0);
 
         log("Test " + (i + 1) + ", LTR:\n");
         log("  Extending right: ");

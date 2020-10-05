@@ -9,12 +9,11 @@
     var sel = getSelection();
     sel.setBaseAndExtent(target, 0, target, 1);
     sel.modify("extend", "forward", "sentence");
-    var selectedRange = sel.getRangeAt(0);
+    var selectedText = sel.toString().trim();
 
-    if (selectedRange.startContainer === target.firstChild && selectedRange.startOffset === 0
-        && selectedRange.endContainer === target.nextSibling && selectedRange.endOffset === 0) {
+    if (selectedText == "All of this should be selected") {
         result.innerText = "PASS";
     } else {
-        result.innerText = "FAIL: Selected range is '" + selectedRange + "'";
+        result.innerText = "FAIL: Selected range is '" + selectedText + "'";
     }
 </script>

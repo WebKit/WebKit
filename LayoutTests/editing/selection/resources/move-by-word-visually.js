@@ -224,15 +224,35 @@ function moveByWordOnEveryChar(sel, test, searchDirection, dir)
     };
 }
 
+function setPositionAfterCollapsedLeadingWhitespace(node)
+{
+    let textNode = node.firstChild;
+
+    // This goes beyond what the title of the function says. This strange special case keeps
+    // one of our tests working. It relies on selection being moved upstream out of the
+    // specified node; we could later just update the test to not rely on that strange thing.
+    if (!textNode && node.nodeType == Node.ELEMENT_NODE && node.localName == "base")
+        textNode = node.previousSibling;
+
+    if (!textNode || textNode.nodeType != Node.TEXT_NODE)
+        getSelection().setPosition(node, 0);
+    else {
+        let offset = 0;
+        if (getComputedStyle(node).getPropertyValue("white-space") != "pre")
+            offset = Math.max(textNode.data.search(/\S/), 0);
+        getSelection().setPosition(textNode, offset);
+    }
+}
+
 function moveByWordForEveryPosition(sel, test, dir)
 {
     // Check ctrl-right-arrow works for every position.
-    sel.setPosition(test, 0);
+    setPositionAfterCollapsedLeadingWhitespace(test);
     var direction = "right";
     if (dir == "rtl")
-        direction = "left";    
-    moveByWord(sel, test, direction, dir);    
-    sel.setPosition(test, 0);
+        direction = "left";
+    moveByWord(sel, test, direction, dir);
+    setPositionAfterCollapsedLeadingWhitespace(test);
     moveByWordOnEveryChar(sel, test, direction, dir);
 
     sel.modify("move", "forward", "lineBoundary");
@@ -243,7 +263,7 @@ function moveByWordForEveryPosition(sel, test, dir)
         direction = "left";
     else
         direction = "right";    
-    moveByWord(sel, test, direction, dir);    
+    moveByWord(sel, test, direction, dir);
 
     sel.setPosition(position.node, position.offset);
     moveByWordOnEveryChar(sel, test, direction, dir);

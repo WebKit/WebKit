@@ -62,6 +62,12 @@
             log("]");
         }
 
+        function setPositionAfterLeadingWhitespace(parentNode)
+        {
+            let textNode = parentNode.firstChild;
+            getSelection().setPosition(textNode, Math.max(textNode.data.search(/\S/), 0));
+        }
+
         onload = function()
         {
             if (!window.testRunner)
@@ -77,7 +83,7 @@
                 var positionsMovingBackward;
     
                 log("Test " + (i + 1) + ", LTR:\n  Moving forward: ");
-                sel.setPosition(tests[i], 0);
+                setPositionAfterLeadingWhitespace(tests[i]);
                 positionsMovingForward = positionsMovingInDirection(sel, "forward");
                 logPositions(positionsMovingForward);
                 log("\n");
@@ -90,7 +96,7 @@
                 tests[i].style.direction = "rtl";
 
                 log("Test " + (i + 1) + ", RTL:\n  Moving forward: ");
-                sel.setPosition(tests[i], 0);
+                setPositionAfterLeadingWhitespace(tests[i]);
                 positionsMovingForward = positionsMovingInDirection(sel, "forward");
                 logPositions(positionsMovingForward);
                 log("\n");
@@ -109,7 +115,7 @@
                 tests[i].style.direction = "ltr";
     
                 log("Test " + (i + 1) + ", LTR:\n  Moving right: ");
-                sel.setPosition(tests[i], 0);
+                setPositionAfterLeadingWhitespace(tests[i]);
                 positionsMovingRight = positionsMovingInDirection(sel, "right");
                 logPositions(positionsMovingRight);
                 log("\n");
@@ -122,7 +128,7 @@
                 tests[i].style.direction = "rtl";
 
                 log("Test " + (i + 1) + ", RTL:\n  Moving left: ");
-                sel.setPosition(tests[i], 0);
+                setPositionAfterLeadingWhitespace(tests[i]);
                 positionsMovingLeft = positionsMovingInDirection(sel, "left");
                 logPositions(positionsMovingLeft);
                 log("\n");
