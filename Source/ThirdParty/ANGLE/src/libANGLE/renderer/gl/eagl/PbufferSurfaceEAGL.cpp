@@ -9,7 +9,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
 
 #    include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
 
@@ -144,4 +144,4 @@ FramebufferImpl *PbufferSurfaceEAGL::createDefaultFramebuffer(const gl::Context 
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_PLATFORM_IOS)
+#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))

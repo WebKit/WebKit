@@ -27,6 +27,8 @@
 #    include "libANGLE/renderer/gl/TextureGL.h"
 #    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
+#    include "libANGLE/renderer/gl/cgl/CGLFunctions.h"
+
 namespace rx
 {
 
