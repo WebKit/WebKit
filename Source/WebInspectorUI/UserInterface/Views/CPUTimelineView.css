@@ -132,6 +132,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
 .timeline-view.cpu > .content > .overview .legend {
     -webkit-padding-start: 20px;
     text-align: start;
+    -webkit-user-select: text;
 }
 
 .timeline-view.cpu > .content > .overview .legend .row {
