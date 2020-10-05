@@ -105,6 +105,8 @@
                     break;
                 case "#step6":
                     document.location.hash = "step7";
+                    // Set per-frame access since clearing access on cross-site navigation of the iframe requires per-frame access.
+                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(false);
                     // Create iframe that will request storage access.
                     let iframeElement = document.createElement("iframe");
                     iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
@@ -143,6 +145,8 @@
                     existingIframe3.src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After the top frame navigates the sub frame cross-site and back, the sub frame should no longer have access to cookies.";
                     break;
                 case "#step10":
+                    // Reset access scope.
+                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
                     setEnableFeature(false, finishJSTest);
                     break;
             }

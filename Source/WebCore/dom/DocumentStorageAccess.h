@@ -109,7 +109,7 @@ private:
 
     uint8_t m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 0;
 
-    StorageAccessScope m_storageAccessScope = StorageAccessScope::PerFrame;
+    StorageAccessScope m_storageAccessScope = StorageAccessScope::PerPage;
 };
 
 template<class Encoder>

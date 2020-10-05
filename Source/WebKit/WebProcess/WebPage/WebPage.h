@@ -1221,6 +1221,7 @@ public:
     void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
     void addDomainWithPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain);
+    void clearPageLevelStorageAccess();
     void wasLoadedWithDataTransferFromPrevalentResource();
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&);
     void clearLoadedSubresourceDomains();

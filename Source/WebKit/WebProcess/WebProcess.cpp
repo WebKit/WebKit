@@ -1596,6 +1596,8 @@ void WebProcess::clearResourceLoadStatistics()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->clearState();
+    for (auto& page : m_pageMap.values())
+        page->clearPageLevelStorageAccess();
 #endif
 }
 

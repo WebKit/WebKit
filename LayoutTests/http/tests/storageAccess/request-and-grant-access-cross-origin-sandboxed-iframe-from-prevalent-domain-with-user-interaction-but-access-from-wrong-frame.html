@@ -105,6 +105,8 @@
                     break;
                 case "#step6":
                     document.location.hash = "step7";
+                    // Set per-frame access since otherwise the sibling iframe will get access.
+                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(false);
                     let iframeElement = document.createElement("iframe");
                     iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
                     iframeElement.onload = function() {
@@ -122,6 +124,8 @@
                     openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should not receive cookies.", runTest);
                     break;
                 case "#step8":
+                    // Reset access scope.
+                    internals.settings.setStorageAccessAPIPerPageScopeEnabled(true);
                     setEnableFeature(false, finishJSTest);
                     break;
             }

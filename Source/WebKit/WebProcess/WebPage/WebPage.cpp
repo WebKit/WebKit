@@ -6813,6 +6813,11 @@ void WebPage::frameBecameRemote(FrameIdentifier frameID, GlobalFrameIdentifier&&
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
+    if (hasPageLevelStorageAccess(topFrameDomain, subFrameDomain)) {
+        completionHandler(true);
+        return;
+    }
+
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier), WTFMove(completionHandler));
 }
 
@@ -6842,6 +6847,11 @@ bool WebPage::hasPageLevelStorageAccess(const RegistrableDomain& topLevelDomain,
 {
     auto it = m_domainsWithPageLevelStorageAccess.find(topLevelDomain);
     return it != m_domainsWithPageLevelStorageAccess.end() && it->value == resourceDomain;
+}
+
+void WebPage::clearPageLevelStorageAccess()
+{
+    m_domainsWithPageLevelStorageAccess.clear();
 }
 
 void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
