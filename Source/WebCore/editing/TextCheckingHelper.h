@@ -54,8 +54,8 @@ public:
     uint64_t checkingLength() const;
     StringView checkingSubstring() const { return text().substring(checkingStart(), checkingLength()); }
 
-    uint64_t automaticReplacementStart() const;
-    uint64_t automaticReplacementLength() const;
+    uint64_t automaticReplacementStart(bool = false) const;
+    uint64_t automaticReplacementLength(bool = false) const;
 
     bool checkingRangeMatches(CharacterRange range) const { return range.location == checkingStart() && range.length == checkingLength(); }
     bool isCheckingRangeCoveredBy(CharacterRange range) const { return range.location <= checkingStart() && range.location + range.length >= checkingStart() + checkingLength(); }
