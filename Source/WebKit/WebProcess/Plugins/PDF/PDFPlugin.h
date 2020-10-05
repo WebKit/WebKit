@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,9 +82,6 @@ class WebFrame;
 struct FrameInfoData;
 
 class PDFPlugin final : public Plugin, public WebCore::ScrollableArea
-#if HAVE(INCREMENTAL_PDF_APIS)
-    , private WebCore::NetscapePlugInStreamLoaderClient
-#endif
 {
 public:
     static Ref<PDFPlugin> create(WebFrame&);
@@ -357,12 +354,29 @@ private:
     void threadEntry(Ref<PDFPlugin>&&);
     void adoptBackgroundThreadDocument();
 
-    // WebCore::NetscapePlugInStreamLoaderClient
-    void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
-    void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&) final;
-    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char*, int) final;
-    void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&) final;
-    void didFinishLoading(WebCore::NetscapePlugInStreamLoader*) final;
+    bool documentFinishedLoading() { return m_documentFinishedLoading; }
+    uint64_t identifierForLoader(WebCore::NetscapePlugInStreamLoader* loader) { return m_streamLoaderMap.get(loader); }
+    void removeOutstandingByteRangeRequest(uint64_t identifier) { m_outstandingByteRangeRequests.remove(identifier); }
+
+    class PDFPluginStreamLoaderClient : public RefCounted<PDFPluginStreamLoaderClient>,
+                                        public WebCore::NetscapePlugInStreamLoaderClient {
+    public:
+        PDFPluginStreamLoaderClient(PDFPlugin& pdfPlugin)
+            : m_pdfPlugin(makeWeakPtr(pdfPlugin))
+        {
+        }
+
+        ~PDFPluginStreamLoaderClient() = default;
+
+        void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
+        void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&) final;
+        void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char*, int) final;
+        void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&) final;
+        void didFinishLoading(WebCore::NetscapePlugInStreamLoader*) final;
+
+    private:
+        WeakPtr<PDFPlugin> m_pdfPlugin;
+    };
 
     class ByteRangeRequest : public Identified<ByteRangeRequest> {
     public:
@@ -405,6 +419,7 @@ private:
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
     RefPtr<Thread> m_pdfThread;
     HashMap<uint64_t, ByteRangeRequest> m_outstandingByteRangeRequests;
+    Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
     HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, uint64_t> m_streamLoaderMap;
     RangeSet<WTF::Range<uint64_t>> m_completedRanges;
     bool m_incrementalPDFLoadingEnabled;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -603,6 +603,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     , m_pdfLayerController(adoptNS([[pdfLayerControllerClass() alloc] init]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 #if HAVE(INCREMENTAL_PDF_APIS)
+    , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
     , m_incrementalPDFLoadingEnabled(WebCore::RuntimeEnabledFeatures::sharedFeatures().incrementalPDFLoadingEnabled())
 #endif
 #if ENABLE(UI_PROCESS_PDF_HUD)
@@ -738,7 +739,7 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
 #endif
 
     for (auto iterator = m_streamLoaderMap.begin(); iterator != m_streamLoaderMap.end(); iterator = m_streamLoaderMap.begin()) {
-        m_outstandingByteRangeRequests.remove(iterator->value);
+        removeOutstandingByteRangeRequest(iterator->value);
         cancelAndForgetLoader(*iterator->key);
     }
 
@@ -980,7 +981,7 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
     pdfLog(makeString("Scheduling a stream loader for request ", identifier, " (", count, " bytes at ", position, ")"));
 #endif
 
-    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, *this, WTFMove(resourceRequest), [this, protectedThis = makeRef(*this), identifier] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
+    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, m_streamLoaderClient, WTFMove(resourceRequest), [this, protectedThis = makeRef(*this), identifier] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
         if (!loader)
             return;
         auto iterator = m_outstandingByteRangeRequests.find(identifier);
@@ -1099,17 +1100,23 @@ void PDFPlugin::ByteRangeRequest::completeUnconditionally(PDFPlugin& plugin)
     completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, count, plugin);
 }
 
-void PDFPlugin::willSendRequest(NetscapePlugInStreamLoader* loader, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&)
+void PDFPlugin::PDFPluginStreamLoaderClient::willSendRequest(NetscapePlugInStreamLoader* loader, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&)
 {
+    if (!m_pdfPlugin)
+        return;
+
     // Redirections for range requests are unexpected.
-    cancelAndForgetLoader(*loader);
+    m_pdfPlugin->cancelAndForgetLoader(*loader);
 }
 
-void PDFPlugin::didReceiveResponse(NetscapePlugInStreamLoader* loader, const ResourceResponse& response)
+void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader* loader, const ResourceResponse& response)
 {
-    auto* request = byteRangeRequestForLoader(*loader);
+    if (!m_pdfPlugin)
+        return;
+
+    auto* request = m_pdfPlugin->byteRangeRequestForLoader(*loader);
     if (!request) {
-        cancelAndForgetLoader(*loader);
+        m_pdfPlugin->cancelAndForgetLoader(*loader);
         return;
     }
 
@@ -1122,49 +1129,58 @@ void PDFPlugin::didReceiveResponse(NetscapePlugInStreamLoader* loader, const Res
     // If the response wasn't a successful range response, we don't need this stream loader anymore.
     // This can happen, for example, if the server doesn't support range requests.
     // We'll still resolve the ByteRangeRequest later once enough of the full resource has loaded.
-    cancelAndForgetLoader(*loader);
+    m_pdfPlugin->cancelAndForgetLoader(*loader);
 
     // The server might support range requests and explicitly told us this range was not satisfiable.
     // In this case, we can reject the ByteRangeRequest right away.
     if (response.httpStatusCode() == 416 && request) {
-        request->completeWithAccumulatedData(*this);
-        m_outstandingByteRangeRequests.remove(request->identifier());
+        request->completeWithAccumulatedData(*m_pdfPlugin);
+        m_pdfPlugin->removeOutstandingByteRangeRequest(request->identifier());
     }
 }
 
-void PDFPlugin::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int count)
+void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int count)
 {
-    auto* request = byteRangeRequestForLoader(*loader);
+    if (!m_pdfPlugin)
+        return;
+
+    auto* request = m_pdfPlugin->byteRangeRequestForLoader(*loader);
     if (!request)
         return;
 
     request->addData(reinterpret_cast<const uint8_t*>(data), count);
 }
 
-void PDFPlugin::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
+void PDFPlugin::PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
 {
-    if (m_documentFinishedLoading) {
-        auto identifier = m_streamLoaderMap.get(loader);
+    if (!m_pdfPlugin)
+        return;
+
+    if (m_pdfPlugin->documentFinishedLoading()) {
+        auto identifier = m_pdfPlugin->identifierForLoader(loader);
         if (identifier)
-            m_outstandingByteRangeRequests.remove(identifier);
+            m_pdfPlugin->removeOutstandingByteRangeRequest(identifier);
     }
 
-    forgetLoader(*loader);
+    m_pdfPlugin->forgetLoader(*loader);
 }
 
-void PDFPlugin::didFinishLoading(NetscapePlugInStreamLoader* loader)
+void PDFPlugin::PDFPluginStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader* loader)
 {
-    auto* request = byteRangeRequestForLoader(*loader);
+    if (!m_pdfPlugin)
+        return;
+
+    auto* request = m_pdfPlugin->byteRangeRequestForLoader(*loader);
     if (!request)
         return;
 
-    request->completeWithAccumulatedData(*this);
-    m_outstandingByteRangeRequests.remove(request->identifier());
+    request->completeWithAccumulatedData(*m_pdfPlugin);
+    m_pdfPlugin->removeOutstandingByteRangeRequest(request->identifier());
 }
 
 PDFPlugin::ByteRangeRequest* PDFPlugin::byteRangeRequestForLoader(NetscapePlugInStreamLoader& loader)
 {
-    uint64_t identifier = m_streamLoaderMap.get(&loader);
+    uint64_t identifier = identifierForLoader(&loader);
     if (!identifier)
         return nullptr;
 
@@ -1177,7 +1193,7 @@ PDFPlugin::ByteRangeRequest* PDFPlugin::byteRangeRequestForLoader(NetscapePlugIn
 
 void PDFPlugin::forgetLoader(NetscapePlugInStreamLoader& loader)
 {
-    uint64_t identifier = m_streamLoaderMap.get(&loader);
+    uint64_t identifier = identifierForLoader(&loader);
     if (!identifier) {
         ASSERT(!m_streamLoaderMap.contains(&loader));
         return;

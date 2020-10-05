@@ -1,3 +1,29 @@
+2020-10-05  David Kilzer  <ddkilzer@apple.com>
+
+        Make NetscapePlugInStreamLoaderClient a weak pointer on NetscapePlugInStreamLoader
+        <https://webkit.org/b/217237>
+        <rdar://problem/69776714>
+
+        Reviewed by Alex Christensen.
+
+        Could not write a test since reproducing a crash requires
+        rapidly reloading a URL to a PDF at random points during the
+        previous load.
+
+        Make NetscapePlugInStreamLoaderClient a WeakPtr on
+        NetscapePlugInStreamLoader, and add nullptr checks for
+        NetscapePlugInStreamLoader.m_client as needed.
+
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        (WebCore::NetscapePlugInStreamLoader::willSendRequest):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        (WebCore::NetscapePlugInStreamLoader::didReceiveDataOrBuffer):
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        (WebCore::NetscapePlugInStreamLoader::didFail):
+        (WebCore::NetscapePlugInStreamLoader::willCancel):
+        * loader/NetscapePlugInStreamLoader.h:
+
 2020-10-05  Chris Dumez  <cdumez@apple.com>
 
         Use memset to zero vectors in PeriodicWave::createBandLimitedTables()

@@ -1,3 +1,46 @@
+2020-10-05  David Kilzer  <ddkilzer@apple.com>
+
+        Make NetscapePlugInStreamLoaderClient a weak pointer on NetscapePlugInStreamLoader
+        <https://webkit.org/b/217237>
+        <rdar://problem/69776714>
+
+        Reviewed by Alex Christensen.
+
+        Making NetscapePlugInStreamLoaderClient inherit from
+        CanMakeWeakPtr<> caused PDFPlugin to fail to compile because one
+        of its parent classes already inherited from CanMakeWeakPtr<>.
+        To fix this, extract a PDFPluginStreamLoaderClient class from
+        PDFPlugin and link the lifetime of PDFPluginStreamLoaderClient
+        to PDFPlugin.
+
+        After moving the NetscapePlugInStreamLoaderClient virtual
+        methods from PDFPlugin to PDFPluginStreamLoaderClient, add some
+        simple methods to PDFPlugin so that PDFPluginStreamLoaderClient
+        doesn't access the instance variables directly.  Also make use
+        of these new methods in other parts of PDFPlugin.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (WebKit::PDFPlugin::documentFinishedLoading): Add.
+        (WebKit::PDFPlugin::identifierForLoader): Add.
+        (WebKit::PDFPlugin::removeOutstandingByteRangeRequest): Add.
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient): Add class.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient::willSendRequest): Move from PDFPlugin.
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient::didReceiveResponse): Ditto.
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData): Ditto.
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient::didFail): Ditto.
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient::didFinishLoading): Ditto.
+        (WebKit::PDFPlugin::byteRangeRequestForLoader):
+        (WebKit::PDFPlugin::forgetLoader):
+        (WebKit::PDFPlugin::willSendRequest): Move to PDFPluginStreamLoaderClient.
+        (WebKit::PDFPlugin::didReceiveResponse): Ditto.
+        (WebKit::PDFPlugin::didReceiveData): Ditto.
+        (WebKit::PDFPlugin::didFail): Ditto.
+        (WebKit::PDFPlugin::didFinishLoading): Ditto.
+
 2020-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r267763) [SOUP] Some tests flaky crashing in NetworkSessionSoup::soupSession()
