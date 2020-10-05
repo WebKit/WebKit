@@ -1,5 +1,20 @@
 2020-10-05  Chris Dumez  <cdumez@apple.com>
 
+        Use memset to zero vectors in PeriodicWave::createBandLimitedTables()
+        https://bugs.webkit.org/show_bug.cgi?id=217328
+
+        Reviewed by Darin Adler.
+
+        Use memset to zero vectors in PeriodicWave::createBandLimitedTables() instead of a for
+        loop, for performance reasons.
+
+        No new tests, no Web-facing behavior change.
+
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::createBandLimitedTables):
+
+2020-10-05  Chris Dumez  <cdumez@apple.com>
+
         Use tryHoldLock() in WebAudio to simplify the code
         https://bugs.webkit.org/show_bug.cgi?id=217332
 

@@ -190,7 +190,6 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
 
     unsigned fftSize = periodicWaveSize();
     unsigned halfSize = fftSize / 2;
-    unsigned i;
     
     numberOfComponents = std::min(numberOfComponents, halfSize);
 
@@ -215,9 +214,11 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
         // If fewer components were provided than 1/2 FFT size, then clear the
         // remaining bins. We also need to cull the aliasing partials for this
         // pitch range.
-        for (i = std::min(numberOfComponents, numberOfPartials + 1); i < halfSize; ++i) {
-            realP[i] = 0;
-            imagP[i] = 0;
+        unsigned clampedNumberOfComponents = std::min(numberOfComponents, numberOfPartials + 1);
+        if (clampedNumberOfComponents < halfSize) {
+            size_t numBytes = (halfSize - clampedNumberOfComponents) * sizeof(float);
+            memset(&realP[clampedNumberOfComponents], 0, numBytes);
+            memset(&imagP[clampedNumberOfComponents], 0, numBytes);
         }
 
         // Clear packed-nyquist and any DC-offset.
