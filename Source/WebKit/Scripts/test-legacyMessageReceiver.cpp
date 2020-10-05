@@ -43,11 +43,11 @@
 #endif
 #include "Plugin.h"
 #include "WebCoreArgumentCoders.h"
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-#include "WebEvent.h"
-#endif
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+#include "WebTouchEvent.h"
+#endif
 #include <WebCore/GraphicsLayer.h>
 #if PLATFORM(MAC)
 #include <WebCore/KeyboardEvent.h>
