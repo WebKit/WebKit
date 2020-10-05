@@ -27,6 +27,8 @@ LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/Tests/WTF/darwin $(inhertied);
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BUILDING_TEST_WTF
+
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZN7testing4Test16TearDownTestCaseEv -Wl,-unexported_symbol -Wl,__ZN7testing4Test13SetUpTestCaseEv
 
 OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWTF.a $(OTHER_LDFLAGS_PLATFORM);

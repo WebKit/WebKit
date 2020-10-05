@@ -48,6 +48,8 @@
 
 #if PLATFORM(COCOA)
 #include "UTIRegistry.h"
+#include "VersionChecks.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCoreTestSupport {
@@ -141,6 +143,13 @@ void initializeLogChannelsIfNecessary()
 void setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
     InternalSettings::setAllowsAnySSLCertificate(allowAnySSLCertificate);
+}
+
+void setLinkedOnOrAfterEverythingForTesting()
+{
+#if PLATFORM(COCOA)
+    setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
+#endif
 }
 
 void installMockGamepadProvider()

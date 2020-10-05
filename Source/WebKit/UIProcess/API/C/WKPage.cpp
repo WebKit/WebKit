@@ -95,7 +95,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "VersionChecks.h"
+#include <WebCore/VersionChecks.h>
 #endif
 
 namespace API {
@@ -278,7 +278,7 @@ void WKPageReload(WKPageRef pageRef)
 {
     OptionSet<WebCore::ReloadOption> reloadOptions;
 #if PLATFORM(COCOA)
-    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfter(WebCore::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 #endif
 

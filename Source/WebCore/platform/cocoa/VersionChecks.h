@@ -33,7 +33,7 @@
 #define DYLD_IOS_VERSION_FIRST_WITH_IOS_APPS_ON_MACOS 0
 #endif
 
-namespace WebKit {
+namespace WebCore {
 
 enum class SDKVersion : uint32_t {
 #if PLATFORM(IOS_FAMILY)
@@ -69,6 +69,7 @@ enum class SDKVersion : uint32_t {
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
     FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13,
     FirstWithExpiredOnlyReloadBehavior = DYLD_MACOSX_VERSION_10_13,
+    FirstWithWebIconDatabaseWarning = DYLD_MACOSX_VERSION_10_13,
     FirstWithMainThreadReleaseAssertionInWebPageProxy = DYLD_MACOSX_VERSION_10_14,
     FirstWithoutUnconditionalUniversalSandboxExtension = DYLD_MACOSX_VERSION_10_15,
     FirstWithSnapshotAfterScreenUpdates = DYLD_MACOSX_VERSION_10_15,
@@ -82,6 +83,6 @@ enum class SDKVersion : uint32_t {
 };
 
 enum class AssumeSafariIsAlwaysLinkedOnAfter : bool { No, Yes };
-bool linkedOnOrAfter(SDKVersion, AssumeSafariIsAlwaysLinkedOnAfter = AssumeSafariIsAlwaysLinkedOnAfter::Yes);
+WEBCORE_EXPORT bool linkedOnOrAfter(SDKVersion, AssumeSafariIsAlwaysLinkedOnAfter = AssumeSafariIsAlwaysLinkedOnAfter::Yes);
 
 }

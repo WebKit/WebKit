@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TestsController.h"
 
+#import <WebKit/WKProcessPoolPrivate.h>
+
 extern "C" void _BeginEventReceiptOnThread(void);
 
 int main(int argc, char** argv)
@@ -42,8 +44,6 @@ int main(int argc, char** argv)
     // CAUTION: Defaults set here are not automatically propagated to the
     // Web Content process. Those listed below are propagated manually.
     NSDictionary *dict = @{
-        @"WebKitLinkedOnOrAfterEverything": @YES,
-
         // FIXME: We should switch these defaults to use overlay
         // scrollbars, since they are the default on the platform,
         // but a variety of tests will need changes.
@@ -53,6 +53,10 @@ int main(int argc, char** argv)
 
     [argumentDomain addEntriesFromDictionary:dict];
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+
+#ifndef BUILDING_TEST_WTF
+    [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+#endif
 
     [NSApplication sharedApplication];
     _BeginEventReceiptOnThread(); // Makes window visibility notifications work (and possibly more).

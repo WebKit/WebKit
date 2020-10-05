@@ -27,9 +27,9 @@
 #import "DefaultWebBrowserChecks.h"
 
 #import "TCCSPI.h"
-#import "VersionChecks.h"
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/VersionChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
@@ -128,7 +128,7 @@ void determineITPState()
         return;
 
     g_currentITPState = ITPState::Initializing;
-    bool appWasLinkedOnOrAfter = linkedOnOrAfter(SDKVersion::FirstWithSessionCleanupByDefault, AssumeSafariIsAlwaysLinkedOnAfter::Yes);
+    bool appWasLinkedOnOrAfter = linkedOnOrAfter(WebCore::SDKVersion::FirstWithSessionCleanupByDefault);
 
     g_itpQueue = dispatch_queue_create("com.apple.WebKit.itpCheckQueue", NULL);
 

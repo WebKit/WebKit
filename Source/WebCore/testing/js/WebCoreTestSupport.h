@@ -54,6 +54,7 @@ void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
 void clearAllLogChannelsToAccumulate() TEST_SUPPORT_EXPORT;
 void initializeLogChannelsIfNecessary() TEST_SUPPORT_EXPORT;
 void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
+void setLinkedOnOrAfterEverythingForTesting() TEST_SUPPORT_EXPORT;
 
 void installMockGamepadProvider() TEST_SUPPORT_EXPORT;
 void connectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;

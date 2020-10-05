@@ -44,7 +44,6 @@
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
 #import "UserInterfaceIdiom.h"
-#import "VersionChecks.h"
 #import "WKActionSheetAssistant.h"
 #import "WKContextMenuElementInfoInternal.h"
 #import "WKContextMenuElementInfoPrivate.h"
@@ -117,6 +116,7 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TouchAction.h>
 #import <WebCore/UTIUtilities.h>
+#import <WebCore/VersionChecks.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WritingDirection.h>
@@ -7098,7 +7098,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (BOOL)_shouldUseContextMenus
 {
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-    return linkedOnOrAfter(WebKit::SDKVersion::FirstThatHasUIContextMenuInteraction);
+    return linkedOnOrAfter(WebCore::SDKVersion::FirstThatHasUIContextMenuInteraction);
 #endif
     return NO;
 }
@@ -8567,7 +8567,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return YES;
     }
 
-    if (!WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstVersionWithiOSAppsOnMacOS)) {
+    if (!WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstVersionWithiOSAppsOnMacOS)) {
         if (WebCore::IOSApplication::isFIFACompanion() // <rdar://problem/67093487>
             || WebCore::IOSApplication::isNoggin() // <rdar://problem/64830335>
             || WebCore::IOSApplication::isOKCupid() // <rdar://problem/65698496>
@@ -8579,7 +8579,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         }
     }
 
-    if (!WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstThatSendsNativeMouseEvents)) {
+    if (!WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstThatSendsNativeMouseEvents)) {
         if (WebCore::IOSApplication::isPocketCity() // <rdar://problem/62273077>
             || WebCore::IOSApplication::isEssentialSkeleton() // <rdar://problem/62694519>
             || WebCore::IOSApplication::isESPNFantasySports() // <rdar://problem/64671543>

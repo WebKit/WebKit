@@ -68,16 +68,3 @@ static int WebKitLinkTimeVersion(void)
     return NSVersionOfLinkTimeLibrary("UIKit");
 #endif
 }
-
-bool linkedOnOrAfter(SDKVersion sdkVersion)
-{
-    static bool linkedOnOrAfterEverything;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitLinkedOnOrAfterEverything"])
-            linkedOnOrAfterEverything = true;
-    });
-    if (UNLIKELY(linkedOnOrAfterEverything))
-        return true;
-    return dyld_get_program_sdk_version() >= static_cast<uint32_t>(sdkVersion);
-}

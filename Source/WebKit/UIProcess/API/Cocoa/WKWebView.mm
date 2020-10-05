@@ -52,7 +52,6 @@
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
 #import "UIDelegate.h"
-#import "VersionChecks.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListInternal.h"
@@ -127,6 +126,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StringUtilities.h>
 #import <WebCore/TextManipulationController.h>
+#import <WebCore/VersionChecks.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
@@ -218,7 +218,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 {
-    static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfter(WebKit::SDKVersion::FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs);
+    static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfter(WebCore::SDKVersion::FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs);
     return shouldAllowSettingAnyXHRHeaderFromFileURLs;
 }
 
@@ -236,7 +236,7 @@ static bool shouldRequireUserGestureToLoadVideo()
 
 static bool shouldRestrictBaseURLSchemes()
 {
-    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(WebKit::SDKVersion::FirstThatRestrictsBaseURLSchemes);
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(WebCore::SDKVersion::FirstThatRestrictsBaseURLSchemes);
     return shouldRestrictBaseURLSchemes;
 }
 
@@ -310,7 +310,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         WKProcessPool *relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
         if (processPool && processPool != relatedWebViewProcessPool)
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process pool %@ but configuration specifies a different process pool %@", relatedWebView, relatedWebViewProcessPool, configuration.processPool];
-        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfter(WebKit::SDKVersion::FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores, WebKit::AssumeSafariIsAlwaysLinkedOnAfter::No))
+        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfter(WebCore::SDKVersion::FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores, WebCore::AssumeSafariIsAlwaysLinkedOnAfter::No))
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has data store %@ but configuration specifies a different data store %@", relatedWebView, [relatedWebView->_configuration websiteDataStore], [_configuration websiteDataStore]];
 
         [_configuration setProcessPool:relatedWebViewProcessPool];
@@ -478,7 +478,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setAllowSettingAnyXHRHeaderFromFileURLs(shouldAllowSettingAnyXHRHeaderFromFileURLs());
     pageConfiguration->preferences()->setShouldDecidePolicyBeforeLoadingQuickLookPreview(!![_configuration _shouldDecidePolicyBeforeLoadingQuickLookPreview]);
 #if ENABLE(DEVICE_ORIENTATION)
-    pageConfiguration->preferences()->setDeviceOrientationPermissionAPIEnabled(linkedOnOrAfter(WebKit::SDKVersion::FirstWithDeviceOrientationAndMotionPermissionAPI));
+    pageConfiguration->preferences()->setDeviceOrientationPermissionAPIEnabled(linkedOnOrAfter(WebCore::SDKVersion::FirstWithDeviceOrientationAndMotionPermissionAPI));
 #endif
 #if USE(SYSTEM_PREVIEW)
     pageConfiguration->preferences()->setSystemPreviewEnabled(!![_configuration _systemPreviewEnabled]);
@@ -526,7 +526,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setServiceWorkerEntitlementDisabledForTesting(!![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting);
 #endif
 
-    if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
+    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferences()->setNeedsSiteSpecificQuirks(false);
 }
 
@@ -780,7 +780,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)reload
 {
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfter(WebCore::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     return wrapper(_page->reload(reloadOptions));
@@ -1024,7 +1024,7 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
         }];
     };
 
-    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfter(WebKit::SDKVersion::FirstWithSnapshotAfterScreenUpdates)) {
+    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfter(WebCore::SDKVersion::FirstWithSnapshotAfterScreenUpdates)) {
         callSnapshotRect();
         return;
     }

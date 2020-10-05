@@ -34,7 +34,7 @@
 
 #if !PLATFORM(IOS_FAMILY)
 #import "WebJavaScriptTextInputPanel.h"
-#import "WebKitVersionChecks.h"
+#import <WebCore/VersionChecks.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -216,11 +216,10 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
-
 #if !PLATFORM(IOS_FAMILY)
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
         return WebDragDestinationActionAny;
 
     return WebDragDestinationActionAny & ~WebDragDestinationActionLoad;

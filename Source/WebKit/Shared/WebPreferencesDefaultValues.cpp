@@ -29,7 +29,7 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 
 #if PLATFORM(COCOA)
-#include "VersionChecks.h"
+#include <WebCore/VersionChecks.h>
 #include <pal/spi/cocoa/FeatureFlagsSPI.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -40,7 +40,7 @@ namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(WebKit::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    static bool result = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
     return result;
 }
 

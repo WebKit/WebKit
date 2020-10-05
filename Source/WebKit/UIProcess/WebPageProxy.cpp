@@ -206,13 +206,13 @@
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
-#include "VersionChecks.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
 #include <WebCore/AttributedString.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/SystemBattery.h>
 #include <WebCore/TextIndicatorWindow.h>
+#include <WebCore/VersionChecks.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/cocoa/Entitlements.h>
 #endif
@@ -1248,7 +1248,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     }
 
 #if PLATFORM(COCOA)
-    if (!linkedOnOrAfter(SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
+    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
         willAcquireUniversalFileReadSandboxExtension(process);
 #endif
 

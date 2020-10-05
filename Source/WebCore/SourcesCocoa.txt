@@ -251,6 +251,7 @@ platform/cocoa/SystemVersion.mm
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/cocoa/ThemeCocoa.mm
 platform/cocoa/UserAgentCocoa.mm
+platform/cocoa/VersionChecks.mm
 platform/cocoa/VideoFullscreenModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify

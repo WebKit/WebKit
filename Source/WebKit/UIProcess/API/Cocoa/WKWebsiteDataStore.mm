@@ -30,7 +30,6 @@
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ShouldGrandfatherStatistics.h"
-#import "VersionChecks.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLAuthenticationChallenge.h"
@@ -45,6 +44,7 @@
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
 #import <WebCore/RegistrationDatabase.h>
+#import <WebCore/VersionChecks.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
@@ -118,7 +118,7 @@ private:
 
 - (instancetype)init
 {
-    if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil))
+    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil))
         [NSException raise:NSGenericException format:@"Calling [WKWebsiteDataStore init] is not supported."];
     
     if (!(self = [super init]))

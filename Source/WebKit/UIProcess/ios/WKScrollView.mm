@@ -29,9 +29,9 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
-#import "VersionChecks.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKWebViewIOS.h"
+#import <WebCore/VersionChecks.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -379,7 +379,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     // to include keyboard insets in the systemContentInset. We always want
     // keyboard insets applied, even when web content has chosen to disable automatic
     // safe area inset adjustment.
-    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
+    if (linkedOnOrAfter(WebCore::SDKVersion::FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
         systemContentInset.bottom += _keyboardBottomInsetAdjustment;
 
     return systemContentInset;

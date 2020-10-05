@@ -24,10 +24,11 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 
 int main(int argc, char *argv[])
 {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitLinkedOnOrAfterEverything"];
+    [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
 
     return NSApplicationMain(argc,  (const char **) argv);
 }

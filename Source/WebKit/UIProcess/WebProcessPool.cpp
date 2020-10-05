@@ -126,11 +126,11 @@
 
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
-#include "VersionChecks.h"
 #include <WebCore/GameControllerGamepadProvider.h>
 #include <WebCore/HIDGamepadProvider.h>
 #include <WebCore/MultiGamepadProvider.h>
 #include <WebCore/PowerSourceNotifier.h>
+#include <WebCore/VersionChecks.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -1029,7 +1029,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isFirefox() && !linkedOnOrAfter(WebKit::SDKVersion::FirstWithProcessSwapOnCrossSiteNavigation))
+    if (WebCore::IOSApplication::isFirefox() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithProcessSwapOnCrossSiteNavigation))
         enableProcessSwapOnCrossSiteNavigation = false;
 #endif
 

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TestsController.h"
 
+#import <WebKit/WKProcessPoolPrivate.h>
+
 int main(int argc, char** argv)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -36,11 +38,12 @@ int main(int argc, char** argv)
     NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
     if (!argumentDomain)
         argumentDomain = [[NSMutableDictionary alloc] init];
-    
-    NSDictionary *dict = @{ @"WebKitLinkedOnOrAfterEverything": @YES };
 
-    [argumentDomain addEntriesFromDictionary:dict];
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+
+#ifndef BUILDING_TEST_WTF
+    [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+#endif
 
     bool passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
 

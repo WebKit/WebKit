@@ -28,7 +28,6 @@
 
 #import "APIPageConfiguration.h"
 #import "UserInterfaceIdiom.h"
-#import "VersionChecks.h"
 #import "WKPreferences.h"
 #import "WKProcessPool.h"
 #import "WKRetainPtr.h"
@@ -45,6 +44,7 @@
 #import "_WKWebsiteDataStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
+#import <WebCore/VersionChecks.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URLParser.h>
 #import <wtf/WeakObjCPtr.h>
@@ -106,7 +106,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 {
 #if USE(QUICK_LOOK)
-    static bool shouldDecide = linkedOnOrAfter(WebKit::SDKVersion::FirstThatDecidesPolicyBeforeLoadingQuickLookPreview);
+    static bool shouldDecide = linkedOnOrAfter(WebCore::SDKVersion::FirstThatDecidesPolicyBeforeLoadingQuickLookPreview);
     return shouldDecide;
 #else
     return false;
@@ -200,7 +200,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     _mediaDataLoadsAutomatically = NO;
 #if !PLATFORM(WATCHOS)
-    if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
+    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
     else
 #endif

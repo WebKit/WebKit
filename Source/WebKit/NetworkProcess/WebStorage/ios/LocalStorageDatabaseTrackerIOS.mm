@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "VersionChecks.h"
+#import <WebCore/VersionChecks.h>
 
 namespace WebKit {
 

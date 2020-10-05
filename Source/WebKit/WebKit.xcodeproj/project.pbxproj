@@ -1823,7 +1823,6 @@
 		E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */; };
 		E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */; };
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
-		E4E864931B16750700C82F40 /* VersionChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8648E1B1673FB00C82F40 /* VersionChecks.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
 		E548EBD121015F0E00BE3C32 /* WKFormColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */; };
 		E55CD1F524CF747D0042DB9C /* WebDateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */; };
@@ -5331,8 +5330,6 @@
 		E49D40D81AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheBlobStorage.cpp; sourceTree = "<group>"; };
 		E4E57F6821A83B0300345F3C /* RemoteLayerTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeNode.mm; sourceTree = "<group>"; };
 		E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeNode.h; sourceTree = "<group>"; };
-		E4E8648E1B1673FB00C82F40 /* VersionChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionChecks.h; sourceTree = "<group>"; };
-		E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VersionChecks.mm; sourceTree = "<group>"; };
 		E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionPicker.h; sourceTree = "<group>"; };
 		E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionPicker.cpp; sourceTree = "<group>"; };
 		E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormColorPicker.h; path = ios/forms/WKFormColorPicker.h; sourceTree = "<group>"; };
@@ -6344,8 +6341,6 @@
 				463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */,
 				070259BE2522841C00153405 /* UserMediaPermissionRequestManagerProxy.mm */,
 				411A9A9A251DE93E00807D7E /* UserMediaPermissionRequestProxy.mm */,
-				E4E8648E1B1673FB00C82F40 /* VersionChecks.h */,
-				E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */,
 				52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */,
 				52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */,
 				52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */,
@@ -11176,7 +11171,6 @@
 				4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */,
 				4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */,
 				074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */,
-				E4E864931B16750700C82F40 /* VersionChecks.h in Headers */,
 				52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */,
 				2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */,
 				2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */,

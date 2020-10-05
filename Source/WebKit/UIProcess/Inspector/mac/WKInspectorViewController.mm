@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "APINavigation.h"
-#import "VersionChecks.h"
 #import "WKFrameInfo.h"
 #import "WKInspectorWKWebView.h"
 #import "WKNavigationAction.h"
@@ -43,6 +42,7 @@
 #import "WebInspectorProxy.h"
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
+#import <WebCore/VersionChecks.h>
 #import <wtf/WeakObjCPtr.h>
 
 @interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate, WKInspectorWKWebViewDelegate>
@@ -252,7 +252,7 @@
         return;
 
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     _inspectedPage->reload(reloadOptions);

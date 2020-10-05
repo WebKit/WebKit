@@ -39,7 +39,6 @@
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
-#import "VersionChecks.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
@@ -60,15 +59,15 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
+#import <WebCore/VersionChecks.h>
 #import <objc/runtime.h>
-#import <pal/cf/CoreMediaSoftLink.h>
-#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
@@ -91,6 +90,9 @@
 #if PLATFORM(COCOA)
 #import <WebCore/SystemBattery.h>
 #endif
+
+#import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
@@ -364,7 +366,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::Type::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
-    parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
+    parameters.uiProcessSDKVersion = applicationSDKVersion();
 
 #if PLATFORM(IOS_FAMILY)
     if (!m_resolvedPaths.cookieStorageDirectory.isEmpty())
@@ -508,7 +510,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
-    parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
+    parameters.uiProcessSDKVersion = applicationSDKVersion();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 

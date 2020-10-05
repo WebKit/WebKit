@@ -25,9 +25,9 @@
 
 #import "WebPreferencesDefaultValues.h"
 
-#import "WebKitVersionChecks.h"
 #import <Foundation/NSBundle.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/VersionChecks.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -128,7 +128,7 @@ bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute()
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-    return linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    return linkedOnOrAfter(WebCore::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
 }
 
 bool defaultRequiresUserGestureToLoadVideo()
@@ -157,7 +157,7 @@ bool defaultAttachmentElementEnabled()
 
 bool defaultShouldRestrictBaseURLSchemes()
 {
-    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(SDKVersion::FirstThatRestrictsBaseURLSchemes);
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(WebCore::SDKVersion::FirstThatRestrictsBaseURLSchemes);
     return shouldRestrictBaseURLSchemes;
 }
 

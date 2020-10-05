@@ -33,7 +33,6 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteScrollingCoordinatorProxy.h"
-#import "VersionChecks.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListItemInternal.h"
@@ -54,6 +53,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/VersionChecks.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -581,7 +581,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (UIEdgeInsets)_computedObscuredInset
 {
-    if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWhereScrollViewContentInsetsAreNotObscuringInsets)) {
+    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWhereScrollViewContentInsetsAreNotObscuringInsets)) {
         // For binary compability with third party apps, treat scroll view content insets as obscuring insets when the app is compiled
         // against a WebKit version without the fix in r229641.
         return [self _computedContentInset];

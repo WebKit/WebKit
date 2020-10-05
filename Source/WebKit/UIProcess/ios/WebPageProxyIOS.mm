@@ -52,7 +52,6 @@
 #import "UIKitSPI.h"
 #import "UserData.h"
 #import "UserInterfaceIdiom.h"
-#import "VersionChecks.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -70,6 +69,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/VersionChecks.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/text/TextStream.h>
 
@@ -1454,7 +1454,7 @@ static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& requ
         // While desktop-class browsing is supported on all iPad models, it is not recommended for iPad mini.
         auto screenClass = MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
         shouldRecommendDesktopClassBrowsing = screenClass != MGScreenClassPad3 && screenClass != MGScreenClassPad4 && desktopClassBrowsingSupported();
-        if (ignoreSafeguards == IgnoreAppCompatibilitySafeguards::No && !linkedOnOrAfter(WebKit::SDKVersion::FirstWithModernCompabilityModeByDefault)) {
+        if (ignoreSafeguards == IgnoreAppCompatibilitySafeguards::No && !linkedOnOrAfter(WebCore::SDKVersion::FirstWithModernCompabilityModeByDefault)) {
             // Opt out apps that haven't yet built against the iOS 13 SDK to limit any incompatibilities as a result of enabling desktop-class browsing by default in
             // WKWebView on appropriately-sized iPad models.
             shouldRecommendDesktopClassBrowsing = false;

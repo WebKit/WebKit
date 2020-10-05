@@ -24,10 +24,11 @@
  */
 
 #import <MobileMiniBrowser/MobileMiniBrowser.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 
 int main(int argc, char * argv[])
 {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitLinkedOnOrAfterEverything"];
+    [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
 
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));

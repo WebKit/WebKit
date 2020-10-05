@@ -1018,7 +1018,6 @@ static void setDefaultsToConsistentValuesForTesting()
         WebKitFullScreenEnabledPreferenceKey: @YES,
         WebKitAllowsInlineMediaPlaybackPreferenceKey: @YES,
         WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey: @NO,
-        @"WebKitLinkedOnOrAfterEverything": @YES,
         @"UseWebKitWebInspector": @YES,
 #if !PLATFORM(IOS_FAMILY)
         @"NSPreferredSpellServerLanguage": @"en_US",
@@ -1390,6 +1389,7 @@ int DumpRenderTreeMain(int argc, const char *argv[])
 
     WTF::setProcessPrivileges(allPrivileges());
     WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
+    WebCoreTestSupport::setLinkedOnOrAfterEverythingForTesting();
 
 #if PLATFORM(IOS_FAMILY)
     _UIApplicationLoadWebKit();

@@ -26,40 +26,26 @@
 #import "config.h"
 #import "VersionChecks.h"
 
-#import <WebCore/RuntimeApplicationChecks.h>
+#import "RuntimeApplicationChecks.h"
 #import <mach-o/dyld.h>
 #import <mutex>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
-namespace WebKit {
-
-static NSString * const WebKitLinkedOnOrAfterEverythingKey = @"WebKitLinkedOnOrAfterEverything";
+namespace WebCore {
 
 bool linkedOnOrAfter(SDKVersion sdkVersion, AssumeSafariIsAlwaysLinkedOnAfter assumeSafariIsAlwaysLinkedOnAfter)
 {
-    static bool linkedOnOrAfterEverything = false;
-    static bool isSafari = false;
-    static std::once_flag once;
-    std::call_once(once, [] {
 #if PLATFORM(IOS_FAMILY)
-        if (WebCore::IOSApplication::isMobileSafari())
-            isSafari = true;
+    bool isSafari = WebCore::IOSApplication::isMobileSafari();
 #elif PLATFORM(MAC)
-        if (WebCore::MacApplication::isSafari())
-            isSafari = true;
+    bool isSafari = WebCore::MacApplication::isSafari();
 #endif
-
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:WebKitLinkedOnOrAfterEverythingKey])
-            linkedOnOrAfterEverything = true;
-    });
-
-    if (UNLIKELY(linkedOnOrAfterEverything))
-        return true;
 
     if (isSafari && assumeSafariIsAlwaysLinkedOnAfter == AssumeSafariIsAlwaysLinkedOnAfter::Yes)
         return true;
 
     auto sdkVersionAsInteger = static_cast<uint32_t>(sdkVersion);
-    return sdkVersionAsInteger && dyld_get_program_sdk_version() >= sdkVersionAsInteger;
+    return sdkVersionAsInteger && applicationSDKVersion() >= sdkVersionAsInteger;
 }
 
 }
