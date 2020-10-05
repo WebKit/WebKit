@@ -1269,6 +1269,11 @@ void RenderStyle::setWillChange(RefPtr<WillChangeData>&& willChangeData)
     m_rareNonInheritedData.access().willChange = WTFMove(willChangeData);
 }
 
+void RenderStyle::setScale(RefPtr<ScaleTransformOperation>&& t)
+{
+    m_rareNonInheritedData.access().scale = WTFMove(t);
+}
+
 void RenderStyle::setTranslate(RefPtr<TranslateTransformOperation>&& t)
 {
     m_rareNonInheritedData.access().translate = WTFMove(t);
@@ -1393,7 +1398,7 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     // 1. Start with the identity matrix.
 
     auto& operations = m_rareNonInheritedData->transform->operations.operations();
-    bool applyTransformOrigin = requireTransformOrigin(operations, applyOrigin);
+    bool applyTransformOrigin = m_rareNonInheritedData->scale || requireTransformOrigin(operations, applyOrigin);
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     FloatPoint3D originTranslate;
@@ -1408,7 +1413,10 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
         translate->apply(transform, boundingBox.size());
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate. (FIXME: we don't support the rotate property)
-    // 5. Scale by the computed X, Y, and Z values of scale. (FIXME: we don't support the scale property)
+    // 5. Scale by the computed X, Y, and Z values of scale.
+    if (TransformOperation* scale = m_rareNonInheritedData->scale.get())
+        scale->apply(transform, boundingBox.size());
+
     // 6. Translate and rotate by the transform specified by offset. (FIXME: we don't support the offset property)
 
     // 7. Multiply by each of the transform functions in transform from left to right.

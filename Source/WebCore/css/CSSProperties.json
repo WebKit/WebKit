@@ -6487,6 +6487,16 @@
                 "url": "https://drafts.csswg.org/css-transforms-2/#propdef-translate"
             }
         },
+        "scale": {
+            "codegen-properties": {
+                "settings-flag": "cssIndividualTransformProperties",
+                "converter": "Scale"
+            },
+            "specification": {
+                "category": "css-transforms",
+                "url": "https://drafts.csswg.org/css-transforms-2/#propdef-scale"
+            }
+        },
         "-webkit-user-drag": {
             "values": [
                 "auto",

@@ -46,6 +46,7 @@
 #include "RenderStyleConstants.h"
 #include "RoundedRect.h"
 #include "SVGRenderStyle.h"
+#include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "ShapeValue.h"
 #include "StyleBackgroundData.h"
@@ -623,6 +624,7 @@ public:
 
     TransformBox transformBox() const { return m_rareNonInheritedData->transform->transformBox; }
 
+    ScaleTransformOperation* scale() const { return m_rareNonInheritedData->scale.get(); }
     TranslateTransformOperation* translate() const { return m_rareNonInheritedData->translate.get(); }
 
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
@@ -644,9 +646,9 @@ public:
     ObjectFit objectFit() const { return static_cast<ObjectFit>(m_rareNonInheritedData->objectFit); }
     LengthPoint objectPosition() const { return m_rareNonInheritedData->objectPosition; }
 
-    // Return true if any transform related property (currently transform, translate, transformStyle3D or perspective)
+    // Return true if any transform related property (currently transform, translate, scale, transformStyle3D or perspective)
     // indicates that we are transforming.
-    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || preserves3D() || hasPerspective(); }
+    bool hasTransformRelatedProperty() const { return hasTransform() || translate() || scale() || preserves3D() || hasPerspective(); }
 
     enum ApplyTransformOrigin { IncludeTransformOrigin, ExcludeTransformOrigin };
     void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, ApplyTransformOrigin = IncludeTransformOrigin) const;
@@ -1183,6 +1185,7 @@ public:
     void setTransformOriginZ(float f) { SET_NESTED_VAR(m_rareNonInheritedData, transform, z, f); }
     void setTransformBox(TransformBox box) { SET_NESTED_VAR(m_rareNonInheritedData, transform, transformBox, box); }
 
+    void setScale(RefPtr<ScaleTransformOperation>&&);
     void setTranslate(RefPtr<TranslateTransformOperation>&&);
 
     void setSpeakAs(OptionSet<SpeakAs> s) { SET_VAR(m_rareInheritedData, speakAs, s.toRaw()); }
@@ -1607,6 +1610,7 @@ public:
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
     static TransformBox initialTransformBox() { return TransformBox::ViewBox; }
+    static ScaleTransformOperation* initialScale() { return nullptr; }
     static TranslateTransformOperation* initialTranslate() { return nullptr; }
     static PointerEvents initialPointerEvents() { return PointerEvents::Auto; }
     static float initialTransformOriginZ() { return 0; }

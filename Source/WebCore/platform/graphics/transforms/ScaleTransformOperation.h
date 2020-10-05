@@ -50,12 +50,12 @@ public:
     double y() const { return m_y; }
     double z() const { return m_z; }
 
+    bool operator==(const TransformOperation&) const final;
+
 private:
     bool isIdentity() const override { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
     bool isRepresentableIn2D() const final { return m_z == 1; }
-
-    bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {

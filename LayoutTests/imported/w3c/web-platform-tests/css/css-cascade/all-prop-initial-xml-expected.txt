@@ -218,6 +218,7 @@ PASS right
 PASS row-gap
 PASS rx
 PASS ry
+PASS scale
 PASS scroll-behavior
 PASS scroll-padding-bottom
 PASS scroll-padding-left

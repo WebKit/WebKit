@@ -1,3 +1,60 @@
+2020-10-04  Antoine Quint  <graouts@webkit.org>
+
+        Add non-animated support for the CSS scale property
+        https://bugs.webkit.org/show_bug.cgi?id=217291
+        <rdar://problem/69926254>
+
+        Reviewed by Simon Fraser.
+
+        We add non-animated support for the CSS "scale" property as specifed in by the CSS Transforms Level 2
+        specification (​https://drafts.csswg.org/css-transforms-2/#propdef-scale).
+
+        Tests: transforms/2d/scale-and-transform-attribute-in-svg-expected.svg
+               transforms/2d/scale-and-transform-attribute-in-svg.svg
+               transforms/2d/scale-and-transform-css-property-in-svg-expected.svg
+               transforms/2d/scale-and-transform-css-property-in-svg.svg
+               transforms/2d/scale-and-translate-in-svg-expected.svg
+               transforms/2d/scale-and-translate-in-svg.svg
+               transforms/2d/scale-and-translate-order.html
+               transforms/2d/scale-in-svg-expected.svg
+               transforms/2d/scale-in-svg.svg
+               transforms/2d/scale-transform-order.html
+               transforms/2d/scale-transform-origin-order.html
+
+        * Headers.cmake:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTranslate): Remove the extraneous is<RenderInline> check which is already covered by rendererCanBeTransformed().
+        (WebCore::computedScale): Create a CSSValueList to print out the computed value for the "scale" property.
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json: Define the "scale" property with the condition that the runtime setting for individual
+        CSS transform properties is set.
+        * css/TransformFunctions.cpp:
+        (WebCore::scaleForValue): Convert a CSSValue to a TranslateTransformOperation when parsing a "scale" property value.
+        * css/TransformFunctions.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeScale): Create a CSSValueList when parsing a "scale" property value.
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransform const): Consider that having the "scale" property is akin to having a "transform" property
+        in the render tree.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setScale):
+        (WebCore::RenderStyle::applyTransform const): Account for the RenderStyle::scale() value in the right order, after applying the
+        transform origin and translate, but before applying the main transform.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::scale const):
+        (WebCore::RenderStyle::hasTransformRelatedProperty const):
+        (WebCore::RenderStyle::initialScale):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertScale):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const): Account for the RenderStyle::scale() value when rendering SVG, ensuring
+        that it is applied before the transform specified by either the "transform" CSS property or SVG attribute.
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         MIME type parser should skip trailing HTTP whitespace

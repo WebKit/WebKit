@@ -378,4 +378,35 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
     return TranslateTransformOperation::create(tx, ty, tz, type);
 }
 
+RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
+{
+    if (!is<CSSValueList>(value))
+        return nullptr;
+
+    auto& valueList = downcast<CSSValueList>(value);
+    if (!valueList.length())
+        return nullptr;
+
+    auto type = TransformOperation::SCALE;
+    double sx = 1.0;
+    double sy = 1.0;
+    double sz = 1.0;
+    for (unsigned i = 0; i < valueList.length(); ++i) {
+        auto* valueItem = valueList.itemWithoutBoundsCheck(i);
+        if (!is<CSSPrimitiveValue>(valueItem))
+            return nullptr;
+        if (!i) {
+            sx = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sy = sx;
+        } else if (i == 1)
+            sy = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+        else if (i == 2) {
+            type = TransformOperation::SCALE_3D;
+            sz = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+        }
+    }
+
+    return ScaleTransformOperation::create(sx, sy, sz, type);
+}
+
 }

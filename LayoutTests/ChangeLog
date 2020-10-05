@@ -1,3 +1,32 @@
+2020-10-04  Antoine Quint  <graouts@webkit.org>
+
+        Add non-animated support for the CSS scale property
+        https://bugs.webkit.org/show_bug.cgi?id=217291
+        <rdar://problem/69926254>
+
+        Reviewed by Simon Fraser.
+
+        Add tests checking that the "scale" CSS property is applied in the correct order related to
+        "transform-origin" and "transform" and that it is applied in SVG as well.
+
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * transforms/2d/scale-and-transform-attribute-in-svg-expected.svg: Added.
+        * transforms/2d/scale-and-transform-attribute-in-svg.svg: Added.
+        * transforms/2d/scale-and-transform-css-property-in-svg-expected.svg: Added.
+        * transforms/2d/scale-and-transform-css-property-in-svg.svg: Added.
+        * transforms/2d/scale-and-translate-in-svg-expected.svg: Added.
+        * transforms/2d/scale-and-translate-in-svg.svg: Added.
+        * transforms/2d/scale-and-translate-order-expected.html: Added.
+        * transforms/2d/scale-and-translate-order.html: Added.
+        * transforms/2d/scale-in-svg-expected.svg: Added.
+        * transforms/2d/scale-in-svg.svg: Added.
+        * transforms/2d/scale-transform-order-expected.html: Added.
+        * transforms/2d/scale-transform-order.html: Added.
+        * transforms/2d/scale-transform-origin-order-expected.html: Added.
+        * transforms/2d/scale-transform-origin-order.html: Added.
+
+
 2020-10-04  Rob Buis  <rbuis@igalia.com>
 
         DataTransfer.setDragImage takes a non nullable Element parameter

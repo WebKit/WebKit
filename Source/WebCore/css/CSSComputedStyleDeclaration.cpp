@@ -614,7 +614,7 @@ static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle
 
 static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
 {
-    if (!rendererCanBeTransformed(renderer) || is<RenderInline>(*renderer) || !style.translate())
+    if (!rendererCanBeTransformed(renderer) || !style.translate())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     FloatRect pixelSnappedRect;
@@ -633,6 +633,22 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
         list->append(zoomAdjustedNumberValue(transform.m42(), style));
         list->append(zoomAdjustedNumberValue(transform.m43(), style));
     }
+
+    return list;
+}
+
+static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& style)
+{
+    auto* scale = style.scale();
+    if (!rendererCanBeTransformed(renderer) || !scale)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+
+    auto& cssValuePool = CSSValuePool::singleton();
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(cssValuePool.createValue(scale->x(), CSSUnitType::CSS_NUMBER));
+    list->append(cssValuePool.createValue(scale->y(), CSSUnitType::CSS_NUMBER));
+    if (scale->is3DOperation())
+        list->append(cssValuePool.createValue(scale->z(), CSSUnitType::CSS_NUMBER));
 
     return list;
 }
@@ -3550,6 +3566,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedTranslate(renderer, style);
+        case CSSPropertyScale:
+            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+                return nullptr;
+            return computedScale(renderer, style);
         case CSSPropertyTransitionDelay:
             return delayValue(style.transitions());
         case CSSPropertyTransitionDuration:
