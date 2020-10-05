@@ -1,3 +1,13 @@
+2020-10-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flex] Fix expectations of a test which is actually passing
+        https://bugs.webkit.org/show_bug.cgi?id=217318
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html: Added a missing " only"
+        to match the string used in the test.
+
 2020-10-05  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS rotate property
