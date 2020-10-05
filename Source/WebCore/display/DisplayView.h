@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayLayerController.h"
-#include "DisplayRect.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 

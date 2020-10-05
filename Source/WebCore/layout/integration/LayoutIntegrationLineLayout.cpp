@@ -105,7 +105,7 @@ void LineLayout::layout()
     prepareLayoutState();
     prepareFloatingState();
 
-    m_displayInlineContent = nullptr;
+    m_inlineContent = nullptr;
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
 
     auto invalidationState = Layout::InvalidationState { };
@@ -113,12 +113,12 @@ void LineLayout::layout()
     auto verticalConstraints = Layout::VerticalConstraints { m_flow.borderAndPaddingBefore(), { } };
 
     inlineFormattingContext.layoutInFlowContent(invalidationState, { horizontalConstraints, verticalConstraints });
-    constructDisplayContent();
+    constructContent();
 }
 
-void LineLayout::constructDisplayContent()
+void LineLayout::constructContent()
 {
-    auto& displayInlineContent = ensureDisplayInlineContent();
+    auto& displayInlineContent = ensureInlineContent();
 
     auto constructDisplayLineRuns = [&] {
         auto initialContaingBlockSize = m_layoutState.viewportSize();
@@ -141,17 +141,17 @@ void LineLayout::constructDisplayContent()
                 return inkOverflow;
             };
             auto logicalRect = FloatRect { lineRun.logicalRect() };
-            // Inline boxes are relative to the line box while final Display::Runs need to be relative to the parent Display:Box
+            // Inline boxes are relative to the line box while final Runs need to be relative to the parent Box
             // FIXME: Shouldn't we just leave them be relative to the line box?
             auto lineIndex = lineRun.lineIndex();
             auto& lineBoxLogicalRect = m_inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
             logicalRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
 
-            WTF::Optional<Display::Run::TextContent> textContent;
+            WTF::Optional<Run::TextContent> textContent;
             if (auto text = lineRun.text())
-                textContent = Display::Run::TextContent { text->start(), text->length(), text->content(), text->needsHyphen() };
-            auto expansion = Display::Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
-            auto displayRun = Display::Run { lineIndex, layoutBox, logicalRect, computedInkOverflow(logicalRect), expansion, textContent };
+                textContent = Run::TextContent { text->start(), text->length(), text->content(), text->needsHyphen() };
+            auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
+            auto displayRun = Run { lineIndex, layoutBox, logicalRect, computedInkOverflow(logicalRect), expansion, textContent };
             displayInlineContent.runs.append(displayRun);
         }
     };
@@ -229,10 +229,9 @@ LayoutUnit LineLayout::contentLogicalHeight() const
 
 size_t LineLayout::lineCount() const
 {
-    auto* inlineContent = displayInlineContent();
-    if (!inlineContent)
+    if (!m_inlineContent)
         return 0;
-    if (inlineContent->runs.isEmpty())
+    if (m_inlineContent->runs.isEmpty())
         return 0;
     return m_inlineFormattingState.lines().size();
 }
@@ -264,8 +263,8 @@ LayoutUnit LineLayout::lastLineBaseline() const
 void LineLayout::adjustForPagination(RenderBlockFlow& flow)
 {
     ASSERT(&flow == &m_flow);
-    auto paginedInlineContent = adjustLinePositionsForPagination(*m_displayInlineContent, flow);
-    if (paginedInlineContent.ptr() == m_displayInlineContent) {
+    auto paginedInlineContent = adjustLinePositionsForPagination(*m_inlineContent, flow);
+    if (paginedInlineContent.ptr() == m_inlineContent) {
         m_paginatedHeight = { };
         return;
     }
@@ -273,7 +272,7 @@ void LineLayout::adjustForPagination(RenderBlockFlow& flow)
     auto& lines = paginedInlineContent->lines;
     m_paginatedHeight = LayoutUnit { lines.last().rect().maxY() - lines.first().rect().y() };
 
-    m_displayInlineContent = WTFMove(paginedInlineContent);
+    m_inlineContent = WTFMove(paginedInlineContent);
 }
 
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
@@ -281,30 +280,29 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
     ASSERT(&flow == &m_flow);
     ASSERT(!flow.hasOverflowClip());
 
-    for (auto& line : displayInlineContent()->lines) {
+    for (auto& line : inlineContent()->lines) {
         flow.addLayoutOverflow(Layout::toLayoutRect(line.scrollableOverflow()));
         flow.addVisualOverflow(Layout::toLayoutRect(line.inkOverflow()));
     }
 }
 
-Display::InlineContent& LineLayout::ensureDisplayInlineContent()
+InlineContent& LineLayout::ensureInlineContent()
 {
-    if (!m_displayInlineContent)
-        m_displayInlineContent = Display::InlineContent::create();
-    return *m_displayInlineContent;
+    if (!m_inlineContent)
+        m_inlineContent = InlineContent::create();
+    return *m_inlineContent;
 }
 
 TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
 {
-    auto* inlineContent = displayInlineContent();
-    if (!inlineContent)
+    if (!m_inlineContent)
         return { };
     auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderText);
     ASSERT(layoutBox);
 
     auto firstIndex = [&]() -> Optional<size_t> {
-        for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
-            if (&inlineContent->runs[i].layoutBox() == layoutBox)
+        for (size_t i = 0; i < m_inlineContent->runs.size(); ++i) {
+            if (&m_inlineContent->runs[i].layoutBox() == layoutBox)
                 return i;
         }
         return { };
@@ -313,21 +311,20 @@ TextRunIterator LineLayout::textRunsFor(const RenderText& renderText) const
     if (!firstIndex)
         return { };
 
-    return { LayoutIntegration::ModernPath(*inlineContent, *firstIndex) };
+    return { LayoutIntegration::ModernPath(*m_inlineContent, *firstIndex) };
 }
 
 RunIterator LineLayout::runFor(const RenderElement& renderElement) const
 {
-    auto* inlineContent = displayInlineContent();
-    if (!inlineContent)
+    if (!m_inlineContent)
         return { };
     auto* layoutBox = m_boxTree.layoutBoxForRenderer(renderElement);
     ASSERT(layoutBox);
 
-    for (size_t i = 0; i < inlineContent->runs.size(); ++i) {
-        auto& run =  inlineContent->runs[i];
+    for (size_t i = 0; i < m_inlineContent->runs.size(); ++i) {
+        auto& run =  m_inlineContent->runs[i];
         if (&run.layoutBox() == layoutBox)
-            return { LayoutIntegration::ModernPath(*inlineContent, i) };
+            return { LayoutIntegration::ModernPath(*m_inlineContent, i) };
     }
 
     return { };
@@ -345,13 +342,13 @@ Layout::ContainerBox& LineLayout::rootLayoutBox()
 
 void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!displayInlineContent())
+    if (!m_inlineContent)
         return;
 
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::EventRegion)
         return;
 
-    auto& inlineContent = *displayInlineContent();
+    auto& inlineContent = *m_inlineContent;
     float deviceScaleFactor = m_flow.document().deviceScaleFactor();
 
     auto paintRect = paintInfo.rect;
@@ -419,10 +416,10 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     if (hitTestAction != HitTestForeground)
         return false;
 
-    if (!displayInlineContent())
+    if (!m_inlineContent)
         return false;
 
-    auto& inlineContent = *displayInlineContent();
+    auto& inlineContent = *m_inlineContent;
 
     // FIXME: This should do something efficient to find the run range.
     for (auto& run : inlineContent.runs) {

@@ -27,38 +27,36 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatRect.h"
+#include "LayoutIntegrationLine.h"
+#include "LayoutIntegrationRun.h"
+#include <wtf/IteratorRange.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
-namespace Display {
+namespace LayoutIntegration {
 
-class Line {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    Line(const FloatRect&, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset);
+struct InlineContent : public RefCounted<InlineContent> {
+    static Ref<InlineContent> create() { return adoptRef(*new InlineContent); }
+    ~InlineContent();
 
-    const FloatRect& rect() const { return m_rect; }
-    const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
-    const FloatRect& inkOverflow() const { return m_inkOverflow; }
-    float baseline() const { return m_baseline; }
-    float horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
+    using Runs = Vector<Run, 4>;
+    using Lines = Vector<Line, 4>;
 
+    Runs runs;
+    Lines lines;
+
+    const Line& lineForRun(const Run& run) const { return lines[run.lineIndex()]; }
+    WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;
+    void shrinkToFit();
 
 private:
-    FloatRect m_rect;
-    FloatRect m_scrollableOverflow;
-    FloatRect m_inkOverflow;
-    float m_baseline { 0 };
-    float m_horizontalAlignmentOffset;
+    InlineContent() = default;
 };
 
-inline Line::Line(const FloatRect& rect, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float horizontalAlignmentOffset)
-    : m_rect(rect)
-    , m_scrollableOverflow(scrollableOverflow)
-    , m_inkOverflow(inkOverflow)
-    , m_baseline(baseline)
-    , m_horizontalAlignmentOffset(horizontalAlignmentOffset)
+inline void InlineContent::shrinkToFit()
 {
+    runs.shrinkToFit();
+    lines.shrinkToFit();
 }
 
 }

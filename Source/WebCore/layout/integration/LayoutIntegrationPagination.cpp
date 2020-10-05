@@ -45,7 +45,7 @@ struct PaginatedLine {
 };
 using PaginatedLines = Vector<PaginatedLine, 20>;
 
-static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow&, Display::InlineContent::Lines& lines, unsigned lineIndex, Vector<Strut>& struts)
+static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow&, InlineContent::Lines& lines, unsigned lineIndex, Vector<Strut>& struts)
 {
     LayoutUnit offset = 0;
     for (auto& strut : struts) {
@@ -108,7 +108,7 @@ static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, 
     struts.append({ lineBreakIndex, computeOffsetAfterLineBreak(lines[lineBreakIndex].top, !lineBreakIndex, atTheTopOfColumnOrPage, flow) });
 }
 
-static void updateMinimumPageHeight(RenderBlockFlow& flow, const Display::InlineContent& inlineContent, unsigned lineCount)
+static void updateMinimumPageHeight(RenderBlockFlow& flow, const InlineContent& inlineContent, unsigned lineCount)
 {
     auto& style = flow.style();
     auto widows = style.hasAutoWidows() ? 1 : std::max<int>(style.widows(), 1);
@@ -117,16 +117,16 @@ static void updateMinimumPageHeight(RenderBlockFlow& flow, const Display::Inline
     flow.updateMinimumPageHeight(0, LayoutUnit(inlineContent.lines[minimumLineCount - 1].rect().maxY()));
 }
 
-static Ref<Display::InlineContent> makeAdjustedContent(const Display::InlineContent& inlineContent, Vector<float> adjustments)
+static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments)
 {
     auto moveVertically = [](FloatRect rect, float offset) {
         rect.move(FloatSize(0, offset));
         return rect;
     };
 
-    auto adjustedLine = [&](const Display::Line& line, float offset)
+    auto adjustedLine = [&](const Line& line, float offset)
     {
-        return Display::Line {
+        return Line {
             moveVertically(line.rect(), offset),
             moveVertically(line.scrollableOverflow(), offset),
             moveVertically(line.inkOverflow(), offset),
@@ -135,9 +135,9 @@ static Ref<Display::InlineContent> makeAdjustedContent(const Display::InlineCont
         };
     };
 
-    auto adjustedRun = [&](const Display::Run& run, float offset)
+    auto adjustedRun = [&](const Run& run, float offset)
     {
-        return Display::Run {
+        return Run {
             run.lineIndex(),
             run.layoutBox(),
             moveVertically(run.rect(), offset),
@@ -147,7 +147,7 @@ static Ref<Display::InlineContent> makeAdjustedContent(const Display::InlineCont
         };
     };
 
-    auto adjustedContent = Display::InlineContent::create();
+    auto adjustedContent = InlineContent::create();
 
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
         adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex]));
@@ -158,7 +158,7 @@ static Ref<Display::InlineContent> makeAdjustedContent(const Display::InlineCont
     return adjustedContent;
 }
 
-Ref<Display::InlineContent> adjustLinePositionsForPagination(Display::InlineContent& inlineContent, RenderBlockFlow& flow)
+Ref<InlineContent> adjustLinePositionsForPagination(InlineContent& inlineContent, RenderBlockFlow& flow)
 {
     Vector<Strut> struts;
     auto lineCount = inlineContent.lines.size();

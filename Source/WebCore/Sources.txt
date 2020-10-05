@@ -1451,7 +1451,6 @@ layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/PrecomputedBlockMarginCollapse.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp
 layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
-layout/displaytree/DisplayInlineContent.cpp
 layout/displaytree/DisplayPainter.cpp
 layout/flexformatting/FlexFormattingContext.cpp
 layout/flexformatting/FlexFormattingContextGeometry.cpp
@@ -1472,6 +1471,7 @@ layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
+layout/integration/LayoutIntegrationInlineContent.cpp
 layout/integration/LayoutIntegrationLineLayout.cpp
 layout/integration/LayoutIntegrationPagination.cpp
 layout/integration/LayoutIntegrationRunIterator.cpp

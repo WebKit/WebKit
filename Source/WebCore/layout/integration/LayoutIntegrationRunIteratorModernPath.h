@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineContent.h"
+#include "LayoutIntegrationInlineContent.h"
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ static FloatPoint linePosition(float left, float top)
 
 class ModernPath {
 public:
-    ModernPath(const Display::InlineContent& inlineContent, size_t startIndex)
+    ModernPath(const InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
         , m_runIndex(startIndex)
     {
@@ -156,11 +156,11 @@ public:
     }
 
 private:
-    const Display::InlineContent::Runs& runs() const { return m_inlineContent->runs; }
-    const Display::Run& run() const { return runs()[m_runIndex]; }
-    const Display::Line& line() const { return m_inlineContent->lineForRun(run()); }
+    const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
+    const Run& run() const { return runs()[m_runIndex]; }
+    const Line& line() const { return m_inlineContent->lineForRun(run()); }
 
-    RefPtr<const Display::InlineContent> m_inlineContent;
+    RefPtr<const InlineContent> m_inlineContent;
     size_t m_runIndex { 0 };
 };
 

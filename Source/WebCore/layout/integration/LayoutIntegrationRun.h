@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CachedImage;
 
-namespace Display {
+namespace LayoutIntegration {
 
 struct Run {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

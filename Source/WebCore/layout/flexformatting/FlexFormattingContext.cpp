@@ -97,7 +97,7 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
         computeFlexItemGeometry();
     }
     auto flexLine = InlineRect { flexItemCrosAxisStart, flexItemMainAxisStart, flexItemMainAxisEnd - flexItemMainAxisStart, flexItemCrosAxisEnd - flexItemCrosAxisStart };
-    formattingState.addLine({ flexLine, flexLine, flexLine, { }, { } });
+    formattingState.addLine(flexLine);
 }
 
 void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()

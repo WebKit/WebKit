@@ -478,32 +478,32 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
     }
 }
 
-static void writeTextRun(TextStream& ts, const RenderText& o, const LayoutIntegration::TextRun& textRun)
-{
-    auto rect = textRun.rect();
-    int x = rect.x();
-    int y = rect.y();
-    // FIXME: Use non-logical width. webkit.org/b/206809.
-    int logicalWidth = ceilf(rect.x() + (textRun.isHorizontal() ? rect.width() : rect.height())) - x;
-    // FIXME: Table cell adjustment is temporary until results can be updated.
-    if (is<RenderTableCell>(*o.containingBlock()))
-        y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
-        
-    ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
-    if (!textRun.isLeftToRightDirection() || textRun.dirOverride()) {
-        ts << (!textRun.isLeftToRightDirection() ? " RTL" : " LTR");
-        if (textRun.dirOverride())
-            ts << " override";
-    }
-    ts << ": "
-        << quoteAndEscapeNonPrintables(textRun.text());
-    if (textRun.hasHyphen())
-        ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style().hyphenString().string());
-    ts << "\n";
-}
-
 void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
+    auto writeTextRun = [&](auto& textRenderer, auto& textRun)
+    {
+        auto rect = textRun.rect();
+        int x = rect.x();
+        int y = rect.y();
+        // FIXME: Use non-logical width. webkit.org/b/206809.
+        int logicalWidth = ceilf(rect.x() + (textRun.isHorizontal() ? rect.width() : rect.height())) - x;
+        // FIXME: Table cell adjustment is temporary until results can be updated.
+        if (is<RenderTableCell>(*o.containingBlock()))
+            y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
+
+        ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
+        if (!textRun.isLeftToRightDirection() || textRun.dirOverride()) {
+            ts << (!textRun.isLeftToRightDirection() ? " RTL" : " LTR");
+            if (textRun.dirOverride())
+                ts << " override";
+        }
+        ts << ": "
+            << quoteAndEscapeNonPrintables(textRun.text());
+        if (textRun.hasHyphen())
+            ts << " + hyphen string " << quoteAndEscapeNonPrintables(textRenderer.style().hyphenString().string());
+        ts << "\n";
+    };
+
     if (is<RenderSVGShape>(o)) {
         write(ts, downcast<RenderSVGShape>(o), behavior);
         return;
@@ -548,7 +548,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         auto& text = downcast<RenderText>(o);
         for (auto& run : LayoutIntegration::textRunsFor(text)) {
             ts << indent;
-            writeTextRun(ts, text, run);
+            writeTextRun(text, run);
         }
     } else {
         for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(o))) {

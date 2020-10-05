@@ -1,3 +1,127 @@
+2020-10-05  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Move Display::InlineContent to LayoutIntegration namespace
+        https://bugs.webkit.org/show_bug.cgi?id=217310
+
+        Reviewed by Zalan Bujtas.
+
+        It is only used by the integration code
+
+        Also move the related classes and rename the path independent iterator run to PathRun
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/DisplayView.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/displaytree/DisplayRect.h: Removed.
+        * layout/flexformatting/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        * layout/flexformatting/FlexFormattingState.h:
+        (WebCore::Layout::FlexFormattingState::lines const):
+        (WebCore::Layout::FlexFormattingState::addLine):
+        * layout/integration/LayoutIntegrationInlineContent.cpp: Renamed from Source/WebCore/layout/displaytree/DisplayInlineContent.cpp.
+        * layout/integration/LayoutIntegrationInlineContent.h: Renamed from Source/WebCore/layout/displaytree/DisplayInlineContent.h.
+        * layout/integration/LayoutIntegrationLine.h: Renamed from Source/WebCore/layout/displaytree/DisplayLine.h.
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::constructContent):
+        (WebCore::LayoutIntegration::LineLayout::lineCount const):
+        (WebCore::LayoutIntegration::LineLayout::adjustForPagination):
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        (WebCore::LayoutIntegration::LineLayout::ensureInlineContent):
+        (WebCore::LayoutIntegration::LineLayout::textRunsFor const):
+        (WebCore::LayoutIntegration::LineLayout::runFor const):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        (WebCore::LayoutIntegration::LineLayout::constructDisplayContent): Deleted.
+        (WebCore::LayoutIntegration::LineLayout::ensureDisplayInlineContent): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        (WebCore::LayoutIntegration::LineLayout::inlineContent const):
+        (WebCore::LayoutIntegration::LineLayout::displayInlineContent const): Deleted.
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::computeLineTopAndBottomWithOverflow):
+        (WebCore::LayoutIntegration::updateMinimumPageHeight):
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        (WebCore::LayoutIntegration::adjustLinePositionsForPagination):
+        * layout/integration/LayoutIntegrationPagination.h:
+        * layout/integration/LayoutIntegrationRun.h: Renamed from Source/WebCore/layout/displaytree/DisplayRun.h.
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::RunIterator):
+        (WebCore::LayoutIntegration::TextRunIterator::TextRunIterator):
+        (WebCore::LayoutIntegration::LineRunIterator::LineRunIterator):
+        (WebCore::LayoutIntegration::PathRun::modernPath):
+        (WebCore::LayoutIntegration::PathRun::legacyPath):
+        (WebCore::LayoutIntegration::Run::modernPath): Deleted.
+        (WebCore::LayoutIntegration::Run::legacyPath): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::legacyInlineBox const):
+        (WebCore::LayoutIntegration::RunIterator::operator* const):
+        (WebCore::LayoutIntegration::RunIterator::operator-> const):
+        (WebCore::LayoutIntegration::TextRunIterator::operator* const):
+        (WebCore::LayoutIntegration::TextRunIterator::operator-> const):
+        (WebCore::LayoutIntegration::TextRunIterator::get const):
+        (WebCore::LayoutIntegration::PathRun::PathRun):
+        (WebCore::LayoutIntegration::PathRun::isText const):
+        (WebCore::LayoutIntegration::PathRun::rect const):
+        (WebCore::LayoutIntegration::PathRun::baseline const):
+        (WebCore::LayoutIntegration::PathRun::isHorizontal const):
+        (WebCore::LayoutIntegration::PathRun::dirOverride const):
+        (WebCore::LayoutIntegration::PathRun::isLineBreak const):
+        (WebCore::LayoutIntegration::PathRun::useLineBreakBoxRenderTreeDumpQuirk const):
+        (WebCore::LayoutIntegration::PathRun::minimumCaretOffset const):
+        (WebCore::LayoutIntegration::PathRun::maximumCaretOffset const):
+        (WebCore::LayoutIntegration::PathRun::bidiLevel const):
+        (WebCore::LayoutIntegration::PathRun::onSameLine const):
+        (WebCore::LayoutIntegration::PathRun::legacyInlineBox const):
+        (WebCore::LayoutIntegration::PathTextRun::hasHyphen const):
+        (WebCore::LayoutIntegration::PathTextRun::PathTextRun):
+        (WebCore::LayoutIntegration::PathTextRun::text const):
+        (WebCore::LayoutIntegration::PathTextRun::localStartOffset const):
+        (WebCore::LayoutIntegration::PathTextRun::localEndOffset const):
+        (WebCore::LayoutIntegration::PathTextRun::length const):
+        (WebCore::LayoutIntegration::PathTextRun::isLastTextRunOnLine const):
+        (WebCore::LayoutIntegration::PathTextRun::isLastTextRun const):
+        (isType):
+        (WebCore::LayoutIntegration::Run::leftmostCaretOffset const): Deleted.
+        (WebCore::LayoutIntegration::Run::rightmostCaretOffset const): Deleted.
+        (WebCore::LayoutIntegration::Run::direction const): Deleted.
+        (WebCore::LayoutIntegration::Run::isLeftToRightDirection const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::legacyInlineBox const): Deleted.
+        (WebCore::LayoutIntegration::Run::Run): Deleted.
+        (WebCore::LayoutIntegration::Run::isText const): Deleted.
+        (WebCore::LayoutIntegration::Run::rect const): Deleted.
+        (WebCore::LayoutIntegration::Run::baseline const): Deleted.
+        (WebCore::LayoutIntegration::Run::isHorizontal const): Deleted.
+        (WebCore::LayoutIntegration::Run::dirOverride const): Deleted.
+        (WebCore::LayoutIntegration::Run::isLineBreak const): Deleted.
+        (WebCore::LayoutIntegration::Run::useLineBreakBoxRenderTreeDumpQuirk const): Deleted.
+        (WebCore::LayoutIntegration::Run::minimumCaretOffset const): Deleted.
+        (WebCore::LayoutIntegration::Run::maximumCaretOffset const): Deleted.
+        (WebCore::LayoutIntegration::Run::bidiLevel const): Deleted.
+        (WebCore::LayoutIntegration::Run::onSameLine const): Deleted.
+        (WebCore::LayoutIntegration::Run::legacyInlineBox const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::hasHyphen const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::TextRun): Deleted.
+        (WebCore::LayoutIntegration::TextRun::text const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::localStartOffset const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::localEndOffset const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::length const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::isLastTextRunOnLine const): Deleted.
+        (WebCore::LayoutIntegration::TextRun::isLastTextRun const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::ModernPath):
+        (WebCore::LayoutIntegration::ModernPath::runs const):
+        (WebCore::LayoutIntegration::ModernPath::run const):
+        (WebCore::LayoutIntegration::ModernPath::line const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeTextRun): Deleted.
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+
 2020-10-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable non-uniform line height content with floats

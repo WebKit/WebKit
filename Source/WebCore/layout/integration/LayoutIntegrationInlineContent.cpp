@@ -24,15 +24,15 @@
 */
 
 #include "config.h"
+#include "LayoutIntegrationInlineContent.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineContent.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextPainter.h"
 
 namespace WebCore {
-namespace Display {
+namespace LayoutIntegration {
 
 WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect&) const
 {

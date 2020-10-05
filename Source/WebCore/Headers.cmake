@@ -705,13 +705,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
-    layout/displaytree/DisplayInlineContent.h
-    layout/displaytree/DisplayLine.h
-    layout/displaytree/DisplayRect.h
-    layout/displaytree/DisplayRun.h
-
     layout/inlineformatting/InlineRect.h
 
+    layout/integration/LayoutIntegrationInlineContent.h
+    layout/integration/LayoutIntegrationLine.h
+    layout/integration/LayoutIntegrationRun.h
     layout/integration/LayoutIntegrationRunIterator.h
     layout/integration/LayoutIntegrationRunIteratorLegacyPath.h
     layout/integration/LayoutIntegrationRunIteratorModernPath.h

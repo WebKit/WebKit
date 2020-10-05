@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayInlineContent.h"
+#include "LayoutIntegrationInlineContent.h"
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ class RenderBlockFlow;
 
 namespace LayoutIntegration {
     
-Ref<Display::InlineContent> adjustLinePositionsForPagination(Display::InlineContent&, RenderBlockFlow&);
+Ref<InlineContent> adjustLinePositionsForPagination(InlineContent&, RenderBlockFlow&);
 
 }
 }

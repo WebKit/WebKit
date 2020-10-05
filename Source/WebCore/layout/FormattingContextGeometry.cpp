@@ -201,8 +201,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         auto& lines = layoutState.establishedFlexFormattingState(formattingRootContainer).lines();
         ASSERT(!lines.isEmpty());
         // FIXME: Move flex over to layout geometry.
-        top = lines.first().rect().y();
-        bottom = lines.last().rect().maxY();
+        top = lines.first().top();
+        bottom = lines.last().bottom();
     } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || formattingRootContainer.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.firstInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
