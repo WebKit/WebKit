@@ -1,3 +1,15 @@
+2020-10-05  Rob Buis  <rbuis@igalia.com>
+
+        MIME type parser should skip trailing HTTP whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=217179
+
+        Reviewed by Darin Adler.
+
+        Add unit tests for trailing HTTP whitespace.
+
+        * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-10-04  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Add WKUIDelegate SPI to inform clients when a _WKInspector is about to close

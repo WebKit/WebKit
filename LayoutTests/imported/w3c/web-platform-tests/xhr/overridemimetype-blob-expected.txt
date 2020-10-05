@@ -49,7 +49,7 @@ FAIL 44) MIME types need to be parsed and serialized: x/x;test="\ assert_equals:
 PASS 45) MIME types need to be parsed and serialized: x/x;x=
 PASS 46) MIME types need to be parsed and serialized: x/x;x=	
 FAIL 47) MIME types need to be parsed and serialized: x/x
-\r	 ;x=x assert_equals: expected "x/x;x=x" but got "application/octet-stream"
+\r	 ;x=x assert_equals: expected "x/x;x=x" but got ""
 FAIL 48) MIME types need to be parsed and serialized:
 \r	 x/x;x=x
 \r	  assert_equals: expected "x/x;x=x" but got ""

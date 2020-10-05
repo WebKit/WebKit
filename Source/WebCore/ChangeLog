@@ -1,3 +1,17 @@
+2020-10-05  Rob Buis  <rbuis@igalia.com>
+
+        MIME type parser should skip trailing HTTP whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=217179
+
+        Reviewed by Darin Adler.
+
+        MIME type parser should skip trailing HTTP whitespace in Mimesniff mode [1].
+
+        [1] https://mimesniff.spec.whatwg.org/#parse-a-mime-type (Steps 8 and 11.9.2)
+
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::parseToken):
+
 2020-10-04  Rob Buis  <rbuis@igalia.com>
 
         DataTransfer.setDragImage takes a non nullable Element parameter

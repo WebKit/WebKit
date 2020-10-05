@@ -74,8 +74,13 @@ static StringView parseToken(StringView input, unsigned& startIndex, CharacterMe
     if (tokenEnd == tokenStart)
         return StringView();
     if (skipTrailingWhitespace) {
-        while (input[tokenEnd - 1] == ' ')
-            --tokenEnd;
+        if (mode == Mode::Rfc2045) {
+            while (input[tokenEnd - 1] == ' ')
+                --tokenEnd;
+        } else {
+            while (isHTTPSpace(input[tokenEnd - 1]))
+                --tokenEnd;
+        }
     }
     return input.substring(tokenStart, tokenEnd - tokenStart);
 }

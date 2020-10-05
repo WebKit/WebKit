@@ -1,3 +1,14 @@
+2020-10-05  Rob Buis  <rbuis@igalia.com>
+
+        MIME type parser should skip trailing HTTP whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=217179
+
+        Reviewed by Darin Adler.
+
+        Update test expectation.
+
+        * web-platform-tests/xhr/overridemimetype-blob-expected.txt:
+
 2020-10-03  Oriol Brufau  <obrufau@igalia.com>
 
         [css-lists] Implement list-style-type: <string>
