@@ -19,11 +19,11 @@
       let audit = Audit.createTaskRunner();
 
       let testConfigs = [
-        {channelCount: 1, message: 'mono', floatRelError: 6.3283e-8},
+        {channelCount: 1, message: 'mono', floatRelError: 1.2657e-7},
         {channelCount: 2, message: 'stereo', floatRelError: 1.1681e-7},
         {channelCount: 4, message: 'quad', floatRelError: 4.9793e-7},
         {channelCount: 6, message: '5.1', floatRelError: 2.0215e-7},
-        {channelCount: 3, message: '3-channel', floatRelError: 6.3283e-8}
+        {channelCount: 3, message: '3-channel', floatRelError: 1.2657e-7}
       ];
 
       // Create tasks for each entry in testConfigs

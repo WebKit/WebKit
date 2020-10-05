@@ -62,19 +62,19 @@ PASS   Order: 12: Max FFT value is greater than or equal to -30.
 PASS   4096-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [12-order FFT] All assertions passed. (total 4 assertions)
 PASS > [13-order FFT]
-PASS   8192-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":3.2106e-7}.
+PASS   8192-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":3.4196e-7}.
 PASS   Order: 13: Min FFT value is less than or equal to -100.
 PASS   Order: 13: Max FFT value is greater than or equal to -30.
 PASS   8192-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [13-order FFT] All assertions passed. (total 4 assertions)
 PASS > [14-order FFT]
-PASS   16384-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1756e-7}.
+PASS   16384-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.6257e-7}.
 PASS   Order: 14: Min FFT value is less than or equal to -100.
 PASS   Order: 14: Max FFT value is greater than or equal to -30.
 PASS   16384-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
 PASS < [14-order FFT] All assertions passed. (total 4 assertions)
 PASS > [15-order FFT]
-PASS   32768-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.1756e-7}.
+PASS   32768-point float FFT equals [-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100,-100...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":2.0876e-7}.
 PASS   Order: 15: Min FFT value is less than or equal to -100.
 PASS   Order: 15: Max FFT value is greater than or equal to -30.
 PASS   32768-point byte FFT equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.

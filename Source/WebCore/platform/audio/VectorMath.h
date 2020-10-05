@@ -32,26 +32,28 @@ namespace WebCore {
 namespace VectorMath {
 
 // Vector scalar multiply and then add.
-void vsma(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess);
+void vsma(const float* inputVector, int inputStride, const float* scale, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
 
-void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess);
-void vsadd(const float* sourceP, int sourceStride, const float* scalar, float* destP, int destStride, size_t framesToProcess);
-void vadd(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess);
+void vsmul(const float* inputVector, int inputStride, const float* scale, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
+void vsadd(const float* inputVector, int inputStride, const float* scalar, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
+void vadd(const float* inputVector1, int inputStride1, const float* inputVector2, int inputStride2, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
 
 // Finds the maximum magnitude of a float vector.
-void vmaxmgv(const float* sourceP, int sourceStride, float* maxP, size_t framesToProcess);
+void vmaxmgv(const float* inputVector, int inputStride, float* maximumValue, size_t numberOfElementsToProcess);
 
 // Sums the squares of a float vector's elements.
-void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesToProcess);
+void vsvesq(const float* inputVector, int inputStride, float* sum, size_t numberOfElementsToProcess);
 
 // For an element-by-element multiply of two float vectors.
-void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess);
+void vmul(const float* inputVector1, int inputStride1, const float* inputVector2, int inputStride2, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
 
 // Multiplies two complex vectors.
-void zvmul(const float* real1P, const float* imag1P, const float* real2P, const float* imag2P, float* realDestP, float* imagDestP, size_t framesToProcess);
+void zvmul(const float* realVector1, const float* imagVector1, const float* realVector2, const float* imagVector2, float* realOutputVector, float* imagOutputVector, size_t numberOfElementsToProcess);
 
 // Copies elements while clipping values to the threshold inputs.
-void vclip(const float* sourceP, int sourceStride, const float* lowThresholdP, const float* highThresholdP, float* destP, int destStride, size_t framesToProcess);
+void vclip(const float* inputVector, int inputStride, const float* lowThresholdP, const float* highThresholdP, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
+
+void linearToDecibels(const float* inputVector, int inputStride, float* outputVector, int outputStride, size_t numberOfElementsToProcess);
 
 } // namespace VectorMath
 

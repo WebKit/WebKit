@@ -8,7 +8,7 @@ PASS Executing "3-channel"
 PASS Audit report
 PASS > [mono]
 PASS   Analyser downmix mono to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...].
-PASS   Analyser downmix mono to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}.
+PASS   Analyser downmix mono to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.2657e-7}.
 PASS < [mono] All assertions passed. (total 2 assertions)
 PASS > [stereo]
 PASS   Analyser downmix stereo to mono time data is identical to the array [2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5...].
@@ -24,7 +24,7 @@ PASS   Analyser downmix 5.1 to mono freq data equals [expected array] with an el
 PASS < [5.1] All assertions passed. (total 2 assertions)
 PASS > [3-channel]
 PASS   Analyser downmix 3-channel to mono time data is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...].
-PASS   Analyser downmix 3-channel to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":6.3283e-8}.
+PASS   Analyser downmix 3-channel to mono freq data equals [expected array] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":1.2657e-7}.
 PASS < [3-channel] All assertions passed. (total 2 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
 

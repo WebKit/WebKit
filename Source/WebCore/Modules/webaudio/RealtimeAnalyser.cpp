@@ -185,15 +185,8 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
     doFFTAnalysisIfNecessary();
     
     // Convert from linear magnitude to floating-point decibels.
-    unsigned sourceLength = magnitudeBuffer().size();
-    size_t length = std::min(sourceLength, destinationArray.length());
-    if (length > 0) {
-        auto* source = magnitudeBuffer().data();
-        auto* destination = destinationArray.data();
-        
-        for (size_t i = 0; i < length; ++i)
-            destination[i] = AudioUtilities::linearToDecibels(source[i]);
-    }
+    size_t length = std::min<size_t>(magnitudeBuffer().size(), destinationArray.length());
+    VectorMath::linearToDecibels(magnitudeBuffer().data(), 1, destinationArray.data(), 1, length);
 }
 
 void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
