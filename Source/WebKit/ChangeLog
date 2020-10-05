@@ -1,3 +1,32 @@
+2020-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up "rendering update" terminology in DrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=217307
+
+        Reviewed by Tim Horton.
+
+        DrawingArea doesn't know about "immediate" vs. "normal" rendering updates; for it,
+        all requests are for immediate rendering updates; the only difference is whether
+        layer tree freezing is respected.
+
+        This is the first step to correcting the naming; scheduleImmediateRenderingUpdate()
+        doesn't have to be exposed at all. A future patch will rename DrawingArea::scheduleRenderingUpdate()
+        to make it clear that it's not about timed updates.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::RemoteLayerTreeDrawingArea::startRenderingUpdateTimer):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleRenderingUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleImmediateRenderingUpdate): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdate):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleImmediateRenderingUpdate): Deleted.
+
 2020-10-05  Per Arne Vollan  <pvollan@apple.com>
 
         [GPU Process] Make it possible to dynamically block IOKit in the WebContent sandbox

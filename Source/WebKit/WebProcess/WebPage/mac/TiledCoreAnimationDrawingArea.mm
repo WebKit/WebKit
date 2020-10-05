@@ -209,11 +209,7 @@ void TiledCoreAnimationDrawingArea::scheduleRenderingUpdate()
 {
     if (m_layerTreeStateIsFrozen)
         return;
-    scheduleRenderingUpdateRunLoopObserver();
-}
 
-void TiledCoreAnimationDrawingArea::scheduleImmediateRenderingUpdate()
-{
     scheduleRenderingUpdateRunLoopObserver();
 }
 

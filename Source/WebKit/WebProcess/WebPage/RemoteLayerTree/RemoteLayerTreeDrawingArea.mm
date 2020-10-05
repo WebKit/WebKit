@@ -202,7 +202,7 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
-        scheduleImmediateRenderingUpdate();
+        startRenderingUpdateTimer();
     }
 }
 
@@ -267,8 +267,10 @@ TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
     return frameView ? frameView->tiledBacking() : nullptr;
 }
 
-void RemoteLayerTreeDrawingArea::scheduleImmediateRenderingUpdate()
+void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
+    if (m_updateRenderingTimer.isActive())
+        return;
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
@@ -279,9 +281,7 @@ void RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
         return;
     }
 
-    if (m_updateRenderingTimer.isActive())
-        return;
-    scheduleImmediateRenderingUpdate();
+    startRenderingUpdateTimer();
 }
 
 void RemoteLayerTreeDrawingArea::addCommitHandlers()
@@ -484,7 +484,7 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     if (activityStateChangeID != ActivityStateChangeAsynchronous) {
         m_nextRenderingUpdateRequiresSynchronousImageDecoding = true;
         m_activityStateChangeID = activityStateChangeID;
-        scheduleImmediateRenderingUpdate();
+        startRenderingUpdateTimer();
     }
 
     // FIXME: We may want to match behavior in TiledCoreAnimationDrawingArea by firing these callbacks after the next compositing flush, rather than immediately after
