@@ -1,3 +1,14 @@
+2020-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r267763) [SOUP] Some tests flaky crashing in NetworkSessionSoup::soupSession()
+        https://bugs.webkit.org/show_bug.cgi?id=217163
+
+        Reviewed by Alex Christensen.
+
+        Remove expectations for tests that should pass now.
+
+        * platform/glib/TestExpectations:
+
 2020-10-04  Darin Adler  <darin@apple.com>
 
         Selection API: Fix more editing tests that rely on non-standard selection API behavior

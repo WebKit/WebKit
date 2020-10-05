@@ -33,7 +33,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediastream/gtk"
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
     "${WEBCORE_DIR}/platform/mock/mediasource"
-    "${WEBCORE_DIR}/platform/network/gtk"
+    "${WEBCORE_DIR}/platform/network/glib"
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 

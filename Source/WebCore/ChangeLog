@@ -1,3 +1,30 @@
+2020-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r267763) [SOUP] Some tests flaky crashing in NetworkSessionSoup::soupSession()
+        https://bugs.webkit.org/show_bug.cgi?id=217163
+
+        Reviewed by Alex Christensen.
+
+        Stop using libsoup for DNS resolver. The libsoup APIs are actually using the GLib networking APIs, and the don't
+        really use the SoupSession. Rename DNSResolveQueueSoup as DNSResolveQueueGLib and use the GLib API instead.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * platform/Soup.cmake:
+        * platform/SourcesGLib.txt:
+        * platform/SourcesSoup.txt:
+        * platform/network/DNSResolveQueue.cpp:
+        * platform/network/glib/DNSResolveQueueGLib.cpp: Added.
+        (WebCore::didResolveProxy):
+        (WebCore::proxyResolvedForHttpUriCallback):
+        (WebCore::proxyResolvedForHttpsUriCallback):
+        (WebCore::DNSResolveQueueGLib::updateIsUsingProxy):
+        (WebCore::DNSResolveQueueGLib::platformResolve):
+        (WebCore::DNSResolveQueueGLib::resolve):
+        (WebCore::DNSResolveQueueGLib::stopResolve):
+        * platform/network/glib/DNSResolveQueueGLib.h: Renamed from Source/WebCore/platform/network/soup/DNSResolveQueueSoup.h.
+        * platform/network/soup/DNSResolveQueueSoup.cpp: Removed.
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         WebKit doesn't parse "#" as delimiter for fragment identifier in data URIs

@@ -30,4 +30,5 @@ platform/glib/LowPowerModeNotifierGLib.cpp
 platform/glib/SharedBufferGlib.cpp
 platform/glib/UserAgentGLib.cpp
 
+platform/network/glib/DNSResolveQueueGLib.cpp
 platform/network/glib/NetworkStateNotifierGLib.cpp

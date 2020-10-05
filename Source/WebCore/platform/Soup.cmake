@@ -9,7 +9,6 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/soup/AuthenticationChallenge.h
     platform/network/soup/CertificateInfo.h
-    platform/network/soup/DNSResolveQueueSoup.h
     platform/network/soup/GRefPtrSoup.h
     platform/network/soup/GUniquePtrSoup.h
     platform/network/soup/ResourceError.h

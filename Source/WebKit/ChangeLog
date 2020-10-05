@@ -1,3 +1,14 @@
+2020-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r267763) [SOUP] Some tests flaky crashing in NetworkSessionSoup::soupSession()
+        https://bugs.webkit.org/show_bug.cgi?id=217163
+
+        Reviewed by Alex Christensen.
+
+        Remove code to set the SoupSession on DNSResolveQueue.
+
+        * NetworkProcess/NetworkProcess.cpp:
+
 2020-10-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r267986.
