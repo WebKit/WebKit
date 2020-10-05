@@ -658,10 +658,6 @@ webkit.org/b/211887 [ Debug ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [
 webkit.org/b/211887 [ Debug ] webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Crash ]
 webkit.org/b/211887 [ Debug ] webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadArgs.html [ Crash ]
 
-webkit.org/b/215725 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Crash ]
-webkit.org/b/215725 webgl/1.0.3/conformance/extensions/get-extension.html [ Crash ]
-webkit.org/b/215725 webgl/1.0.3/conformance/context/context-lost-restored.html [ Failure ]
-
 webkit.org/b/216071 fast/canvas/webgl/move-canvas-in-document-while-clean.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,14 @@
+2020-10-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Remove two WebGL tests crashing that are passing since r266809.
+
+        Unreviewed test gardening.
+
+        Also emit GLIB baseline for webgl/1.0.3/conformance/context/context-lost-restored.html.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt:
+
 2020-10-05  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Introduce bindings for the Contact Picker API
