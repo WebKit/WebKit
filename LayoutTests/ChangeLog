@@ -1,3 +1,22 @@
+2020-10-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Merge common GTK and WPE baselines and emit new baselines for WPE tests after r267960.
+
+        Also move webaudio/oscillator-sine.html failure to glib.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fetch/fetch-url-serialization-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt: Copied from LayoutTests/platform/glib/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt.
+        * platform/wpe/http/tests/storageAccess/aggregate-sorted-data-with-storage-access-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt.
+
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix UTF-8 encoding in URL parsing

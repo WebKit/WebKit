@@ -325,6 +325,6 @@ a\rg' with base 'about:blank'
 PASS Testing Request url '?a=b&c=d' with base 'http://example.org/foo/bar'
 PASS Testing Request url '??a=b&c=d' with base 'http://example.org/foo/bar'
 PASS Testing Request url 'http:' with base 'http://example.org/foo/bar'
-FAIL Testing Request url 'http:' with base 'https://example.org/foo/bar' assert_throws: function "function () {  new Request(url.input); }" did not throw
+PASS Testing Request url 'http:' with base 'https://example.org/foo/bar'
 PASS Testing Request url 'sc:' with base 'https://example.org/foo/bar'
 
