@@ -55,11 +55,6 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
     static get supportsEditing()
     {
-        if (this._eventListener) {
-            // COMPATIBILITY (iOS 14): DOM.setBreakpointForEventListener did not have an "options" parameter yet.
-            return InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options");
-        }
-
         // COMPATIBILITY (iOS 14): DOMDebugger.setEventBreakpoint did not have an "options" parameter yet.
         return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "options");
     }
@@ -116,7 +111,12 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
     get editable()
     {
-        return WI.EventBreakpoint.editable || super.editable;
+        if (this._eventListener) {
+            // COMPATIBILITY (iOS 14): DOM.setBreakpointForEventListener did not have an "options" parameter yet.
+            return InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options");
+        }
+
+        return WI.EventBreakpoint.supportsEditing || super.editable;
     }
 
     remove()

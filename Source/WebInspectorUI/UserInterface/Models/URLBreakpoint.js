@@ -38,7 +38,7 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
 
     // Static
 
-    static get editable()
+    static get supportsEditing()
     {
         // COMPATIBILITY (iOS 14): DOMDebugger.setURLBreakpoint did not have an "options" parameter yet.
         return InspectorBackend.hasCommand("DOMDebugger.setURLBreakpoint", "options");
@@ -84,7 +84,7 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
 
     get editable()
     {
-        return WI.URLBreakpoint.editable || super.editable;
+        return WI.URLBreakpoint.supportsEditing || super.editable;
     }
 
     remove()
