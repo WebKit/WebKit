@@ -1122,16 +1122,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->plugInSnapshottingEnabled();
 }
 
-- (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
-{
-    _preferences->setSubpixelCSSOMElementMetricsEnabled(enabled);
-}
-
-- (BOOL)_subpixelCSSOMElementMetricsEnabled
-{
-    return _preferences->subpixelCSSOMElementMetricsEnabled();
-}
-
 - (void)_setViewGestureDebuggingEnabled:(BOOL)enabled
 {
     _preferences->setViewGestureDebuggingEnabled(enabled);
@@ -1498,3 +1488,19 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 @end
 
+@implementation WKPreferences (WKPrivateDeprecated)
+
+#if !TARGET_OS_IPHONE
+
+- (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_subpixelCSSOMElementMetricsEnabled
+{
+    return NO;
+}
+
+#endif
+
+@end

@@ -1309,16 +1309,6 @@ bool WKPreferencesGetDeferredCSSParserEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->deferredCSSParserEnabled();
 }
 
-void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setSubpixelCSSOMElementMetricsEnabled(flag);
-}
-
-bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->subpixelCSSOMElementMetricsEnabled();
-}
-
 void WKPreferencesSetUseGiantTiles(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setUseGiantTiles(flag);
@@ -2211,4 +2201,13 @@ void WKPreferencesSetCrossOriginResourcePolicyEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetCrossOriginResourcePolicyEnabled(WKPreferencesRef)
 {
     return true;
+}
+
+void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef)
+{
+    return false;
 }

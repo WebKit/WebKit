@@ -1045,14 +1045,6 @@ static double localZoomForRenderer(const RenderElement& renderer)
     return zoomFactor;
 }
 
-static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer, double& zoomFactor)
-{
-    zoomFactor = localZoomForRenderer(renderer);
-    if (zoomFactor == 1)
-        return value.toDouble();
-    return value.toDouble() / zoomFactor;
-}
-
 static int adjustContentsScrollPositionOrSizeForZoom(int value, const Frame& frame)
 {
     double zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
@@ -1067,22 +1059,18 @@ static int adjustContentsScrollPositionOrSizeForZoom(int value, const Frame& fra
 
 enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
 
-static bool subpixelMetricsEnabled(const Document& document)
+static int convertToNonSubpixelValue(double value, const LegacyCSSOMElementMetricsRoundingStrategy roundStrategy = Round)
 {
-    return document.settings().subpixelCSSOMElementMetricsEnabled();
+    return roundStrategy == Round ? std::round(value) : std::floor(value);
 }
 
-static double convertToNonSubpixelValueIfNeeded(double value, const Document& document, LegacyCSSOMElementMetricsRoundingStrategy roundStrategy = Round)
+static int adjustOffsetForZoomAndSubpixelLayout(RenderBoxModelObject& renderer, const LayoutUnit& offset)
 {
-    return subpixelMetricsEnabled(document) ? value : roundStrategy == Round ? round(value) : floor(value);
-}
-
-static double adjustOffsetForZoomAndSubpixelLayout(RenderBoxModelObject* renderer, const LayoutUnit& offset)
-{
-    LayoutUnit offsetLeft = subpixelMetricsEnabled(renderer->document()) ? offset : LayoutUnit(roundToInt(offset));
-    double zoomFactor = 1;
-    double offsetLeftAdjustedWithZoom = adjustForLocalZoom(offsetLeft, *renderer, zoomFactor);
-    return convertToNonSubpixelValueIfNeeded(offsetLeftAdjustedWithZoom, renderer->document(), zoomFactor == 1 ? Floor : Round);
+    auto offsetLeft = LayoutUnit { roundToInt(offset) };
+    double zoomFactor = localZoomForRenderer(renderer);
+    if (zoomFactor == 1)
+        return convertToNonSubpixelValue(offsetLeft, Floor);
+    return convertToNonSubpixelValue(offsetLeft / zoomFactor, Round);
 }
 
 static HashSet<TreeScope*> collectAncestorTreeScopeAsHashSet(Node& node)
@@ -1093,7 +1081,7 @@ static HashSet<TreeScope*> collectAncestorTreeScopeAsHashSet(Node& node)
     return ancestors;
 }
 
-double Element::offsetLeftForBindings()
+int Element::offsetLeftForBindings()
 {
     auto offset = offsetLeft();
 
@@ -1114,15 +1102,15 @@ double Element::offsetLeftForBindings()
     return offset;
 }
 
-double Element::offsetLeft()
+int Element::offsetLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return adjustOffsetForZoomAndSubpixelLayout(renderer, renderer->offsetLeft());
+        return adjustOffsetForZoomAndSubpixelLayout(*renderer, renderer->offsetLeft());
     return 0;
 }
 
-double Element::offsetTopForBindings()
+int Element::offsetTopForBindings()
 {
     auto offset = offsetTop();
 
@@ -1143,30 +1131,30 @@ double Element::offsetTopForBindings()
     return offset;
 }
 
-double Element::offsetTop()
+int Element::offsetTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return adjustOffsetForZoomAndSubpixelLayout(renderer, renderer->offsetTop());
+        return adjustOffsetForZoomAndSubpixelLayout(*renderer, renderer->offsetTop());
     return 0;
 }
 
-double Element::offsetWidth()
+int Element::offsetWidth()
 {
     document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
-        LayoutUnit offsetWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetWidth() : LayoutUnit(roundToInt(renderer->offsetWidth()));
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble(), renderer->document());
+        auto offsetWidth = LayoutUnit { roundToInt(renderer->offsetWidth()) };
+        return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble());
     }
     return 0;
 }
 
-double Element::offsetHeight()
+int Element::offsetHeight()
 {
     document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
-        LayoutUnit offsetHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetHeight() : LayoutUnit(roundToInt(renderer->offsetHeight()));
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble(), renderer->document());
+        auto offsetHeight = LayoutUnit { roundToInt(renderer->offsetHeight()) };
+        return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble());
     }
     return 0;
 }
@@ -1193,29 +1181,29 @@ Element* Element::offsetParent()
     return offsetParent->element();
 }
 
-double Element::clientLeft()
+int Element::clientLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (auto* renderer = renderBox()) {
-        LayoutUnit clientLeft = subpixelMetricsEnabled(renderer->document()) ? renderer->clientLeft() : LayoutUnit(roundToInt(renderer->clientLeft()));
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientLeft, *renderer).toDouble(), renderer->document());
+        auto clientLeft = LayoutUnit { roundToInt(renderer->clientLeft()) };
+        return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientLeft, *renderer).toDouble());
     }
     return 0;
 }
 
-double Element::clientTop()
+int Element::clientTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
     if (auto* renderer = renderBox()) {
-        LayoutUnit clientTop = subpixelMetricsEnabled(renderer->document()) ? renderer->clientTop() : LayoutUnit(roundToInt(renderer->clientTop()));
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientTop, *renderer).toDouble(), renderer->document());
+        auto clientTop = LayoutUnit { roundToInt(renderer->clientTop()) };
+        return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientTop, *renderer).toDouble());
     }
     return 0;
 }
 
-double Element::clientWidth()
+int Element::clientWidth()
 {
     document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
 
@@ -1231,7 +1219,7 @@ double Element::clientWidth()
         return adjustForAbsoluteZoom(renderView.frameView().layoutWidth(), renderView);
     
     if (RenderBox* renderer = renderBox()) {
-        LayoutUnit clientWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->clientWidth() : LayoutUnit(roundToInt(renderer->clientWidth()));
+        auto clientWidth = LayoutUnit { roundToInt(renderer->clientWidth()) };
         // clientWidth/Height is the visual portion of the box content, not including
         // borders or scroll bars, but includes padding. And per
         // https://www.w3.org/TR/CSS2/tables.html#model,
@@ -1244,12 +1232,12 @@ double Element::clientWidth()
         // when we retrieve clientWidth/Height, it includes table's border size.
         if (renderer->isTable())
             clientWidth += renderer->borderLeft() + renderer->borderRight();
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble(), renderer->document());
+        return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble());
     }
     return 0;
 }
 
-double Element::clientHeight()
+int Element::clientHeight()
 {
     document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
     if (!document().hasLivingRenderTree())
@@ -1264,7 +1252,7 @@ double Element::clientHeight()
         return adjustForAbsoluteZoom(renderView.frameView().layoutHeight(), renderView);
 
     if (RenderBox* renderer = renderBox()) {
-        LayoutUnit clientHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->clientHeight() : LayoutUnit(roundToInt(renderer->clientHeight()));
+        auto clientHeight = LayoutUnit { roundToInt(renderer->clientHeight()) };
         // clientWidth/Height is the visual portion of the box content, not including
         // borders or scroll bars, but includes padding. And per
         // https://www.w3.org/TR/CSS2/tables.html#model,
@@ -1277,7 +1265,7 @@ double Element::clientHeight()
         // when we retrieve clientWidth/Height, it includes table's border size.
         if (renderer->isTable())
             clientHeight += renderer->borderTop() + renderer->borderBottom();
-        return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble(), renderer->document());
+        return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble());
     }
     return 0;
 }

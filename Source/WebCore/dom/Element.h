@@ -161,12 +161,12 @@ public:
     WEBCORE_EXPORT void scrollByLines(int lines);
     WEBCORE_EXPORT void scrollByPages(int pages);
 
-    WEBCORE_EXPORT double offsetLeftForBindings();
-    WEBCORE_EXPORT double offsetLeft();
-    WEBCORE_EXPORT double offsetTopForBindings();
-    WEBCORE_EXPORT double offsetTop();
-    WEBCORE_EXPORT double offsetWidth();
-    WEBCORE_EXPORT double offsetHeight();
+    WEBCORE_EXPORT int offsetLeftForBindings();
+    WEBCORE_EXPORT int offsetLeft();
+    WEBCORE_EXPORT int offsetTopForBindings();
+    WEBCORE_EXPORT int offsetTop();
+    WEBCORE_EXPORT int offsetWidth();
+    WEBCORE_EXPORT int offsetHeight();
 
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
 
@@ -177,10 +177,10 @@ public:
     const Element* rootElement() const;
 
     Element* offsetParent();
-    WEBCORE_EXPORT double clientLeft();
-    WEBCORE_EXPORT double clientTop();
-    WEBCORE_EXPORT double clientWidth();
-    WEBCORE_EXPORT double clientHeight();
+    WEBCORE_EXPORT int clientLeft();
+    WEBCORE_EXPORT int clientTop();
+    WEBCORE_EXPORT int clientWidth();
+    WEBCORE_EXPORT int clientHeight();
 
     virtual int scrollLeft();
     virtual int scrollTop();

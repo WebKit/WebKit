@@ -1,3 +1,22 @@
+2020-10-05  Sam Weinig  <weinig@apple.com>
+
+        Remove support for enabling subpixel CSSOM values, it's off by default everywhere and known to be not-compatible with the web
+        https://bugs.webkit.org/show_bug.cgi?id=217300
+
+        Reviewed by Simon Fraser.
+
+        Remove support in MiniBrowser for toggling support for subpixel CSSOM values since it
+        is no longer supported in WebCore.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleEnableSubPixelCSSOMMetrics:]): Deleted.
+        (-[SettingsController subPixelCSSOMMetricsEnabled]): Deleted.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Unify linkedOnOrAfter duplicate code and use SPI/WebCoreTestSupport instead of NSUserDefaults

@@ -269,8 +269,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)webAudioEnabled;
 - (void)setWebAudioEnabled:(BOOL)enabled;
 
-- (BOOL)subpixelCSSOMElementMetricsEnabled;
-- (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled;
 
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
@@ -651,29 +649,16 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
 
+@property (nonatomic) BOOL subpixelCSSOMElementMetricsEnabled;
 @property (nonatomic) BOOL userTimingEnabled;
 @property (nonatomic) BOOL resourceTimingEnabled;
-
-- (void)setCSSShadowPartsEnabled:(BOOL)flag;
-- (BOOL)cssShadowPartsEnabled;
-
-- (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
-- (BOOL)isSecureContextAttributeEnabled;
-
-- (void)setFetchAPIEnabled:(BOOL)flag;
-- (BOOL)fetchAPIEnabled;
-
-- (void)setShadowDOMEnabled:(BOOL)flag;
-- (BOOL)shadowDOMEnabled;
-
-- (void)setCustomElementsEnabled:(BOOL)flag;
-- (BOOL)customElementsEnabled;
-
-- (void)setVideoPluginProxyEnabled:(BOOL)flag;
-- (BOOL)isVideoPluginProxyEnabled;
-
-- (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
-- (BOOL)isHixie76WebSocketProtocolEnabled;
+@property (nonatomic, getter=cssShadowPartsEnabled) BOOL CSSShadowPartsEnabled;
+@property (nonatomic) BOOL isSecureContextAttributeEnabled;
+@property (nonatomic) BOOL fetchAPIEnabled;
+@property (nonatomic) BOOL shadowDOMEnabled;
+@property (nonatomic) BOOL customElementsEnabled;
+@property (nonatomic, getter=isVideoPluginProxyEnabled) BOOL videoPluginProxyEnabled;
+@property (nonatomic, getter=isHixie76WebSocketProtocolEnabled) BOOL hixie76WebSocketProtocolEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

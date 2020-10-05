@@ -324,7 +324,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
 
-    [[WebPreferences standardPreferences] setSubpixelCSSOMElementMetricsEnabled:settings.subPixelCSSOMMetricsEnabled];
     [[WebPreferences standardPreferences] setShowDebugBorders:settings.layerBordersVisible];
     [[WebPreferences standardPreferences] setSimpleLineLayoutEnabled:settings.simpleLineLayoutEnabled];
     [[WebPreferences standardPreferences] setSimpleLineLayoutDebugBordersEnabled:settings.simpleLineLayoutDebugBordersEnabled];

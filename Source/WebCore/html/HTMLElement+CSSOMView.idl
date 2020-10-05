@@ -26,12 +26,8 @@
 // https://drafts.csswg.org/cssom-view/#extensions-to-the-htmlelement-interface
 partial interface HTMLElement {
     [ImplementedAs=offsetParentForBindings] readonly attribute Element? offsetParent;
-    // FIXME: 'offsetTop' should be of type 'long'.
-    [ImplementedAs=offsetTopForBindings] readonly attribute double offsetTop;
-    // FIXME: 'offsetLeft' should be of type 'long'.
-    [ImplementedAs=offsetLeftForBindings] readonly attribute double offsetLeft;
-    // FIXME: 'offsetWidth' should be of type 'long'.
-    readonly attribute double offsetWidth;
-    // FIXME: 'offsetHeight' should be of type 'long'.
-    readonly attribute double offsetHeight;
+    [ImplementedAs=offsetTopForBindings] readonly attribute long offsetTop;
+    [ImplementedAs=offsetLeftForBindings] readonly attribute long offsetLeft;
+    readonly attribute long offsetWidth;
+    readonly attribute long offsetHeight;
 };

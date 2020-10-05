@@ -61,7 +61,6 @@ static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"W
 
 static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWindows";
 static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
-static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPixelCSSOMMetrics";
 
 static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
 static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
@@ -244,7 +243,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [internalDebugFeaturesMenu release];
 
     [self _addHeaderWithTitle:@"WebKit1-only Settings"];
-    [self _addItemWithTitle:@"Enable Subpixel CSSOM Metrics" action:@selector(toggleEnableSubPixelCSSOMMetrics:) indented:YES];
 }
 
 + (NSArray *)userAgentData
@@ -388,8 +386,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self useUISideCompositing] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
         [menuItem setState:[self perWindowWebProcessesDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleEnableSubPixelCSSOMMetrics:))
-        [menuItem setState:[self subPixelCSSOMMetricsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDebugOverlay:))
         [menuItem setState:[self debugOverlayVisible:menuItem] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(changeCutomUserAgent:)) {
@@ -705,16 +701,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)useSystemAppearance
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseSystemAppearancePreferenceKey];
-}
-
-- (void)toggleEnableSubPixelCSSOMMetrics:(id)sender
-{
-    [self _toggleBooleanDefault:EnableSubPixelCSSOMMetricsPreferenceKey];
-}
-
-- (BOOL)subPixelCSSOMMetricsEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:EnableSubPixelCSSOMMetricsPreferenceKey];
 }
 
 - (BOOL)nonFastScrollableRegionOverlayVisible

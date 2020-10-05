@@ -1693,14 +1693,6 @@ StorageBlockingPolicy:
     WebKit:
       default: WebCore::SecurityOrigin::BlockThirdPartyStorage
 
-SubpixelCSSOMElementMetricsEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 SubresourceIntegrityEnabled:
   type: bool
   defaultValue:

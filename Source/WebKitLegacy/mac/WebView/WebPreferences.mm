@@ -1850,16 +1850,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitWebAudioEnabledPreferenceKey];
 }
 
-- (BOOL)subpixelCSSOMElementMetricsEnabled
-{
-    return [self _boolValueForKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
-}
-
-- (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
-}
-
 - (BOOL)webGLEnabled
 {
     return [self _boolValueForKey:WebKitWebGLEnabledPreferenceKey];
@@ -3381,6 +3371,16 @@ static NSString *classIBCreatorID = nil;
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (void)setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
+}
+
+- (BOOL)subpixelCSSOMElementMetricsEnabled
+{
+    return [self _boolValueForKey:WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey];
+}
 
 - (void)setUserTimingEnabled:(BOOL)flag
 {

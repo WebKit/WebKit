@@ -38,10 +38,10 @@ partial interface Element {
     attribute long scrollLeft; // FIXME(webkit.org/b/188045): should be unrestricted double.
     readonly attribute long scrollWidth;
     readonly attribute long scrollHeight;
-    readonly attribute double clientTop; // FIXME: Should be of type long.
-    readonly attribute double clientLeft; // FIXME: Should be of type long.
-    readonly attribute double clientWidth; // FIXME: Should be of type long.
-    readonly attribute double clientHeight; // FIXME: Should be of type long.
+    readonly attribute long clientTop;
+    readonly attribute long clientLeft;
+    readonly attribute long clientWidth;
+    readonly attribute long clientHeight;
 
     // Non-standard: https://www.w3.org/Bugs/Public/show_bug.cgi?id=17152.
     undefined scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
