@@ -1265,6 +1265,10 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 {
     VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    if (UNLIKELY(Options::debuggerTriggersBreakpointException()) && debugHookType == DidReachDebuggerStatement)
+        WTFBreakpointTrap();
+
     Debugger* debugger = callFrame->lexicalGlobalObject(vm)->debugger();
     if (!debugger)
         return;

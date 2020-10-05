@@ -110,6 +110,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, dumpBytecodeLivenessResults, false, Normal, nullptr) \
     v(Bool, validateBytecode, false, Normal, nullptr) \
     v(Bool, forceDebuggerBytecodeGeneration, false, Normal, nullptr) \
+    v(Bool, debuggerTriggersBreakpointException, false, Normal, "Using the debugger statement will trigger an breakpoint exception (Useful when lldbing)") \
     v(Bool, dumpBytecodesBeforeGeneratorification, false, Normal, nullptr) \
     \
     v(Bool, useFunctionDotArguments, true, Normal, nullptr) \

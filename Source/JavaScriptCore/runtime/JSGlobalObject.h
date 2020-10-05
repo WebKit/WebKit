@@ -1164,7 +1164,7 @@ inline JSObject* JSGlobalObject::globalThis() const
 inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const
 {
     OptionSet<CodeGenerationMode> codeGenerationMode;
-    if (hasInteractiveDebugger() || Options::forceDebuggerBytecodeGeneration())
+    if (hasInteractiveDebugger() || Options::forceDebuggerBytecodeGeneration() || Options::debuggerTriggersBreakpointException())
         codeGenerationMode.add(CodeGenerationMode::Debugger);
     if (vm().typeProfiler())
         codeGenerationMode.add(CodeGenerationMode::TypeProfiler);
