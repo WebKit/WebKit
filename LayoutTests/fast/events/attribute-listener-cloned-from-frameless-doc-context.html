@@ -1,6 +1,6 @@
 <html>
 <body onload="test()">
-<iframe src='data:text/html,<a id="a" href="#" onclick="document.write(window != top ? &apos;<p>FAIL</p>&apos; : &apos;<p>PASS</p>&apos;); return false">link</a>'></iframe>
+<iframe src='data:text/html,<a id="a" href="%23" onclick="document.write(window != top ? &apos;<p>FAIL</p>&apos; : &apos;<p>PASS</p>&apos;); return false">link</a>'></iframe>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();

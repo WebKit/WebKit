@@ -1,3 +1,49 @@
+2020-10-05  Rob Buis  <rbuis@igalia.com>
+
+        WebKit doesn't parse "#" as delimiter for fragment identifier in data URIs
+        https://bugs.webkit.org/show_bug.cgi?id=68089
+
+        Reviewed by Alex Christensen, Ryosuke Niwa, and Darin Adler.
+
+        Adjusts tests thats use data URIs to escape the # character.
+
+        * accessibility/ios-simulator/iframe-access.html:
+        * accessibility/ios-simulator/unobscured-content-rect.html:
+        * accessibility/resources/iframe.html:
+        * accessibility/scroll-to-global-point-iframe.html:
+        * accessibility/scroll-to-make-visible-iframe-offscreen.html:
+        * accessibility/scroll-to-make-visible-iframe.html:
+        * css3/blending/background-blend-mode-crossfade-image.html:
+        * css3/blending/background-blend-mode-data-uri-svg-image.html:
+        * css3/blending/background-blend-mode-tiled-layers.html:
+        * css3/flexbox/flexitem.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-002.html:
+        * css3/shapes/shape-outside/shape-image/shape-image-005.html:
+        * editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html:
+        * editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html:
+        * fast/css-grid-layout/grid-item-display.html:
+        * fast/css/import-style-update.html:
+        * fast/css/link-media-attr.html:
+        * fast/dom/HTMLLinkElement/link-stylesheet-media-type.html:
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html:
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context.html:
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html:
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context.html:
+        * fast/hidpi/image-srcset-data-escaped-srcset.html:
+        * fast/html/link-rel-stylesheet.html:
+        * fast/loader/data-url-encoding-html.html:
+        * fast/loader/data-url-encoding-svg.html:
+        * fast/spatial-navigation/resources/iframe.html:
+        * http/tests/security/top-level-unique-origin.https.html:
+        * platform/ios/css3/flexbox/flexitem-expected.txt:
+        * platform/win/css3/flexbox/flexitem-expected.txt:
+        * security/contentSecurityPolicy/link-with-data-url-allowed-by-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html:
+        * svg/animations/css-animation-background-svg.html:
+        * svg/animations/css-animation-embedded-svg.html:
+        * svg/animations/css-animation-hover-svg.html:
+        * svg/as-image/svg-canvas-data-url-svg-with-feimage-not-tainted.html:
+        * svg/custom/object-data-href.html:
+
 2020-10-05  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Fix expectations of a test which is actually passing

@@ -1,3 +1,20 @@
+2020-10-05  Rob Buis  <rbuis@igalia.com>
+
+        WebKit doesn't parse "#" as delimiter for fragment identifier in data URIs
+        https://bugs.webkit.org/show_bug.cgi?id=68089
+
+        Reviewed by Alex Christensen, Ryosuke Niwa, and Darin Adler.
+
+        To maintain compatibility with existing iOS and macOS apps, we only do this for apps linked
+        with the SDK after the change.
+
+        Covered by newly passing web platform tests (which Chrome and Firefox already passed).
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::shouldStripFragmentIdentifier):
+        (WebCore::ResourceLoader::loadDataURL):
+        * platform/cocoa/VersionChecks.h:
+
 2020-10-05  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Introduce bindings for the Contact Picker API

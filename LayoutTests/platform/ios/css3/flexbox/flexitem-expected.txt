@@ -31,7 +31,7 @@ FAIL .flexbox 18 assert_equals:
 <div class="flexbox" style="height:200px">
   <button data-expected-display="block" data-expected-width="100" data-expected-height="200">button</button>
   <canvas data-expected-display="block" data-expected-width="100" data-expected-height="200">canvas</canvas>
-  <iframe data-expected-display="block" data-expected-width="100" data-expected-height="200" src="data:text/html,&lt;body bgcolor=#fff&gt;iframe&lt;/body&gt;"></iframe>
+  <iframe data-expected-display="block" data-expected-width="100" data-expected-height="200" src="data:text/html,&lt;body bgcolor=%23fff&gt;iframe&lt;/body&gt;"></iframe>
   <object data-expected-display="block" data-expected-width="100" data-expected-height="200">object</object>
   <select data-expected-display="block" data-expected-width="100" data-expected-height="200">
     <option>select</option>

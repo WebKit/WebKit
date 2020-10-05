@@ -17,6 +17,6 @@ function test() {
 <p>Test that non-ASCII data: URLs are handled correctly.</p>
 <pre id=result></pre>
 <iframe src="data:image/svg+xml;charset=utf-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 test='ðÒÏ×ÅÒËÁ'></svg>"></iframe>
-<iframe src="data:image/svg+xml;charset=utf-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 foo='#' test='ðÒÏ×ÅÒËÁ'></svg>"></iframe>
-<iframe src="data:image/svg+xml;charset=utf-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 foo='#' test='%D0%9F%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%BA%D0%B0'></svg>"></iframe>
+<iframe src="data:image/svg+xml;charset=utf-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 foo='%23' test='ðÒÏ×ÅÒËÁ'></svg>"></iframe>
+<iframe src="data:image/svg+xml;charset=utf-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 foo='%23' test='%D0%9F%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%BA%D0%B0'></svg>"></iframe>
 </body>

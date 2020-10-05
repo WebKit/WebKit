@@ -7,7 +7,7 @@ PASS "data:"
 PASS "data:text/html"
 PASS "data:text/html    ;charset=x   "
 PASS "data:,"
-FAIL "data:,X#X" assert_array_equals: lengths differ, expected array [88] length 1, got object "88,35,88" length 3
+PASS "data:,X#X"
 PASS "data:,%FF"
 PASS "data:text/plain,X"
 PASS "data:text/plain ,X"

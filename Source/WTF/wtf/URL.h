@@ -107,7 +107,7 @@ public:
     WTF_EXPORT_PRIVATE StringView queryWithLeadingQuestionMark() const;
     WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const;
     WTF_EXPORT_PRIVATE StringView stringWithoutQueryOrFragmentIdentifier() const;
-    StringView stringWithoutFragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE StringView stringWithoutFragmentIdentifier() const;
 
     WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
     WTF_EXPORT_PRIVATE String hostAndPort() const;

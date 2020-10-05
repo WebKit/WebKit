@@ -64,6 +64,7 @@ enum class SDKVersion : uint32_t {
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_IOS_VERSION_14_0,
     FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_IOS_VERSION_14_0,
     FirstVersionWithiOSAppsOnMacOS = DYLD_IOS_VERSION_FIRST_WITH_IOS_APPS_ON_MACOS,
+    FirstWithDataURLFragmentRemoval = DYLD_IOS_VERSION_14_5,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
@@ -79,6 +80,7 @@ enum class SDKVersion : uint32_t {
     FirstWithSessionCleanupByDefault = DYLD_MACOSX_VERSION_10_16,
     FirstWithInitializeWebKit2MainThreadAssertion = DYLD_MACOSX_VERSION_10_16,
     FirstWithWKWebsiteDataStoreInitReturningNil = DYLD_MACOSX_VERSION_10_16,
+    FirstWithDataURLFragmentRemoval = DYLD_MACOSX_VERSION_11_3,
 #endif
 };
 
