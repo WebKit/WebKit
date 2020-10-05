@@ -694,12 +694,8 @@ WI.DOMManager = class DOMManager extends WI.Object
     removeBreakpointForEventListener(eventListener)
     {
         let breakpoint = this._breakpointsForEventListeners.take(eventListener.eventListenerId);
-        console.assert(breakpoint);
-
-        for (let target of WI.targets) {
-            if (target.hasDomain("DOM"))
-                target.DOMAgent.removeBreakpointForEventListener(eventListener.eventListenerId);
-        }
+        if (!breakpoint)
+            return;
 
         // Disable the breakpoint first, so removing actions doesn't re-add the breakpoint.
         breakpoint.disabled = true;
