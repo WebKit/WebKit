@@ -31,13 +31,13 @@ partial interface Document {
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString alinkColor;
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString bgColor;
 
-    readonly attribute HTMLCollection anchors; // Should be [SameObject].
-    readonly attribute HTMLCollection applets; // Should be [SameObject].
+    [SameObject] readonly attribute HTMLCollection anchors;
+    [SameObject] readonly attribute HTMLCollection applets;
 
     undefined clear();
     undefined captureEvents();
     undefined releaseEvents();
 
     // FIXME: 'all' is not specified to be [Replaceable].
-    [Replaceable] readonly attribute HTMLAllCollection all; // Should be [SameObject].
+    [Replaceable, SameObject] readonly attribute HTMLAllCollection all;
 };

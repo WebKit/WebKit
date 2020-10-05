@@ -18,13 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://dom.spec.whatwg.org/#interface-treewalker
 [
     ExportToWrappedFunction,
     ImplementationLacksVTable,
     JSCustomMarkFunction,
     Exposed=Window
 ] interface TreeWalker {
-    readonly attribute Node root; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute Node root;
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter? filter;
     attribute Node currentNode;

@@ -1,3 +1,42 @@
+2020-10-04  Sam Weinig  <weinig@apple.com>
+
+        [WebIDL] Address consistency around [SameObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=217303
+
+        Reviewed by Darin Adler.
+
+        There isn't any real value in keeping comments around in the IDLs saying:
+        
+            // FIXME: Add [SameObject] once it is supported
+        
+        It's unclear what we would want the bindings generator to do with [SameObject],
+        perhaps for wrapper types, assert if the implementation doesn't return the same
+        object each time in a debug build, perhaps error out if a non-wrapper type doesn't
+        also have CachedAttribute or maybe just have SameObject imply it. Regardless,
+        in the mean time, there is no harm in just annotating the types with the attribute
+        and letting the generator do nothing while we think.
+
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/mediastream/MediaStreamTrackEvent.idl:
+        * css/DocumentOrShadowRoot+CSSOM.idl:
+        * css/ElementCSSInlineStyle.idl:
+        * dom/DOMQuad.idl:
+        * dom/DataTransfer.idl:
+        * dom/Document+HTML.idl:
+        * dom/Document+HTMLObsolete.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/MutationRecord.idl:
+        * dom/Node.idl:
+        * dom/NodeIterator.idl:
+        * dom/ParentNode.idl:
+        * dom/TreeWalker.idl:
+        * html/HTMLOrForeignElement.idl:
+        * html/HTMLSelectElement.idl:
+        * page/Location.idl:
+        * svg/SVGFitToViewBox.idl:
+
 2020-10-04  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Presence of CSS variable causes a background url() to get resolved with a different base

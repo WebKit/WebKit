@@ -51,7 +51,7 @@
     [DOMJIT=Getter] readonly attribute Node? parentNode;
     readonly attribute Element? parentElement;
     boolean hasChildNodes();
-    readonly attribute NodeList childNodes; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute NodeList childNodes;
     [DOMJIT=Getter] readonly attribute Node? firstChild;
     [DOMJIT=Getter] readonly attribute Node? lastChild;
     [DOMJIT=Getter] readonly attribute Node? previousSibling;

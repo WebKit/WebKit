@@ -33,12 +33,12 @@
 
     [CEReactions, Reflect] attribute DOMString id;
     [CEReactions, Reflect=class] attribute DOMString className;
-    [PutForwards=value] readonly attribute DOMTokenList classList; // FIXME: Should be [SameObject].
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
     [CEReactions, Reflect, Unscopable] attribute DOMString slot;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
     [DOMJIT=ReadDOM] boolean hasAttributes();
-    readonly attribute NamedNodeMap attributes; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute NamedNodeMap attributes;
     sequence<DOMString> getAttributeNames();
     [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString qualifiedName);
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);

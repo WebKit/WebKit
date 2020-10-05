@@ -45,7 +45,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 ] interface Document : Node {
     [CallWith=Document] constructor();
 
-    readonly attribute DOMImplementation implementation; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute DOMImplementation implementation;
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
     readonly attribute DOMString compatMode;

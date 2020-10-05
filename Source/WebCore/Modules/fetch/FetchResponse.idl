@@ -55,7 +55,7 @@ dictionary FetchResponseInit {
     readonly attribute unsigned short status;
     readonly attribute boolean ok;
     readonly attribute ByteString statusText;
-    readonly attribute FetchHeaders headers; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute FetchHeaders headers;
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchResponse clone();
 };

@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/history.html#location
 [
     CheckSecurity,
     CustomDefineOwnProperty,
@@ -62,6 +63,5 @@
 
     readonly attribute USVString origin;
 
-    // FIXME: Add support for SameObject.
-    [LegacyUnforgeable, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
+    [LegacyUnforgeable, SameObject, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
 };

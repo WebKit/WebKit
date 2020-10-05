@@ -34,7 +34,7 @@
 
     readonly attribute DOMString type;
 
-    /* [SameObject] */ readonly attribute HTMLOptionsCollection options;
+    [SameObject] readonly attribute HTMLOptionsCollection options;
     [CEReactions] attribute unsigned long length;
     getter HTMLOptionElement? item(unsigned long index); // FIXME: The spec has this returning Element?.
     HTMLOptionElement? namedItem([RequiresExistingAtomString] DOMString name);
@@ -43,7 +43,7 @@
     [CEReactions] undefined remove(long index);
     [CEReactions] setter undefined (unsigned long index, HTMLOptionElement? option);
 
-    /* [SameObject] */ readonly attribute HTMLCollection selectedOptions;
+    [SameObject] readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
     attribute DOMString value;
 

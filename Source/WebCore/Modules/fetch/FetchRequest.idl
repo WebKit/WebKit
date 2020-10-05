@@ -40,7 +40,7 @@ typedef (FetchRequest or USVString) RequestInfo;
 
     readonly attribute ByteString method;
     [ImplementedAs=urlString] readonly attribute USVString url;
-    readonly attribute FetchHeaders headers; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute FetchHeaders headers;
 
     readonly attribute FetchRequestDestination destination;
     readonly attribute USVString referrer;

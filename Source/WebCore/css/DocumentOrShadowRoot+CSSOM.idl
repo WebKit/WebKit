@@ -25,6 +25,6 @@
 
 // https://drafts.csswg.org/cssom/#extensions-to-the-document-or-shadow-root-interface
 partial interface mixin DocumentOrShadowRoot {
-    readonly attribute StyleSheetList styleSheets; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute StyleSheetList styleSheets;
 };
 

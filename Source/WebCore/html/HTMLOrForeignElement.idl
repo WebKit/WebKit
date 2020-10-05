@@ -27,7 +27,7 @@
 // FIXME: update above link when this change has been implemented:
 // https://github.com/whatwg/html/issues/4702
 interface mixin HTMLOrForeignElement {
-    readonly attribute DOMStringMap dataset; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute DOMStringMap dataset;
     // FIXME: Implement 'nonce'.
     // attribute DOMString nonce; // intentionally no [CEReactions]
 
