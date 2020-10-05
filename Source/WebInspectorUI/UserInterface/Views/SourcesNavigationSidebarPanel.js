@@ -229,8 +229,17 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         this._localOverridesRow = new WI.DetailsSectionRow(WI.UIString("No Overrides"));
 
+        let localOverrideNavigationBarWrapper = document.createElement("div");
+
+        let localOverrideNavigationBar = new WI.NavigationBar;
+        localOverrideNavigationBarWrapper.appendChild(localOverrideNavigationBar.element);
+
+        this._createLocalOverrideButton = new WI.ButtonNavigationItem("create-local-override", WI.UIString("Create Local Override"), "Images/Plus13.svg", 13, 13);
+        WI.addMouseDownContextMenuHandlers(this._createLocalOverrideButton.element, this._populateCreateLocalOverrideContextMenu.bind(this));
+        localOverrideNavigationBar.addNavigationItem(this._createLocalOverrideButton);
+
         let localOverridesGroup = new WI.DetailsSectionGroup([this._localOverridesRow]);
-        this._localOverridesSection = new WI.DetailsSection("local-overrides", WI.UIString("Local Overrides"), [localOverridesGroup]);
+        this._localOverridesSection = new WI.DetailsSection("local-overrides", WI.UIString("Local Overrides"), [localOverridesGroup], localOverrideNavigationBarWrapper);
 
         this._localOverridesContainer = this.contentView.element.appendChild(document.createElement("div"));
         this._localOverridesContainer.classList.add("local-overrides-container");
@@ -2031,6 +2040,24 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _populateCreateLocalOverrideContextMenu(contextMenu)
+    {
+        if (WI.NetworkManager.supportsOverridingResponses()) {
+            contextMenu.appendItem(WI.UIString("Local Override\u2026"), () => {
+                let popover = new WI.LocalResourceOverridePopover(this);
+                popover.show(null, this._createLocalOverrideButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+            });
+        }
+
+        if (WI.NetworkManager.supportsBootstrapScript()) {
+            contextMenu.appendItem(WI.UIString("Inspector Bootstrap Script"), async () => {
+                await WI.networkManager.createBootstrapScript();
+                WI.networkManager.bootstrapScriptEnabled = true;
+                WI.showRepresentedObject(WI.networkManager.bootstrapScript);
+            });
+        }
+    }
+
     _populateCreateResourceContextMenu(contextMenu)
     {
         if (WI.NetworkManager.supportsOverridingResponses()) {
@@ -2040,10 +2067,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
                 this._localOverridesContainer.hidden = false;
 
-                this._localOverridesSection.titleElement.scrollIntoViewIfNeeded(false);
+                this._createLocalOverrideButton.element.scrollIntoViewIfNeeded(false);
                 requestAnimationFrame(() => {
                     let popover = new WI.LocalResourceOverridePopover(this);
-                    popover.show(null, this._localOverridesSection.titleElement, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+                    popover.show(null, this._createLocalOverrideButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
                 });
             });
         }
