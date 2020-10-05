@@ -68,7 +68,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
     static bool hasWaitedForLaunchServicesDatabase = false;
     if (!hasWaitedForLaunchServicesDatabase) {
         auto startTime = WallTime::now();
-        bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
+        bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(2_s);
         auto elapsedTime = WallTime::now() - startTime;
         if (elapsedTime.value() > 0.5)
             RELEASE_LOG(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());
