@@ -8,7 +8,7 @@
 
 #import "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
 
 #    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
@@ -23,11 +23,10 @@
 #    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
 
 #    import <Foundation/Foundation.h>
-#    import <OpenGLES/EAGL.h>
 #    import <QuartzCore/QuartzCore.h>
 #    import <dlfcn.h>
 
-#    define GLES_SILENCE_DEPRECATION
+#    import "libANGLE/renderer/gl/eagl/EAGLFunctions.h"
 
 namespace
 {
@@ -71,12 +70,12 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
         return egl::EglNotInitialized() << "Unable to query ANGLE's SystemInfo.";
     }
 
-    mContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    mContext = [allocEAGLContextInstance() initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (mContext == nullptr)
     {
         return egl::EglNotInitialized() << "Could not create the EAGL context.";
     }
-    [EAGLContext setCurrentContext:mContext];
+    [getEAGLContextClass() setCurrentContext:mContext];
 
     // There is no equivalent getProcAddress in EAGL so we open the dylib directly
     void *handle = dlopen(kOpenGLESDylibName, RTLD_NOW);
@@ -106,7 +105,7 @@ void DisplayEAGL::terminate()
     mRenderer.reset();
     if (mContext != nullptr)
     {
-        [EAGLContext setCurrentContext:nil];
+        [getEAGLContextClass() setCurrentContext:nil];
         [mContext release];
         mContext = nullptr;
     }
@@ -330,14 +329,14 @@ WorkerContextEAGL::WorkerContextEAGL(EAGLContextObj context) : mContext(context)
 
 WorkerContextEAGL::~WorkerContextEAGL()
 {
-    [EAGLContext setCurrentContext:nil];
+    [getEAGLContextClass() setCurrentContext:nil];
     [mContext release];
     mContext = nullptr;
 }
 
 bool WorkerContextEAGL::makeCurrent()
 {
-    if (![EAGLContext setCurrentContext:static_cast<EAGLContext *>(mContext)])
+    if (![getEAGLContextClass() setCurrentContext:static_cast<EAGLContext *>(mContext)])
     {
         ERR() << "Unable to make gl context current.";
         return false;
@@ -347,13 +346,13 @@ bool WorkerContextEAGL::makeCurrent()
 
 void WorkerContextEAGL::unmakeCurrent()
 {
-    [EAGLContext setCurrentContext:nil];
+    [getEAGLContextClass() setCurrentContext:nil];
 }
 
 WorkerContext *DisplayEAGL::createWorkerContext(std::string *infoLog)
 {
     EAGLContextObj context = nullptr;
-    context                = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    context                = [allocEAGLContextInstance() initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (!context)
     {
         *infoLog += "Could not create the EAGL context.";
@@ -374,4 +373,4 @@ void DisplayEAGL::populateFeatureList(angle::FeatureList *features)
 }
 }
 
-#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#endif  // (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))

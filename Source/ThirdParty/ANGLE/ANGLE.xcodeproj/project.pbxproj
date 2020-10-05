@@ -150,6 +150,16 @@
 		315EBE241FCE462A00AC7A89 /* safe_math_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBE201FCE462A00AC7A89 /* safe_math_impl.h */; };
 		315EBE281FCF808C00AC7A89 /* PMurHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBE261FCF808C00AC7A89 /* PMurHash.cpp */; };
 		315EBE291FCF808C00AC7A89 /* PMurHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBE271FCF808C00AC7A89 /* PMurHash.h */; };
+		31647F9F2511A1A60010F8FB /* SystemInfo_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647F9E2511A1A60010F8FB /* SystemInfo_apple.mm */; };
+		31647FA02511A1A60010F8FB /* SystemInfo_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647F9E2511A1A60010F8FB /* SystemInfo_apple.mm */; };
+		31647FA42515978D0010F8FB /* CGLFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31647FA22515978D0010F8FB /* CGLFunctions.h */; };
+		31647FA52515978D0010F8FB /* CGLFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31647FA22515978D0010F8FB /* CGLFunctions.h */; };
+		31647FA62515978D0010F8FB /* CGLFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31647FA32515978D0010F8FB /* CGLFunctions.cpp */; };
+		31647FA72515978D0010F8FB /* CGLFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31647FA32515978D0010F8FB /* CGLFunctions.cpp */; };
+		31647FB3251768AC0010F8FB /* EAGLFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31647FB2251768AC0010F8FB /* EAGLFunctions.h */; };
+		31647FB4251768AC0010F8FB /* EAGLFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31647FB2251768AC0010F8FB /* EAGLFunctions.h */; };
+		31647FB6251768DD0010F8FB /* EAGLFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647FB5251768DD0010F8FB /* EAGLFunctions.mm */; };
+		31647FB7251768DD0010F8FB /* EAGLFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647FB5251768DD0010F8FB /* EAGLFunctions.mm */; };
 		31A331C21EA5ED2500FD2203 /* bitset_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A331C01EA5ED2500FD2203 /* bitset_utils.h */; };
 		31A331C61EA5ED5F00FD2203 /* system_utils_mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A331C31EA5ED5F00FD2203 /* system_utils_mac.cpp */; };
 		31A331C71EA5ED5F00FD2203 /* system_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A331C41EA5ED5F00FD2203 /* system_utils.h */; };
@@ -1547,6 +1557,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F85DA2F25137808000A500B /* SoftLinking_apple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoftLinking_apple.h; sourceTree = "<group>"; };
 		31012DA018B97B9B0039062F /* BaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTypes.h; sourceTree = "<group>"; };
 		31012DA118B97B9B0039062F /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
 		31012DA218B97B9B0039062F /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
@@ -1681,6 +1692,11 @@
 		315EBE201FCE462A00AC7A89 /* safe_math_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = safe_math_impl.h; sourceTree = "<group>"; };
 		315EBE261FCF808C00AC7A89 /* PMurHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PMurHash.cpp; sourceTree = "<group>"; };
 		315EBE271FCF808C00AC7A89 /* PMurHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMurHash.h; sourceTree = "<group>"; };
+		31647F9E2511A1A60010F8FB /* SystemInfo_apple.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemInfo_apple.mm; sourceTree = "<group>"; };
+		31647FA22515978D0010F8FB /* CGLFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGLFunctions.h; sourceTree = "<group>"; };
+		31647FA32515978D0010F8FB /* CGLFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGLFunctions.cpp; sourceTree = "<group>"; };
+		31647FB2251768AC0010F8FB /* EAGLFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EAGLFunctions.h; path = src/libANGLE/renderer/gl/eagl/EAGLFunctions.h; sourceTree = SOURCE_ROOT; };
+		31647FB5251768DD0010F8FB /* EAGLFunctions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLFunctions.mm; sourceTree = "<group>"; };
 		31A331C01EA5ED2500FD2203 /* bitset_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitset_utils.h; sourceTree = "<group>"; };
 		31A331C31EA5ED5F00FD2203 /* system_utils_mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = system_utils_mac.cpp; sourceTree = "<group>"; };
 		31A331C41EA5ED5F00FD2203 /* system_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system_utils.h; sourceTree = "<group>"; };
@@ -2472,6 +2488,8 @@
 				313BCE4D2361133900FC39E5 /* DeviceEAGL.h */,
 				313BCE462361133800FC39E5 /* DisplayEAGL.h */,
 				313BCE532361133900FC39E5 /* DisplayEAGL.mm */,
+				31647FB2251768AC0010F8FB /* EAGLFunctions.h */,
+				31647FB5251768DD0010F8FB /* EAGLFunctions.mm */,
 				313BCE472361133800FC39E5 /* IOSurfaceSurfaceEAGL.h */,
 				313BCE4E2361133900FC39E5 /* IOSurfaceSurfaceEAGL.mm */,
 				313BCE482361133800FC39E5 /* PbufferSurfaceEAGL.cpp */,
@@ -2960,6 +2978,7 @@
 				A30307872305F8F0002DA972 /* SemaphoreGL.h */,
 				5CB301081DE39F1A00D2C405 /* ShaderGL.cpp */,
 				5CB301091DE39F1A00D2C405 /* ShaderGL.h */,
+				0F85DA2F25137808000A500B /* SoftLinking_apple.h */,
 				5CB3010A1DE39F1A00D2C405 /* StateManagerGL.cpp */,
 				5CB3010B1DE39F1A00D2C405 /* StateManagerGL.h */,
 				5CB3010C1DE39F1A00D2C405 /* SurfaceGL.cpp */,
@@ -2979,6 +2998,8 @@
 		5CB301481DE39F3600D2C405 /* cgl */ = {
 			isa = PBXGroup;
 			children = (
+				31647FA32515978D0010F8FB /* CGLFunctions.cpp */,
+				31647FA22515978D0010F8FB /* CGLFunctions.h */,
 				5CCD59722284FA820018F2D8 /* ContextCGL.cpp */,
 				5CCD59752284FA820018F2D8 /* ContextCGL.h */,
 				6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */,
@@ -3208,6 +3229,7 @@
 			children = (
 				5CCD59982284FC750018F2D8 /* SystemInfo.cpp */,
 				5CCD59992284FC750018F2D8 /* SystemInfo.h */,
+				31647F9E2511A1A60010F8FB /* SystemInfo_apple.mm */,
 				31B15721236B803300CAA4FD /* SystemInfo_internal.h */,
 				31B1571F236B7FAE00CAA4FD /* SystemInfo_ios.cpp */,
 				5CCD59972284FC750018F2D8 /* SystemInfo_macos.mm */,
@@ -3414,6 +3436,7 @@
 				31CDFFD8249184A700486F27 /* BuiltinsWorkaroundGLSL.h in Headers */,
 				31CDFFF9249184A700486F27 /* CallDAG.h in Headers */,
 				31CD0061249184FC00486F27 /* Caps.h in Headers */,
+				31647FA52515978D0010F8FB /* CGLFunctions.h in Headers */,
 				31CDFF822491849800486F27 /* ClampFragDepth.h in Headers */,
 				31CDFF8A2491849800486F27 /* ClampPointSize.h in Headers */,
 				31CD0011249184E700486F27 /* ClearMultiviewGL.h in Headers */,
@@ -3456,6 +3479,7 @@
 				31CD0023249184E700486F27 /* DisplayGL.h in Headers */,
 				31CD002F249184F400486F27 /* DisplayImpl.h in Headers */,
 				31CD0038249184F400486F27 /* driver_utils.h in Headers */,
+				31647FB4251768AC0010F8FB /* EAGLFunctions.h in Headers */,
 				31CDFF9A2491849800486F27 /* EarlyFragmentTestsOptimization.h in Headers */,
 				31CDFDFA249183A500486F27 /* egl.h in Headers */,
 				31CDFDF9249183A500486F27 /* eglext.h in Headers */,
@@ -3819,6 +3843,7 @@
 				A3694FC723202C5200A83D8F /* BuiltinsWorkaroundGLSL.h in Headers */,
 				5C1DBC2B1B04375F00235552 /* CallDAG.h in Headers */,
 				5C1DBDDB1B0438D300235552 /* Caps.h in Headers */,
+				31647FA42515978D0010F8FB /* CGLFunctions.h in Headers */,
 				5C55D66622826B9F00B5BA2C /* ClampFragDepth.h in Headers */,
 				5C55D65B22826B9F00B5BA2C /* ClampPointSize.h in Headers */,
 				315EBDC11FCE44BF00AC7A89 /* ClearMultiviewGL.h in Headers */,
@@ -3861,6 +3886,7 @@
 				5CB3011F1DE39F1A00D2C405 /* DisplayGL.h in Headers */,
 				5CB304E21DE4164800D2C405 /* DisplayImpl.h in Headers */,
 				315EBDC91FCE44E400AC7A89 /* driver_utils.h in Headers */,
+				31647FB3251768AC0010F8FB /* EAGLFunctions.h in Headers */,
 				6EB01C1D2477279A00E50B35 /* EarlyFragmentTestsOptimization.h in Headers */,
 				31DB79582491C84500982878 /* egl.h in Headers */,
 				31DB79592491C84500982878 /* eglext.h in Headers */,
@@ -4322,6 +4348,7 @@
 				31CDFE7E2491843A00486F27 /* BuiltinsWorkaroundGLSL.cpp in Sources */,
 				31CDFE862491843A00486F27 /* CallDAG.cpp in Sources */,
 				31CDFF1C2491845F00486F27 /* Caps.cpp in Sources */,
+				31647FA72515978D0010F8FB /* CGLFunctions.cpp in Sources */,
 				31CDFE582491842E00486F27 /* ClampFragDepth.cpp in Sources */,
 				31CDFE612491842F00486F27 /* ClampPointSize.cpp in Sources */,
 				31CDFEC32491845300486F27 /* ClearMultiviewGL.cpp in Sources */,
@@ -4363,6 +4390,7 @@
 				31CDFEE12491845800486F27 /* DisplayImpl.cpp in Sources */,
 				31CDFEE52491845800486F27 /* driver_utils.cpp in Sources */,
 				31CD00C62491917E00486F27 /* driver_utils_mac.mm in Sources */,
+				31647FB7251768DD0010F8FB /* EAGLFunctions.mm in Sources */,
 				31CDFE442491842E00486F27 /* EarlyFragmentTestsOptimization.cpp in Sources */,
 				31CDFF342491846000486F27 /* EGLSync.cpp in Sources */,
 				31CDFE832491843A00486F27 /* emulated_builtin_functions_hlsl_autogen.cpp in Sources */,
@@ -4555,6 +4583,7 @@
 				31CDFE162491842300486F27 /* system_utils_mac.cpp in Sources */,
 				31CDFE1E2491842300486F27 /* system_utils_posix.cpp in Sources */,
 				31CDFEB12491844200486F27 /* SystemInfo.cpp in Sources */,
+				31647FA02511A1A60010F8FB /* SystemInfo_apple.mm in Sources */,
 				31CDFEB32491844200486F27 /* SystemInfo_ios.cpp in Sources */,
 				31CD00C7249191D100486F27 /* SystemInfo_macos.mm in Sources */,
 				31CDFEFB2491845F00486F27 /* Texture.cpp in Sources */,
@@ -4655,6 +4684,7 @@
 				A3694FC623202C5200A83D8F /* BuiltinsWorkaroundGLSL.cpp in Sources */,
 				5C1DBC2A1B04375F00235552 /* CallDAG.cpp in Sources */,
 				5C1DBDDA1B0438D300235552 /* Caps.cpp in Sources */,
+				31647FA62515978D0010F8FB /* CGLFunctions.cpp in Sources */,
 				5C55D6AC22826BC800B5BA2C /* ClampFragDepth.cpp in Sources */,
 				5C55D6AD22826BC800B5BA2C /* ClampPointSize.cpp in Sources */,
 				315EBDBD1FCE44BF00AC7A89 /* ClearMultiviewGL.cpp in Sources */,
@@ -4696,6 +4726,7 @@
 				5CB304E11DE4164800D2C405 /* DisplayImpl.cpp in Sources */,
 				315EBDCC1FCE44E400AC7A89 /* driver_utils.cpp in Sources */,
 				A303079D23062565002DA972 /* driver_utils_mac.mm in Sources */,
+				31647FB6251768DD0010F8FB /* EAGLFunctions.mm in Sources */,
 				6EB01C1E2477279A00E50B35 /* EarlyFragmentTestsOptimization.cpp in Sources */,
 				5CCD596A2284F7960018F2D8 /* EGLSync.cpp in Sources */,
 				315EBD971FCE443600AC7A89 /* emulated_builtin_functions_hlsl_autogen.cpp in Sources */,
@@ -4888,6 +4919,7 @@
 				31A331C61EA5ED5F00FD2203 /* system_utils_mac.cpp in Sources */,
 				5C55D7302282747700B5BA2C /* system_utils_posix.cpp in Sources */,
 				5CCD599B2284FC750018F2D8 /* SystemInfo.cpp in Sources */,
+				31647F9F2511A1A60010F8FB /* SystemInfo_apple.mm in Sources */,
 				31B15720236B7FAF00CAA4FD /* SystemInfo_ios.cpp in Sources */,
 				5CCD599A2284FC750018F2D8 /* SystemInfo_macos.mm in Sources */,
 				5C1DBF301B0438D300235552 /* Texture.cpp in Sources */,
