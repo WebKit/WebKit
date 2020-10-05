@@ -1062,18 +1062,29 @@ WI.Resource = class Resource extends WI.SourceCode
         cookie[WI.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 
-    async createLocalResourceOverride({initialMIMEType, initialBase64Encoded, initialContent} = {})
+    async createLocalResourceOverride({mimeType, base64Encoded, content} = {})
     {
         console.assert(!this.isLocalResourceOverride);
         console.assert(WI.NetworkManager.supportsOverridingResponses());
 
-        let {rawContent, rawBase64Encoded} = await this.requestContent();
+        mimeType ??= this.mimeType ?? WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(this.urlComponents.lastPathComponent));
+
+        if (base64Encoded === undefined || content === undefined) {
+            try {
+                let {rawContent, rawBase64Encoded} = await this.requestContent();
+                content ??= rawContent;
+                base64Encoded ??= rawBase64Encoded;
+            } catch {
+                content ??= "";
+                base64Encoded ??= !WI.shouldTreatMIMETypeAsText(mimeType);
+            }
+        }
 
         return WI.LocalResourceOverride.create(WI.LocalResourceOverride.InterceptType.Response, {
             url: this.url,
-            mimeType: initialMIMEType !== undefined ? initialMIMEType : this.mimeType,
-            content: initialContent !== undefined ? initialContent : rawContent,
-            base64Encoded: initialBase64Encoded !== undefined ? initialBase64Encoded : rawBase64Encoded,
+            mimeType,
+            content,
+            base64Encoded,
             statusCode: this.statusCode,
             statusText: this.statusText,
             headers: this.responseHeaders,

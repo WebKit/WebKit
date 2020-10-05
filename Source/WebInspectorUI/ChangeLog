@@ -1,5 +1,27 @@
 2020-10-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: unable to create local override for resource that failed to load
+        https://bugs.webkit.org/show_bug.cgi?id=217234
+        <rdar://problem/69888143>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.async createLocalResourceOverride):
+        Wrap the `WI.SourceCode.prototype.requestContent` call in a `try` in case the content is not
+        able to be fetched. If so, determine the MIME from the URL and fall back to `""`.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype.requestLocalResourceOverrideInitialContent):
+        (WI.ResourceContentView.prototype.async _getContentForLocalResourceOverrideFromFile):
+        Drive-by: drop `initial` from the parameter name as it's not really necessary.
+
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.requestLocalResourceOverrideInitialContent):
+        Drive-by: include the `mimeType` and `base64Encoded` of the related `WI.Resource`.
+
+2020-10-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(?): cannot edit Event Breakpoint
         https://bugs.webkit.org/show_bug.cgi?id=217244
 

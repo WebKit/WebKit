@@ -146,11 +146,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             console.assert(fileList.length === 1);
 
             this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
-                callback({
-                    initialMIMEType: mimeType,
-                    initialBase64Encoded: base64Encoded,
-                    initialContent: content,
-                });
+                callback({mimeType, base64Encoded, content});
             });
         });
     }
@@ -281,11 +277,11 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     async _getContentForLocalResourceOverrideFromFile(file, callback)
     {
-        let initialMIMEType = file.type || WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(file.name));
-        if (WI.shouldTreatMIMETypeAsText(initialMIMEType)) {
+        let mimeType = file.type || WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(file.name));
+        if (WI.shouldTreatMIMETypeAsText(mimeType)) {
             await WI.FileUtilities.readText(file, async ({text}) => {
                 await callback({
-                    mimeType: initialMIMEType,
+                    mimeType,
                     base64Encoded: false,
                     content: text,
                 });

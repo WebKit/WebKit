@@ -151,7 +151,11 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
     requestLocalResourceOverrideInitialContent(callback)
     {
-        callback({initialContent: this._textEditor.string});
+        callback({
+            mimeType: this.resource.mimeType,
+            base64Encoded: this.resource.base64Encoded,
+            content: this._textEditor.string,
+        });
     }
 
     get supportsSave()
