@@ -37,7 +37,7 @@
 
     [SameObject, EnabledBySetting=DataTransferItems, CallWith=Document] readonly attribute DataTransferItemList items;
 
-    undefined setDragImage(Element? image, long x, long y); // FIXME: Element argument is not nullable in the HTML standard.
+    undefined setDragImage(Element image, long x, long y);
 
     readonly attribute FrozenArray<DOMString> types;
     [CallWith=Document] DOMString getData(DOMString format);

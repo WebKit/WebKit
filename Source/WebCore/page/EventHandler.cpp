@@ -3889,7 +3889,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             if (auto* renderer = dragState().source->renderer()) {
                 auto absolutePosition = renderer->localToAbsolute();
                 auto delta = m_mouseDownContentsPosition - roundedIntPoint(absolutePosition);
-                dragState().dataTransfer->setDragImage(dragState().source.get(), delta.width(), delta.height());
+                dragState().dataTransfer->setDragImage(*dragState().source, delta.width(), delta.height());
             } else {
                 dispatchEventToDragSourceElement(eventNames().dragendEvent, event.event());
                 m_mouseDownMayStartDrag = false;

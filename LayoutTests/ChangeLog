@@ -1,3 +1,17 @@
+2020-10-04  Rob Buis  <rbuis@igalia.com>
+
+        DataTransfer.setDragImage takes a non nullable Element parameter
+        https://bugs.webkit.org/show_bug.cgi?id=217283
+
+        Reviewed by Sam Weinig.
+
+        Add test to verify DataTransfer.setDragImage throws if a null
+        is passed for the Element parameter.
+
+        * fast/events/setDragImage-element-non-nullable-expected.txt: Added.
+        * fast/events/setDragImage-element-non-nullable.html: Added.
+        * platform/ios/TestExpectations:
+
 2020-10-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Do not assert when right aligned float overflows the containing block on the left
