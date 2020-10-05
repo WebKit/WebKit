@@ -913,7 +913,7 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 void WebChromeClient::scheduleRenderingUpdate()
 {
     if (m_page.drawingArea())
-        m_page.drawingArea()->scheduleRenderingUpdate();
+        m_page.drawingArea()->triggerRenderingUpdate();
 }
 
 void WebChromeClient::contentRuleListNotification(const URL& url, const ContentRuleListResults& results)

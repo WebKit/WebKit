@@ -205,7 +205,7 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
     return m_layerTreeStateIsFrozen;
 }
 
-void TiledCoreAnimationDrawingArea::scheduleRenderingUpdate()
+void TiledCoreAnimationDrawingArea::triggerRenderingUpdate()
 {
     if (m_layerTreeStateIsFrozen)
         return;
@@ -258,7 +258,7 @@ void TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer(GraphicsLayer
 {
     m_viewOverlayRootLayer = viewOverlayRootLayer;
     updateRootLayers();
-    scheduleRenderingUpdate();
+    triggerRenderingUpdate();
 }
 
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
@@ -271,7 +271,7 @@ void TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument(bool shouldS
         return;
 
     m_shouldScaleViewToFitDocument = shouldScaleView;
-    scheduleRenderingUpdate();
+    triggerRenderingUpdate();
 }
 
 void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
@@ -415,7 +415,7 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()
 void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
 {
     m_pendingCallbackIDs.append(callbackID);
-    scheduleRenderingUpdate();
+    triggerRenderingUpdate();
 }
 
 void TiledCoreAnimationDrawingArea::addCommitHandlers()
@@ -548,7 +548,7 @@ void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivitySta
 
     if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbackIDs.isEmpty()) {
         m_shouldHandleActivityStateChangeCallbacks = true;
-        scheduleRenderingUpdate();
+        triggerRenderingUpdate();
     }
 }
 

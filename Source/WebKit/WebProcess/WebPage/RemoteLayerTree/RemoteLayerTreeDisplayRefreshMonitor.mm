@@ -53,7 +53,7 @@ bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
         return false;
 
     if (!isScheduled())
-        static_cast<DrawingArea&>(*m_drawingArea.get()).scheduleRenderingUpdate();
+        static_cast<DrawingArea&>(*m_drawingArea.get()).triggerRenderingUpdate();
 
     setIsActive(true);
     setIsScheduled(true);

@@ -343,7 +343,7 @@ void DrawingAreaCoordinatedGraphics::setRootCompositingLayer(GraphicsLayer* grap
     enterAcceleratedCompositingMode(graphicsLayer);
 }
 
-void DrawingAreaCoordinatedGraphics::scheduleRenderingUpdate()
+void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
 {
     if (m_layerTreeStateIsFrozen)
         return;

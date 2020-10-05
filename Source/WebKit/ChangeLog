@@ -1,3 +1,47 @@
+2020-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename DrawingArea::scheduleRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=217337
+
+        Reviewed by Tim Horton.
+
+        DrawingArea::scheduleRenderingUpdate() always schedules an "immediate" update (either
+        on a zero-delay timer, or in the current runloop). To make this more clear, change
+        the terminology to "triggerRenderingUpdate()."
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scheduleRenderingUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::triggerRenderingUpdate):
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleRenderingUpdate): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedContentRect):
+        (WebKit::RemoteLayerTreeDrawingArea::triggerRenderingUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::addTransactionCallbackID):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleRenderingUpdate): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scheduleFullEditorStateUpdate):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::triggerRenderingUpdate):
+        (WebKit::TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument):
+        (WebKit::TiledCoreAnimationDrawingArea::addTransactionCallbackID):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdate): Deleted.
+
 2020-10-05  Eric Carlson  <eric.carlson@apple.com>
 
         Disable media capture if an app's entitlements won't allow access to capture devices
