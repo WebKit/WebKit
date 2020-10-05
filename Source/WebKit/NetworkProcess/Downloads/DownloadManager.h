@@ -84,9 +84,8 @@ public:
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, Optional<NavigatingToAppBoundDomain>, const String& suggestedName = { });
     void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
-    void willDecidePendingDownloadDestination(NetworkDataTask&, ResponseCompletionHandler&&);
     void convertNetworkLoadToDownload(DownloadID, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&,  Vector<RefPtr<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-    void continueDecidePendingDownloadDestination(DownloadID, String destination, SandboxExtension::Handle&&, bool allowOverwrite);
+    void downloadDestinationDecided(DownloadID, Ref<NetworkDataTask>&&);
 
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
 
@@ -114,7 +113,6 @@ public:
 private:
     Client& m_client;
     HashMap<DownloadID, std::unique_ptr<PendingDownload>> m_pendingDownloads;
-    HashMap<DownloadID, std::pair<RefPtr<NetworkDataTask>, ResponseCompletionHandler>> m_downloadsWaitingForDestination;
     HashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
     DownloadMap m_downloads;
 };

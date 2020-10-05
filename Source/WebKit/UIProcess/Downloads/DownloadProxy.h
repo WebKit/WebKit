@@ -49,11 +49,12 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class DownloadID;
 class DownloadProxyMap;
 class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
+
+enum class AllowOverwrite : bool;
 
 struct FrameInfoData;
 
@@ -117,7 +118,7 @@ private:
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
     void didCancel(const IPC::DataReference& resumeData);
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse);
-    void decideDestinationWithSuggestedFilenameAsync(DownloadID, const String& suggestedFilename);
+    void decideDestinationWithSuggestedFilename(const String& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&&);
 
     DownloadProxyMap& m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;

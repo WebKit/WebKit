@@ -59,7 +59,6 @@ messages -> NetworkProcess LegacyReceiver {
     ApplicationWillEnterForeground()
 
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
-    ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle, bool allowOverwrite)
 
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)

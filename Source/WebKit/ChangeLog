@@ -1,3 +1,34 @@
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Use sendWithAsyncReply for DecideDestinationWithSuggestedFilename
+        https://bugs.webkit.org/show_bug.cgi?id=209195
+
+        Reviewed by Tim Horton.
+
+        This makes the download flow more clear.
+        No change in behavior.
+
+        * NetworkProcess/Downloads/DownloadID.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::downloadDestinationDecided):
+        (WebKit::DownloadManager::cancelDownload):
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination): Deleted.
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination): Deleted.
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Scripts/webkit/messages.py:
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/API/APIDownloadClient.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2020-10-05  David Kilzer  <ddkilzer@apple.com>
 
         Make NetscapePlugInStreamLoaderClient a weak pointer on NetscapePlugInStreamLoader

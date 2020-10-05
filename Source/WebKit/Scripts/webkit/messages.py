@@ -664,6 +664,7 @@ def headers_for_type(type):
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::SelectionRect': ['"EditorState.h"'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
+        'WebKit::AllowOverwrite': ['"DownloadID.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
         'WebKit::FindOptions': ['"WebFindOptions.h"'],

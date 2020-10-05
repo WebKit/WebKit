@@ -28,6 +28,7 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
+#include "DownloadID.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +44,7 @@ class DownloadProxy;
 class WebsiteDataStore;
 class WebProtectionSpace;
 
-enum class AllowOverwrite { No, Yes };
+enum class AllowOverwrite : bool;
 }
 
 namespace API {

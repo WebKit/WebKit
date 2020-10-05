@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadID_h
-#define DownloadID_h
+#pragma once
 
 #include "ArgumentCoder.h"
 #include "Decoder.h"
@@ -33,6 +32,9 @@
 
 namespace WebKit {
 
+enum class AllowOverwrite : bool { No, Yes };
+
+// FIXME: This should be an ObjectIdentifier.
 class DownloadID {
 public:
     DownloadID()
@@ -93,4 +95,3 @@ template<> struct HashTraits<WebKit::DownloadID> : GenericHashTraits<WebKit::Dow
 template<> struct DefaultHash<WebKit::DownloadID> : DownloadIDHash { };
 
 }
-#endif /* DownloadID_h */

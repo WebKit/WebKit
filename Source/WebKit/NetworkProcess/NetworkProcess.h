@@ -429,7 +429,6 @@ private:
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
-    void continueDecidePendingDownloadDestination(DownloadID, String destination, SandboxExtension::Handle&&, bool allowOverwrite);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 

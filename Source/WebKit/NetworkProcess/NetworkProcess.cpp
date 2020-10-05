@@ -2097,22 +2097,30 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     uint64_t destinationID = networkDataTask.pendingDownloadID().downloadID();
     downloadProxyConnection()->send(Messages::DownloadProxy::DidReceiveResponse(response), destinationID);
 
-    downloadManager().willDecidePendingDownloadDestination(networkDataTask, WTFMove(completionHandler));
-
     // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
     // should override the suggested filename from the download attribute.
     String suggestedFilename = response.isAttachmentWithFilename() ? response.suggestedFilename() : networkDataTask.suggestedFilename();
     suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
 
-    downloadProxyConnection()->send(Messages::DownloadProxy::DecideDestinationWithSuggestedFilenameAsync(networkDataTask.pendingDownloadID(), suggestedFilename), destinationID);
-}
+    downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), networkDataTask = makeRef(networkDataTask)] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite) mutable {
+        auto downloadID = networkDataTask->pendingDownloadID();
+        if (destination.isEmpty()) {
+            downloadManager().cancelDownload(downloadID);
+            completionHandler(PolicyAction::Ignore);
+            return;
+        }
+        networkDataTask->setPendingDownloadLocation(destination, WTFMove(sandboxExtensionHandle), allowOverwrite == AllowOverwrite::Yes);
+        completionHandler(PolicyAction::Download);
+        if (networkDataTask->state() == NetworkDataTask::State::Canceling || networkDataTask->state() == NetworkDataTask::State::Completed)
+            return;
 
-void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
-{
-    if (destination.isEmpty())
-        downloadManager().cancelDownload(downloadID);
-    else
-        downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
+        if (downloadManager().download(downloadID)) {
+            // The completion handler already called dataTaskBecameDownloadTask().
+            return;
+        }
+
+        downloadManager().downloadDestinationDecided(downloadID, WTFMove(networkDataTask));
+    }, destinationID);
 }
 
 void NetworkProcess::setCacheModelSynchronouslyForTesting(CacheModel cacheModel, CompletionHandler<void()>&& completionHandler)

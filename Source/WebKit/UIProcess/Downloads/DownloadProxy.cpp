@@ -166,19 +166,17 @@ void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWri
     m_processPool->downloadClient().didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
-void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downloadID, const String& suggestedFilename)
+void DownloadProxy::decideDestinationWithSuggestedFilename(const String& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
 {
     if (!m_processPool)
-        return;
+        return completionHandler({ }, { }, { });
     
-    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), downloadID] (AllowOverwrite allowOverwrite, String destination) {
+    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
-        if (!m_dataStore)
-            return;
-        m_dataStore->networkProcess().send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite == AllowOverwrite::Yes), 0);
+        completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
     });
 }
 
