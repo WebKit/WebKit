@@ -1,3 +1,37 @@
+2020-10-05  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should respect enabled and muted tracks
+        https://bugs.webkit.org/show_bug.cgi?id=217312
+
+        Reviewed by Eric Carlson.
+
+        If track is muted, replace it by either silence (audio buffer filled with zeros) or black frames.
+        MediaRecorderPrivate will keep track of whether the selected track should be muted.
+        It is then the responsibility of the specialization to do the appropriate processing.
+
+        Test: http/wpt/mediarecorder/mute-tracks.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::trackMutedChanged):
+        (WebCore::MediaRecorder::trackEnabledChanged):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::zeroFlatBuffer):
+        * platform/audio/cocoa/WebAudioBufferList.h:
+        * platform/mediarecorder/MediaRecorderPrivate.cpp:
+        (WebCore::MediaRecorderPrivate::selectTracks):
+        (WebCore::MediaRecorderPrivate::checkTrackState):
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        (WebCore::MediaRecorderPrivate::trackMutedChanged):
+        (WebCore::MediaRecorderPrivate::trackEnabledChanged):
+        (WebCore::MediaRecorderPrivate::shouldMuteAudio const):
+        (WebCore::MediaRecorderPrivate::shouldMuteVideo const):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        (WebCore::MediaRecorderPrivateAVFImpl::videoSampleAvailable):
+        (WebCore::MediaRecorderPrivateAVFImpl::audioSamplesAvailable):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+
 2020-10-05  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS rotate property

@@ -1,3 +1,13 @@
+2020-10-05  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should respect enabled and muted tracks
+        https://bugs.webkit.org/show_bug.cgi?id=217312
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/mute-tracks-expected.txt: Added.
+        * http/wpt/mediarecorder/mute-tracks.html: Added.
+
 2020-10-05  Antoine Quint  <graouts@webkit.org>
 
         Add non-animated support for the CSS rotate property

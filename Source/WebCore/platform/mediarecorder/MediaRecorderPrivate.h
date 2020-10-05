@@ -65,11 +65,21 @@ public:
     using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
     virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType())); }
 
+    void trackMutedChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
+    void trackEnabledChanged(MediaStreamTrackPrivate& track) { checkTrackState(track); }
+
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
     void setVideoSource(RefPtr<RealtimeMediaSource>&&);
 
+    void checkTrackState(const MediaStreamTrackPrivate&);
+
+    bool shouldMuteAudio() const { return m_shouldMuteAudio; }
+    bool shouldMuteVideo() const { return m_shouldMuteVideo; }
+
 private:
+    bool m_shouldMuteAudio { false };
+    bool m_shouldMuteVideo { false };
     RefPtr<RealtimeMediaSource> m_audioSource;
     RefPtr<RealtimeMediaSource> m_videoSource;
 };
