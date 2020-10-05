@@ -51,7 +51,7 @@ std::unique_ptr<AudioDSPKernel> WaveShaperProcessor::createKernel()
 void WaveShaperProcessor::setCurve(Float32Array* curve)
 {
     // This synchronizes with process().
-    auto locker = holdLock(m_processMutex);
+    auto locker = holdLock(m_processLock);
 
     m_curve = curve;
 }
@@ -59,7 +59,7 @@ void WaveShaperProcessor::setCurve(Float32Array* curve)
 void WaveShaperProcessor::setOversample(OverSampleType oversample)
 {
     // This synchronizes with process().
-    auto locker = holdLock(m_processMutex);
+    auto locker = holdLock(m_processLock);
 
     m_oversample = oversample;
 
@@ -83,10 +83,10 @@ void WaveShaperProcessor::process(const AudioBus* source, AudioBus* destination,
     if (!channelCountMatches)
         return;
 
-    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
-    if (!lock.owns_lock()) {
-        // Too bad - the try_lock() failed. We must be in the middle of a setCurve() call.
+    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // Too bad - tryHoldLock() failed. We must be in the middle of a setCurve() call.
         destination->zero();
         return;
     }

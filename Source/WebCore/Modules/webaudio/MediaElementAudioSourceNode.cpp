@@ -139,11 +139,11 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
         return;
     }
 
-    // Use a std::try_to_lock to avoid contention in the real-time audio thread.
+    // Use tryHoldLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
     // reconfiguring its playback engine, so we output silence in this case.
-    std::unique_lock<Lock> lock(m_processLock, std::try_to_lock);
-    if (!lock.owns_lock()) {
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
         // We failed to acquire the lock.
         outputBus->zero();
         return;

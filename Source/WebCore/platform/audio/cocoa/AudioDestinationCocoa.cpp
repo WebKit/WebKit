@@ -186,8 +186,8 @@ OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 n
     // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.
     if (m_dispatchToRenderThread) {
         m_dispatchToRenderThread([this, protectedThis = makeRef(*this), framesToRender]() mutable {
-            std::unique_lock<Lock> lock(m_isPlayingLock, std::try_to_lock);
-            if (lock.owns_lock() && m_isPlaying)
+            auto locker = tryHoldLock(m_isPlayingLock);
+            if (locker && m_isPlaying)
                 renderOnRenderingThead(framesToRender);
         });
     } else

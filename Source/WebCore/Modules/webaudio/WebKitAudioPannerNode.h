@@ -145,7 +145,7 @@ private:
     unsigned m_connectionCount { 0 };
 
     // Synchronize process() and setPanningModel() which can change the panner.
-    mutable Lock m_pannerMutex;
+    mutable Lock m_processLock;
 };
 
 } // namespace WebCore

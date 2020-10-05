@@ -149,10 +149,10 @@ void PannerNode::process(size_t framesToProcess)
         }
     }
 
-    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<Lock> lock(m_pannerMutex, std::try_to_lock);
-    if (!lock.owns_lock()) {
-        // Too bad - The try_lock() failed. We must be in the middle of changing the panner.
+    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // Too bad - tryHoldLock() failed. We must be in the middle of changing the panner.
         destination->zero();
         return;
     }
@@ -295,7 +295,7 @@ void PannerNode::setPanningModel(PanningModelType model)
 
     if (!m_panner.get() || model != m_panningModel) {
         // This synchronizes with process().
-        auto locker = holdLock(m_pannerMutex);
+        auto locker = holdLock(m_processLock);
 
         m_panner = Panner::create(model, sampleRate(), m_hrtfDatabaseLoader.get());
         m_panningModel = model;
@@ -312,7 +312,7 @@ ExceptionOr<void> PannerNode::setPosition(float x, float y, float z)
     ASSERT(isMainThread());
 
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     auto now = context().currentTime();
 
@@ -339,7 +339,7 @@ ExceptionOr<void> PannerNode::setOrientation(float x, float y, float z)
     ASSERT(isMainThread());
 
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     auto now = context().currentTime();
 
@@ -366,7 +366,7 @@ void PannerNode::setDistanceModel(DistanceModelType model)
     ASSERT(isMainThread());
 
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_distanceEffect.setModel(model, true);
 }
@@ -379,7 +379,7 @@ ExceptionOr<void> PannerNode::setRefDistance(double refDistance)
         return Exception { RangeError, "refDistance cannot be set to a negative value"_s };
     
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_distanceEffect.setRefDistance(refDistance);
     return { };
@@ -393,7 +393,7 @@ ExceptionOr<void> PannerNode::setMaxDistance(double maxDistance)
         return Exception { RangeError, "maxDistance cannot be set to a non-positive value"_s };
     
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_distanceEffect.setMaxDistance(maxDistance);
     return { };
@@ -407,7 +407,7 @@ ExceptionOr<void> PannerNode::setRolloffFactor(double rolloffFactor)
         return Exception { RangeError, "rolloffFactor cannot be set to a negative value"_s };
     
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_distanceEffect.setRolloffFactor(rolloffFactor);
     return { };
@@ -421,7 +421,7 @@ ExceptionOr<void> PannerNode::setConeOuterGain(double gain)
         return Exception { InvalidStateError, "coneOuterGain must be in [0, 1]"_s };
     
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_coneEffect.setOuterGain(gain);
     return { };
@@ -432,7 +432,7 @@ void PannerNode::setConeOuterAngle(double angle)
     ASSERT(isMainThread());
 
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_coneEffect.setOuterAngle(angle);
 }
@@ -442,7 +442,7 @@ void PannerNode::setConeInnerAngle(double angle)
     ASSERT(isMainThread());
 
     // This synchronizes with process().
-    auto locker = holdLock(m_pannerMutex);
+    auto locker = holdLock(m_processLock);
 
     m_coneEffect.setInnerAngle(angle);
 }

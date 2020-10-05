@@ -111,10 +111,10 @@ void WebKitAudioPannerNode::process(size_t framesToProcess)
         }
     }
 
-    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<Lock> lock(m_pannerMutex, std::try_to_lock);
-    if (!lock.owns_lock()) {
-        // Too bad - The try_lock() failed. We must be in the middle of changing the panner.
+    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // Too bad - tryHoldLock() failed. We must be in the middle of changing the panner.
         destination->zero();
         return;
     }
@@ -160,7 +160,7 @@ void WebKitAudioPannerNode::setPanningModel(PanningModelType model)
 {
     if (!m_panner.get() || model != m_panningModel) {
         // This synchronizes with process().
-        auto locker = holdLock(m_pannerMutex);
+        auto locker = holdLock(m_processLock);
 
         m_panner = Panner::create(model, sampleRate(), m_hrtfDatabaseLoader.get());
         m_panningModel = model;

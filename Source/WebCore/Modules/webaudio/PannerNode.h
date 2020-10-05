@@ -169,7 +169,7 @@ private:
 
     // Synchronize process() with setting of the panning model, source's location
     // information, listener, distance parameters and sound cones.
-    mutable Lock m_pannerMutex;
+    mutable Lock m_processLock;
 };
 
 } // namespace WebCore

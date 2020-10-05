@@ -145,7 +145,7 @@ private:
     AudioConnectionRefPtr<PannerNodeBase> m_pannerNode;
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
-    mutable Lock m_processMutex;
+    mutable Lock m_processLock;
 };
 
 } // namespace WebCore

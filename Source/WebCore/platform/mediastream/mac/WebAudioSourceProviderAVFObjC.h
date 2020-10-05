@@ -85,7 +85,7 @@ private:
     AudioSourceProviderClient* m_client { nullptr };
     MediaStreamTrackPrivate* m_captureSource { nullptr };
     Ref<RealtimeMediaSource> m_source;
-    Lock m_mutex;
+    Lock m_lock;
     bool m_connected { false };
     bool m_enabled { true };
 };

@@ -92,9 +92,9 @@ void ConvolverNode::process(size_t framesToProcess)
     ASSERT(outputBus);
 
     // Synchronize with possible dynamic changes to the impulse response.
-    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
-    if (!lock.owns_lock()) {
-        // Too bad - the try_lock() failed. We must be in the middle of setting a new impulse response.
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // Too bad - tryHoldLock() failed. We must be in the middle of setting a new impulse response.
         outputBus->zero();
         return;
     }
@@ -147,7 +147,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
         BaseAudioContext::AutoLocker contextLocker(context());
 
         // Synchronize with process().
-        auto locker = holdLock(m_processMutex);
+        auto locker = holdLock(m_processLock);
 
         m_reverb = WTFMove(reverb);
         m_buffer = WTFMove(buffer);

@@ -67,7 +67,7 @@ private:
     Ref<MediaStreamTrack> m_audioTrack;
     std::unique_ptr<MultiChannelResampler> m_multiChannelResampler;
 
-    Lock m_processMutex;
+    Lock m_processLock;
 
     unsigned m_sourceNumberOfChannels { 0 };
     double m_sourceSampleRate { 0 };

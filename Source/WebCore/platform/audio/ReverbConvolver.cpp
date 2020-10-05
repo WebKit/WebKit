@@ -135,7 +135,7 @@ ReverbConvolver::~ReverbConvolver()
 
         // Wake up thread so it can return
         {
-            auto locker = holdLock(m_backgroundThreadMutex);
+            auto locker = holdLock(m_backgroundThreadLock);
             m_moreInputBuffered = true;
             m_backgroundThreadConditionVariable.notifyOne();
         }
@@ -150,7 +150,7 @@ void ReverbConvolver::backgroundThreadEntry()
         // Wait for realtime thread to give us more input
         m_moreInputBuffered = false;        
         {
-            std::unique_lock<Lock> lock(m_backgroundThreadMutex);
+            std::unique_lock<Lock> lock(m_backgroundThreadLock);
 
             m_backgroundThreadConditionVariable.wait(lock, [this] { return m_moreInputBuffered || m_wantsToExit; });
         }
@@ -204,8 +204,8 @@ void ReverbConvolver::process(const AudioChannel* sourceChannel, AudioChannel* d
     // signal from time to time, since we'll get to it the next time we're called.  We're called repeatedly
     // and frequently (around every 3ms).  The background thread is processing well into the future and has a considerable amount of 
     // leeway here...
-    std::unique_lock<Lock> lock(m_backgroundThreadMutex, std::try_to_lock);
-    if (!lock.owns_lock())
+    auto locker = tryHoldLock(m_backgroundThreadLock);
+    if (!locker)
         return;
 
     m_moreInputBuffered = true;

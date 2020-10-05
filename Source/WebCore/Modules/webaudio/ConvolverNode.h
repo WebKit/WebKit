@@ -64,7 +64,7 @@ private:
     RefPtr<AudioBuffer> m_buffer;
 
     // This synchronizes dynamic changes to the convolution impulse response with process().
-    mutable Lock m_processMutex;
+    mutable Lock m_processLock;
 
     // Normalize the impulse response or not.
     bool m_normalize { true };

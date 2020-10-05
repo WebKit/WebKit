@@ -85,7 +85,7 @@ private:
     double m_virtualReadIndex { 0 };
 
     // This synchronizes process().
-    mutable Lock m_processMutex;
+    mutable Lock m_processLock;
 
     // Stores sample-accurate values calculated according to frequency and detune.
     AudioFloatArray m_phaseIncrements;

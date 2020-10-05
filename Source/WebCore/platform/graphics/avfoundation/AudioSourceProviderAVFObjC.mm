@@ -37,7 +37,6 @@
 #import <AVFoundation/AVAudioMix.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <AVFoundation/AVPlayerItem.h>
-#import <mutex>
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/Lock.h>
@@ -69,7 +68,7 @@ class AudioSourceProviderAVFObjC::TapStorage : public ThreadSafeRefCounted<Audio
 public:
     TapStorage(AudioSourceProviderAVFObjC* _this) : _this(_this) { }
     AudioSourceProviderAVFObjC* _this;
-    Lock mutex;
+    Lock lock;
 };
 
 RefPtr<AudioSourceProviderAVFObjC> AudioSourceProviderAVFObjC::create(AVPlayerItem *item)
@@ -88,7 +87,7 @@ AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
 {
     setClient(nullptr);
     if (m_tapStorage) {
-        auto locker = holdLock(m_tapStorage->mutex);
+        auto locker = holdLock(m_tapStorage->lock);
         m_tapStorage->_this = nullptr;
     }
 
@@ -97,7 +96,7 @@ AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
 
 void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    // Protect access to m_ringBuffer by try_locking the mutex. If we failed
+    // Protect access to m_ringBuffer by using tryHoldLock(). If we failed
     // to aquire, a re-configure is underway, and m_ringBuffer is unsafe to access.
     // Emit silence.
     if (!m_tapStorage) {
@@ -105,8 +104,8 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
         return;
     }
 
-    std::unique_lock<Lock> lock(m_tapStorage->mutex, std::try_to_lock);
-    if (!lock.owns_lock() || !m_ringBuffer) {
+    auto locker = tryHoldLock(m_tapStorage->lock);
+    if (!locker || !m_ringBuffer) {
         bus->zero();
         return;
     }
@@ -254,7 +253,7 @@ void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
     {
-        auto locker = holdLock(tapStorage->mutex);
+        auto locker = holdLock(tapStorage->lock);
         if (tapStorage->_this)
             tapStorage->_this->finalize();
     }
@@ -266,7 +265,7 @@ void AudioSourceProviderAVFObjC::prepareCallback(MTAudioProcessingTapRef tap, CM
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    auto locker = holdLock(tapStorage->mutex);
+    auto locker = holdLock(tapStorage->lock);
 
     if (tapStorage->_this)
         tapStorage->_this->prepare(maxFrames, processingFormat);
@@ -277,7 +276,7 @@ void AudioSourceProviderAVFObjC::unprepareCallback(MTAudioProcessingTapRef tap)
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    auto locker = holdLock(tapStorage->mutex);
+    auto locker = holdLock(tapStorage->lock);
 
     if (tapStorage->_this)
         tapStorage->_this->unprepare();
@@ -288,7 +287,7 @@ void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CM
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    auto locker = holdLock(tapStorage->mutex);
+    auto locker = holdLock(tapStorage->lock);
 
     if (tapStorage->_this)
         tapStorage->_this->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);

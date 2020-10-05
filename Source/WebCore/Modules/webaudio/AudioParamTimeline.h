@@ -166,7 +166,7 @@ private:
 
     Vector<UniqueRef<ParamEvent>> m_events;
 
-    Lock m_eventsMutex;
+    Lock m_eventsLock;
 };
 
 } // namespace WebCore

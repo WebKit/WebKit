@@ -64,7 +64,7 @@ WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 {
     m_source->removeAudioSampleObserver(*this);
 
-    auto locker = holdLock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     if (m_connected && m_captureSource)
         m_captureSource->removeObserver(*this);
@@ -72,8 +72,8 @@ WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 
 void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    std::unique_lock<Lock> lock(m_mutex, std::try_to_lock);
-    if (!lock.owns_lock() || !m_dataSource || !m_audioBufferList) {
+    auto locker = tryHoldLock(m_lock);
+    if (!locker || !m_dataSource || !m_audioBufferList) {
         bus->zero();
         return;
     }
@@ -126,7 +126,7 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
 
 void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription& format)
 {
-    auto locker = holdLock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     LOG(Media, "WebAudioSourceProviderAVFObjC::prepare(%p)", this);
 
@@ -158,7 +158,7 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription& f
 
 void WebAudioSourceProviderAVFObjC::unprepare()
 {
-    auto locker = holdLock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     m_inputDescription = WTF::nullopt;
     m_outputDescription = WTF::nullopt;

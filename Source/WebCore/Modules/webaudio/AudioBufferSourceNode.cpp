@@ -110,10 +110,10 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         return;
     }
 
-    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
-    if (!lock.owns_lock()) {
-        // Too bad - the try_lock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
+    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // Too bad - tryHoldLock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus.zero();
         return;
     }
@@ -430,7 +430,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     BaseAudioContext::AutoLocker contextLocker(context());
     
     // This synchronizes with process().
-    auto locker = holdLock(m_processMutex);
+    auto locker = holdLock(m_processLock);
     
     if (buffer) {
         m_wasBufferSet = true;
@@ -488,7 +488,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
         return Exception { RangeError, "duration value should be positive"_s };
 
     // This synchronizes with process().
-    auto locker = holdLock(m_processMutex);
+    auto locker = holdLock(m_processLock);
 
     m_isGrain = true;
     m_grainOffset = grainOffset;
@@ -505,7 +505,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
 void AudioBufferSourceNode::adjustGrainParameters()
 {
-    ASSERT(m_processMutex.isHeld());
+    ASSERT(m_processLock.isHeld());
 
     auto buffer = this->buffer();
     if (!buffer)

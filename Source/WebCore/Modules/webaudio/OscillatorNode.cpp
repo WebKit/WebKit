@@ -356,10 +356,10 @@ void OscillatorNode::process(size_t framesToProcess)
     if (framesToProcess > m_phaseIncrements.size())
         return;
 
-    // The audio thread can't block on this lock, so we use std::try_to_lock instead.
-    std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
-    if (!lock.owns_lock()) {
-        // Too bad - the try_lock() failed. We must be in the middle of changing wave-tables.
+    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
+    auto locker = tryHoldLock(m_processLock);
+    if (!locker) {
+        // Too bad - tryHoldLock() failed. We must be in the middle of changing wave-tables.
         outputBus.zero();
         return;
     }
@@ -438,7 +438,7 @@ void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)
     ASSERT(isMainThread());
     
     // This synchronizes with process().
-    auto locker = holdLock(m_processMutex);
+    auto locker = holdLock(m_processLock);
     m_periodicWave = &periodicWave;
     m_type = OscillatorType::Custom;
 }

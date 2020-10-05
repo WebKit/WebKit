@@ -1,3 +1,91 @@
+2020-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Use tryHoldLock() in WebAudio to simplify the code
+        https://bugs.webkit.org/show_bug.cgi?id=217332
+
+        Reviewed by Darin Adler.
+
+        Use tryHoldLock() in WebAudio to simplify the code a bit.
+
+        No new tests, no Web-facing behavior change.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        (WebCore::AudioBufferSourceNode::startPlaying):
+        (WebCore::AudioBufferSourceNode::adjustGrainParameters):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::setValueAtTime):
+        (WebCore::AudioParamTimeline::linearRampToValueAtTime):
+        (WebCore::AudioParamTimeline::exponentialRampToValueAtTime):
+        (WebCore::AudioParamTimeline::setTargetAtTime):
+        (WebCore::AudioParamTimeline::setValueCurveAtTime):
+        (WebCore::AudioParamTimeline::insertEvent):
+        (WebCore::AudioParamTimeline::cancelScheduledValues):
+        (WebCore::AudioParamTimeline::cancelAndHoldAtTime):
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::AudioParamTimeline::valuesForTimeRange):
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::process):
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::process):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        (WebCore::MediaStreamAudioSourceNode::process):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::process):
+        (WebCore::OscillatorNode::setPeriodicWave):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::process):
+        (WebCore::PannerNode::setPanningModel):
+        (WebCore::PannerNode::setPosition):
+        (WebCore::PannerNode::setOrientation):
+        (WebCore::PannerNode::setDistanceModel):
+        (WebCore::PannerNode::setRefDistance):
+        (WebCore::PannerNode::setMaxDistance):
+        (WebCore::PannerNode::setRolloffFactor):
+        (WebCore::PannerNode::setConeOuterGain):
+        (WebCore::PannerNode::setConeOuterAngle):
+        (WebCore::PannerNode::setConeInnerAngle):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::process):
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::setCurve):
+        (WebCore::WaveShaperProcessor::setOversample):
+        (WebCore::WaveShaperProcessor::process):
+        * Modules/webaudio/WaveShaperProcessor.h:
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::process):
+        (WebCore::WebKitAudioPannerNode::setPanningModel):
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::~ReverbConvolver):
+        (WebCore::ReverbConvolver::backgroundThreadEntry):
+        (WebCore::ReverbConvolver::process):
+        * platform/audio/ReverbConvolver.h:
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::render):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC):
+        (WebCore::AudioSourceProviderAVFObjC::provideInput):
+        (WebCore::AudioSourceProviderAVFObjC::finalizeCallback):
+        (WebCore::AudioSourceProviderAVFObjC::prepareCallback):
+        (WebCore::AudioSourceProviderAVFObjC::unprepareCallback):
+        (WebCore::AudioSourceProviderAVFObjC::processCallback):
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::unprepare):
+
 2020-10-05  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK][X11] WebProcess crash in WebCore::GLContextGLX::createPbufferContext() with NVidia proprietary drivers

@@ -88,7 +88,7 @@ private:
     RefPtr<Thread> m_backgroundThread;
     bool m_wantsToExit { false };
     bool m_moreInputBuffered { false };
-    mutable Lock m_backgroundThreadMutex;
+    mutable Lock m_backgroundThreadLock;
     mutable Condition m_backgroundThreadConditionVariable;
 };
 

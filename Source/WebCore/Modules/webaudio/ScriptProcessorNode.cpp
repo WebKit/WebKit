@@ -191,8 +191,8 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             });
             semaphore.wait();
         } else {
-            std::unique_lock<Lock> lock(m_processLock, std::try_to_lock);
-            if (!lock.owns_lock()) {
+            auto locker = tryHoldLock(m_processLock);
+            if (!locker) {
                 // We're late in handling the previous request. The main thread must be
                 // very busy. The best we can do is clear out the buffer ourself here.
                 outputBuffer->zero();
