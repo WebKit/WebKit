@@ -1,5 +1,11 @@
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused -expected.txt file
+
+        * web-platform-tests/url/urlencoded-parser-expected.txt: Removed.
+
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should fail to parse URLs with hosts containing invalid punycode encodings
         https://bugs.webkit.org/show_bug.cgi?id=217285
 
