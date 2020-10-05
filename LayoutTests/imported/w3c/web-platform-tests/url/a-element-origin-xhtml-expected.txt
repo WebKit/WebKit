@@ -262,6 +262,7 @@ FAIL Parsing origin: <sc::a@example.net> against <about:blank> assert_equals: or
 FAIL Parsing origin: <wow:%NBD> against <about:blank> assert_equals: origin expected "null" but got "wow://"
 FAIL Parsing origin: <wow:%1G> against <about:blank> assert_equals: origin expected "null" but got "wow://"
 FAIL Parsing origin: <wow:￿> against <about:blank> assert_equals: origin expected "null" but got "wow://"
+PASS Parsing origin: <http://example.com/U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿?U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 PASS Parsing origin: <http://!"$&'()*+,-.;=_`{|}~/> against <about:blank>
 FAIL Parsing origin: <sc://!"$&'()*+,-.;=_`{|}~/> against <about:blank> assert_equals: origin expected "null" but got "sc://%1f!\"$&'()*+,-.;=_`{|}~"
 PASS Parsing origin: <ftp://%e2%98%83> against <about:blank>

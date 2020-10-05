@@ -1,3 +1,18 @@
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix UTF-8 encoding in URL parsing
+        https://bugs.webkit.org/show_bug.cgi?id=217289
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         Make xhr.response more conforming to the specification

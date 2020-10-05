@@ -359,7 +359,8 @@ PASS Parsing: <sc:\../> against <about:blank>
 PASS Parsing: <sc::a@example.net> against <about:blank>
 PASS Parsing: <wow:%NBD> against <about:blank>
 PASS Parsing: <wow:%1G> against <about:blank>
-FAIL Parsing: <wow:￿> against <about:blank> assert_equals: href expected "wow:%EF%BF%BF" but got "wow:%EF%BF%BD"
+PASS Parsing: <wow:￿> against <about:blank>
+PASS Parsing: <http://example.com/U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿?U+d800�U+dffeU+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
 PASS Parsing: <http://a<b> against <about:blank>
 PASS Parsing: <http://a>b> against <about:blank>
 PASS Parsing: <http://a^b> against <about:blank>
