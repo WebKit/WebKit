@@ -1,3 +1,24 @@
+2020-10-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [GPU Process] Make it possible to dynamically block IOKit in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=217129
+        <rdar://problem/69466039>
+
+        Reviewed by Geoffrey Garen.
+
+        We need to be able to enable IOKit blocking via the WebContent sandbox dynamically.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::gpuIOKitClasses):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-10-04  Lauro Moura  <lmoura@igalia.com>
 
         webkitpy: Update messages reference files after r267916

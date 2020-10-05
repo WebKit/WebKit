@@ -87,7 +87,10 @@
 
 (define-once (framebuffer-access)
     (allow iokit-open
-        (iokit-user-client-class "IOMobileFramebufferUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOMobileFramebufferUserClient")
+        )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
@@ -231,8 +234,14 @@
 
     ;; Items with known uses
     (allow iokit-open
-        (iokit-connection "IOGPU")
-        (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-connection "IOGPU")
+        )
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
+        )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
@@ -383,7 +392,10 @@
     )
 
     (allow iokit-open
-        (iokit-user-client-class "AppleJPEGDriverUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AppleJPEGDriverUserClient")
+        )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
@@ -397,7 +409,10 @@
 
     ; WebKit-required IOKit classes
     (allow iokit-open
-        (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
+        )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
@@ -410,7 +425,10 @@
     )
 
     (allow iokit-open
-        (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
+        )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
@@ -453,6 +471,18 @@
 
 (with-filter (system-attribute apple-internal)
   (mobile-preferences-read "com.apple.PrototypeTools"))
+
+(allow iokit-open (with report) (with telemetry-backtrace)
+    (iokit-user-client-class "IOMobileFramebufferUserClient")
+    (iokit-user-client-class "AGXDeviceUserClient")
+    (iokit-user-client-class "AppleJPEGDriverUserClient")
+    (iokit-user-client-class "IOSurfaceAcceleratorClient")
+    (iokit-user-client-class "IOSurfaceRootUserClient")
+)
+
+(allow iokit-open (with report) (with telemetry-backtrace)
+    (iokit-connection "IOGPU")
+)
 
 (with-elevated-precedence
     (allow file-read*

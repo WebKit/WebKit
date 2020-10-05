@@ -247,6 +247,23 @@ static const Vector<ASCIILiteral>& mediaRelatedMachServices()
     return services;
 }
 
+static const Vector<ASCIILiteral>& gpuIOKitClasses()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+#if PLATFORM(IOS_FAMILY)
+        "AGXDeviceUserClient"_s,
+        "AppleJPEGDriverUserClient"_s,
+        "IOGPU"_s,
+        "IOMobileFramebufferUserClient"_s,
+        "IOSurfaceAcceleratorClient"_s,
+        "IOSurfaceRootUserClient"_s,
+#endif
+    });
+    return services;
+
+}
+
 #if PLATFORM(IOS_FAMILY)
 static const Vector<ASCIILiteral>& nonBrowserServices()
 {
@@ -459,6 +476,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (needWebProcessExtensions) {
         // FIXME(207716): The following should be removed when the GPU process is complete.
         parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
+        parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
     }
 
 #if ENABLE(CFPREFS_DIRECT_MODE) && PLATFORM(IOS_FAMILY)
