@@ -1196,14 +1196,14 @@ WI.Resource = class Resource extends WI.SourceCode
 
         throw errorString;
     }
-    
+
     // Private
-    
+
     _requestContentFailure(error)
     {
         return Promise.resolve({
             error: WI.UIString("An error occurred trying to load the resource."),
-            reason: error.message || this._failureReasonText,
+            reason: error?.message || this._failureReasonText,
             sourceCode: this,
         });
     }
