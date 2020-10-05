@@ -80,6 +80,8 @@ typedef void* GLeglContext;
 #import "ExtensionsGLOpenGL.h"
 #elif USE(ANGLE)
 #import "ExtensionsGLANGLE.h"
+#import "RuntimeApplicationChecks.h"
+#import "WebCoreThread.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -90,6 +92,69 @@ typedef void* GLeglContext;
 #endif
 
 namespace WebCore {
+
+namespace {
+
+#if USE(ANGLE)
+
+#if ASSERT_ENABLED
+// Returns true if we have volatile context extension for the particular API or
+// if the particular API is not used.
+bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const char* deviceContextVolatileExtension,
+    const char* deviceContextExtension, EGLint deviceContextType)
+{
+    const char *clientExtensions = EGL_QueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
+    if (clientExtensions && strstr(clientExtensions, deviceContextVolatileExtension))
+        return true;
+    EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
+        return true;
+    if (device == EGL_NO_DEVICE_EXT)
+        return true;
+    const char* deviceExtensions = EGL_QueryDeviceStringEXT(device, EGL_EXTENSIONS);
+    if (!deviceExtensions || !strstr(deviceExtensions, deviceContextExtension))
+        return true;
+    void* deviceContext = nullptr;
+    if (!EGL_QueryDeviceAttribEXT(device, deviceContextType, reinterpret_cast<EGLAttrib*>(&deviceContext)))
+        return true;
+    return !deviceContext;
+}
+#endif
+
+EGLDisplay InitializeEGLDisplay()
+{
+    EGLint majorVersion = 0;
+    EGLint minorVersion = 0;
+    EGLDisplay display;
+    bool shouldInitializeWithVolatileContextSupport = !isInWebProcess();
+    if (shouldInitializeWithVolatileContextSupport) {
+        // For WK1 type APIs we need to set "volatile platform context" for specific
+        // APIs, since client code will be able to override the thread-global context
+        // that ANGLE expects.
+        EGLint displayAttributes[] = {
+            EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE, EGL_TRUE,
+            EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE, EGL_TRUE,
+            EGL_NONE
+        };
+        display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), displayAttributes);
+    } else
+        display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+
+    if (EGL_Initialize(display, &majorVersion, &minorVersion) == EGL_FALSE) {
+        LOG(WebGL, "EGLDisplay Initialization failed.");
+        return EGL_NO_DISPLAY;
+    }
+    LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
+    if (shouldInitializeWithVolatileContextSupport) {
+        // After initialization, EGL_DEFAULT_DISPLAY will return the platform-customized display.
+        ASSERT(display == EGL_GetDisplay(EGL_DEFAULT_DISPLAY));
+        ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_eagl", "EGL_ANGLE_device_eagl", EGL_EAGL_CONTEXT_ANGLE));
+        ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
+    }
+    return display;
+}
+#endif
+}
 
 static const unsigned statusCheckThreshold = 5;
 
@@ -316,16 +381,9 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         ::glEnable(GraphicsContextGL::PRIMITIVE_RESTART);
 
 #elif USE(ANGLE)
-
-    m_displayObj = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+    m_displayObj = InitializeEGLDisplay();
     if (m_displayObj == EGL_NO_DISPLAY)
         return;
-    EGLint majorVersion, minorVersion;
-    if (EGL_Initialize(m_displayObj, &majorVersion, &minorVersion) == EGL_FALSE) {
-        LOG(WebGL, "EGLDisplay Initialization failed.");
-        return;
-    }
-    LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
     const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
     LOG(WebGL, "Extensions: %s", displayExtensions);
 
@@ -578,17 +636,13 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 
     if (m_contextObj) {
         GraphicsContextGLAttributes attrs = contextAttributes();
-
+        makeContextCurrent(); // TODO: check result.
 #if USE(OPENGL_ES)
-        makeContextCurrent();
         [static_cast<EAGLContext *>(m_contextObj) renderbufferStorage:GL_RENDERBUFFER fromDrawable:nil];
         ::glDeleteRenderbuffers(1, &m_texture);
 #elif USE(OPENGL)
-        CGLContextObj cglContext = static_cast<CGLContextObj>(m_contextObj);
-        CGLSetCurrentContext(cglContext);
         ::glDeleteTextures(1, &m_texture);
 #elif USE(ANGLE)
-        EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
         gl::DeleteTextures(1, &m_texture);
 #endif
 
@@ -707,11 +761,49 @@ bool GraphicsContextGLOpenGL::makeContextCurrent()
     if (currentContext != m_contextObj)
         return CGLSetCurrentContext(static_cast<CGLContextObj>(m_contextObj)) == kCGLNoError;
 #elif USE(ANGLE)
-    if (EGL_GetCurrentContext() != m_contextObj)
-        return EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+    // ANGLE has an early out for case where nothing changes. Calling MakeCurrent
+    // is important to set volatile platform context. See InitializeEGLDisplay().
+    if (!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj))
+        return false;
 #endif
     return true;
 }
+
+#if PLATFORM(IOS_FAMILY) && USE(ANGLE)
+bool GraphicsContextGLOpenGL::releaseCurrentContext(ReleaseBehavior releaseBehavior)
+{
+    // At the moment this function is relevant only when web thread lock owns the GraphicsContextGLOpenGL current context.
+    ASSERT(!WebCore::isInWebProcess());
+
+    if (!EGL_BindAPI(EGL_OPENGL_ES_API))
+        return false;
+    if (EGL_GetCurrentContext() == EGL_NO_CONTEXT)
+        return true;
+
+    // At the time of writing, ANGLE does not flush on MakeCurrent. Since we are
+    // potentially switching threads, we should flush.
+    // Note: Here we assume also that ANGLE has only one platform context -- otherwise
+    // we would need to flush each EGL context that has been used.
+    gl::Flush();
+
+    // Unset the EGL current context, since the next access might be from another thread, and the
+    // context cannot be current on multiple threads.
+
+    if (releaseBehavior == ReleaseBehavior::ReleaseThreadResources) {
+        // Called when we do not know if we will ever see another call from this thread again.
+        // Unset the EGL current context by releasing whole EGL thread state.
+        // Theoretically ReleaseThread can reset the bound API, so the rest of the code mentions BindAPI/QueryAPI.
+        return EGL_ReleaseThread();
+    }
+    // On WebKit owned threads, WebKit is able to choose the time for the EGL cleanup.
+    // This is why we only unset the context.
+    // Note: At the time of writing the EGL cleanup is chosen to be not done at all.
+    EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+    if (display == EGL_NO_DISPLAY)
+        return false;
+    return EGL_MakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+}
+#endif
 
 void GraphicsContextGLOpenGL::checkGPUStatus()
 {
@@ -724,6 +816,7 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
 #elif USE(OPENGL_ES)
         [EAGLContext setCurrentContext:0];
 #elif USE(ANGLE)
+        EGL_BindAPI(EGL_OPENGL_ES_API);
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #endif
         return;

@@ -102,6 +102,13 @@ class Display final : public LabeledObject,
 
     Error initialize();
     Error terminate(const Thread *thread);
+    // Called before all display state dependent EGL functions. Backends can set up, for example,
+    // thread-specific backend state through this function. Not called for functions that do not
+    // need the state.
+    Error prepareForCall();
+    // Called on eglReleaseThread. Backends can tear down thread-specific backend state through
+    // this function.
+    Error releaseThread();
 
     static Display *GetDisplayFromDevice(Device *device, const AttributeMap &attribMap);
     static Display *GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay,
