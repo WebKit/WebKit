@@ -1,3 +1,10 @@
+2020-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Remove url-domainToUnicode web platform test as it was done upstream.
+
+        * web-platform-tests/url/url-domainToUnicode-expected.txt: Removed.
+        * web-platform-tests/url/url-domainToUnicode.html: Removed.
+
 2020-10-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Update baselines of two touch-events tests after r266649.
