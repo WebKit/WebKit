@@ -29,7 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "BlocklistUpdater.h"
-#import <OpenGL/OpenGL.h>
+#import "OpenGLSoftLinkCocoa.h"
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 
 namespace WebCore {

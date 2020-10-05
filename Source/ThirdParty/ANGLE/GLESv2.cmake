@@ -167,7 +167,9 @@ set(libangle_gpu_info_util_libpci_sources
 set(libangle_gpu_info_util_x11_sources "src/gpu_info_util/SystemInfo_x11.cpp" )
 
 
-set(libangle_gpu_info_util_mac_sources "src/gpu_info_util/SystemInfo_macos.mm" )
+set(libangle_gpu_info_util_mac_sources
+    "src/gpu_info_util/SystemInfo_apple.mm"
+    "src/gpu_info_util/SystemInfo_macos.mm" )
 
 
 set(libangle_includes

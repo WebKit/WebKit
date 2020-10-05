@@ -29,11 +29,24 @@
 #if PLATFORM(MAC)
 
 #include "Logging.h"
-#include <OpenGL/CGLTypes.h>
-#include <OpenGL/OpenGL.h>
 #include <WebCore/GraphicsContextGLOpenGLManager.h>
+#include <WebCore/OpenGLSoftLinkCocoa.h>
 
 namespace WebKit {
+
+static bool isiOSAppOnMac()
+{
+#if PLATFORM(MACCATALYST) && CPU(ARM64)
+    static bool isiOSAppOnMac = false;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        isiOSAppOnMac = [[NSProcessInfo processInfo] isiOSAppOnMac];
+    });
+    return isiOSAppOnMac;
+#else
+    return false;
+#endif
+}
 
 // FIXME: This class is using OpenGL to control the muxing of GPUs. Ultimately
 // we want to use Metal, but currently there isn't a way to "release" a
@@ -47,6 +60,9 @@ HighPerformanceGPUManager& HighPerformanceGPUManager::singleton()
 
 void HighPerformanceGPUManager::addProcessRequiringHighPerformance(WebProcessProxy* process)
 {
+    if (isiOSAppOnMac())
+        return;
+
     if (!WebCore::hasLowAndHighPowerGPUs())
         return;
 
@@ -61,6 +77,9 @@ void HighPerformanceGPUManager::addProcessRequiringHighPerformance(WebProcessPro
 
 void HighPerformanceGPUManager::removeProcessRequiringHighPerformance(WebProcessProxy* process)
 {
+    if (isiOSAppOnMac())
+        return;
+
     if (!WebCore::hasLowAndHighPowerGPUs())
         return;
 
@@ -75,6 +94,9 @@ void HighPerformanceGPUManager::removeProcessRequiringHighPerformance(WebProcess
 
 void HighPerformanceGPUManager::updateState()
 {
+    if (isiOSAppOnMac())
+        return;
+
     if (m_processesRequiringHighPerformance.size()) {
         if (!m_pixelFormatObj) {
             LOG(WebGL, "HighPerformanceGPUManager - turning on high-performance GPU.");

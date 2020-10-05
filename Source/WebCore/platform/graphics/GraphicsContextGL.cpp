@@ -184,6 +184,23 @@ uint8_t GraphicsContextGL::getChannelBitsByFormat(GCGLenum format)
     }
 }
 
+#if !PLATFORM(COCOA) && USE(ANGLE)
+GCGLenum GraphicsContextGL::IOSurfaceTextureTarget()
+{
+    return TEXTURE_2D;
+}
+
+GCGLenum GraphicsContextGL::IOSurfaceTextureTargetQuery()
+{
+    return TEXTURE_BINDING_2D;
+}
+
+GCGLint GraphicsContextGL::EGLIOSurfaceTextureTarget()
+{
+    return 0x305F; // EGL_TEXTURE_2D
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

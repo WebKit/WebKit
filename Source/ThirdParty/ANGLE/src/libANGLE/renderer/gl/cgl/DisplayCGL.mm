@@ -28,6 +28,8 @@
 #    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 #    include "platform/PlatformMethods.h"
 
+#    include "libANGLE/renderer/gl/cgl/CGLFunctions.h"
+
 namespace
 {
 

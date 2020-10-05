@@ -39,6 +39,7 @@
 #import "HostWindow.h"
 #import "ImageBuffer.h"
 #import "Logging.h"
+#import "OpenGLSoftLinkCocoa.h"
 #import "WebGLLayer.h"
 #import "WebGLObject.h"
 #import "WebGLRenderingContextBase.h"
@@ -101,6 +102,22 @@ public:
     
     ~GraphicsContextGLOpenGLPrivate() { }
 };
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+static bool isiOSAppOnMac()
+{
+#if PLATFORM(MACCATALYST) && CPU(ARM64)
+    static bool isiOSAppOnMac = false;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        isiOSAppOnMac = [[NSProcessInfo processInfo] isiOSAppOnMac];
+    });
+    return isiOSAppOnMac;
+#else
+    return false;
+#endif
+}
+#endif
 
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination)
 {
@@ -387,18 +404,20 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     ExtensionsGL& extensions = getExtensions();
 
-    static constexpr const char* requiredExtensions[] = {
-        "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures.
-        "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface.
-    };
+    if (!isiOSAppOnMac()) {
+        static constexpr const char* requiredExtensions[] = {
+            "GL_ANGLE_texture_rectangle", // For IOSurface-backed textures.
+            "GL_EXT_texture_format_BGRA8888", // For creating the EGL surface from an IOSurface.
+        };
 
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(requiredExtensions); ++i) {
-        if (!extensions.supports(requiredExtensions[i])) {
-            LOG(WebGL, "Missing required extension. %s", requiredExtensions[i]);
-            return;
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(requiredExtensions); ++i) {
+            if (!extensions.supports(requiredExtensions[i])) {
+                LOG(WebGL, "Missing required extension. %s", requiredExtensions[i]);
+                return;
+            }
+
+            extensions.ensureEnabled(requiredExtensions[i]);
         }
-
-        extensions.ensureEnabled(requiredExtensions[i]);
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
@@ -454,7 +473,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
 #elif USE(ANGLE)
 
-    GLenum textureTarget = GraphicsContextGL::IOSurfaceTextureTarget;
+    GLenum textureTarget = GraphicsContextGL::IOSurfaceTextureTarget();
 
     gl::GenTextures(1, &m_texture);
     gl::BindTexture(textureTarget, m_texture);
@@ -617,6 +636,47 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
 }
+
+#if USE(ANGLE)
+GCGLenum GraphicsContextGL::IOSurfaceTextureTarget()
+{
+#if PLATFORM(MACCATALYST)
+    if (isiOSAppOnMac())
+        return TEXTURE_2D;
+    return TEXTURE_RECTANGLE_ARB;
+#elif PLATFORM(MAC)
+    return TEXTURE_RECTANGLE_ARB;
+#else
+    return TEXTURE_2D;
+#endif
+}
+
+GCGLenum GraphicsContextGL::IOSurfaceTextureTargetQuery()
+{
+#if PLATFORM(MACCATALYST)
+    if (isiOSAppOnMac())
+        return TEXTURE_BINDING_2D;
+    return TEXTURE_BINDING_RECTANGLE_ARB;
+#elif PLATFORM(MAC)
+    return TEXTURE_BINDING_RECTANGLE_ARB;
+#else
+    return TEXTURE_BINDING_2D;
+#endif
+}
+
+GCGLint GraphicsContextGL::EGLIOSurfaceTextureTarget()
+{
+#if PLATFORM(MACCATALYST)
+    if (isiOSAppOnMac())
+        return 0x305F; // EGL_TEXTURE_2D
+    return 0x345B; // EGL_TEXTURE_RECTANGLE_ANGLE
+#elif PLATFORM(MAC)
+    return 0x345B; // EGL_TEXTURE_RECTANGLE_ANGLE
+#else
+    return 0x305F; // EGL_TEXTURE_2D
+#endif
+}
+#endif
 
 #if USE(OPENGL_ES)
 void GraphicsContextGLOpenGL::setRenderbufferStorageFromDrawable(GCGLsizei width, GCGLsizei height)
