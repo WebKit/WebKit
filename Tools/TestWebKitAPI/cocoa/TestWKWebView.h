@@ -61,6 +61,7 @@
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames;
 - (void)expectElementCount:(NSInteger)count querySelector:(NSString *)querySelector;
 - (void)expectElementTag:(NSString *)tagName toComeBefore:(NSString *)otherTagName;
+- (BOOL)evaluateMediaQuery:(NSString *)query;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;

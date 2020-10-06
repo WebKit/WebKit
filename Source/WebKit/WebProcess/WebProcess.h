@@ -187,6 +187,11 @@ public:
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    bool hasMouseDevice() const { return m_hasMouseDevice; }
+    void setHasMouseDevice(bool);
+#endif
+
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
     Vector<WebFrame*> webFrames() const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
@@ -553,6 +558,10 @@ private:
 #endif
 
     bool m_fullKeyboardAccessEnabled { false };
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    bool m_hasMouseDevice { false };
+#endif
 
     HashMap<WebCore::FrameIdentifier, WebFrame*> m_frameMap;
 

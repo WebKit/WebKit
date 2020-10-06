@@ -75,6 +75,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/PointerCharacteristics.h>
 #include <WebCore/PointerID.h>
 #include <WebCore/RenderingMode.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
@@ -414,6 +415,9 @@ public:
     String userAgent(const URL&) const;
     String platformUserAgent(const URL&) const;
     WebCore::KeyboardUIMode keyboardUIMode();
+
+    bool hoverSupportedByAnyAvailablePointingDevice() const;
+    OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const;
 
     void didInsertMenuElement(WebCore::HTMLMenuElement&);
     void didRemoveMenuElement(WebCore::HTMLMenuElement&);

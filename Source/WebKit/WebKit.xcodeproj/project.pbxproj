@@ -1379,6 +1379,8 @@
 		93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
+		95C943912523C0D00054F3D5 /* BaseBoardSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C943902523C0D00054F3D5 /* BaseBoardSPI.h */; };
 		99036AE223A949CF0000B06A /* _WKInspectorDebuggableInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99036AE123A949CE0000B06A /* _WKInspectorDebuggableInfoInternal.h */; };
 		99036AE523A958750000B06A /* APIDebuggableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 99036AE323A958740000B06A /* APIDebuggableInfo.h */; };
 		99036AE923A970870000B06A /* DebuggableInfoData.h in Headers */ = {isa = PBXBuildFile; fileRef = 99036AE723A970870000B06A /* DebuggableInfoData.h */; };
@@ -4425,6 +4427,9 @@
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
+		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
+		950F287F252414EA00B74F1C /* WKMouseDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseDeviceObserver.mm; path = ios/WKMouseDeviceObserver.mm; sourceTree = "<group>"; };
+		95C943902523C0D00054F3D5 /* BaseBoardSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBoardSPI.h; sourceTree = "<group>"; };
 		99036AE123A949CE0000B06A /* _WKInspectorDebuggableInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorDebuggableInfoInternal.h; sourceTree = "<group>"; };
 		99036AE323A958740000B06A /* APIDebuggableInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDebuggableInfo.h; sourceTree = "<group>"; };
 		99036AE423A958740000B06A /* APIDebuggableInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIDebuggableInfo.cpp; sourceTree = "<group>"; };
@@ -7021,6 +7026,8 @@
 				933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */,
 				2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */,
 				2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */,
+				950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */,
+				950F287F252414EA00B74F1C /* WKMouseDeviceObserver.mm */,
 				2DB94297234E7A7F00E776AD /* WKMouseGestureRecognizer.h */,
 				2DB94298234E7A7F00E776AD /* WKMouseGestureRecognizer.mm */,
 				A15EEDE41E301CEE000069B0 /* WKPasswordView.h */,
@@ -10381,6 +10388,7 @@
 			children = (
 				CE1A0BCC1A48E6C60054EF74 /* AssertionServicesSPI.h */,
 				CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */,
+				95C943902523C0D00054F3D5 /* BaseBoardSPI.h */,
 				2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */,
 				A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */,
 				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,
@@ -10747,6 +10755,7 @@
 				290F4272172A0C7400939FF0 /* AuxiliaryProcessSupplement.h in Headers */,
 				CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */,
 				46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */,
+				95C943912523C0D00054F3D5 /* BaseBoardSPI.h in Headers */,
 				E164A2F2191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h in Headers */,
 				E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */,
 				4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */,
@@ -11604,6 +11613,7 @@
 				5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */,
 				C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */,
 				411A8DDB20DDD1AC0060D34F /* WKMockMediaDevice.h in Headers */,
+				950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */,
 				2DB94299234E7A7F00E776AD /* WKMouseGestureRecognizer.h in Headers */,
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,
 				BC407600124FF0270068F20A /* WKMutableDictionary.h in Headers */,

@@ -854,6 +854,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PerformanceLoggingClient.h
     page/PlugInClient.h
     page/PointerCaptureController.h
+    page/PointerCharacteristics.h
     page/PointerLockController.h
     page/PostMessageOptions.h
     page/PrewarmInformation.h

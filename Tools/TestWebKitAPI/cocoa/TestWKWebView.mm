@@ -161,6 +161,11 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self expectElementTagsInOrder:@[tagName, otherTagName]];
 }
 
+- (BOOL)evaluateMediaQuery:(NSString *)query
+{
+    return [[self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.matchMedia(\"(%@)\").matches", query]] boolValue];
+}
+
 - (id)objectByEvaluatingJavaScript:(NSString *)script
 {
     bool isWaitingForJavaScript = false;

@@ -109,7 +109,7 @@ static bool isMainThreadOrCheckDisabled()
 #endif
 }
 
-static HashMap<ProcessIdentifier, WebProcessProxy*>& allProcesses()
+HashMap<ProcessIdentifier, WebProcessProxy*>& WebProcessProxy::allProcesses()
 {
     ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<HashMap<ProcessIdentifier, WebProcessProxy*>> map;
@@ -210,7 +210,15 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     ASSERT_UNUSED(result, result.isNewEntry);
 
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
+
+    platformInitialize();
 }
+
+#if !PLATFORM(IOS_FAMILY)
+void WebProcessProxy::platformInitialize()
+{
+}
+#endif
 
 WebProcessProxy::~WebProcessProxy()
 {
@@ -240,7 +248,15 @@ WebProcessProxy::~WebProcessProxy()
 #if PLATFORM(MAC)
     HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
 #endif
+
+    platformDestroy();
 }
+
+#if !PLATFORM(IOS_FAMILY)
+void WebProcessProxy::platformDestroy()
+{
+}
+#endif
 
 void WebProcessProxy::setIsInProcessCache(bool value)
 {

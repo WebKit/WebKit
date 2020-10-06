@@ -43,6 +43,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/PointerCharacteristics.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserAgent.h>
@@ -113,6 +114,16 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
 String WebPage::platformUserAgent(const URL&) const
 {
     return { };
+}
+
+bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
+{
+    return true;
+}
+
+OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
+{
+    return PointerCharacteristics::Fine;
 }
 
 static const unsigned CtrlKey = 1 << 0;

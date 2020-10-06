@@ -102,6 +102,9 @@ class EmptyChromeClient : public ChromeClient {
 
     KeyboardUIMode keyboardUIMode() final { return KeyboardAccessDefault; }
 
+    bool hoverSupportedByAnyAvailablePointingDevice() const final { return false; }
+    OptionSet<PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final { return { }; }
+
     void invalidateRootView(const IntRect&) final { }
     void invalidateContentsAndRootView(const IntRect&) override { }
     void invalidateContentsForSlowScroll(const IntRect&) final { }

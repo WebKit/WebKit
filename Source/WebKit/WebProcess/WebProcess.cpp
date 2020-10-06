@@ -1050,6 +1050,20 @@ void WebProcess::messagesAvailableForPort(const MessagePortIdentifier& identifie
     MessagePort::notifyMessageAvailable(identifier);
 }
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+
+void WebProcess::setHasMouseDevice(bool hasMouseDevice)
+{
+    if (hasMouseDevice == m_hasMouseDevice)
+        return;
+
+    m_hasMouseDevice = hasMouseDevice;
+
+    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+}
+
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+
 #if ENABLE(GAMEPAD)
 
 void WebProcess::setInitialGamepads(const Vector<WebKit::GamepadData>& gamepadDatas)

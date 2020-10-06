@@ -158,6 +158,9 @@ private:
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
+    bool hoverSupportedByAnyAvailablePointingDevice() const override { return true; }
+    OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const override { return WebCore::PointerCharacteristics::Fine; }
+
     NSResponder *firstResponder() final;
     void makeFirstResponder(NSResponder *) final;
 

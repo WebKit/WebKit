@@ -27,6 +27,7 @@
 #include "WebPage.h"
 
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PointerCharacteristics.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserAgent.h>
 
@@ -63,6 +64,16 @@ String WebPage::platformUserAgent(const URL& url) const
         return emptyString();
 
     return WebCore::standardUserAgentForURL(url);
+}
+
+bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
+{
+    return true;
+}
+
+OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
+{
+    return PointerCharacteristics::Fine;
 }
 
 bool WebPage::handleEditingKeyboardEvent(WebCore::KeyboardEvent& event)

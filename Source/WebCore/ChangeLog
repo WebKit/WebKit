@@ -1,3 +1,40 @@
+2020-10-06  Devin Rousso  <drousso@apple.com>
+
+        CSS hover and "pointer: fine" media queries do not evaluate to true with iOS 13.4 mouse support
+        https://bugs.webkit.org/show_bug.cgi?id=209292
+        <rdar://problem/60663124>
+
+        Reviewed by Tim Horton.
+
+        On iOS, the primary pointer will always be touch input, so the `hover`/`pointer` media query
+        should never change. If a mouse is connected, however, `any-hover`/`any-pointer` should
+        change as now there is at least one device that supports `hover`/`fine`. Note that in the
+        case of `any-pointer` this means that both `coarse` and `fine` will apply. Catalyst assumes
+        that there is always a mouse connected.
+
+        Spec: https://drafts.csswg.org/mediaqueries-4/#any-input
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::anyHoverEvaluate):
+        (WebCore::anyPointerEvaluate):
+
+        * page/ChromeClient.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebCore::EmptyChromeClient::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        Provide a way for WebCore to get the current state of whether there are any mouse devices.
+        Refactor logic in `anyHoverEvaluate` and `anyPointerEvaluate` to move platform code into the
+        respective `WebKit::WebPage` file.
+
+        * page/PointerCharacteristics.h: Added.
+        Enum for `Coarse` and `Fine`.
+
+        * platform/PlatformScreen.h:
+        Export additional functions for use in WebKit.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-10-06  James Darpinian  <jdarpinian@chromium.org>
 
         Support EXT_texture_compression_rgtc WebGL extension

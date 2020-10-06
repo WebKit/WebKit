@@ -112,6 +112,9 @@ private:
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
+    bool hoverSupportedByAnyAvailablePointingDevice() const final;
+    OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final;
+
     // HostWindow member function finals.
     void invalidateRootView(const WebCore::IntRect&) final;
     void invalidateContentsAndRootView(const WebCore::IntRect&) final;

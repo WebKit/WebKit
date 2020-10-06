@@ -299,6 +299,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         });
     }
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    m_hasMouseDevice = parameters.hasMouseDevice;
+#endif
+
     WebCore::setScreenProperties(parameters.screenProperties);
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

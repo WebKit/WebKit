@@ -83,6 +83,7 @@
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PluginDocument.h>
+#import <WebCore/PointerCharacteristics.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyle.h>
@@ -828,6 +829,16 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
 String WebPage::platformUserAgent(const URL&) const
 {
     return String();
+}
+
+bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
+{
+    return true;
+}
+
+OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
+{
+    return PointerCharacteristics::Fine;
 }
 
 void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates)

@@ -1,3 +1,23 @@
+2020-10-06  Devin Rousso  <drousso@apple.com>
+
+        CSS hover and "pointer: fine" media queries do not evaluate to true with iOS 13.4 mouse support
+        https://bugs.webkit.org/show_bug.cgi?id=209292
+        <rdar://problem/60663124>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView evaluateMediaQuery:]): Added.
+        Create helper function for synchronously testing media queries.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (iOSMouseSupport.MouseInitiallyDisconnected): Added.
+        (iOSMouseSupport.MouseInitiallyConnected): Added.
+        (iOSMouseSupport.MouseLaterDisconnected): Added.
+        (iOSMouseSupport.MouseLaterConnected): Added.
+        (iOSMouseSupport.MouseAlwaysConnected): Added.
+
 2020-10-06  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Generate Commit object from local repository

@@ -460,6 +460,7 @@ UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
+UIProcess/ios/WKMouseDeviceObserver.mm
 UIProcess/ios/WKMouseGestureRecognizer.mm
 UIProcess/ios/WKPasswordView.mm
 UIProcess/ios/WKPDFPageNumberIndicator.mm

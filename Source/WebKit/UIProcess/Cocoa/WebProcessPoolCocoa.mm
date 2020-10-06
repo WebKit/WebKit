@@ -40,6 +40,7 @@
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKMouseDeviceObserver.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
@@ -504,6 +505,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
     parameters.overrideUserInterfaceIdiomAndScale = { _UIApplicationCatalystUserInterfaceIdiom(), _UIApplicationCatalystScaleFactor() };
+#endif
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    parameters.hasMouseDevice = [[WKMouseDeviceObserver sharedInstance] hasMouseDevice];
 #endif
 }
 

@@ -27,11 +27,27 @@
 
 #import <BackBoardServices/BKSAnimationFence.h>
 #import <BackBoardServices/BKSAnimationFence_Private.h>
+#import <BackBoardServices/BKSMousePointerService.h>
 
 #else
 
+#import "BaseBoardSPI.h"
+
 @interface BKSAnimationFenceHandle : NSObject
 - (mach_port_t)CAPort;
+@end
+
+@class BKSMousePointerDevice;
+
+@protocol BKSMousePointerDeviceObserver <NSObject>
+@optional
+- (void)mousePointerDevicesDidConnect:(NSSet<BKSMousePointerDevice *> *)mousePointerDevices;
+- (void)mousePointerDevicesDidDisconnect:(NSSet<BKSMousePointerDevice *> *)mousePointerDevices;
+@end
+
+@interface BKSMousePointerService : NSObject
++ (BKSMousePointerService *)sharedInstance;
+- (id<BSInvalidatable>)addPointerDeviceObserver:(id<BKSMousePointerDeviceObserver>)observer;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

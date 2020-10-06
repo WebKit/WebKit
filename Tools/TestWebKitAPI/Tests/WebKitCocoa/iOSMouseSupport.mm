@@ -300,4 +300,187 @@ TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+#if PLATFORM(IOS)
+
+@interface WKMouseDeviceObserver
++ (WKMouseDeviceObserver *)sharedInstance;
+- (void)start;
+- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
+@end
+
+TEST(iOSMouseSupport, MouseInitiallyDisconnected)
+{
+    WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [mouseDeviceObserver start];
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@""];
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
+#endif
+
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: hover"]);
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: fine"]);
+}
+
+TEST(iOSMouseSupport, MouseInitiallyConnected)
+{
+    WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [mouseDeviceObserver start];
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@""];
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: hover"]);
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
+}
+
+TEST(iOSMouseSupport, MouseLaterDisconnected)
+{
+    WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [mouseDeviceObserver start];
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@""];
+
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
+#endif
+
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: hover"]);
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: fine"]);
+}
+
+TEST(iOSMouseSupport, MouseLaterConnected)
+{
+    WKMouseDeviceObserver *mouseDeviceObserver = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [mouseDeviceObserver start];
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@""];
+
+    [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: hover"]);
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
+}
+
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(MACCATALYST)
+
+TEST(iOSMouseSupport, MouseAlwaysConnected)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@""];
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: hover"]);
+
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
+#endif
+
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
+}
+
+#endif // PLATFORM(MACCATALYST)
+
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
 #endif // PLATFORM(IOS) || PLATFORM(MACCATALYST)

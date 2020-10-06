@@ -211,6 +211,10 @@ public:
 
     static bool fullKeyboardAccessEnabled();
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    static void notifyHasMouseDeviceChanged();
+#endif
+
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
@@ -410,6 +414,11 @@ protected:
     void validateFreezerStatus();
 
 private:
+    static HashMap<WebCore::ProcessIdentifier, WebProcessProxy*>& allProcesses();
+
+    void platformInitialize();
+    void platformDestroy();
+
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);
     void didDestroyFrame(WebCore::FrameIdentifier);

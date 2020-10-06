@@ -1,3 +1,96 @@
+2020-10-06  Devin Rousso  <drousso@apple.com>
+
+        CSS hover and "pointer: fine" media queries do not evaluate to true with iOS 13.4 mouse support
+        https://bugs.webkit.org/show_bug.cgi?id=209292
+        <rdar://problem/60663124>
+
+        Reviewed by Tim Horton.
+
+        On iOS, the primary pointer will always be touch input, so the `hover`/`pointer` media query
+        should never change. If a mouse is connected, however, `any-hover`/`any-pointer` should
+        change as now there is at least one device that supports `hover`/`fine`. Note that in the
+        case of `any-pointer` this means that both `coarse` and `fine` will apply. Catalyst assumes
+        that there is always a mouse connected.
+
+        Spec: https://drafts.csswg.org/mediaqueries-4/#any-input
+
+        * UIProcess/ios/WKMouseDeviceObserver.h: Added.
+        * UIProcess/ios/WKMouseDeviceObserver.mm: Added.
+        (+[WKMouseDeviceObserver sharedInstance]):
+        (-[WKMouseDeviceObserver dealloc]):
+        (-[WKMouseDeviceObserver start]):
+        (-[WKMouseDeviceObserver stop]):
+        (-[WKMouseDeviceObserver mousePointerDevicesDidChange:]):
+        (-[WKMouseDeviceObserver _setHasMouseDeviceForTesting:]):
+        Use `BackBoardServices` to listen for mouse devices changes and notify all WebProcess.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::platformInitialize): Added.
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::platformDestroy): Added.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::platformInitialize): Added.
+        (WebKit::WebProcessProxy::platformDestroy): Added.
+        (WebKit::WebProcessProxy::notifyHasMouseDeviceChanged): Added.
+        Tell the shared `WKMouseDeviceObserver` to start listening for mouse device changes when
+        creating the WebProcess so that the shared `WKMouseDeviceObserver` knows to notify all
+        instances when mouse devices change. Make `allProcesses` into a `private static` member
+        function so that it can also be used in `UIProcess/ios/WebProcessProxyIOS.mm`.
+
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        Use the current state of the shared `WKMouseDeviceObserver` when creating WebProcess instead
+        of sending a `SetHasMouseDevice` message immediately after the WebProcess is created.
+
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::hasMouseDevice const): Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setHasMouseDevice): Added.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Update style (including `any-hover` and `any-pointer`) whenever mouse devices change.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebChromeClient::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::hasMouseDevice): Added.
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        * WebProcess/WebPage/playstation/WebPagePlayStation.cpp:
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const): Added.
+        Provide a way for WebCore to get the current state of whether there are any mouse devices.
+        Refactor logic in `WebCore::anyHoverEvaluate` and `WebCore::anyPointerEvaluate` to move
+        platform code into the respective `WebPage` file.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/ios/BackBoardServicesSPI.h:
+        * Platform/spi/ios/BaseBoardSPI.h: Added.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-06  Simon Fraser  <simon.fraser@apple.com>
 
         Redundant rendering updates can be scheduled from inside Page::updateRendering()

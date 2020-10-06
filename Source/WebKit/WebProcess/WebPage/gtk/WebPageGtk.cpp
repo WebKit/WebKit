@@ -43,6 +43,8 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/PlatformScreen.h>
+#include <WebCore/PointerCharacteristics.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
@@ -127,6 +129,24 @@ String WebPage::platformUserAgent(const URL& url) const
         return String();
 
     return WebCore::standardUserAgentForURL(url);
+}
+
+bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
+{
+#if ENABLE(TOUCH_EVENTS)
+    return !screenHasTouchDevice();
+#else
+    return true;
+#endif
+}
+
+OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (screenHasTouchDevice())
+        return PointerCharacteristics::Coarse;
+#endif
+    return PointerCharacteristics::Fine;
 }
 
 void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&& completionHandler)

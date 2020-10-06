@@ -506,6 +506,16 @@ KeyboardUIMode WebChromeClient::keyboardUIMode()
     return m_page.keyboardUIMode();
 }
 
+bool WebChromeClient::hoverSupportedByAnyAvailablePointingDevice() const
+{
+    return m_page.hoverSupportedByAnyAvailablePointingDevice();
+}
+
+OptionSet<PointerCharacteristics> WebChromeClient::pointerCharacteristicsOfAllAvailablePointingDevices() const
+{
+    return m_page.pointerCharacteristicsOfAllAvailablePointingDevices();
+}
+
 #if ENABLE(POINTER_LOCK)
 
 bool WebChromeClient::requestPointerLock()

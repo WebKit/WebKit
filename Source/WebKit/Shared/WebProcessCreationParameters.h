@@ -117,6 +117,9 @@ struct WebProcessCreationParameters {
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseFontSmoothing { true };
     bool fullKeyboardAccessEnabled { false };
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    bool hasMouseDevice { false };
+#endif
     bool memoryCacheDisabled { false };
     bool attrStyleEnabled { false };
     bool useGPUProcessForMediaEnabled { false };

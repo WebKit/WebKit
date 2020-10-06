@@ -52,6 +52,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     UserPreferredLanguagesChanged()
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+    SetHasMouseDevice(bool hasMouseDevice)
+#endif
+
     # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
     ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)

@@ -39,6 +39,7 @@
 #include "ImageBuffer.h"
 #include "InputMode.h"
 #include "MediaProducer.h"
+#include "PointerCharacteristics.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RegistrableDomain.h"
@@ -177,6 +178,9 @@ public:
     virtual bool runJavaScriptPrompt(Frame&, const String& message, const String& defaultValue, String& result) = 0;
     virtual void setStatusbarText(const String&) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
+
+    virtual bool hoverSupportedByAnyAvailablePointingDevice() const = 0;
+    virtual OptionSet<PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const = 0;
 
     virtual bool supportsImmediateInvalidation() { return false; }
     virtual void invalidateRootView(const IntRect&) = 0;

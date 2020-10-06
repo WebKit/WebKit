@@ -33,6 +33,8 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Logging.h"
@@ -730,22 +732,16 @@ static bool hoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Fra
     return keyword == CSSValueHover;
 }
 
-static bool anyHoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
+static bool anyHoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    if (!is<CSSPrimitiveValue>(value)) {
-#if ENABLE(TOUCH_EVENTS)
-        return !screenHasTouchDevice();
-#else
-        return true;
-#endif
-    }
+    auto* page = frame.page();
+    bool hoverSupportedByAnyAvailablePointingDevice = page && page->chrome().client().hoverSupportedByAnyAvailablePointingDevice();
+
+    if (!is<CSSPrimitiveValue>(value))
+        return hoverSupportedByAnyAvailablePointingDevice;
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-#if ENABLE(TOUCH_EVENTS)
-    if (screenHasTouchDevice())
-        return keyword == CSSValueNone;
-#endif
-    return keyword == CSSValueHover;
+    return hoverSupportedByAnyAvailablePointingDevice ? (keyword == CSSValueHover) : (keyword == CSSValueNone);
 }
 
 static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
@@ -765,17 +761,22 @@ static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, F
     return keyword == CSSValueFine;
 }
 
-static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
+static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
+    auto* page = frame.page();
+    auto pointerCharacteristicsOfAllAvailablePointingDevices = page ? page->chrome().client().pointerCharacteristicsOfAllAvailablePointingDevices() : OptionSet<PointerCharacteristics>();
+
     if (!is<CSSPrimitiveValue>(value))
-        return true;
+        return !pointerCharacteristicsOfAllAvailablePointingDevices.isEmpty();
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-#if ENABLE(TOUCH_EVENTS)
-    if (screenHasTouchDevice())
-        return keyword == CSSValueCoarse;
-#endif
-    return keyword == CSSValueFine;
+    if (keyword == CSSValueFine)
+        return pointerCharacteristicsOfAllAvailablePointingDevices.contains(PointerCharacteristics::Fine);
+    if (keyword == CSSValueCoarse)
+        return pointerCharacteristicsOfAllAvailablePointingDevices.contains(PointerCharacteristics::Coarse);
+    if (keyword == CSSValueNone)
+        return pointerCharacteristicsOfAllAvailablePointingDevices.isEmpty();
+    return false;
 }
 
 static bool prefersDarkInterfaceEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
