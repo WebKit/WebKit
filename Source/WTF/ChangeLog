@@ -1,3 +1,21 @@
+2020-10-05  Sam Weinig  <weinig@apple.com>
+
+        Add implementation of <filesystem> to WTF for macOS 10.14
+        https://bugs.webkit.org/show_bug.cgi?id=217302
+
+        Reviewed by Darin Adler.
+
+        Imports a copy of <filesystem> and its needed implementation files
+        from libc++ (r343838) and modifies them to build outside of  libc++. 
+        This is only needed and only built for versions of macOS < 10.15
+        and can be dropped when we require 10.15.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/StdFilesystem.cpp: Added.
+        * wtf/StdFilesystem.h: Added.
+        * LICENSE-libc++.txt: Added.
+
 2020-10-05  Rob Buis  <rbuis@igalia.com>
 
         WebKit doesn't parse "#" as delimiter for fragment identifier in data URIs

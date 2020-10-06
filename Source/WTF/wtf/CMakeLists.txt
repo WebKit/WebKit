@@ -241,6 +241,7 @@ set(WTF_PUBLIC_HEADERS
     StackShotProfiler.h
     StackStats.h
     StackTrace.h
+    StdFilesystem.h
     StdIntExtras.h
     StdLibExtras.h
     StdList.h
