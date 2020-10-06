@@ -208,21 +208,15 @@ uint64_t TextCheckingParagraph::checkingLength() const
     return *m_checkingLength;
 }
 
-uint64_t TextCheckingParagraph::automaticReplacementStart(bool oldBehaviour) const
+uint64_t TextCheckingParagraph::automaticReplacementStart() const
 {
-    if (oldBehaviour && is_gt(documentOrder(paragraphRange().start, m_automaticReplacementRange.start)))
-        return 0;
-    
     if (!m_automaticReplacementStart)
         m_automaticReplacementStart = characterCount({ paragraphRange().start, m_automaticReplacementRange.start });
     return *m_automaticReplacementStart;
 }
 
-uint64_t TextCheckingParagraph::automaticReplacementLength(bool oldBehaviour) const
+uint64_t TextCheckingParagraph::automaticReplacementLength() const
 {
-    if (oldBehaviour && is_gt(documentOrder(paragraphRange().start, m_automaticReplacementRange.start)))
-        return characterCount({ paragraphRange().start, m_automaticReplacementRange.end });
-    
     if (!m_automaticReplacementLength)
         m_automaticReplacementLength = characterCount(m_automaticReplacementRange);
     return *m_automaticReplacementLength;

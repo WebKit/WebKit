@@ -701,7 +701,6 @@ editing/spelling/spelling-attribute-change.html [ Timeout ]
 editing/spelling/spellcheck-attribute.html [ Timeout ]
 
 # UIScriptController.setContinuousSpellCheckingEnabled is not implemented.
-editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
 editing/spelling/toggle-spellchecking.html [ Skip ]
 
 # LayoutTest/fast/loader tests that fail or time out.
