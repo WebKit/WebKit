@@ -277,7 +277,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-app
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
-webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
 # Crash is webkit.org/b/176020
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure Crash ]
 # Crash in bug #176019
@@ -301,9 +300,6 @@ webkit.org/b/210498 media/media-source/media-source-restrictions.html [ Pass Cra
 webkit.org/b/210498 media/media-source/media-source-sequence-timestamps.html [ Pass Crash ]
 webkit.org/b/175876 imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass Crash ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
-
-# There is an oggdemux bug that deadlocks WebKit: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/639
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Failure Crash ]
 
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
@@ -418,7 +414,6 @@ webkit.org/b/169918 compositing/masks/compositing-clip-path-mask-change.html [ I
 webkit.org/b/169918 compositing/masks/mask-with-preserve-3d.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
@@ -1124,8 +1119,6 @@ webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
 
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
 
-webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
-
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
 
 webkit.org/b/208631 compositing/repaint/fixed-background-scroll.html [ Failure Pass ]
@@ -1154,9 +1147,7 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
 
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015a.xht [ ImageOnlyFailure ]
-webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015b.xht [ ImageOnlyFailure ]
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015a.xht [ ImageOnlyFailure ]
-webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015b.xht [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-010.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-inline-010.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-016.html [ ImageOnlyFailure ]
@@ -1189,8 +1180,6 @@ webkit.org/b/210239 fast/canvas/webgl/index-validation-with-subsequent-draws.htm
 
 webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
 webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
-
-webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
 
 webkit.org/b/211693 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure Pass ]
 webkit.org/b/211693 editing/input/caret-at-the-edge-of-input.html [ Failure Pass ]
@@ -1296,11 +1285,7 @@ webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Ski
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
 
-webkit.org/b/199224 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
-
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
-
-webkit.org/b/212811 editing/deleting/delete-txt-in-dl-crash.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -2063,7 +2048,6 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 
 webkit.org/b/209044 http/tests/media/hls/video-controls-live-stream.html [ Failure Pass ]
 
-
 webkit.org/b/210233 http/tests/media/media-stream/device-change-event-in-iframe.html [ Failure Pass ]
 
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
@@ -2383,8 +2367,6 @@ webkit.org/b/205112 media/remoteplayback-prompt.html [ Timeout ]
 webkit.org/b/205112 media/remoteplayback-target-availability.html [ Timeout ]
 webkit.org/b/205112 media/remoteplayback-watch-disableremoteplayback.html [ Timeout ]
 
-webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
-
 webkit.org/b/207711 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
@@ -2392,7 +2374,6 @@ webkit.org/b/207711 [ Debug ] http/tests/multipart/multipart-async-image.html [ 
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ]
-webkit.org/b/207711 [ Release ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass Timeout ]
 
 # Web inspector related tests are very slow or timeout in debug.
@@ -2717,8 +2698,6 @@ webkit.org/b/123097 media/video-controls-captions.html [ Skip ]
 
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
-webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
-
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
 webkit.org/b/102776 webkit.org/b/198830 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure Timeout Crash ]
 webkit.org/b/102776 webkit.org/b/198830 media/track/track-cue-rendering-horizontal.html [ Failure Timeout Crash ]
@@ -2938,11 +2917,6 @@ webkit.org/b/153602 fast/table/003.html [ Failure ]
 webkit.org/b/153602 fast/text/emoji.html [ Failure ]
 webkit.org/b/153602 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure ]
 
-webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase.html [ Failure ]
-webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-archive.html [ Failure ]
-webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]
-webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code.html [ Failure ]
-
 webkit.org/b/153698 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-dashed-000.xht [ ImageOnlyFailure ]
 
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
@@ -2999,9 +2973,6 @@ webkit.org/b/163827 storage/websql/quota-tracking.html [ Failure ]
 webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
 webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
-
-webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
-webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 
 webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
 
@@ -3095,8 +3066,6 @@ webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Fai
 
 webkit.org/b/174460 fast/canvas/canvas-blend-image.html [ Failure ]
 webkit.org/b/174460 fast/canvas/canvas-blend-solid.html [ Failure ]
-
-webkit.org/b/174461 inspector/canvas/memory.html [ Failure ]
 
 webkit.org/b/174609 accessibility/presentation-role-iframe.html [ Failure ]
 
@@ -3339,8 +3308,6 @@ webkit.org/b/193629 fast/css3-text/css3-text-decoration/text-underline-style.htm
 
 webkit.org/b/193631 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 
-webkit.org/b/193632 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
-
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 
 webkit.org/b/193638 webkit.org/b/198830 media/video-webkit-playsinline.html [ Failure Crash ]
@@ -3358,8 +3325,6 @@ webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
-
-webkit.org/b/195134 inspector/cpu-profiler/threads.html [ Failure ]
 
 webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 
@@ -3396,7 +3361,6 @@ webkit.org/b/197709 imported/w3c/web-platform-tests/html/browsers/history/the-lo
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
 
-webkit.org/b/198119 compositing/shared-backing/shared-layer-has-reflection.html [ ImageOnlyFailure ]
 webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
@@ -3404,8 +3368,6 @@ webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
 
 webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
-
-webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
@@ -3463,11 +3425,6 @@ webkit.org/b/202229 css-dark-mode/color-scheme-meta.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
 
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
-
 webkit.org/b/202744 compositing/layer-creation/absolute-in-async-overflow-scroll.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
@@ -3524,7 +3481,6 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Pass ]
-
 
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
