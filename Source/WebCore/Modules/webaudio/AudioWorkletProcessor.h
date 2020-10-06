@@ -29,6 +29,7 @@
 #pragma once
 
 #if ENABLE(WEB_AUDIO)
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

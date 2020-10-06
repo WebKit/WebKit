@@ -32,6 +32,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "RootInlineBox.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 

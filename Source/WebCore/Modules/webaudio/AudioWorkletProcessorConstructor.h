@@ -32,6 +32,7 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
+#include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
