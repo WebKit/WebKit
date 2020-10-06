@@ -1,5 +1,14 @@
 2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK][WPE] Update baseline of WPT test css/cssom/cssstyledeclaration-csstext.html after r267985
+
+        Unreviewed test gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
+2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Update two webaudio tests baselines after r268006
 
         Unreviewed test gardening.
