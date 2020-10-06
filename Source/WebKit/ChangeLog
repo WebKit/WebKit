@@ -1,3 +1,20 @@
+2020-10-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] The WebContent development XPC service is not allowed to connect to the XPC endpoint in the Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=217389
+        <rdar://problem/68585497>
+
+        Reviewed by Brent Fulgham.
+
+        The WebContent development XPC service is not allowed to connect to the XPC endpoint in the Networking process,
+        because this requires a private entitlement. The WebContent development XPC service is not allowed to have private
+        entitlements. The WebContent process needs to connect to the XPC endpoint in the Networking process in order to
+        receive the Launch Services database XPC object. This patch addresses this issue by allowing platform binaries
+        to connect to the XPC endpoint.
+
+        * Shared/Cocoa/XPCEndpoint.mm:
+        (WebKit::XPCEndpoint::XPCEndpoint):
+
 2020-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename MediaPlayerPrivateRemoteIdentifier to MediaPlayerIdentifier
