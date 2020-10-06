@@ -55,9 +55,6 @@ webkit.org/b/213874 accessibility/keyevents-for-increment-actions-with-node-remo
 webkit.org/b/213874 accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
 webkit.org/b/213874 accessibility/keyevents-posted-for-dismiss-action.html [ Skip ]
 
-
-webkit.org/b/214068 accessibility/textarea-selected-text-range.html [ Timeout ]
-
 webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
 webkit.org/b/199860 accessibility/datalist.html [ Failure ]
 
@@ -122,8 +119,6 @@ webkit.org/b/211979 imported/w3c/web-platform-tests/clipboard-apis/async-raw-wri
 # Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/214060 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
-
 webkit.org/b/214417 [ Debug ] css3/color/composited-solid-backgrounds.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +156,7 @@ webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failu
 webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Crypto tests
+# End of Crypto tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -228,7 +223,6 @@ webkit.org/b/212202 fast/events/platform-wheelevent-in-scrolling-div.html [ Skip
 webkit.org/b/98937 gamepad [ Skip ]
 webkit.org/b/177447 imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
 webkit.org/b/98937 http/tests/misc/gamepads-insecure.html [ Skip ]
-
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Gamepad-related bugs
@@ -434,7 +428,6 @@ webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Failure Pass ]
 webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PageOverlay-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +571,6 @@ webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure
 
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -629,7 +621,6 @@ webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-upd
 # WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/216768 webaudio/Analyser/realtimeanalyser-downmix.html [ Failure ]
 webkit.org/b/216868 webaudio/AudioParam/audioparam-processing.html [ Failure Pass ]
 
 webkit.org/b/217189 webaudio/Convolver/unmmodified-buffer.html [ Pass Timeout Crash ]
@@ -666,8 +657,6 @@ webkit.org/b/216071 fast/canvas/webgl/move-canvas-in-document-while-clean.html [
 webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash ]
 
 webkit.org/b/212809 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
-
-webkit.org/b/212925 webrtc/multi-audio.html [ Failure ]
 
 webkit.org/b/213780 webrtc/vp9.html [ Failure ]
 
@@ -771,8 +760,6 @@ webkit.org/b/213331 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-m
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Pass ]
 
 webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
-
-webkit.org/b/214033 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-valueasdate.html [ Failure ]
 
 # Main baseline imported in r264117, but it is indeed failing (i.e. the textarea is scrolled)
 webkit.org/b/178583 imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea.html [ Failure ]

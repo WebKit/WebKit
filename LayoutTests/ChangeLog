@@ -1,5 +1,11 @@
 2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Remove tests passing.
+
+        * platform/glib/TestExpectations:
+
+2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Remove tests passing.
 
         * platform/gtk/TestExpectations:
