@@ -1,3 +1,16 @@
+2020-10-06  Luming Yin  <luming_yin@apple.com>
+
+        [macOS] Bump reported current shipping release UA to 10_15_7
+        https://bugs.webkit.org/show_bug.cgi?id=217364
+        <rdar://problem/69984962>
+
+        Reviewed by Alex Christensen.
+
+        Bump the reported current shipping release UA from 10_15_6 to 10_15_7.
+
+        * platform/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+
 2020-10-06  Chris Dumez  <cdumez@apple.com>
 
         Update Worklet.addModule() to actually fetch and evaluate the module script

@@ -36,7 +36,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 {
     String osVersion = systemMarketingVersionForUserAgentString();
     if (!osVersion.startsWith("10"))
-        osVersion = "10_15_6"_s;
+        osVersion = "10_15_7"_s;
     
     String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
 
