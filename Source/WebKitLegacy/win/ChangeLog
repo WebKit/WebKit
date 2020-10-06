@@ -1,3 +1,21 @@
+2020-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Use the "triggerRenderingUpdate" terminology in ChromeClient
+        https://bugs.webkit.org/show_bug.cgi?id=217355
+
+        Reviewed by Tim Horton.
+
+        ChromeClient confusingly had both scheduleRenderingUpdate() and scheduleTimedRenderingUpdate().
+        The former is for triggering an update soon, and the latter is a normal schedule, used by
+        SVGImages because they have their own Page.
+
+        Rename the one that the WebKits have to implement to triggerRenderingUpdate().
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::triggerRenderingUpdate):
+        (WebChromeClient::scheduleRenderingUpdate): Deleted.
+        * WebCoreSupport/WebChromeClient.h:
+
 2020-10-05  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Introduce bindings for the Contact Picker API

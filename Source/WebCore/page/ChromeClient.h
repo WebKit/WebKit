@@ -325,7 +325,7 @@ public:
     virtual void setNeedsOneShotDrawingSynchronization() = 0;
     // Sets a flag to specify that the view needs to be updated, so we need
     // to do an eager layout before the drawing.
-    virtual void scheduleRenderingUpdate() = 0;
+    virtual void triggerRenderingUpdate() = 0;
     virtual bool scheduleTimedRenderingUpdate() { return false; }
     // Returns whether or not the client can render the composited layer,
     // regardless of the settings.

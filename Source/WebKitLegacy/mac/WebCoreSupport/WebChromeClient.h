@@ -174,7 +174,7 @@ private:
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
-    void scheduleRenderingUpdate() final;
+    void triggerRenderingUpdate() final;
 
     CompositingTriggerFlags allowedCompositingTriggers() const final
     {

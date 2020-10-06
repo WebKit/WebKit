@@ -141,7 +141,7 @@ void RenderingUpdateScheduler::displayRefreshFired()
 
 void RenderingUpdateScheduler::scheduleImmediateRenderingUpdate()
 {
-    m_page.chrome().client().scheduleRenderingUpdate();
+    m_page.chrome().client().triggerRenderingUpdate();
 }
 
 void RenderingUpdateScheduler::scheduleRenderingUpdate()

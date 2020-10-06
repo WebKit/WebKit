@@ -910,7 +910,7 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     notImplemented();
 }
 
-void WebChromeClient::scheduleRenderingUpdate()
+void WebChromeClient::triggerRenderingUpdate()
 {
     if (m_page.drawingArea())
         m_page.drawingArea()->triggerRenderingUpdate();

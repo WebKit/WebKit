@@ -1,5 +1,23 @@
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Use the "triggerRenderingUpdate" terminology in ChromeClient
+        https://bugs.webkit.org/show_bug.cgi?id=217355
+
+        Reviewed by Tim Horton.
+
+        ChromeClient confusingly had both scheduleRenderingUpdate() and scheduleTimedRenderingUpdate().
+        The former is for triggering an update soon, and the latter is a normal schedule, used by
+        SVGImages because they have their own Page.
+
+        Rename the one that the WebKits have to implement to triggerRenderingUpdate().
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::triggerRenderingUpdate):
+        (WebChromeClient::scheduleRenderingUpdate): Deleted.
+
+2020-10-05  Simon Fraser  <simon.fraser@apple.com>
+
         ChromeClient::needsImmediateRenderingUpdate() only existing to work around a WebKit1 bug
         https://bugs.webkit.org/show_bug.cgi?id=217338
 

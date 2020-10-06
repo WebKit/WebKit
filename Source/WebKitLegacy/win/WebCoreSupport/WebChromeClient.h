@@ -133,7 +133,7 @@ public:
     void setNeedsOneShotDrawingSynchronization() final { }
     // Sets a flag to specify that the view needs to be updated, so we need
     // to do an eager layout before the drawing.
-    void scheduleRenderingUpdate() final;
+    void triggerRenderingUpdate() final;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const final;

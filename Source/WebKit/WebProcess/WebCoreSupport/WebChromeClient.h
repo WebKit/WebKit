@@ -220,7 +220,7 @@ private:
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
-    void scheduleRenderingUpdate() final;
+    void triggerRenderingUpdate() final;
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
 
