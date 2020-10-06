@@ -1,3 +1,34 @@
+2020-10-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r268019. rdar://problem/70005083
+
+    Change a PDF RELEASE_ASSERT to an early return.
+    rdar://problem/69805240 and https://bugs.webkit.org/show_bug.cgi?id=217346
+    
+    Reviewed by Tim Horton.
+    
+    No new tests (Wish they were possible)
+    
+    * WebProcess/Plugins/PDF/PDFPlugin.mm:
+    (WebKit::PDFPlugin::installPDFDocument): This release assert is getting hit regularly.
+      Change to an early return while we continue tracking this down.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@268019 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-05  Brady Eidson  <beidson@apple.com>
+
+            Change a PDF RELEASE_ASSERT to an early return.
+            rdar://problem/69805240 and https://bugs.webkit.org/show_bug.cgi?id=217346
+
+            Reviewed by Tim Horton.
+
+            No new tests (Wish they were possible)
+
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (WebKit::PDFPlugin::installPDFDocument): This release assert is getting hit regularly.
+              Change to an early return while we continue tracking this down.
+
 2020-10-05  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r267602. rdar://problem/69904386
