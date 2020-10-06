@@ -1,3 +1,20 @@
+2020-10-06  Rob Buis  <rbuis@igalia.com>
+
+        Make value parameter in Document.execCommand non nullable
+        https://bugs.webkit.org/show_bug.cgi?id=217331
+
+        Reviewed by Sam Weinig.
+
+        Make value parameter in Document.execCommand non nullable [1].
+
+        Test: editing/execCommand/arguments-combinations.html
+
+        [1] https://html.spec.whatwg.org/#document
+
+        * dom/Document+HTML.idl:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertImage):
+
 2020-10-06  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early October 2020 edition, take two

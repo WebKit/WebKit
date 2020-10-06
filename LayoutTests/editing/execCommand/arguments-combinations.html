@@ -69,8 +69,8 @@
                 // Test empty String 3rd parameter. (should not add an empty id value)
                 test('document.execCommand("InsertHorizontalRule", false, "")', '<hr>');
 
-                // Test null 3rd parameter. (should treat as if only two arguments were passed, same as undefined)
-                test('document.execCommand("InsertHorizontalRule", false, null)', '<hr>');
+                // Test null 3rd parameter. (should stringify to "null")
+                test('document.execCommand("InsertHorizontalRule", false, null)', '<hr id="null">');
 
                 // Test undefined 3rd parameter. (should treat as if only two arguments were passed, same as null)
                 test('document.execCommand("InsertHorizontalRule", false, undefined)', '<hr>');
