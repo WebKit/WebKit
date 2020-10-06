@@ -1,3 +1,13 @@
+2020-10-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        %TypedArray%.from must do mapping and putting in lockstep
+        https://bugs.webkit.org/show_bug.cgi?id=217349
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
 2020-10-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add Array#item to @@unscopables

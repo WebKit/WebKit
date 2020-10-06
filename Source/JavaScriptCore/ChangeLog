@@ -1,3 +1,19 @@
+2020-10-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        %TypedArray%.from must do mapping and putting in lockstep
+        https://bugs.webkit.org/show_bug.cgi?id=217349
+
+        Reviewed by Yusuke Suzuki.
+
+        %TypedArray%.from first turns the input iterator into a list to find the size for the resulting typed array,
+        then it fills the typed array with the list elements.
+
+        If a map function is provided, however, it must be called during the *second* phase, not the first,
+        because if an element throws upon valueOf, that should prevent all further calls of the map function.
+
+        * builtins/TypedArrayConstructor.js:
+        (from):
+
 2020-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unrevewed, fix crash for ASan debug builds

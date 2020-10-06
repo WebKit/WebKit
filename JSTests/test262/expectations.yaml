@@ -1314,9 +1314,6 @@ test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-value-not-obj-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/from/set-value-abrupt-completion.js:
-  default: 'Test262Error: interrupted source iteration Expected SameValue(«1», «[object Object]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: interrupted source iteration Expected SameValue(«1», «[object Object]») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/detached-buffer-realm.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'

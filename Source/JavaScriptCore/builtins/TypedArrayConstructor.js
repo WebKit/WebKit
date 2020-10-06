@@ -66,7 +66,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
         var accumulator = [];
 
-        var k = 0;
+        var count = 0;
         var iterator = iteratorMethod.@call(items);
 
         // Since for-of loop once more looks up the @@iterator property of a given iterable,
@@ -76,19 +76,21 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         wrapper.@@iterator = function() { return iterator; }
 
         for (var value of wrapper) {
-            if (mapFn)
-                @putByValDirect(accumulator, k, thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k));
-            else
-                @putByValDirect(accumulator, k, value);
-            k++;
+            @putByValDirect(accumulator, count, value);
+            count++;
         }
 
-        var result = new this(k);
-        if (@typedArrayLength(result) < k)
+        var result = new this(count);
+        if (@typedArrayLength(result) < count)
             @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 
-        for (var i = 0; i < k; i++) 
-            result[i] = accumulator[i];
+        for (var k = 0; k < count; k++) {
+            var value = accumulator[k];
+            if (mapFn)
+                result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
+            else
+                result[k] = value;
+        }
 
         return result;
     }
@@ -99,14 +101,12 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     if (@typedArrayLength(result) < arrayLikeLength)
         @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 
-    var k = 0;
-    while (k < arrayLikeLength) {
+    for (var k = 0; k < arrayLikeLength; k++) {
         var value = arrayLike[k];
         if (mapFn)
             result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
         else
             result[k] = value;
-        k++;
     }
 
     return result;
