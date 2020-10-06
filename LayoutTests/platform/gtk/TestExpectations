@@ -1092,9 +1092,6 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 
-# LFC (LayoutFormatingContext is disabled by default).
-fast/layoutformattingcontext/ [ Skip ]
-
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-025.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-029.html [ ImageOnlyFailure ]

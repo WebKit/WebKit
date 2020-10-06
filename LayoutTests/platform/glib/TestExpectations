@@ -1139,6 +1139,9 @@ inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
 inspector/canvas/updateShader-webgpu.html [ Skip ]
 inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
+# LFC (LayoutFormatingContext is disabled by default).
+fast/layoutformattingcontext/ [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
