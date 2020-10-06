@@ -149,7 +149,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         size_t overflowContentLength { 0 };
     };
     Optional<PreviousLine> previousLine;
-    auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
+    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     auto isFirstLine = formattingState().lines().isEmpty();
 
     auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
@@ -258,7 +258,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
 {
     auto& inlineItems = formattingState().inlineItems();
     auto maximumLineWidth = InlineLayoutUnit { };
-    auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
+    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     auto lineBuilder = LineBuilder { *this, floatingContext, root(), inlineItems };
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     while (!layoutRange.isEmpty()) {
@@ -414,7 +414,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto updateFloatGeometry = [&] {
         if (lineContent.floats.isEmpty())
             return;
-        auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
+        auto floatingContext = FloatingContext { *this, formattingState.floatingState() };
         // Move floats to their final position.
         for (const auto& floatCandidate : lineContent.floats) {
             auto& floatBox = floatCandidate.item->layoutBox();

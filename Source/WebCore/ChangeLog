@@ -1,3 +1,23 @@
+2020-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Remove redundant FormattingContextRoot in FloatingContext c'tor
+        https://bugs.webkit.org/show_bug.cgi?id=217398
+
+        Reviewed by Antti Koivisto.
+
+        No need to pass in the root now that FormattingContext has the root() getter.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        * layout/floats/FloatingContext.h:
+        (WebCore::Layout::FloatingContext::root const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+
 2020-10-06  Luming Yin  <luming_yin@apple.com>
 
         [macOS] Bump reported current shipping release UA to 10_15_7

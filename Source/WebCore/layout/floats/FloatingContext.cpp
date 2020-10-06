@@ -213,9 +213,8 @@ struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
     HorizontalEdges containingBlockContentBox;
 };
 
-FloatingContext::FloatingContext(const ContainerBox& floatingContextRoot, const FormattingContext& formattingContext, FloatingState& floatingState)
-    : m_root(makeWeakPtr(floatingContextRoot))
-    , m_formattingContext(formattingContext)
+FloatingContext::FloatingContext(const FormattingContext& formattingContext, FloatingState& floatingState)
+    : m_formattingContext(formattingContext)
     , m_floatingState(floatingState)
 {
 }

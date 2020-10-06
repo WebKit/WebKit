@@ -62,7 +62,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> block formatting context -> formatting root(" << &root() << ")");
     auto& formattingRoot = root();
     ASSERT(formattingRoot.hasInFlowOrFloatingChild());
-    auto floatingContext = FloatingContext { formattingRoot, *this, formattingState().floatingState() };
+    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
 
     LayoutQueue layoutQueue;
     enum class LayoutDirection { Child, Sibling };

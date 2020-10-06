@@ -44,7 +44,7 @@ class LayoutState;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(const ContainerBox& floatingContextRoot, const FormattingContext&, FloatingState&);
+    FloatingContext(const FormattingContext&, FloatingState&);
 
     FloatingState& floatingState() const { return m_floatingState; }
 
@@ -69,7 +69,7 @@ public:
 private:
     LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
-    const ContainerBox& root() const { return *m_root; }
+    const ContainerBox& root() const { return m_formattingContext.root(); }
 
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
@@ -78,7 +78,6 @@ private:
     LayoutPoint mapTopLeftToFloatingStateRoot(const Box&) const;
     Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
 
-    WeakPtr<const ContainerBox> m_root;
     const FormattingContext& m_formattingContext;
     FloatingState& m_floatingState;
 };
