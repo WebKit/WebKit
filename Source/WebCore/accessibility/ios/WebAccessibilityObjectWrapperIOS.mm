@@ -2675,6 +2675,24 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [WebAccessibilityTextMarker textMarkerWithVisiblePosition:lineEnd cache:self.axBackingObject->axObjectCache()];
 }
 
+// Returns start/end markers for the line based on position
+- (NSArray<WebAccessibilityTextMarker *> *)lineMarkersForMarker:(WebAccessibilityTextMarker *)marker
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    if (!marker)
+        return nil;
+
+    auto range = self.axBackingObject->lineRangeForPosition([marker visiblePosition]);
+    auto* startMarker = [WebAccessibilityTextMarker textMarkerWithVisiblePosition:range.start cache:self.axBackingObject->axObjectCache()];
+    auto* endMarker = [WebAccessibilityTextMarker textMarkerWithVisiblePosition:range.end cache:self.axBackingObject->axObjectCache()];
+    if (!startMarker || !endMarker)
+        return nil;
+    
+    return @[ startMarker, endMarker ];
+}
+
 // This method is intended to return the marker at the start of the line starting at
 // the marker that is passed into the method.
 - (WebAccessibilityTextMarker *)lineStartMarkerForMarker:(WebAccessibilityTextMarker *)marker

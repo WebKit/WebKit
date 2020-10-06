@@ -1,3 +1,16 @@
+2020-10-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose lineRangeForPosition for iOS Accessibility code
+        https://bugs.webkit.org/show_bug.cgi?id=217256
+        <rdar://problem/67478962>
+
+        Reviewed by Zalan Bujtas.
+
+        Expose the existing lineRangeForPosition method for iOS accessibility.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper lineMarkersForMarker:]):
+
 2020-10-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Move document box special height computation out of contentHeightForFormattingContextRoot
