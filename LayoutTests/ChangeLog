@@ -1,3 +1,13 @@
+2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Move two common cache tests to GLIB test expectations.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-10-05  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] Enable some fullscreen and picture-in-picture tests

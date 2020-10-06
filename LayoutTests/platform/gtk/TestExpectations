@@ -2385,9 +2385,6 @@ webkit.org/b/205112 media/remoteplayback-watch-disableremoteplayback.html [ Time
 
 webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 
-webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
-webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Failure Pass Timeout ]
-
 webkit.org/b/207711 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
