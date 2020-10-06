@@ -1,3 +1,13 @@
+2020-10-06  Youenn Fablet  <youenn@apple.com>
+
+        Enable video capture in WebProcess by default on MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=217385
+        <rdar://problem/69999542>
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Align URL setters with reasonably behaving other browsers

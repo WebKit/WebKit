@@ -170,7 +170,7 @@ CaptureVideoInUIProcessEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: WebKit::defaultCaptureVideoInUIProcessEnabled()
+      default: false
 
 DOMPasteAccessRequestsEnabled:
   type: bool

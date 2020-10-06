@@ -69,7 +69,6 @@ bool defaultUseGPUProcessForWebGLEnabled();
 bool defaultCaptureAudioInGPUProcessEnabled();
 bool defaultCaptureAudioInUIProcessEnabled();
 bool defaultCaptureVideoInGPUProcessEnabled();
-bool defaultCaptureVideoInUIProcessEnabled();
 #endif
 
 #if ENABLE(WEB_RTC)
