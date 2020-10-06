@@ -1,3 +1,23 @@
+2020-10-05  Peng Liu  <peng.liu6@apple.com>
+
+        MobileSafari crashes at WebCore: -[WebAVPlayerViewControllerDelegate playerViewControllerWillStartPictureInPicture:]
+        https://bugs.webkit.org/show_bug.cgi?id=217356
+
+        Reviewed by Alex Christensen.
+
+        Since we replaced the RefPtr of VideoFullscreenInterfaceAVKit with a WeakPtr in
+        WebAVPlayerViewControllerDelegate to fix a leak in r262185, self.fullscreenInterface
+        could be NULL and we need to add NULL checks.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerViewControllerDelegate playerViewControllerWillStartPictureInPicture:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewControllerDidStartPictureInPicture:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewController:failedToStartPictureInPictureWithError:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewControllerWillStopPictureInPicture:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewControllerDidStopPictureInPicture:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewController:shouldExitFullScreenWithReason:]):
+        (-[WebAVPlayerViewControllerDelegate playerViewController:restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:]):
+
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Remove Page::scheduleImmediateRenderingUpdate()

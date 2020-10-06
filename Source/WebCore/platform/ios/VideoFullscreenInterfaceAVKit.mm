@@ -118,32 +118,37 @@ static bool ignoreWatchdogForDebugging = false;
 - (void)playerViewControllerWillStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->willStartPictureInPicture();
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->willStartPictureInPicture();
 }
 
 - (void)playerViewControllerDidStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->didStartPictureInPicture();
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->didStartPictureInPicture();
 }
 
 - (void)playerViewController:(AVPlayerViewController *)playerViewController failedToStartPictureInPictureWithError:(NSError *)error
 {
     UNUSED_PARAM(playerViewController);
     UNUSED_PARAM(error);
-    self.fullscreenInterface->failedToStartPictureInPicture();
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->failedToStartPictureInPicture();
 }
 
 - (void)playerViewControllerWillStopPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->willStopPictureInPicture();
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->willStopPictureInPicture();
 }
 
 - (void)playerViewControllerDidStopPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->didStopPictureInPicture();
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->didStopPictureInPicture();
 }
 
 - (BOOL)playerViewControllerShouldAutomaticallyDismissAtPictureInPictureStart:(AVPlayerViewController *)playerViewController
@@ -171,13 +176,17 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
 {
     UNUSED_PARAM(playerViewController);
+    if (!self.fullscreenInterface)
+        return YES;
+
     return self.fullscreenInterface->shouldExitFullscreenWithReason(convertToExitFullScreenReason(reason));
 }
 
 - (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
 
 - (BOOL)playerViewControllerShouldStartPictureInPictureFromInlineWhenEnteringBackground:(AVPlayerViewController *)playerViewController
