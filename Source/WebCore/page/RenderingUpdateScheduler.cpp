@@ -146,10 +146,7 @@ void RenderingUpdateScheduler::scheduleImmediateRenderingUpdate()
 
 void RenderingUpdateScheduler::scheduleRenderingUpdate()
 {
-    if (m_page.chrome().client().needsImmediateRenderingUpdate())
-        scheduleImmediateRenderingUpdate();
-    else
-        scheduleTimedRenderingUpdate();
+    scheduleTimedRenderingUpdate();
 }
 
 }

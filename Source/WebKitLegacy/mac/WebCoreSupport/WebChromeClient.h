@@ -175,7 +175,6 @@ private:
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     void scheduleRenderingUpdate() final;
-    bool needsImmediateRenderingUpdate() const final { return true; }
 
     CompositingTriggerFlags allowedCompositingTriggers() const final
     {

@@ -1,5 +1,24 @@
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
+        ChromeClient::needsImmediateRenderingUpdate() only existing to work around a WebKit1 bug
+        https://bugs.webkit.org/show_bug.cgi?id=217338
+
+        Reviewed by Said Abou-Hallawa.
+
+        WebViewLayerFlushScheduler has a bug where scheduling inside the callback would fail
+        because the RunLoopObserver was always invalidated at the end of the callback.
+
+        If we fix this, we can remove ChromeClient::needsImmediateRenderingUpdate() which I believe
+        only existed to work around this bug.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scheduleTimedRenderingUpdate):
+        (WebCore::ChromeClient::needsImmediateRenderingUpdate const): Deleted.
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+
+2020-10-05  Simon Fraser  <simon.fraser@apple.com>
+
         Rename scheduleTimedRenderingUpdate() functions related to images
         https://bugs.webkit.org/show_bug.cgi?id=217352
 

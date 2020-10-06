@@ -327,7 +327,6 @@ public:
     // to do an eager layout before the drawing.
     virtual void scheduleRenderingUpdate() = 0;
     virtual bool scheduleTimedRenderingUpdate() { return false; }
-    virtual bool needsImmediateRenderingUpdate() const { return false; }
     // Returns whether or not the client can render the composited layer,
     // regardless of the settings.
     virtual bool allowsAcceleratedCompositing() const { return true; }
