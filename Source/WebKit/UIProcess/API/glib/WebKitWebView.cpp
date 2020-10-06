@@ -3785,11 +3785,14 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, const g
 {
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
 
-    getPage(webView).runJavaScriptInMainFrame(WTFMove(params), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+    getPage(webView).runJavaScriptInMainFrame(WTFMove(params), [task = WTFMove(task)] (auto&& result) {
+        RefPtr<API::SerializedScriptValue> serializedScriptValue;
         ExceptionDetails exceptionDetails;
-        if (details)
-            exceptionDetails = *details;
-        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
+        if (result.has_value())
+            serializedScriptValue = WTFMove(result.value());
+        else
+            exceptionDetails = WTFMove(result.error());
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue.get(), exceptionDetails, task.get());
     });
 }
 
@@ -3919,11 +3922,14 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName));
-    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, WTF::nullopt, world.get(), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, WTF::nullopt, world.get(), [task = WTFMove(task)] (auto&& result) {
+        RefPtr<API::SerializedScriptValue> serializedScriptValue;
         ExceptionDetails exceptionDetails;
-        if (details)
-            exceptionDetails = *details;
-        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
+        if (result.has_value())
+            serializedScriptValue = WTFMove(result.value());
+        else
+            exceptionDetails = WTFMove(result.error());
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue.get(), exceptionDetails, task.get());
     });
 }
 
@@ -3962,11 +3968,14 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, false, WTF::nullopt, true },
-        [task](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+        [task] (auto&& result) {
+            RefPtr<API::SerializedScriptValue> serializedScriptValue;
             ExceptionDetails exceptionDetails;
-            if (details)
-                exceptionDetails = *details;
-            webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
+            if (result.has_value())
+                serializedScriptValue = WTFMove(result.value());
+            else
+                exceptionDetails = WTFMove(result.error());
+            webkitWebViewRunJavaScriptCallback(serializedScriptValue.get(), exceptionDetails, task.get());
         });
 }
 

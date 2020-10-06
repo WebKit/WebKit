@@ -796,6 +796,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _page->stopLoading();
 }
 
+#if USE(APPKIT)
 static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 {
     switch (error) {
@@ -813,6 +814,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         return WKErrorWebViewInvalidated;
     }
 }
+#endif
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
@@ -932,41 +934,22 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
             frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(identifier);
     }
 
-    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler](API::SerializedScriptValue* serializedScriptValue, Optional<WebCore::ExceptionDetails> details, WebKit::ScriptValueCallback::Error errorCode) {
+    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
         if (!handler)
             return;
 
-        if (errorCode != WebKit::ScriptValueCallback::Error::None) {
-            auto error = createNSError(callbackErrorCode(errorCode));
-            if (errorCode == WebKit::ScriptValueCallback::Error::OwnerWasInvalidated) {
-                // The OwnerWasInvalidated callback is synchronous. We don't want to call the block from within it
-                // because that can trigger re-entrancy bugs in WebKit.
-                // FIXME: It would be even better if GenericCallback did this for us.
-                dispatch_async(dispatch_get_main_queue(), [handler, error] {
-                    auto rawHandler = (void (^)(id, NSError *))handler.get();
-                    rawHandler(nil, error.get());
-                });
-                return;
-            }
-
-            auto rawHandler = (void (^)(id, NSError *))handler.get();
-            rawHandler(nil, error.get());
-            return;
-        }
-
         auto rawHandler = (void (^)(id, NSError *))handler.get();
-        if (details) {
-            ASSERT(!serializedScriptValue);
-            rawHandler(nil, nsErrorFromExceptionDetails(*details).get());
+        if (!result.has_value()) {
+            rawHandler(nil, nsErrorFromExceptionDetails(result.error()).get());
             return;
         }
 
-        if (!serializedScriptValue) {
+        if (!result.value()) {
             rawHandler(nil, createNSError(WKErrorJavaScriptResultTypeIsUnsupported).get());
             return;
         }
 
-        id body = API::SerializedScriptValue::deserialize(serializedScriptValue->internalRepresentation(), 0);
+        id body = API::SerializedScriptValue::deserialize(result.value()->internalRepresentation(), 0);
         rawHandler(body, nil);
     });
 }
@@ -996,7 +979,7 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
     // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
     // in snapshotConfiguration.afterScreenUpdates at that time.
     _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error errorCode) {
-        if (errorCode != WebKit::ScriptValueCallback::Error::None) {
+        if (errorCode != WebKit::CallbackBase::Error::None) {
             auto error = createNSError(callbackErrorCode(errorCode));
             handler(nil, error.get());
             return;

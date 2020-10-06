@@ -4081,31 +4081,35 @@ void WebPageProxy::launchInitialProcessIfNecessary()
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 }
 
-void WebPageProxy::runJavaScriptInMainFrame(RunJavaScriptParameters&& parameters, WTF::Function<void (API::SerializedScriptValue*, Optional<WebCore::ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::runJavaScriptInMainFrame(RunJavaScriptParameters&& parameters, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&& callbackFunction)
 {
     runJavaScriptInFrameInScriptWorld(WTFMove(parameters), WTF::nullopt, API::ContentWorld::pageContentWorld(), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, API::ContentWorld& world, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, API::ContentWorld& world, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&& callbackFunction)
 {
     // For backward-compatibility support running script in a WebView which has not done any loads yets.
     launchInitialProcessIfNecessary();
 
-    if (!hasRunningProcess()) {
-        callbackFunction(nullptr, { }, CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callbackFunction({ nullptr });
 
     ProcessThrottler::ActivityVariant activity;
 #if PLATFORM(IOS_FAMILY)
     if (pageClient().canTakeForegroundAssertions())
         activity = m_process->throttler().foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
-    else
 #endif
-        activity = m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), WTFMove(activity));
-    send(Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldData(), callbackID));
+    sendWithAsyncReply(Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldData()), [activity = WTFMove(activity), callbackFunction = WTFMove(callbackFunction)] (const IPC::DataReference& dataReference, Optional<ExceptionDetails>&& details) mutable {
+        if (details)
+            return callbackFunction(makeUnexpected(WTFMove(*details)));
+        if (dataReference.isEmpty())
+            return callbackFunction({ nullptr });
+        Vector<uint8_t> data;
+        data.reserveInitialCapacity(dataReference.size());
+        data.append(dataReference.data(), dataReference.size());
+        callbackFunction({ API::SerializedScriptValue::adopt(WTFMove(data)).ptr() });
+    });
 }
 
 void WebPageProxy::getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
@@ -7158,26 +7162,6 @@ void WebPageProxy::invalidateStringCallback(CallbackID callbackID)
     m_loadDependentStringCallbackIDs.remove(callbackID);
 
     callback->invalidate();
-}
-
-void WebPageProxy::scriptValueCallback(const IPC::DataReference& dataReference, Optional<ExceptionDetails> details, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<ScriptValueCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    if (dataReference.isEmpty()) {
-        callback->performCallbackWithReturnValue(nullptr, details);
-        return;
-    }
-
-    Vector<uint8_t> data;
-    data.reserveInitialCapacity(dataReference.size());
-    data.append(dataReference.data(), dataReference.size());
-
-    callback->performCallbackWithReturnValue(API::SerializedScriptValue::adopt(WTFMove(data)).ptr(), details);
 }
 
 void WebPageProxy::computedPagesCallback(const Vector<IntRect>& pageRects, double totalScaleFactorForPrinting, const FloatBoxExtent& computedPageMargin, CallbackID callbackID)

@@ -121,9 +121,9 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
 void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
     m_page.runJavaScriptInMainFrame({ script, URL { }, false, WTF::nullopt, false }, 
-        [](API::SerializedScriptValue*, Optional<WebCore::ExceptionDetails> exceptionDetails, CallbackBase::Error) {
-            if (exceptionDetails)
-                LOG_ERROR("Exception running script \"%s\"", exceptionDetails->message.utf8().data());
+        [] (auto&& result) {
+        if (!result.has_value())
+            LOG_ERROR("Exception running script \"%s\"", result.error().message.utf8().data());
     });
 }
 
