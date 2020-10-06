@@ -75,13 +75,11 @@ void AudioDestinationCocoa::configure()
 
 void AudioDestinationCocoa::processBusAfterRender(AudioBus& bus, UInt32 numberOfFrames)
 {
-    const float kLowThreshold = -1;
-    const float kHighThreshold = 1;
     // Clamp values at 0db (i.e., [-1.0, 1.0])
     for (unsigned i = 0; i < bus.numberOfChannels(); ++i) {
         auto* channel = bus.channel(i);
         if (!channel->isSilent())
-            VectorMath::vclip(channel->data(), 1, &kLowThreshold, &kHighThreshold, channel->mutableData(), 1, numberOfFrames);
+            VectorMath::clamp(channel->data(), -1, 1, channel->mutableData(), numberOfFrames);
     }
 }
 

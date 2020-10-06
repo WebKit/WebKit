@@ -108,10 +108,8 @@ void FFTFrame::doFFT(const float* data)
     // (See https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html#//apple_ref/doc/uid/TP40005147-CH3-SW5)
     // In the case of a Real forward Transform like above: RFimp = RFmath * 2 so we need to divide the output
     // by 2 to get the correct value.
-    float scale = 0.5f;
-
-    VectorMath::vsmul(realData(), 1, &scale, realData(), 1, halfSize);
-    VectorMath::vsmul(imagData(), 1, &scale, imagData(), 1, halfSize);
+    VectorMath::multiplyByScalar(realData(), 0.5, realData(), halfSize);
+    VectorMath::multiplyByScalar(imagData(), 0.5, imagData(), halfSize);
 }
 
 void FFTFrame::doInverseFFT(float* data)
@@ -120,8 +118,7 @@ void FFTFrame::doInverseFFT(float* data)
     vDSP_ztoc(&m_frame, 1, (DSPComplex*)data, 2, m_FFTSize / 2);
 
     // Do final scaling so that x == IFFT(FFT(x))
-    float scale = 1.0f / m_FFTSize;
-    VectorMath::vsmul(data, 1, &scale, data, 1, m_FFTSize);
+    VectorMath::multiplyByScalar(data, 1.0f / m_FFTSize, data, m_FFTSize);
 }
 
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)

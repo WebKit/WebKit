@@ -38,8 +38,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 constexpr int InputBufferSize = 8 * 16384;
 
 // We only process the leading portion of the impulse response in the real-time thread.  We don't exceed this length.

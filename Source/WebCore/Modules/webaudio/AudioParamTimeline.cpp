@@ -349,7 +349,7 @@ float AudioParamTimeline::valuesForTimeRange(size_t startFrame, size_t endFrame,
     float value = valuesForTimeRangeImpl(startFrame, endFrame, defaultValue, values, numberOfValues, sampleRate, controlRate);
 
     // Clamp values based on range allowed by AudioParam's min and max values.
-    VectorMath::vclip(values, 1, &minValue, &maxValue, values, 1, numberOfValues);
+    VectorMath::clamp(values, minValue, maxValue, values, numberOfValues);
 
     return value;
 }
@@ -659,13 +659,10 @@ void AudioParamTimeline::processLinearRamp(float* values, unsigned& writeIndex, 
         values[writeIndex + 1] = 1;
         values[writeIndex + 2] = 2;
         values[writeIndex + 3] = 3;
-        float scalar = samplingPeriod;
-        VectorMath::vsmul(values + writeIndex, 1, &scalar, values + writeIndex, 1, 4);
-        scalar = currentFrame * samplingPeriod - time1.value();
-        VectorMath::vsadd(values + writeIndex, 1, &scalar, values + writeIndex, 1, 4);
-        scalar = k * valueDelta;
-        VectorMath::vsmul(values + writeIndex, 1, &scalar, values + writeIndex, 1, 4);
-        VectorMath::vsadd(values + writeIndex, 1, &value1, values + writeIndex, 1, 4);
+        VectorMath::multiplyByScalar(values + writeIndex, samplingPeriod, values + writeIndex, 4);
+        VectorMath::addScalar(values + writeIndex, currentFrame * samplingPeriod - time1.value(), values + writeIndex, 4);
+        VectorMath::multiplyByScalar(values + writeIndex, k * valueDelta, values + writeIndex, 4);
+        VectorMath::addScalar(values + writeIndex, value1, values + writeIndex, 4);
 
         float inc = 4 * samplingPeriod * k * valueDelta;
 
@@ -677,7 +674,7 @@ void AudioParamTimeline::processLinearRamp(float* values, unsigned& writeIndex, 
         // Process 4 loop steps.
         writeIndex += 4;
         for (; writeIndex < fillToFrameTrunc; writeIndex += 4)
-            VectorMath::vsadd(values + writeIndex - 4, 1, &inc, values + writeIndex, 1, 4);
+            VectorMath::addScalar(values + writeIndex - 4, inc, values + writeIndex, 4);
     }
     // Update |value| with the last value computed so that the .value attribute of the AudioParam gets
     // the correct linear ramp value, in case the following loop doesn't execute.
@@ -717,8 +714,8 @@ void AudioParamTimeline::processSetTarget(float* values, unsigned& writeIndex, u
         for (; writeIndex < fillToFrameTrunc; writeIndex += 4) {
             delta = target - value;
 
-            VectorMath::vsmul(&cVector[0], 1, &delta, &values[writeIndex], 1, 4);
-            VectorMath::vsadd(&values[writeIndex], 1, &value, &values[writeIndex], 1, 4);
+            VectorMath::multiplyByScalar(&cVector[0], delta, &values[writeIndex], 4);
+            VectorMath::addScalar(&values[writeIndex], value, &values[writeIndex], 4);
 
             value += delta * c3;
         }

@@ -1,3 +1,75 @@
+2020-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Improvements to VectorMath API
+        https://bugs.webkit.org/show_bug.cgi?id=217343
+
+        Reviewed by Alex Christensen.
+
+        The following improvements were made to the VectorMath API:
+        - Use clearer names for the functions, e.g. VectorMath::vmul() -> VectorMath::multiply()
+        - Drop stride parameters as the call sites always pass 1. This helps simplify the code.
+        - Stop using out-parameters and have the functions return a value when needed.
+        - Pass input scalar as 'float' instead of 'const float*'.
+
+        No new tests, no Web-facing behavior change.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateFinalValues):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRange):
+        (WebCore::AudioParamTimeline::processLinearRamp):
+        (WebCore::AudioParamTimeline::processSetTarget):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::calculateSampleAccuratePhaseIncrements):
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::createBandLimitedTables):
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::getFloatFrequencyData):
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::speakersSumFromByDownMixing):
+        (WebCore::AudioBus::copyWithGainFrom):
+        (WebCore::AudioBus::copyWithSampleAccurateGainValuesFrom):
+        * platform/audio/AudioChannel.cpp:
+        (WebCore::AudioChannel::scale):
+        (WebCore::AudioChannel::sumFrom):
+        (WebCore::AudioChannel::maxAbsValue const):
+        * platform/audio/DirectConvolver.cpp:
+        * platform/audio/FFTConvolver.cpp:
+        (WebCore::FFTConvolver::process):
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::scaleFFT):
+        (WebCore::FFTFrame::multiply):
+        * platform/audio/IIRFilter.cpp:
+        (WebCore::IIRFilter::tailTime):
+        * platform/audio/Reverb.cpp:
+        (WebCore::calculateNormalizationScale):
+        * platform/audio/ReverbAccumulationBuffer.cpp:
+        (WebCore::ReverbAccumulationBuffer::accumulate):
+        * platform/audio/ReverbConvolver.cpp:
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::multiplyByScalar):
+        (WebCore::VectorMath::add):
+        (WebCore::VectorMath::addScalar):
+        (WebCore::VectorMath::multiply):
+        (WebCore::VectorMath::multiplyComplex):
+        (WebCore::VectorMath::multiplyThenAddScalar):
+        (WebCore::VectorMath::maximumMagnitude):
+        (WebCore::VectorMath::sumOfSquares):
+        (WebCore::VectorMath::clamp):
+        (WebCore::VectorMath::linearToDecibels):
+        (WebCore::VectorMath::is16ByteAligned):
+        * platform/audio/VectorMath.h:
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        (WebCore::FFTFrame::doInverseFFT):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationCocoa::processBusAfterRender):
+        * platform/audio/mac/AudioSampleBufferList.cpp:
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::doFFT):
+        (WebCore::FFTFrame::doInverseFFT):
+
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         ChromeClient::needsImmediateRenderingUpdate() only existing to work around a WebKit1 bug

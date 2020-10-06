@@ -292,9 +292,7 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     }
 
     // Clamp values based on range allowed by AudioParam's min and max values.
-    float minValue = this->minValue();
-    float maxValue = this->maxValue();
-    VectorMath::vclip(values, 1, &minValue, &maxValue, values, 1, numberOfValues);
+    VectorMath::clamp(values, minValue(), maxValue(), values, numberOfValues);
 }
 
 void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)

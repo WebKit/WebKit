@@ -39,8 +39,6 @@
 #include "VectorMath.h"
 
 namespace WebCore {
-
-using namespace VectorMath;
     
 DirectConvolver::DirectConvolver(size_t inputBlockSize)
     : m_inputBlockSize(inputBlockSize)

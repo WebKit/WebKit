@@ -38,8 +38,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 void AudioChannel::resizeSmaller(size_t newLength)
 {
     ASSERT(newLength <= m_length);
@@ -52,7 +50,7 @@ void AudioChannel::scale(float scale)
     if (isSilent())
         return;
 
-    vsmul(data(), 1, &scale, mutableData(), 1, length());
+    VectorMath::multiplyByScalar(data(), scale, mutableData(), length());
 }
 
 void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
@@ -110,7 +108,7 @@ void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
     if (isSilent())
         copyFrom(sourceChannel);
     else
-        vadd(data(), 1, sourceChannel->data(), 1, mutableData(), 1, length());
+        VectorMath::add(data(), sourceChannel->data(), mutableData(), length());
 }
 
 float AudioChannel::maxAbsValue() const
@@ -118,11 +116,7 @@ float AudioChannel::maxAbsValue() const
     if (isSilent())
         return 0;
 
-    float max = 0;
-
-    vmaxmgv(data(), 1, &max, length());
-
-    return max;
+    return VectorMath::maximumMagnitude(data(), length());
 }
 
 } // WebCore

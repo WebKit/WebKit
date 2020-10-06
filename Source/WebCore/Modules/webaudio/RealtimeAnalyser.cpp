@@ -186,7 +186,7 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
     
     // Convert from linear magnitude to floating-point decibels.
     size_t length = std::min<size_t>(magnitudeBuffer().size(), destinationArray.length());
-    VectorMath::linearToDecibels(magnitudeBuffer().data(), 1, destinationArray.data(), 1, length);
+    VectorMath::linearToDecibels(magnitudeBuffer().data(), destinationArray.data(), length);
 }
 
 void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)

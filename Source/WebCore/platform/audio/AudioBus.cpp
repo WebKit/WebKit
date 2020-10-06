@@ -42,8 +42,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 constexpr unsigned MaxBusChannels = 32;
 
 RefPtr<AudioBus> AudioBus::create(unsigned numberOfChannels, size_t length, bool allocate)
@@ -319,9 +317,8 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
 
         float* destination = channelByType(ChannelLeft)->mutableData();
-        float scale = 0.5;
-        vsma(sourceL, 1, &scale, destination, 1, length());
-        vsma(sourceR, 1, &scale, destination, 1, length());
+        VectorMath::multiplyThenAddScalar(sourceL, 0.5, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceR, 0.5, destination, length());
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 1) {
         // Down-mixing: 4 -> 1
         // output = 0.25 * (input.L + input.R + input.SL + input.SR)
@@ -331,12 +328,11 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
 
         auto* destination = channelByType(ChannelLeft)->mutableData();
-        float scale = 0.25;
 
-        vsma(sourceL, 1, &scale, destination, 1, length());
-        vsma(sourceR, 1, &scale, destination, 1, length());
-        vsma(sourceSL, 1, &scale, destination, 1, length());
-        vsma(sourceSR, 1, &scale, destination, 1, length());
+        VectorMath::multiplyThenAddScalar(sourceL, 0.25, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceR, 0.25, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceSL, 0.25, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceSR, 0.25, destination, length());
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 1) {
         // Down-mixing: 5.1 -> 1
         // output = sqrt(1/2) * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
@@ -348,13 +344,12 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
 
         auto* destination = channelByType(ChannelLeft)->mutableData();
         float scaleSqrtHalf = sqrtf(0.5);
-        float scaleHalf = 0.5f;
 
-        vsma(sourceL, 1, &scaleSqrtHalf, destination, 1, length());
-        vsma(sourceR, 1, &scaleSqrtHalf, destination, 1, length());
-        vadd(sourceC, 1, destination, 1, destination, 1, length());
-        vsma(sourceSL, 1, &scaleHalf, destination, 1, length());
-        vsma(sourceSR, 1, &scaleHalf, destination, 1, length());
+        VectorMath::multiplyThenAddScalar(sourceL, scaleSqrtHalf, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceR, scaleSqrtHalf, destination, length());
+        VectorMath::add(sourceC, destination, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceSL, 0.5, destination, length());
+        VectorMath::multiplyThenAddScalar(sourceSR, 0.5, destination, length());
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 2) {
         // Down-mixing: 4 -> 2
         // output.L = 0.5 * (input.L + input.SL)
@@ -366,12 +361,11 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
 
         auto* destinationL = channelByType(ChannelLeft)->mutableData();
         auto* destinationR = channelByType(ChannelRight)->mutableData();
-        float scaleHalf = 0.5f;
 
-        vsma(sourceL, 1, &scaleHalf, destinationL, 1, length());
-        vsma(sourceSL, 1, &scaleHalf, destinationL, 1, length());
-        vsma(sourceR, 1, &scaleHalf, destinationR, 1, length());
-        vsma(sourceSR, 1, &scaleHalf, destinationR, 1, length());
+        VectorMath::multiplyThenAddScalar(sourceL, 0.5, destinationL, length());
+        VectorMath::multiplyThenAddScalar(sourceSL, 0.5, destinationL, length());
+        VectorMath::multiplyThenAddScalar(sourceR, 0.5, destinationR, length());
+        VectorMath::multiplyThenAddScalar(sourceSR, 0.5, destinationR, length());
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 2) {
         // Down-mixing: 5.1 -> 2
         // output.L = input.L + sqrt(1/2) * (input.C + input.SL)
@@ -386,12 +380,12 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         float* destinationR = channelByType(ChannelRight)->mutableData();
         float scaleSqrtHalf = sqrtf(0.5);
 
-        vadd(sourceL, 1, destinationL, 1, destinationL, 1, length());
-        vsma(sourceC, 1, &scaleSqrtHalf, destinationL, 1, length());
-        vsma(sourceSL, 1, &scaleSqrtHalf, destinationL, 1, length());
-        vadd(sourceR, 1, destinationR, 1, destinationR, 1, length());
-        vsma(sourceC, 1, &scaleSqrtHalf, destinationR, 1, length());
-        vsma(sourceSR, 1, &scaleSqrtHalf, destinationR, 1, length());
+        VectorMath::add(sourceL, destinationL, destinationL, length());
+        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationL, length());
+        VectorMath::multiplyThenAddScalar(sourceSL, scaleSqrtHalf, destinationL, length());
+        VectorMath::add(sourceR, destinationR, destinationR, length());
+        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationR, length());
+        VectorMath::multiplyThenAddScalar(sourceSR, scaleSqrtHalf, destinationR, length());
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 4) {
         // Down-mixing: 5.1 -> 4
         // output.L = input.L + sqrt(1/2) * input.C
@@ -406,10 +400,10 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         auto* destinationR = channelByType(ChannelRight)->mutableData();
         auto scaleSqrtHalf = sqrtf(0.5);
 
-        vadd(sourceL, 1, destinationL, 1, destinationL, 1, length());
-        vsma(sourceC, 1, &scaleSqrtHalf, destinationL, 1, length());
-        vadd(sourceR, 1, destinationR, 1, destinationR, 1, length());
-        vsma(sourceC, 1, &scaleSqrtHalf, destinationR, 1, length());
+        VectorMath::add(sourceL, destinationL, destinationL, length());
+        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationL, length());
+        VectorMath::add(sourceR, destinationR, destinationR, length());
+        VectorMath::multiplyThenAddScalar(sourceC, scaleSqrtHalf, destinationR, length());
         channel(2)->sumFrom(sourceBus.channel(4));
         channel(3)->sumFrom(sourceBus.channel(5));
     } else {
@@ -476,7 +470,7 @@ void AudioBus::copyWithGainFrom(const AudioBus& sourceBus, float gain)
             memset(destinations[channelIndex], 0, framesToProcess * sizeof(*destinations[channelIndex]));
     } else {
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-            vsmul(sources[channelIndex], 1, &gain, destinations[channelIndex], 1, framesToProcess);
+            VectorMath::multiplyByScalar(sources[channelIndex], gain, destinations[channelIndex], framesToProcess);
     }
 }
 
@@ -505,7 +499,7 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
         if (sourceBus.numberOfChannels() == numberOfChannels())
             source = sourceBus.channel(channelIndex)->data();
         float* destination = channel(channelIndex)->mutableData();
-        vmul(source, 1, gainValues, 1, destination, 1, numberOfGainValues);
+        VectorMath::multiply(source, gainValues, destination, numberOfGainValues);
     }
 }
 

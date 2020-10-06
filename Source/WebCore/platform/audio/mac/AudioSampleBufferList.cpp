@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 Ref<AudioSampleBufferList> AudioSampleBufferList::create(const CAAudioStreamDescription& format, size_t maximumSampleCount)
 {
     return adoptRef(*new AudioSampleBufferList(format, maximumSampleCount));

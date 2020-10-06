@@ -201,7 +201,7 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
 
     // Process the first block and get the max magnitude of the output.
     process(input.data(), output.data(), AudioUtilities::renderQuantumSize);
-    VectorMath::vmaxmgv(output.data(), 1, &magnitudes[0], AudioUtilities::renderQuantumSize);
+    magnitudes[0] = VectorMath::maximumMagnitude(output.data(), AudioUtilities::renderQuantumSize);
 
     // Process the rest of the signal, getting the max magnitude of the
     // output for each block.
@@ -209,7 +209,7 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
 
     for (int k = 1; k < numberOfBlocks; ++k) {
         process(input.data(), output.data(), AudioUtilities::renderQuantumSize);
-        VectorMath::vmaxmgv(output.data(), 1, &magnitudes[k], AudioUtilities::renderQuantumSize);
+        magnitudes[k] = VectorMath::maximumMagnitude(output.data(), AudioUtilities::renderQuantumSize);
     }
 
     // Done computing the impulse response; reset the state so the actual node

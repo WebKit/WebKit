@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(OscillatorNode);
 
 // Breakpoints where we deicde to do linear interoplation, 3-point interpolation or 5-point interpolation. See doInterpolation().
@@ -158,14 +156,13 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
         m_detune->calculateSampleAccurateValues(detuneValues, framesToProcess);
 
         // Convert from cents to rate scalar.
-        float k = 1.0 / 1200;
-        vsmul(detuneValues, 1, &k, detuneValues, 1, framesToProcess);
+        VectorMath::multiplyByScalar(detuneValues, 1.0 / 1200, detuneValues, framesToProcess);
         for (unsigned i = 0; i < framesToProcess; ++i)
             detuneValues[i] = std::exp2(detuneValues[i]);
 
         if (hasFrequencyChanges) {
             // Multiply frequencies by detune scalings.
-            vmul(detuneValues, 1, phaseIncrements, 1, phaseIncrements, 1, framesToProcess);
+            VectorMath::multiply(detuneValues, phaseIncrements, phaseIncrements, framesToProcess);
         }
     } else {
         float detune = m_detune->finalValue();
@@ -176,7 +173,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
     if (hasSampleAccurateValues) {
         clampFrequency(phaseIncrements, framesToProcess, context().sampleRate() / 2);
         // Convert from frequency to wave increment.
-        vsmul(phaseIncrements, 1, &finalScale, phaseIncrements, 1, framesToProcess);
+        VectorMath::multiplyByScalar(phaseIncrements, finalScale, phaseIncrements, framesToProcess);
     }
 
     return hasSampleAccurateValues;

@@ -129,8 +129,7 @@ void FFTFrame::doInverseFFT(float* data)
     gst_fft_f32_inverse_fft(m_inverseFft, m_complexData.get(), data);
 
     // Scale so that a forward then inverse FFT yields exactly the original data.
-    const float scaleFactor = 1.0 / m_FFTSize;
-    VectorMath::vsmul(data, 1, &scaleFactor, data, 1, m_FFTSize);
+    VectorMath::multiplyByScalar(data, 1.0 / m_FFTSize, data, m_FFTSize);
 }
 
 float* FFTFrame::realData() const

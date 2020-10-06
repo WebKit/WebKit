@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 // Empirical gain calibration tested across many impulse responses to ensure perceived volume is same as dry (unprocessed) signal
 constexpr float GainCalibration = -58;
 constexpr float GainCalibrationSampleRate = 44100;
@@ -58,11 +56,8 @@ static float calculateNormalizationScale(AudioBus* response)
 
     float power = 0;
 
-    for (size_t i = 0; i < numberOfChannels; ++i) {
-        float channelPower = 0;
-        vsvesq(response->channel(i)->data(), 1, &channelPower, length);
-        power += channelPower;
-    }
+    for (size_t i = 0; i < numberOfChannels; ++i)
+        power += VectorMath::sumOfSquares(response->channel(i)->data(), length);
 
     power = sqrt(power / (numberOfChannels * length));
 

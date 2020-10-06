@@ -35,8 +35,6 @@
 #include "VectorMath.h"
 
 namespace WebCore {
-
-using namespace VectorMath;
     
 FFTConvolver::FFTConvolver(size_t fftSize)
     : m_frame(fftSize)
@@ -92,7 +90,7 @@ void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* des
             m_frame.doInverseFFT(m_outputBuffer.data());
 
             // Overlap-add 1st half from previous time
-            vadd(m_outputBuffer.data(), 1, m_lastOverlapBuffer.data(), 1, m_outputBuffer.data(), 1, halfSize);
+            VectorMath::add(m_outputBuffer.data(), m_lastOverlapBuffer.data(), m_outputBuffer.data(), halfSize);
 
             // Finally, save 2nd half of result
             bool isCopyGood3 = m_outputBuffer.size() == 2 * halfSize && m_lastOverlapBuffer.size() == halfSize;

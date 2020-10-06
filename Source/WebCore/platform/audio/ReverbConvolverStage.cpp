@@ -42,8 +42,6 @@
 
 namespace WebCore {
 
-using namespace VectorMath;
-
 ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t, size_t reverbTotalLatency, size_t stageOffset, size_t stageLength,
     size_t fftSize, size_t renderPhase, size_t renderSliceSize, ReverbAccumulationBuffer* accumulationBuffer, float scale, bool directMode)
     : m_accumulationBuffer(accumulationBuffer)
@@ -70,7 +68,7 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
         m_directKernel->copyToRange(impulseResponse, 0, stageLength);
         // Account for the normalization (if any) of the convolver node.
         if (scale != 1)
-            VectorMath::vsmul(m_directKernel->data(), 1, &scale, m_directKernel->data(), 1, stageLength);
+            VectorMath::multiplyByScalar(m_directKernel->data(), scale, m_directKernel->data(), stageLength);
         m_directConvolver = makeUnique<DirectConvolver>(renderSliceSize);
     }
     m_temporaryBuffer.allocate(renderSliceSize);
