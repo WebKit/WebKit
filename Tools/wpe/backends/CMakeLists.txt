@@ -27,7 +27,6 @@ set(WPEToolingBackends_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 set(WPEToolingBackends_LIBRARIES
-    ATK::Bridge
     Cairo::Cairo
     WPE::libwpe
     ${ATK_LIBRARIES}
@@ -56,6 +55,7 @@ add_custom_command(
 if (ENABLE_ACCESSIBILITY)
     add_definitions(-DHAVE_ACCESSIBILITY=1)
     add_definitions(-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_40)
+    list(APPEND WPEToolingBackends_LIBRARIES ATK::Bridge)
 endif ()
 
 add_library(WPEToolingBackends STATIC ${WPEToolingBackends_SOURCES})

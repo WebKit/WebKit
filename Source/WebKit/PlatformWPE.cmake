@@ -284,7 +284,6 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_LIBRARIES
-    ATK::Bridge
     Cairo::Cairo
     Freetype::Freetype
     HarfBuzz::HarfBuzz
@@ -295,6 +294,10 @@ list(APPEND WebKit_LIBRARIES
     ${GLIB_GMODULE_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
 )
+
+if (ENABLE_ACCESSIBILITY)
+    list(APPEND WebKit_LIBRARIES ATK::Bridge)
+endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebKit_LIBRARIES Libseccomp::Libseccomp)
