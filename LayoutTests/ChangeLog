@@ -1,5 +1,14 @@
 2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Update two webaudio tests baselines after r268006
+
+        Unreviewed test gardening.
+
+        * platform/glib/webaudio/Analyser/realtimeanalyser-fftsize-reset-expected.txt: Updated.
+        * platform/glib/webaudio/Analyser/realtimeanalyser-freq-data-expected.txt: Removed.
+
+2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Move two common cache tests to GLIB test expectations.
 
         Unreviewed test gardening.
