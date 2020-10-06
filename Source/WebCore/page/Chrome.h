@@ -85,8 +85,6 @@ public:
     std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, ShouldAccelerate, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, ColorSpace) const override;
     std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, float resolutionScale, ColorSpace) const override;
 
-    void scheduleAnimation() override { }
-
     PlatformDisplayID displayID() const override;
     void windowScreenDidChange(PlatformDisplayID, Optional<unsigned>) override;
 

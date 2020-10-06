@@ -298,13 +298,6 @@ void ScrollAnimator::cancelAnimations()
 #endif
 }
 
-void ScrollAnimator::serviceScrollAnimations()
-{
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    m_animationProgrammaticScroll->serviceAnimation();
-#endif
-}
-
 void ScrollAnimator::willEndLiveResize()
 {
     m_animationProgrammaticScroll->updateVisibleLengths();

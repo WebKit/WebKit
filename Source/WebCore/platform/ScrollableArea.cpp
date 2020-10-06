@@ -603,12 +603,6 @@ void ScrollableArea::updateScrollSnapState()
 #endif
 
 
-void ScrollableArea::serviceScrollAnimations()
-{
-    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
-        scrollAnimator->serviceScrollAnimations();
-}
-
 bool ScrollableArea::isPinnedInBothDirections(const IntSize& scrollDelta) const
 {
     return isPinnedHorizontallyInDirection(scrollDelta.width()) && isPinnedVerticallyInDirection(scrollDelta.height());

@@ -101,8 +101,6 @@ public:
     WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
 
-    bool scheduleAnimation() final;
-
     Frame& frame() const { return m_frame; }
 
     WEBCORE_EXPORT RenderView* renderView() const;

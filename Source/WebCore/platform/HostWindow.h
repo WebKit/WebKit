@@ -73,8 +73,6 @@ public:
 
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 
-    virtual void scheduleAnimation() = 0;
-
     virtual PlatformDisplayID displayID() const = 0;
     virtual void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond) = 0;
 
