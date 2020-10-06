@@ -33,6 +33,7 @@
 #include "AudioWorklet.h"
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletThread.h"
+#include "BaseAudioContext.h"
 #include "CacheStorageConnection.h"
 #include "Document.h"
 #include "Frame.h"
@@ -49,7 +50,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
 
     return {
         document->url(),
-        jsRuntimeFlags
+        jsRuntimeFlags,
+        worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f
     };
 }
 

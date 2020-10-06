@@ -32,6 +32,10 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
+#include "AudioWorklet.h"
+#include "AudioWorkletGlobalScope.h"
+#include "AudioWorkletMessagingProxy.h"
+#include "AudioWorkletThread.h"
 #include "DenormalDisabler.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -94,6 +98,13 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
     
     // Advance current sample-frame.
     m_currentSampleFrame += numberOfFrames;
+
+    if (auto* audioWorkletProxy = context().audioWorklet().proxy()) {
+        // We are on the audio rendering thread, which is the AudioWorketThread since AudioWorklet is
+        // active. It is therefore safe to interact with the AudioWorkletGlobalScope directly.
+        if (auto* audioWorkletGlobalScope = audioWorkletProxy->workletThread().globalScope())
+            audioWorkletGlobalScope->setCurrentFrame(m_currentSampleFrame);
+    }
 
     setIsSilent(destinationBus->isSilent());
 

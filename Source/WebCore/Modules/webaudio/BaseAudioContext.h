@@ -52,6 +52,7 @@
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -107,6 +108,9 @@ class BaseAudioContext
     WTF_MAKE_ISO_ALLOCATED(BaseAudioContext);
 public:
     virtual ~BaseAudioContext();
+
+    using WeakValueType = MediaCanStartListener::WeakValueType;
+    using MediaCanStartListener::weakPtrFactory;
 
     // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
     using ThreadSafeRefCounted::ref;

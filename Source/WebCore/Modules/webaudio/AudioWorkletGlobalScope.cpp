@@ -41,6 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletGlobalScope);
 AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, const WorkletParameters& parameters)
     : WorkletGlobalScope(parameters)
     , m_thread(thread)
+    , m_sampleRate(parameters.sampleRate)
 {
     ASSERT(!isMainThread());
 }

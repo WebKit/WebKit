@@ -30,22 +30,28 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "Worklet.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class BaseAudioContext;
 class AudioWorkletMessagingProxy;
 
 class AudioWorklet final : public Worklet {
+    WTF_MAKE_ISO_ALLOCATED(AudioWorklet);
 public:
-    static Ref<AudioWorklet> create(Document&);
+    static Ref<AudioWorklet> create(BaseAudioContext&);
 
     AudioWorkletMessagingProxy* proxy() const;
+    BaseAudioContext* audioContext() const;
 
 private:
-    explicit AudioWorklet(Document&);
+    explicit AudioWorklet(BaseAudioContext&);
 
     // Worklet.
     Vector<Ref<WorkletGlobalScopeProxy>> createGlobalScopes() final;
+
+    WeakPtr<BaseAudioContext> m_audioContext;
 };
 
 } // namespace WebCore

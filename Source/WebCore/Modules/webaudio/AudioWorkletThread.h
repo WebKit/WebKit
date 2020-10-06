@@ -50,6 +50,8 @@ public:
     }
     ~AudioWorkletThread();
 
+    AudioWorkletGlobalScope* globalScope() const { return m_workletGlobalScope.get(); }
+
     void start();
     void stop();
 

@@ -33,12 +33,14 @@ namespace WebCore {
 struct WorkletParameters {
     URL windowURL;
     JSC::RuntimeFlags jsRuntimeFlags;
+    float sampleRate;
 
     WorkletParameters isolatedCopy() const
     {
         return {
             windowURL.isolatedCopy(),
-            jsRuntimeFlags
+            jsRuntimeFlags,
+            sampleRate
         };
     }
 };

@@ -1,3 +1,44 @@
+2020-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Add implementation for AudioWorkletGlobalScope's currentFrame / currentTime / sampleRate attributes
+        https://bugs.webkit.org/show_bug.cgi?id=217251
+
+        Reviewed by Geoffrey Garen.
+
+        Add implementation for AudioWorkletGlobalScope's currentFrame / currentTime / sampleRate attributes.
+        The AudioContext's sample rate is passed upon constructor since it does not change once the AudioContext
+        has been created. The current sample frame gets updated directly by the AudioDestinationNode on the
+        audio rendering thread, whenever the AudioAudioDestinationNode updates the current frame.
+        The currrentTime gets computed based on the current frame and the sample rate.
+
+        No new tests, no Web-facing behavior yet because we are not yet executing module scripts in
+        AudioWorklets.
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render):
+        * Modules/webaudio/AudioWorklet.cpp:
+        (WebCore::AudioWorklet::create):
+        (WebCore::AudioWorklet::AudioWorklet):
+        * Modules/webaudio/AudioWorklet.h:
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::AudioWorkletGlobalScope):
+        * Modules/webaudio/AudioWorkletGlobalScope.h:
+        (WebCore::AudioWorkletGlobalScope::setCurrentFrame):
+        (WebCore::AudioWorkletGlobalScope::currentFrame const):
+        (WebCore::AudioWorkletGlobalScope::sampleRate const):
+        (WebCore::AudioWorkletGlobalScope::currentTime const):
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp:
+        (WebCore::generateWorkletParameters):
+        * Modules/webaudio/AudioWorkletMessagingProxy.h:
+        (WebCore::AudioWorkletMessagingProxy::workletThread):
+        * Modules/webaudio/AudioWorkletThread.h:
+        (WebCore::AudioWorkletThread::globalScope const):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        * Modules/webaudio/BaseAudioContext.h:
+        * worklets/WorkletParameters.h:
+        (WebCore::WorkletParameters::isolatedCopy const):
+
 2020-10-06  Simon Fraser  <simon.fraser@apple.com>
 
         Redundant rendering updates can be scheduled from inside Page::updateRendering()

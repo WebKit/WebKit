@@ -32,18 +32,23 @@
 #include "AudioWorklet.h"
 
 #include "AudioWorkletMessagingProxy.h"
+#include "BaseAudioContext.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-Ref<AudioWorklet> AudioWorklet::create(Document& document)
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorklet);
+
+Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 {
-    auto worklet = adoptRef(*new AudioWorklet(document));
+    auto worklet = adoptRef(*new AudioWorklet(audioContext));
     worklet->suspendIfNeeded();
     return worklet;
 }
 
-AudioWorklet::AudioWorklet(Document& document)
-    : Worklet(document)
+AudioWorklet::AudioWorklet(BaseAudioContext& audioContext)
+    : Worklet(*audioContext.document())
+    , m_audioContext(makeWeakPtr(audioContext))
 {
 }
 
@@ -59,6 +64,11 @@ AudioWorkletMessagingProxy* AudioWorklet::proxy() const
     if (proxies.isEmpty())
         return nullptr;
     return downcast<AudioWorkletMessagingProxy>(proxies.first().ptr());
+}
+
+BaseAudioContext* AudioWorklet::audioContext() const
+{
+    return m_audioContext.get();
 }
 
 } // namespace WebCore
