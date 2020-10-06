@@ -1836,7 +1836,7 @@ webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
 webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
 
-webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
+webkit.org/b/189343 webkit.org/b/217363 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure Crash ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 
 webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]

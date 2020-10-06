@@ -1,3 +1,12 @@
+2020-10-05  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some flaky crashes related to NetworkProcess
+
+        Unreviewed test gardening.
+
+        * platform/gtk-wayland/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-10-05  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION(iOS 14): http/wpt/cache-storage/cache-quota-after-restart.any.html is a flaky failure
