@@ -414,28 +414,28 @@ static Optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned l
     switch (length) {
     case 3:
         // #abc converts to #aabbcc
-        // FIXME: Replace conversion to Packed::ARGB with simpler bit math to construct
+        // FIXME: Replace conversion to PackedColor::ARGB with simpler bit math to construct
         // the SRGBA<uint8_t> directly.
-        return asSRGBA(Packed::ARGB {
+        return asSRGBA(PackedColor::ARGB {
                0xFF000000
             | (value & 0xF00) << 12 | (value & 0xF00) << 8
             | (value & 0xF0) << 8 | (value & 0xF0) << 4
             | (value & 0xF) << 4 | (value & 0xF) });
     case 4:
         // #abcd converts to ddaabbcc since alpha bytes are the high bytes.
-        // FIXME: Replace conversion to Packed::ARGB with simpler bit math to construct
+        // FIXME: Replace conversion to PackedColor::ARGB with simpler bit math to construct
         // the SRGBA<uint8_t> directly.
-        return asSRGBA(Packed::ARGB {
+        return asSRGBA(PackedColor::ARGB {
               (value & 0xF) << 28 | (value & 0xF) << 24
             | (value & 0xF000) << 8 | (value & 0xF000) << 4
             | (value & 0xF00) << 4 | (value & 0xF00)
             | (value & 0xF0) | (value & 0xF0) >> 4 });
     case 6:
-        // FIXME: Replace conversion to Packed::ARGB with simpler bit math to construct
+        // FIXME: Replace conversion to PackedColor::ARGB with simpler bit math to construct
         // the SRGBA<uint8_t> directly.
-        return asSRGBA(Packed::ARGB { 0xFF000000 | value });
+        return asSRGBA(PackedColor::ARGB { 0xFF000000 | value });
     case 8:
-        return asSRGBA(Packed::RGBA { value });
+        return asSRGBA(PackedColor::RGBA { value });
     }
     return WTF::nullopt;
 }
@@ -539,7 +539,7 @@ static Optional<SRGBA<uint8_t>> finishParsingNamedColor(char* buffer, unsigned l
     auto namedColor = findColor(buffer, length);
     if (!namedColor)
         return WTF::nullopt;
-    return asSRGBA(Packed::ARGB { namedColor->ARGBValue });
+    return asSRGBA(PackedColor::ARGB { namedColor->ARGBValue });
 }
 
 template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNamedColorInternal(const CharacterType* characters, unsigned length)

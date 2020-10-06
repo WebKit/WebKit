@@ -152,7 +152,7 @@ public:
         if (!a)
             return;
 
-        auto pixel = asSRGBA(Packed::ARGB { *dest });
+        auto pixel = asSRGBA(PackedColor::ARGB { *dest });
 
         if (a >= 255 || !pixel.alpha) {
             setPixel(dest, r, g, b, a);
@@ -174,7 +174,7 @@ public:
         if (!m_premultiplyAlpha)
             result = unpremultiplied(result);
 
-        *dest = Packed::ARGB { result }.value;
+        *dest = PackedColor::ARGB { result }.value;
     }
 
     static bool isOverSize(const IntSize& size)
@@ -231,7 +231,7 @@ private:
         if (m_premultiplyAlpha && a < 255)
             result = premultipliedFlooring(result);
 
-        return Packed::ARGB { result }.value;
+        return PackedColor::ARGB { result }.value;
     }
 
     RefPtr<SharedBuffer::DataSegment> m_pixels;

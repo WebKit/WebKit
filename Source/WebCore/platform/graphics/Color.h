@@ -393,12 +393,12 @@ inline const ExtendedColor& Color::asExtended() const
 inline SRGBA<uint8_t> Color::asInline() const
 {
     ASSERT(isInline());
-    return asSRGBA(Packed::RGBA { static_cast<uint32_t>(m_colorData.inlineColorAndFlags >> 32) });
+    return asSRGBA(PackedColor::RGBA { static_cast<uint32_t>(m_colorData.inlineColorAndFlags >> 32) });
 }
 
 inline void Color::setColor(SRGBA<uint8_t> color)
 {
-    m_colorData.inlineColorAndFlags = static_cast<uint64_t>(Packed::RGBA { color }.value) << 32;
+    m_colorData.inlineColorAndFlags = static_cast<uint64_t>(PackedColor::RGBA { color }.value) << 32;
     tagAsValid();
 }
 
@@ -465,7 +465,7 @@ template<class Encoder> void Color::encode(Encoder& encoder) const
     // FIXME: This should encode whether the color is semantic.
 
     encoder << true;
-    encoder << Packed::RGBA { asInline() }.value;
+    encoder << PackedColor::RGBA { asInline() }.value;
 }
 
 template<class Decoder> Optional<Color> Color::decode(Decoder& decoder)
@@ -504,7 +504,7 @@ template<class Decoder> Optional<Color> Color::decode(Decoder& decoder)
     if (!decoder.decode(value))
         return WTF::nullopt;
 
-    return Color { asSRGBA(Packed::RGBA { value }) };
+    return Color { asSRGBA(PackedColor::RGBA { value }) };
 }
 
 } // namespace WebCore

@@ -117,16 +117,16 @@ static CGColorRef leakCGColor(const Color& color)
 CGColorRef cachedCGColor(const Color& color)
 {
     if (color.isInline()) {
-        switch (Packed::RGBA { color.asInline() }.value) {
-        case Packed::RGBA { Color::transparentBlack }.value: {
+        switch (PackedColor::RGBA { color.asInline() }.value) {
+        case PackedColor::RGBA { Color::transparentBlack }.value: {
             static CGColorRef transparentCGColor = leakCGColor(color);
             return transparentCGColor;
         }
-        case Packed::RGBA { Color::black }.value: {
+        case PackedColor::RGBA { Color::black }.value: {
             static CGColorRef blackCGColor = leakCGColor(color);
             return blackCGColor;
         }
-        case Packed::RGBA { Color::white }.value: {
+        case PackedColor::RGBA { Color::white }.value: {
             static CGColorRef whiteCGColor = leakCGColor(color);
             return whiteCGColor;
         }

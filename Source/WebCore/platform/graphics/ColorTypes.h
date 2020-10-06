@@ -356,7 +356,7 @@ template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& 
 
 // Packed Color Formats
 
-namespace Packed {
+namespace PackedColor {
 
 struct RGBA {
     constexpr explicit RGBA(uint32_t rgba)
@@ -388,12 +388,12 @@ struct ARGB {
 
 }
 
-constexpr SRGBA<uint8_t> asSRGBA(Packed::RGBA color)
+constexpr SRGBA<uint8_t> asSRGBA(PackedColor::RGBA color)
 {
     return { static_cast<uint8_t>(color.value >> 24), static_cast<uint8_t>(color.value >> 16), static_cast<uint8_t>(color.value >> 8), static_cast<uint8_t>(color.value) };
 }
 
-constexpr SRGBA<uint8_t> asSRGBA(Packed::ARGB color)
+constexpr SRGBA<uint8_t> asSRGBA(PackedColor::ARGB color)
 {
     return { static_cast<uint8_t>(color.value >> 16), static_cast<uint8_t>(color.value >> 8), static_cast<uint8_t>(color.value), static_cast<uint8_t>(color.value >> 24) };
 }
