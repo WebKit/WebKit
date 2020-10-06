@@ -41,6 +41,9 @@ namespace LLInt {
 Instruction* returnToThrow(VM&);
 
 // Use this when you're throwing to a call thunk.
-void* callToThrow(VM&);
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrow(VM&);
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtException(VM&);
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatch(OpcodeSize);
 
 } } // namespace JSC::LLInt

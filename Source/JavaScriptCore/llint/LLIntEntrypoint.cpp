@@ -45,9 +45,9 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
             static DirectJITCode* jitCode;
             static std::once_flag onceKey;
             std::call_once(onceKey, [&] {
-                auto callRef = functionForCallEntryThunk().retagged<JSEntryPtrTag>();
-                auto callArityCheckRef = functionForCallArityCheckThunk().retaggedCode<JSEntryPtrTag>();
-                jitCode = new DirectJITCode(callRef, callArityCheckRef, JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
+                auto callRef = functionForCallEntryThunk();
+                auto callArityCheckRef = functionForCallArityCheckThunk();
+                jitCode = new DirectJITCode(callRef, callArityCheckRef.code(), JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
             });
 
             codeBlock->setJITCode(makeRef(*jitCode));
@@ -58,9 +58,9 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
         static DirectJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            auto constructRef = functionForConstructEntryThunk().retagged<JSEntryPtrTag>();
-            auto constructArityCheckRef = functionForConstructArityCheckThunk().retaggedCode<JSEntryPtrTag>();
-            jitCode = new DirectJITCode(constructRef, constructArityCheckRef, JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
+            auto constructRef = functionForConstructEntryThunk();
+            auto constructArityCheckRef = functionForConstructArityCheckThunk();
+            jitCode = new DirectJITCode(constructRef, constructArityCheckRef.code(), JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
         });
 
         codeBlock->setJITCode(makeRef(*jitCode));
@@ -92,7 +92,7 @@ static void setEvalEntrypoint(CodeBlock* codeBlock)
         static NativeJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = evalEntryThunk().retagged<JSEntryPtrTag>();
+            MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = evalEntryThunk();
             jitCode = new NativeJITCode(codeRef, JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
         });
         codeBlock->setJITCode(makeRef(*jitCode));
@@ -115,7 +115,7 @@ static void setProgramEntrypoint(CodeBlock* codeBlock)
         static NativeJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = programEntryThunk().retagged<JSEntryPtrTag>();
+            MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = programEntryThunk();
             jitCode = new NativeJITCode(codeRef, JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
         });
         codeBlock->setJITCode(makeRef(*jitCode));
@@ -138,7 +138,7 @@ static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
         static NativeJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = moduleProgramEntryThunk().retagged<JSEntryPtrTag>();
+            MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = moduleProgramEntryThunk();
             jitCode = new NativeJITCode(codeRef, JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
         });
         codeBlock->setJITCode(makeRef(*jitCode));

@@ -48,7 +48,7 @@ Instruction* returnToThrow(VM& vm)
     return LLInt::exceptionInstructions();
 }
 
-void* callToThrow(VM& vm)
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrow(VM& vm)
 {
     UNUSED_PARAM(vm);
 #if LLINT_TRACING
@@ -57,7 +57,38 @@ void* callToThrow(VM& vm)
         dataLog("Throwing exception ", JSValue(scope.exception()), " (callToThrow).\n");
     }
 #endif
-    return LLInt::getCodePtr<ExceptionHandlerPtrTag>(llint_throw_during_call_trampoline).executableAddress();
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return LLInt::callToThrowThunk();
+#endif
+    return LLInt::getCodeRef<ExceptionHandlerPtrTag>(llint_throw_during_call_trampoline);
+}
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtException(VM&)
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return handleUncaughtExceptionThunk();
+#endif
+    return LLInt::getCodeRef<ExceptionHandlerPtrTag>(llint_handle_uncaught_exception);
+}
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatch(OpcodeSize size)
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return handleCatchThunk(size);
+#endif
+    switch (size) {
+    case OpcodeSize::Narrow:
+        return LLInt::getCodeRef<ExceptionHandlerPtrTag>(op_catch);
+    case OpcodeSize::Wide16:
+        return LLInt::getWide16CodeRef<ExceptionHandlerPtrTag>(op_catch);
+    case OpcodeSize::Wide32:
+        return LLInt::getWide32CodeRef<ExceptionHandlerPtrTag>(op_catch);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return {};
 }
 
 } } // namespace JSC::LLInt

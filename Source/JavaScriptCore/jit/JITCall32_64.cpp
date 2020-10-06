@@ -324,11 +324,11 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     checkStackPointerAlignment();
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
         prepareForTailCallSlow();
-        m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedTailCall();
+        m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedNearTailCall();
         return;
     }
 
-    m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
+    m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedNearCall();
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
@@ -355,7 +355,7 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();
 
-    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).retaggedCode<NoPtrTag>());
+    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedNearCall(m_vm->getCTIStub(linkCallThunkGenerator).retaggedCode<NoPtrTag>());
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
         abortWithReason(JITDidReturnFromTailCall);

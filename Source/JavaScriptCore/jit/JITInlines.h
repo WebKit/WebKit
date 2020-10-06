@@ -89,19 +89,19 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     done.link(this);
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr<NoPtrTag> target)
+ALWAYS_INLINE JIT::Call JIT::emitNakedNearCall(CodePtr<NoPtrTag> target)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
+    m_nearCalls.append(NearCallRecord(nakedCall, m_bytecodeIndex, FunctionPtr<JSInternalPtrTag>(target.retagged<JSInternalPtrTag>())));
     return nakedCall;
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr<NoPtrTag> target)
+ALWAYS_INLINE JIT::Call JIT::emitNakedNearTailCall(CodePtr<NoPtrTag> target)
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearTailCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
+    m_nearCalls.append(NearCallRecord(nakedCall, m_bytecodeIndex, FunctionPtr<JSInternalPtrTag>(target.retagged<JSInternalPtrTag>())));
     return nakedCall;
 }
 

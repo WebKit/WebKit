@@ -4526,7 +4526,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
             }
 
             if (addICGenerationState->shouldSlowPathRepatch)
-                addICGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_GJJMic>(repatchingFunction), resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
+                addICGenerationState->slowPathCall = callOperation(repatchingFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
             else
                 addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), innerLeftRegs, innerRightRegs);
 
@@ -5144,7 +5144,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
             silentSpill(savePlans);
 
             if (icGenerationState->shouldSlowPathRepatch)
-                icGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_GJMic>(repatchingFunction), resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), childRegs, TrustedImmPtr(mathIC));
+                icGenerationState->slowPathCall = callOperation(repatchingFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), childRegs, TrustedImmPtr(mathIC));
             else
                 icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), childRegs);
 

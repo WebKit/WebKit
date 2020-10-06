@@ -32,6 +32,7 @@
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
 #include "LLIntData.h"
+#include "LLIntExceptions.h"
 #include "Opcode.h"
 #include "ShadowChicken.h"
 #include "VMInlines.h"
@@ -77,7 +78,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
             catchRoutine = LLInt::getCodePtr(catchPCForInterpreter->opcodeID());
 #endif
     } else
-        catchRoutine = LLInt::getCodePtr<ExceptionHandlerPtrTag>(handleUncaughtException).executableAddress();
+        catchRoutine = LLInt::handleUncaughtException(vm).code().executableAddress();
 
     ASSERT(bitwise_cast<uintptr_t>(callFrame) < bitwise_cast<uintptr_t>(vm.topEntryFrame));
 

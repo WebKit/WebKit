@@ -1491,8 +1491,8 @@ void JIT::privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo* byValInfo
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
     patchBuffer.link(done, byValInfo->doneTarget);
     if (needsLinkForWriteBarrier) {
-        ASSERT(removeCodePtrTag(m_calls.last().callee.executableAddress()) == removeCodePtrTag(operationWriteBarrierSlowPath));
-        patchBuffer.link(m_calls.last().from, m_calls.last().callee);
+        ASSERT(removeCodePtrTag(m_farCalls.last().callee.executableAddress()) == removeCodePtrTag(operationWriteBarrierSlowPath));
+        patchBuffer.link(m_farCalls.last().from, m_farCalls.last().callee);
     }
     
     bool isDirect = currentInstruction->opcodeID() == op_put_by_val_direct;
@@ -1531,7 +1531,11 @@ void JIT::privateCompilePutPrivateNameWithCachedId(ByValInfo* byValInfo, ReturnA
     if (!m_exceptionChecks.empty())
         patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
 
-    for (const auto& callSite : m_calls) {
+    for (const auto& callSite : m_nearCalls) {
+        if (callSite.callee)
+            patchBuffer.link(callSite.from, callSite.callee);
+    }
+    for (const auto& callSite : m_farCalls) {
         if (callSite.callee)
             patchBuffer.link(callSite.from, callSite.callee);
     }
@@ -1565,7 +1569,11 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     if (!m_exceptionChecks.empty())
         patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
 
-    for (const auto& callSite : m_calls) {
+    for (const auto& callSite : m_nearCalls) {
+        if (callSite.callee)
+            patchBuffer.link(callSite.from, callSite.callee);
+    }
+    for (const auto& callSite : m_farCalls) {
         if (callSite.callee)
             patchBuffer.link(callSite.from, callSite.callee);
     }

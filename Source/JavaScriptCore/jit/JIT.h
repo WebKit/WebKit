@@ -74,22 +74,26 @@ namespace JSC {
     struct OpPutPrivateName;
     struct OpPutToScope;
 
+    template<PtrTag tag>
     struct CallRecord {
         MacroAssembler::Call from;
         BytecodeIndex bytecodeIndex;
-        FunctionPtr<OperationPtrTag> callee;
+        FunctionPtr<tag> callee;
 
         CallRecord()
         {
         }
 
-        CallRecord(MacroAssembler::Call from, BytecodeIndex bytecodeIndex, FunctionPtr<OperationPtrTag> callee)
+        CallRecord(MacroAssembler::Call from, BytecodeIndex bytecodeIndex, FunctionPtr<tag> callee)
             : from(from)
             , bytecodeIndex(bytecodeIndex)
             , callee(callee)
         {
         }
     };
+
+    using FarCallRecord = CallRecord<OperationPtrTag>;
+    using NearCallRecord = CallRecord<JSInternalPtrTag>;
 
     struct JumpTable {
         MacroAssembler::Jump from;
@@ -286,7 +290,7 @@ namespace JSC {
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = call(OperationPtrTag);
-            m_calls.append(CallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
+            m_farCalls.append(FarCallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 
@@ -294,7 +298,7 @@ namespace JSC {
         Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
-            m_calls.append(CallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
+            m_farCalls.append(FarCallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 #endif
@@ -900,8 +904,8 @@ namespace JSC {
 
         void updateTopCallFrame();
 
-        Call emitNakedCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
-        Call emitNakedTailCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
+        Call emitNakedNearCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
+        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
 
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
@@ -961,7 +965,8 @@ namespace JSC {
 
         Interpreter* m_interpreter;
 
-        Vector<CallRecord> m_calls;
+        Vector<FarCallRecord> m_farCalls;
+        Vector<NearCallRecord> m_nearCalls;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
         Vector<JITGetByIdGenerator> m_getByIds;

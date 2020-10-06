@@ -802,7 +802,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
         move(returnValueGPR, GPRInfo::argumentGPR0);
-        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
+        emitNakedNearCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
 
 #if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
@@ -882,7 +882,12 @@ CompilationResult JIT::link()
         handler.nativeCode = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_labels[handler.target]);
     }
 
-    for (auto& record : m_calls) {
+
+    for (auto& record : m_nearCalls) {
+        if (record.callee)
+            patchBuffer.link(record.from, record.callee);
+    }
+    for (auto& record : m_farCalls) {
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
     }
@@ -996,7 +1001,7 @@ void JIT::privateCompileExceptionHandlers()
         // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
-        m_calls.append(CallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
+        m_farCalls.append(FarCallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
         jumpToExceptionHandler(vm());
     }
 
@@ -1009,7 +1014,7 @@ void JIT::privateCompileExceptionHandlers()
         // operationLookupExceptionHandler is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
-        m_calls.append(CallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
+        m_farCalls.append(FarCallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }
 }

@@ -764,7 +764,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
     // FIXME: We could make this better:
-    // This is a total hack, but the llint (both op_catch and handleUncaughtException)
+    // This is a total hack, but the llint (both op_catch and llint_handle_uncaught_exception)
     // require a cell in the callee field to load the VM. (The baseline JIT does not require
     // this since it is compiled with a constant VM pointer.) We could make the calling convention
     // for exceptions first load callFrameForCatch info call frame register before jumping

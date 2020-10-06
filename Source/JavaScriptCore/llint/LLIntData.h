@@ -161,15 +161,46 @@ ALWAYS_INLINE MacroAssemblerCodeRef<tag> getCodeRef(OpcodeID opcodeID)
     return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getCodePtr<tag>(opcodeID));
 }
 
+template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide16CodeRef(OpcodeID opcodeID)
+{
+    return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getWide16CodePtr<tag>(opcodeID));
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodeRef<tag> getWide32CodeRef(OpcodeID opcodeID)
+{
+    return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getWide32CodePtr<tag>(opcodeID));
+}
+
 #if ENABLE(JIT)
 template<PtrTag tag>
 ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID opcodeID)
 {
-    ASSERT(opcodeID >= NUMBER_OF_BYTECODE_IDS);
 #if COMPILER(MSVC)
     return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).executableAddress());
 #else
     return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template executableAddress());
+#endif
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE LLIntCode getWide16CodeFunctionPtr(OpcodeID opcodeID)
+{
+#if COMPILER(MSVC)
+    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).executableAddress());
+#else
+    return reinterpret_cast<LLIntCode>(getWide16CodePtr<tag>(opcodeID).template executableAddress());
+#endif
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE LLIntCode getWide32CodeFunctionPtr(OpcodeID opcodeID)
+{
+#if COMPILER(MSVC)
+    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).executableAddress());
+#else
+    return reinterpret_cast<LLIntCode>(getWide32CodePtr<tag>(opcodeID).template executableAddress());
 #endif
 }
 

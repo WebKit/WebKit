@@ -64,6 +64,7 @@
 #include "JSTemplateObjectDescriptor.h"
 #include "LLIntData.h"
 #include "LLIntEntrypoint.h"
+#include "LLIntExceptions.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "MetadataTable.h"
 #include "ModuleProgramCodeBlock.h"
@@ -431,8 +432,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
 #if ENABLE(JIT)
                 auto& instruction = *instructions().at(unlinkedHandler.target).ptr();
-                MacroAssemblerCodePtr<BytecodePtrTag> codePtr = LLInt::getCodePtr<BytecodePtrTag>(instruction);
-                handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(codePtr.retagged<ExceptionHandlerPtrTag>()));
+                handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleCatch(instruction.width()).code()));
 #else
                 handler.initialize(unlinkedHandler);
 #endif
@@ -1502,8 +1502,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
                         const UnlinkedHandlerInfo& unlinkedHandler = m_unlinkedCode->exceptionHandler(i);
                         HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
                         auto& instruction = *instructions().at(unlinkedHandler.target).ptr();
-                        MacroAssemblerCodePtr<BytecodePtrTag> codePtr = LLInt::getCodePtr<BytecodePtrTag>(instruction);
-                        handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(codePtr.retagged<ExceptionHandlerPtrTag>()));
+                        handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleCatch(instruction.width()).code()));
                     }
 
                     unlinkIncomingCalls();

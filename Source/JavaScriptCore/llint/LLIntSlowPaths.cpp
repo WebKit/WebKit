@@ -160,14 +160,14 @@ inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { retur
 #define LLINT_CALL_THROW(globalObject, exceptionToThrow) do {                   \
         JSGlobalObject* __ct_globalObject = (globalObject);                                  \
         throwException(__ct_globalObject, throwScope, exceptionToThrow);        \
-        LLINT_CALL_END_IMPL(nullptr, callToThrow(vm), ExceptionHandlerPtrTag);                 \
+        LLINT_CALL_END_IMPL(nullptr, callToThrow(vm).code().executableAddress(), ExceptionHandlerPtrTag);                 \
     } while (false)
 
 #define LLINT_CALL_CHECK_EXCEPTION(globalObject) do {               \
         JSGlobalObject* __cce_globalObject = (globalObject);                                 \
         doExceptionFuzzingIfEnabled(__cce_globalObject, throwScope, "LLIntSlowPaths/call", nullptr); \
         if (UNLIKELY(throwScope.exception()))                           \
-            LLINT_CALL_END_IMPL(nullptr, callToThrow(vm), ExceptionHandlerPtrTag); \
+            LLINT_CALL_END_IMPL(nullptr, callToThrow(vm).code().executableAddress(), ExceptionHandlerPtrTag); \
     } while (false)
 
 #define LLINT_CALL_RETURN(globalObject, calleeFrame, callTarget, callTargetTag) do { \

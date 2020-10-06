@@ -141,7 +141,7 @@ void JITCompiler::compileExceptionHandlers()
         prepareCallOperation(vm());
         addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
 
-        m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
+        appendCall(operationLookupExceptionHandlerFromCallerFrame);
 
         jumpToExceptionHandler(vm());
     }
@@ -155,7 +155,7 @@ void JITCompiler::compileExceptionHandlers()
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
 
-        m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
+        appendCall(operationLookupExceptionHandler);
 
         jumpToExceptionHandler(vm());
     }

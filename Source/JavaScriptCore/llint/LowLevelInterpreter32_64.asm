@@ -390,7 +390,7 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
     end
 end
 
-op(handleUncaughtException, macro()
+op(llint_handle_uncaught_exception, macro()
     loadp Callee + PayloadOffset[cfr], t3
     convertCalleeToVM(t3)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)

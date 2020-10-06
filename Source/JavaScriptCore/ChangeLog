@@ -1,3 +1,89 @@
+2020-10-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] More consistent PtrTagging for code types
+        https://bugs.webkit.org/show_bug.cgi?id=217362
+
+        Reviewed by Mark Lam.
+
+        1. Avoid tagging JIT code with OperationPtrTag. OperationPtrTag should be used only for operations (C++ code).
+        2. Avoid mixing JIT and C++ code for the same tagged pointers. For exception trampoline, in JIT mode, we should have
+           JIT trampoline thunk which goes to LLInt bytecode handler code.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearCall):
+        (JSC::JIT::emitNakedNearTailCall):
+        (JSC::JIT::emitNakedCall): Deleted.
+        (JSC::JIT::emitNakedTailCall): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutPrivateNameWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getWide16CodeRef):
+        (JSC::LLInt::getWide32CodeRef):
+        (JSC::LLInt::getCodeFunctionPtr):
+        (JSC::LLInt::getWide16CodeFunctionPtr):
+        (JSC::LLInt::getWide32CodeFunctionPtr):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::callToThrow):
+        (JSC::LLInt::handleUncaughtException):
+        (JSC::LLInt::catcher):
+        * llint/LLIntExceptions.h:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForCallEntryThunk):
+        (JSC::LLInt::functionForConstructEntryThunk):
+        (JSC::LLInt::functionForCallArityCheckThunk):
+        (JSC::LLInt::functionForConstructArityCheckThunk):
+        (JSC::LLInt::evalEntryThunk):
+        (JSC::LLInt::programEntryThunk):
+        (JSC::LLInt::moduleProgramEntryThunk):
+        (JSC::LLInt::wasmFunctionEntryThunk):
+        (JSC::LLInt::callToThrowThunk):
+        (JSC::LLInt::handleUncaughtExceptionThunk):
+        (JSC::LLInt::catcherThunk):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+
 2020-10-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         %TypedArray%.from must do mapping and putting in lockstep

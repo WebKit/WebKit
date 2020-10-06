@@ -1405,7 +1405,7 @@ op :checkpoint_osr_exit_from_inlined_call_trampoline
 op :checkpoint_osr_exit_trampoline
 op :fuzzer_return_early_from_loop_hint
 op :llint_get_host_call_return_value
-op :handleUncaughtException
+op :llint_handle_uncaught_exception
 op :op_call_return_location
 op :op_construct_return_location
 op :op_call_varargs_slow_return_location

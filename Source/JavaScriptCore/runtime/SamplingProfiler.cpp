@@ -590,7 +590,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
                 // This might also be false for various reasons (known and unknown), even though
                 // it's super unlikely. One reason that this can be false is when we throw from a DFG frame,
                 // and we end up having to unwind past an EntryFrame, we will end up executing
-                // inside the LLInt's handleUncaughtException. So we just protect against this
+                // inside the LLInt's llint_handle_ucaught_exception. So we just protect against this
                 // by ignoring it.
                 BytecodeIndex bytecodeIndex = BytecodeIndex(0);
                 if (topCodeBlock->jitType() == JITType::InterpreterThunk || topCodeBlock->jitType() == JITType::BaselineJIT) {
