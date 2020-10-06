@@ -154,7 +154,7 @@ private:
         bool canDestroyDecodedData(const Image&) final;
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
         void changedInRect(const Image&, const IntRect*) final;
-        void scheduleTimedRenderingUpdate(const Image&) final;
+        void scheduleRenderingUpdate(const Image&) final;
 
         HashSet<CachedImage*> m_cachedImages;
     };
@@ -165,7 +165,7 @@ private:
     bool canDestroyDecodedData(const Image&);
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
     void changedInRect(const Image&, const IntRect*);
-    void scheduleTimedRenderingUpdate(const Image&);
+    void scheduleRenderingUpdate(const Image&);
 
     void updateBufferInternal(SharedBuffer&);
 

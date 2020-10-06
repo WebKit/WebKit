@@ -49,7 +49,7 @@ public:
 
     virtual void didRemoveCachedImageClient(CachedImage&) { }
 
-    virtual void scheduleTimedRenderingUpdate() { }
+    virtual void scheduleRenderingUpdateForImage(CachedImage&) { }
 };
 
 } // namespace WebCore

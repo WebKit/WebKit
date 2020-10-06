@@ -440,10 +440,10 @@ void CachedImage::CachedImageObserver::changedInRect(const Image& image, const I
         cachedImage->changedInRect(image, rect);
 }
 
-void CachedImage::CachedImageObserver::scheduleTimedRenderingUpdate(const Image& image)
+void CachedImage::CachedImageObserver::scheduleRenderingUpdate(const Image& image)
 {
     for (auto cachedImage : m_cachedImages)
-        cachedImage->scheduleTimedRenderingUpdate(image);
+        cachedImage->scheduleRenderingUpdate(image);
 }
 
 inline void CachedImage::clearImage()
@@ -696,14 +696,14 @@ void CachedImage::changedInRect(const Image& image, const IntRect* rect)
     notifyObservers(rect);
 }
 
-void CachedImage::scheduleTimedRenderingUpdate(const Image& image)
+void CachedImage::scheduleRenderingUpdate(const Image& image)
 {
     if (&image != m_image)
         return;
 
     CachedResourceClientWalker<CachedImageClient> walker(m_clients);
     while (auto* client = walker.next())
-        client->scheduleTimedRenderingUpdate();
+        client->scheduleRenderingUpdateForImage(*this);
 }
 
 bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
