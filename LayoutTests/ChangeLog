@@ -1,5 +1,11 @@
 2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Update test expectations after r268038.
+
+        * platform/wpe/TestExpectations:
+
+2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK][WPE] Update baseline of WPT test css/cssom/cssstyledeclaration-csstext.html after r267985
 
         Unreviewed test gardening.

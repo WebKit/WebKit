@@ -700,6 +700,10 @@ webkit.org/b/216471 fast/layoutformattingcontext/table-simple-thead-border-ignor
 webkit.org/b/216471 fast/layoutformattingcontext/vertical-align-middle-nested.html [ ImageOnlyFailure ]
 webkit.org/b/216471 fast/layoutformattingcontext/vertical-align-middle-simple.html [ ImageOnlyFailure ]
 
+webkit.org/b/217369 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
+
+webkit.org/b/217370 fast/events/setDragImage-element-non-nullable.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
