@@ -166,7 +166,7 @@ void DocumentTimeline::scheduleAnimationResolution()
     if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
 
-    m_document->page()->scheduleTimedRenderingUpdate();
+    m_document->page()->scheduleRenderingUpdate();
     m_animationResolutionScheduled = true;
 }
 

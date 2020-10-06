@@ -1395,7 +1395,7 @@ public:
     void addDynamicMediaQueryDependentImage(HTMLImageElement&);
     void removeDynamicMediaQueryDependentImage(HTMLImageElement&);
 
-    void scheduleTimedRenderingUpdate();
+    void scheduleRenderingUpdate();
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void addIntersectionObserver(IntersectionObserver&);

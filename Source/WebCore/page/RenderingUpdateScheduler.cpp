@@ -71,11 +71,11 @@ void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 
     if (isScheduled()) {
         clearScheduled();
-        scheduleTimedRenderingUpdate();
+        scheduleRenderingUpdate();
     }
 }
 
-void RenderingUpdateScheduler::scheduleTimedRenderingUpdate()
+void RenderingUpdateScheduler::scheduleRenderingUpdate()
 {
     if (isScheduled())
         return;
@@ -147,11 +147,6 @@ void RenderingUpdateScheduler::triggerRenderingUpdateForTesting()
 void RenderingUpdateScheduler::triggerRenderingUpdate()
 {
     m_page.chrome().client().triggerRenderingUpdate();
-}
-
-void RenderingUpdateScheduler::scheduleRenderingUpdate()
-{
-    scheduleTimedRenderingUpdate();
 }
 
 }

@@ -97,7 +97,7 @@ void LayerTreeHost::layerFlushTimerFired()
 
     // In case an animation is running, we should flush again soon.
     if (downcast<GraphicsLayerTextureMapper>(m_rootLayer.get())->layer().descendantsOrSelfHaveRunningAnimations())
-        m_webPage.corePage()->scheduleTimedRenderingUpdate();
+        m_webPage.corePage()->scheduleRenderingUpdate();
 }
 
 LayerTreeHost::LayerTreeHost(WebPage& webPage)

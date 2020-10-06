@@ -46,7 +46,6 @@ public:
     RenderingUpdateScheduler(Page&);
     
     void adjustRenderingUpdateFrequency();
-    void scheduleTimedRenderingUpdate();
     void scheduleRenderingUpdate();
 
     void triggerRenderingUpdateForTesting();

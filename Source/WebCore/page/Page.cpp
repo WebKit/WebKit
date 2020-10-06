@@ -596,7 +596,7 @@ void Page::updateStyleAfterChangeInEnvironment()
             styleResolver->invalidateMatchedDeclarationsCache();
         document.scheduleFullStyleRebuild();
         document.styleScope().didChangeStyleSheetEnvironment();
-        document.scheduleTimedRenderingUpdate();
+        document.scheduleRenderingUpdate();
     });
 }
 
@@ -1408,14 +1408,9 @@ void Page::layoutIfNeeded()
 
 void Page::scheduleRenderingUpdate()
 {
-    renderingUpdateScheduler().scheduleRenderingUpdate();
-}
-
-void Page::scheduleTimedRenderingUpdate()
-{
-    if (chrome().client().scheduleTimedRenderingUpdate())
+    if (chrome().client().scheduleRenderingUpdate())
         return;
-    renderingUpdateScheduler().scheduleTimedRenderingUpdate();
+    renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void Page::triggerRenderingUpdateForTesting()
@@ -2931,7 +2926,7 @@ void Page::accessibilitySettingsDidChange()
     forEachDocument([] (auto& document) {
         document.styleScope().evaluateMediaQueriesForAccessibilitySettingsChange();
         document.updateElementsAffectedByMediaQueries();
-        document.scheduleTimedRenderingUpdate();
+        document.scheduleRenderingUpdate();
     });
 }
 
@@ -2941,7 +2936,7 @@ void Page::appearanceDidChange()
         document.styleScope().didChangeStyleSheetEnvironment();
         document.styleScope().evaluateMediaQueriesForAppearanceChange();
         document.updateElementsAffectedByMediaQueries();
-        document.scheduleTimedRenderingUpdate();
+        document.scheduleRenderingUpdate();
     });
 }
 

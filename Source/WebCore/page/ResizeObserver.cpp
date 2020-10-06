@@ -74,7 +74,7 @@ void ResizeObserver::observe(Element& target)
 
     if (m_document) {
         m_document->addResizeObserver(*this);
-        m_document->scheduleTimedRenderingUpdate();
+        m_document->scheduleRenderingUpdate();
     }
 }
 

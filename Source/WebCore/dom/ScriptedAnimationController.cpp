@@ -181,7 +181,7 @@ void ScriptedAnimationController::scheduleAnimation()
         return;
 
     if (auto* page = this->page())
-        page->scheduleTimedRenderingUpdate();
+        page->scheduleRenderingUpdate();
 }
 
 }

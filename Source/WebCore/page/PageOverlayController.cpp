@@ -318,7 +318,7 @@ void PageOverlayController::didChangeDeviceScaleFactor()
 
 void PageOverlayController::didChangeViewExposedRect()
 {
-    m_page.scheduleTimedRenderingUpdate();
+    m_page.scheduleRenderingUpdate();
 }
 
 void PageOverlayController::didScrollFrame(Frame& frame)
@@ -412,7 +412,7 @@ float PageOverlayController::deviceScaleFactor() const
 
 void PageOverlayController::notifyFlushRequired(const GraphicsLayer*)
 {
-    m_page.scheduleTimedRenderingUpdate();
+    m_page.scheduleRenderingUpdate();
 }
 
 void PageOverlayController::didChangeOverlayFrame(PageOverlay& overlay)

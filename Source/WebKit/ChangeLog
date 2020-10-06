@@ -1,3 +1,17 @@
+2020-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename scheduleTimedRenderingUpdate() to scheduleRenderingUpdate() everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=217367
+
+        Reviewed by Alex Christensen.
+
+        The previously named scheduleImmediateRenderingUpdate() is no more, so all rendering
+        updates that WebCore knows about are of the timed variety. So just call them 
+        scheduleRenderingUpdate() everywhere.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+
 2020-10-06  Adrian Perez de Castro  <aperez@igalia.com>
 
         REGRESSION(r267399): [WPE] Build broken with ENABLE_ACCESSIBILITY=OFF

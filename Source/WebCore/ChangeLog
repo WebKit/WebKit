@@ -1,3 +1,55 @@
+2020-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename scheduleTimedRenderingUpdate() to scheduleRenderingUpdate() everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=217367
+
+        Reviewed by Alex Christensen.
+
+        The previously named scheduleImmediateRenderingUpdate() is no more, so all rendering
+        updates that WebCore knows about are of the timed variety. So just call them 
+        scheduleRenderingUpdate() everywhere.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        * dom/Document.cpp:
+        (WebCore::Document::setNeedsDOMWindowResizeEvent):
+        (WebCore::Document::setNeedsVisualViewportResize):
+        (WebCore::Document::addPendingScrollEventTarget):
+        (WebCore::Document::setNeedsVisualViewportScrollEvent):
+        (WebCore::Document::scheduleRenderingUpdate):
+        (WebCore::Document::scheduleInitialIntersectionObservationUpdate):
+        (WebCore::Document::updateResizeObservations):
+        (WebCore::Document::scheduleTimedRenderingUpdate): Deleted.
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scheduleRenderingUpdate):
+        (WebCore::ChromeClient::scheduleTimedRenderingUpdate): Deleted.
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleAfterChangeInEnvironment):
+        (WebCore::Page::scheduleRenderingUpdate):
+        (WebCore::Page::accessibilitySettingsDidChange):
+        (WebCore::Page::appearanceDidChange):
+        (WebCore::Page::scheduleTimedRenderingUpdate): Deleted.
+        * page/Page.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::notifyFlushRequired):
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::adjustRenderingUpdateFrequency):
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::scheduleTimedRenderingUpdate): Deleted.
+        * page/RenderingUpdateScheduler.h:
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::observe):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::scheduleRenderingUpdateForImage):
+        * svg/graphics/SVGImageClients.h:
+
 2020-10-06  Youenn Fablet  <youenn@apple.com>
 
         In case all tracks are ended, enqueue a task to stop recording instead of stopping recording

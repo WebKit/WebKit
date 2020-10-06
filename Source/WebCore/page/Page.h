@@ -488,11 +488,9 @@ public:
     WEBCORE_EXPORT void isolatedUpdateRendering();
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
 
-    // Do immediate or timed update as dictated by the ChromeClient.
+    // Schedule a rerndering update that coordinates with display refresh.
     WEBCORE_EXPORT void scheduleRenderingUpdate();
-    // Schedule an update that coordinates with display refresh; the normal kind of update.
-    void scheduleTimedRenderingUpdate();
-    // Trigger a rendering update in the current runloop.
+    // Trigger a rendering update in the current runloop. Only used for testing.
     void triggerRenderingUpdateForTesting();
 
     WEBCORE_EXPORT void startTrackingRenderingUpdates();

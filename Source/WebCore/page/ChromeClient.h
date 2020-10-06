@@ -323,10 +323,12 @@ public:
     // Sets a flag to specify that the next time content is drawn to the window,
     // the changes appear on the screen in synchrony with updates to GraphicsLayers.
     virtual void setNeedsOneShotDrawingSynchronization() = 0;
-    // Sets a flag to specify that the view needs to be updated, so we need
-    // to do an eager layout before the drawing.
+
+    // Makes a rendering update happen soon, typically in the current runloop.
     virtual void triggerRenderingUpdate() = 0;
-    virtual bool scheduleTimedRenderingUpdate() { return false; }
+    // Schedule a rendering update that coordinates with display refresh. Returns true if scheduled. (This is only used by SVGImageChromeClient.)
+    virtual bool scheduleRenderingUpdate() { return false; }
+
     // Returns whether or not the client can render the composited layer,
     // regardless of the settings.
     virtual bool allowsAcceleratedCompositing() const { return true; }
