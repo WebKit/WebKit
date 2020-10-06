@@ -170,7 +170,8 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedWidth(const Box& layou
 
 LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(const Box& layoutBox) const
 {
-    ASSERT((isHeightAuto(layoutBox) || layoutBox.establishesTableFormattingContext() || layoutBox.isTableCell()) && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
+    ASSERT(layoutBox.establishesFormattingContext());
+    ASSERT(isHeightAuto(layoutBox) || layoutBox.establishesTableFormattingContext() || layoutBox.isTableCell());
 
     // 10.6.7 'Auto' heights for block formatting context roots
 
@@ -203,7 +204,7 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         // FIXME: Move flex over to layout geometry.
         top = lines.first().top();
         bottom = lines.last().bottom();
-    } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || formattingRootContainer.isDocumentBox()) {
+    } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext()) {
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.firstInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
             auto& lastBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.lastInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
@@ -213,18 +214,11 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     } else
         ASSERT_NOT_REACHED();
 
-    auto* formattingContextRoot = &formattingRootContainer;
-    // TODO: The document renderer is not a formatting context root by default at all. Need to find out what it is.
-    if (!layoutBox.establishesFormattingContext()) {
-        ASSERT(layoutBox.isDocumentBox());
-        formattingContextRoot = &layoutBox.formattingContextRoot();
-    }
-
-    auto& floatingState = layoutState.establishedFormattingState(*formattingContextRoot).floatingState();
-    auto floatBottom = floatingState.bottom(*formattingContextRoot);
+    auto& floatingState = layoutState.establishedFormattingState(formattingRootContainer).floatingState();
+    auto floatBottom = floatingState.bottom(formattingRootContainer);
     if (floatBottom) {
         bottom = std::max<LayoutUnit>(*floatBottom, bottom);
-        auto floatTop = floatingState.top(*formattingContextRoot);
+        auto floatTop = floatingState.top(formattingRootContainer);
         ASSERT(floatTop);
         top = std::min<LayoutUnit>(*floatTop, top);
     }
@@ -827,7 +821,27 @@ ContentHeightAndMargin FormattingContext::Geometry::complicatedCases(const Box& 
     // #2
     if (!height) {
         ASSERT(isHeightAuto(layoutBox));
-        height = contentHeightForFormattingContextRoot(layoutBox);
+        if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild())
+            height = 0_lu;
+        else if (layoutBox.isDocumentBox() && !layoutBox.establishesFormattingContext()) {
+            auto& documentBox = downcast<ContainerBox>(layoutBox);
+            auto top = formattingContext().geometryForBox(*documentBox.firstInFlowChild()).logicalRectWithMargin().top();
+            auto bottom = formattingContext().geometryForBox(*documentBox.lastInFlowChild()).logicalRectWithMargin().bottom();
+            // This is a special (quirk?) behavior since the document box is not a formatting context root and
+            // all the float boxes end up at the ICB level.
+            auto& initialContainingBlock = documentBox.formattingContextRoot();
+            auto& floatingState = layoutState().establishedFormattingState(initialContainingBlock).floatingState();
+            if (auto floatBottom = floatingState.bottom(initialContainingBlock)) {
+                bottom = std::max<LayoutUnit>(*floatBottom, bottom);
+                auto floatTop = floatingState.top(initialContainingBlock);
+                ASSERT(floatTop);
+                top = std::min<LayoutUnit>(*floatTop, top);
+            }
+            height = bottom - top;
+        } else {
+            ASSERT(layoutBox.establishesFormattingContext());
+            height = contentHeightForFormattingContextRoot(layoutBox);
+        }
     }
 
     ASSERT(height);
