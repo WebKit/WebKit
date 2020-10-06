@@ -1522,6 +1522,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerAnimationController.h
     workers/WorkerDebuggerProxy.h
     workers/WorkerLoaderProxy.h
+    workers/WorkerOrWorkletThread.h
     workers/WorkerRunLoop.h
     workers/WorkerScriptLoader.h
     workers/WorkerScriptLoaderClient.h

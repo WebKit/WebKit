@@ -52,7 +52,6 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerSWClientConnection.h"
 #include "WorkerScriptLoader.h"
-#include "WorkerThread.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/IsoMallocInlines.h>
@@ -448,7 +447,7 @@ bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t
     m_thread.workerLoaderProxy().postTaskToLoader([resultContainer, key, wrappedKeyContainer, doneContainer, workerMessagingProxy = makeRef(downcast<WorkerMessagingProxy>(m_thread.workerLoaderProxy()))](ScriptExecutionContext& context) {
         resultContainer->setBoolean(context.wrapCryptoKey(key, wrappedKeyContainer->buffer()));
         doneContainer->setBoolean(true);
-        workerMessagingProxy->postTaskForModeToWorkerGlobalScope([](ScriptExecutionContext& context) {
+        workerMessagingProxy->postTaskForModeToWorkerOrWorkletGlobalScope([](ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, context.isWorkerGlobalScope());
         }, WorkerRunLoop::defaultMode());
     });
@@ -471,7 +470,7 @@ bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vecto
     m_thread.workerLoaderProxy().postTaskToLoader([resultContainer, wrappedKey, keyContainer, doneContainer, workerMessagingProxy = makeRef(downcast<WorkerMessagingProxy>(m_thread.workerLoaderProxy()))](ScriptExecutionContext& context) {
         resultContainer->setBoolean(context.unwrapCryptoKey(wrappedKey, keyContainer->buffer()));
         doneContainer->setBoolean(true);
-        workerMessagingProxy->postTaskForModeToWorkerGlobalScope([](ScriptExecutionContext& context) {
+        workerMessagingProxy->postTaskForModeToWorkerOrWorkletGlobalScope([](ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, context.isWorkerGlobalScope());
         }, WorkerRunLoop::defaultMode());
     });
@@ -542,11 +541,6 @@ CSSValuePool& WorkerGlobalScope::cssValuePool()
 ReferrerPolicy WorkerGlobalScope::referrerPolicy() const
 {
     return m_referrerPolicy;
-}
-
-Thread* WorkerGlobalScope::underlyingThread() const
-{
-    return m_thread.thread();
 }
 
 } // namespace WebCore

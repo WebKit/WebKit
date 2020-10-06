@@ -1,3 +1,15 @@
+2020-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Update Worklet.addModule() to actually fetch the module script
+        https://bugs.webkit.org/show_bug.cgi?id=217242
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * webaudio/audioworklet-addModule-failure-expected.txt: Added.
+        * webaudio/audioworklet-addModule-failure.html: Added.
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         FileReader should transition to readyState DONE after last onprogress event

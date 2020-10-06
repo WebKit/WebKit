@@ -34,6 +34,7 @@
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "WorkerEventLoop.h"
+#include "WorkerScriptLoader.h"
 #include "WorkletParameters.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
@@ -54,7 +55,7 @@ WorkletGlobalScope::WorkletGlobalScope(const WorkletParameters& parameters)
     auto addResult = allWorkletGlobalScopesSet().add(this);
     ASSERT_UNUSED(addResult, addResult);
 
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(m_topOrigin.copyRef()));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::create(this->url())));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
 }
 
@@ -71,7 +72,7 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, Sc
 
     ASSERT(document.page());
 
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(m_topOrigin.copyRef()));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::create(this->url())));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
 }
 
@@ -183,11 +184,64 @@ ReferrerPolicy WorkletGlobalScope::referrerPolicy() const
     return ReferrerPolicy::NoReferrer;
 }
 
-void WorkletGlobalScope::fetchAndInvokeScript(const URL&, FetchRequestCredentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(!isMainThread());
-    // FIXME: Add implementation.
-    completionHandler(WTF::nullopt);
+    m_scriptFetchJobs.append({ moduleURL, credentials, WTFMove(completionHandler) });
+    processNextScriptFetchJobIfNeeded();
+}
+
+void WorkletGlobalScope::processNextScriptFetchJobIfNeeded()
+{
+    if (m_scriptFetchJobs.isEmpty() || m_scriptLoader)
+        return;
+
+    auto& scriptFetchJob = m_scriptFetchJobs.first();
+
+    ResourceRequest request { scriptFetchJob.moduleURL };
+
+    FetchOptions fetchOptions;
+    fetchOptions.mode = FetchOptions::Mode::SameOrigin;
+    fetchOptions.cache = FetchOptions::Cache::Default;
+    fetchOptions.redirect = FetchOptions::Redirect::Follow;
+    fetchOptions.destination = FetchOptions::Destination::Worker;
+    fetchOptions.credentials = scriptFetchJob.credentials;
+
+    auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
+
+    m_scriptLoader = WorkerScriptLoader::create();
+    m_scriptLoader->loadAsynchronously(*this, WTFMove(request), WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this);
+}
+
+void WorkletGlobalScope::didReceiveResponse(unsigned long, const ResourceResponse&)
+{
+}
+
+void WorkletGlobalScope::notifyFinished()
+{
+    auto completedJob = m_scriptFetchJobs.takeFirst();
+
+    if (m_scriptLoader->failed()) {
+        didCompleteScriptFetchJob(WTFMove(completedJob), Exception { NetworkError, makeString("Failed to fetch module, error: ", m_scriptLoader->error().localizedDescription()) });
+        return;
+    }
+
+    // FIXME: This should really be run as a module script but we don't support this in workers yet.
+    NakedPtr<JSC::Exception> exception;
+    m_script->evaluate(ScriptSourceCode(m_scriptLoader->script(), URL(m_scriptLoader->responseURL())), exception);
+    if (exception)
+        m_script->setException(exception);
+
+    didCompleteScriptFetchJob(WTFMove(completedJob), { });
+}
+
+void WorkletGlobalScope::didCompleteScriptFetchJob(ScriptFetchJob&& job, Optional<Exception> result)
+{
+    m_scriptLoader = nullptr;
+
+    job.completionHandler(WTFMove(result));
+
+    processNextScriptFetchJobIfNeeded();
 }
 
 } // namespace WebCore

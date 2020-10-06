@@ -32,6 +32,7 @@
 #include "AudioWorkletThread.h"
 
 #include "AudioWorkletGlobalScope.h"
+#include "AudioWorkletMessagingProxy.h"
 
 #if PLATFORM(IOS_FAMILY)
 #include "FloatingPointEnvironment.h"
@@ -43,10 +44,13 @@
 
 namespace WebCore {
 
-AudioWorkletThread::AudioWorkletThread(const WorkletParameters& parameters)
-    : m_parameters(parameters.isolatedCopy())
+AudioWorkletThread::AudioWorkletThread(AudioWorkletMessagingProxy& messagingProxy, const WorkletParameters& parameters)
+    : m_messagingProxy(messagingProxy)
+    , m_parameters(parameters.isolatedCopy())
 {
 }
+
+AudioWorkletThread::~AudioWorkletThread() = default;
 
 void AudioWorkletThread::start()
 {
@@ -58,6 +62,44 @@ void AudioWorkletThread::start()
     // Force the Thread object to be initialized fully before storing it to m_thread (and becoming visible to other threads).
     WTF::storeStoreFence();
     m_thread = WTFMove(thread);
+}
+
+void AudioWorkletThread::stop()
+{
+    // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
+    // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
+    // be called before m_workerGlobalScope is fully created.
+    auto locker = tryHoldLock(m_threadCreationAndWorkletGlobalScopeLock);
+    if (!locker) {
+        // The thread is still starting, spin the runloop and try again to avoid deadlocks if the worker thread
+        // needs to interact with the main thread during startup.
+        callOnMainThread([this]() mutable {
+            stop();
+        });
+        return;
+    }
+
+    // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
+    if (m_workletGlobalScope) {
+        m_workletGlobalScope->script()->scheduleExecutionTermination();
+
+        m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
+            auto& workletGlobalScope = downcast<AudioWorkletGlobalScope>(context);
+
+            workletGlobalScope.prepareForTermination();
+
+            // Stick a shutdown command at the end of the queue, so that we deal
+            // with all the cleanup tasks the databases post first.
+            workletGlobalScope.postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {
+                auto& workletGlobalScope = downcast<AudioWorkletGlobalScope>(context);
+                // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
+                workletGlobalScope.clearScript();
+            } });
+
+        } });
+        return;
+    }
+    m_runLoop.terminate();
 }
 
 void AudioWorkletThread::workletThread()
@@ -127,6 +169,11 @@ void AudioWorkletThread::runEventLoop()
 {
     // Does not return until terminated.
     m_runLoop.run(m_workletGlobalScope.get());
+}
+
+WorkerLoaderProxy& AudioWorkletThread::workerLoaderProxy()
+{
+    return m_messagingProxy;
 }
 
 } // namespace WebCore

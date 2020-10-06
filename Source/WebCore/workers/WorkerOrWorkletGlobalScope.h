@@ -26,21 +26,24 @@
 #pragma once
 
 #include "ScriptExecutionContext.h"
-#include "WorkerOrWorkletScriptController.h"
-
-namespace WTF {
-class Thread;
-}
 
 namespace WebCore {
+
+class WorkerOrWorkletScriptController;
+class WorkerOrWorkletThread;
 
 class WorkerOrWorkletGlobalScope : public ScriptExecutionContext {
 public:
     virtual ~WorkerOrWorkletGlobalScope() = default;
 
-    virtual WTF::Thread* underlyingThread() const = 0;
     virtual bool isClosing() const = 0;
     virtual WorkerOrWorkletScriptController* script() = 0;
+    virtual WorkerOrWorkletThread* workerOrWorkletThread() = 0;
+
+    unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
+
+private:
+    unsigned long m_uniqueIdentifier { 1 };
 };
 
 } // namespace WebCore

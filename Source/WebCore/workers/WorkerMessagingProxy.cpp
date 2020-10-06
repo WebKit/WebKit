@@ -153,14 +153,14 @@ void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
     m_scriptExecutionContext->postTask(WTFMove(task));
 }
 
-Ref<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
+RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
 {
     ASSERT(isMainThread());
     auto& document = downcast<Document>(*m_scriptExecutionContext);
     return document.page()->cacheStorageProvider().createCacheStorageConnection();
 }
 
-bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+bool WorkerMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
     if (m_askedToTerminate)
         return false;

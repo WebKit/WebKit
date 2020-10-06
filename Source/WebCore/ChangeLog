@@ -1,3 +1,130 @@
+2020-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Update Worklet.addModule() to actually fetch and evaluate the module script
+        https://bugs.webkit.org/show_bug.cgi?id=217242
+
+        Reviewed by Geoffrey Garen.
+
+        Update Worklet.addModule() to actually fetch and evaluate the module script as per:
+        - https://www.w3.org/TR/worklets-1/#dom-worklet-addmodule
+
+        The WorkletGlobalScope maintains a queue of fetch requests (basically a URL and a completion handler) and uses
+        the existing WorkerScriptLoader to process the requests serially. Based on the result on the load, we call the
+        CompletionHandler which will cause the Worklet.addModule() promise to get resolved or rejected.
+
+        Test: webaudio/audioworklet-addModule-failure.html
+
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        * Modules/webaudio/AudioWorkletGlobalScope.h:
+        Provide workerOrWorkletThread() override for WorkerOrWorkletGlobalScope(), which is a replacement
+        for underlyingThread().
+
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp:
+        (WebCore::AudioWorkletMessagingProxy::AudioWorkletMessagingProxy):
+        (WebCore::AudioWorkletMessagingProxy::createCacheStorageConnection):
+        (WebCore::AudioWorkletMessagingProxy::postTaskToLoader):
+        (WebCore::AudioWorkletMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope):
+        * Modules/webaudio/AudioWorkletMessagingProxy.h:
+        Update AudioWorkletMessagingProxy to subclass WorkerLoaderProxy so that AudioWorklet can reuse
+        WorkerScriptLoader. WorkerScriptLoader relies on WorkerLoaderProxy to do thread hopping.
+
+        * Modules/webaudio/AudioWorkletThread.cpp:
+        (WebCore::AudioWorkletThread::AudioWorkletThread):
+        (WebCore::AudioWorkletThread::workerLoaderProxy):
+        * Modules/webaudio/AudioWorkletThread.h:
+        (WebCore::AudioWorkletThread::create):
+        Subclass the new WorkerOrWorkletThread interface. WorkerOrWorkletThread is a new interface that
+        was adding so that WorkerScriptLoader can be reused by AudioWorklets.
+
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpgradeURL):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        Simple renaming.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::notifyIsDone):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishTiming):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        Update WorkerThreadableLoader so that it can be reused by AudioWorklets.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::wrapCryptoKey):
+        (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+        * workers/WorkerGlobalScope.h:
+        Minor changes to keep building after updates to WorkerOrWorkletGlobalScope.
+
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::createCacheStorageConnection):
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        Simple renames.
+
+        * workers/WorkerOrWorkletGlobalScope.h:
+        (WebCore::WorkerOrWorkletGlobalScope::createUniqueIdentifier):
+        Update WorkerOrWorkletGlobalScope to add a few things WorkerScriptLoader needed to work with
+        both Workers and Worklets.
+
+        * workers/WorkerOrWorkletThread.h: Added.
+        Added new parent interface for WorkerThread and AudioWorkletThread so that WorkerScriptLoader
+        can work for both Workers and Worklets.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::runCleanupTasks):
+        Minor changes to keep building after changes to WorkerOrWorkletGlobalScope.
+
+        * workers/WorkerThread.h:
+        Subclass the new WorkerOrWorkletThread interface.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope):
+        (WebCore::ServiceWorkerThreadProxy::createCacheStorageConnection):
+        (WebCore::ServiceWorkerThreadProxy::notifyNetworkStateChange):
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+        (WebCore::ServiceWorkerThreadProxy::cancelFetch):
+        (WebCore::ServiceWorkerThreadProxy::continueDidReceiveFetchResponse):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        Simple renames.
+
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+        Make sure we correctly initialize the security origin for the WorkletGlobalScope.
+        Previously, we were using a unique origin so all script loads would have failed
+        with a cross-origin error.
+
+        (WebCore::WorkletGlobalScope::fetchAndInvokeScript):
+        (WebCore::WorkletGlobalScope::processNextScriptFetchJobIfNeeded):
+        (WebCore::WorkletGlobalScope::didReceiveResponse):
+        (WebCore::WorkletGlobalScope::notifyFinished):
+        (WebCore::WorkletGlobalScope::didCompleteScriptFetchJob):
+        * worklets/WorkletGlobalScope.h:
+        (WebCore::WorkletGlobalScope::responsibleDocument):
+        (WebCore::WorkletGlobalScope::responsibleDocument const):
+        Add implementation for module script fetching using WorkerScriptLoader. This gets called
+        when Worklet.addModule() is called on the main thread.
+
 2020-10-06  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Add renderer() to iterator

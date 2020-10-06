@@ -34,10 +34,12 @@
 #include "ScriptSourceCode.h"
 #include "WorkerEventLoop.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerScriptLoaderClient.h"
 #include "WorkletScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
@@ -47,13 +49,14 @@ namespace WebCore {
 
 class EventLoopTaskGroup;
 class WorkerEventLoop;
+class WorkerScriptLoader;
 
 struct WorkletParameters;
 
 enum WorkletGlobalScopeIdentifierType { };
 using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
 
-class WorkletGlobalScope : public RefCounted<WorkletGlobalScope>, public EventTargetWithInlineData, public WorkerOrWorkletGlobalScope {
+class WorkletGlobalScope : public RefCounted<WorkletGlobalScope>, public EventTargetWithInlineData, public WorkerOrWorkletGlobalScope, public WorkerScriptLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(WorkletGlobalScope);
 public:
     virtual ~WorkletGlobalScope();
@@ -80,6 +83,8 @@ public:
     using RefCounted::deref;
 
     WorkletScriptController* script() final { return m_script.get(); }
+    void clearScript() { m_script = nullptr; }
+    WorkerOrWorkletThread* workerOrWorkletThread() override { return nullptr; }
 
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 
@@ -89,7 +94,6 @@ public:
     SocketProvider* socketProvider() final { return nullptr; }
 
     // WorkerOrWorkletGlobalScope.
-    Thread* underlyingThread() const override { return nullptr; }
     bool isClosing() const final { return m_isClosing; }
 
     bool isContextThread() const final { return true; }
@@ -101,21 +105,24 @@ public:
 
     void fetchAndInvokeScript(const URL&, FetchRequestCredentials, CompletionHandler<void(Optional<Exception>&&)>&&);
 
+    Document* responsibleDocument() { return m_document.get(); }
+    const Document* responsibleDocument() const { return m_document.get(); }
+
 protected:
     WorkletGlobalScope(const WorkletParameters&);
     WorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);
     WorkletGlobalScope(const WorkletGlobalScope&) = delete;
     WorkletGlobalScope(WorkletGlobalScope&&) = delete;
 
-    Document* responsibleDocument() { return m_document.get(); }
-    const Document* responsibleDocument() const { return m_document.get(); }
+    WorkerEventLoop* existingEventLoop() const { return m_eventLoop.get(); }
+    EventLoopTaskGroup* defaultTaskGroup() const { return m_defaultTaskGroup.get(); }
 
 private:
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { ASSERT_NOT_REACHED(); return nullptr; }
 #endif
 
-    void postTask(Task&&) final { ASSERT_NOT_REACHED(); }
+    void postTask(Task&&) override { ASSERT_NOT_REACHED(); }
 
     void refScriptExecutionContext() final { ref(); }
     void derefScriptExecutionContext() final { deref(); }
@@ -132,6 +139,10 @@ private:
     void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long) final;
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
 
+    // WorkerScriptLoaderClient.
+    void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
+    void notifyFinished() final;
+
     EventTarget* errorEventTarget() final { return this; }
 
 #if ENABLE(WEB_CRYPTO)
@@ -142,6 +153,15 @@ private:
     String userAgent(const URL&) const final;
     void disableEval(const String&) final;
     void disableWebAssembly(const String&) final;
+
+    struct ScriptFetchJob {
+        URL moduleURL;
+        FetchRequestCredentials credentials;
+        CompletionHandler<void(Optional<Exception>&&)> completionHandler;
+    };
+
+    void processNextScriptFetchJobIfNeeded();
+    void didCompleteScriptFetchJob(ScriptFetchJob&&, Optional<Exception>);
 
     WeakPtr<Document> m_document;
 
@@ -155,6 +175,10 @@ private:
     URL m_url;
     JSC::RuntimeFlags m_jsRuntimeFlags;
     Optional<ScriptSourceCode> m_code;
+
+    RefPtr<WorkerScriptLoader> m_scriptLoader;
+    Deque<ScriptFetchJob> m_scriptFetchJobs;
+
     bool m_isClosing { false };
 };
 

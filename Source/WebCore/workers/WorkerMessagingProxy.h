@@ -45,7 +45,7 @@ public:
 
     // Implementation of WorkerLoaderProxy.
     // This method is used in the main thread to post task back to the worker thread.
-    bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
 
 private:
     // Implementations of WorkerGlobalScopeProxy.
@@ -78,7 +78,7 @@ private:
     // requests and to send callbacks back to WorkerGlobalScope.
     bool isWorkerMessagingProxy() const final { return true; }
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    Ref<CacheStorageConnection> createCacheStorageConnection() final;
+    RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
 
     void workerThreadCreated(DedicatedWorkerThread&);
 

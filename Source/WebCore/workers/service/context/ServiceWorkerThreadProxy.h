@@ -85,9 +85,9 @@ private:
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 
     // WorkerLoaderProxy
-    bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    Ref<CacheStorageConnection> createCacheStorageConnection() final;
+    RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
 
     // WorkerDebuggerProxy
     void postMessageToDebugger(const String&) final;

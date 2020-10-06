@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
@@ -75,7 +76,7 @@ public:
     WorkerParameters isolatedCopy() const;
 };
 
-class WorkerThread : public ThreadSafeRefCounted<WorkerThread> {
+class WorkerThread : public ThreadSafeRefCounted<WorkerThread>, public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 
@@ -87,9 +88,9 @@ public:
     void suspend();
     void resume();
 
-    Thread* thread() const { return m_thread.get(); }
-    WorkerRunLoop& runLoop() { return m_runLoop; }
-    WorkerLoaderProxy& workerLoaderProxy() const { return m_workerLoaderProxy; }
+    Thread* thread() const final { return m_thread.get(); }
+    WorkerRunLoop& runLoop() final { return m_runLoop; }
+    WorkerLoaderProxy& workerLoaderProxy() final { return m_workerLoaderProxy; }
     WorkerDebuggerProxy& workerDebuggerProxy() const { return m_workerDebuggerProxy; }
     WorkerReportingProxy& workerReportingProxy() const { return m_workerReportingProxy; }
 

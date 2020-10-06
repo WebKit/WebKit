@@ -29,6 +29,7 @@
 #pragma once
 
 #if ENABLE(WEB_AUDIO)
+#include "AudioWorkletThread.h"
 #include "WorkletGlobalScope.h"
 
 namespace WebCore {
@@ -52,12 +53,16 @@ public:
     double currentTime() const { return 0; }
     float sampleRate() const { return 44100; }
 
-    Thread* underlyingThread() const final;
+    AudioWorkletThread& thread() { return m_thread.get(); }
+    void prepareForTermination();
+
+    void postTask(Task&&) final;
 
 private:
     AudioWorkletGlobalScope(AudioWorkletThread&, const WorkletParameters&);
 
     bool isAudioWorkletGlobalScope() const final { return true; }
+    AudioWorkletThread* workerOrWorkletThread() final { return m_thread.ptr(); }
 
     Ref<AudioWorkletThread> m_thread;
 };

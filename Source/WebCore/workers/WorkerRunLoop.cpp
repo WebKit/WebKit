@@ -161,7 +161,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerOrWorkletGlobalScope* cont
 MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, const ModePredicate& predicate, WaitMode waitMode)
 {
     ASSERT(context);
-    ASSERT(context->underlyingThread() == &Thread::current());
+    ASSERT(context->workerOrWorkletThread()->thread() == &Thread::current());
 
     JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = WTF::createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this] {
         // We don't actually do anything here, we just want to loop around runInMode
@@ -226,7 +226,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerOrWorkletGlobalScope* cont
 void WorkerRunLoop::runCleanupTasks(WorkerOrWorkletGlobalScope* context)
 {
     ASSERT(context);
-    ASSERT(context->underlyingThread() == &Thread::current());
+    ASSERT(context->workerOrWorkletThread()->thread() == &Thread::current());
     ASSERT(m_messageQueue.killed());
 
     while (true) {

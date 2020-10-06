@@ -37,6 +37,7 @@
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerMessagePortChannelProvider.h"
 #include "WorkerScriptController.h"
+#include "WorkerThread.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
 
@@ -53,7 +54,6 @@ class WorkerInspectorController;
 class WorkerLocation;
 class WorkerNavigator;
 class WorkerSWClientConnection;
-class WorkerThread;
 struct WorkerParameters;
 
 namespace IDBClient {
@@ -92,8 +92,6 @@ public:
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     WorkerThread& thread() const { return m_thread; }
-
-    Thread* underlyingThread() const final;
 
     using ScriptExecutionContext::hasPendingActivity;
 
@@ -138,8 +136,6 @@ public:
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
 
-    unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
-
     CSSValuePool& cssValuePool();
 
     ReferrerPolicy referrerPolicy() const final;
@@ -168,6 +164,7 @@ private:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
 
     bool isWorkerGlobalScope() const final { return true; }
+    WorkerThread* workerOrWorkletThread() final { return &m_thread; }
 
     ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerGlobalScope*>(this); }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
@@ -221,7 +218,6 @@ private:
 
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
     std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
-    unsigned long m_uniqueIdentifier { 1 };
 #if ENABLE(SERVICE_WORKER)
     RefPtr<WorkerSWClientConnection> m_swClientConnection;
 #endif

@@ -32,7 +32,6 @@
 #include "AudioWorkletGlobalScope.h"
 
 #include "AudioWorkletProcessorConstructor.h"
-#include "AudioWorkletThread.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -54,9 +53,25 @@ void AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<AudioWorkletP
     UNUSED_PARAM(name);
 }
 
-Thread* AudioWorkletGlobalScope::underlyingThread() const
+void AudioWorkletGlobalScope::prepareForTermination()
 {
-    return m_thread->thread();
+    if (auto* defaultTaskGroup = this->defaultTaskGroup())
+        defaultTaskGroup->stopAndDiscardAllTasks();
+    stopActiveDOMObjects();
+
+    // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
+    // which become dangling once Heap is destroyed.
+    removeAllEventListeners();
+
+    // MicrotaskQueue and RejectedPromiseTracker reference Heap.
+    if (auto* eventLoop = this->existingEventLoop())
+        eventLoop->clearMicrotaskQueue();
+    removeRejectedPromiseTracker();
+}
+
+void AudioWorkletGlobalScope::postTask(Task&& task)
+{
+    thread().runLoop().postTask(WTFMove(task));
 }
 
 } // namespace WebCore
