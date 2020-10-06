@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 messages -> RemoteLegacyCDMFactoryProxy NotRefCounted {
-    CreateCDM(String keySystem, Optional<WebKit::MediaPlayerPrivateRemoteIdentifier> playerId) -> (WebKit::RemoteLegacyCDMIdentifier id) Synchronous
+    CreateCDM(String keySystem, Optional<WebCore::MediaPlayerIdentifier> playerId) -> (WebKit::RemoteLegacyCDMIdentifier id) Synchronous
     SupportsKeySystem(String keySystem, Optional<String> mimeType) -> (bool result) Synchronous
 }
 

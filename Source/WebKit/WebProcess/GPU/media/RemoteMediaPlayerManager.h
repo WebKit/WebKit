@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessConnection.h"
-#include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
@@ -36,6 +35,7 @@
 #include "TrackPrivateRemoteIdentifier.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -68,9 +68,9 @@ public:
 
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
-    void deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
+    void deleteRemoteMediaPlayer(WebCore::MediaPlayerIdentifier);
 
-    MediaPlayerPrivateRemoteIdentifier findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
+    WebCore::MediaPlayerIdentifier findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
 
 private:
     std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
@@ -88,7 +88,7 @@ private:
 
     RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
-    HashMap<MediaPlayerPrivateRemoteIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
+    HashMap<WebCore::MediaPlayerIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
     WebProcess& m_process;
     mutable GPUProcessConnection* m_gpuProcessConnection { nullptr };
 };

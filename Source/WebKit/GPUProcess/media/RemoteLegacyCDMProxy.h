@@ -50,14 +50,14 @@ class RemoteLegacyCDMProxy
     , public WebCore::LegacyCDMClient
     , public CanMakeWeakPtr<RemoteLegacyCDMProxy> {
 public:
-    static std::unique_ptr<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, MediaPlayerPrivateRemoteIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
+    static std::unique_ptr<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
     ~RemoteLegacyCDMProxy();
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
 
 private:
     friend class RemoteLegacyCDMFactoryProxy;
-    RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, MediaPlayerPrivateRemoteIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
+    RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -68,13 +68,13 @@ private:
     void supportsMIMEType(const String&, SupportsMIMETypeCallback&&);
     using CreateSessionCallback = CompletionHandler<void(RemoteLegacyCDMSessionIdentifier&&)>;
     void createSession(const String&, CreateSessionCallback&&);
-    void setPlayerId(Optional<MediaPlayerPrivateRemoteIdentifier>&&);
+    void setPlayerId(Optional<WebCore::MediaPlayerIdentifier>&&);
 
     // LegacyCDMClient
     RefPtr<WebCore::MediaPlayer> cdmMediaPlayer(const WebCore::LegacyCDM*) const final;
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;
-    MediaPlayerPrivateRemoteIdentifier m_playerId;
+    WebCore::MediaPlayerIdentifier m_playerId;
     std::unique_ptr<WebCore::LegacyCDM> m_cdm;
 };
 

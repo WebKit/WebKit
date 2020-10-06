@@ -33,6 +33,7 @@
 #include "LayoutRect.h"
 #include "LegacyCDMSession.h"
 #include "MediaPlayerEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "NativeImage.h"
 #include "PlatformLayer.h"
 #include "PlatformMediaResourceLoader.h"
@@ -637,6 +638,8 @@ public:
     String audioOutputDeviceId() const;
     String audioOutputDeviceIdOverride() const;
     void audioOutputDeviceChanged();
+
+    MediaPlayerIdentifier identifier() const;
 
 private:
     MediaPlayer(MediaPlayerClient&);

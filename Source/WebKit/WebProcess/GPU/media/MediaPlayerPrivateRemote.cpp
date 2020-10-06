@@ -91,7 +91,7 @@ using namespace WebCore;
 #endif
 
 #if !PLATFORM(COCOA)
-MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
+MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
     : m_player(player)
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
@@ -1155,6 +1155,11 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
     return LogMedia;
 }
 #endif
+
+MediaPlayerIdentifier MediaPlayerPrivateRemote::identifier() const
+{
+    return m_id;
+}
 
 } // namespace WebKit
 

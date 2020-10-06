@@ -28,10 +28,10 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "Connection.h"
-#include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -71,7 +71,7 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
     // Messages
-    void createCDM(const String& keySystem, Optional<MediaPlayerPrivateRemoteIdentifier>&&, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&&);
+    void createCDM(const String& keySystem, Optional<WebCore::MediaPlayerIdentifier>&&, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&&);
     void supportsKeySystem(const String& keySystem, Optional<String> mimeType, CompletionHandler<void(bool)>&&);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;

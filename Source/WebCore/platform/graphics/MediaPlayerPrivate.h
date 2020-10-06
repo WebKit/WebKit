@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayer.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlatformTimeRanges.h"
 
 namespace WebCore {
@@ -291,6 +292,8 @@ public:
     virtual void setPreferredDynamicRangeMode(DynamicRangeMode) { }
 
     virtual void audioOutputDeviceChanged() { }
+
+    virtual MediaPlayerIdentifier identifier() const { return { }; }
 };
 
 }

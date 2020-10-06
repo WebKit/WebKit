@@ -2164,7 +2164,6 @@
 		07923142239CBCB5009598E2 /* RemoteMediaPlayerManagerProxyMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerProxyMessagesReplies.h; sourceTree = "<group>"; };
 		07923145239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		07923146239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerProxyMessages.h; sourceTree = "<group>"; };
-		0792314E239D5F53009598E2 /* MediaPlayerPrivateRemoteIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateRemoteIdentifier.h; sourceTree = "<group>"; };
 		0794B4AB24451BB90001B9C4 /* MediaUsageManagerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaUsageManagerCocoa.mm; sourceTree = "<group>"; };
 		0794B4AC24451BB90001B9C4 /* MediaUsageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaUsageManager.h; sourceTree = "<group>"; };
 		0794B4AE244524B00001B9C4 /* MediaUsageManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaUsageManager.cpp; sourceTree = "<group>"; };
@@ -5501,7 +5500,6 @@
 				07923131239B3B0C009598E2 /* MediaPlayerPrivateRemote.cpp */,
 				07923132239B3B0C009598E2 /* MediaPlayerPrivateRemote.h */,
 				07B1D04B23D38FCE00399A6E /* MediaPlayerPrivateRemote.messages.in */,
-				0792314E239D5F53009598E2 /* MediaPlayerPrivateRemoteIdentifier.h */,
 				9B5BEC30240102220070C6EF /* RemoteAudioBusData.h */,
 				9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */,
 				9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */,

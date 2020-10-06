@@ -46,7 +46,7 @@ RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProce
 
 RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy() = default;
 
-void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<MediaPlayerPrivateRemoteIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
+void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
 {
     auto privateCDM = LegacyCDM::create(keySystem);
     if (!privateCDM) {
@@ -54,7 +54,7 @@ void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, Optional<Me
         return;
     }
 
-    MediaPlayerPrivateRemoteIdentifier playerId;
+    MediaPlayerIdentifier playerId;
     if (optionalPlayerId)
         playerId = WTFMove(optionalPlayerId.value());
 

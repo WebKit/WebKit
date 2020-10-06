@@ -27,9 +27,9 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "RemoteLegacyCDMIdentifier.h"
 #include <WebCore/LegacyCDMPrivate.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ public:
 
     bool supportsMIMEType(const String&) final;
     std::unique_ptr<WebCore::LegacyCDMSession> createSession(WebCore::LegacyCDMSessionClient*) final;
-    void setPlayerId(MediaPlayerPrivateRemoteIdentifier);
+    void setPlayerId(WebCore::MediaPlayerIdentifier);
 
 private:
     RemoteLegacyCDM(WeakPtr<RemoteLegacyCDMFactory>&&, RemoteLegacyCDMIdentifier&&);

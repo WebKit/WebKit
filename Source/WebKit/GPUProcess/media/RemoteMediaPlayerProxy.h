@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include "RemoteMediaPlayerConfiguration.h"
@@ -40,6 +39,7 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -76,10 +76,10 @@ class RemoteMediaPlayerProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, MediaPlayerPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
+    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
     ~RemoteMediaPlayerProxy();
 
-    MediaPlayerPrivateRemoteIdentifier idendifier() const { return m_id; }
+    WebCore::MediaPlayerIdentifier idendifier() const { return m_id; }
     void invalidate();
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -276,7 +276,7 @@ private:
     HashMap<WebCore::VideoTrackPrivate*, Ref<RemoteVideoTrackProxy>> m_videoTracks;
     HashMap<WebCore::InbandTextTrackPrivate*, Ref<RemoteTextTrackProxy>> m_textTracks;
 
-    MediaPlayerPrivateRemoteIdentifier m_id;
+    WebCore::MediaPlayerIdentifier m_id;
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;

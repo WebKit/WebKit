@@ -59,7 +59,7 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 {
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerPrivateRemoteIdentifier id, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier id, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
 {
     ASSERT(!m_proxies.contains(id));
 
@@ -72,7 +72,7 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerPrivateRemoteId
     completionHandler(playerConfiguration);
 }
 
-void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerPrivateRemoteIdentifier id)
+void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier id)
 {
     if (auto proxy = m_proxies.take(id))
         proxy->invalidate();
@@ -194,17 +194,17 @@ void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEng
 
 void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>(decoder.destinationID())))
+    if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }
 
 void RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder)
 {
-    if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>(decoder.destinationID())))
+    if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveSyncMessage(connection, decoder, encoder);
 }
 
-RemoteMediaPlayerProxy* RemoteMediaPlayerManagerProxy::getProxy(const MediaPlayerPrivateRemoteIdentifier& id)
+RemoteMediaPlayerProxy* RemoteMediaPlayerManagerProxy::getProxy(const MediaPlayerIdentifier& id)
 {
     auto results = m_proxies.find(id);
     if (results != m_proxies.end())

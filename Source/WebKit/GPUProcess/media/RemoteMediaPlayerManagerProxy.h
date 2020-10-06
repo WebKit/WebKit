@@ -28,11 +28,11 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaPlayer.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WebKit {
@@ -68,15 +68,15 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    RemoteMediaPlayerProxy* getProxy(const MediaPlayerPrivateRemoteIdentifier&);
+    RemoteMediaPlayerProxy* getProxy(const WebCore::MediaPlayerIdentifier&);
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaPlayer(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&&);
-    void deleteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
+    void createMediaPlayer(WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&&);
+    void deleteMediaPlayer(WebCore::MediaPlayerIdentifier);
 
     // Media player factory
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
@@ -87,7 +87,7 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, Vector<WebCore::SecurityOriginData>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
-    HashMap<MediaPlayerPrivateRemoteIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
+    HashMap<WebCore::MediaPlayerIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 
 #if !RELEASE_LOG_DISABLED

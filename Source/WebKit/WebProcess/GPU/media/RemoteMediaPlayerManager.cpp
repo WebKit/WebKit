@@ -165,7 +165,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     auto documentSecurityOrigin = player->documentSecurityOrigin();
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;
 
-    auto identifier = MediaPlayerPrivateRemoteIdentifier::generate();
+    auto identifier = MediaPlayerIdentifier::generate();
     RemoteMediaPlayerConfiguration playerConfiguration;
     auto completionHandler = [this, weakThis = makeWeakPtr(this), identifier, documentSecurityOrigin = WTFMove(documentSecurityOrigin)](auto&& playerConfiguration) mutable {
         if (!weakThis)
@@ -183,13 +183,13 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     return remotePlayer;
 }
 
-void RemoteMediaPlayerManager::deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteIdentifier id)
+void RemoteMediaPlayerManager::deleteRemoteMediaPlayer(MediaPlayerIdentifier id)
 {
     m_players.take(id);
     gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::DeleteMediaPlayer(id), 0);
 }
 
-MediaPlayerPrivateRemoteIdentifier RemoteMediaPlayerManager::findRemotePlayerId(const MediaPlayerPrivateInterface* player)
+MediaPlayerIdentifier RemoteMediaPlayerManager::findRemotePlayerId(const MediaPlayerPrivateInterface* player)
 {
     for (auto pair : m_players) {
         if (pair.value == player)
@@ -259,7 +259,7 @@ void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::Media
 
 void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (const auto& player = m_players.get(makeObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>(decoder.destinationID())))
+    if (const auto& player = m_players.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }
 

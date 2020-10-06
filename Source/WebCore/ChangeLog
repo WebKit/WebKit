@@ -1,3 +1,25 @@
+2020-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename MediaPlayerPrivateRemoteIdentifier to MediaPlayerIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=217397
+
+        Reviewed by Tim Horton.
+
+        Move `MediaPlayerPrivateRemoteIdentifier` into WebCore, and rename it to `MediaPlayerIdentifier`, such that it
+        isn't necessarily limited to use for GPU Process code. This is preparation for introducing a display list
+        drawing item which will need to reference a remotely hosted `MediaPlayer`.
+
+        No change in behavior.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::identifier const):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerIdentifier.h: Renamed from Source/WebKit/WebProcess/GPU/media/MediaPlayerPrivateRemoteIdentifier.h.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::identifier const):
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Rename namespace Packed to namespace PackedColor

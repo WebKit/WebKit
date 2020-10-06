@@ -1609,6 +1609,11 @@ void MediaPlayer::audioOutputDeviceChanged()
     m_private->audioOutputDeviceChanged();
 }
 
+MediaPlayerIdentifier MediaPlayer::identifier() const
+{
+    return m_private->identifier();
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {

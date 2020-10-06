@@ -1,3 +1,54 @@
+2020-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename MediaPlayerPrivateRemoteIdentifier to MediaPlayerIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=217397
+
+        Reviewed by Tim Horton.
+
+        Mass rename `MediaPlayerPrivateRemoteIdentifier` to `WebCore::MediaPlayerIdentifier`. See WebCore/ChangeLog for
+        more details.
+
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::createCDM):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp:
+        (WebKit::RemoteLegacyCDMProxy::create):
+        (WebKit::RemoteLegacyCDMProxy::RemoteLegacyCDMProxy):
+        (WebKit::RemoteLegacyCDMProxy::setPlayerId):
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceivePlayerMessage):
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage):
+        (WebKit::RemoteMediaPlayerManagerProxy::getProxy):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::identifier const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteLegacyCDM.cpp:
+        (WebKit::RemoteLegacyCDM::setPlayerId):
+        * WebProcess/GPU/media/RemoteLegacyCDM.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp:
+        (WebKit::RemoteLegacyCDMFactory::createCDM):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManager::deleteRemoteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManager::findRemotePlayerId):
+        (WebKit::RemoteMediaPlayerManager::didReceivePlayerMessage):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Move ownership of DownloadClient from WebProcessPool to DownloadProxy
