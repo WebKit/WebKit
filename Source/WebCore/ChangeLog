@@ -1,3 +1,95 @@
+2020-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Redundant rendering updates can be scheduled from inside Page::updateRendering()
+        https://bugs.webkit.org/show_bug.cgi?id=216726
+
+        Reviewed by Tim Horton.
+
+        The basic model for scheduling rendering updates is that code that needs to trigger an
+        update just calls Page::schedule[Timed]RenderingUpdate(). However, if
+        Page::updateRendering() is already on the stack, and the work to be scheduled will happen
+        later in the current update, we don't have to schedule a new one.
+
+        To fix this Page::updateRendering() and related functions track which steps remain
+        in the current update, and callers of schedule[Timed]RenderingUpdate() pass the update steps
+        for the work they need to trigger. If the requested steps are included in the remaining steps
+        no new update needs to be scheduled. Note that requesting a step while that step is being executed
+        has to schedule an upate (e.g. requestAnimationFrame inside its own callback has to schedule).
+        
+        At the end of an update, if there are any unfulfilled steps, then we schedule a new update.
+
+        Add a log channel for EventLoop and and log from various places.
+
+        In my brief testing, this reduces the number of calls to Page::updateRendering() by 10-25%
+        on some real pages, which could be a significant power saving.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        * display/DisplayLayerController.cpp:
+        (WebCore::Display::LayerController::scheduleRenderingUpdate):
+        * dom/Document.cpp:
+        (WebCore::Document::setNeedsDOMWindowResizeEvent):
+        (WebCore::Document::setNeedsVisualViewportResize):
+        (WebCore::Document::addPendingScrollEventTarget):
+        (WebCore::Document::setNeedsVisualViewportScrollEvent):
+        (WebCore::Document::serviceRequestAnimationFrameCallbacks):
+        (WebCore::Document::intersectionObserversInitialUpdateTimerFired):
+        (WebCore::Document::scheduleRenderingUpdate):
+        (WebCore::Document::scheduleInitialIntersectionObservationUpdate):
+        (WebCore::Document::updateResizeObservations):
+        (WebCore::Document::updateAnimationsAndSendEvents):
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scheduleCursorUpdate):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setViewExposedRect):
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleAfterChangeInEnvironment):
+        (WebCore::Page::scheduleRenderingUpdate):
+        (WebCore::Page::computeUnfulfilledRenderingSteps):
+        (WebCore::Page::triggerRenderingUpdateForTesting):
+        (WebCore::Page::updateRendering):
+        (WebCore::Page::isolatedUpdateRendering):
+        (WebCore::Page::doAfterUpdateRendering):
+        (WebCore::Page::finalizeRenderingUpdate):
+        (WebCore::Page::renderingUpdateCompleted):
+        (WebCore::Page::accessibilitySettingsDidChange):
+        (WebCore::Page::appearanceDidChange):
+        (WebCore::operator<<):
+        * page/Page.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::notifyFlushRequired):
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::scheduleAnimation):
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::startTimer):
+        (WebCore::RenderingUpdateScheduler::displayRefreshFired):
+        * page/RenderingUpdateScheduler.h:
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::observe):
+        * page/WheelEventTestMonitor.cpp:
+        (WebCore::WheelEventTestMonitor::setTestCallbackAndStartMonitoring):
+        (WebCore::WheelEventTestMonitor::scheduleCallbackCheck):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setEventTrackingRegionsDirty):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        * platform/Logging.cpp:
+        (WebCore::initializeLogChannelsIfNecessary):
+        * platform/Logging.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::scheduleRenderingUpdateForImage):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::notifyFlushRequired):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleRenderingUpdate):
+        * rendering/RenderLayerCompositor.h:
+
 2020-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename MediaPlayerPrivateRemoteIdentifier to MediaPlayerIdentifier

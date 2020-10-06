@@ -144,6 +144,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "HTMLVideoElement.h"
@@ -596,7 +597,7 @@ void Page::updateStyleAfterChangeInEnvironment()
             styleResolver->invalidateMatchedDeclarationsCache();
         document.scheduleFullStyleRebuild();
         document.styleScope().didChangeStyleSheetEnvironment();
-        document.scheduleRenderingUpdate();
+        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
     });
 }
 
@@ -1406,15 +1407,30 @@ void Page::layoutIfNeeded()
         view->updateLayoutAndStyleIfNeededRecursive();
 }
 
-void Page::scheduleRenderingUpdate()
+void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
 {
-    if (chrome().client().scheduleRenderingUpdate())
+    LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " scheduleTimedRenderingUpdate() - requestedSteps " << requestedSteps << " remaining steps " << m_renderingUpdateRemainingSteps);
+    if (m_renderingUpdateRemainingSteps.isEmpty()) {
+        if (chrome().client().scheduleRenderingUpdate())
+            return;
+        renderingUpdateScheduler().scheduleRenderingUpdate();
         return;
-    renderingUpdateScheduler().scheduleRenderingUpdate();
+    }
+    computeUnfulfilledRenderingSteps(requestedSteps);
+}
+
+void Page::computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep> requestedSteps)
+{
+    // m_renderingUpdateRemainingSteps only has more than one entry for the re-entrant rendering update triggered by testing.
+    // For scheduling, we only care about the value of the first entry.
+    auto remainingSteps = m_renderingUpdateRemainingSteps[0];
+    auto stepsForNextUpdate = requestedSteps - remainingSteps;
+    m_unfulfilledRequestedSteps.add(stepsForNextUpdate);
 }
 
 void Page::triggerRenderingUpdateForTesting()
 {
+    LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " triggerRenderingUpdateForTesting()");
     renderingUpdateScheduler().triggerRenderingUpdateForTesting();
 }
 
@@ -1432,12 +1448,18 @@ unsigned Page::renderingUpdateCount() const
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {
-    m_updateRenderingPhaseStack.append(RenderingUpdatePhase::InUpdateRendering);
+    LOG(EventLoop, "Page %p updateRendering() - re-entering %d", this, !m_renderingUpdateRemainingSteps.isEmpty());
+
+    if (m_renderingUpdateRemainingSteps.isEmpty())
+        m_unfulfilledRequestedSteps = { };
+
+    m_renderingUpdateRemainingSteps.append(allRenderingUpdateSteps);
 
     // This function is not reentrant, e.g. a rAF callback may trigger a forces repaint in testing.
-    // This is why we track updateRenderingPhase as a stack.
-    if (m_updateRenderingPhaseStack.size() > 1) {
+    // This is why we track m_renderingUpdateRemainingSteps as a stack.
+    if (m_renderingUpdateRemainingSteps.size() > 1) {
         layoutIfNeeded();
+        m_renderingUpdateRemainingSteps.last().remove(updateRenderingSteps);
         return;
     }
 
@@ -1461,57 +1483,63 @@ void Page::updateRendering()
         initialDocuments.append(makeWeakPtr(&document));
     });
 
-    // Flush autofocus candidates
+    auto runProcessingStep = [&](RenderingUpdateStep step, const WTF::Function<void(Document&)>& perDocumentFunction) {
+        m_renderingUpdateRemainingSteps.last().remove(step);
+        forEachDocument(perDocumentFunction);
+    };
 
-    forEachDocument([] (Document& document) {
+    // FIXME: Flush autofocus candidates.
+
+    runProcessingStep(RenderingUpdateStep::Resize, [] (Document& document) {
         document.runResizeSteps();
     });
 
-    forEachDocument([] (Document& document) {
+    runProcessingStep(RenderingUpdateStep::Scroll, [] (Document& document) {
         document.runScrollSteps();
     });
 
-    forEachDocument([] (Document& document) {
+    runProcessingStep(RenderingUpdateStep::MediaQueryEvaluation, [] (Document& document) {
         document.evaluateMediaQueriesAndReportChanges();        
     });
 
-    forEachDocument([] (Document& document) {
-        if (!document.domWindow())
-            return;
-        auto timestamp = document.domWindow()->frozenNowTimestamp();
-        if (auto* timelinesController = document.timelinesController())
-            timelinesController->updateAnimationsAndSendEvents(timestamp);
-        // FIXME: Run the fullscreen steps.
-        document.serviceRequestAnimationFrameCallbacks(timestamp);
+    runProcessingStep(RenderingUpdateStep::Animations, [] (Document& document) {
+        document.updateAnimationsAndSendEvents();
+    });
+
+    // FIXME: Run the fullscreen steps.
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
+
+    runProcessingStep(RenderingUpdateStep::AnimationFrameCallbacks, [] (Document& document) {
+        document.serviceRequestAnimationFrameCallbacks();
     });
 
     layoutIfNeeded();
 
 #if ENABLE(INTERSECTION_OBSERVER)
-    forEachDocument([] (Document& document) {
+    runProcessingStep(RenderingUpdateStep::IntersectionObservations, [] (Document& document) {
         document.updateIntersectionObservations();
     });
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
-    forEachDocument([&] (Document& document) {
+    runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
         document.updateResizeObservations(*this);
     });
 #endif
 
-    forEachDocument([] (Document& document) {
+    runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
         for (auto& image : document.cachedResourceLoader().allCachedSVGImages()) {
             if (auto* page = image->internalPage())
                 page->isolatedUpdateRendering();
         }
     });
 
-    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
-
     for (auto& document : initialDocuments) {
         if (document && document->domWindow())
             document->domWindow()->unfreezeNowTimestamp();
     }
+
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::WheelEventMonitorCallbacks);
 
     if (UNLIKELY(isMonitoringWheelEvents()))
         wheelEventTestMonitor()->checkShouldFireCallbacks();
@@ -1524,20 +1552,17 @@ void Page::updateRendering()
 
     if (!isSVGImagePage)
         tracePoint(RenderingUpdateEnd);
-
-    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
 }
 
 void Page::isolatedUpdateRendering()
 {
+    LOG(EventLoop, "Page %p isolatedUpdateRendering()", this);
     updateRendering();
-    m_updateRenderingPhaseStack.removeLast();
+    renderingUpdateCompleted();
 }
 
 void Page::doAfterUpdateRendering()
 {
-    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
-
     // Code here should do once-per-frame work that needs to be done before painting, and requires
     // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
 
@@ -1550,7 +1575,12 @@ void Page::doAfterUpdateRendering()
     }
 #endif
 
-    forEachDocument([] (Document& document) {
+    auto runProcessingStep = [&](RenderingUpdateStep step, const WTF::Function<void(Document&)>& perDocumentFunction) {
+        m_renderingUpdateRemainingSteps.last().remove(step);
+        forEachDocument(perDocumentFunction);
+    };
+
+    runProcessingStep(RenderingUpdateStep::CursorUpdate, [] (Document& document) {
         if (auto* frame = document.frame())
             frame->eventHandler().updateCursorIfNeeded();
     });
@@ -1568,6 +1598,8 @@ void Page::doAfterUpdateRendering()
         document.updateTextTrackRepresentationImageIfNeeded();
     });
 #endif
+
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::EventRegionUpdate);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     // updateTouchEventRegions() needs to be called only on the top document.
@@ -1591,13 +1623,11 @@ void Page::doAfterUpdateRendering()
         ASSERT(!frameView || !frameView->needsLayout());
     }
 #endif
-
-    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
-    ASSERT(m_updateRenderingPhaseStack.last() == RenderingUpdatePhase::InUpdateRendering);
+    LOG(EventLoop, "Page %p finalizeRenderingUpdate()", this);
 
     auto* view = mainFrame().view();
     if (!view)
@@ -1606,23 +1636,36 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
     if (flags.contains(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes))
         view->invalidateImagesWithAsyncDecodes();
 
-    m_updateRenderingPhaseStack.last() = RenderingUpdatePhase::LayerFlushing;
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::LayerFlush);
 
     view->flushCompositingStateIncludingSubframes();
 
-    m_updateRenderingPhaseStack.last() = RenderingUpdatePhase::PostLayerFlush;
-
 #if ENABLE(ASYNC_SCROLLING)
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::ScrollingTreeUpdate);
+
     if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
         scrollingCoordinator->commitTreeStateIfNeeded();
         if (flags.contains(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions))
             scrollingCoordinator->applyScrollingTreeLayerPositions();
-            
+
         scrollingCoordinator->didCompleteRenderingUpdate();
     }
 #endif
 
-    m_updateRenderingPhaseStack.removeLast();
+    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
+    renderingUpdateCompleted();
+}
+
+void Page::renderingUpdateCompleted()
+{
+    m_renderingUpdateRemainingSteps.removeLast();
+
+    LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " renderingUpdateCompleted() - steps " << m_renderingUpdateRemainingSteps << " unfulfilled steps " << m_unfulfilledRequestedSteps);
+
+    if (m_unfulfilledRequestedSteps) {
+        renderingUpdateScheduler().scheduleRenderingUpdate();
+        m_unfulfilledRequestedSteps = { };
+    }
 }
 
 void Page::suspendScriptedAnimations()
@@ -2926,7 +2969,7 @@ void Page::accessibilitySettingsDidChange()
     forEachDocument([] (auto& document) {
         document.styleScope().evaluateMediaQueriesForAccessibilitySettingsChange();
         document.updateElementsAffectedByMediaQueries();
-        document.scheduleRenderingUpdate();
+        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
     });
 }
 
@@ -2936,7 +2979,7 @@ void Page::appearanceDidChange()
         document.styleScope().didChangeStyleSheetEnvironment();
         document.styleScope().evaluateMediaQueriesForAppearanceChange();
         document.updateElementsAffectedByMediaQueries();
-        document.scheduleRenderingUpdate();
+        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
     });
 }
 
@@ -3299,6 +3342,31 @@ void Page::mainFrameDidChangeToNonInitialEmptyDocument()
     for (auto& userStyleSheet : m_userStyleSheetsPendingInjection)
         injectUserStyleSheet(userStyleSheet);
     m_userStyleSheetsPendingInjection.clear();
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
+{
+    switch (step) {
+    case RenderingUpdateStep::Resize: ts << "Resize"; break;
+    case RenderingUpdateStep::Scroll: ts << "Scroll"; break;
+    case RenderingUpdateStep::MediaQueryEvaluation: ts << "MediaQueryEvaluation"; break;
+    case RenderingUpdateStep::Animations: ts << "Animations"; break;
+    case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"; break;
+    case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"; break;
+#if ENABLE(INTERSECTION_OBSERVER)
+    case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"; break;
+#endif
+#if ENABLE(RESIZE_OBSERVER)
+    case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"; break;
+#endif
+    case RenderingUpdateStep::Images: ts << "Images"; break;
+    case RenderingUpdateStep::WheelEventMonitorCallbacks: ts << "WheelEventMonitorCallbacks"; break;
+    case RenderingUpdateStep::CursorUpdate: ts << "CursorUpdate"; break;
+    case RenderingUpdateStep::EventRegionUpdate: ts << "EventRegionUpdate"; break;
+    case RenderingUpdateStep::LayerFlush: ts << "LayerFlush"; break;
+    case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"; break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

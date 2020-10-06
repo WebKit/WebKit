@@ -239,6 +239,7 @@ enum CollectionType;
 
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
+enum class RenderingUpdateStep : uint16_t;
 
 using PlatformDisplayID = uint32_t;
 
@@ -1069,7 +1070,7 @@ public:
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
 
-    void serviceRequestAnimationFrameCallbacks(ReducedResolutionSeconds);
+    void serviceRequestAnimationFrameCallbacks();
 
     void windowScreenDidChange(PlatformDisplayID);
 
@@ -1395,7 +1396,7 @@ public:
     void addDynamicMediaQueryDependentImage(HTMLImageElement&);
     void removeDynamicMediaQueryDependentImage(HTMLImageElement&);
 
-    void scheduleRenderingUpdate();
+    void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep>);
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void addIntersectionObserver(IntersectionObserver&);
@@ -1485,6 +1486,7 @@ public:
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
+    void updateAnimationsAndSendEvents();
     WEBCORE_EXPORT DocumentTimeline& timeline();
     DocumentTimeline* existingTimeline() const { return m_timeline.get(); }
     Vector<RefPtr<WebAnimation>> getAnimations();
@@ -1646,6 +1648,8 @@ private:
     void buildAccessKeyCache();
 
     void moveNodeIteratorsToNewDocumentSlowCase(Node&, Document&);
+
+    void intersectionObserversInitialUpdateTimerFired();
 
     void loadEventDelayTimerFired();
 

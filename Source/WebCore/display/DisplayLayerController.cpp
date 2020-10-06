@@ -125,7 +125,7 @@ void LayerController::scheduleRenderingUpdate()
     if (!page)
         return;
 
-    page->scheduleRenderingUpdate();
+    page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
 void LayerController::ensureRootLayer(FloatSize viewSize, FloatSize contentSize)

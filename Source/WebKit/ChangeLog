@@ -1,3 +1,15 @@
+2020-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Redundant rendering updates can be scheduled from inside Page::updateRendering()
+        https://bugs.webkit.org/show_bug.cgi?id=216726
+
+        Reviewed by Tim Horton.
+
+        Schedule for layer flush.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply to evaluate JavaScript in a WebPage

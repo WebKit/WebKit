@@ -212,8 +212,8 @@ TextStream& operator<<(TextStream& ts, const Markable<T, Traits>& item)
     return ts << "unset";
 }
 
-template<typename Item>
-TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
+template<typename ItemType, size_t inlineCapacity>
+TextStream& operator<<(TextStream& ts, const Vector<ItemType, inlineCapacity>& vector)
 {
     ts << "[";
 

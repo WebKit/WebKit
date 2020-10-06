@@ -74,6 +74,10 @@ namespace JSC {
 class Debugger;
 }
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 namespace IDBClient {
@@ -168,6 +172,52 @@ enum class FinalizeRenderingUpdateFlags : uint8_t {
     ApplyScrollingTreeLayerPositions    = 1 << 0,
     InvalidateImagesWithAsyncDecodes    = 1 << 1,
 };
+
+enum class RenderingUpdateStep : uint16_t {
+    Resize                          = 1 << 0,
+    Scroll                          = 1 << 1,
+    MediaQueryEvaluation            = 1 << 2,
+    Animations                      = 1 << 3,
+    Fullscreen                      = 1 << 4,
+    AnimationFrameCallbacks         = 1 << 5,
+#if ENABLE(INTERSECTION_OBSERVER)
+    IntersectionObservations        = 1 << 6,
+#endif
+#if ENABLE(RESIZE_OBSERVER)
+    ResizeObservations              = 1 << 7,
+#endif
+    Images                          = 1 << 8,
+    WheelEventMonitorCallbacks      = 1 << 9,
+    CursorUpdate                    = 1 << 10,
+    EventRegionUpdate               = 1 << 11,
+    LayerFlush                      = 1 << 12,
+    ScrollingTreeUpdate             = 1 << 13,
+};
+
+constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
+    RenderingUpdateStep::Resize,
+    RenderingUpdateStep::Scroll,
+    RenderingUpdateStep::MediaQueryEvaluation,
+    RenderingUpdateStep::Animations,
+    RenderingUpdateStep::Fullscreen,
+    RenderingUpdateStep::AnimationFrameCallbacks,
+#if ENABLE(INTERSECTION_OBSERVER)
+    RenderingUpdateStep::IntersectionObservations,
+#endif
+#if ENABLE(RESIZE_OBSERVER)
+    RenderingUpdateStep::ResizeObservations,
+#endif
+    RenderingUpdateStep::Images,
+    RenderingUpdateStep::WheelEventMonitorCallbacks,
+    RenderingUpdateStep::CursorUpdate,
+    RenderingUpdateStep::EventRegionUpdate,
+};
+
+constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {
+    RenderingUpdateStep::LayerFlush,
+    RenderingUpdateStep::ScrollingTreeUpdate,
+};
+
 
 class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
@@ -489,7 +539,7 @@ public:
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
 
     // Schedule a rerndering update that coordinates with display refresh.
-    WEBCORE_EXPORT void scheduleRenderingUpdate();
+    WEBCORE_EXPORT void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps);
     // Trigger a rendering update in the current runloop. Only used for testing.
     void triggerRenderingUpdateForTesting();
 
@@ -771,13 +821,6 @@ public:
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
 
 private:
-    enum class RenderingUpdatePhase : uint8_t {
-        Outside,
-        InUpdateRendering,
-        LayerFlushing,
-        PostLayerFlush
-    };
-
     struct Navigation {
         RegistrableDomain domain;
         FrameLoadType type;
@@ -813,6 +856,8 @@ private:
     void domTimerAlignmentIntervalIncreaseTimerFired();
 
     void doAfterUpdateRendering();
+    void renderingUpdateCompleted();
+    void computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep>);
 
     RenderingUpdateScheduler& renderingUpdateScheduler();
 
@@ -1022,8 +1067,9 @@ private:
     bool m_isEditableRegionEnabled { false };
 #endif
 
-    Vector<RenderingUpdatePhase, 2> m_updateRenderingPhaseStack;
-
+    Vector<OptionSet<RenderingUpdateStep>, 2> m_renderingUpdateRemainingSteps;
+    OptionSet<RenderingUpdateStep> m_unfulfilledRequestedSteps;
+    
     UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { UserInterfaceLayoutDirection::LTR };
     
     // For testing.
@@ -1084,5 +1130,7 @@ inline PageGroup& Page::group()
         initGroup();
     return *m_group;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);
 
 } // namespace WebCore

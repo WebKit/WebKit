@@ -1,3 +1,15 @@
+2020-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Redundant rendering updates can be scheduled from inside Page::updateRendering()
+        https://bugs.webkit.org/show_bug.cgi?id=216726
+
+        Reviewed by Tim Horton.
+
+        Make it possible to dump Vectors with inline capacity.
+
+        * wtf/text/TextStream.h:
+        (WTF::operator<<):
+
 2020-10-06  Youenn Fablet  <youenn@apple.com>
 
         Enable video capture in WebProcess by default on MacOS

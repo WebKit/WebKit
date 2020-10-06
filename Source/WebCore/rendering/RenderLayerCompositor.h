@@ -178,7 +178,7 @@ public:
 
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
-    void scheduleRenderingUpdate();
+    void notifyFlushRequired(const GraphicsLayer*) override;
     void flushPendingLayerChanges(bool isFlushRoot = true);
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
@@ -396,7 +396,6 @@ private:
     bool updateCompositingPolicy();
     
     // GraphicsLayerClient implementation
-    void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
@@ -453,6 +452,8 @@ private:
     void appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>&);
 
     bool needsCompositingForContentOrOverlays() const;
+
+    void scheduleRenderingUpdate();
 
     void ensureRootLayer();
     void destroyRootLayer();

@@ -3153,7 +3153,7 @@ void EventHandler::scheduleCursorUpdate()
         return;
 
     m_hasScheduledCursorUpdate = true;
-    page->scheduleRenderingUpdate();
+    page->scheduleRenderingUpdate(RenderingUpdateStep::CursorUpdate);
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoon()

@@ -9082,7 +9082,7 @@ bool LayerFlushController::flushLayers()
 - (void)_scheduleRenderingUpdateForPendingTileCacheRepaint
 {
     if (auto* page = _private->page)
-        page->scheduleRenderingUpdate();
+        page->scheduleRenderingUpdate(WebCore::RenderingUpdateStep::LayerFlush);
 }
 #endif
 

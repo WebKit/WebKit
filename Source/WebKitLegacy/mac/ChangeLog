@@ -1,3 +1,15 @@
+2020-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Redundant rendering updates can be scheduled from inside Page::updateRendering()
+        https://bugs.webkit.org/show_bug.cgi?id=216726
+
+        Reviewed by Tim Horton.
+
+        Provide the flags.
+
+        * WebView/WebView.mm:
+        (-[WebView _scheduleRenderingUpdateForPendingTileCacheRepaint]):
+
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Use the "triggerRenderingUpdate" terminology in ChromeClient

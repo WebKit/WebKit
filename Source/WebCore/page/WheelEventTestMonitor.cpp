@@ -72,7 +72,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
     UNUSED_PARAM(expectMomentumEnd);
 #endif
 
-    m_page.scheduleRenderingUpdate();
+    m_page.scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
 
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::setTestCallbackAndStartMonitoring - expect end/cancel " << expectWheelEndOrCancel << ", expect momentum end " << expectMomentumEnd);
 }
@@ -121,13 +121,13 @@ void WheelEventTestMonitor::receivedWheelEvent(const PlatformWheelEvent& event)
 void WheelEventTestMonitor::scheduleCallbackCheck()
 {
     if (isMainThread()) {
-        m_page.scheduleRenderingUpdate();
+        m_page.scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
         return;
     }
 
     RunLoop::main().dispatch([weakPage = makeWeakPtr(m_page)] {
         if (weakPage)
-            weakPage->scheduleRenderingUpdate();
+            weakPage->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
     });
 }
 

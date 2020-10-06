@@ -29,8 +29,10 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DisplayRefreshMonitorManager.h"
+#include "Logging.h"
 #include "Page.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -58,7 +60,11 @@ bool RenderingUpdateScheduler::scheduleAnimation(FramesPerSecond preferredFrames
         return false;
 #endif
     setPreferredFramesPerSecond(preferredFramesPerSecond);
-    return DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
+    auto result = DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
+
+    LOG_WITH_STREAM(EventLoop, stream << "RenderingUpdateScheduler for page " << &m_page << " scheduleAnimation(" << preferredFramesPerSecond << "fps) - scheduled " << result);
+
+    return result;
 }
 
 void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
@@ -77,6 +83,8 @@ void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 
 void RenderingUpdateScheduler::scheduleRenderingUpdate()
 {
+    LOG_WITH_STREAM(EventLoop, stream << "RenderingUpdateScheduler for page " << &m_page << " scheduleTimedRenderingUpdate() - already scheduled " << isScheduled() << " page visible " << m_page.isVisible());
+
     if (isScheduled())
         return;
 
@@ -106,6 +114,8 @@ bool RenderingUpdateScheduler::isScheduled() const
     
 void RenderingUpdateScheduler::startTimer(Seconds delay)
 {
+    LOG_WITH_STREAM(EventLoop, stream << "RenderingUpdateScheduler for page " << &m_page << " startTimer(" << delay << ")");
+
     ASSERT(!isScheduled());
     m_refreshTimer = makeUnique<Timer>(*this, &RenderingUpdateScheduler::displayRefreshFired);
     m_refreshTimer->startOneShot(delay);
@@ -133,6 +143,8 @@ void RenderingUpdateScheduler::windowScreenDidChange(PlatformDisplayID displayID
 
 void RenderingUpdateScheduler::displayRefreshFired()
 {
+    LOG_WITH_STREAM(EventLoop, stream << "RenderingUpdateScheduler for page " << &m_page << " displayRefreshFired()");
+
     tracePoint(TriggerRenderingUpdate);
 
     clearScheduled();

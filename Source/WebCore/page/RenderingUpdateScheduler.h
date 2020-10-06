@@ -65,9 +65,9 @@ private:
     void triggerRenderingUpdate();
 
     Page& m_page;
-    bool m_scheduled { false };
     std::unique_ptr<Timer> m_refreshTimer;
     FramesPerSecond m_preferredFramesPerSecond { FullSpeedFramesPerSecond };
+    bool m_scheduled { false };
 };
 
 }

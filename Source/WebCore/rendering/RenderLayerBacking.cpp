@@ -3648,11 +3648,12 @@ void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const Stri
 {
 }
 
-void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer*)
+void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer* layer)
 {
     if (renderer().renderTreeBeingDestroyed())
         return;
-    compositor().scheduleRenderingUpdate();
+
+    compositor().notifyFlushRequired(layer);
 }
 
 void RenderLayerBacking::notifyFlushBeforeDisplayRefresh(const GraphicsLayer* layer)

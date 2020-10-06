@@ -1406,7 +1406,7 @@ void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
 {
     if (auto* page = document().page())
-        page->scheduleRenderingUpdate();
+        page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
 }
 
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)

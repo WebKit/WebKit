@@ -124,7 +124,7 @@ private:
 
     void notifyFlushRequired(const GraphicsLayer*) override
     {
-        m_overlay.overlay().page()->scheduleRenderingUpdate();
+        m_overlay.overlay().page()->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
     }
 
     ResourceUsageOverlay& m_overlay;

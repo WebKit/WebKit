@@ -95,7 +95,8 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEv
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
 {
-    m_page->scheduleRenderingUpdate();
+    // FIXME: This one needs work.
+    m_page->scheduleRenderingUpdate(RenderingUpdateStep::ScrollingTreeUpdate);
 }
 
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()

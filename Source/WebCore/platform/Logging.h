@@ -56,6 +56,7 @@ namespace WebCore {
     M(Editing) \
     M(EME) \
     M(Events) \
+    M(EventLoop) \
     M(EventRegions) \
     M(FileAPI) \
     M(Filters) \
