@@ -152,25 +152,16 @@ ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadTyp
 void FileReader::abort()
 {
     LOG(FileAPI, "FileReader: aborting\n");
-
-    if (m_aborting || m_state != LOADING)
+    if (m_state != LOADING || m_finishedLoading)
         return;
-    m_aborting = true;
 
-    // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
     m_pendingTasks.clear();
-    enqueueTask([this] {
-        ASSERT(m_state != DONE);
+    stop();
+    m_error = DOMException::create(Exception { AbortError });
 
-        stop();
-        m_aborting = false;
-
-        m_error = DOMException::create(Exception { AbortError });
-
-        fireEvent(eventNames().errorEvent);
-        fireEvent(eventNames().abortEvent);
-        fireEvent(eventNames().loadendEvent);
-    });
+    auto protectedThis = makeRef(*this);
+    fireEvent(eventNames().abortEvent);
+    fireEvent(eventNames().loadendEvent);
 }
 
 void FileReader::didStartLoading()
@@ -197,14 +188,14 @@ void FileReader::didReceiveData()
 
 void FileReader::didFinishLoading()
 {
-    if (m_aborting)
-        return;
-
     enqueueTask([this] {
-        ASSERT(m_state != DONE);
-        m_state = DONE;
-
+        if (m_state == DONE)
+            return;
+        m_finishedLoading = true;
         fireEvent(eventNames().progressEvent);
+        if (m_state == DONE)
+            return;
+        m_state = DONE;
         fireEvent(eventNames().loadEvent);
         fireEvent(eventNames().loadendEvent);
     });
@@ -212,12 +203,9 @@ void FileReader::didFinishLoading()
 
 void FileReader::didFail(ExceptionCode errorCode)
 {
-    // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
-    if (m_aborting)
-        return;
-
     enqueueTask([this, errorCode] {
-        ASSERT(m_state != DONE);
+        if (m_state == DONE)
+            return;
         m_state = DONE;
 
         m_error = DOMException::create(Exception { errorCode });

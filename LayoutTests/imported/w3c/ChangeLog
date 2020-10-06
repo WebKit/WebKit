@@ -1,5 +1,22 @@
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
+        FileReader should transition to readyState DONE after last onprogress event
+        https://bugs.webkit.org/show_bug.cgi?id=217333
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/FileAPI/FileReader/workers-expected.txt:
+        * web-platform-tests/FileAPI/fileReader-expected.txt:
+        * web-platform-tests/FileAPI/fileReader.html:
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_abort-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsArrayBuffer-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsBinaryString-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsText-expected.txt:
+
+2020-10-06  Alex Christensen  <achristensen@webkit.org>
+
         Align URL setters with reasonably behaving other browsers
         https://bugs.webkit.org/show_bug.cgi?id=217366
 

@@ -1,3 +1,15 @@
+2020-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        FileReader should transition to readyState DONE after last onprogress event
+        https://bugs.webkit.org/show_bug.cgi?id=217333
+
+        Reviewed by Youenn Fablet.
+
+        * fast/files/file-reader-abort-expected.txt:
+        * fast/files/file-reader-abort-using-open-panel-expected.txt:
+        Update expectations to reflect new behavior that onerror is not called before onabort,
+        matching Chrome, Firefox, and the specification.
+
 2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Skip LFC tests.

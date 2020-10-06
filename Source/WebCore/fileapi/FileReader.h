@@ -103,7 +103,7 @@ private:
     void fireEvent(const AtomString& type);
 
     ReadyState m_state { EMPTY };
-    bool m_aborting { false };
+    bool m_finishedLoading { false };
     RefPtr<Blob> m_blob;
     FileReaderLoader::ReadType m_readType { FileReaderLoader::ReadAsBinaryString };
     String m_encoding;
