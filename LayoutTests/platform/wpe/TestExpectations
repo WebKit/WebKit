@@ -284,9 +284,6 @@ webkit.org/b/133122 crypto/workers/subtle/ec-postMessage-worker.html [ Skip ]
 # User-installed font infrastructure is ony present on certain OSes.
 webkit.org/b/180062 fast/text/user-installed-fonts/ [ Skip ]
 
-# Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
-http/tests/cookies/third-party-cookie-relaxing.html [ WontFix Failure ]
-
 # These are prone to run in parallel, consuming all the memory on the system.
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-2.html [ Skip ]
@@ -605,15 +602,10 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/209330 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
 
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015a.xht [ ImageOnlyFailure ]
-webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015b.xht [ ImageOnlyFailure ]
 webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015a.xht [ ImageOnlyFailure ]
-webkit.org/b/209328 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015b.xht [ ImageOnlyFailure ]
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-002.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-010.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-003.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-004.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001.html [ Failure ]
 
 # Still failing even after r259188.
@@ -628,8 +620,6 @@ webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
-
-webkit.org/b/210255 http/wpt/notifications/constructor-basic-bfcache.html [ Failure ]
 
 webkit.org/b/210262 fast/selectors/text-field-selection-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/210262 fast/selectors/text-field-selection-text-shadow.html [ ImageOnlyFailure ]
@@ -657,13 +647,9 @@ Bug(WPE) http/tests/contentfiltering [ Skip ]
 webkit.org/b/212347 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/212347 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-column-wrap.html [ ImageOnlyFailure ]
 
-webkit.org/b/212348 printing/simple-lines-break.html [ ImageOnlyFailure ]
-
 webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
-
-webkit.org/b/213188 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html [ Failure ]
 
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
 
@@ -679,7 +665,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseli
 
 # LFC painting is work in progress.
 webkit.org/b/216471 fast/layoutformattingcontext/block-only/absolute-position-left-right-margin.html [ ImageOnlyFailure ]
-webkit.org/b/216471 fast/layoutformattingcontext/block-only/replaced-intrinsic-width-simple.html [ ImageOnlyFailure ]
 webkit.org/b/216471 fast/layoutformattingcontext/empty-table-with-specified-height-quirk-simple.html [ ImageOnlyFailure ]
 webkit.org/b/216471 fast/layoutformattingcontext/empty-table-with-specified-height-standards-simple.html [ ImageOnlyFailure ]
 webkit.org/b/216471 fast/layoutformattingcontext/fit-content-width-simple.html [ ImageOnlyFailure ]
@@ -697,8 +682,6 @@ webkit.org/b/216471 fast/layoutformattingcontext/table-simple-multiple-sections.
 webkit.org/b/216471 fast/layoutformattingcontext/table-simple-row-border.html [ ImageOnlyFailure ]
 webkit.org/b/216471 fast/layoutformattingcontext/table-simple-rowspan-with-spacing.html [ ImageOnlyFailure ]
 webkit.org/b/216471 fast/layoutformattingcontext/table-simple-thead-border-ignore.html [ ImageOnlyFailure ]
-webkit.org/b/216471 fast/layoutformattingcontext/vertical-align-middle-nested.html [ ImageOnlyFailure ]
-webkit.org/b/216471 fast/layoutformattingcontext/vertical-align-middle-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/217369 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
 
@@ -1231,8 +1214,6 @@ webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/t
 
 webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
 
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout ]
-
 webkit.org/b/208921 fast/events/touch/basic-single-touch-events.html [ Timeout ]
 webkit.org/b/208921 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
 
@@ -1441,8 +1422,6 @@ webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-007.html [ ImageOnlyFailure ]
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
-webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
-
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html [ Failure ]
@@ -1541,7 +1520,6 @@ webkit.org/b/173419 fast/events/input-events-drag-and-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-insert-by-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-paste-data.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-paste-rich-datatransfer.html [ Failure ]
-webkit.org/b/173419 fast/events/js-keyboard-event-creation.html [ Failure ]
 webkit.org/b/109469 [ Release ] fast/events/mouse-cursor-image-set.html [ Failure ]
 webkit.org/b/109469 [ Debug ] fast/events/mouse-cursor-image-set.html [ Crash ]
 webkit.org/b/173419 fast/events/mouseover-button.html [ Failure ]
@@ -1830,8 +1808,6 @@ webkit.org/b/188976 fast/css/pseudo-visited-background-color-on-input.html [ Ima
 webkit.org/b/188977 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
-webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
-webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 
 webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
@@ -1893,8 +1869,6 @@ webkit.org/b/200302 accessibility/media-with-aria-label.html [ Failure ]
 
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
 
-webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
-
 webkit.org/b/201981 http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 webkit.org/b/201981 http/wpt/service-workers/online.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
@@ -1931,8 +1905,6 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ 
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
 
-webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ ImageOnlyFailure ]
-
 # WEBGL2 is disabled
 webkit.org/b/208188 fast/canvas/webgl/webgl2 [ Skip ]
 webkit.org/b/208188 fast/canvas/webgl/bufferData-offset-length.html [ Skip ]
@@ -1955,7 +1927,6 @@ webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 
 webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
-webkit.org/b/212080 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
@@ -1963,7 +1934,6 @@ webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/presentation-markup/t
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html [ Failure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
-webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
 
 webkit.org/b/203240 css3/shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
@@ -1995,13 +1965,6 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 
 webkit.org/b/212148 http/tests/navigation/page-cache-mediakeysession.html [ Failure ]
 
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
-
-webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
-webkit.org/b/212149 http/tests/websocket/tests/hybi/send-after-close-on-unload.html [ Failure ]
 webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/212150 http/tests/misc/bubble-drag-events.html [ Failure ]
@@ -2126,8 +2089,6 @@ webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
 
 webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 
-webkit.org/b/193632 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
-
 webkit.org/b/160243 fast/text/complex-small-caps-non-bmp-capitalize.html [ ImageOnlyFailure ]
 
 webkit.org/b/193631 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
@@ -2143,8 +2104,6 @@ webkit.org/b/212209 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/212210 fast/text/space-width.html [ ImageOnlyFailure ]
 webkit.org/b/212211 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 
-webkit.org/b/213334 fast/events/touch/touch-event-constructor.html [ Failure ]
-
 webkit.org/b/213507 fast/text/text-styles/-webkit-control.html [ ImageOnlyFailure ]
 webkit.org/b/213507 fast/text/text-styles/-webkit-mini-control.html [ ImageOnlyFailure ]
 webkit.org/b/213507 fast/text/text-styles/-webkit-small-control.html [ ImageOnlyFailure ]
@@ -2157,8 +2116,6 @@ webkit.org/b/213507 fast/text/text-styles/status-bar.html [ ImageOnlyFailure ]
 
 webkit.org/b/213508 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Failure ]
 
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round.xht [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht [ ImageOnlyFailure ]
@@ -2168,10 +2125,6 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-resolut
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-001.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-002.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-rtl-001.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-variable.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
