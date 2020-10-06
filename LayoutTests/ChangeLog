@@ -1,3 +1,11 @@
+2020-10-06  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] Enable some layout tests
+
+        Unreviewed test gardening.
+
+        * gpu-process/TestExpectations:
+
 2020-10-06  Chris Dumez  <cdumez@apple.com>
 
         Update Worklet.addModule() to actually fetch the module script
