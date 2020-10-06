@@ -297,7 +297,16 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
     if (position != notFound)
         return;
 
-    stopRecording();
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
+        if (!m_isActive || state() == RecordingState::Inactive)
+            return;
+
+        stopRecordingInternal();
+        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, Blob::create(scriptExecutionContext())));
+        if (!m_isActive)
+            return;
+        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 }
 
 void MediaRecorder::trackMutedChanged(MediaStreamTrackPrivate& track)

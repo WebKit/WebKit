@@ -1,3 +1,15 @@
+2020-10-06  Youenn Fablet  <youenn@apple.com>
+
+        In case all tracks are ended, enqueue a task to stop recording instead of stopping recording
+        https://bugs.webkit.org/show_bug.cgi?id=217372
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::trackEnded):
+
 2020-10-06  Rob Buis  <rbuis@igalia.com>
 
         Make value parameter in Document.execCommand non nullable
