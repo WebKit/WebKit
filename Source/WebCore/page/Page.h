@@ -492,8 +492,8 @@ public:
     WEBCORE_EXPORT void scheduleRenderingUpdate();
     // Schedule an update that coordinates with display refresh; the normal kind of update.
     void scheduleTimedRenderingUpdate();
-    // Schedule an update in the current runloop; this is an eager update that may trigger rendering more than once per display refresh.
-    void scheduleImmediateRenderingUpdate();
+    // Trigger a rendering update in the current runloop.
+    void triggerRenderingUpdateForTesting();
 
     WEBCORE_EXPORT void startTrackingRenderingUpdates();
     WEBCORE_EXPORT unsigned renderingUpdateCount() const;

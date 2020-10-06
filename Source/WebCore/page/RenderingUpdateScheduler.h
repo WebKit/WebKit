@@ -47,8 +47,9 @@ public:
     
     void adjustRenderingUpdateFrequency();
     void scheduleTimedRenderingUpdate();
-    void scheduleImmediateRenderingUpdate();
     void scheduleRenderingUpdate();
+
+    void triggerRenderingUpdateForTesting();
 
     void windowScreenDidChange(PlatformDisplayID);
 
@@ -61,6 +62,8 @@ private:
     bool isScheduled() const;
     void startTimer(Seconds);
     void clearScheduled();
+
+    void triggerRenderingUpdate();
 
     Page& m_page;
     bool m_scheduled { false };

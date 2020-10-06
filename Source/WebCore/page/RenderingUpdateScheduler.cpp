@@ -82,7 +82,7 @@ void RenderingUpdateScheduler::scheduleTimedRenderingUpdate()
 
     // Optimize the case when an invisible page wants just to schedule layer flush.
     if (!m_page.isVisible()) {
-        scheduleImmediateRenderingUpdate();
+        triggerRenderingUpdate();
         return;
     }
 
@@ -136,10 +136,15 @@ void RenderingUpdateScheduler::displayRefreshFired()
     tracePoint(TriggerRenderingUpdate);
 
     clearScheduled();
-    scheduleImmediateRenderingUpdate();
+    triggerRenderingUpdate();
 }
 
-void RenderingUpdateScheduler::scheduleImmediateRenderingUpdate()
+void RenderingUpdateScheduler::triggerRenderingUpdateForTesting()
+{
+    triggerRenderingUpdate();
+}
+
+void RenderingUpdateScheduler::triggerRenderingUpdate()
 {
     m_page.chrome().client().triggerRenderingUpdate();
 }

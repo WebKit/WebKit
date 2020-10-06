@@ -1,3 +1,31 @@
+2020-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Page::scheduleImmediateRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=217361
+
+        Reviewed by Antti Koivisto.
+
+        There was only one remaining caller of Page::scheduleImmediateRenderingUpdate(), which
+        is RenderLayerCompositor::layerTreeAsText(). The immediate update here is necessary because
+        we flush compositing layers in layerTreeAsText(), and that can trigger a Core Animation commit
+        with painting, so we have to complete our rendering update first to ensure up-to-date layout.
+
+        However, this is a testing-only codepath, so have the naming reflect that.
+
+        * page/Page.cpp:
+        (WebCore::Page::triggerRenderingUpdateForTesting):
+        (WebCore::Page::scheduleImmediateRenderingUpdate): Deleted.
+        * page/Page.h:
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::scheduleTimedRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::displayRefreshFired):
+        (WebCore::RenderingUpdateScheduler::triggerRenderingUpdateForTesting):
+        (WebCore::RenderingUpdateScheduler::triggerRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::scheduleImmediateRenderingUpdate): Deleted.
+        * page/RenderingUpdateScheduler.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+
 2020-10-05  Alex Christensen  <achristensen@webkit.org>
 
         Don't NFC normalize strings from blobs

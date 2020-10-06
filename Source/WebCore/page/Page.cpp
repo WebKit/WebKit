@@ -1418,9 +1418,9 @@ void Page::scheduleTimedRenderingUpdate()
     renderingUpdateScheduler().scheduleTimedRenderingUpdate();
 }
 
-void Page::scheduleImmediateRenderingUpdate()
+void Page::triggerRenderingUpdateForTesting()
 {
-    renderingUpdateScheduler().scheduleImmediateRenderingUpdate();
+    renderingUpdateScheduler().triggerRenderingUpdateForTesting();
 }
 
 void Page::startTrackingRenderingUpdates()
