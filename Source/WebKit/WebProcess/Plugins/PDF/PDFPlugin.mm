@@ -1605,8 +1605,10 @@ void PDFPlugin::installPDFDocument()
     if (m_hasBeenDestroyed)
         return;
 
-    // If we haven't been destroyed yet, there must still be a PluginController
-    RELEASE_ASSERT(controller());
+    if (!controller()) {
+        RELEASE_LOG(IncrementalPDF, "PDFPlugin::installPDFDocument called - Plug-in has not been destroyed, but there's also no controller.");
+        return;
+    }
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     maybeClearHighLatencyDataProviderFlag();
