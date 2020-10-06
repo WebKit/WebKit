@@ -65,12 +65,17 @@ public:
     unsigned localEndOffset() const { return inlineTextBox()->end(); }
     unsigned length() const { return inlineTextBox()->len(); }
 
-    inline bool isLastTextRunOnLine() const
+    bool isLastTextRunOnLine() const
     {
         auto* next = nextInlineTextBoxInTextOrder();
         return !next || &inlineTextBox()->root() != &next->root();
     }
-    inline bool isLastTextRun() const { return !nextInlineTextBoxInTextOrder(); };
+    bool isLastTextRun() const { return !nextInlineTextBoxInTextOrder(); };
+
+    const RenderObject& renderer() const
+    {
+        return m_inlineBox->renderer();
+    }
 
     void traverseNextTextRun() { m_inlineBox = inlineTextBox()->nextTextBox(); }
     void traverseNextTextRunInTextOrder()

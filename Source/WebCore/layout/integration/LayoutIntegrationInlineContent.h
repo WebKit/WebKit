@@ -31,12 +31,22 @@
 #include "LayoutIntegrationRun.h"
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class RenderObject;
+
+namespace Layout {
+class Box;
+}
+
 namespace LayoutIntegration {
 
+class LineLayout;
+
 struct InlineContent : public RefCounted<InlineContent> {
-    static Ref<InlineContent> create() { return adoptRef(*new InlineContent); }
+    static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }
     ~InlineContent();
 
     using Runs = Vector<Run, 4>;
@@ -49,8 +59,13 @@ struct InlineContent : public RefCounted<InlineContent> {
     WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;
     void shrinkToFit();
 
+    const LineLayout& lineLayout() const;
+    const RenderObject* rendererForLayoutBox(const Layout::Box&) const;
+
 private:
-    InlineContent() = default;
+    InlineContent(const LineLayout&);
+
+    WeakPtr<const LineLayout> m_lineLayout;
 };
 
 inline void InlineContent::shrinkToFit()

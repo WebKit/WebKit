@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderLineBreak;
+class RenderObject;
 class RenderText;
 
 namespace LayoutIntegration {
@@ -74,6 +75,8 @@ public:
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
 
     bool onSameLine(const PathRun&) const;
+
+    const RenderObject& renderer() const;
 
     // For intermediate porting steps only.
     InlineBox* legacyInlineBox() const;
@@ -278,6 +281,13 @@ inline bool PathRun::onSameLine(const PathRun& other) const
 
     return WTF::switchOn(m_pathVariant, [&](const auto& path) {
         return path.onSameLine(WTF::get<std::decay_t<decltype(path)>>(other.m_pathVariant));
+    });
+}
+
+inline const RenderObject& PathRun::renderer() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderObject& {
+        return path.renderer();
     });
 }
 

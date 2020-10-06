@@ -1,3 +1,56 @@
+2020-10-06  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Add renderer() to iterator
+        https://bugs.webkit.org/show_bug.cgi?id=217382
+
+        Reviewed by Zalan Bujtas.
+
+        Also use it while converting RenderedPosition for the iterator.
+
+        * dom/Position.h:
+        * editing/RenderedPosition.cpp:
+        (WebCore::rendererFromPosition):
+        (WebCore::RenderedPosition::RenderedPosition):
+        (WebCore::RenderedPosition::previousLeafOnLine const):
+        (WebCore::RenderedPosition::nextLeafOnLine const):
+        (WebCore::RenderedPosition::isEquivalent const):
+        (WebCore::RenderedPosition::bidiLevelOnLeft const):
+        (WebCore::RenderedPosition::bidiLevelOnRight const):
+        (WebCore::RenderedPosition::leftBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::rightBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::atLeftBoundaryOfBidiRun const):
+        (WebCore::RenderedPosition::atRightBoundaryOfBidiRun const):
+        (WebCore::RenderedPosition::positionAtLeftBoundaryOfBiDiRun const):
+        (WebCore::RenderedPosition::positionAtRightBoundaryOfBiDiRun const):
+        (WebCore::RenderedPosition::absoluteRect const):
+        (WebCore::renderObjectContainsPosition):
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::rootBox):
+        (WebCore::RenderedPosition::atLeftmostOffsetInBox const):
+        (WebCore::RenderedPosition::atRightmostOffsetInBox const):
+        (WebCore::RenderedPosition::uncachedInlineBox): Deleted.
+        (WebCore::RenderedPosition::RenderedPosition): Deleted.
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::InlineContent):
+        (WebCore::LayoutIntegration::InlineContent::lineLayout const):
+        (WebCore::LayoutIntegration::InlineContent::rendererForLayoutBox const):
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::create):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::ensureInlineContent):
+        (WebCore::LayoutIntegration::LineLayout::rendererForLayoutBox const):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathRun::renderer const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::isLastTextRunOnLine const):
+        (WebCore::LayoutIntegration::LegacyPath::isLastTextRun const):
+        (WebCore::LayoutIntegration::LegacyPath::renderer const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::ModernPath::renderer const):
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         FileReader should transition to readyState DONE after last onprogress event

@@ -28,11 +28,17 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutIntegrationLineLayout.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextPainter.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
+
+InlineContent::InlineContent(const LineLayout& lineLayout)
+    : m_lineLayout(makeWeakPtr(lineLayout))
+{
+}
 
 WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect&) const
 {
@@ -49,6 +55,17 @@ InlineContent::~InlineContent()
             TextPainter::removeGlyphDisplayList(run);
     }
 }
+
+const LineLayout& InlineContent::lineLayout() const
+{
+    return *m_lineLayout;
+}
+
+const RenderObject* InlineContent::rendererForLayoutBox(const Layout::Box& layoutBox) const
+{
+    return m_lineLayout->rendererForLayoutBox(layoutBox);
+}
+
 
 }
 }

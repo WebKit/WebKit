@@ -289,7 +289,7 @@ void LineLayout::collectOverflow(RenderBlockFlow& flow)
 InlineContent& LineLayout::ensureInlineContent()
 {
     if (!m_inlineContent)
-        m_inlineContent = InlineContent::create();
+        m_inlineContent = InlineContent::create(*this);
     return *m_inlineContent;
 }
 
@@ -328,6 +328,11 @@ RunIterator LineLayout::runFor(const RenderElement& renderElement) const
     }
 
     return { };
+}
+
+const RenderObject* LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
+{
+    return m_boxTree.rendererForLayoutBox(layoutBox);
 }
 
 const Layout::ContainerBox& LineLayout::rootLayoutBox() const

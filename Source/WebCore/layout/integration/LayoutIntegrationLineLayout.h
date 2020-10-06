@@ -32,6 +32,7 @@
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ namespace LayoutIntegration {
 
 struct InlineContent;
 
-class LineLayout {
+class LineLayout : public CanMakeWeakPtr<LineLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LineLayout(const RenderBlockFlow&);
@@ -77,6 +78,8 @@ public:
 
     TextRunIterator textRunsFor(const RenderText&) const;
     RunIterator runFor(const RenderElement&) const;
+
+    const RenderObject* rendererForLayoutBox(const Layout::Box&) const;
 
     static void releaseCaches(RenderView&);
 

@@ -209,6 +209,8 @@ public:
     // FIXME: Combine this function with operator==
     bool equals(const Position&) const;
 
+    void ensureLineBoxes() const;
+
 private:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))
     enum class LegacyEditingPositionFlag { On };
@@ -219,8 +221,6 @@ private:
     
     Position previousCharacterPosition(Affinity) const;
     Position nextCharacterPosition(Affinity) const;
-
-    void ensureLineBoxes() const;
 
     static AnchorType anchorTypeForLegacyEditingPosition(Node* anchorNode, unsigned offset);
 

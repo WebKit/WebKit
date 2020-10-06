@@ -147,7 +147,7 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
         };
     };
 
-    auto adjustedContent = InlineContent::create();
+    auto adjustedContent = InlineContent::create(inlineContent.lineLayout());
 
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
         adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex]));

@@ -99,6 +99,11 @@ public:
         return &run().layoutBox() != &runs()[m_runIndex + 1].layoutBox();
     };
 
+    const RenderObject& renderer() const
+    {
+        return *m_inlineContent->rendererForLayoutBox(run().layoutBox());
+    }
+
     void traverseNextTextRun()
     {
         ASSERT(!atEnd());

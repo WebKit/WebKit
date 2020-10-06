@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "InlineBox.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "TextAffinity.h"
 
 namespace WebCore {
@@ -48,7 +48,7 @@ public:
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }
-    RootInlineBox* rootBox() { return m_inlineBox ? &m_inlineBox->root() : 0; }
+    RootInlineBox* rootBox() { return m_run ? &m_run->legacyInlineBox()->root() : nullptr; }
 
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;
@@ -70,42 +70,23 @@ public:
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }
-    explicit RenderedPosition(RenderObject*, InlineBox*, int offset);
+    explicit RenderedPosition(const RenderObject*, LayoutIntegration::RunIterator, unsigned offset);
 
-    InlineBox* previousLeafOnLine() const;
-    InlineBox* nextLeafOnLine() const;
-    bool atLeftmostOffsetInBox() const { return m_inlineBox && m_offset == m_inlineBox->caretLeftmostOffset(); }
-    bool atRightmostOffsetInBox() const { return m_inlineBox && m_offset == m_inlineBox->caretRightmostOffset(); }
+    LayoutIntegration::RunIterator previousLeafOnLine() const;
+    LayoutIntegration::RunIterator nextLeafOnLine() const;
+    bool atLeftmostOffsetInBox() const { return m_run && m_offset == m_run->leftmostCaretOffset(); }
+    bool atRightmostOffsetInBox() const { return m_run && m_offset == m_run->rightmostCaretOffset(); }
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
-    static InlineBox* uncachedInlineBox() { return reinterpret_cast<InlineBox*>(1); }
-    // Needs to be different form 0 so pick 1 because it's also on the null page.
+    const RenderObject* m_renderer { nullptr };
+    LayoutIntegration::RunIterator m_run;
+    unsigned m_offset { 0 };
 
-    RenderObject* m_renderer { nullptr };
-    InlineBox* m_inlineBox { nullptr };
-    int m_offset { 0 };
-
-    mutable InlineBox* m_previousLeafOnLine { nullptr };
-    mutable InlineBox* m_nextLeafOnLine { nullptr };
+    mutable Optional<LayoutIntegration::RunIterator> m_previousLeafOnLine;
+    mutable Optional<LayoutIntegration::RunIterator> m_nextLeafOnLine;
 };
 
-inline RenderedPosition::RenderedPosition()
-    : m_offset(0)
-    , m_previousLeafOnLine(uncachedInlineBox())
-    , m_nextLeafOnLine(uncachedInlineBox())
-{
-}
-
-inline RenderedPosition::RenderedPosition(RenderObject* renderer, InlineBox* box, int offset)
-    : m_renderer(renderer)
-    , m_inlineBox(box)
-    , m_offset(offset)
-    , m_previousLeafOnLine(uncachedInlineBox())
-    , m_nextLeafOnLine(uncachedInlineBox())
-{
-}
-
-bool renderObjectContainsPosition(RenderObject*, const Position&);
+bool renderObjectContainsPosition(const RenderObject*, const Position&);
 
 } // namespace WebCore
