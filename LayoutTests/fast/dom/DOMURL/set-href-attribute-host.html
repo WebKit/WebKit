@@ -78,7 +78,7 @@ debug("Set host containing slashes in it");
 try {
 a.href = "https://www.mydomain.com:8080/path/";
 a.host = "www.other\dom/ain.com";
-shouldBe("a.href", "'https://www.otherdom/ain.com:8080/path/'");
+shouldBe("a.href", "'https://www.otherdom:8080/path/'");
 } catch(e) {
 debug("Exception: " + e.description);
 }

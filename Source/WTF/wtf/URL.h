@@ -198,6 +198,7 @@ private:
     unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);
     void parse(const String&);
+    bool hasSpecialScheme() const;
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 

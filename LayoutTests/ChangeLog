@@ -1,3 +1,15 @@
+2020-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        Align URL setters with reasonably behaving other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=217366
+
+        Reviewed by Youenn Fablet.
+
+        * fast/dom/DOMURL/set-href-attribute-host-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-host.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host.html:
+
 2020-10-06  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Remove tests passing.
