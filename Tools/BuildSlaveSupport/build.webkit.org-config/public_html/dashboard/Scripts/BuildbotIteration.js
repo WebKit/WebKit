@@ -74,7 +74,7 @@ BuildbotIteration.ProductiveSteps = {
 
 // These have a special meaning for test queue views.
 BuildbotIteration.TestSteps = {
-    "API tests": "platform api test",
+    "API-tests": "platform api test",
     "bindings-generation-tests": "bindings tests",
     "builtins-generator-tests": "builtins generator tests",
     "jscore-test": "javascript test",

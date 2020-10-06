@@ -72,7 +72,7 @@ class TestWithFailureCount(shell.Test):
 
 
 class ConfigureBuild(buildstep.BuildStep):
-    name = "configure build"
+    name = "configure-build"
     description = ["configuring build"]
     descriptionDone = ["configured build"]
 
@@ -134,7 +134,7 @@ class InstallWin32Dependencies(shell.Compile):
 
 
 class KillOldProcesses(shell.Compile):
-    name = "kill old processes"
+    name = "kill-old-processes"
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
     command = ["python", "./Tools/BuildSlaveSupport/kill-old-processes", "buildbot"]
@@ -155,7 +155,7 @@ class WaitForCrashCollection(shell.Compile):
 
 
 class CleanBuildIfScheduled(shell.Compile):
-    name = "delete WebKitBuild directory"
+    name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]
     descriptionDone = ["deleted WebKitBuild directory"]
     command = ["python", "./Tools/BuildSlaveSupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
@@ -168,7 +168,7 @@ class CleanBuildIfScheduled(shell.Compile):
 
 
 class DeleteStaleBuildFiles(shell.Compile):
-    name = "delete stale build files"
+    name = "delete-stale-build-files"
     description = ["deleting stale build files"]
     descriptionDone = ["deleted stale build files"]
     command = ["python", "./Tools/BuildSlaveSupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
@@ -798,7 +798,7 @@ class RunBuiltinsTests(shell.Test):
 
 
 class RunGLibAPITests(shell.Test):
-    name = "API tests"
+    name = "API-tests"
     description = ["API tests running"]
     descriptionDone = ["API tests"]
 
