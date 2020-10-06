@@ -1444,7 +1444,7 @@
 		A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1ADAFB62368E6A8009CB776 /* SharedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ADAFB52368E4B8009CB776 /* SharedMemory.cpp */; };
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
-		A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* DownloadClient.h */; };
+		A1DF631318E0B7C8003A3E2A /* LegacyDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */; };
 		A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */; };
 		A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */; };
@@ -4540,8 +4540,8 @@
 		A1B9CA382246E54A003D6DCA /* WebPaymentCoordinatorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorCocoa.mm; sourceTree = "<group>"; };
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
 		A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreviewLoaderClient.h; path = ios/WebPreviewLoaderClient.h; sourceTree = "<group>"; };
-		A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadClient.mm; sourceTree = "<group>"; };
-		A1DF631118E0B7C8003A3E2A /* DownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadClient.h; sourceTree = "<group>"; };
+		A1DF631018E0B7C8003A3E2A /* LegacyDownloadClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyDownloadClient.mm; sourceTree = "<group>"; };
+		A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyDownloadClient.h; sourceTree = "<group>"; };
 		A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuarantineSPI.h; sourceTree = "<group>"; };
 		A1EA02351DABFF7E0096021F /* WKContextMenuListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuListener.cpp; sourceTree = "<group>"; };
 		A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuListener.h; sourceTree = "<group>"; };
@@ -6303,8 +6303,6 @@
 				990D28B81C6539A000986977 /* AutomationSessionClient.mm */,
 				83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */,
 				83891B6B1A68C30B0030F386 /* DiagnosticLoggingClient.mm */,
-				A1DF631118E0B7C8003A3E2A /* DownloadClient.h */,
-				A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */,
 				5C2B1AF5223C1FD200B91CF7 /* DownloadProxyMapCocoa.mm */,
 				00B9661818E25AE100CE1F88 /* FindClient.h */,
 				00B9661718E25AE100CE1F88 /* FindClient.mm */,
@@ -6316,6 +6314,8 @@
 				51C0C9731DDD74F00032CAD3 /* IconLoadingDelegate.mm */,
 				7A821F4B1E2F664800604577 /* LegacyCustomProtocolManagerClient.h */,
 				7A821F4D1E2F679E00604577 /* LegacyCustomProtocolManagerClient.mm */,
+				A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */,
+				A1DF631018E0B7C8003A3E2A /* LegacyDownloadClient.mm */,
 				411286EF21C8A90C003A8550 /* MediaUtilities.h */,
 				411286F021C8A90D003A8550 /* MediaUtilities.mm */,
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
@@ -10783,7 +10783,6 @@
 				C18173612058424700DFDA65 /* DisplayLink.h in Headers */,
 				0F189CAC24749F2F00E58D81 /* DisplayLinkObserverID.h in Headers */,
 				5C1427021C23F84C00D41183 /* Download.h in Headers */,
-				A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */,
 				5C1427051C23F84C00D41183 /* DownloadID.h in Headers */,
 				5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */,
 				51240EBA220A08D2005CFC63 /* DownloadMap.h in Headers */,
@@ -10868,6 +10867,7 @@
 				2984F589164BA095004BC0C6 /* LegacyCustomProtocolManagerMessages.h in Headers */,
 				29AD3093164B4C5D0072DEA9 /* LegacyCustomProtocolManagerProxy.h in Headers */,
 				2984F57D164B915F004BC0C6 /* LegacyCustomProtocolManagerProxyMessages.h in Headers */,
+				A1DF631318E0B7C8003A3E2A /* LegacyDownloadClient.h in Headers */,
 				1A1DC340196346D700FF7059 /* LegacySessionStateCoding.h in Headers */,
 				411B22641E371BA6004F7363 /* LibWebRTCNetwork.h in Headers */,
 				413075B41DE85F580039EC69 /* LibWebRTCProvider.h in Headers */,

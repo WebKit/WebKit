@@ -49,7 +49,7 @@ enum class AllowOverwrite : bool;
 
 namespace API {
 
-class DownloadClient {
+class DownloadClient : public RefCounted<DownloadClient> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DownloadClient() { }

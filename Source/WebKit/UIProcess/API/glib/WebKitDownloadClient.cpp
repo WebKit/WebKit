@@ -33,9 +33,9 @@
 using namespace WebCore;
 using namespace WebKit;
 
-class DownloadClient final : public API::DownloadClient {
+class LegacyDownloadClient final : public API::DownloadClient {
 public:
-    explicit DownloadClient(WebKitWebContext* webContext)
+    explicit LegacyDownloadClient(WebKitWebContext* webContext)
         : m_webContext(webContext)
     {
     }
@@ -130,5 +130,5 @@ private:
 
 void attachDownloadClientToContext(WebKitWebContext* webContext)
 {
-    webkitWebContextGetProcessPool(webContext).setDownloadClient(makeUniqueRef<DownloadClient>(webContext));
+    webkitWebContextGetProcessPool(webContext).setLegacyDownloadClient(adoptRef(*new LegacyDownloadClient(webContext)));
 }

@@ -1,3 +1,67 @@
+2020-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        Move ownership of DownloadClient from WebProcessPool to DownloadProxy
+        https://bugs.webkit.org/show_bug.cgi?id=217399
+
+        Reviewed by Tim Horton.
+
+        To keep binary compatibility, the WebProcessPool has a nullable DownloadClient that is used if it has been set.
+        This will allow us to get a DownloadClient from elsewhere, such as having the API Download object have its own delegate
+        or having the WKWebsiteDataStore have a delegate, which are two of the solutions I've considered.  We definitely don't
+        want it on the WebProcessPool, though.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIDownloadClient.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setDownloadDelegate:]):
+        * UIProcess/API/glib/WebKitDownloadClient.cpp:
+        (attachDownloadClientToContext):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextDispose):
+        * UIProcess/Cocoa/LegacyDownloadClient.h: Renamed from Source/WebKit/UIProcess/Cocoa/DownloadClient.h.
+        * UIProcess/Cocoa/LegacyDownloadClient.mm: Renamed from Source/WebKit/UIProcess/Cocoa/DownloadClient.mm.
+        (WebKit::LegacyDownloadClient::LegacyDownloadClient):
+        (WebKit::LegacyDownloadClient::didStart):
+        (WebKit::LegacyDownloadClient::didReceiveResponse):
+        (WebKit::LegacyDownloadClient::didReceiveData):
+        (WebKit::LegacyDownloadClient::didReceiveAuthenticationChallenge):
+        (WebKit::LegacyDownloadClient::didCreateDestination):
+        (WebKit::LegacyDownloadClient::processDidCrash):
+        (WebKit::LegacyDownloadClient::decideDestinationWithSuggestedFilename):
+        (WebKit::LegacyDownloadClient::didFinish):
+        (WebKit::LegacyDownloadClient::didFail):
+        (WebKit::LegacyDownloadClient::didCancel):
+        (WebKit::LegacyDownloadClient::willSendRequest):
+        (WebKit::LegacyDownloadClient::takeActivityToken):
+        (WebKit::LegacyDownloadClient::releaseActivityTokenIfNecessary):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::DownloadProxy):
+        (WebKit::DownloadProxy::cancel):
+        (WebKit::DownloadProxy::invalidate):
+        (WebKit::DownloadProxy::processDidClose):
+        (WebKit::DownloadProxy::didStart):
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::didReceiveResponse):
+        (WebKit::DownloadProxy::didReceiveData):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::didCreateDestination):
+        (WebKit::DownloadProxy::didFinish):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::didCancel):
+        (WebKit::DownloadProxy::~DownloadProxy): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::setLegacyDownloadClient):
+        (WebKit::WebProcessPool::setDownloadClient): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-10-06  Youenn Fablet  <youenn@apple.com>
 
         Enable video capture in WebProcess by default on MacOS

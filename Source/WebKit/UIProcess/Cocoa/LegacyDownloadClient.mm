@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DownloadClient.h"
+#import "LegacyDownloadClient.h"
 
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationChallengeProxy.h"
@@ -47,7 +47,7 @@
 
 namespace WebKit {
 
-DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
+LegacyDownloadClient::LegacyDownloadClient(id <_WKDownloadDelegate> delegate)
     : m_delegate(delegate)
 {
     m_delegateMethods.downloadDidStart = [delegate respondsToSelector:@selector(_downloadDidStart:)];
@@ -76,7 +76,7 @@ static SystemPreviewController* systemPreviewController(DownloadProxy& downloadP
 }
 #endif
 
-void DownloadClient::didStart(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::didStart(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -93,7 +93,7 @@ void DownloadClient::didStart(DownloadProxy& downloadProxy)
         [m_delegate _downloadDidStart:wrapper(downloadProxy)];
 }
 
-void DownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
+void LegacyDownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload() && response.isSuccessful()) {
@@ -107,7 +107,7 @@ void DownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebC
         [m_delegate _download:wrapper(downloadProxy) didReceiveResponse:response.nsURLResponse()];
 }
 
-void DownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
+void LegacyDownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -123,7 +123,7 @@ void DownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytes
         [m_delegate _download:wrapper(downloadProxy) didReceiveData:bytesWritten];
 }
 
-void DownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
+void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
 {
     // FIXME: System Preview needs code here.
     if (!m_delegateMethods.downloadDidReceiveAuthenticationChallengeCompletionHandler) {
@@ -157,7 +157,7 @@ void DownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& downloadPr
     }).get()];
 }
 
-void DownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const String& destination)
+void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const String& destination)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -170,7 +170,7 @@ void DownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const St
         [m_delegate _download:wrapper(downloadProxy) didCreateDestination:destination];
 }
 
-void DownloadClient::processDidCrash(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -185,7 +185,7 @@ void DownloadClient::processDidCrash(DownloadProxy& downloadProxy)
         [m_delegate _downloadProcessDidCrash:wrapper(downloadProxy)];
 }
 
-void DownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
+void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -215,7 +215,7 @@ void DownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downl
     }
 }
 
-void DownloadClient::didFinish(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::didFinish(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -234,7 +234,7 @@ void DownloadClient::didFinish(DownloadProxy& downloadProxy)
         [m_delegate _downloadDidFinish:wrapper(downloadProxy)];
 }
 
-void DownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
+void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -249,7 +249,7 @@ void DownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::Resour
         [m_delegate _download:wrapper(downloadProxy) didFailWithError:error.nsError()];
 }
 
-void DownloadClient::didCancel(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::didCancel(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -264,7 +264,7 @@ void DownloadClient::didCancel(DownloadProxy& downloadProxy)
         [m_delegate _downloadDidCancel:wrapper(downloadProxy)];
 }
 
-void DownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
         [m_delegate _download:wrapper(downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
@@ -273,7 +273,7 @@ void DownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::Reso
 }
 
 #if USE(SYSTEM_PREVIEW)
-void DownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 {
 #if PLATFORM(IOS_FAMILY)
     if (auto* webPage = downloadProxy.originatingPage()) {
@@ -286,7 +286,7 @@ void DownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 #endif
 }
 
-void DownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downloadProxy)
+void LegacyDownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downloadProxy)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_activity) {

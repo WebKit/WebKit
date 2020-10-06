@@ -80,7 +80,9 @@ void DownloadProxyMap::applicationWillEnterForeground()
 
 DownloadProxy& DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore, WebProcessPool& processPool, const WebCore::ResourceRequest& resourceRequest, const FrameInfoData& frameInfo, WebPageProxy* originatingPage)
 {
-    auto downloadProxy = DownloadProxy::create(*this, dataStore, processPool, resourceRequest, frameInfo, originatingPage);
+    auto* legacyDownloadClient = processPool.legacyDownloadClient();
+    Ref<API::DownloadClient> client = legacyDownloadClient ? Ref<API::DownloadClient>(*legacyDownloadClient) : adoptRef(*new API::DownloadClient);
+    auto downloadProxy = DownloadProxy::create(*this, dataStore, WTFMove(client), resourceRequest, frameInfo, originatingPage);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy.copyRef());
 
     RELEASE_LOG(Loading, "Adding download %" PRIu64 " to UIProcess DownloadProxyMap", downloadProxy->downloadID().toUInt64());

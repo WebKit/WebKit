@@ -170,9 +170,9 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
 
 void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* wkClient)
 {
-    class DownloadClient final : public API::Client<WKContextDownloadClientBase>, public API::DownloadClient {
+    class LegacyDownloadClient final : public API::Client<WKContextDownloadClientBase>, public API::DownloadClient {
     public:
-        explicit DownloadClient(const WKContextDownloadClientBase* client, WKContextRef context)
+        explicit LegacyDownloadClient(const WKContextDownloadClientBase* client, WKContextRef context)
             : m_context(context)
         {
             initialize(client);
@@ -248,7 +248,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
         }
         WKContextRef m_context;
     };
-    WebKit::toImpl(context)->setDownloadClient(makeUniqueRef<DownloadClient>(wkClient, context));
+    WebKit::toImpl(context)->setLegacyDownloadClient(adoptRef(*new LegacyDownloadClient(wkClient, context)));
 }
 
 void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)

@@ -77,6 +77,7 @@ class DownloadClient;
 class HTTPCookieStore;
 class InjectedBundleClient;
 class LegacyContextHistoryClient;
+class LegacyDownloadClient;
 class Navigation;
 class PageConfiguration;
 }
@@ -169,7 +170,7 @@ public:
     void setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&&);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&&);
-    void setDownloadClient(UniqueRef<API::DownloadClient>&&);
+    void setLegacyDownloadClient(RefPtr<API::DownloadClient>&&);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
 
     void setCustomWebContentServiceBundleIdentifier(const String&);
@@ -278,7 +279,7 @@ public:
     
     // Downloads.
     DownloadProxy& createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const FrameInfoData&);
-    API::DownloadClient& downloadClient() { return m_downloadClient.get(); }
+    API::DownloadClient* legacyDownloadClient() { return m_legacyDownloadClient.get(); }
 
     API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }
@@ -597,7 +598,7 @@ private:
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
     std::unique_ptr<API::AutomationClient> m_automationClient;
-    UniqueRef<API::DownloadClient> m_downloadClient;
+    RefPtr<API::DownloadClient> m_legacyDownloadClient;
     std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;
 
     RefPtr<WebAutomationSession> m_automationSession;

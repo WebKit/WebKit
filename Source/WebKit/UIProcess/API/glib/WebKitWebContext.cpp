@@ -433,7 +433,7 @@ static void webkitWebContextDispose(GObject* object)
     if (!priv->clientsDetached) {
         priv->clientsDetached = true;
         priv->processPool->setInjectedBundleClient(nullptr);
-        priv->processPool->setDownloadClient(makeUniqueRef<API::DownloadClient>());
+        priv->processPool->setLegacyDownloadClient(nullptr);
     }
 
     if (priv->faviconDatabase) {

@@ -25,10 +25,9 @@
 
 #pragma once
 
-#import "WKFoundation.h"
-
 #import "APIDownloadClient.h"
 #import "ProcessThrottler.h"
+#import "WKFoundation.h"
 #import <wtf/WeakObjCPtr.h>
 
 @protocol _WKDownloadDelegate;
@@ -40,10 +39,10 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class DownloadClient final : public API::DownloadClient {
+class LegacyDownloadClient final : public API::DownloadClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DownloadClient(id <_WKDownloadDelegate>);
+    explicit LegacyDownloadClient(id <_WKDownloadDelegate>);
     
 private:
     // From API::DownloadClient

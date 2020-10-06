@@ -36,6 +36,7 @@
 
 namespace API {
 class Data;
+class DownloadClient;
 class FrameInfo;
 }
 
@@ -51,7 +52,6 @@ namespace WebKit {
 
 class DownloadProxyMap;
 class WebPageProxy;
-class WebProcessPool;
 class WebsiteDataStore;
 
 enum class AllowOverwrite : bool;
@@ -102,7 +102,7 @@ public:
     API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
 
 private:
-    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
+    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -122,7 +122,7 @@ private:
 
     DownloadProxyMap& m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;
-    RefPtr<WebProcessPool> m_processPool;
+    Ref<API::DownloadClient> m_client;
     DownloadID m_downloadID;
 
     RefPtr<API::Data> m_resumeData;

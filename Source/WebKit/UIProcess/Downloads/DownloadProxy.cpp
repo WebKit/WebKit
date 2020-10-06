@@ -48,10 +48,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfoData, WebPageProxy* originatingPage)
+DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, API::DownloadClient& client, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfoData, WebPageProxy* originatingPage)
     : m_downloadProxyMap(downloadProxyMap)
     , m_dataStore(&dataStore)
-    , m_processPool(&processPool)
+    , m_client(client)
     , m_downloadID(DownloadID::generate())
     , m_request(resourceRequest)
     , m_originatingPage(makeWeakPtr(originatingPage))
@@ -59,34 +59,23 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
 {
 }
 
-DownloadProxy::~DownloadProxy()
-{
-    ASSERT(!m_processPool);
-}
+DownloadProxy::~DownloadProxy() = default;
 
 void DownloadProxy::cancel()
 {
-    if (!m_processPool)
-        return;
-
     if (m_dataStore)
         m_dataStore->networkProcess().send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
 }
 
 void DownloadProxy::invalidate()
 {
-    ASSERT(m_processPool);
-    m_processPool = nullptr;
     ASSERT(m_dataStore);
     m_dataStore = nullptr;
 }
 
 void DownloadProxy::processDidClose()
 {
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().processDidCrash(*this);
+    m_client->processDidCrash(*this);
 }
 
 WebPageProxy* DownloadProxy::originatingPage() const
@@ -115,27 +104,21 @@ void DownloadProxy::didStart(const ResourceRequest& request, const String& sugge
     if (m_redirectChain.isEmpty() || m_redirectChain.last() != request.url())
         m_redirectChain.append(request.url());
 
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().didStart(*this);
+    m_client->didStart(*this);
 }
 
 void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID)
 {
-    if (!m_processPool || !m_dataStore)
+    if (!m_dataStore)
         return;
 
     auto authenticationChallengeProxy = AuthenticationChallengeProxy::create(WTFMove(authenticationChallenge), challengeID, makeRef(*m_dataStore->networkProcess().connection()), nullptr);
-    m_processPool->downloadClient().didReceiveAuthenticationChallenge(*this, authenticationChallengeProxy.get());
+    m_client->didReceiveAuthenticationChallenge(*this, authenticationChallengeProxy.get());
 }
 
 void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const ResourceResponse& redirectResponse)
 {
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().willSendRequest(*this, WTFMove(proposedRequest), redirectResponse, [this, protectedThis = makeRef(*this)](ResourceRequest&& newRequest) {
+    m_client->willSendRequest(*this, WTFMove(proposedRequest), redirectResponse, [this, protectedThis = makeRef(*this)](ResourceRequest&& newRequest) {
         m_redirectChain.append(newRequest.url());
         if (!protectedThis->m_dataStore)
             return;
@@ -146,26 +129,17 @@ void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const Res
 
 void DownloadProxy::didReceiveResponse(const ResourceResponse& response)
 {
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().didReceiveResponse(*this, response);
+    m_client->didReceiveResponse(*this, response);
 }
 
 void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
+    m_client->didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 void DownloadProxy::decideDestinationWithSuggestedFilename(const String& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
 {
-    if (!m_processPool)
-        return completionHandler({ }, { }, { });
-    
-    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
+    m_client->decideDestinationWithSuggestedFilename(*this, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
@@ -176,18 +150,12 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& suggest
 
 void DownloadProxy::didCreateDestination(const String& path)
 {
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().didCreateDestination(*this, path);
+    m_client->didCreateDestination(*this, path);
 }
 
 void DownloadProxy::didFinish()
 {
-    if (!m_processPool)
-        return;
-
-    m_processPool->downloadClient().didFinish(*this);
+    m_client->didFinish(*this);
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);
@@ -203,12 +171,9 @@ static RefPtr<API::Data> createData(const IPC::DataReference& data)
 
 void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
-    if (!m_processPool)
-        return;
-
     m_resumeData = createData(resumeData);
 
-    m_processPool->downloadClient().didFail(*this, error);
+    m_client->didFail(*this, error);
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);
@@ -218,7 +183,7 @@ void DownloadProxy::didCancel(const IPC::DataReference& resumeData)
 {
     m_resumeData = createData(resumeData);
 
-    m_processPool->downloadClient().didCancel(*this);
+    m_client->didCancel(*this);
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);

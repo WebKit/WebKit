@@ -28,7 +28,7 @@
 
 #import "AutomationClient.h"
 #import "CacheModel.h"
-#import "DownloadClient.h"
+#import "LegacyDownloadClient.h"
 #import "Logging.h"
 #import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
@@ -348,7 +348,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (void)_setDownloadDelegate:(id <_WKDownloadDelegate>)downloadDelegate
 {
     _downloadDelegate = downloadDelegate;
-    _processPool->setDownloadClient(makeUniqueRef<WebKit::DownloadClient>(downloadDelegate));
+    _processPool->setLegacyDownloadClient(adoptRef(*new WebKit::LegacyDownloadClient(downloadDelegate)));
 }
 
 - (id <_WKAutomationDelegate>)_automationDelegate
