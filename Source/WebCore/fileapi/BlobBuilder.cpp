@@ -71,7 +71,7 @@ void BlobBuilder::append(RefPtr<Blob>&& blob)
 
 void BlobBuilder::append(const String& text)
 {
-    auto bytes = UTF8Encoding().encode(text, UnencodableHandling::Entities);
+    auto bytes = UTF8Encoding().encode(text, UnencodableHandling::Entities, NFCNormalize::No);
 
     if (m_endings == EndingType::Native)
         bytes = normalizeLineEndingsToNative(WTFMove(bytes));
