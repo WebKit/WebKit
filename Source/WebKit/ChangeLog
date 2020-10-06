@@ -1,3 +1,14 @@
+2020-10-05  Sihui Liu  <sihui_liu@apple.com>
+
+        Break reference cycle with NSURLSessionDataTask in NetworkDataTaskCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=217347
+        <rdar://problem/69483575>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking):
+
 2020-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Use the "triggerRenderingUpdate" terminology in ChromeClient
