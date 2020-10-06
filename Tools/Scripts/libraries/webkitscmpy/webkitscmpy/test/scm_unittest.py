@@ -44,3 +44,23 @@ class TestScm(unittest.TestCase):
     def test_remote(self):
         with self.assertRaises(NotImplementedError):
             local.Scm(self.path).remote()
+
+    def test_dev_branches(self):
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('eng/1234'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('jbedard/eng/1234'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('dev/1234'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('jbedard/dev/1234'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('bug/1234'))
+        self.assertTrue(local.Scm.DEV_BRANCHES.match('jbedard/bug/1234'))
+
+        self.assertFalse(local.Scm.DEV_BRANCHES.match('main'))
+        self.assertFalse(local.Scm.DEV_BRANCHES.match('random/1234'))
+        self.assertFalse(local.Scm.DEV_BRANCHES.match('other/1234'))
+        self.assertFalse(local.Scm.DEV_BRANCHES.match('safari-606-branch'))
+
+    def test_prod_branches(self):
+        self.assertTrue(local.Scm.PROD_BRANCHES.match('safari-610-branch'))
+        self.assertTrue(local.Scm.PROD_BRANCHES.match('safari-610.1-branch'))
+
+        self.assertFalse(local.Scm.PROD_BRANCHES.match('main'))
+        self.assertFalse(local.Scm.PROD_BRANCHES.match('eng/1234'))

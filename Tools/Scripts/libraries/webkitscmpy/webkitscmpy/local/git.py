@@ -21,19 +21,24 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import re
+
 from webkitcorepy import run, decorators, TimeoutExpired
 from webkitscmpy.local import Scm
+from webkitscmpy import Commit, Contributor
 
 
 class Git(Scm):
     executable = '/usr/bin/git'
+    GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
+    GIT_SVN_REVISION = re.compile(r'git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+')
 
     @classmethod
     def is_checkout(cls, path):
         return run([cls.executable, 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path):
-        super(Git, self).__init__(path)
+    def __init__(self, path, dev_branches=None, prod_branches=None):
+        super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches)
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
@@ -100,11 +105,7 @@ class Git(Scm):
 
     @property
     def branches(self):
-        branch = run([self.executable, 'branch', '-a'], cwd=self.root_path, capture_output=True, encoding='utf-8')
-        if branch.returncode:
-            raise self.Exception('Failed to retrieve branch list for {}'.format(self.root_path))
-        result = [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
-        return ['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]
+        return self._branches_for()
 
     @property
     def tags(self):
@@ -118,3 +119,134 @@ class Git(Scm):
         if result.returncode:
             raise self.Exception('Failed to retrieve remote for {}'.format(self.root_path))
         return result.stdout.rstrip()
+
+    def _commit_count(self, native_parameter):
+        revision_count = run(
+            [self.executable, 'rev-list', '--count', '--no-merges', native_parameter],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if revision_count.returncode:
+            raise self.Exception('Failed to retrieve revision count for {}'.format(native_parameter))
+        return int(revision_count.stdout)
+
+    def _branches_for(self, hash=None):
+        branch = run(
+            [self.executable, 'branch', '-a'] + (['--contains', hash] if hash else []),
+            cwd=self.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        )
+        if branch.returncode:
+            raise self.Exception('Failed to retrieve branch list for {}'.format(self.root_path))
+        result = [branch.lstrip(' *') for branch in filter(lambda branch: '->' not in branch, branch.stdout.splitlines())]
+        return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
+
+    def commit(self, hash=None, revision=None, identifier=None, branch=None):
+        if revision and not self.is_svn:
+            raise self.Exception('This git checkout does not support SVN revisions')
+        elif revision:
+            revision = Commit._parse_revision(revision, do_assert=True)
+            revision_log = run(
+                [self.executable, 'svn', 'find-rev', 'r{}'.format(revision)],
+                cwd=self.root_path, capture_output=True, encoding='utf-8',
+                timeout=3,
+            )
+            if revision_log.returncode:
+                raise self.Exception("Failed to retrieve commit information for 'r{}'".format(revision))
+            hash = revision_log.stdout.rstrip()
+            if not hash:
+                raise self.Exception("Failed to find 'r{}'".format(revision))
+
+        default_branch = self.default_branch
+        parsed_branch_point = None
+
+        if identifier is not None:
+            if revision:
+                raise ValueError('Cannot define both revision and identifier')
+            if hash:
+                raise ValueError('Cannot define both hash and identifier')
+
+            parsed_branch_point, identifier, parsed_branch = Commit._parse_identifier(identifier, do_assert=True)
+            if parsed_branch:
+                if branch and branch != parsed_branch:
+                    raise ValueError(
+                        "Caller passed both 'branch' and 'identifier', but specified different branches ({} and {})".format(
+                            branch, parsed_branch,
+                        ),
+                    )
+                branch = parsed_branch
+
+            baseline = branch or 'HEAD'
+            is_default = baseline == default_branch
+            if baseline == 'HEAD':
+                is_default = default_branch in self._branches_for(baseline)
+
+            if is_default and parsed_branch_point:
+                raise self.Exception('Cannot provide a branch point for a commit on the default branch')
+
+            base_count = self._commit_count(baseline if is_default else '{}..{}'.format(default_branch, baseline))
+
+            if identifier > base_count:
+                raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
+            log = run(
+                [self.executable, 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier), '-1'],
+                cwd=self.root_path,
+                capture_output=True,
+                encoding='utf-8',
+            )
+            if log.returncode:
+                raise self.Exception("Failed to retrieve commit information for 'i{}@{}'".format(identifier, branch or 'HEAD'))
+
+            # Negative identifiers are actually commits on the default branch, we will need to re-compute the identifier
+            if identifier < 0 and is_default:
+                raise self.Exception('Illegal negative identifier on the default branch')
+            if identifier < 0:
+                identifier = None
+
+        elif branch:
+            if hash:
+                raise ValueError('Cannot define both branch and hash')
+            log = run([self.executable, 'log', branch, '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if log.returncode:
+                raise self.Exception("Failed to retrieve commit information for '{}'".format(branch))
+
+        else:
+            hash = Commit._parse_hash(hash, do_assert=True)
+            log = run([self.executable, 'log', hash or 'HEAD', '-1'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if log.returncode:
+                raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
+
+        match = self.GIT_COMMIT.match(log.stdout.splitlines()[0])
+        if not match:
+            raise self.Exception('Invalid commit hash in git log')
+        hash = match.group('hash')
+
+        branch = self.prioritize_branches(self._branches_for(hash))
+
+        if not identifier:
+            identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
+        branch_point = None if branch == default_branch else self._commit_count(hash)
+        if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
+            raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
+
+        if self.is_svn:
+            match = self.GIT_SVN_REVISION.match(log.stdout.splitlines()[-1].lstrip())
+            revision = int(match.group('revision')) if match else None
+
+        commit_time = run(
+            [self.executable, 'show', '-s', '--format=%ct', hash],
+            cwd=self.root_path, capture_output=True, encoding='utf-8',
+        )
+        if commit_time.returncode:
+            raise self.Exception('Failed to retrieve commit time for {}'.format(hash))
+
+        return Commit(
+            hash=hash,
+            revision=revision,
+            identifier=identifier,
+            branch_point=branch_point,
+            branch=branch,
+            timestamp=int(commit_time.stdout.lstrip()),
+            author=Contributor.from_scm_log(log.stdout.splitlines()[1]),
+            message='\n'.join(line[4:] for line in log.stdout.splitlines()[4:]),
+        )

@@ -38,7 +38,7 @@ def _maybe_add_webkitcorepy_path():
 _maybe_add_webkitcorepy_path()
 
 try:
-    from webkitcorepy.version import Version
+    from webkitcorepy import AutoInstall, Package, Version
 except ImportError:
     raise ImportError(
         "'webkitcorepy' could not be found on your Python path.\n" +
@@ -46,7 +46,9 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 0, 8)
+version = Version(0, 1, 0)
+
+AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit

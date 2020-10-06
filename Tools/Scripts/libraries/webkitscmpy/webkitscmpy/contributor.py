@@ -26,7 +26,7 @@ import re
 class Contributor(object):
     GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@]+@[^@]+)(@.*)?>')
     AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
-    SVN_AUTHOR_RE = re.compile(r'r\d+ \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines')
+    SVN_AUTHOR_RE = re.compile(r'r\d+ \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
 
     by_email = dict()

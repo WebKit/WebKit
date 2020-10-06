@@ -57,6 +57,13 @@ class TestContributor(unittest.TestCase):
         self.assertEqual(contributor.name, 'jbedard@apple.com')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
 
+    def test_short_svn_log(self):
+        Contributor.clear()
+        contributor = Contributor.from_scm_log('r266751 | jbedard@apple.com | 2020-09-08 14:33:42 -0700 (Tue, 08 Sep 2020) | 1 line')
+
+        self.assertEqual(contributor.name, 'jbedard@apple.com')
+        self.assertEqual(contributor.emails, ['jbedard@apple.com'])
+
     def test_svn_patch_by_log(self):
         Contributor.clear()
         contributor = Contributor.from_scm_log('Patch by Jonathan Bedard <jbedard@apple.com> on 2020-09-10')

@@ -88,12 +88,13 @@ class PopenBase(object):
                 string_utils.decode(self._completion.stderr, target_type=self._stderr_type))
             (self.stderr or sys.stderr).flush()
 
-        if self.returncode is not None and time.time() >= self._start_time + self._completion.elapsed:
-            self.returncode = self._completion.returncode
             if self.stdout:
                 self.stdout.seek(0)
             if self.stderr:
                 self.stderr.seek(0)
+
+        if self.returncode is not None and time.time() >= self._start_time + self._completion.elapsed:
+            self.returncode = self._completion.returncode
 
         return self.returncode
 

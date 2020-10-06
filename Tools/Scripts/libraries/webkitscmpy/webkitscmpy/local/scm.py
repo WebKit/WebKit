@@ -21,9 +21,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import logging
+import re
+import sys
+
+from logging import NullHandler
+from webkitscmpy import log
+
+
 class Scm(object):
     class Exception(RuntimeError):
         pass
+
+    # Projects can define for themselves what constitutes a development vs a production branch,
+    # the following idioms seem common enough to be shared.
+    DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
+    PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
 
     executable = None
 
@@ -37,10 +50,13 @@ class Scm(object):
             return local.Svn(path)
         raise OSError('{} is not a known SCM type')
 
-    def __init__(self, path):
+    def __init__(self, path, dev_branches=None, prod_branches=None):
         if not isinstance(path, str):
             raise ValueError('')
         self.path = path
+
+        self.dev_branches = dev_branches or self.DEV_BRANCHES
+        self.prod_branches = prod_branches or self.PROD_BRANCHES
 
     @property
     def is_svn(self):
@@ -72,3 +88,32 @@ class Scm(object):
 
     def remote(self, name=None):
         raise NotImplementedError()
+
+    def commit(self, hash=None, revision=None, identifier=None, branch=None):
+        raise NotImplementedError()
+
+    def prioritize_branches(self, branches):
+        if len(branches) == 1:
+            return branches[0]
+
+        default_branch = self.default_branch
+        if default_branch in branches:
+            return default_branch
+
+        # We don't have enough information to determine a branch. We will attempt to first use the branch specified
+        # by the caller, then the one then checkout is currently on. If both those fail, we will pick one of the
+        # other branches. We prefer production branches first, then any branch which isn't explicitly labeled a
+        # dev branch. We then sort the list of candidate branches and pick the smallest
+        filtered_candidates = [candidate for candidate in branches if self.prod_branches.match(candidate)]
+        if not filtered_candidates:
+            filtered_candidates = [candidate for candidate in branches if not self.dev_branches.match(candidate)]
+        if not filtered_candidates:
+            filtered_candidates = branches
+        return sorted(filtered_candidates)[0]
+
+    @classmethod
+    def log(cls, message, level=logging.WARNING):
+        if not log.handlers or all([isinstance(handle, NullHandler) for handle in log.handlers]):
+            sys.stderr.write(message + '\n')
+        else:
+            log.log(level, message)

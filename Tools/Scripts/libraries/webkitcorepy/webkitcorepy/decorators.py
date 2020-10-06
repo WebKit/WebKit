@@ -42,8 +42,9 @@ class Memoize(object):
             if 'cached' not in inspect.getargspec(function).args:
                 cached = kwargs.pop('cached', cached)
 
-            last_called = self._last_called[function].get(args, 0)
-            is_cached = args in self._cache[function]
+            keyargs = args + tuple(sorted([(key, value) for key, value in kwargs.items()]))
+            last_called = self._last_called[function].get(keyargs, 0)
+            is_cached = keyargs in self._cache[function]
             if not cached:
                 is_cached = False
             if timeout and timeout < time.time() - last_called:
@@ -52,8 +53,8 @@ class Memoize(object):
                 return self._cache[function].get(args, None)
 
             value = function(*args, **kwargs)
-            self._last_called[function][args] = time.time()
-            self._cache[function][args] = value
+            self._last_called[function][keyargs] = time.time()
+            self._cache[function][keyargs] = value
             return value
 
         decorator.clear = self.clear

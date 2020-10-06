@@ -106,4 +106,4 @@ class TestMemoize(unittest.TestCase):
         self.assertEqual(TestMemoize.increment_with_args(
             timeout='timeout-new',
             cached='cached-new',
-        ), ('timeout', 'cached'))
+        ), ('timeout-new', 'cached-new'))
