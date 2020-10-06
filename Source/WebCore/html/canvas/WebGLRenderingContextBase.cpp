@@ -40,6 +40,7 @@
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
+#include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
 #include "EventNames.h"
@@ -3714,6 +3715,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_extFragDepth, "EXT_frag_depth");
     CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
     CHECK_EXTENSION(m_extsRGB, "EXT_sRGB");
+    CHECK_EXTENSION(m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic");
     CHECK_EXTENSION(m_extShaderTextureLOD, "EXT_shader_texture_lod");
@@ -6730,6 +6732,26 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
         bytesRequired = checkedBytesRequired.unsafeGet();
         break;
     }
+    case ExtensionsGL::COMPRESSED_RED_RGTC1_EXT:
+    case ExtensionsGL::COMPRESSED_SIGNED_RED_RGTC1_EXT: {
+        const int kBlockSize = 8;
+        const int kBlockWidth = 4;
+        const int kBlockHeight = 4;
+        int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
+        int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
+        bytesRequired = numBlocksAcross * numBlocksDown * kBlockSize;
+        break;
+    }
+    case ExtensionsGL::COMPRESSED_RED_GREEN_RGTC2_EXT:
+    case ExtensionsGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT: {
+        const int kBlockSize = 16;
+        const int kBlockWidth = 4;
+        const int kBlockHeight = 4;
+        int numBlocksAcross = (width + kBlockWidth - 1) / kBlockWidth;
+        int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
+        bytesRequired = numBlocksAcross * numBlocksDown * kBlockSize;
+        break;
+    }
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid format");
         return false;
@@ -7784,6 +7806,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_extFragDepth);
     LOSE_EXTENSION(m_extBlendMinMax);
     LOSE_EXTENSION(m_extsRGB);
+    LOSE_EXTENSION(m_extTextureCompressionRGTC);
     LOSE_EXTENSION(m_extTextureFilterAnisotropic);
     LOSE_EXTENSION(m_extShaderTextureLOD);
     LOSE_EXTENSION(m_oesTextureFloat);

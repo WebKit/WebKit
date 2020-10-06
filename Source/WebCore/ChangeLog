@@ -1,3 +1,39 @@
+2020-10-06  James Darpinian  <jdarpinian@chromium.org>
+
+        Support EXT_texture_compression_rgtc WebGL extension
+        https://bugs.webkit.org/show_bug.cgi?id=217198
+
+        Reviewed by Kenneth Russell.
+
+        Test: webgl/conformance/extensions/ext-texture-compression-rgtc.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/EXTTextureCompressionRGTC.cpp: Added.
+        (WebCore::EXTTextureCompressionRGTC::EXTTextureCompressionRGTC):
+        (WebCore::EXTTextureCompressionRGTC::getName const):
+        * html/canvas/EXTTextureCompressionRGTC.h: Added.
+        * html/canvas/EXTTextureCompressionRGTC.idl: Added.
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContextBase::loseExtensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/ExtensionsGL.h:
+
 2020-10-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose lineRangeForPosition for iOS Accessibility code

@@ -1,3 +1,18 @@
+2020-10-06  James Darpinian  <jdarpinian@chromium.org>
+
+        Support EXT_texture_compression_rgtc WebGL extension
+        https://bugs.webkit.org/show_bug.cgi?id=217198
+
+        Reviewed by Kenneth Russell.
+
+        * webgl/conformance/extensions/ext-texture-compression-rgtc-expected.txt: Added.
+        * webgl/conformance/extensions/ext-texture-compression-rgtc.html: Added.
+        * webgl/conformance/extensions/s3tc-and-rgtc-expected.txt: Added.
+        * webgl/conformance/extensions/s3tc-and-rgtc.html: Added.
+        * webgl/resources/webgl_test_files/conformance/extensions/ext-texture-compression-rgtc.html: Added.
+        * webgl/resources/webgl_test_files/conformance/extensions/s3tc-and-rgtc.html: Added.
+        * webgl/resources/webgl_test_files/js/tests/compressed-texture-utils.js: Added.
+
 2020-10-06  Hector Lopez  <hector_i_lopez@apple.com>
 
         Adjust test expectation to include Release queue failure after change to iOS 14
