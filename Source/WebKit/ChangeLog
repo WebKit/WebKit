@@ -1,3 +1,19 @@
+2020-10-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r267915): Many layout tests are asserting under ~CompletionHandler()
+        https://bugs.webkit.org/show_bug.cgi?id=217345
+        <rdar://problem/69973775>
+
+        Reviewed by Tim Horton.
+
+        I did *not* intend to schedule an async task after every single image load in r267915. Apart from triggering
+        assertions on various tests, this also causes us to send excessive IPC messages to the UI process when loading
+        images, which can't be good for performance. Fix this by only calling into `computeAndSendEditDragSnapshot()`
+        when we've finished loading all dropped image elements.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didFinishLoadingImageForElement):
+
 2020-10-05  Brady Eidson  <beidson@apple.com>
 
         Change a PDF RELEASE_ASSERT to an early return.

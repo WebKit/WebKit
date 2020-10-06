@@ -1015,7 +1015,9 @@ void WebPage::didConcludeEditDrag()
 
 void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element)
 {
-    m_pendingImageElementsForDropSnapshot.remove(&element);
+    if (!m_pendingImageElementsForDropSnapshot.remove(&element))
+        return;
+
     bool shouldSendSnapshot = m_pendingImageElementsForDropSnapshot.isEmpty();
     m_page->dragController().finalizeDroppedImagePlaceholder(element, [protectedThis = makeRefPtr(this), shouldSendSnapshot] {
         if (shouldSendSnapshot)
