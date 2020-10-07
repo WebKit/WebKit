@@ -1,3 +1,16 @@
+2020-10-07  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [build-webkit] Compare with cmakeargs and unhandled to detect configuration change
+        https://bugs.webkit.org/show_bug.cgi?id=207012
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Added command line arguments on top of @featureArgs for comparison with previous build
+        options. This forces regeneration of CMakeCache.txt when any configuration is changed.
+
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache):
+
 2020-10-07  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Ensure that invalid step names are not allowed
