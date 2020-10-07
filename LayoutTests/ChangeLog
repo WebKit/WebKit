@@ -1,5 +1,33 @@
 2020-10-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267836. rdar://problem/70024631
+
+    http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html is flaky
+    https://bugs.webkit.org/show_bug.cgi?id=217171
+    <rdar://problem/65085139>
+    
+    Reviewed by Eric Carlson.
+    
+    * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html:
+    Setting the video currentTime too close to the end makes it render transparent frames.
+    Make it so that we try using the middle of the video content where we expect green content.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267836 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+            http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html is flaky
+            https://bugs.webkit.org/show_bug.cgi?id=217171
+            <rdar://problem/65085139>
+
+            Reviewed by Eric Carlson.
+
+            * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html:
+            Setting the video currentTime too close to the end makes it render transparent frames.
+            Make it so that we try using the middle of the video content where we expect green content.
+
+2020-10-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267833. rdar://problem/70024626
 
     MediaRecorder should support MediaRecorderOptions.mimeType
