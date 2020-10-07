@@ -244,7 +244,7 @@ struct WKAutoCorrectionData {
     WebCore::MouseEventPolicy _mouseEventPolicy;
 #endif
 
-#if ENABLE(PENCILKIT_TEXT_INPUT)
+#if HAVE(PENCILKIT_TEXT_INPUT)
     RetainPtr<UIIndirectScribbleInteraction> _scribbleInteraction;
 #endif
 

@@ -175,7 +175,7 @@ static NSString * const editableCursorRegionIdentifier = @"WKEditableCursorRegio
 @end
 #endif
 
-#if ENABLE(PENCILKIT_TEXT_INPUT)
+#if HAVE(PENCILKIT_TEXT_INPUT)
 @interface WKContentView (WKUIIndirectScribbleInteractionDelegate) <UIIndirectScribbleInteractionDelegate>
 @end
 #endif
@@ -831,7 +831,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpCursorInteraction];
 #endif
 
-#if ENABLE(PENCILKIT_TEXT_INPUT)
+#if HAVE(PENCILKIT_TEXT_INPUT)
     [self setUpScribbleInteraction];
 #endif
 
@@ -999,7 +999,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _cursorInteraction = nil;
 #endif
 
-#if ENABLE(PENCILKIT_TEXT_INPUT)
+#if HAVE(PENCILKIT_TEXT_INPUT)
     [self cleanUpScribbleInteraction];
 #endif
 
@@ -4833,7 +4833,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
 - (BOOL)_shouldSimulateKeyboardInputOnTextInsertion
 {
-#if ENABLE(PENCILKIT_TEXT_INPUT)
+#if HAVE(PENCILKIT_TEXT_INPUT)
     return [_scribbleInteraction isHandlingWriting];
 #else
     return NO;
@@ -8780,7 +8780,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 #endif // HAVE(UI_CURSOR_INTERACTION)
 
-#if ENABLE(PENCILKIT_TEXT_INPUT)
+#if HAVE(PENCILKIT_TEXT_INPUT)
 
 - (void)setUpScribbleInteraction
 {
@@ -8853,7 +8853,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         [self _didFinishTextInteractionInTextInputContext:textInputContext];
 }
 
-#endif // ENABLE(PENCILKIT_TEXT_INPUT)
+#endif // HAVE(PENCILKIT_TEXT_INPUT)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
