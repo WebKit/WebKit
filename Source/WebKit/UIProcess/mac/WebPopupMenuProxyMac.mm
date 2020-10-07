@@ -106,9 +106,15 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    if (NSDictionary *fontAttributes = static_cast<NSDictionary *>(data.fontInfo.fontAttributeDictionary.get()))
-        font = fontWithAttributes(fontAttributes, ((pageScaleFactor != 1) ? [fontAttributes[NSFontSizeAttribute] floatValue] * pageScaleFactor : 0));
-    else
+    if (NSDictionary *fontAttributes = static_cast<NSDictionary *>(data.fontInfo.fontAttributeDictionary.get())) {
+        auto scaledFontSize = [fontAttributes[NSFontSizeAttribute] floatValue] * pageScaleFactor;
+
+        font = fontWithAttributes(fontAttributes, ((pageScaleFactor != 1) ? scaledFontSize : 0));
+        // font will be nil when using a custom font. However, we should still
+        // honor the font size, matching other browsers.
+        if (!font)
+            font = [NSFont menuFontOfSize:scaledFontSize];
+    } else
         font = [NSFont menuFontOfSize:0];
     
     END_BLOCK_OBJC_EXCEPTIONS

@@ -1,3 +1,27 @@
+2020-10-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        zappos.com: Dropdown - 'Quantity' option size different
+        https://bugs.webkit.org/show_bug.cgi?id=217395
+        <rdar://problem/60261396>
+
+        Reviewed by Tim Horton.
+
+        The select element used in this instance uses a custom font (Open Sans)
+        with a 16px font size. When presenting the select dropdown a call to
+        WebPopupMenuProxyMac::showPopupMenu is made with those attributes.
+        However, since Open Sans is not a system font, the call to
+        [NSFont fontWithDescriptor:size:] returns nil. This results in the
+        presented view falling back to the default font size, which is smaller
+        than the expected 16px size, leading to smaller options.
+
+        While other browsers do not honor custom fonts in their select dropdowns,
+        they do honor the font size. Consequently, this dropdown appears
+        different in Safari. To fix, ensure that the font size is always honored
+        if the corresponding attribute is present.
+
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         Make sure to fire the correct set of events in case MediaRecorder stream has track changes
