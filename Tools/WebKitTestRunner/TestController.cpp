@@ -109,12 +109,6 @@ static constexpr auto pathSeparator = '\\';
 static constexpr auto pathSeparator = '/';
 #endif
 
-const unsigned TestController::viewWidth = 800;
-const unsigned TestController::viewHeight = 600;
-
-const unsigned TestController::w3cSVGViewWidth = 480;
-const unsigned TestController::w3cSVGViewHeight = 360;
-
 const WTF::Seconds TestController::defaultShortTimeout = 5_s;
 const WTF::Seconds TestController::noTimeout = -1_s;
 
@@ -469,15 +463,17 @@ void TestController::initialize(int argc, const char* argv[])
     m_shouldDumpPixelsForAllTests = options.shouldDumpPixelsForAllTests;
     m_forceComplexText = options.forceComplexText;
     m_shouldUseAcceleratedDrawing = options.shouldUseAcceleratedDrawing;
-    m_shouldUseRemoteLayerTree = options.shouldUseRemoteLayerTree;
     m_paths = options.paths;
     m_allowedHosts = options.allowedHosts;
-    m_shouldShowWebView = options.shouldShowWebView;
-    m_shouldShowTouches = options.shouldShowTouches;
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
-    m_internalFeatures = options.internalFeatures;
-    m_experimentalFeatures = options.experimentalFeatures;
+    
+    m_globalFeatures.internalDebugFeatures = options.internalFeatures;
+    m_globalFeatures.experimentalFeatures = options.experimentalFeatures;
+    m_globalFeatures.boolFeatures.insert({ "useRemoteLayerTree", options.shouldUseRemoteLayerTree });
+    m_globalFeatures.boolFeatures.insert({ "shouldShowWebView", options.shouldShowWebView });
+    m_globalFeatures.boolFeatures.insert({ "shouldShowTouches", options.shouldShowTouches });
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityIsolatedTreeMode = options.accessibilityIsolatedTreeMode;
 #endif
@@ -499,7 +495,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 }
 
-WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions::ContextOptions& options) const
+WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const ContextOptions& options) const
 {
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
@@ -562,10 +558,11 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
 
 WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(const TestOptions& options)
 {
-    if (!m_context || !m_contextOptions->hasSameInitializationOptions(options.contextOptions)) {
-        auto contextConfiguration = generateContextConfiguration(options.contextOptions);
+    auto contextOptions = options.contextOptions();
+    if (!m_context || !m_contextOptions->hasSameInitializationOptions(contextOptions)) {
+        auto contextConfiguration = generateContextConfiguration(contextOptions);
         m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get())).get(), contextConfiguration.get());
-        m_contextOptions = options.contextOptions;
+        m_contextOptions = contextOptions;
 
         m_geolocationProvider = makeUnique<GeolocationProviderMock>(m_context.get());
 
@@ -627,7 +624,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
     WKPageConfigurationSetPageGroup(pageConfiguration.get(), m_pageGroup.get());
     
-    if (options.useEphemeralSession) {
+    if (options.useEphemeralSession()) {
         auto ephemeralDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
         WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), ephemeralDataStore.get());
     }
@@ -639,11 +636,12 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
+    auto applicationBundleIdentifier = options.applicationBundleIdentifier();
 #if PLATFORM(COCOA)
-    if (!options.applicationBundleIdentifier.isEmpty()) {
+    if (!applicationBundleIdentifier.empty()) {
         // The bundle identifier can only be set once per test, and is cleared between tests.
         RELEASE_ASSERT(!m_hasSetApplicationBundleIdentifier);
-        setApplicationBundleIdentifier(options.applicationBundleIdentifier);
+        setApplicationBundleIdentifier(applicationBundleIdentifier);
         m_hasSetApplicationBundleIdentifier = true;
     }
 #endif
@@ -686,7 +684,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota,
-        options.shouldHandleRunOpenPanel ? runOpenPanel : 0,
+        options.shouldHandleRunOpenPanel() ? runOpenPanel : 0,
         decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight
         0, // footerHeight
@@ -795,9 +793,9 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     // something else for specific tests that need to run at a different window scale.
     m_mainWebView->changeWindowScaleIfNeeded(1);
     
-    if (!options.applicationBundleIdentifier.isEmpty()) {
+    if (!applicationBundleIdentifier.empty()) {
         reinitializeAppBoundDomains();
-        updateBundleIdentifierInNetworkProcess(options.applicationBundleIdentifier);
+        updateBundleIdentifierInNetworkProcess(applicationBundleIdentifier);
     }
 }
 
@@ -809,7 +807,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         // Having created another page (via window.open()) prevents process swapping on navigation and it may therefore
         // cause flakiness to reuse the view. We should also always make a new view if the test is marked as app-bound, because
         // the view configuration must change.
-        if (!m_createdOtherPage && m_mainWebView->viewSupportsOptions(options) && !options.isAppBoundWebView)
+        if (!m_createdOtherPage && m_mainWebView->viewSupportsOptions(options) && !options.isAppBoundWebView())
             return;
 
         willDestroyWebView();
@@ -836,8 +834,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesResetTestRunnerOverrides(preferences);
 
     WKPreferencesEnableAllExperimentalFeatures(preferences);
-    for (const auto& experimentalFeature : options.experimentalFeatures)
-        WKPreferencesSetExperimentalFeatureForKey(preferences, experimentalFeature.value, toWK(experimentalFeature.key).get());
+    for (const auto& [key, value] : options.experimentalFeatures())
+        WKPreferencesSetExperimentalFeatureForKey(preferences, value, toWK(key).get());
 
     WKPreferencesResetAllInternalDebugFeatures(preferences);
 
@@ -862,17 +860,17 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetInternalDebugFeatureForKey(preferences, true, toWK("InputTypeWeekEnabled").get());
 #endif
 
-    for (const auto& internalDebugFeature : options.internalDebugFeatures)
-        WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
+    for (const auto& [key, value]  : options.internalDebugFeatures())
+        WKPreferencesSetInternalDebugFeatureForKey(preferences, value, toWK(key).get());
 
 #if PLATFORM(COCOA)
-    WKPreferencesSetCaptureVideoInUIProcessEnabled(preferences, options.enableCaptureVideoInUIProcess);
-    WKPreferencesSetCaptureVideoInGPUProcessEnabled(preferences, options.enableCaptureVideoInGPUProcess);
-    WKPreferencesSetCaptureAudioInUIProcessEnabled(preferences, options.enableCaptureAudioInUIProcess);
-    WKPreferencesSetCaptureAudioInGPUProcessEnabled(preferences, options.enableCaptureAudioInGPUProcess);
+    WKPreferencesSetCaptureVideoInUIProcessEnabled(preferences, options.enableCaptureVideoInUIProcess());
+    WKPreferencesSetCaptureVideoInGPUProcessEnabled(preferences, options.enableCaptureVideoInGPUProcess());
+    WKPreferencesSetCaptureAudioInUIProcessEnabled(preferences, options.enableCaptureAudioInUIProcess());
+    WKPreferencesSetCaptureAudioInGPUProcessEnabled(preferences, options.enableCaptureAudioInGPUProcess());
 #endif
-    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions.shouldEnableProcessSwapOnNavigation());
-    WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, options.enableAppNap);
+    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions().shouldEnableProcessSwapOnNavigation());
+    WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, options.enableAppNap());
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(preferences, false);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
@@ -883,10 +881,10 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetJavaScriptRuntimeFlags(preferences, kWKJavaScriptRuntimeFlagsAllEnabled);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences, true);
-    WKPreferencesSetDOMPasteAllowed(preferences, options.domPasteAllowed);
+    WKPreferencesSetDOMPasteAllowed(preferences, options.domPasteAllowed());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
-    WKPreferencesSetTopNavigationToDataURLsAllowed(preferences, options.allowTopNavigationToDataURLs);
+    WKPreferencesSetTopNavigationToDataURLsAllowed(preferences, options.allowTopNavigationToDataURLs());
 #if ENABLE(FULLSCREEN_API)
     WKPreferencesSetFullScreenEnabled(preferences, true);
 #endif
@@ -899,18 +897,18 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
     WKPreferencesSetDialogElementEnabled(preferences, true);
 
-    WKPreferencesSetMockScrollbarsEnabled(preferences, options.useMockScrollbars);
-    WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks);
-    WKPreferencesSetAttachmentElementEnabled(preferences, options.enableAttachmentElement);
-    WKPreferencesSetMenuItemElementEnabled(preferences, options.enableMenuItemElement);
-    WKPreferencesSetKeygenElementEnabled(preferences, options.enableKeygenElement);
-    WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls);
-    WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);
-    WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled(preferences, options.enableWebAuthenticationLocalAuthenticator);
-    WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials);
-    WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter);
-    WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode);
-    WKPreferencesSetPageCacheEnabled(preferences, options.enableBackForwardCache);
+    WKPreferencesSetMockScrollbarsEnabled(preferences, options.useMockScrollbars());
+    WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks());
+    WKPreferencesSetAttachmentElementEnabled(preferences, options.enableAttachmentElement());
+    WKPreferencesSetMenuItemElementEnabled(preferences, options.enableMenuItemElement());
+    WKPreferencesSetKeygenElementEnabled(preferences, options.enableKeygenElement());
+    WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls());
+    WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication());
+    WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled(preferences, options.enableWebAuthenticationLocalAuthenticator());
+    WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials());
+    WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter());
+    WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode());
+    WKPreferencesSetPageCacheEnabled(preferences, options.enableBackForwardCache());
 
     WKPreferencesSetDefaultTextEncodingName(preferences, toWK("ISO-8859-1").get());
 
@@ -932,7 +930,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
 
-    WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing || options.useAcceleratedDrawing);
+    WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing || options.useAcceleratedDrawing());
     // FIXME: We should be testing the default.
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
@@ -953,7 +951,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     
     WKPreferencesSetLargeImageAsyncDecodingEnabled(preferences, false);
 
-    WKPreferencesSetInspectorAdditionsEnabled(preferences, options.enableInspectorAdditions);
+    WKPreferencesSetInspectorAdditionsEnabled(preferences, options.enableInspectorAdditions());
 
     WKPreferencesSetStorageAccessAPIEnabled(preferences, true);
     
@@ -972,7 +970,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetInternalDebugFeatureForKey(preferences, false, WKStringCreateWithUTF8CString("SpeakerSelectionRequiresUserGesture"));
 
-    WKPreferencesSetShouldUseServiceWorkerShortTimeout(preferences, options.contextOptions.useServiceWorkerShortTimeout);
+    WKPreferencesSetShouldUseServiceWorkerShortTimeout(preferences, options.useServiceWorkerShortTimeout());
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WKPreferencesSetIsAccessibilityIsolatedTreeEnabled(preferences, accessibilityIsolatedTreeMode());
@@ -1006,11 +1004,12 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setValue(resetMessageBody, "AccessibilityIsolatedTree", m_accessibilityIsolatedTreeMode);
 #endif
 
-    if (options.jscOptions.length())
-        setValue(resetMessageBody, "JSCOptions", options.jscOptions.c_str());
+    auto jscOptions = options.jscOptions();
+    if (!jscOptions.empty())
+        setValue(resetMessageBody, "JSCOptions", jscOptions.c_str());
 
 #if PLATFORM(COCOA)
-    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes.c_str());
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes().c_str());
 #endif
 
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
@@ -1118,7 +1117,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     setNavigationGesturesEnabled(false);
     
-    setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits);
+    setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits());
 
     m_openPanelFileURLs = nullptr;
 #if PLATFORM(IOS_FAMILY)
@@ -1318,7 +1317,7 @@ static std::string testPath(WKURLRef url)
     return std::string();
 }
 
-static WKURLRef createTestURL(const char* pathOrURL)
+WKURLRef TestController::createTestURL(const char* pathOrURL)
 {
     if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
         return WKURLCreateWithUTF8CString(pathOrURL);
@@ -1356,221 +1355,25 @@ static WKURLRef createTestURL(const char* pathOrURL)
     return WKURLCreateWithUTF8CString(buffer.get());
 }
 
-static bool parseBooleanTestHeaderValue(const std::string& value)
-{
-    if (value == "true")
-        return true;
-    if (value == "false")
-        return false;
-
-    LOG_ERROR("Found unexpected value '%s' for boolean option. Expected 'true' or 'false'.", value.c_str());
-    return false;
-}
-
-static std::string parseStringTestHeaderValueAsRelativePath(const std::string& value, const std::string& pathOrURL)
-{
-    auto baseURL = adoptWK(createTestURL(pathOrURL.c_str()));
-    auto relativeURL = adoptWK(WKURLCreateWithBaseURL(baseURL.get(), value.c_str()));
-    return toSTD(adoptWK(WKURLCopyPath(relativeURL.get())));
-}
-
-static std::string parseStringTestHeaderValueAsURL(const std::string& value)
-{
-    return toSTD(adoptWK(WKURLCopyString(createTestURL(value.c_str()))));
-}
-
-static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std::string& pathOrURL, const std::string& absolutePath)
-{
-    std::string filename = absolutePath;
-    if (filename.empty()) {
-        // Gross. Need to reduce conversions between all the string types and URLs.
-        filename = testPath(adoptWK(createTestURL(pathOrURL.c_str())).get());
-    }
-
-    if (filename.empty())
-        return;
-
-    std::string options;
-    std::ifstream testFile(filename.data());
-    if (!testFile.good())
-        return;
-    getline(testFile, options);
-    std::string beginString("webkit-test-runner [ ");
-    std::string endString(" ]");
-    size_t beginLocation = options.find(beginString);
-    if (beginLocation == std::string::npos)
-        return;
-    size_t endLocation = options.find(endString, beginLocation);
-    if (endLocation == std::string::npos) {
-        LOG_ERROR("Could not find end of test header in %s", filename.c_str());
-        return;
-    }
-    std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
-    size_t pairStart = 0;
-    while (pairStart < pairString.size()) {
-        size_t pairEnd = pairString.find(" ", pairStart);
-        if (pairEnd == std::string::npos)
-            pairEnd = pairString.size();
-        size_t equalsLocation = pairString.find("=", pairStart);
-        if (equalsLocation == std::string::npos) {
-            LOG_ERROR("Malformed option in test header (could not find '=' character) in %s", filename.c_str());
-            break;
-        }
-        auto key = pairString.substr(pairStart, equalsLocation - pairStart);
-        auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
-
-        if (!key.rfind("experimental:")) {
-            key = key.substr(13);
-            testOptions.experimentalFeatures.add(String(key.c_str()), parseBooleanTestHeaderValue(value));
-        }
-
-        if (!key.rfind("internal:")) {
-            key = key.substr(9);
-            testOptions.internalDebugFeatures.add(String(key.c_str()), parseBooleanTestHeaderValue(value));
-        }
-
-        if (key == "language")
-            testOptions.contextOptions.overrideLanguages = String(value.c_str()).split(',');
-        else if (key == "useThreadedScrolling")
-            testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
-        else if (key == "useAcceleratedDrawing")
-            testOptions.useAcceleratedDrawing = parseBooleanTestHeaderValue(value);
-        else if (key == "useFlexibleViewport")
-            testOptions.useFlexibleViewport = parseBooleanTestHeaderValue(value);
-        else if (key == "useDataDetection")
-            testOptions.useDataDetection = parseBooleanTestHeaderValue(value);
-        else if (key == "useMockScrollbars")
-            testOptions.useMockScrollbars = parseBooleanTestHeaderValue(value);
-        else if (key == "needsSiteSpecificQuirks")
-            testOptions.needsSiteSpecificQuirks = parseBooleanTestHeaderValue(value);
-        else if (key == "ignoresViewportScaleLimits")
-            testOptions.ignoresViewportScaleLimits = parseBooleanTestHeaderValue(value);
-        else if (key == "useCharacterSelectionGranularity")
-            testOptions.useCharacterSelectionGranularity = parseBooleanTestHeaderValue(value);
-        else if (key == "enableAttachmentElement")
-            testOptions.enableAttachmentElement = parseBooleanTestHeaderValue(value);
-        else if (key == "enableIntersectionObserver")
-            testOptions.enableIntersectionObserver = parseBooleanTestHeaderValue(value);
-        else if (key == "useEphemeralSession")
-            testOptions.useEphemeralSession = parseBooleanTestHeaderValue(value);
-        else if (key == "enableMenuItemElement")
-            testOptions.enableMenuItemElement = parseBooleanTestHeaderValue(value);
-        else if (key == "enableKeygenElement")
-            testOptions.enableKeygenElement = parseBooleanTestHeaderValue(value);
-        else if (key == "enableModernMediaControls")
-            testOptions.enableModernMediaControls = parseBooleanTestHeaderValue(value);
-        else if (key == "enablePointerLock")
-            testOptions.enablePointerLock = parseBooleanTestHeaderValue(value);
-        else if (key == "enableWebAuthentication")
-            testOptions.enableWebAuthentication = parseBooleanTestHeaderValue(value);
-        else if (key == "enableWebAuthenticationLocalAuthenticator")
-            testOptions.enableWebAuthenticationLocalAuthenticator = parseBooleanTestHeaderValue(value);
-        else if (key == "enableInspectorAdditions")
-            testOptions.enableInspectorAdditions = parseBooleanTestHeaderValue(value);
-        else if (key == "dumpJSConsoleLogInStdErr")
-            testOptions.dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
-        else if (key == "applicationManifest")
-            testOptions.applicationManifest = parseStringTestHeaderValueAsRelativePath(value, pathOrURL);
-        else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
-            testOptions.allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
-        else if (key == "domPasteAllowed")
-            testOptions.domPasteAllowed = parseBooleanTestHeaderValue(value);
-        else if (key == "enableProcessSwapOnNavigation")
-            testOptions.contextOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
-        else if (key == "enableProcessSwapOnWindowOpen")
-            testOptions.contextOptions.enableProcessSwapOnWindowOpen = parseBooleanTestHeaderValue(value);
-        else if (key == "useServiceWorkerShortTimeout")
-            testOptions.contextOptions.useServiceWorkerShortTimeout = parseBooleanTestHeaderValue(value);
-        else if (key == "enableColorFilter")
-            testOptions.enableColorFilter = parseBooleanTestHeaderValue(value);
-        else if (key == "punchOutWhiteBackgroundsInDarkMode")
-            testOptions.punchOutWhiteBackgroundsInDarkMode = parseBooleanTestHeaderValue(value);
-        else if (key == "jscOptions")
-            testOptions.jscOptions = value;
-        else if (key == "additionalSupportedImageTypes")
-            testOptions.additionalSupportedImageTypes = value;
-        else if (key == "runSingly")
-            testOptions.runSingly = parseBooleanTestHeaderValue(value);
-        else if (key == "shouldIgnoreMetaViewport")
-            testOptions.shouldIgnoreMetaViewport = parseBooleanTestHeaderValue(value);
-        else if (key == "spellCheckingDots")
-            testOptions.shouldShowSpellCheckingDots = parseBooleanTestHeaderValue(value);
-        else if (key == "enableServiceControls")
-            testOptions.enableServiceControls = parseBooleanTestHeaderValue(value);
-        else if (key == "editable")
-            testOptions.editable = parseBooleanTestHeaderValue(value);
-        else if (key == "shouldHandleRunOpenPanel")
-            testOptions.shouldHandleRunOpenPanel = parseBooleanTestHeaderValue(value);
-        else if (key == "shouldPresentPopovers")
-            testOptions.shouldPresentPopovers = parseBooleanTestHeaderValue(value);
-        else if (key == "contentInset.top")
-            testOptions.contentInsetTop = std::stod(value);
-        else if (key == "ignoreSynchronousMessagingTimeouts")
-            testOptions.contextOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
-        else if (key == "contentMode")
-            testOptions.contentMode = { value.c_str() };
-        else if (key == "applicationBundleIdentifier")
-            testOptions.applicationBundleIdentifier = { value.c_str() };
-        else if (key == "enableAppNap")
-            testOptions.enableAppNap = parseBooleanTestHeaderValue(value);
-        else if (key == "enableBackForwardCache")
-            testOptions.enableBackForwardCache = parseBooleanTestHeaderValue(value);
-        else if (key == "allowsLinkPreview")
-            testOptions.allowsLinkPreview = parseBooleanTestHeaderValue(value);
-        else if (key == "enableCaptureVideoInUIProcess")
-            testOptions.enableCaptureVideoInUIProcess = parseBooleanTestHeaderValue(value);
-        else if (key == "enableCaptureVideoInGPUProcess")
-            testOptions.enableCaptureVideoInGPUProcess = parseBooleanTestHeaderValue(value);
-        else if (key == "enableCaptureAudioInUIProcess")
-            testOptions.enableCaptureAudioInUIProcess = parseBooleanTestHeaderValue(value);
-        else if (key == "enableCaptureAudioInGPUProcess")
-            testOptions.enableCaptureAudioInGPUProcess = parseBooleanTestHeaderValue(value);
-        else if (key == "allowTopNavigationToDataURLs")
-            testOptions.allowTopNavigationToDataURLs = parseBooleanTestHeaderValue(value);
-        else if (key == "enableInAppBrowserPrivacy")
-            testOptions.enableInAppBrowserPrivacy = parseBooleanTestHeaderValue(value);
-        else if (key == "standaloneWebApplicationURL")
-            testOptions.standaloneWebApplicationURL = parseStringTestHeaderValueAsURL(value);
-        else if (key == "isAppBoundWebView")
-            testOptions.isAppBoundWebView = parseBooleanTestHeaderValue(value);
-        pairStart = pairEnd + 1;
-    }
-}
-
 TestOptions TestController::testOptionsForTest(const TestCommand& command) const
 {
-    TestOptions options(command.pathOrURL);
+    TestFeatures features = m_globalFeatures;
+    merge(features, hardcodedFeaturesBasedOnPathForTest(command));
+    merge(features, platformSpecificFeatureDefaultsForTest(command));
+    merge(features, featureDefaultsFromTestHeaderForTest(command));
+    merge(features, platformSpecificFeatureOverridesDefaultsForTest(command));
 
-    options.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
-    options.shouldShowWebView = m_shouldShowWebView;
-
-    for (auto& feature : m_internalFeatures)
-        options.internalDebugFeatures.add(feature.key, feature.value);
-    for (auto& feature : m_experimentalFeatures)
-        options.experimentalFeatures.add(feature.key, feature.value);
-
-    updatePlatformSpecificTestOptionsForTest(options, command.pathOrURL);
-    updateTestOptionsFromTestHeader(options, command.pathOrURL, command.absolutePath);
-    platformAddTestOptions(options);
-
-    return options;
+    return TestOptions { features };
 }
 
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
-    unsigned width = viewWidth;
-    unsigned height = viewHeight;
-    if (test.options().isSVGTest) {
-        width = w3cSVGViewWidth;
-        height = w3cSVGViewHeight;
-    }
-
-    mainWebView()->resizeTo(width, height);
+    mainWebView()->resizeTo(test.options().viewWidth(), test.options().viewHeight());
 }
 
 void TestController::updateWindowScaleForTest(PlatformWebView* view, const TestInvocation& test)
 {
-    view->changeWindowScaleIfNeeded(test.options().deviceScaleFactor);
+    view->changeWindowScaleIfNeeded(test.options().deviceScaleFactor());
 }
 
 void TestController::configureViewForTest(const TestInvocation& test)
@@ -1766,6 +1569,12 @@ static TestCommand parseInputLine(const std::string& inputLine)
         else
             die(inputLine);
     }
+    
+    if (result.absolutePath.empty()) {
+        // Gross. Need to reduce conversions between all the string types and URLs.
+        result.absolutePath = testPath(adoptWK(TestController::createTestURL(result.pathOrURL.c_str())).get());
+    }
+
     return result;
 }
 
@@ -1788,7 +1597,7 @@ bool TestController::runTest(const char* inputLine)
     if (command.timeout > 0_s)
         m_currentInvocation->setCustomTimeout(command.timeout);
 
-    m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr);
+    m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
 
     platformWillRunTest(*m_currentInvocation);
 
@@ -3003,7 +2812,7 @@ void TestController::platformWillRunTest(const TestInvocation&)
 
 void TestController::platformInitializeDataStore(WKPageConfigurationRef configuration, const TestOptions& options)
 {
-    if (!options.useEphemeralSession)
+    if (!options.useEphemeralSession())
         WKPageConfigurationSetWebsiteDataStore(configuration, defaultWebsiteDataStore());
 
     m_websiteDataStore = WKPageConfigurationGetWebsiteDataStore(configuration);
@@ -3818,7 +3627,7 @@ void TestController::reinitializeAppBoundDomains()
     WKWebsiteDataStoreReinitializeAppBoundDomains(TestController::websiteDataStore());
 }
 
-void TestController::updateBundleIdentifierInNetworkProcess(const String& bundleIdentifier)
+void TestController::updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier)
 {
     InAppBrowserPrivacyCallbackContext context(*this);
     WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(TestController::websiteDataStore(), toWK(bundleIdentifier).get(), &context, inAppBrowserPrivacyVoidResultCallback);
@@ -3833,8 +3642,9 @@ void TestController::clearBundleIdentifierInNetworkProcess()
 }
 
 #if !PLATFORM(COCOA)
-void TestController::platformAddTestOptions(TestOptions&) const
+TestFeatures TestController::platformSpecificFeatureOverridesDefaultsForTest(const TestCommand&) const
 {
+    return { };
 }
 
 void TestController::injectUserScript(WKStringRef)

@@ -189,7 +189,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     : m_windowIsKey(true)
     , m_options(options)
 {
-    CGRect rect = CGRectMake(0, 0, TestController::viewWidth, TestController::viewHeight);
+    CGRect rect = CGRectMake(0, 0, options.viewWidth(), options.viewHeight());
 
     m_window = [[WebKitTestRunnerWindow alloc] initWithFrame:rect];
     m_window.backgroundColor = [UIColor lightGrayColor];

@@ -32,6 +32,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -50,12 +51,12 @@ OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
 
-class TestInvocation;
+class EventSenderProxy;
 class OriginSettings;
 class PlatformWebView;
-class EventSenderProxy;
+class TestInvocation;
+class TestOptions;
 struct TestCommand;
-struct TestOptions;
 
 class AsyncTask {
 public:
@@ -91,11 +92,7 @@ public:
     static void configureWebsiteDataStoreTemporaryDirectories(WKWebsiteDataStoreConfigurationRef);
     static WKWebsiteDataStoreRef defaultWebsiteDataStore();
 
-    static const unsigned viewWidth;
-    static const unsigned viewHeight;
-
-    static const unsigned w3cSVGViewWidth;
-    static const unsigned w3cSVGViewHeight;
+    static WKURLRef createTestURL(const char* pathOrURL);
 
     static const WTF::Seconds defaultShortTimeout;
     static const WTF::Seconds noTimeout;
@@ -115,20 +112,15 @@ public:
     WKWebsiteDataStoreRef websiteDataStore();
 
     EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
-
-    bool shouldUseRemoteLayerTree() const { return m_shouldUseRemoteLayerTree; }
     
     // Runs the run loop until `done` is true or the timeout elapses.
     bool useWaitToDumpWatchdogTimer() { return m_useWaitToDumpWatchdogTimer; }
     void runUntil(bool& done, WTF::Seconds timeout);
     void notifyDone();
 
-    bool shouldShowWebView() const { return m_shouldShowWebView; }
     bool usingServerMode() const { return m_usingServerMode; }
     void configureViewForTest(const TestInvocation&);
-    
-    bool shouldShowTouches() const { return m_shouldShowTouches; }
-    
+
     bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }
     void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
 
@@ -275,7 +267,7 @@ public:
     void clearLoadedSubresourceDomains();
     void clearAppBoundSession();
     void reinitializeAppBoundDomains();
-    void updateBundleIdentifierInNetworkProcess(const String& bundleIdentifier);
+    void updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier);
     void clearBundleIdentifierInNetworkProcess();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
@@ -362,7 +354,7 @@ public:
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
-    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions::ContextOptions&) const;
+    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const ContextOptions&) const;
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(const TestOptions&);
     void run();
@@ -380,7 +372,6 @@ private:
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
-    void platformAddTestOptions(TestOptions&) const;
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
     void platformResetPreferencesToConsistentValues();
@@ -389,7 +380,7 @@ private:
 #if PLATFORM(COCOA)
     void cocoaPlatformInitialize();
     void cocoaResetStateToConsistentValues(const TestOptions&);
-    void setApplicationBundleIdentifier(const String&);
+    void setApplicationBundleIdentifier(const std::string&);
     void clearApplicationBundleIdentifierTestingOverride();
 #endif
     void platformConfigureViewForTest(const TestInvocation&);
@@ -403,7 +394,9 @@ private:
 
     void ensureViewSupportsOptionsForTest(const TestInvocation&);
     TestOptions testOptionsForTest(const TestCommand&) const;
-    void updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string& pathOrURL) const;
+    TestFeatures globalFeatureDefaultsForTest(const TestCommand&) const;
+    TestFeatures platformSpecificFeatureDefaultsForTest(const TestCommand&) const;
+    TestFeatures platformSpecificFeatureOverridesDefaultsForTest(const TestCommand&) const;
 
     void updateWebViewSizeForTest(const TestInvocation&);
     void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);
@@ -538,8 +531,10 @@ private:
     bool m_createdOtherPage { false };
     std::vector<std::string> m_paths;
     std::set<std::string> m_allowedHosts;
-    HashMap<String, bool> m_internalFeatures;
-    HashMap<String, bool> m_experimentalFeatures;
+    TestFeatures m_globalFeatures;
+
+    std::unordered_map<std::string, bool> m_internalFeatures;
+    std::unordered_map<std::string, bool> m_experimentalFeatures;
 
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
@@ -548,7 +543,7 @@ private:
 
     std::unique_ptr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
-    Optional<TestOptions::ContextOptions> m_contextOptions;
+    Optional<ContextOptions> m_contextOptions;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
     WKRetainPtr<WKUserContentControllerRef> m_userContentController;
 
@@ -605,14 +600,10 @@ private:
 
     bool m_forceComplexText { false };
     bool m_shouldUseAcceleratedDrawing { false };
-    bool m_shouldUseRemoteLayerTree { false };
-
+    
     bool m_shouldLogCanAuthenticateAgainstProtectionSpace { false };
     bool m_shouldLogDownloadCallbacks { false };
     bool m_shouldLogHistoryClientCallbacks { false };
-    bool m_shouldShowWebView { false };
-    
-    bool m_shouldShowTouches { false };
     bool m_checkForWorldLeaks { false };
 
     bool m_allowAnyHTTPSCertificateForAllowedHosts { false };

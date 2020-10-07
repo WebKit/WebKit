@@ -25,165 +25,176 @@
 
 #pragma once
 
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace WTR {
 
-struct TestOptions {
-    struct ContextOptions {
-        Vector<String> overrideLanguages;
-        bool ignoreSynchronousMessagingTimeouts { false };
-        bool enableProcessSwapOnNavigation { true };
-        bool enableProcessSwapOnWindowOpen { false };
-        bool useServiceWorkerShortTimeout { false };
+struct TestCommand;
 
-        bool hasSameInitializationOptions(const ContextOptions& options) const
-        {
-            if (ignoreSynchronousMessagingTimeouts != options.ignoreSynchronousMessagingTimeouts
-                || overrideLanguages != options.overrideLanguages
-                || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
-                || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
-                || useServiceWorkerShortTimeout != options.useServiceWorkerShortTimeout)
-                return false;
-            return true;
-        }
+struct TestFeatures {
+    std::unordered_map<std::string, bool> experimentalFeatures;
+    std::unordered_map<std::string, bool> internalDebugFeatures;
+    std::unordered_map<std::string, bool> boolFeatures;
+    std::unordered_map<std::string, double> doubleFeatures;
+    std::unordered_map<std::string, std::string> stringFeatures;
+    std::unordered_map<std::string, std::vector<std::string>> stringVectorFeatures;
+};
 
-        bool shouldEnableProcessSwapOnNavigation() const
-        {
-            return enableProcessSwapOnNavigation || enableProcessSwapOnWindowOpen;
-        }
-    };
+void merge(TestFeatures& base, TestFeatures additional);
 
-    bool useThreadedScrolling { false };
-    bool useAcceleratedDrawing { false };
-    bool useRemoteLayerTree { false };
-    bool shouldShowWebView { false };
-    bool useFlexibleViewport { false };
-    bool useFixedLayout { false };
-    bool isSVGTest { false };
-    bool useDataDetection { false };
-    bool useMockScrollbars { true };
-    bool needsSiteSpecificQuirks { false };
-    bool ignoresViewportScaleLimits { false };
-    bool useCharacterSelectionGranularity { false };
-    bool enableAttachmentElement { false };
-    bool enableIntersectionObserver { false };
-    bool useEphemeralSession { false };
-    bool enableMenuItemElement { false };
-    bool enableKeygenElement { false };
-    bool enableModernMediaControls { true };
-    bool enablePointerLock { false };
-    bool enableWebAuthentication { true };
-    bool enableWebAuthenticationLocalAuthenticator { true };
-    bool enableInspectorAdditions { false };
-    bool shouldShowTouches { false };
-    bool dumpJSConsoleLogInStdErr { false };
-    bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool domPasteAllowed { true };
-    bool enableColorFilter { false };
-    bool punchOutWhiteBackgroundsInDarkMode { false };
-    bool runSingly { false };
-    bool checkForWorldLeaks { false };
-    bool shouldIgnoreMetaViewport { false };
-    bool shouldShowSpellCheckingDots { false };
-    bool enableServiceControls { false };
-    bool editable { false };
-    bool shouldHandleRunOpenPanel { true };
-    bool shouldPresentPopovers { true };
-    bool enableAppNap { false };
-    bool enableBackForwardCache { false };
-    bool allowsLinkPreview { true };
-    bool enableCaptureVideoInUIProcess { false };
-    bool enableCaptureVideoInGPUProcess { false };
-    bool enableCaptureAudioInUIProcess { false };
-    bool enableCaptureAudioInGPUProcess { false };
-    bool allowTopNavigationToDataURLs { true };
-    bool enableInAppBrowserPrivacy { false };
-    bool isAppBoundWebView { false };
+TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand&);
+TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand&);
 
-    double contentInsetTop { 0 };
+struct ContextOptions {
+    std::vector<std::string> overrideLanguages;
+    bool ignoreSynchronousMessagingTimeouts;
+    bool enableProcessSwapOnNavigation;
+    bool enableProcessSwapOnWindowOpen;
+    bool useServiceWorkerShortTimeout;
 
-    float deviceScaleFactor { 1 };
-    std::string applicationManifest;
-    std::string jscOptions;
-    std::string additionalSupportedImageTypes;
-    std::string standaloneWebApplicationURL;
-    HashMap<String, bool> experimentalFeatures;
-    HashMap<String, bool> internalDebugFeatures;
-    String contentMode;
-    String applicationBundleIdentifier;
-    
-    ContextOptions contextOptions;
-
-    TestOptions(const std::string& pathOrURL);
-
-    // Add here options that can only be set upon PlatformWebView
-    // initialization and make sure it's up to date when adding new
-    // options to this struct. Otherwise, tests using those options
-    // might fail if WTR is reusing an existing PlatformWebView.
-    bool hasSameInitializationOptions(const TestOptions& options) const
+    bool hasSameInitializationOptions(const ContextOptions& options) const
     {
-        if (useThreadedScrolling != options.useThreadedScrolling
-            || useAcceleratedDrawing != options.useAcceleratedDrawing
-            || useMockScrollbars != options.useMockScrollbars
-            || needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
-            || useCharacterSelectionGranularity != options.useCharacterSelectionGranularity
-            || enableAttachmentElement != options.enableAttachmentElement
-            || enableIntersectionObserver != options.enableIntersectionObserver
-            || useEphemeralSession != options.useEphemeralSession
-            || enableMenuItemElement != options.enableMenuItemElement
-            || enableKeygenElement != options.enableKeygenElement
-            || enableModernMediaControls != options.enableModernMediaControls
-            || enablePointerLock != options.enablePointerLock
-            || enableWebAuthentication != options.enableWebAuthentication
-            || enableWebAuthenticationLocalAuthenticator != options.enableWebAuthenticationLocalAuthenticator
-            || enableInspectorAdditions != options.enableInspectorAdditions
-            || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
-            || applicationManifest != options.applicationManifest
-            || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
-            || domPasteAllowed != options.domPasteAllowed
-            || enableColorFilter != options.enableColorFilter
-            || punchOutWhiteBackgroundsInDarkMode != options.punchOutWhiteBackgroundsInDarkMode
-            || jscOptions != options.jscOptions
-            || additionalSupportedImageTypes != options.additionalSupportedImageTypes
-            || runSingly != options.runSingly
-            || checkForWorldLeaks != options.checkForWorldLeaks
-            || shouldShowSpellCheckingDots != options.shouldShowSpellCheckingDots
-            || enableServiceControls != options.enableServiceControls
-            || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport
-            || editable != options.editable
-            || shouldHandleRunOpenPanel != options.shouldHandleRunOpenPanel
-            || shouldPresentPopovers != options.shouldPresentPopovers
-            || contentInsetTop != options.contentInsetTop
-            || contentMode != options.contentMode
-            || applicationBundleIdentifier != options.applicationBundleIdentifier
-            || enableAppNap != options.enableAppNap
-            || enableBackForwardCache != options.enableBackForwardCache
-            || allowsLinkPreview != options.allowsLinkPreview
-            || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess
-            || enableCaptureVideoInGPUProcess != options.enableCaptureVideoInGPUProcess
-            || enableCaptureAudioInUIProcess != options.enableCaptureAudioInUIProcess
-            || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess
-            || allowTopNavigationToDataURLs != options.allowTopNavigationToDataURLs
-            || enableInAppBrowserPrivacy != options.enableInAppBrowserPrivacy
-            || standaloneWebApplicationURL != options.standaloneWebApplicationURL
-            || isAppBoundWebView != options.isAppBoundWebView)
+        if (ignoreSynchronousMessagingTimeouts != options.ignoreSynchronousMessagingTimeouts
+            || overrideLanguages != options.overrideLanguages
+            || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
+            || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
+            || useServiceWorkerShortTimeout != options.useServiceWorkerShortTimeout)
             return false;
-
-        if (!contextOptions.hasSameInitializationOptions(options.contextOptions))
-            return false;
-
-        if (experimentalFeatures != options.experimentalFeatures)
-            return false;
-
-        if (internalDebugFeatures != options.internalDebugFeatures)
-            return false;
-
         return true;
     }
+
+    bool shouldEnableProcessSwapOnNavigation() const
+    {
+        return enableProcessSwapOnNavigation || enableProcessSwapOnWindowOpen;
+    }
+};
+
+class TestOptions {
+public:
+    explicit TestOptions(TestFeatures);
+
+    ContextOptions contextOptions() const
+    {
+        return {
+            overrideLanguages(),
+            ignoreSynchronousMessagingTimeouts(),
+            enableProcessSwapOnNavigation(),
+            enableProcessSwapOnWindowOpen(),
+            useServiceWorkerShortTimeout()
+        };
+    }
+
+    bool useThreadedScrolling() const { return boolFeatureValue("useThreadedScrolling", false); }
+    bool useAcceleratedDrawing() const { return boolFeatureValue("useAcceleratedDrawing", false); }
+    bool useRemoteLayerTree() const { return boolFeatureValue("useRemoteLayerTree", false); }
+    bool shouldShowWebView() const { return boolFeatureValue("shouldShowWebView", false); }
+    bool useFlexibleViewport() const { return boolFeatureValue("useFlexibleViewport", false); }
+    bool useDataDetection() const { return boolFeatureValue("useDataDetection", false); }
+    bool useMockScrollbars() const { return boolFeatureValue("useMockScrollbars", true); }
+    bool needsSiteSpecificQuirks() const { return boolFeatureValue("needsSiteSpecificQuirks", false); }
+    bool ignoresViewportScaleLimits() const { return boolFeatureValue("ignoresViewportScaleLimits", false); }
+    bool useCharacterSelectionGranularity() const { return boolFeatureValue("useCharacterSelectionGranularity", false); }
+    bool enableAttachmentElement() const { return boolFeatureValue("enableAttachmentElement", false); }
+    bool enableIntersectionObserver() const { return boolFeatureValue("enableIntersectionObserver", false); }
+    bool useEphemeralSession() const { return boolFeatureValue("useEphemeralSession", false); }
+    bool enableMenuItemElement() const { return boolFeatureValue("enableMenuItemElement", false); }
+    bool enableKeygenElement() const { return boolFeatureValue("enableKeygenElement", false); }
+    bool enableModernMediaControls() const { return boolFeatureValue("enableModernMediaControls", true); }
+    bool enablePointerLock() const { return boolFeatureValue("enablePointerLock", false); }
+    bool enableWebAuthentication() const { return boolFeatureValue("enableWebAuthentication", true); }
+    bool enableWebAuthenticationLocalAuthenticator() const { return boolFeatureValue("enableWebAuthenticationLocalAuthenticator", true); }
+    bool enableInspectorAdditions() const { return boolFeatureValue("enableInspectorAdditions", false); }
+    bool shouldShowTouches() const { return boolFeatureValue("shouldShowTouches", false); }
+    bool dumpJSConsoleLogInStdErr() const { return boolFeatureValue("dumpJSConsoleLogInStdErr", false); }
+    bool allowCrossOriginSubresourcesToAskForCredentials() const { return boolFeatureValue("allowCrossOriginSubresourcesToAskForCredentials", false); }
+    bool domPasteAllowed() const { return boolFeatureValue("domPasteAllowed", true); }
+    bool enableColorFilter() const { return boolFeatureValue("enableColorFilter", false); }
+    bool punchOutWhiteBackgroundsInDarkMode() const { return boolFeatureValue("punchOutWhiteBackgroundsInDarkMode", false); }
+    bool runSingly() const { return boolFeatureValue("runSingly", false); }
+    bool checkForWorldLeaks() const { return boolFeatureValue("checkForWorldLeaks", false); }
+    bool shouldIgnoreMetaViewport() const { return boolFeatureValue("shouldIgnoreMetaViewport", false); }
+    bool shouldShowSpellCheckingDots() const { return boolFeatureValue("spellCheckingDots", false); }
+    bool enableServiceControls() const { return boolFeatureValue("enableServiceControls", false); }
+    bool editable() const { return boolFeatureValue("editable", false); }
+    bool shouldHandleRunOpenPanel() const { return boolFeatureValue("shouldHandleRunOpenPanel", true); }
+    bool shouldPresentPopovers() const { return boolFeatureValue("shouldPresentPopovers", true); }
+    bool enableAppNap() const { return boolFeatureValue("enableAppNap", false); }
+    bool enableBackForwardCache() const { return boolFeatureValue("enableBackForwardCache", false); }
+    bool allowsLinkPreview() const { return boolFeatureValue("allowsLinkPreview", true); }
+    bool enableCaptureVideoInUIProcess() const { return boolFeatureValue("enableCaptureVideoInUIProcess", false); }
+    bool enableCaptureVideoInGPUProcess() const { return boolFeatureValue("enableCaptureVideoInGPUProcess", false); }
+    bool enableCaptureAudioInUIProcess() const { return boolFeatureValue("enableCaptureAudioInUIProcess", false); }
+    bool enableCaptureAudioInGPUProcess() const { return boolFeatureValue("enableCaptureAudioInGPUProcess", false); }
+    bool allowTopNavigationToDataURLs() const { return boolFeatureValue("allowTopNavigationToDataURLs", true); }
+    bool enableInAppBrowserPrivacy() const { return boolFeatureValue("enableInAppBrowserPrivacy", false); }
+    bool isAppBoundWebView() const { return boolFeatureValue("isAppBoundWebView", false); }
+    bool ignoreSynchronousMessagingTimeouts() const { return boolFeatureValue("ignoreSynchronousMessagingTimeouts", false); }
+    bool enableProcessSwapOnNavigation() const { return boolFeatureValue("enableProcessSwapOnNavigation", true); }
+    bool enableProcessSwapOnWindowOpen() const { return boolFeatureValue("enableProcessSwapOnWindowOpen", false); }
+    bool useServiceWorkerShortTimeout() const { return boolFeatureValue("useServiceWorkerShortTimeout", false); }
+    double contentInsetTop() const { return doubleFeatureValue("contentInset.top", 0); }
+    double deviceScaleFactor() const { return doubleFeatureValue("deviceScaleFactor", 1); }
+    double viewWidth() const { return doubleFeatureValue("viewWidth", 800); }
+    double viewHeight() const { return doubleFeatureValue("viewHeight", 600); }
+    std::string applicationManifest() const { return stringFeatureValue("applicationManifest", { }); }
+    std::string jscOptions() const { return stringFeatureValue("jscOptions", { }); }
+    std::string additionalSupportedImageTypes() const { return stringFeatureValue("additionalSupportedImageTypes", { }); }
+    std::string standaloneWebApplicationURL() const { return stringFeatureValue("standaloneWebApplicationURL", { }); }
+    std::string contentMode() const { return stringFeatureValue("contentMode", { }); }
+    std::string applicationBundleIdentifier() const { return stringFeatureValue("applicationBundleIdentifier", { }); }
+    std::vector<std::string> overrideLanguages() const { return stringVectorFeatureValue("language", { }); }
+
+    const std::unordered_map<std::string, bool>& experimentalFeatures() const { return m_features.experimentalFeatures; }
+    const std::unordered_map<std::string, bool>& internalDebugFeatures() const { return m_features.internalDebugFeatures; }
+
+    bool hasSameInitializationOptions(const TestOptions& options) const
+    {
+        if (m_features.experimentalFeatures != options.m_features.experimentalFeatures)
+            return false;
+        if (m_features.internalDebugFeatures != options.m_features.internalDebugFeatures)
+            return false;
+        if (m_features.boolFeatures != options.m_features.boolFeatures)
+            return false;
+        if (m_features.doubleFeatures != options.m_features.doubleFeatures)
+            return false;
+        if (m_features.stringFeatures != options.m_features.stringFeatures)
+            return false;
+        if (m_features.stringVectorFeatures != options.m_features.stringVectorFeatures)
+            return false;
+        return true;
+    }
+
+private:
+    template<typename T>
+    T featureValue(std::string key, T defaultValue, const std::unordered_map<std::string, T>& map) const
+    {
+        auto it = map.find(key);
+        if (it != map.end())
+            return it->second;
+        return defaultValue;
+    }
+
+    bool boolFeatureValue(std::string key, bool defaultValue) const
+    {
+        return featureValue(key, defaultValue, m_features.boolFeatures);
+    }
+    double doubleFeatureValue(std::string key, double defaultValue) const
+    {
+        return featureValue(key, defaultValue, m_features.doubleFeatures);
+    }
+    std::string stringFeatureValue(std::string key, std::string defaultValue) const
+    {
+        return featureValue(key, defaultValue, m_features.stringFeatures);
+    }
+    std::vector<std::string> stringVectorFeatureValue(std::string key, std::vector<std::string> defaultValue) const
+    {
+        return featureValue(key, defaultValue, m_features.stringVectorFeatures);
+    }
+
+    TestFeatures m_features;
 };
 
 }

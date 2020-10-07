@@ -28,6 +28,7 @@
 #include "config.h"
 #include "Options.h"
 
+#include "StringFunctions.h"
 #include <string.h>
 
 namespace WTR {
@@ -113,16 +114,16 @@ static bool handleOptionAllowedHost(Options& options, const char*, const char* h
     return true;
 }
 
-static bool parseFeature(String featureString, HashMap<String, bool>& features)
+static bool parseFeature(std::string_view featureString, std::unordered_map<std::string, bool>& features)
 {
-    auto strings = featureString.split('=');
-    if (strings.isEmpty() || strings.size() > 2)
+    auto strings = split(featureString, '=');
+    if (strings.empty() || strings.size() > 2)
         return false;
 
     auto featureName = strings[0];
     bool enabled = strings.size() == 1 || strings[1] == "true";
 
-    features.set(featureName, enabled);
+    features.insert({ std::string { featureName }, enabled });
     return true;
 }
 
@@ -173,7 +174,12 @@ const char * OptionsHandler::usage = "Usage: WebKitTestRunner [options] filename
 const char * OptionsHandler::help = "Displays this help.";
 
 Option::Option(const char* name, const char* description, std::function<bool(Options&, const char*, const char*)> parameterHandler, bool hasArgument)
-    : name(name), description(description), parameterHandler(parameterHandler), hasArgument(hasArgument) { };
+    : name(name)
+    , description(description)
+    , parameterHandler(parameterHandler)
+    , hasArgument(hasArgument)
+{
+}
 
 bool Option::matches(const char* option)
 {
