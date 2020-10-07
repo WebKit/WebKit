@@ -116,9 +116,19 @@ String WebPage::platformUserAgent(const URL&) const
     return { };
 }
 
+bool WebPage::hoverSupportedByPrimaryPointingDevice() const
+{
+    return true;
+}
+
 bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 {
     return true;
+}
+
+Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
+{
+    return PointerCharacteristics::Fine;
 }
 
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const

@@ -506,9 +506,19 @@ KeyboardUIMode WebChromeClient::keyboardUIMode()
     return m_page.keyboardUIMode();
 }
 
+bool WebChromeClient::hoverSupportedByPrimaryPointingDevice() const
+{
+    return m_page.hoverSupportedByPrimaryPointingDevice();
+}
+
 bool WebChromeClient::hoverSupportedByAnyAvailablePointingDevice() const
 {
     return m_page.hoverSupportedByAnyAvailablePointingDevice();
+}
+
+Optional<PointerCharacteristics> WebChromeClient::pointerCharacteristicsOfPrimaryPointingDevice() const
+{
+    return m_page.pointerCharacteristicsOfPrimaryPointingDevice();
 }
 
 OptionSet<PointerCharacteristics> WebChromeClient::pointerCharacteristicsOfAllAvailablePointingDevices() const

@@ -1,3 +1,24 @@
+2020-10-06  Devin Rousso  <drousso@apple.com>
+
+        Move platform logic for CSS `hover` and `pointer` media queries outside of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=217413
+
+        Reviewed by Tim Horton.
+
+        No change in behavior, covered by existing tests.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::hoverEvaluate):
+        (WebCore::pointerEvaluate):
+
+        * page/ChromeClient.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebCore::EmptyChromeClient::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        Provide a way for WebCore to get information about the primary pointing device.
+        Refactor logic in `hoverEvaluate` and `pointerEvaluate` to move platform code into the
+        respective `WebKit::WebPage` file.
+
 2020-10-06  Sam Weinig  <weinig@apple.com>
 
         <input type="datetime-local"> not show calendar UI when it's inside ShadowDOM

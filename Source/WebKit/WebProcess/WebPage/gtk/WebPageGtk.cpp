@@ -131,6 +131,15 @@ String WebPage::platformUserAgent(const URL& url) const
     return WebCore::standardUserAgentForURL(url);
 }
 
+bool WebPage::hoverSupportedByPrimaryPointingDevice() const
+{
+#if ENABLE(TOUCH_EVENTS)
+    return !screenIsTouchPrimaryInputDevice();
+#else
+    return true;
+#endif
+}
+
 bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 {
 #if ENABLE(TOUCH_EVENTS)
@@ -138,6 +147,15 @@ bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 #else
     return true;
 #endif
+}
+
+Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (screenIsTouchPrimaryInputDevice())
+        return PointerCharacteristics::Coarse;
+#endif
+    return PointerCharacteristics::Fine;
 }
 
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const

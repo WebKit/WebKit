@@ -179,7 +179,9 @@ public:
     virtual void setStatusbarText(const String&) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
+    virtual bool hoverSupportedByPrimaryPointingDevice() const = 0;
     virtual bool hoverSupportedByAnyAvailablePointingDevice() const = 0;
+    virtual Optional<PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const = 0;
     virtual OptionSet<PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const = 0;
 
     virtual bool supportsImmediateInvalidation() { return false; }

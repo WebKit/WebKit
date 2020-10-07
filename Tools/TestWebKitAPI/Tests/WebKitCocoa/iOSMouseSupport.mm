@@ -320,22 +320,18 @@ TEST(iOSMouseSupport, MouseInitiallyDisconnected)
 
     [webView synchronouslyLoadHTMLString:@""];
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
-#endif
 
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: hover"]);
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
@@ -353,22 +349,18 @@ TEST(iOSMouseSupport, MouseInitiallyConnected)
 
     [webView synchronouslyLoadHTMLString:@""];
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: hover"]);
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
@@ -388,22 +380,18 @@ TEST(iOSMouseSupport, MouseLaterDisconnected)
 
     [mouseDeviceObserver _setHasMouseDeviceForTesting:NO];
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
-#endif
 
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: hover"]);
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
@@ -423,22 +411,18 @@ TEST(iOSMouseSupport, MouseLaterConnected)
 
     [mouseDeviceObserver _setHasMouseDeviceForTesting:YES];
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: hover"]);
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
@@ -456,22 +440,18 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 
     [webView synchronouslyLoadHTMLString:@""];
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover: hover"]);
 
-#if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
-#endif
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);

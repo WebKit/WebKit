@@ -112,7 +112,9 @@ private:
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
+    bool hoverSupportedByPrimaryPointingDevice() const final;
     bool hoverSupportedByAnyAvailablePointingDevice() const final;
+    Optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final;
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final;
 
     // HostWindow member function finals.

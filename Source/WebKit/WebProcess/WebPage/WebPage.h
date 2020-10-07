@@ -416,7 +416,9 @@ public:
     String platformUserAgent(const URL&) const;
     WebCore::KeyboardUIMode keyboardUIMode();
 
+    bool hoverSupportedByPrimaryPointingDevice() const;
     bool hoverSupportedByAnyAvailablePointingDevice() const;
+    Optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const;
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const;
 
     void didInsertMenuElement(WebCore::HTMLMenuElement&);

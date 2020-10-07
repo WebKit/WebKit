@@ -50,7 +50,9 @@ private:
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
 
+    bool hoverSupportedByPrimaryPointingDevice() const final { return false; }
     bool hoverSupportedByAnyAvailablePointingDevice() const final { return false; }
+    Optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final { return WebCore::PointerCharacteristics::Coarse; }
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final { return WebCore::PointerCharacteristics::Coarse; }
 
     void setCursor(const WebCore::Cursor&) final { }

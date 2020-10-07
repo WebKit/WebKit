@@ -1,3 +1,37 @@
+2020-10-06  Devin Rousso  <drousso@apple.com>
+
+        Move platform logic for CSS `hover` and `pointer` media queries outside of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=217413
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebChromeClient::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        * WebProcess/WebPage/playstation/WebPagePlayStation.cpp:
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const): Added.
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevices const): Added.
+        Provide a way for WebCore to get information about the primary pointing device.
+        Refactor logic in `WebCore::anyHoverEvaluate` and `WebCore::anyPointerEvaluate` to move
+        platform code into the respective `WebPage` file.
+
 2020-10-06  Chris Dumez  <cdumez@apple.com>
 
         Reloading a view in its processTerminationHandler does not work reliably when using related views

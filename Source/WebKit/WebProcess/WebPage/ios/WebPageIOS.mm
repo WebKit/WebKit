@@ -4000,9 +4000,19 @@ static bool hasMouseDevice()
 #endif
 }
 
+bool WebPage::hoverSupportedByPrimaryPointingDevice() const
+{
+    return false;
+}
+
 bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 {
     return hasMouseDevice();
+}
+
+Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
+{
+    return PointerCharacteristics::Coarse;
 }
 
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const

@@ -714,22 +714,16 @@ static bool videoPlayableInlineEvaluate(CSSValue*, const CSSToLengthConversionDa
     return frame.settings().allowsInlineMediaPlayback();
 }
 
-static bool hoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
+static bool hoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
-    if (!is<CSSPrimitiveValue>(value)) {
-#if ENABLE(TOUCH_EVENTS)
-        return !screenIsTouchPrimaryInputDevice();
-#else
-        return true;
-#endif
-    }
+    auto* page = frame.page();
+    bool hoverSupportedByPrimaryPointingDevice = page && page->chrome().client().hoverSupportedByPrimaryPointingDevice();
+
+    if (!is<CSSPrimitiveValue>(value))
+        return hoverSupportedByPrimaryPointingDevice;
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-#if ENABLE(TOUCH_EVENTS)
-    if (screenIsTouchPrimaryInputDevice())
-        return keyword == CSSValueNone;
-#endif
-    return keyword == CSSValueHover;
+    return hoverSupportedByPrimaryPointingDevice ? (keyword == CSSValueHover) : (keyword == CSSValueNone);
 }
 
 static bool anyHoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
@@ -746,19 +740,28 @@ static bool anyHoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, 
 
 static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
+    auto* page = frame.page();
+    auto pointerCharacteristicsOfPrimaryPointingDevice = page ? page->chrome().client().pointerCharacteristicsOfPrimaryPointingDevice() : Optional<PointerCharacteristics>();
+
+#if ENABLE(TOUCH_EVENTS)
+    if (pointerCharacteristicsOfPrimaryPointingDevice == PointerCharacteristics::Coarse) {
+        auto* document = frame.document();
+        if (document && document->quirks().shouldPreventPointerMediaQueryFromEvaluatingToCoarse())
+            pointerCharacteristicsOfPrimaryPointingDevice = PointerCharacteristics::Fine;
+    }
+#endif
+
     if (!is<CSSPrimitiveValue>(value))
-        return true;
+        return !!pointerCharacteristicsOfPrimaryPointingDevice;
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-#if ENABLE(TOUCH_EVENTS)
-    if (screenIsTouchPrimaryInputDevice()) {
-        if (!frame.document() || !frame.document()->quirks().shouldPreventPointerMediaQueryFromEvaluatingToCoarse())
-            return keyword == CSSValueCoarse;
-    }
-#else
-    UNUSED_PARAM(frame);
-#endif
-    return keyword == CSSValueFine;
+    if (keyword == CSSValueFine)
+        return pointerCharacteristicsOfPrimaryPointingDevice == PointerCharacteristics::Fine;
+    if (keyword == CSSValueCoarse)
+        return pointerCharacteristicsOfPrimaryPointingDevice == PointerCharacteristics::Coarse;
+    if (keyword == CSSValueNone)
+        return !pointerCharacteristicsOfPrimaryPointingDevice;
+    return false;
 }
 
 static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)

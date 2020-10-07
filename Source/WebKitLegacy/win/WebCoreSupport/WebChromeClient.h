@@ -94,7 +94,9 @@ public:
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
+    bool hoverSupportedByPrimaryPointingDevice() const final { return true; }
     bool hoverSupportedByAnyAvailablePointingDevice() const final { return true; }
+    Optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const final { return WebCore::PointerCharacteristics::Fine; }
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final { return WebCore::PointerCharacteristics::Fine; }
 
     void invalidateRootView(const WebCore::IntRect&) final;
