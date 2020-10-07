@@ -115,6 +115,8 @@ void AudioWorkletGlobalScope::prepareForTermination()
         defaultTaskGroup->stopAndDiscardAllTasks();
     stopActiveDOMObjects();
 
+    m_processorConstructorMap.clear();
+
     // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
     // which become dangling once Heap is destroyed.
     removeAllEventListeners();
