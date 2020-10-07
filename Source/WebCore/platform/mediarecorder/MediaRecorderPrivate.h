@@ -60,6 +60,7 @@ public:
     using FetchDataCallback = CompletionHandler<void(RefPtr<SharedBuffer>&&, const String& mimeType)>;
     virtual void fetchData(FetchDataCallback&&) = 0;
     virtual void stopRecording() = 0;
+    virtual const String& mimeType() const = 0;
 
     using ErrorCallback = CompletionHandler<void(Optional<Exception>&&)>;
     virtual void startRecording(ErrorCallback&& callback) { callback({ }); }

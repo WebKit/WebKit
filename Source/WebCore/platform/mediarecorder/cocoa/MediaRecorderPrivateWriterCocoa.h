@@ -75,6 +75,8 @@ public:
     void appendData(const char*, size_t);
     void appendData(Ref<SharedBuffer>&&);
 
+    const String& mimeType() const;
+
 private:
     MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
     void clear();
