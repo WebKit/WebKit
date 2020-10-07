@@ -1,3 +1,80 @@
+2020-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Support CanvasRenderingContext2D.drawImage() with HTMLVideoElement
+        https://bugs.webkit.org/show_bug.cgi?id=217339
+        <rdar://problem/69409029>
+
+        Reviewed by Darin Adler.
+
+        Implements support for painting the current video frame into a canvas 2D graphics context. See below for more
+        details.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::paintCurrentFrameInContext):
+
+        Flip this around to call `GraphicsContext::paintFrameForMedia` with the `MediaPlayer`, instead of calling into
+        `MediaPlayer` with the graphics context. See changes below.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::paintFrameForMedia):
+        * platform/graphics/GraphicsContext.h:
+
+        Add a `paintFrameForMedia` method that takes a `MediaPlayer` representing a video, and paints the current frame
+        of the video into the context. If the graphics context is backed by an platform context (i.e. `m_impl` is
+        `nullptr`), then we simply call through to `MediaPlayer`'s private impl to paint into the context. Otherwise, we
+        forward the call to the `GraphicsContextImpl` (see the changes to `DisplayListRecorder.cpp` below).
+
+        * platform/graphics/GraphicsContextImpl.h:
+
+        Add a new virtual function to paint the current frame of the given `MediaPlayer` into the destination rect.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::playerPrivate const):
+        (WebCore::MediaPlayer::playerPrivate):
+        (WebCore::MediaPlayer::paintCurrentFrameInContext): Deleted.
+        * platform/graphics/MediaPlayer.h:
+
+        Remove the existing `paintCurrentFrameInContext` method on `MediaPlayer`, which currently takes a graphics
+        context. Instead, move `paintCurrentFrameInContext` to `GraphicsContext`, rename it to `paintFrameForMedia`, and
+        pass it a `MediaPlayer`. Additionally, expose a helper method to get a non-const `MediaPlayerPrivateInterface`,
+        and move both method definitions to the implementation file to avoid style checker errors due to `MediaPlayer`
+        itself being `WEBCORE_EXPORT`-ed.
+
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::paintFrameForMedia):
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/displaylists/DisplayList.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::Item::sizeInBytes):
+        (WebCore::DisplayList::PaintFrameForMedia::create):
+        (WebCore::DisplayList::PaintFrameForMedia::PaintFrameForMedia):
+        (WebCore::DisplayList::PaintFrameForMedia::apply const):
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::PaintFrameForMedia::destination const):
+        (WebCore::DisplayList::PaintFrameForMedia::identifier const):
+        (WebCore::DisplayList::PaintFrameForMedia::encode const):
+        (WebCore::DisplayList::PaintFrameForMedia::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::paintFrameForMedia):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
+        Add a new display list item, `PaintFrameForMedia`, that paints the current frame of a given `MediaPlayer`. This
+        works by serializing and then deserializing a `MediaPlayerHandle` and destination rect; similar to
+        `PutImageData`, the replayer delegate is responsible for applying this item by mapping the `MediaPlayerHandle`
+        to a concrete `MediaPlayer` instance.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::paintFrameForMedia):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        (WebCore::GraphicsContextImplDirect2D::paintFrameForMedia):
+        * platform/graphics/win/GraphicsContextImplDirect2D.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+
 2020-10-07  Aditya Keerthi  <akeerthi@apple.com>
 
         [Contact Picker API] Add support for ContactsManager.getProperties()

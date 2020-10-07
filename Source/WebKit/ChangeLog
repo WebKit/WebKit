@@ -1,3 +1,28 @@
+2020-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Support CanvasRenderingContext2D.drawImage() with HTMLVideoElement
+        https://bugs.webkit.org/show_bug.cgi?id=217339
+        <rdar://problem/69409029>
+
+        Reviewed by Darin Adler.
+
+        Implements support for painting the current video frame into a canvas 2D graphics context. See below (and
+        Source/WebCore/ChangeLog) for more details.
+
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.h:
+        (WebKit::RemoteImageBufferMessageHandlerProxy::backend):
+        * GPUProcess/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::apply):
+
+        Refactor `apply` so that it treats `PutImageData` and `PaintFrameForMedia` as special cases, and otherwise
+        returns `false` by default. Implement `apply` in the case where the display list item is `PaintFrameForMedia` by
+        using the `MediaPlayerIdentifier` to look up the platform `MediaPlayer` instance, and then calling
+        `GraphicsContext::paintFrameForMedia` with this `MediaPlayer`.
+
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::gpuConnectionToWebProcess const):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h:
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         Add support for BlobEvent.timecode

@@ -92,6 +92,7 @@ class GraphicsContextImpl;
 class GraphicsContextPlatformPrivate;
 class ImageBuffer;
 class IntRect;
+class MediaPlayer;
 class RoundedRect;
 class GraphicsContextGLOpenGL;
 class Path;
@@ -515,6 +516,8 @@ public:
 
     void setContentfulPaintDetected() { m_contenfulPaintDetected = true; }
     bool contenfulPaintDetected() const { return m_contenfulPaintDetected; }
+
+    WEBCORE_EXPORT void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);
 
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend); // The passed in rect is used to create a bitmap for compositing inside transparency layers.

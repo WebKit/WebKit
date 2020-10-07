@@ -121,6 +121,11 @@ void RemoteRenderingBackendProxy::flushImageBufferDrawingContextAndCommit(const 
         imageBuffer->flushDrawingContextAndCommit(displayList, flushIdentifier);
 }
 
+GPUConnectionToWebProcess* RemoteRenderingBackendProxy::gpuConnectionToWebProcess() const
+{
+    return m_gpuConnectionToWebProcess.get();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

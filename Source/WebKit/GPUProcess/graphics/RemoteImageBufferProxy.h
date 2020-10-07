@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteImageBufferMessageHandlerProxy.h"
 #include <WebCore/ConcreteImageBuffer.h>
 #include <WebCore/DisplayListReplayer.h>
@@ -84,14 +85,37 @@ private:
         return BaseConcreteImageBuffer::getImageData(outputFormat, srcRect);
     }
 
-    bool apply(WebCore::DisplayList::Item& item, WebCore::GraphicsContext&) override
+    bool apply(WebCore::DisplayList::Item& item, WebCore::GraphicsContext& context) override
     {
-        if (item.type() != WebCore::DisplayList::ItemType::PutImageData)
-            return false;
+        if (item.type() == WebCore::DisplayList::ItemType::PutImageData) {
+            auto& putImageDataItem = static_cast<WebCore::DisplayList::PutImageData&>(item);
+            putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint(), putImageDataItem.destFormat());
+            return true;
+        }
 
-        auto& putImageDataItem = static_cast<WebCore::DisplayList::PutImageData&>(item);
-        putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint(), putImageDataItem.destFormat());
-        return true;
+        if (item.type() == WebCore::DisplayList::ItemType::PaintFrameForMedia) {
+            apply(static_cast<WebCore::DisplayList::PaintFrameForMedia&>(item), context);
+            return true;
+        }
+
+        return false;
+    }
+
+    void apply(WebCore::DisplayList::PaintFrameForMedia& item, WebCore::GraphicsContext& context)
+    {
+        auto process = backend().gpuConnectionToWebProcess();
+        if (!process)
+            return;
+
+        auto playerProxy = process->remoteMediaPlayerManagerProxy().getProxy(item.identifier());
+        if (!playerProxy)
+            return;
+
+        auto player = playerProxy->mediaPlayer();
+        if (!player)
+            return;
+
+        context.paintFrameForMedia(*player, item.destination());
     }
 };
 

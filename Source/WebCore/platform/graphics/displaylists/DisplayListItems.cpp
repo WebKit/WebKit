@@ -29,6 +29,7 @@
 #include "DisplayListReplayer.h"
 #include "FontCascade.h"
 #include "ImageData.h"
+#include "MediaPlayer.h"
 #include "SharedBuffer.h"
 #include <wtf/text/TextStream.h>
 
@@ -145,6 +146,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<FillEllipse>(item));
     case ItemType::PutImageData:
         return sizeof(downcast<PutImageData>(item));
+    case ItemType::PaintFrameForMedia:
+        return sizeof(downcast<PaintFrameForMedia>(item));
     case ItemType::StrokeRect:
         return sizeof(downcast<StrokeRect>(item));
     case ItemType::StrokePath:
@@ -1218,6 +1221,45 @@ static TextStream& operator<<(TextStream& ts, const PutImageData& item)
     return ts;
 }
 
+Ref<PaintFrameForMedia> PaintFrameForMedia::create(MediaPlayer& player, const FloatRect& destination)
+{
+    return adoptRef(*new PaintFrameForMedia(player, destination));
+}
+
+Ref<PaintFrameForMedia> PaintFrameForMedia::create(MediaPlayerIdentifier identifier, const FloatRect& destination)
+{
+    return adoptRef(*new PaintFrameForMedia(identifier, destination));
+}
+
+PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+    : DrawingItem(ItemType::PaintFrameForMedia)
+    , m_identifier(player.identifier())
+    , m_destination(destination)
+{
+}
+
+PaintFrameForMedia::PaintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
+    : DrawingItem(ItemType::PaintFrameForMedia)
+    , m_identifier(identifier)
+    , m_destination(destination)
+{
+}
+
+PaintFrameForMedia::~PaintFrameForMedia() = default;
+
+void PaintFrameForMedia::apply(GraphicsContext&) const
+{
+    // Should be handled by the delegate.
+    ASSERT_NOT_REACHED();
+}
+
+static TextStream& operator<<(TextStream& ts, const PaintFrameForMedia& item)
+{
+    ts << static_cast<const DrawingItem&>(item);
+    ts.dumpProperty("destination", item.destination());
+    return ts;
+}
+
 StrokeRect::StrokeRect(const FloatRect& rect, float lineWidth)
     : DrawingItem(ItemType::StrokeRect)
     , m_rect(rect)
@@ -1448,6 +1490,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
+    case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
@@ -1586,6 +1629,9 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::PutImageData:
         ts << downcast<PutImageData>(item);
+        break;
+    case ItemType::PaintFrameForMedia:
+        ts << downcast<PaintFrameForMedia>(item);
         break;
     case ItemType::StrokeRect:
         ts << downcast<StrokeRect>(item);

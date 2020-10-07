@@ -33,6 +33,7 @@
 #include "Gradient.h"
 #include "Image.h"
 #include "ImageData.h"
+#include "MediaPlayerIdentifier.h"
 #include "Pattern.h"
 #include "SharedBuffer.h"
 #include <wtf/TypeCasts.h>
@@ -44,6 +45,7 @@ class TextStream;
 namespace WebCore {
 
 class ImageData;
+class MediaPlayer;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
@@ -2582,6 +2584,53 @@ Optional<Ref<PutImageData>> PutImageData::decode(Decoder& decoder)
     return PutImageData::create(*inputFormat, WTFMove(*imageData), *srcRect, *destPoint, *destFormat);
 }
 
+class PaintFrameForMedia : public DrawingItem {
+public:
+    static Ref<PaintFrameForMedia> create(MediaPlayer&, const FloatRect& destination);
+
+    WEBCORE_EXPORT virtual ~PaintFrameForMedia();
+
+    const FloatRect& destination() const { return m_destination; }
+    MediaPlayerIdentifier identifier() const { return m_identifier; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<PaintFrameForMedia>> decode(Decoder&);
+
+private:
+    WEBCORE_EXPORT static Ref<PaintFrameForMedia> create(MediaPlayerIdentifier, const FloatRect& destination);
+
+    PaintFrameForMedia(MediaPlayer&, const FloatRect& destination);
+    PaintFrameForMedia(MediaPlayerIdentifier, const FloatRect& destination);
+
+    void apply(GraphicsContext&) const override;
+
+    MediaPlayerIdentifier m_identifier;
+    FloatRect m_destination;
+};
+
+template<class Encoder>
+void PaintFrameForMedia::encode(Encoder& encoder) const
+{
+    encoder << m_identifier;
+    encoder << m_destination;
+}
+
+template<class Decoder>
+Optional<Ref<PaintFrameForMedia>> PaintFrameForMedia::decode(Decoder& decoder)
+{
+    Optional<MediaPlayerIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return WTF::nullopt;
+
+    Optional<FloatRect> destination;
+    decoder >> destination;
+    if (!destination)
+        return WTF::nullopt;
+
+    return PaintFrameForMedia::create(*identifier, *destination);
+}
+
 class StrokeRect : public DrawingItem {
 public:
     static Ref<StrokeRect> create(const FloatRect& rect, float lineWidth)
@@ -2983,6 +3032,9 @@ void Item::encode(Encoder& encoder) const
     case ItemType::PutImageData:
         encoder << downcast<PutImageData>(*this);
         break;
+    case ItemType::PaintFrameForMedia:
+        encoder << downcast<PaintFrameForMedia>(*this);
+        break;
     case ItemType::StrokeRect:
         encoder << downcast<StrokeRect>(*this);
         break;
@@ -3190,6 +3242,10 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = PutImageData::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
+    case ItemType::PaintFrameForMedia:
+        if (auto item = PaintFrameForMedia::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
     case ItemType::StrokeRect:
         if (auto item = StrokeRect::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
@@ -3291,6 +3347,7 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillRectWithRoundedHole)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillEllipse)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(PutImageData)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(PaintFrameForMedia)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokePath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeEllipse)
@@ -3352,6 +3409,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
     WebCore::DisplayList::ItemType::PutImageData,
+    WebCore::DisplayList::ItemType::PaintFrameForMedia,
     WebCore::DisplayList::ItemType::StrokeRect,
     WebCore::DisplayList::ItemType::StrokePath,
     WebCore::DisplayList::ItemType::StrokeEllipse,

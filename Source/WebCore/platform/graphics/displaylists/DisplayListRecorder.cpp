@@ -389,6 +389,11 @@ void Recorder::clipToDrawingCommands(const FloatRect& destination, ColorSpace co
     appendItem(ClipToDrawingCommands::create(destination, colorSpace, recordingContext->takeDisplayList()));
 }
 
+void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+{
+    appendItem(PaintFrameForMedia::create(player, destination));
+}
+
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.

@@ -432,6 +432,11 @@ void GraphicsContextImplCairo::clipToDrawingCommands(const FloatRect&, ColorSpac
     // FIXME: Not implemented.
 }
 
+void GraphicsContextImplCairo::paintFrameForMedia(MediaPlayer&, const FloatRect&)
+{
+    // FIXME: Not implemented.
+}
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)

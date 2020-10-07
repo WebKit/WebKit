@@ -59,6 +59,8 @@ protected:
     void createBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
     void commitFlushContext(ImageBufferFlushIdentifier);
 
+    RemoteRenderingBackendProxy& backend() { return m_remoteRenderingBackendProxy; }
+
 private:
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
     ImageBufferIdentifier m_imageBufferIdentifier;

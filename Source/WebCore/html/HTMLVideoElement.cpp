@@ -297,7 +297,7 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, cons
         return;
     
     player->setVisible(true); // Make player visible or it won't draw.
-    player->paintCurrentFrameInContext(context, destRect);
+    context.paintFrameForMedia(*player, destRect);
 }
 
 bool HTMLVideoElement::copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL* context, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)

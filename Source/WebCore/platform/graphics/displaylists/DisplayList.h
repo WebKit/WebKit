@@ -83,6 +83,7 @@ enum class ItemType : uint8_t {
     FillPath,
     FillEllipse,
     PutImageData,
+    PaintFrameForMedia,
     StrokeRect,
     StrokePath,
     StrokeEllipse,

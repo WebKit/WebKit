@@ -60,6 +60,7 @@ public:
     virtual ~RemoteRenderingBackendProxy();
 
     RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
+    GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
 
 private:
     RemoteRenderingBackendProxy(GPUConnectionToWebProcess&, RenderingBackendIdentifier);

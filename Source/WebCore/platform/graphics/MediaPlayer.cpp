@@ -31,6 +31,7 @@
 #include "ContentType.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "GraphicsContext.h"
 #include "IntRect.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -302,6 +303,16 @@ static const AtomString& textPlain()
 {
     static MainThreadNeverDestroyed<const AtomString> textPlain("text/plain", AtomString::ConstructFromLiteral);
     return textPlain;
+}
+
+const MediaPlayerPrivateInterface* MediaPlayer::playerPrivate() const
+{
+    return m_private.get();
+}
+
+MediaPlayerPrivateInterface* MediaPlayer::playerPrivate()
+{
+    return m_private.get();
 }
 
 const MediaPlayerFactory* MediaPlayer::mediaEngine(MediaPlayerEnums::MediaEngineIdentifier identifier)
@@ -965,11 +976,6 @@ void MediaPlayer::setPreload(MediaPlayer::Preload preload)
 void MediaPlayer::paint(GraphicsContext& p, const FloatRect& r)
 {
     m_private->paint(p, r);
-}
-
-void MediaPlayer::paintCurrentFrameInContext(GraphicsContext& p, const FloatRect& r)
-{
-    m_private->paintCurrentFrameInContext(p, r);
 }
 
 bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL* context, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)

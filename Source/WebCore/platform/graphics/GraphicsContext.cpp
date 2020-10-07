@@ -33,6 +33,8 @@
 #include "GraphicsContextImpl.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
+#include "MediaPlayer.h"
+#include "MediaPlayerPrivate.h"
 #include "RoundedRect.h"
 #include "TextRun.h"
 #include <wtf/text/TextStream.h>
@@ -1239,6 +1241,7 @@ Vector<FloatPoint> GraphicsContext::centerLineAndCutOffCorners(bool isVerticalLi
 }
 
 #if !USE(CG)
+
 bool GraphicsContext::supportsInternalLinks() const
 {
     return false;
@@ -1251,6 +1254,20 @@ void GraphicsContext::setDestinationForRect(const String&, const FloatRect&)
 void GraphicsContext::addDestinationAtPoint(const String&, const FloatPoint&)
 {
 }
+
 #endif
+
+void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+{
+    if (paintingDisabled())
+        return;
+
+    if (m_impl && m_impl->canPaintFrameForMedia()) {
+        m_impl->paintFrameForMedia(player, destination);
+        return;
+    }
+
+    player.playerPrivate()->paintCurrentFrameInContext(*this, destination);
+}
 
 }

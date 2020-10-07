@@ -226,7 +226,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         paintIntoRect(paintInfo, rect);
     else if (!videoElement().isFullscreen() || !mediaPlayer->supportsAcceleratedRendering()) {
         if (paintInfo.paintBehavior.contains(PaintBehavior::FlattenCompositingLayers))
-            mediaPlayer->paintCurrentFrameInContext(context, rect);
+            context.paintFrameForMedia(*mediaPlayer, rect);
         else
             mediaPlayer->paint(context, rect);
     }

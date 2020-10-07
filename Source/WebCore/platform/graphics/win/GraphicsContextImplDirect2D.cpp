@@ -441,6 +441,11 @@ void GraphicsContextImplDirect2D::clipToDrawingCommands(const FloatRect&, ColorS
     // FIXME: Not implemented.
 }
 
+void GraphicsContextImplDirect2D::paintFrameForMedia(MediaPlayer&, const FloatRect&)
+{
+    // FIXME: Not implemented.
+}
+
 } // namespace WebCore
 
 #endif // USE(DIRECT2D)

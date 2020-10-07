@@ -422,7 +422,6 @@ public:
     void setClosedCaptionsVisible(bool closedCaptionsVisible);
 
     void paint(GraphicsContext&, const FloatRect&);
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
     // copyVideoTextureToPlatformTexture() is used to do the GPU-GPU textures copy without a readback to system memory.
     // The first five parameters denote the corresponding GraphicsContext, destination texture, requested level, requested type and the required internalFormat for destination texture.
@@ -630,7 +629,8 @@ public:
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }
 #endif
 
-    const MediaPlayerPrivateInterface* playerPrivate() const { return m_private.get(); }
+    const MediaPlayerPrivateInterface* playerPrivate() const;
+    MediaPlayerPrivateInterface* playerPrivate();
 
     DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
     void setPreferredDynamicRangeMode(DynamicRangeMode);
