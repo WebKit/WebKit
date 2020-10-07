@@ -1,5 +1,47 @@
 2020-10-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267822. rdar://problem/70024621
+
+    MediaRecorder should allow setting low bit rates for audio
+    https://bugs.webkit.org/show_bug.cgi?id=216688
+    <rdar://problem/69129142>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    When setting the bitrate provided by the web app fails, we now use default bit rate values that are expected to work properly.
+    Covered by updated tests.
+    
+    * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.h:
+    * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm:
+    (WebCore::AudioSampleBufferCompressor::setBitsPerSecond):
+    (WebCore::AudioSampleBufferCompressor::defaultOutputBitRate const):
+    (WebCore::AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription):
+    
+    LayoutTests:
+    
+    Add more bitrate tests.
+    
+    * http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267822 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+            MediaRecorder should allow setting low bit rates for audio
+            https://bugs.webkit.org/show_bug.cgi?id=216688
+            <rdar://problem/69129142>
+
+            Reviewed by Eric Carlson.
+
+            Add more bitrate tests.
+
+            * http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html:
+
+2020-10-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267825. rdar://problem/70024248
 
     MediaRecorder should support isTypeSupported
