@@ -295,18 +295,21 @@ bool AXObjectCache::isNodeVisible(Node* node) const
 {
     if (!is<Element>(node))
         return false;
-    
+
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return false;
+
     const RenderStyle& style = renderer->style();
-    if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+    if (style.display() == DisplayType::None
+        || style.visibility() != Visibility::Visible
+        || !style.opacity())
         return false;
-    
+
     // We also need to consider aria hidden status.
     if (!isNodeAriaVisible(node))
         return false;
-    
+
     return true;
 }
 

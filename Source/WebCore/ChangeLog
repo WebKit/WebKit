@@ -1,3 +1,26 @@
+2020-10-06  Andres Gonzalez  <andresg_22@apple.com>
+
+        Presidential Executive Order pages not accessible with Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=217415
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/aria-modal.html.
+
+        These pages have a dialog modal element of the form
+
+        <div class="popover" role="dialog" aria-modal="true">
+
+        with style visible and a display value different from none. This makes
+        WebCore/accessibility to treat it as if the dialog were always visible,
+        and thus do not convey the content of the page outside the dialog to
+        VoiceOver. The author controls the visibility of the dialog using the
+        style opacity. This patch adds the check for the opacity to determine
+        whether an element is visible or not.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isNodeVisible const):
+
 2020-10-06  Devin Rousso  <drousso@apple.com>
 
         Move platform logic for CSS `hover` and `pointer` media queries outside of WebCore
