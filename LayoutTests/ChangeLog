@@ -1,3 +1,12 @@
+2020-10-06  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening and rebaseline two tests
+
+        Unreviewed test gardening.
+
+        * platform/glib/webaudio/audioworklet-addModule-failure-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+
 2020-10-06  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (iOS 14): [ iOS wk2 ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant failure
