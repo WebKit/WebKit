@@ -33,9 +33,9 @@ namespace WebCore {
 
 namespace LayoutIntegration {
 
-static FloatPoint linePosition(float left, float top)
+inline FloatRect verticallyRoundedRect(const FloatRect& rect)
 {
-    return FloatPoint(left, roundf(top));
+    return { FloatPoint(rect.x(), roundf(rect.y())), rect.size() };
 }
 
 class ModernPath {
@@ -53,7 +53,7 @@ public:
 
     bool isText() const { return !!run().textContent(); }
 
-    FloatRect rect() const;
+    FloatRect rect() const { return verticallyRoundedRect(run().rect()); }
 
     float baseline() const { return line().baseline(); }
 
@@ -149,7 +149,6 @@ public:
     }
 
     bool operator==(const ModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
-    bool onSameLine(const ModernPath& other) const { return run().lineIndex() == other.run().lineIndex(); }
 
     bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
     void setAtEnd() { m_runIndex = runs().size(); }
@@ -161,6 +160,8 @@ public:
     }
 
 private:
+    friend class RunIterator;
+
     const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Run& run() const { return runs()[m_runIndex]; }
     const Line& line() const { return m_inlineContent->lineForRun(run()); }
@@ -168,13 +169,6 @@ private:
     RefPtr<const InlineContent> m_inlineContent;
     size_t m_runIndex { 0 };
 };
-
-inline FloatRect ModernPath::rect() const
-{
-    auto rect = run().rect();
-    auto position = linePosition(rect.x(), rect.y());
-    return { position, rect.size() };
-}
 
 }
 }

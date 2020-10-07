@@ -1474,6 +1474,7 @@ layout/inlineformatting/text/TextUtil.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
 layout/integration/LayoutIntegrationInlineContent.cpp
+layout/integration/LayoutIntegrationLineIterator.cpp
 layout/integration/LayoutIntegrationLineLayout.cpp
 layout/integration/LayoutIntegrationPagination.cpp
 layout/integration/LayoutIntegrationRunIterator.cpp

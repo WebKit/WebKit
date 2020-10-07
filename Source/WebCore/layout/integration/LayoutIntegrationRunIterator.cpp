@@ -26,6 +26,8 @@
 #include "config.h"
 #include "LayoutIntegrationRunIterator.h"
 
+
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
@@ -80,6 +82,19 @@ LineRunIterator RunIterator::nextOnLineIgnoringLineBreak() const
 LineRunIterator RunIterator::previousOnLineIgnoringLineBreak() const
 {
     return LineRunIterator(*this).traversePreviousOnLineIgnoringLineBreak();
+}
+
+LineIterator RunIterator::line() const
+{
+    return WTF::switchOn(m_run.m_pathVariant, [](const LegacyPath& path) {
+        return LineIterator(LegacyLinePath(&path.rootInlineBox()));
+    }
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    , [](const ModernPath& path) {
+        return LineIterator(ModernLinePath(*path.m_inlineContent, path.run().lineIndex()));
+    }
+#endif
+    );
 }
 
 TextRunIterator::TextRunIterator(PathRun::PathVariant&& pathVariant)

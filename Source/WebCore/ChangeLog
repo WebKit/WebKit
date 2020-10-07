@@ -1,3 +1,72 @@
+2020-10-07  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Add line iterator
+        https://bugs.webkit.org/show_bug.cgi?id=217427
+
+        Reviewed by Zalan Bujtas.
+
+        Add line iterator. In this patch it is only used to replace onSameLine function.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Position.cpp:
+        (WebCore::Position::rendersInDifferentPosition const):
+        * layout/integration/LayoutIntegrationLineIterator.cpp: Added.
+        (WebCore::LayoutIntegration::LineIterator::LineIterator):
+        (WebCore::LayoutIntegration::LineIterator::atEnd const):
+        (WebCore::LayoutIntegration::LineIterator::next const):
+        (WebCore::LayoutIntegration::LineIterator::previous const):
+        (WebCore::LayoutIntegration::LineIterator::traverseNext):
+        (WebCore::LayoutIntegration::LineIterator::traversePrevious):
+        * layout/integration/LayoutIntegrationLineIterator.h: Added.
+        (WebCore::LayoutIntegration::PathLine::operator!= const):
+        (WebCore::LayoutIntegration::LineIterator::LineIterator):
+        (WebCore::LayoutIntegration::LineIterator::operator++):
+        (WebCore::LayoutIntegration::LineIterator::operator bool const):
+        (WebCore::LayoutIntegration::LineIterator::operator== const):
+        (WebCore::LayoutIntegration::LineIterator::operator!= const):
+        (WebCore::LayoutIntegration::LineIterator::operator* const):
+        (WebCore::LayoutIntegration::LineIterator::operator-> const):
+        (WebCore::LayoutIntegration::PathLine::PathLine):
+        (WebCore::LayoutIntegration::PathLine::rect const):
+        (WebCore::LayoutIntegration::PathLine::operator== const):
+        * layout/integration/LayoutIntegrationLineIteratorLegacyPath.h: Added.
+        (WebCore::LayoutIntegration::LegacyLinePath::LegacyLinePath):
+        (WebCore::LayoutIntegration::LegacyLinePath::rect const):
+        (WebCore::LayoutIntegration::LegacyLinePath::traverseNext):
+        (WebCore::LayoutIntegration::LegacyLinePath::traversePrevious):
+        (WebCore::LayoutIntegration::LegacyLinePath::operator== const):
+        (WebCore::LayoutIntegration::LegacyLinePath::atEnd const):
+        (WebCore::LayoutIntegration::LegacyLinePath::setAtEnd):
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h: Added.
+        (WebCore::LayoutIntegration::ModernLinePath::ModernLinePath):
+        (WebCore::LayoutIntegration::ModernLinePath::rect const):
+        (WebCore::LayoutIntegration::ModernLinePath::traverseNext):
+        (WebCore::LayoutIntegration::ModernLinePath::traversePrevious):
+        (WebCore::LayoutIntegration::ModernLinePath::operator== const):
+        (WebCore::LayoutIntegration::ModernLinePath::atEnd const):
+        (WebCore::LayoutIntegration::ModernLinePath::setAtEnd):
+        (WebCore::LayoutIntegration::ModernLinePath::lines const):
+        (WebCore::LayoutIntegration::ModernLinePath::line const):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::line const):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathRun::logicalLeft const):
+        (WebCore::LayoutIntegration::PathRun::logicalRight const):
+        (WebCore::LayoutIntegration::PathRun::logicalWidth const):
+        (WebCore::LayoutIntegration::PathRun::logicalHeight const):
+        (WebCore::LayoutIntegration::PathRun::onSameLine const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LegacyPath::operator== const):
+        (WebCore::LayoutIntegration::LegacyPath::rootInlineBox const):
+        (WebCore::LayoutIntegration::LegacyPath::onSameLine const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::verticallyRoundedRect):
+        (WebCore::LayoutIntegration::ModernPath::rect const):
+        (WebCore::LayoutIntegration::ModernPath::operator== const):
+        (WebCore::LayoutIntegration::linePosition): Deleted.
+        (WebCore::LayoutIntegration::ModernPath::onSameLine const): Deleted.
+
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add initial support for inline content to clear intrusive floats

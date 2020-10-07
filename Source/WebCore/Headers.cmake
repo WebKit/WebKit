@@ -709,11 +709,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/integration/LayoutIntegrationInlineContent.h
     layout/integration/LayoutIntegrationLine.h
+    layout/integration/LayoutIntegrationLineIterator.h
+    layout/integration/LayoutIntegrationLineIteratorLegacyPath.h
+    layout/integration/LayoutIntegrationLineIteratorModernPath.h
     layout/integration/LayoutIntegrationRun.h
     layout/integration/LayoutIntegrationRunIterator.h
     layout/integration/LayoutIntegrationRunIteratorLegacyPath.h
     layout/integration/LayoutIntegrationRunIteratorModernPath.h
-
     layout/layouttree/LayoutBox.h
 
     loader/AdClickAttribution.h

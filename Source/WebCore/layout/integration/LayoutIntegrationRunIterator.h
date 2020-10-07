@@ -38,6 +38,7 @@ class RenderText;
 
 namespace LayoutIntegration {
 
+class LineIterator;
 class LineRunIterator;
 class TextRunIterator;
 
@@ -58,6 +59,11 @@ public:
 
     FloatRect rect() const;
 
+    float logicalLeft() const { return isHorizontal() ? rect().x() : rect().y(); }
+    float logicalRight() const { return isHorizontal() ? rect().maxX() : rect().maxY(); }
+    float logicalWidth() const { return isHorizontal() ? rect().width() : rect().height(); }
+    float logicalHeight() const { return isHorizontal() ? rect().height() : rect().width(); }
+
     float baseline() const;
 
     bool isHorizontal() const;
@@ -73,8 +79,6 @@ public:
     unsigned char bidiLevel() const;
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
-
-    bool onSameLine(const PathRun&) const;
 
     const RenderObject& renderer() const;
 
@@ -135,6 +139,8 @@ public:
     LineRunIterator previousOnLine() const;
     LineRunIterator nextOnLineIgnoringLineBreak() const;
     LineRunIterator previousOnLineIgnoringLineBreak() const;
+
+    LineIterator line() const;
 
 protected:
     void setAtEnd();
@@ -271,16 +277,6 @@ inline unsigned char PathRun::bidiLevel() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.bidiLevel();
-    });
-}
-
-inline bool PathRun::onSameLine(const PathRun& other) const
-{
-    if (m_pathVariant.index() != other.m_pathVariant.index())
-        return false;
-
-    return WTF::switchOn(m_pathVariant, [&](const auto& path) {
-        return path.onSameLine(WTF::get<std::decay_t<decltype(path)>>(other.m_pathVariant));
     });
 }
 

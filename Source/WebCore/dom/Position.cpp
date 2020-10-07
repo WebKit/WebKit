@@ -39,6 +39,7 @@
 #include "InlineIterator.h"
 #include "InlineRunAndOffset.h"
 #include "InlineTextBox.h"
+#include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
@@ -1086,7 +1087,7 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (!run1 || !run2)
         return false;
 
-    if (!run1->onSameLine(*run2))
+    if (run1.line() != run2.line())
         return true;
 
     if (nextRenderedEditable(deprecatedNode()) == position.deprecatedNode()
