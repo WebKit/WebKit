@@ -1,3 +1,54 @@
+2020-10-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r267870. rdar://problem/70025703
+
+    Add AVAssetWriter SPI header
+    https://bugs.webkit.org/show_bug.cgi?id=217169
+    <rdar://problem/69793050>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    No change of behavior, include SPI header instead of private SDK header.
+    
+    * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/spi/cocoa/AVAssetWriterSPI.h: Added.
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    Remove dependency on AVAssetWriter_private.h.
+    Introduce HAVE_AVASSETWRITERDELEGATE_API for older OSes that only have delegate as SPI.
+    
+    LayoutTests:
+    
+    Enable tests by default on Catalina+, disable them on Mojave and WK1.
+    Disable tests for iOS13.
+    
+    * TestExpectations:
+    * platform/ios-13/TestExpectations:
+    * platform/mac/TestExpectations:
+    * platform/mac-wk1/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267870 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-02  Youenn Fablet  <youenn@apple.com>
+
+            Add AVAssetWriter SPI header
+            https://bugs.webkit.org/show_bug.cgi?id=217169
+            <rdar://problem/69793050>
+
+            Reviewed by Eric Carlson.
+
+            * wtf/PlatformHave.h:
+            Remove dependency on AVAssetWriter_private.h.
+            Introduce HAVE_AVASSETWRITERDELEGATE_API for older OSes that only have delegate as SPI.
+
 2020-09-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r266802. rdar://problem/69101097
