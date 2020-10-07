@@ -1,3 +1,15 @@
+2020-10-07  Noam Rosenthal  <noam@webkit.org>
+
+        clip-path: path() ignores page zooming (Command-+)
+        https://bugs.webkit.org/show_bug.cgi?id=217311
+        <rdar://problem/69977271>
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+                Marked newly imported clip-path w3c tests that don't pass yet as expected failure.
+                Some of them have open bugs, the others need triage.
+
 2020-10-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Adjust the inline formatting context root's content height when the last line has float clear

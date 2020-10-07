@@ -207,7 +207,7 @@ static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionDa
     return BasicShapeRadius(convertToLength(conversionData, radius));
 }
 
-Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionData, const CSSBasicShape& basicShapeValue)
+Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionData, const CSSBasicShape& basicShapeValue, float zoom)
 {
     RefPtr<BasicShape> basicShape;
 
@@ -269,6 +269,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         auto& pathValue = downcast<CSSBasicShapePath>(basicShapeValue);
         auto path = BasicShapePath::create(pathValue.pathData().copy());
         path->setWindRule(pathValue.windRule());
+        path->setZoom(zoom);
 
         basicShape = WTFMove(path);
         break;

@@ -2033,6 +2033,18 @@ webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-meta
 
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
 
+# Imported w3c tests for clip-path that don't pass yet
+webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-003.html [ ImageOnlyFailure ]
+webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-013.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate.html [ ImageOnlyFailure ]
+webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html
 imported/w3c/web-platform-tests/css/css-multicol/large-actual-column-count.html

@@ -629,7 +629,10 @@ inline RefPtr<ClipPathOperation> BuilderConverter::convertClipPath(BuilderState&
         auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
         if (primitiveValue.isShape()) {
             ASSERT(!operation);
-            operation = ShapeClipPathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(), *primitiveValue.shapeValue()));
+            operation = ShapeClipPathOperation::create(
+                basicShapeForValue(builderState.cssToLengthConversionData(), 
+                *primitiveValue.shapeValue(),
+                builderState.style().effectiveZoom()));
         } else {
             ASSERT(primitiveValue.valueID() == CSSValueContentBox
                 || primitiveValue.valueID() == CSSValueBorderBox

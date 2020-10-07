@@ -1,3 +1,53 @@
+2020-10-07  Noam Rosenthal  <noam@webkit.org>
+
+        clip-path: path() ignores page zooming (Command-+)
+        https://bugs.webkit.org/show_bug.cgi?id=217311
+        <rdar://problem/69977271>
+
+        Reviewed by Darin Adler.
+
+        Added a zoom property to BasicShapePath.
+
+        When BasicShapePath is created from a clip-path, the shape's zoom received the effective zoom.
+        The internal cache in BasicShapePath now uses the zoom as an additional cache key, in addition
+        to windRule, offset and byteStream. Renamed SVGPathTranslatedByteStream to SVGPathTransformedByteStream.
+
+        Tests:
+               imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-interpolation-with-zoom.html
+               imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom-hittest.html
+               imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom.html
+
+        Also imported the rest of the w3c clip-path tests.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::SVGPathTransformedByteStream::SVGPathTransformedByteStream):
+        (WebCore::SVGPathTransformedByteStream::operator== const):
+        (WebCore::SVGPathTransformedByteStream::operator!= const):
+        (WebCore::SVGPathTransformedByteStream::path const):
+        (WebCore::TransformedByteStreamPathPolicy::isKeyNull):
+        (WebCore::TransformedByteStreamPathPolicy::createValueForKey):
+        (WebCore::cachedTransformedByteStreamPath):
+        (WebCore::BasicShapePath::path):
+        (WebCore::BasicShapePath::operator== const):
+        (WebCore::BasicShapePath::blend const):
+        (WebCore::SVGPathTranslatedByteStream::SVGPathTranslatedByteStream): Deleted.
+        (WebCore::SVGPathTranslatedByteStream::operator== const): Deleted.
+        (WebCore::SVGPathTranslatedByteStream::operator!= const): Deleted.
+        (WebCore::SVGPathTranslatedByteStream::isEmpty const): Deleted.
+        (WebCore::SVGPathTranslatedByteStream::path const): Deleted.
+        (WebCore::TranslatedByteStreamPathPolicy::isKeyNull): Deleted.
+        (WebCore::TranslatedByteStreamPathPolicy::createValueForKey): Deleted.
+        (WebCore::cachedTranslatedByteStreamPath): Deleted.
+                Add zoom to BasicShapePath and related internal structure.
+
+        * rendering/style/BasicShapes.h:
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertClipPath):
+                Read zoom from current style when creating a BasicShapeClipPath.
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         Add support for BlobEvent.timecode

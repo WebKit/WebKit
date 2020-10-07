@@ -41,7 +41,7 @@ class CSSPrimitiveValue;
 class RenderStyle;
 
 Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle&, const BasicShape&);
-Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSBasicShape&);
+Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSBasicShape&, float zoom = 1);
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 
 }

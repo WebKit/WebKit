@@ -61,25 +61,26 @@ void BasicShapeCenterCoordinate::updateComputedLength()
     m_computedLength = convertTo100PercentMinusLength(m_length);
 }
 
-struct SVGPathTranslatedByteStream {
-    SVGPathTranslatedByteStream(const FloatPoint& offset, const SVGPathByteStream& rawStream)
-        : m_offset(offset)
-        , m_rawStream(rawStream)
-    { }
-
-    bool operator==(const SVGPathTranslatedByteStream& other) const { return other.m_offset == m_offset && other.m_rawStream == m_rawStream; }
-    bool operator!=(const SVGPathTranslatedByteStream& other) const { return !(*this == other); }
-    bool isEmpty() const { return m_rawStream.isEmpty(); }
+struct SVGPathTransformedByteStream {
+    bool operator==(const SVGPathTransformedByteStream& other) const 
+    { 
+        return other.offset == offset && other.zoom == zoom && other.rawStream == rawStream;
+    }
+    bool operator!=(const SVGPathTransformedByteStream& other) const { return !(*this == other); }
+    bool isEmpty() const { return rawStream.isEmpty(); }
 
     Path path() const
     {
-        Path path = buildPathFromByteStream(m_rawStream);
-        path.translate(toFloatSize(m_offset));
+        Path path = buildPathFromByteStream(rawStream);
+        if (zoom != 1)
+            path.transform(AffineTransform().scale(zoom));
+        path.translate(toFloatSize(offset));
         return path;
     }
     
-    FloatPoint m_offset;
-    SVGPathByteStream m_rawStream;
+    SVGPathByteStream rawStream;
+    float zoom;
+    FloatPoint offset;
 };
 
 struct EllipsePathPolicy : public TinyLRUCachePolicy<FloatRect, Path> {
@@ -106,18 +107,17 @@ public:
     }
 };
 
-struct PolygonPathPolicy : public TinyLRUCachePolicy<Vector<FloatPoint>, Path> {
+struct PolygonPathPolicy : TinyLRUCachePolicy<Vector<FloatPoint>, Path> {
 public:
     static bool isKeyNull(const Vector<FloatPoint>& points) { return !points.size(); }
 
     static Path createValueForKey(const Vector<FloatPoint>& points) { return Path::polygonPathFromPoints(points); }
 };
 
-struct TranslatedByteStreamPathPolicy : public TinyLRUCachePolicy<SVGPathTranslatedByteStream, Path> {
-public:
-    static bool isKeyNull(const SVGPathTranslatedByteStream& stream) { return stream.isEmpty(); }
+struct TransformedByteStreamPathPolicy : TinyLRUCachePolicy<SVGPathTransformedByteStream, Path> {
+    static bool isKeyNull(const SVGPathTransformedByteStream& stream) { return stream.isEmpty(); }
 
-    static Path createValueForKey(const SVGPathTranslatedByteStream& stream) { return stream.path(); }
+    static Path createValueForKey(const SVGPathTransformedByteStream& stream) { return stream.path(); }
 };
 
 static const Path& cachedEllipsePath(const FloatRect& rect)
@@ -138,10 +138,10 @@ static const Path& cachedPolygonPath(const Vector<FloatPoint>& points)
     return cache.get().get(points);
 }
 
-static const Path& cachedTranslatedByteStreamPath(const SVGPathByteStream& stream, const FloatPoint& offset)
+static const Path& cachedTransformedByteStreamPath(const SVGPathByteStream& stream, float zoom, const FloatPoint& offset)
 {
-    static NeverDestroyed<TinyLRUCache<SVGPathTranslatedByteStream, Path, 4, TranslatedByteStreamPathPolicy>> cache;
-    return cache.get().get(SVGPathTranslatedByteStream(offset, stream));
+    static NeverDestroyed<TinyLRUCache<SVGPathTransformedByteStream, Path, 4, TransformedByteStreamPathPolicy>> cache;
+    return cache.get().get(SVGPathTransformedByteStream { stream, zoom, offset });
 }
 
 bool BasicShapeCircle::operator==(const BasicShape& other) const
@@ -352,7 +352,7 @@ BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream)
 
 const Path& BasicShapePath::path(const FloatRect& boundingBox)
 {
-    return cachedTranslatedByteStreamPath(*m_byteStream, boundingBox.location());
+    return cachedTransformedByteStreamPath(*m_byteStream, m_zoom, boundingBox.location());
 }
 
 bool BasicShapePath::operator==(const BasicShape& other) const
@@ -361,7 +361,7 @@ bool BasicShapePath::operator==(const BasicShape& other) const
         return false;
 
     auto& otherPath = downcast<BasicShapePath>(other);
-    return m_windRule == otherPath.m_windRule && *m_byteStream == *otherPath.m_byteStream;
+    return m_zoom == otherPath.m_zoom && m_windRule == otherPath.m_windRule && *m_byteStream == *otherPath.m_byteStream;
 }
 
 bool BasicShapePath::canBlend(const BasicShape& other) const
@@ -381,9 +381,9 @@ Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, double progress) c
 
     auto resultingPathBytes = makeUnique<SVGPathByteStream>();
     buildAnimatedSVGPathByteStream(*fromPath.m_byteStream, *m_byteStream, *resultingPathBytes, progress);
-
     auto result = BasicShapePath::create(WTFMove(resultingPathBytes));
     result->setWindRule(windRule());
+    result->setZoom(m_zoom);
     return result;
 }
 

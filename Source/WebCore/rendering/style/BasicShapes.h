@@ -270,6 +270,8 @@ public:
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     WindRule windRule() const override { return m_windRule; }
 
+    void setZoom(float z) { m_zoom = z; }
+
     const SVGPathByteStream* pathData() const { return m_byteStream.get(); }
 
 private:
@@ -287,6 +289,7 @@ private:
     void dump(TextStream&) const final;
 
     std::unique_ptr<SVGPathByteStream> m_byteStream;
+    float m_zoom { 1 };
     WindRule m_windRule { WindRule::NonZero };
 };
 
