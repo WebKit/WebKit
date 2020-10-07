@@ -37,12 +37,12 @@ class MediaRecorderPrivateAVFImpl final
     : public MediaRecorderPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<MediaRecorderPrivateAVFImpl> create(MediaStreamPrivate&);
-
-    explicit MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&&);
+    static std::unique_ptr<MediaRecorderPrivateAVFImpl> create(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateAVFImpl();
 
 private:
+    explicit MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&&);
+
     // MediaRecorderPrivate
     void videoSampleAvailable(MediaSample&) final;
     void fetchData(FetchDataCallback&&) final;

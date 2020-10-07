@@ -39,6 +39,7 @@ public:
     static std::unique_ptr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject);
     ~AudioSampleBufferCompressor();
 
+    void setBitsPerSecond(unsigned);
     void finish();
     void addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer();
@@ -47,6 +48,7 @@ public:
 private:
     AudioSampleBufferCompressor();
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
+    UInt32 outputBitRate(const AudioStreamBasicDescription&) const;
 
     static OSStatus audioConverterComplexInputDataProc(AudioConverterRef, UInt32*, AudioBufferList*, AudioStreamPacketDescription**, void*);
 
@@ -85,6 +87,7 @@ private:
     size_t m_sampleBlockBufferSize { 0 };
     size_t m_currentOffsetInSampleBlockBuffer { 0 };
     AudioFormatID m_outputCodecType { kAudioFormatMPEG4AAC };
+    Optional<unsigned> m_outputBitRate;
 };
 
 }
