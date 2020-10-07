@@ -1,3 +1,16 @@
+2020-10-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Ensure that builder names are valid Buildbot identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=217434
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Updated builder names.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py: Ensure that unit-tests fail when any builder name does
+        not follow required naming convention.
+
 2020-10-07  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION (r268080): [test-webkitpy] Mojave bots failing to install python-dateutil-2.8.1

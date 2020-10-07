@@ -178,32 +178,32 @@
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot632"]
                     },
-                    { "name": "Apple Mojave Debug (Build)", "factory": "BuildFactory", "builddir": "mojave-debug",
+                    { "name": "Apple-Mojave-Debug-Build", "factory": "BuildFactory", "builddir": "mojave-debug",
                       "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["mojave-debug-tests-wk1", "mojave-debug-tests-wk2"],
                       "slavenames": ["bot612", "bot613"]
                     },
-                    { "name": "Apple Mojave Debug WK1 (Tests)", "factory": "TestWebKit1AllButJSCFactory", "builddir": "mojave-debug-tests-wk1",
+                    { "name": "Apple-Mojave-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "mojave-debug-tests-wk1",
                       "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot183", "bot184"]
                     },
-                    { "name": "Apple Mojave Debug WK2 (Tests)", "factory": "TestAllButJSCFactory", "builddir": "mojave-debug-tests-wk2",
+                    { "name": "Apple-Mojave-Debug-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "mojave-debug-tests-wk2",
                       "platform": "mac-mojave", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot178", "bot179"]
                     },
-                    { "name": "Apple Mojave Release (Build)", "factory": "BuildFactory", "builddir": "mojave-release",
+                    { "name": "Apple-Mojave-Release-Build", "factory": "BuildFactory", "builddir": "mojave-release",
                       "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["mojave-release-tests-wk1", "mojave-release-tests-wk2"],
                       "slavenames": ["bot610", "bot611"]
                     },
-                    { "name": "Apple Mojave Release WK1 (Tests)", "factory": "TestWebKit1AllButJSCFactory", "builddir": "mojave-release-tests-wk1",
+                    { "name": "Apple-Mojave-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "mojave-release-tests-wk1",
                       "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot132", "bot185"]
                     },
-                    { "name": "Apple Mojave Release WK2 (Tests)", "factory": "TestAllButJSCFactory", "builddir": "mojave-release-tests-wk2",
+                    { "name": "Apple-Mojave-Release-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "mojave-release-tests-wk2",
                       "platform": "mac-mojave", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot198", "bot210"]
@@ -270,90 +270,90 @@
                       "slavenames": ["bot672"]
                     },
                     {
-                      "name": "Apple Win 10 Release (Build)", "factory": "BuildFactory", "builddir": "win10-release",
+                      "name": "Apple-Win-10-Release-Build", "factory": "BuildFactory", "builddir": "win10-release",
                       "platform": "win", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["win10-release-tests"],
                       "slavenames": ["bot548"]
                     },
                     {
-                      "name": "Apple Win 10 Debug (Build)", "factory": "BuildFactory", "builddir": "win10-debug",
+                      "name": "Apple-Win-10-Debug-Build", "factory": "BuildFactory", "builddir": "win10-debug",
                       "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["win10-debug-tests"],
                       "slavenames": ["bot547"]
                     },
                     {
-                      "name": "Apple Win 10 Release (Tests)", "factory": "TestWebKit1Factory", "builddir": "win10-release-tests",
+                      "name": "Apple-Win-10-Release-Tests", "factory": "TestWebKit1Factory", "builddir": "win10-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot546"]
                     },
                     {
-                      "name": "Apple Win 10 Debug (Tests)", "factory": "TestWebKit1Factory", "builddir": "win10-debug-tests",
+                      "name": "Apple-Win-10-Debug-Tests", "factory": "TestWebKit1Factory", "builddir": "win10-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["bot545"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Build)", "factory": "BuildFactory", "builddir": "gtk-linux-64-release",
+                      "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
                                    "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests)", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-tests",
+                      "name": "GTK-Linux-64-bit-Release-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-6"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests JS)", "factory": "TestJSFactory", "builddir": "gtk-linux-64-release-tests-js",
+                      "name": "GTK-Linux-64-bit-Release-JS-Tests", "factory": "TestJSFactory", "builddir": "gtk-linux-64-release-tests-js",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-bot-12"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests WebDriver)", "factory": "TestWebDriverFactory", "builddir": "gtk-linux-64-release-tests-webdriver",
+                      "name": "GTK-Linux-64-bit-Release-WebDriver-Tests", "factory": "TestWebDriverFactory", "builddir": "gtk-linux-64-release-tests-webdriver",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-bot-14"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Build)", "factory": "BuildFactory", "builddir": "gtk-linux-64-debug",
+                      "name": "GTK-Linux-64-bit-Debug-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-debug-tests", "gtk-linux-64-debug-tests-js", "gtk-linux-64-debug-tests-webdriver"],
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests)", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-debug-tests",
+                      "name": "GTK-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-7"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests JS)", "factory": "TestJSFactory", "builddir": "gtk-linux-64-debug-tests-js",
+                      "name": "GTK-Linux-64-bit-Debug-JS-Tests", "factory": "TestJSFactory", "builddir": "gtk-linux-64-debug-tests-js",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-bot-13"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests WebDriver)", "factory": "TestWebDriverFactory", "builddir": "gtk-linux-64-debug-tests-webdriver",
+                      "name": "GTK-Linux-64-bit-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory", "builddir": "gtk-linux-64-debug-tests-webdriver",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-bot-15"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Perf)", "factory": "DownloadAndPerfTestFactory", "builddir": "gtk-linux-64-release-perf-tests",
+                      "name": "GTK-Linux-64-bit-Release-Perf", "factory": "DownloadAndPerfTestFactory", "builddir": "gtk-linux-64-release-perf-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--display-server=xorg"],
                       "slavenames": ["gtk-linux-slave-8"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release Wayland (Tests)", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-wayland-tests",
+                      "name": "GTK-Linux-64-bit-Release-Wayland-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-wayland-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--display-server=wayland"],
                       "slavenames": ["gtk-linux-slave-9"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release Debian Stable (Build)", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-debian",
+                      "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-debian",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features", "--no-media-source"],
                       "slavenames": ["gtk-linux-slave-10"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release Ubuntu LTS (Build)", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-ubuntu",
+                      "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-ubuntu",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features", "--no-media-source"],
                       "slavenames": ["gtk-linux-slave-11"]
@@ -371,34 +371,34 @@
                       "slavenames": ["gtk-linux-bot-17"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Release (Build)", "factory": "BuildFactory", "builddir": "wincairo-wkl-release",
+                      "name": "WinCairo-64-bit-WKL-Release-Build", "factory": "BuildFactory", "builddir": "wincairo-wkl-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["wincairo-wkl-release-tests", "wincairo-jsc-release-tests"],
                       "slavenames": ["wincairo-wkl-release-build-01"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Release (Tests)", "factory": "TestWebKit1AllButJSCFactory", "builddir": "wincairo-wkl-release-tests",
+                      "name": "WinCairo-64-bit-WKL-Release-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "wincairo-wkl-release-tests",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-wkl-release-tests-01", "wincairo-wkl-release-tests-02"]
                     },
                     {
-                      "name": "WinCairo 64-bit JSC Release (Tests)", "factory": "TestJSCFactory", "builddir": "wincairo-jsc-release-tests",
+                      "name": "WinCairo-64-bit-JSC-Release-Tests", "factory": "TestJSCFactory", "builddir": "wincairo-jsc-release-tests",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-jsc-release-tests-01"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Debug (Build)", "factory": "BuildFactory", "builddir": "wincairo-wkl-debug",
+                      "name": "WinCairo-64-bit-WKL-Debug-Build", "factory": "BuildFactory", "builddir": "wincairo-wkl-debug",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["wincairo-wkl-debug-tests", "wincairo-jsc-debug-tests"],
                       "slavenames": ["wincairo-wkl-debug-build-01"]
                     },
                     {
-                      "name": "WinCairo 64-bit WKL Debug (Tests)", "factory": "TestWebKit1AllButJSCFactory", "builddir": "wincairo-wkl-debug-tests",
+                      "name": "WinCairo-64-bit-WKL-Debug-Tests", "factory": "TestWebKit1AllButJSCFactory", "builddir": "wincairo-wkl-debug-tests",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-wkl-debug-tests-01", "wincairo-wkl-debug-tests-02"]
                     },
                     {
-                      "name": "WinCairo 64-bit JSC Debug (Tests)", "factory": "TestJSCFactory", "builddir": "wincairo-jsc-debug-tests",
+                      "name": "WinCairo-64-bit-JSC-Debug-Tests", "factory": "TestJSCFactory", "builddir": "wincairo-jsc-debug-tests",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wincairo-jsc-debug-tests-01"]
                     },
@@ -413,54 +413,54 @@
                       "slavenames": ["playstation-release-build-01"]
                     },
                     {
-                      "name": "JSCOnly Linux AArch64 Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-aarch64-release",
+                      "name": "JSCOnly-Linux-AArch64-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-aarch64-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["aarch64"],
                       "slavenames": ["jsconly-linux-igalia-bot-2"]
                     },
                     {
-                      "name": "JSCOnly Linux ARMv7 Thumb2 Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-release",
+                      "name": "JSCOnly-Linux-ARMv7-Thumb2-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["jsconly-linux-igalia-bot-3"]
                     },
                     {
-                      "name": "JSCOnly Linux ARMv7 Thumb2 SoftFP Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-softfp-release",
+                      "name": "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-softfp-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["jsconly-linux-igalia-bot-5"]
                     },
                     {
-                      "name": "JSCOnly Linux MIPS32el Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-mips32el-release",
+                      "name": "JSCOnly-Linux-MIPS32el-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-mips32el-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
                       "slavenames": ["jsconly-linux-igalia-bot-1"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Release (Build)", "factory": "BuildFactory", "builddir": "wpe-linux-64-release",
+                      "name": "WPE-Linux-64-bit-Release-Build", "factory": "BuildFactory", "builddir": "wpe-linux-64-release",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js"],
                       "slavenames": ["wpe-linux-bot-1"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Release (Tests)", "factory": "TestAllButJSCFactory", "builddir": "wpe-linux-64-release-tests",
+                      "name": "WPE-Linux-64-bit-Release-Tests", "factory": "TestAllButJSCFactory", "builddir": "wpe-linux-64-release-tests",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-2"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Release (Tests JS)", "factory": "TestJSFactory", "builddir": "wpe-linux-64-release-tests-js",
+                      "name": "WPE-Linux-64-bit-Release-JS-Tests", "factory": "TestJSFactory", "builddir": "wpe-linux-64-release-tests-js",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-5"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Debug (Build)", "factory": "BuildFactory", "builddir": "wpe-linux-64-debug",
+                      "name": "WPE-Linux-64-bit-Debug-Build", "factory": "BuildFactory", "builddir": "wpe-linux-64-debug",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["wpe-linux-64-debug-tests", "wpe-linux-64-debug-tests-js"],
                       "slavenames": ["wpe-linux-bot-3"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Debug (Tests)", "factory": "TestAllButJSCFactory", "builddir": "wpe-linux-64-debug-tests",
+                      "name": "WPE-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory", "builddir": "wpe-linux-64-debug-tests",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-4"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Debug (Tests JS)", "factory": "TestJSFactory", "builddir": "wpe-linux-64-debug-tests-js",
+                      "name": "WPE-Linux-64-bit-Debug-JS-Tests", "factory": "TestJSFactory", "builddir": "wpe-linux-64-debug-tests-js",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-6"]
                     },
@@ -479,13 +479,13 @@
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
-                      "builderNames": ["GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)",
-                                       "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
-                                       "JSCOnly Linux AArch64 Release",
-                                       "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Thumb2 SoftFP Release",
-                                       "JSCOnly Linux MIPS32el Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
-                                       "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
-                                       "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
+                      "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
+                                       "GTK-Linux-64-bit-Release-Debian-Stable-Build", "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "JSCOnly-Linux-AArch64-Release",
+                                       "JSCOnly-Linux-ARMv7-Thumb2-Release", "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release",
+                                       "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
+                                       "WinCairo-64-bit-WKL-Release-Build", "WinCairo-64-bit-WKL-Debug-Build",
+                                       "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-BigSur-Release-Build"]
@@ -527,19 +527,19 @@
                       "builderNames": ["Apple-Catalina-Release-Test262-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mojave", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Mojave Release (Build)", "Apple Mojave Debug (Build)"]
+                      "builderNames": ["Apple-Mojave-Release-Build", "Apple-Mojave-Debug-Build"]
                     },
                     { "type": "Triggerable", "name": "mojave-release-tests-wk1",
-                      "builderNames": ["Apple Mojave Release WK1 (Tests)"]
+                      "builderNames": ["Apple-Mojave-Release-WK1-Tests"]
                     },
                     { "type": "Triggerable", "name": "mojave-release-tests-wk2",
-                      "builderNames": ["Apple Mojave Release WK2 (Tests)"]
+                      "builderNames": ["Apple-Mojave-Release-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "mojave-debug-tests-wk1",
-                      "builderNames": ["Apple Mojave Debug WK1 (Tests)"]
+                      "builderNames": ["Apple-Mojave-Debug-WK1-Tests"]
                     },
                     { "type": "Triggerable", "name": "mojave-debug-tests-wk2",
-                      "builderNames": ["Apple Mojave Debug WK2 (Tests)"]
+                      "builderNames": ["Apple-Mojave-Debug-WK2-Tests"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-14", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-14-Release-Build"]
@@ -560,7 +560,7 @@
                       "builderNames": ["Apple-watchOS-Simulator-7-Release-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Win 10 Release (Build)", "Apple Win 10 Debug (Build)"]
+                      "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-14-release-tests-wk2",
                       "builderNames": ["Apple-iOS-14-Simulator-Release-WK2-Tests"]
@@ -575,58 +575,58 @@
                       "builderNames": ["Apple-iPadOS-14-Simulator-Debug-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "win10-release-tests",
-                      "builderNames": ["Apple Win 10 Release (Tests)"]
+                      "builderNames": ["Apple-Win-10-Release-Tests"]
                     },
                     { "type": "Triggerable", "name": "win10-debug-tests",
-                      "builderNames": ["Apple Win 10 Debug (Tests)"]
+                      "builderNames": ["Apple-Win-10-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
-                      "builderNames": ["GTK Linux 64-bit Release (Tests)"]
+                      "builderNames": ["GTK-Linux-64-bit-Release-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-js",
-                      "builderNames": ["GTK Linux 64-bit Release (Tests JS)"]
+                      "builderNames": ["GTK-Linux-64-bit-Release-JS-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-webdriver",
-                      "builderNames": ["GTK Linux 64-bit Release (Tests WebDriver)"]
+                      "builderNames": ["GTK-Linux-64-bit-Release-WebDriver-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
-                      "builderNames": ["GTK Linux 64-bit Debug (Tests)"]
+                      "builderNames": ["GTK-Linux-64-bit-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-js",
-                      "builderNames": ["GTK Linux 64-bit Debug (Tests JS)"]
+                      "builderNames": ["GTK-Linux-64-bit-Debug-JS-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-webdriver",
-                      "builderNames": ["GTK Linux 64-bit Debug (Tests WebDriver)"]
+                      "builderNames": ["GTK-Linux-64-bit-Debug-WebDriver-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-perf-tests",
-                      "builderNames": ["GTK Linux 64-bit Release (Perf)"]
+                      "builderNames": ["GTK-Linux-64-bit-Release-Perf"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-wayland-tests",
-                      "builderNames": ["GTK Linux 64-bit Release Wayland (Tests)"]
+                      "builderNames": ["GTK-Linux-64-bit-Release-Wayland-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-wkl-release-tests",
-                      "builderNames": ["WinCairo 64-bit WKL Release (Tests)"]
+                      "builderNames": ["WinCairo-64-bit-WKL-Release-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-jsc-release-tests",
-                      "builderNames": ["WinCairo 64-bit JSC Release (Tests)"]
+                      "builderNames": ["WinCairo-64-bit-JSC-Release-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-wkl-debug-tests",
-                      "builderNames": ["WinCairo 64-bit WKL Debug (Tests)"]
+                      "builderNames": ["WinCairo-64-bit-WKL-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-jsc-debug-tests",
-                      "builderNames": ["WinCairo 64-bit JSC Debug (Tests)"]
+                      "builderNames": ["WinCairo-64-bit-JSC-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
-                      "builderNames": ["WPE Linux 64-bit Release (Tests)"]
+                      "builderNames": ["WPE-Linux-64-bit-Release-Tests"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests-js",
-                      "builderNames": ["WPE Linux 64-bit Release (Tests JS)"]
+                      "builderNames": ["WPE-Linux-64-bit-Release-JS-Tests"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests",
-                      "builderNames": ["WPE Linux 64-bit Debug (Tests)"]
+                      "builderNames": ["WPE-Linux-64-bit-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-js",
-                      "builderNames": ["WPE Linux 64-bit Debug (Tests JS)"]
+                      "builderNames": ["WPE-Linux-64-bit-Debug-JS-Tests"]
                     },
                     { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "trunk_filter",
                       "branch": "trunk", "hour": 22, "minute": 0,
