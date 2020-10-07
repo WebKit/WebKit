@@ -6,7 +6,6 @@
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
     <script src="../common/canvas-tests.js"></script>
-    <link rel="stylesheet" href="../common/canvas-tests.css">
 </head>
 <body>
 <div>
@@ -94,7 +93,7 @@
                     _assertPixelApprox(resFrame, 25, 25, 255, 0, 0, 255, "25, 25", "255, 0, 0, 255", 50);
                     _assertPixelApprox(resFrame, 50, 50, 255, 0, 0, 255, "50, 50", "255, 0, 0, 255", 50);
                     mode = 1;
-                    player.currentTime = player.duration - 0.05;
+                    player.currentTime = Math.min(1.5, player.duration - 0.05);
                 } else {
                     _assertPixelApprox(resFrame, 20, 20, 0, 255, 0, 255, "20, 20", "0, 255, 0, 255", 50);
                     _assertPixelApprox(resFrame, 199, 199, 0, 255, 0, 255, "199, 199", "0, 255, 0, 255", 50);
