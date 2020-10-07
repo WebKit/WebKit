@@ -168,7 +168,8 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
             lineLogicalTop = geometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
             if (lineContent.isLastLineWithInlineContent) {
                 // The final content height of this inline formatting context should include the cleared floats as well.
-                formattingState().setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
+                // FIXME: Arithmetic overflow due to lineLogicalTop being a LayoutUnit type while this is mostly InlineLayoutUnit(float) territory.
+                formattingState().setClearGapAfterLastLine(std::max<InlineLayoutUnit>(0, lineLogicalTop - lineLogicalRect.bottom()));
             }
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;

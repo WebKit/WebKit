@@ -1,3 +1,12 @@
+2020-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        Add std::max to make sure the line gap is always larger than 0 (see FIXME).
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+
 2020-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Support CanvasRenderingContext2D.drawImage() with HTMLVideoElement
