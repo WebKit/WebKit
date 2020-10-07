@@ -1,5 +1,46 @@
 2020-10-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r267828. rdar://problem/70023908
+
+    [iOS] MediaRecorder incorrect screen orientation handling
+    https://bugs.webkit.org/show_bug.cgi?id=198912
+    <rdar://problem/51802521>
+    
+    Reviewed by Eric Carlson.
+    
+    We were setting the transform to the writer input too soon.
+    Buffer the transform when receiving the first frame and set it at creation of the writer input.
+    
+    Covered by http/wpt/mediarecorder/video-rotation.html now actually passing.
+    
+    * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+    * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+    (WebCore::MediaRecorderPrivateWriter::startAssetWriter):
+    (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@267828 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-10-01  Youenn Fablet  <youenn@apple.com>
+
+            [iOS] MediaRecorder incorrect screen orientation handling
+            https://bugs.webkit.org/show_bug.cgi?id=198912
+            <rdar://problem/51802521>
+
+            Reviewed by Eric Carlson.
+
+            We were setting the transform to the writer input too soon.
+            Buffer the transform when receiving the first frame and set it at creation of the writer input.
+
+            Covered by http/wpt/mediarecorder/video-rotation.html now actually passing.
+
+            * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+            * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+            (WebCore::MediaRecorderPrivateWriter::startAssetWriter):
+            (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+
+2020-10-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r267521. rdar://problem/70023915
 
     REGRESSION (iOS/Safari 14): MediaRecorder produces invalid video files

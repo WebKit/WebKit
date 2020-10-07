@@ -224,6 +224,9 @@ void MediaRecorderPrivateWriter::startAssetWriter()
     if (m_hasVideo) {
         m_videoAssetWriterInput = adoptNS([PAL::allocAVAssetWriterInputInstance() initWithMediaType:AVMediaTypeVideo outputSettings:nil sourceFormatHint:m_videoFormatDescription.get()]);
         [m_videoAssetWriterInput setExpectsMediaDataInRealTime:true];
+        if (m_videoTransform)
+            m_videoAssetWriterInput.get().transform = *m_videoTransform;
+
         if (![m_writer.get() canAddInput:m_videoAssetWriterInput.get()]) {
             RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter::startAssetWriter failed canAddInput for video");
             return;
@@ -426,10 +429,9 @@ void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
         m_firstVideoFrame = true;
         m_firstVideoSampleTime = CMClockGetTime(CMClockGetHostTimeClock());
         if (sample.videoRotation() != MediaSample::VideoRotation::None || sample.videoMirrored()) {
-            auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
+            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
             if (sample.videoMirrored())
-                videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
-            m_videoAssetWriterInput.get().transform = videoTransform;
+                m_videoTransform = CGAffineTransformScale(*m_videoTransform, -1, 1);
         }
     }
 
