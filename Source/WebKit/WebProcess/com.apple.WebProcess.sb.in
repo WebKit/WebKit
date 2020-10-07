@@ -732,7 +732,6 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     (with report) (with telemetry-backtrace)
 #endif
-    (global-name "com.apple.cookied")
     (global-name "com.apple.mobileassetd")
 )
 
@@ -980,6 +979,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.containermanagerd")
+    (global-name "com.apple.cookied")
 )
 #endif
 

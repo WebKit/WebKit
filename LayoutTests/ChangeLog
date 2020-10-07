@@ -1,3 +1,13 @@
+2020-10-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove 'com.apple.cookied' from the WebContent process sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=206088
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-10-07  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorder::create should not need to create a MediaRecorderPrivate to validate it can record properly
