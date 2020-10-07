@@ -26,12 +26,17 @@
 
 #if ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
+#include "CAAudioStreamDescription.h"
 #include "MediaRecorderPrivate.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
+
+using CVPixelBufferRef = struct __CVBuffer*;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
 class MediaStreamPrivate;
+class WebAudioBufferList;
 
 class MediaRecorderPrivateAVFImpl final
     : public MediaRecorderPrivate {
@@ -53,6 +58,10 @@ private:
     void stopRecording();
 
     Ref<MediaRecorderPrivateWriter> m_writer;
+    RetainPtr<CVPixelBufferRef> m_blackFrame;
+    RetainPtr<CMFormatDescriptionRef> m_blackFrameDescription;
+    CAAudioStreamDescription m_description;
+    std::unique_ptr<WebAudioBufferList> m_audioBuffer;
 };
 
 } // namespace WebCore

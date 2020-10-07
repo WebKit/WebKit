@@ -300,6 +300,18 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
     stopRecording();
 }
 
+void MediaRecorder::trackMutedChanged(MediaStreamTrackPrivate& track)
+{
+    if (m_private)
+        m_private->trackMutedChanged(track);
+}
+
+void MediaRecorder::trackEnabledChanged(MediaStreamTrackPrivate& track)
+{
+    if (m_private)
+        m_private->trackEnabledChanged(track);
+}
+
 bool MediaRecorder::virtualHasPendingActivity() const
 {
     return m_state != RecordingState::Inactive;
