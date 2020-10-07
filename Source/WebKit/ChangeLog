@@ -1,3 +1,24 @@
+2020-10-06  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process] The seekable attribute of HTMLMediaElement has an incorrect value
+        https://bugs.webkit.org/show_bug.cgi?id=217410
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged):
+        Update the state variables related to the `seekable` attribute when the media player is ready.
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+        Add a missing state variable setting.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::seekable const): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        Instead of overriding seekable() here, we should use MediaPlayerPrivateInterface::seekable(),
+        which has the correct behavior.
+
 2020-10-06  Devin Rousso  <drousso@apple.com>
 
         CSS hover and "pointer: fine" media queries do not evaluate to true with iOS 13.4 mouse support

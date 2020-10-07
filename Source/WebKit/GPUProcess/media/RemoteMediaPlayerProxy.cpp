@@ -293,16 +293,21 @@ void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
     updateCachedState();
-    m_cachedState.canSaveMediaData = m_player->canSaveMediaData();
+
+    m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
+    m_cachedState.maxTimeSeekable = m_player->maxTimeSeekable();
     m_cachedState.startDate = m_player->getStartDate();
     m_cachedState.startTime = m_player->startTime();
     m_cachedState.naturalSize = m_player->naturalSize();
     m_cachedState.maxFastForwardRate = m_player->maxFastForwardRate();
     m_cachedState.minFastReverseRate = m_player->minFastReverseRate();
+    m_cachedState.seekableTimeRangesLastModifiedTime = m_player->seekableTimeRangesLastModifiedTime();
+    m_cachedState.liveUpdateInterval = m_player->liveUpdateInterval();
     m_cachedState.hasAvailableVideoFrame = m_player->hasAvailableVideoFrame();
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
 #endif
+    m_cachedState.canSaveMediaData = m_player->canSaveMediaData();
     m_cachedState.hasSingleSecurityOrigin = m_player->hasSingleSecurityOrigin();
     m_cachedState.didPassCORSAccessCheck = m_player->didPassCORSAccessCheck();
     m_cachedState.wouldTaintDocumentSecurityOrigin = m_player->wouldTaintOrigin(m_configuration.documentSecurityOrigin.securityOrigin());
@@ -727,6 +732,7 @@ void RemoteMediaPlayerProxy::updateCachedState()
     m_cachedState.duration = m_player->duration();
     m_cachedState.networkState = m_player->networkState();
     m_cachedState.readyState = m_player->readyState();
+    m_cachedState.movieLoadType = m_player->movieLoadType();
     m_cachedState.paused = m_player->paused();
     m_cachedState.loadingProgressed = m_player->didLoadingProgress();
     m_cachedState.hasAudio = m_player->hasAudio();

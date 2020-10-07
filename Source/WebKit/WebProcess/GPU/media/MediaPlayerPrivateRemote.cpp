@@ -251,11 +251,6 @@ bool MediaPlayerPrivateRemote::hasAudio() const
     return m_cachedState.hasAudio;
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateRemote::seekable() const
-{
-    return makeUnique<PlatformTimeRanges>(m_cachedState.minTimeSeekable, m_cachedState.maxTimeSeekable);
-}
-
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateRemote::buffered() const
 {
     if (!m_cachedBufferedTimeRanges)

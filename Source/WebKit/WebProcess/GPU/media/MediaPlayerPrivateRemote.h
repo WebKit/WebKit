@@ -246,8 +246,6 @@ private:
     WebCore::MediaPlayer::NetworkState networkState() const final { return m_cachedState.networkState; }
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
 
-    std::unique_ptr<WebCore::PlatformTimeRanges> seekable() const final;
-
     MediaTime maxMediaTimeSeekable() const final;
     MediaTime minMediaTimeSeekable() const final;
     std::unique_ptr<WebCore::PlatformTimeRanges> buffered() const final;
