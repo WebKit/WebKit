@@ -201,18 +201,14 @@ ExceptionOr<void> MediaRecorder::stopRecording()
         return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
     stopRecordingInternal();
-    auto& privateRecorder = *m_private;
-    privateRecorder.fetchData([this, pendingActivity = makePendingActivity(*this), privateRecorder = WTFMove(m_private)](auto&& buffer, auto& mimeType) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, buffer = WTFMove(buffer), mimeType]() mutable {
-            if (!m_isActive)
-                return;
-            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(scriptExecutionContext(), buffer.releaseNonNull(), mimeType) : Blob::create(scriptExecutionContext())));
-
-            if (!m_isActive)
-                return;
-            dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        });
-    });
+    fetchData([this](auto&& buffer, auto& mimeType) {
+        if (!m_isActive)
+            return;
+        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(scriptExecutionContext(), buffer.releaseNonNull(), mimeType) : Blob::create(scriptExecutionContext())));
+        if (!m_isActive)
+            return;
+        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    }, TakePrivateRecorder::Yes);
     return { };
 }
 
@@ -223,18 +219,45 @@ ExceptionOr<void> MediaRecorder::requestData()
 
     if (m_timeSliceTimer.isActive())
         m_timeSliceTimer.stop();
-    m_private->fetchData([this, pendingActivity = makePendingActivity(*this)](auto&& buffer, auto& mimeType) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, buffer = WTFMove(buffer), mimeType]() mutable {
-            if (!m_isActive)
-                return;
 
-            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(scriptExecutionContext(), buffer.releaseNonNull(), mimeType) : Blob::create(scriptExecutionContext())));
+    fetchData([this](auto&& buffer, auto& mimeType) {
+        if (!m_isActive)
+            return;
 
-            if (m_timeSlice)
-                m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
-        });
-    });
+        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(scriptExecutionContext(), buffer.releaseNonNull(), mimeType) : Blob::create(scriptExecutionContext())));
+
+        if (m_isActive && m_timeSlice)
+            m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
+    }, TakePrivateRecorder::No);
     return { };
+}
+
+void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder takeRecorder)
+{
+    auto& privateRecorder = *m_private;
+
+    std::unique_ptr<MediaRecorderPrivate> takenPrivateRecorder;
+    if (takeRecorder == TakePrivateRecorder::Yes)
+        takenPrivateRecorder = WTFMove(m_private);
+
+    auto fetchDataCallback = [this, privateRecorder = WTFMove(takenPrivateRecorder), callback = WTFMove(callback)](auto&& buffer, auto& mimeType) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [buffer = WTFMove(buffer), mimeType, callback = WTFMove(callback)]() mutable {
+            callback(WTFMove(buffer), mimeType);
+        });
+    };
+
+    if (m_isFetchingData) {
+        m_pendingFetchDataTasks.append(WTFMove(fetchDataCallback));
+        return;
+    }
+
+    m_isFetchingData = true;
+    privateRecorder.fetchData([this, pendingActivity = makePendingActivity(*this), callback = WTFMove(fetchDataCallback)](auto&& buffer, auto& mimeType) mutable {
+        m_isFetchingData = false;
+        callback(WTFMove(buffer), mimeType);
+        for (auto& task : std::exchange(m_pendingFetchDataTasks, { }))
+            task({ }, mimeType);
+    });
 }
 
 void MediaRecorder::stopRecordingInternal()

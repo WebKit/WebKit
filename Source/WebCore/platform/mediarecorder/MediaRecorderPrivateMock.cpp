@@ -30,6 +30,7 @@
 
 #include "MediaStreamTrackPrivate.h"
 #include "SharedBuffer.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -91,7 +92,11 @@ void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
         m_buffer.clear();
         buffer = SharedBuffer::create(WTFMove(value));
     }
-    completionHandler(WTFMove(buffer), mimeType());
+
+    // Delay calling the completion handler a bit to mimick real writer behavior.
+    m_delayCompletingTimer.doTask([completionHandler = WTFMove(completionHandler), buffer = WTFMove(buffer), mimeType = mimeType()]() mutable {
+        completionHandler(WTFMove(buffer), mimeType);
+    }, 50_ms);
 }
 
 const String& MediaRecorderPrivateMock::mimeType() const
