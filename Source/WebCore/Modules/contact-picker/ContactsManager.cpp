@@ -56,7 +56,8 @@ Navigator* ContactsManager::navigator()
 
 void ContactsManager::getProperties(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    Vector<ContactProperty> properties = { ContactProperty::Email, ContactProperty::Name, ContactProperty::Tel };
+    promise->resolve<IDLSequence<IDLEnumeration<ContactProperty>>>(properties);
 }
 
 void ContactsManager::select(const Vector<ContactProperty>& properties, const ContactsSelectOptions& options, Ref<DeferredPromise>&& promise)

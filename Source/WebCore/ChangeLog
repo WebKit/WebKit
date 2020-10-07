@@ -1,3 +1,19 @@
+2020-10-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Contact Picker API] Add support for ContactsManager.getProperties()
+        https://bugs.webkit.org/show_bug.cgi?id=217354
+        <rdar://problem/69862099>
+
+        Reviewed by Youenn Fablet.
+
+        ContactsManager.getProperties() returns a list of properties supported
+        by the API. These currently include name, email and tel.
+
+        Test: contact-picker/contacts-manager-get-properties.html
+
+        * Modules/contact-picker/ContactsManager.cpp:
+        (WebCore::ContactsManager::getProperties):
+
 2020-10-07  Noam Rosenthal  <noam@webkit.org>
 
         clip-path: path() ignores page zooming (Command-+)
