@@ -940,10 +940,6 @@ isLoggedInAPIEnabled:
 enterKeyHintEnabled:
   initial: false
 
-legacyGetUserMediaEnabled:
-  initial: false
-  conditional: ENABLE(MEDIA_STREAM)
-
 # FIXME: Seems to be unused. Remove once verified.
 isInAppBrowserPrivacyEnabled:
   initial: false

@@ -144,8 +144,8 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
     finish();
 }
     
-MediaDocument::MediaDocument(Frame* frame, const URL& url)
-    : HTMLDocument(frame, url, MediaDocumentClass)
+MediaDocument::MediaDocument(Frame* frame, const Settings& settings, const URL& url)
+    : HTMLDocument(frame, settings, url, MediaDocumentClass)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();

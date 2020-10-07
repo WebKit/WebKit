@@ -87,11 +87,11 @@ using namespace HTMLNames;
 
 Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(Frame& frame, const URL& url)
 {
-    return adoptRef(*new HTMLDocument(&frame, url, HTMLDocumentClass, Synthesized));
+    return adoptRef(*new HTMLDocument(&frame, frame.settings(), url, HTMLDocumentClass, Synthesized));
 }
 
-HTMLDocument::HTMLDocument(Frame* frame, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
-    : Document(frame, url, documentClasses | HTMLDocumentClass, constructionFlags)
+HTMLDocument::HTMLDocument(Frame* frame, const Settings& settings, const URL& url, DocumentClassFlags documentClasses, unsigned constructionFlags)
+    : Document(frame, settings, url, documentClasses | HTMLDocumentClass, constructionFlags)
 {
     clearXMLVersion();
 }
@@ -250,7 +250,7 @@ bool HTMLDocument::isFrameSet() const
 
 Ref<Document> HTMLDocument::cloneDocumentWithoutChildren() const
 {
-    return create(nullptr, url());
+    return create(nullptr, settings(), url());
 }
 
 }

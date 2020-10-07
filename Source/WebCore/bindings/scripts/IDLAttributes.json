@@ -160,6 +160,11 @@
         "DefaultDefineOwnProperty": {
             "contextsAllowed": ["interface"]
         },
+        "DisabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
         "DoNotCheckConstants": {
             "contextsAllowed": ["interface"]
         },
@@ -175,6 +180,11 @@
         "DocumentEventHandler": {
             "contextsAllowed": ["attribute"]
         },
+        "EnabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
         "EnabledAtRuntime": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
             "values": ["*"],
@@ -184,10 +194,6 @@
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
             "values": ["*"],
             "supportsConjunction": true
-        },
-        "DisabledByQuirk": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
-            "values": ["*"]
         },
         "EnabledForContext": {
             "contextsAllowed": ["attribute", "interface"]

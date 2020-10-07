@@ -102,7 +102,7 @@ public:
     static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType, const EventListener&);
 
 #if ENABLE(MEDIA_STREAM)
-    bool shouldEnableLegacyGetUserMedia() const;
+    bool shouldEnableLegacyGetUserMediaQuirk() const;
 #endif
 
     bool shouldDisableElementFullscreenQuirk() const;

@@ -142,7 +142,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 }
 
 PluginDocument::PluginDocument(Frame& frame, const URL& url)
-    : HTMLDocument(&frame, url, PluginDocumentClass)
+    : HTMLDocument(&frame, frame.settings(), url, PluginDocumentClass)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();

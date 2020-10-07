@@ -28,9 +28,12 @@
 
 namespace WebCore {
 
+class Settings;
+
 class CachedSVGDocument final : public CachedResource {
 public:
-    explicit CachedSVGDocument(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
+    explicit CachedSVGDocument(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*, const Settings&);
+    explicit CachedSVGDocument(CachedResourceRequest&&, CachedSVGDocument&);
     virtual ~CachedSVGDocument();
 
     SVGDocument* document() const { return m_document.get(); }
@@ -44,6 +47,7 @@ private:
 
     RefPtr<SVGDocument> m_document;
     RefPtr<TextResourceDecoder> m_decoder;
+    const Ref<const Settings> m_settings;
 };
 
 } // namespace WebCore

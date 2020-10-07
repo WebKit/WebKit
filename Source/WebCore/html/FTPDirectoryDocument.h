@@ -31,13 +31,13 @@ namespace WebCore {
 class FTPDirectoryDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(FTPDirectoryDocument);
 public:
-    static Ref<FTPDirectoryDocument> create(Frame* frame, const URL& url)
+    static Ref<FTPDirectoryDocument> create(Frame* frame, const Settings& settings, const URL& url)
     {
-        return adoptRef(*new FTPDirectoryDocument(frame, url));
+        return adoptRef(*new FTPDirectoryDocument(frame, settings, url));
     }
 
 private:
-    FTPDirectoryDocument(Frame*, const URL&);
+    FTPDirectoryDocument(Frame*, const Settings&, const URL&);
     Ref<DocumentParser> createParser() override;
 };
 

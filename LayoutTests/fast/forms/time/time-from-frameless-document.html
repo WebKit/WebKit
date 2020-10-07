@@ -1,0 +1,9 @@
+<body>
+<script>
+// This tests that an <input type="time"> created in a template document (e.g. one without a frame)
+// is identical to one created in the main document.
+let template = document.createElement('template');
+template.innerHTML = '<input type="time" value="22:53:05">';
+document.body.appendChild(template.content.cloneNode(true));
+</script>
+</body>

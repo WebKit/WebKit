@@ -839,7 +839,7 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
 }
 
 #if ENABLE(MEDIA_STREAM)
-bool Quirks::shouldEnableLegacyGetUserMedia() const
+bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
 {
     if (!needsQuirks())
         return false;

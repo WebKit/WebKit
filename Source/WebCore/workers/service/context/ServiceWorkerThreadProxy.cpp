@@ -56,12 +56,13 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
 {
     auto page = makeUniqueRef<Page>(WTFMove(configuration));
 
+    page->settings().setStorageBlockingPolicy(storageBlockingPolicy);
+
     auto& mainFrame = page->mainFrame();
     mainFrame.loader().initForSynthesizedDocument({ });
     auto document = Document::createNonRenderedPlaceholder(mainFrame, data.scriptURL);
     document->createDOMWindow();
 
-    document->mutableSettings().setStorageBlockingPolicy(storageBlockingPolicy);
     document->storageBlockingStateDidChange();
 
     auto origin = data.registration.key.topOrigin().securityOrigin();

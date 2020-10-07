@@ -422,8 +422,8 @@ void FTPDirectoryDocumentParser::finish()
     HTMLDocumentParser::finish();
 }
 
-FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const URL& url)
-    : HTMLDocument(frame, url)
+FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const Settings& settings, const URL& url)
+    : HTMLDocument(frame, settings, url)
 {
 #if !LOG_DISABLED
     LogFTP.state = WTFLogChannelState::On;

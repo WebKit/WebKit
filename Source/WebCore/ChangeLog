@@ -1,3 +1,143 @@
+2020-10-06  Sam Weinig  <weinig@apple.com>
+
+        <input type="datetime-local"> not show calendar UI when it's inside ShadowDOM
+        https://bugs.webkit.org/show_bug.cgi?id=216985
+        <rdar://problem/69660273>
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/forms/date/date-from-frameless-document.html
+               fast/forms/datetimelocal/datetimelocal-from-frameless-document.html
+               fast/forms/month/month-from-frameless-document.html
+               fast/forms/time/time-from-frameless-document.html
+               fast/forms/week/week-from-frameless-document.html
+
+        The issue here was that frameless documents, such as those created via the
+        <template> element or document.implementation.createHTMLDocument(...) were
+        not able to access the real Settings object, so were creating their own which
+        only contained the default values. So, the solution is to ensure we pass
+        the real Settings object to the Document constructors even when the Frame is
+        null.
+        
+        To do this requires a bit of piping Settings around, but also some simplification.
+        Now, the Settings owned by Document is fully immutable, with the mutableSettings()
+        accessor being removed, as it was not actually needed. The two uses of mutable 
+        Settings were for ServiceWorker creation, where we can just use the mutable accessor
+        from Page instead, and in the Document constructor, where the LegacyGetUserMediaEnabled
+        setting was being enabled based on a quirk. This was not only incorrect (as it would
+        effect more than just what the quirk intended) but unnecessary, as we can make the
+        bindings access the quirk directly.
+
+        The one somewhat complex case was for CachedSVGDocument and CachedSVGFont for which
+        I had to thread settings through CachedResourceLoader and have the CachedSVGDocument 
+        and CachedSVGFont hold onto the Settings object until it was time to construct their
+        documents.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeCheck):
+        (GenerateRuntimeEnableConditionalString):
+        * bindings/scripts/IDLAttributes.json:
+        Add support back for EnabledByQuirk.
+
+        * Modules/mediastream/Navigator+MediaDevices.idl:
+        Switch to EnabledByQuirk=shouldEnableLegacyGetUserMedia.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldEnableLegacyGetUserMediaQuirk const):
+        (WebCore::Quirks::shouldEnableLegacyGetUserMedia const): Deleted.
+        * page/Quirks.h:
+        Rename quirk to end in "Quirk" to work with the bindings generator.
+
+        * page/Settings.yaml:
+        Remove now unused legacyGetUserMediaEnabled settings.
+
+        * Scripts/SettingsTemplates/Settings.h.erb:
+        Export the settings contructor and destructor so it can be used by tests.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::createPageForServiceWorker):
+        Switch to using the mutable settings from Page.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::createXMLDocument):
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::m_selection):
+        (WebCore::Document::create):
+        (WebCore::Document::createNonRenderedPlaceholder):
+        (WebCore::Document::cloneDocumentWithoutChildren const):
+        (WebCore::Document::ensureTemplateDocument):
+        * dom/Document.h:
+        (WebCore::Document::settings const):
+        (WebCore::Document::create):
+        (WebCore::Document::mutableSettings): Deleted.
+        * dom/XMLDocument.h:
+        (WebCore::XMLDocument::create):
+        (WebCore::XMLDocument::createXHTML):
+        (WebCore::XMLDocument::XMLDocument):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::FTPDirectoryDocument):
+        * html/FTPDirectoryDocument.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createSynthesizedDocument):
+        (WebCore::HTMLDocument::HTMLDocument):
+        (WebCore::HTMLDocument::cloneDocumentWithoutChildren const):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        * html/ImageDocument.h:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::MediaDocument):
+        * html/MediaDocument.h:
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::PluginDocument):
+        * html/PluginDocument.h:
+        * html/TextDocument.cpp:
+        (WebCore::TextDocument::TextDocument):
+        * html/TextDocument.h:
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        (WebCore::DocumentWriter::begin):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::SinkDocument):
+        * loader/SinkDocument.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::updateCachedResourceWithCurrentRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        (WebCore::CachedSVGDocument::finishLoading):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::CachedSVGFont):
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        * loader/cache/CachedSVGFont.h:
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::initWithSimpleHTMLDocument):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        (WebCore::SVGDocument::cloneDocumentWithoutChildren const):
+        * svg/SVGDocument.h:
+        (WebCore::SVGDocument::create):
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::DOMParser):
+        (WebCore::DOMParser::parseFromString):
+        * xml/DOMParser.h:
+        * xml/XMLHttpRequest.cpp:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        Thread settings into all the places.
+
 2020-10-06  Chris Dumez  <cdumez@apple.com>
 
         Add implementation for AudioWorkletGlobalScope.registerProcessor()

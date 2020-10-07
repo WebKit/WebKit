@@ -24,16 +24,20 @@
 namespace WebCore {
 
 class Document;
+class Settings;
 
 class DOMParser : public RefCounted<DOMParser> {
 public:
     static Ref<DOMParser> create(Document& contextDocument);
+    ~DOMParser();
+
     ExceptionOr<Ref<Document>> parseFromString(const String&, const String& contentType);
 
 private:
     explicit DOMParser(Document& contextDocument);
 
     WeakPtr<Document> m_contextDocument;
+    const Ref<const Settings> m_settings;
 };
 
 }

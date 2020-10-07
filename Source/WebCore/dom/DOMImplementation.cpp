@@ -76,18 +76,18 @@ ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const Strin
     return DocumentType::create(m_document, qualifiedName, publicId, systemId);
 }
 
-static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI)
+static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, const Settings& settings)
 {
     if (namespaceURI == SVGNames::svgNamespaceURI)
-        return SVGDocument::create(nullptr, URL());
+        return SVGDocument::create(nullptr, settings, URL());
     if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        return XMLDocument::createXHTML(nullptr, URL());
-    return XMLDocument::create(nullptr, URL());
+        return XMLDocument::createXHTML(nullptr, settings, URL());
+    return XMLDocument::create(nullptr, settings, URL());
 }
 
 ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType* documentType)
 {
-    auto document = createXMLDocument(namespaceURI);
+    auto document = createXMLDocument(namespaceURI, m_document.settings());
     document->setContextDocument(m_document.contextDocument());
     document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
 
@@ -119,7 +119,7 @@ Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const S
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    auto document = HTMLDocument::create(nullptr, URL());
+    auto document = HTMLDocument::create(nullptr, m_document.settings(), URL());
     document->open();
     document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
@@ -133,48 +133,48 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)
+Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame* frame, const Settings& settings, const URL& url)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,
     // because of the analogy with HTMLElementFactory.
 
     // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
-    if (equalLettersIgnoringASCIICase(type, "text/html"))
-        return HTMLDocument::create(frame, url);
-    if (equalLettersIgnoringASCIICase(type, "application/xhtml+xml"))
-        return XMLDocument::createXHTML(frame, url);
-    if (equalLettersIgnoringASCIICase(type, "text/plain"))
-        return TextDocument::create(frame, url);
-    bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(type);
-    if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(type))
+    if (equalLettersIgnoringASCIICase(contentType, "text/html"))
+        return HTMLDocument::create(frame, settings, url);
+    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"))
+        return XMLDocument::createXHTML(frame, settings, url);
+    if (equalLettersIgnoringASCIICase(contentType, "text/plain"))
+        return TextDocument::create(frame, settings, url);
+    bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);
+    if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType))
         return ImageDocument::create(*frame, url);
 
     // The "image documents for subframe PDFs" mode will override a PDF plug-in.
-    if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(type) && frame->settings().useImageDocumentForSubframePDF())
+    if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(contentType) && frame->settings().useImageDocumentForSubframePDF())
         return ImageDocument::create(*frame, url);
 
 #if ENABLE(VIDEO)
     MediaEngineSupportParameters parameters;
-    parameters.type = ContentType { type };
+    parameters.type = ContentType { contentType };
     parameters.url = url;
     if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported)
-        return MediaDocument::create(frame, url);
+        return MediaDocument::create(frame, settings, url);
 #endif
 
 #if ENABLE(FTPDIR)
-    if (equalLettersIgnoringASCIICase(type, "application/x-ftp-directory"))
-        return FTPDirectoryDocument::create(frame, url);
+    if (equalLettersIgnoringASCIICase(contentType, "application/x-ftp-directory"))
+        return FTPDirectoryDocument::create(frame, settings, url);
 #endif
 
-    if (frame && frame->loader().client().shouldAlwaysUsePluginDocument(type))
+    if (frame && frame->loader().client().shouldAlwaysUsePluginDocument(contentType))
         return PluginDocument::create(*frame, url);
 
     // The following is the relatively costly lookup that requires initializing the plug-in database.
     if (frame && frame->page()) {
         auto allowedPluginTypes = frame->loader().arePluginsEnabled()
             ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
-        if (frame->page()->pluginData().supportsWebVisibleMimeType(type, allowedPluginTypes))
+        if (frame->page()->pluginData().supportsWebVisibleMimeType(contentType, allowedPluginTypes))
             return PluginDocument::create(*frame, url);
     }
 
@@ -182,16 +182,16 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
     // For example, plug-ins can take over support for PDF or SVG.
     if (frame && isImage)
         return ImageDocument::create(*frame, url);
-    if (MIMETypeRegistry::isTextMIMEType(type))
-        return TextDocument::create(frame, url);
-    if (equalLettersIgnoringASCIICase(type, "image/svg+xml"))
-        return SVGDocument::create(frame, url);
-    if (MIMETypeRegistry::isXMLMIMEType(type)) {
-        auto document = XMLDocument::create(frame, url);
-        document->overrideMIMEType(type);
+    if (MIMETypeRegistry::isTextMIMEType(contentType))
+        return TextDocument::create(frame, settings, url);
+    if (equalLettersIgnoringASCIICase(contentType, "image/svg+xml"))
+        return SVGDocument::create(frame, settings, url);
+    if (MIMETypeRegistry::isXMLMIMEType(contentType)) {
+        auto document = XMLDocument::create(frame, settings, url);
+        document->overrideMIMEType(contentType);
         return document;
     }
-    return HTMLDocument::create(frame, url);
+    return HTMLDocument::create(frame, settings, url);
 }
 
 }
