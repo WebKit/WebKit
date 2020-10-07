@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder audio bitrate</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    async function record(stream, bitRate)
+    {
+        const recorder = new MediaRecorder(stream, { audioBitsPerSecond : bitRate });
+        const promise = new Promise((resolve, reject) => {
+            recorder.ondataavailable = (e) => resolve(e.data);
+            setTimeout(reject, 5000);
+        });
+        recorder.start();
+        setTimeout(() => recorder.stop(), 2500);
+        return promise;
+    }
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+        const bitRates = [128000, 192000, 256000];
+        let promises = [];
+        bitRates.forEach(bitRate => {
+            promises.push(record(stream, bitRate));
+        });
+
+        let blobs = [0, 0, 0];
+        promises.forEach(async (promise, index) => {
+            blobs[index] = await promise;
+        });
+        await Promise.all(promises);
+        assert_not_equals(blobs[0].size, 0);
+        assert_greater_than(blobs[2].size, blobs[0].size);
+    }, "Various audio bitrates");
+</script>
+</body>
+</html>

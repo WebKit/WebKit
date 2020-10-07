@@ -50,7 +50,7 @@ class MediaRecorderPrivate final
     , public CanMakeWeakPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaRecorderPrivate(WebCore::MediaStreamPrivate&);
+    MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivate();
 
 private:
@@ -71,6 +71,7 @@ private:
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     WebCore::CAAudioStreamDescription m_description { };
     int64_t m_numberOfFrames { 0 };
+    WebCore::MediaRecorderPrivateOptions m_options;
 };
 
 }
