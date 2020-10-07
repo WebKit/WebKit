@@ -1,3 +1,12 @@
+2020-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, unskip a few dozen canvas-related tests that now pass after recent changes
+
+        * gpu-process/TestExpectations:
+
+        Unskip a number of tests that were skipped when enabling GPU process. Additionally, remove some erroneous test
+        expectation lines that were targeting HTML files that are resources or ref test.
+
 2020-10-07  Karl Rackler  <rackler@apple.com>
 
         Remove test expectation for fast/images/image-orientation-none-canvas.html while the issue is investigated.
