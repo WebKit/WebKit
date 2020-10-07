@@ -59,6 +59,7 @@ public:
     static std::unique_ptr<RemoteMediaRecorder> create(GPUConnectionToWebProcess&, MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&);
     ~RemoteMediaRecorder();
 
+    String mimeType() const { return m_writer->mimeType(); }
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
