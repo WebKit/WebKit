@@ -1,3 +1,27 @@
+2020-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Reloading a view in its processTerminationHandler does not work reliably when using related views
+        https://bugs.webkit.org/show_bug.cgi?id=217407
+
+        Reviewed by Geoff Garen.
+
+        Related web views share the same WebContent process. When this process crashes, we iterate over
+        the list of WebPageProxy objects sharing this process and let them know that their process has
+        crashed. This causes the WebPageProxy to reset its state (so that it is aware it no longer has
+        a running process) and to notify the client application. Because we were notifying the client
+        application synchronously, the client could trigger a load in the view synchronously while we
+        are still iterating over the WebPageProxy objects. When triggering a load in a web view that
+        has no running process, we normally relaunch one. However, in the case of related web views,
+        the view uses its related webview's process, relaunching it if necessary. The 'relaunching
+        if necessary' part was not reliably happening here because the related web view may not have
+        been notified yet that its WebProcess has crashed (since we are still iterating over the
+        pages to notify them).
+
+        To address the issue, we now notify the client asynchronously of the process termination.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+
 2020-10-06  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process] The seekable attribute of HTMLMediaElement has an incorrect value

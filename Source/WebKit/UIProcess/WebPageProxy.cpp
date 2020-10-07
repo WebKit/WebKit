@@ -7464,14 +7464,22 @@ void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
 {
     RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "dispatchProcessDidTerminate: reason = %d", reason);
 
-    bool handledByClient = false;
-    if (m_loaderClient)
-        handledByClient = reason != ProcessTerminationReason::RequestedByClient && m_loaderClient->processDidCrash(*this);
-    else
-        handledByClient = m_navigationClient->processDidTerminate(*this, reason);
+    // We notify the client asynchronously because several pages may share the same process
+    // and we want to make sure all pages are aware their process has crashed before the
+    // the client reacts to the process termination.
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), reason] {
+        if (!weakThis)
+            return;
 
-    if (!handledByClient && shouldReloadAfterProcessTermination(reason))
-        tryReloadAfterProcessTermination();
+        bool handledByClient = false;
+        if (m_loaderClient)
+            handledByClient = reason != ProcessTerminationReason::RequestedByClient && m_loaderClient->processDidCrash(*this);
+        else
+            handledByClient = m_navigationClient->processDidTerminate(*this, reason);
+
+        if (!handledByClient && shouldReloadAfterProcessTermination(reason))
+            tryReloadAfterProcessTermination();
+    });
 }
 
 void WebPageProxy::tryReloadAfterProcessTermination()
