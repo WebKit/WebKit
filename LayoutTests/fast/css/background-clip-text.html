@@ -27,7 +27,7 @@ shouldBe('test("background-clip: content-box", "background-clip")', '"content-bo
 shouldBe('test("background-clip: padding-box", "background-clip")', '"padding-box"');
 shouldBe('test("background-clip: border-box", "background-clip")', '"border-box"');
 
-shouldBeEqualToString('test("background-clip: text", "background-clip")', '');
+shouldBeEqualToString('test("background-clip: text", "background-clip")', 'text');
 shouldBeEqualToString('test("background-clip: text", "-webkit-background-clip")', '');
 
 shouldBeEqualToString('test("-webkit-background-clip: -webkit-text", "background-clip")', '');
@@ -41,9 +41,16 @@ shouldBeEqualToString('test("-webkit-mask: url() ", "background-clip")', '');
 shouldBe('test("background: url() ", "background-clip")', '"initial"');
 
 shouldBe('test("background: url() padding-box", "background-clip")', '"padding-box"');
+shouldBe('test("background: url() text", "background-clip")', '"text"');
+
 shouldBe('test("background: url() padding-box border-box", "background-clip")', '"border-box"');
+shouldBe('test("background: url() padding-box text", "background-clip")', '"text"');
+
 shouldBe('test("background: repeat content-box border-box url() ", "background-clip")', '"border-box"');
+shouldBe('test("background: repeat content-box text url() ", "background-clip")', '"text"');
+
 shouldBe('test("background: padding-box blue content-box url() repeat scroll ", "background-clip")', '"content-box"');
+shouldBe('test("background: padding-box blue text url() repeat scroll ", "background-clip")', '"text"');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

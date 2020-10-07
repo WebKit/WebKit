@@ -1,5 +1,18 @@
 2020-10-07  Tyler Wilcock  <twilco.o@protonmail.com>
 
+        background-clip:var(--a) invalidates -webkit-background-clip:text when --a:text
+        https://bugs.webkit.org/show_bug.cgi?id=199410
+
+        Reviewed by Darin Adler.
+
+        We now parse the `text` value for the `background-clip` property, so
+        update this test to reflect that.
+
+        * fast/css/background-clip-text-expected.txt:
+        * fast/css/background-clip-text.html: Parse `text` value.
+
+2020-10-07  Tyler Wilcock  <twilco.o@protonmail.com>
+
         Using CSS wide keywords as a fallback for variable substitution works inconsistently.
         https://bugs.webkit.org/show_bug.cgi?id=197158
 
