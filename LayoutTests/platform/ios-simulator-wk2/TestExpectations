@@ -142,3 +142,5 @@ webkit.org/b/217184 http/tests/in-app-browser-privacy/top-frame-redirect-to-non-
 webkit.org/b/217184 imported/w3c/web-platform-tests/xhr/event-timeout.any.html [ Failure ]
 
 webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Pass Failure ]
+
+webkit.org/b/217419 [ Release ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
