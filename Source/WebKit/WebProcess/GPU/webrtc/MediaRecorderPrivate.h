@@ -74,6 +74,7 @@ private:
     int64_t m_numberOfFrames { 0 };
     WebCore::MediaRecorderPrivateOptions m_options;
     bool m_hasVideo { false };
+    bool m_isStopped { false };
 };
 
 }

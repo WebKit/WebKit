@@ -1,3 +1,12 @@
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to fire the correct set of events in case MediaRecorder stream has track changes
+        https://bugs.webkit.org/show_bug.cgi?id=217316
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-10-06  Andres Gonzalez  <andresg_22@apple.com>
 
         Presidential Executive Order pages not accessible with Safari.

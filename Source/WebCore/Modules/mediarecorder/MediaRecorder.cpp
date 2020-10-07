@@ -67,6 +67,8 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
     if (result.hasException())
         return result.releaseException();
 
+    result.releaseReturnValue()->stop();
+
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
     return recorder;
@@ -269,7 +271,7 @@ void MediaRecorder::stopRecordingInternal()
         track->removeObserver(*this);
 
     m_state = RecordingState::Inactive;
-    m_private->stopRecording();
+    m_private->stop();
 }
 
 void MediaRecorder::handleTrackChange()
@@ -278,7 +280,13 @@ void MediaRecorder::handleTrackChange()
         if (!m_isActive || state() == RecordingState::Inactive)
             return;
         stopRecordingInternal();
-        dispatchError(Exception { UnknownError, "Track cannot be added to or removed from the MediaStream while recording is happening"_s });
+        dispatchError(Exception { InvalidModificationError, "Track cannot be added to or removed from the MediaStream while recording"_s });
+        if (!m_isActive)
+            return;
+        dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, Blob::create(scriptExecutionContext())));
+        if (!m_isActive)
+            return;
+        dispatchEvent(Event::create(eventNames().stopEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

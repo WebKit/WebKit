@@ -59,8 +59,9 @@ public:
 
     using FetchDataCallback = CompletionHandler<void(RefPtr<SharedBuffer>&&, const String& mimeType)>;
     virtual void fetchData(FetchDataCallback&&) = 0;
-    virtual void stopRecording() = 0;
     virtual const String& mimeType() const = 0;
+
+    void stop();
 
     using StartRecordingCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
     virtual void startRecording(StartRecordingCallback&& callback) { callback(String(mimeType())); }
@@ -76,6 +77,9 @@ protected:
 
     bool shouldMuteAudio() const { return m_shouldMuteAudio; }
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }
+
+private:
+    virtual void stopRecording() = 0;
 
 private:
     bool m_shouldMuteAudio { false };

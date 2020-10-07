@@ -1,3 +1,28 @@
+2020-10-07  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to fire the correct set of events in case MediaRecorder stream has track changes
+        https://bugs.webkit.org/show_bug.cgi?id=217316
+
+        Reviewed by Eric Carlson.
+
+        Introduce MediaRecorderPrivate::stop which makes sure to unregister from media sources before stopping.
+        Update firing events according https://w3c.github.io/mediacapture-record/#dom-mediarecorder-start when track set is changed.
+        Covered by updated test.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::stopRecordingInternal):
+        (WebCore::MediaRecorder::handleTrackChange):
+        * platform/mediarecorder/MediaRecorderPrivate.cpp:
+        (WebCore::MediaRecorderPrivate::stop):
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl):
+        (WebCore::MediaRecorderPrivateAVFImpl::stopRecording):
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::~MediaRecorderPrivateMock):
+        (WebCore::MediaRecorderPrivateMock::stopRecording):
+
 2020-10-06  Andres Gonzalez  <andresg_22@apple.com>
 
         Presidential Executive Order pages not accessible with Safari.

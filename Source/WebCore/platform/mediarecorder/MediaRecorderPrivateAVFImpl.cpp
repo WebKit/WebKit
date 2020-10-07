@@ -75,8 +75,6 @@ MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivat
 
 MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 {
-    setAudioSource(nullptr);
-    setVideoSource(nullptr);
 }
 
 void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer)
@@ -136,8 +134,6 @@ void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const WTF::MediaTime& me
 
 void MediaRecorderPrivateAVFImpl::stopRecording()
 {
-    setAudioSource(nullptr);
-    setVideoSource(nullptr);
     m_writer->stopRecording();
 }
 

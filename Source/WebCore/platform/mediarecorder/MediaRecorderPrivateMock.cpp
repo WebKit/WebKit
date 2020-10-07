@@ -49,14 +49,10 @@ MediaRecorderPrivateMock::MediaRecorderPrivateMock(MediaStreamPrivate& stream)
 
 MediaRecorderPrivateMock::~MediaRecorderPrivateMock()
 {
-    setAudioSource(nullptr);
-    setVideoSource(nullptr);
 }
 
 void MediaRecorderPrivateMock::stopRecording()
 {
-    setAudioSource(nullptr);
-    setVideoSource(nullptr);
 }
 
 void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&)

@@ -66,6 +66,13 @@ void MediaRecorderPrivate::checkTrackState(const MediaStreamTrackPrivate& track)
         m_shouldMuteVideo = track.muted() || !track.enabled();
 }
 
+void MediaRecorderPrivate::stop()
+{
+    setAudioSource(nullptr);
+    setVideoSource(nullptr);
+    stopRecording();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

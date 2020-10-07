@@ -70,18 +70,18 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
             callback(Exception { exception->code, WTFMove(exception->message) });
             return;
         }
-        if (audioTrack)
-            setAudioSource(&audioTrack->source());
-        if (videoTrack)
-            setVideoSource(&videoTrack->source());
+        if (!m_isStopped) {
+            if (audioTrack)
+                setAudioSource(&audioTrack->source());
+            if (videoTrack)
+                setVideoSource(&videoTrack->source());
+        }
         callback(WTFMove(mimeType));
     }, 0);
 }
 
 MediaRecorderPrivate::~MediaRecorderPrivate()
 {
-    setAudioSource(nullptr);
-    setVideoSource(nullptr);
     m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
 }
 
@@ -137,8 +137,7 @@ void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::Shar
 
 void MediaRecorderPrivate::stopRecording()
 {
-    setAudioSource(nullptr);
-    setVideoSource(nullptr);
+    m_isStopped = true;
     m_connection->send(Messages::RemoteMediaRecorder::StopRecording { }, m_identifier);
 }
 
