@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
+#include "ContentType.h"
+#include "HTMLParserIdioms.h"
 #include "MediaRecorderPrivateAVFImpl.h"
 
 namespace WebCore {
@@ -41,6 +43,26 @@ std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorder
     UNUSED_PARAM(options);
     return nullptr;
 #endif
+}
+
+bool MediaRecorderProvider::isSupported(const String& value)
+{
+    if (value.isEmpty())
+        return true;
+
+    ContentType mimeType(value);
+
+    auto containerType = mimeType.containerType();
+    if (!equalLettersIgnoringASCIICase(containerType, "audio/mp4") && !equalLettersIgnoringASCIICase(containerType, "video/mp4"))
+        return false;
+
+    for (auto& item : mimeType.codecs()) {
+        auto codec = StringView(item).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        // FIXME: We should further validate paramters.
+        if (!startsWithLettersIgnoringASCIICase(codec, "avc1") && !startsWithLettersIgnoringASCIICase(codec, "mp4a"))
+            return false;
+    }
+    return true;
 }
 
 }

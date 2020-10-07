@@ -94,7 +94,7 @@ void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
     completionHandler(WTFMove(buffer), mimeType());
 }
 
-const String& MediaRecorderPrivateMock::mimeType()
+const String& MediaRecorderPrivateMock::mimeType() const
 {
     static NeverDestroyed<const String> textPlainMimeType(MAKE_STATIC_STRING_IMPL("text/plain"));
     return textPlainMimeType;
