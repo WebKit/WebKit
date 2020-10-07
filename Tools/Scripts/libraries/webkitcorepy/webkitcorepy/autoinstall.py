@@ -205,9 +205,10 @@ class Package(object):
         if self.is_cached():
             return
 
-        # Make sure that setuptools are installed, since setup.py relies on it
-        if self.name != 'setuptools':
+        # Make sure that setuptools and wheel are installed, since setup.py relies on it
+        if self.name not in ['setuptools', 'wheel']:
             AutoInstall.install('setuptools')
+            AutoInstall.install('wheel')
 
         if not self.archives():
             raise ValueError('No archives for {}-{} found'.format(self.pypi_name, self.version))

@@ -35,7 +35,7 @@ from webkitcorepy.timeout import Timeout
 from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 
-version = Version(0, 4, 12)
+version = Version(0, 4, 13)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -56,5 +56,6 @@ AutoInstall.register(Package('setuptools', Version(44, 1,  1)))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
 AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
+AutoInstall.register(Package('wheel', Version(0, 35, 1)))
 
 name = 'webkitcorepy'
