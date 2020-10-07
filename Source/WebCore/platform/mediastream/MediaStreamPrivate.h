@@ -96,7 +96,7 @@ public:
     void stopProducingData();
     bool isProducingData() const;
 
-    bool hasVideo() const;
+    WEBCORE_EXPORT bool hasVideo() const;
     bool hasAudio() const;
     bool muted() const;
 

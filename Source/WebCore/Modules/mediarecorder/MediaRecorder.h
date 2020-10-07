@@ -53,15 +53,18 @@ public:
     
     ~MediaRecorder();
     
+    static bool isTypeSupported(Document&, const String&);
+
     using Options = MediaRecorderPrivateOptions;
     static ExceptionOr<Ref<MediaRecorder>> create(Document&, Ref<MediaStream>&&, Options&& = { });
-    
+
     using CreatorFunction = ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> (*)(MediaStreamPrivate&, const Options&);
 
     WEBCORE_EXPORT static void setCustomPrivateRecorderCreator(CreatorFunction);
-    
+
     RecordingState state() const { return m_state; }
-    
+    const String& mimeType() const { return m_options.mimeType; }
+
     using RefCounted::ref;
     using RefCounted::deref;
     

@@ -18,4 +18,3 @@ PASS PeerConnection MediaRecorder receives data after onstart, {"video":true,"au
 PASS PeerConnection MediaRecorder gets ondata on stopping recorded tracks {"video":true,"audio":false} with format video/webm;codecs=vp9. 
 PASS PeerConnection MediaRecorder receives data after onstart, {"video":true,"audio":true} with format video/webm;codecs=vp9. 
 PASS PeerConnection MediaRecorder gets ondata on stopping recorded tracks {"video":true,"audio":true} with format video/webm;codecs=vp9. 
-
