@@ -1,3 +1,26 @@
+2020-10-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION: Date/time pickers are not displayed in UIWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=217341
+        <rdar://problem/66881739>
+
+        Reviewed by Wenson Hsieh.
+
+        Added regression tests to ensure this preference is not accidently
+        modified in the future.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm: Added.
+        (-[DateTimeInputsTestsLoadingDelegate webViewDidFinishLoad:]):
+        (runTestWithInputType):
+
+        Note that [UIDatePicker setDatePickerMode:] had to be swizzled to an
+        empty implementation as the UIKit version on the bots attempts to
+        create a QoS interval upon setting the initially selected row in
+        a UITableView when the date picker is presented. This fails because
+        TestWebKitAPI isn't actually an app. To avoid an exception, the method
+        is swizzled out.
+
 2020-10-06  Devin Rousso  <drousso@apple.com>
 
         Move platform logic for CSS `hover` and `pointer` media queries outside of WebCore

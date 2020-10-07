@@ -1,3 +1,16 @@
+2020-10-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION: Date/time pickers are not displayed in UIWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=217341
+        <rdar://problem/66881739>
+
+        Reviewed by Wenson Hsieh.
+
+        Date/time inputs were incorrectly disabled by default on
+        PLATFORM(IOS_FAMILY) in WebPreferencesInternal.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2020-10-06  Simon Fraser  <simon.fraser@apple.com>
 
         Redundant rendering updates can be scheduled from inside Page::updateRendering()
