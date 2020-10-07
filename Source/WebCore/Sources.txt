@@ -2681,6 +2681,7 @@ JSAudioListener.cpp
 JSAudioNode.cpp
 JSAudioNodeOptions.cpp
 JSAudioParam.cpp
+JSAudioParamDescriptor.cpp
 JSAudioParamMap.cpp
 JSAudioProcessingEvent.cpp
 JSAudioProcessingEventInit.cpp
@@ -2700,6 +2701,7 @@ JSAuthenticatorAssertionResponse.cpp
 JSAuthenticatorAttestationResponse.cpp
 JSAuthenticatorResponse.cpp
 JSAuthenticatorTransport.cpp
+JSAutomationRate.cpp
 JSBarProp.cpp
 JSBaseAudioContext.cpp
 JSBasicCredential.cpp

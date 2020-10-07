@@ -28,14 +28,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    ImplementedAs=AutomationRate
-] enum AutomationRate {
-    "a-rate",
-    "k-rate"
-};
-
-[
-    Conditional=WEB_AUDIO,
     Exposed=Window
 ] interface AudioParam {
     [ImplementedAs=valueForBindings] attribute float value;

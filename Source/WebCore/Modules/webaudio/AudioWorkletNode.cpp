@@ -33,6 +33,7 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "AudioParam.h"
 #include "AudioParamMap.h"
 #include "AudioWorkletNodeOptions.h"
 #include "BaseAudioContext.h"
@@ -59,7 +60,10 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(BaseAudioContext& co
         }
     }
 
-    // FIXME: Throw an InvalidStateError if |name| is already present in the context's node name to parameter descriptor map.
+    auto it = context.parameterDescriptorMap().find(name);
+    if (it == context.parameterDescriptorMap().end())
+        return Exception { InvalidStateError, "No ScriptProcessor was registered with this name"_s };
+    auto& parameterDescriptors = it->value;
 
     if (context.isClosed() || !context.scriptExecutionContext())
         return Exception { InvalidStateError, "Context is closed"_s };
@@ -67,11 +71,24 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(BaseAudioContext& co
     auto messageChannel = MessageChannel::create(*context.scriptExecutionContext());
     // FIXME: Pass messageChannel's port2 to the AudioWorkletProcessor.
 
+    auto parameterData = WTFMove(options.parameterData);
     auto node = adoptRef(*new AudioWorkletNode(context, WTFMove(name), WTFMove(options), *messageChannel->port1()));
 
     auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });
     if (result.hasException())
         return result.releaseException();
+
+    for (auto& descriptor : parameterDescriptors) {
+        auto parameter = AudioParam::create(context, descriptor.name, descriptor.defaultValue, descriptor.minValue, descriptor.maxValue, descriptor.automationRate);
+        node->parameters().add(descriptor.name, WTFMove(parameter));
+    }
+
+    if (parameterData) {
+        for (auto& parameter : *parameterData) {
+            if (auto* audioParam = node->parameters().map().get(parameter.key))
+                audioParam->setValue(parameter.value);
+        }
+    }
 
     return node;
 }

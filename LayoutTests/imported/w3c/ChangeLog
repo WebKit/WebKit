@@ -1,3 +1,19 @@
+2020-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Add implementation for AudioWorkletGlobalScope.registerProcessor()
+        https://bugs.webkit.org/show_bug.cgi?id=217405
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline WPT tests as we are now passing more checks.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam-iterable.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-construction.https-expected.txt:
+
 2020-10-06  Alex Christensen  <achristensen@webkit.org>
 
         FileReader should transition to readyState DONE after last onprogress event

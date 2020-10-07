@@ -31,7 +31,12 @@
 #if ENABLE(WEB_AUDIO)
 #include "AudioWorkletGlobalScope.h"
 
-#include "AudioWorkletProcessorConstructor.h"
+#include "AudioParamDescriptor.h"
+#include "AudioWorklet.h"
+#include "AudioWorkletMessagingProxy.h"
+#include "JSAudioWorkletProcessorConstructor.h"
+#include "JSDOMConvert.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,10 +53,60 @@ AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, con
 
 AudioWorkletGlobalScope::~AudioWorkletGlobalScope() = default;
 
-void AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<AudioWorkletProcessorConstructor>&&)
+// https://www.w3.org/TR/webaudio/#dom-audioworkletglobalscope-registerprocessor
+ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&& processorContructor)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(name);
+    ASSERT(!isMainThread());
+
+    if (name.isEmpty())
+        return Exception { NotSupportedError, "Name cannot be the empty string"_s };
+
+    if (m_processorConstructorMap.contains(name))
+        return Exception { NotSupportedError, "A processor was already registered with this name"_s };
+
+    JSC::JSObject* jsConstructor = processorContructor->callbackData()->callback();
+    auto* globalObject = jsConstructor->globalObject();
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!jsConstructor->isConstructor(vm))
+        return Exception { TypeError, "Class definitition passed to registerProcessor() is not a constructor"_s };
+
+    auto prototype = jsConstructor->getPrototype(vm, globalObject);
+    RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+
+    if (!prototype.isObject())
+        return Exception { TypeError, "Class definitition passed to registerProcessor() has invalid prototype"_s };
+
+    auto parameterDescriptorsValue = jsConstructor->get(globalObject, JSC::Identifier::fromString(vm, "parameterDescriptors"));
+    RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+
+    Vector<AudioParamDescriptor> parameterDescriptors;
+    if (!parameterDescriptorsValue.isUndefined()) {
+        parameterDescriptors = convert<IDLSequence<IDLDictionary<AudioParamDescriptor>>>(*globalObject, parameterDescriptorsValue);
+        RETURN_IF_EXCEPTION(scope, Exception { TypeError });
+        UNUSED_PARAM(parameterDescriptors);
+        HashSet<String> paramNames;
+        for (auto& descriptor : parameterDescriptors) {
+            auto addResult = paramNames.add(descriptor.name);
+            if (!addResult.isNewEntry)
+                return Exception { NotSupportedError, makeString("parameterDescriptors contain duplicate AudioParam name: ", name) };
+            if (descriptor.defaultValue < descriptor.minValue)
+                return Exception { InvalidStateError, makeString("AudioParamDescriptor with name '", name, "' has a defaultValue that is less than the minValue") };
+            if (descriptor.defaultValue > descriptor.maxValue)
+                return Exception { InvalidStateError, makeString("AudioParamDescriptor with name '", name, "' has a defaultValue that is greater than the maxValue") };
+        }
+    }
+
+    m_processorConstructorMap.add(name, WTFMove(processorContructor));
+
+    thread().messagingProxy().postTaskToAudioWorklet([name = name.isolatedCopy(), parameterDescriptors = crossThreadCopy(parameterDescriptors)](AudioWorklet& worklet) mutable {
+        ASSERT(isMainThread());
+        if (auto* audioContext = worklet.audioContext())
+            audioContext->addAudioParamDescriptors(name, WTFMove(parameterDescriptors));
+    });
+
+    return { };
 }
 
 void AudioWorkletGlobalScope::prepareForTermination()

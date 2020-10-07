@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-class AudioWorkletProcessorConstructor;
 class AudioWorkletThread;
+class JSAudioWorkletProcessorConstructor;
 
 struct WorkletParameters;
 
@@ -48,7 +48,7 @@ public:
     }
     ~AudioWorkletGlobalScope();
 
-    void registerProcessor(String&& name, Ref<AudioWorkletProcessorConstructor>&&);
+    ExceptionOr<void> registerProcessor(String&& name, Ref<JSAudioWorkletProcessorConstructor>&&);
 
     void setCurrentFrame(float currentFrame) { m_currentFrame = currentFrame; }
     size_t currentFrame() const { return m_currentFrame; }
@@ -71,6 +71,7 @@ private:
     Ref<AudioWorkletThread> m_thread;
     size_t m_currentFrame { 0 };
     const float m_sampleRate;
+    HashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
 };
 
 } // namespace WebCore

@@ -1,14 +1,41 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'nodeParam.setValueAtTime')
-
-Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'nodeParam.setValueAtTime')
 
 PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "Initializing AudioWorklet and Context"
-TIMEOUT Executing "Verify Size of AudioParam Arrays" Test timed out
-NOTRUN Audit report
+PASS Executing "Verify Size of AudioParam Arrays"
+PASS Audit report
 PASS > [Initializing AudioWorklet and Context]
 PASS   Creating offline context for testing did not throw an exception.
 PASS   Creating test worklet resolved correctly.
 PASS < [Initializing AudioWorklet and Context] All assertions passed. (total 2 assertions)
 PASS > [Verify Size of AudioParam Arrays]
+FAIL X Render quantum 0: array size: Expected 1 for all values but found 128 unexpected values:
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 124 more errors. assert_true: expected true got false
+FAIL X Render quantum 1: array size: Expected 1 for all values but found 128 unexpected values:
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 124 more errors. assert_true: expected true got false
+FAIL X Render quantum 2-3: array size: Expected 128 for all values but found 256 unexpected values:
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 252 more errors. assert_true: expected true got false
+FAIL X Remaining renders: array size: Expected 1 for all values but found 768 unexpected values:
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 764 more errors. assert_true: expected true got false
+FAIL < [Verify Size of AudioParam Arrays] 4 out of 4 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

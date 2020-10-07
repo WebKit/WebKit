@@ -188,6 +188,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNodeOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioNodeOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParamDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParamDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParamMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParamMap.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEvent.cpp
@@ -230,6 +232,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorResponse.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorResponse.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorTransport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAuthenticatorTransport.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAutomationRate.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAutomationRate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarProp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarProp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBaseAudioContext.cpp

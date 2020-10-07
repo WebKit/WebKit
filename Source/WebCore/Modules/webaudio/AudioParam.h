@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioParamTimeline.h"
 #include "AudioSummingJunction.h"
+#include "AutomationRate.h"
 #include "WebKitAudioContext.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <sys/types.h>
@@ -42,7 +43,6 @@ namespace WebCore {
 
 class AudioNodeOutput;
 
-enum class AutomationRate : bool { ARate, KRate };
 enum class AutomationRateMode : bool { Fixed, Variable };
 
 class AudioParam final

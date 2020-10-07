@@ -39,6 +39,7 @@
 #include "AudioListener.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioParamDescriptor.h"
 #include "AudioSession.h"
 #include "AudioWorklet.h"
 #include "BiquadFilterNode.h"
@@ -1337,6 +1338,12 @@ PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
         return *m_cachedPeriodicWaveSine;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void BaseAudioContext::addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&& descriptors)
+{
+    ASSERT(!m_parameterDescriptorMap.contains(processorName));
+    m_parameterDescriptorMap.add(processorName, WTFMove(descriptors));
 }
 
 #if !RELEASE_LOG_DISABLED

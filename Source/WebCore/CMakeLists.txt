@@ -475,6 +475,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioNode.idl
     Modules/webaudio/AudioNodeOptions.idl
     Modules/webaudio/AudioParam.idl
+    Modules/webaudio/AudioParamDescriptor.idl
     Modules/webaudio/AudioParamMap.idl
     Modules/webaudio/AudioProcessingEvent.idl
     Modules/webaudio/AudioProcessingEventInit.idl
@@ -486,6 +487,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioWorkletNodeOptions.idl
     Modules/webaudio/AudioWorkletProcessor.idl
     Modules/webaudio/AudioWorkletProcessorConstructor.idl
+    Modules/webaudio/AutomationRate.idl
     Modules/webaudio/BaseAudioContext.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/BiquadFilterOptions.idl

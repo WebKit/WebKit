@@ -52,6 +52,8 @@ public:
 
     AudioWorkletThread& workletThread() { return m_workletThread.get(); }
 
+    void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
+
 private:
     explicit AudioWorkletMessagingProxy(AudioWorklet&);
 
@@ -62,6 +64,7 @@ private:
 
     bool isAudioWorkletMessagingProxy() const final { return true; }
 
+    WeakPtr<AudioWorklet> m_worklet;
     Ref<Document> m_document;
     Ref<AudioWorkletThread> m_workletThread;
 };

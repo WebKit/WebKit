@@ -1,3 +1,58 @@
+2020-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Add implementation for AudioWorkletGlobalScope.registerProcessor()
+        https://bugs.webkit.org/show_bug.cgi?id=217405
+
+        Reviewed by Geoff Garen.
+
+        Add implementation for AudioWorkletGlobalScope.registerProcessor() that matches very closely
+        the specification at:
+        - https://www.w3.org/TR/webaudio/#dom-audioworkletglobalscope-registerprocessor
+
+        Also update the AudioWorkletNode constructor implementation as per:
+        - https://www.w3.org/TR/webaudio/#AudioWorkletNode-constructors
+
+        Now that the AudioWorklet is able to register a processor and AudioParamDescriptors, the
+        AudioWorkletNode constructor is able to make sure that a processor with the given name was
+        indeed registered. We are also able to construct the AudioParam objects based on the
+        AudioParamDescriptors provided when registering the processor.
+
+        Note that even though it is now possible to register an AudioWorkletProcessor, it is still
+        not used to process the audio. An AudioWorkletNode currently only outputs silence. This will
+        be addresssed in a future patch.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/AudioParamDescriptor.h: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        (WebCore::AudioParamDescriptor::isolatedCopy const):
+        * Modules/webaudio/AudioParamDescriptor.idl: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::registerProcessor):
+        * Modules/webaudio/AudioWorkletGlobalScope.h:
+        * Modules/webaudio/AudioWorkletGlobalScope.idl:
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp:
+        (WebCore::AudioWorkletMessagingProxy::AudioWorkletMessagingProxy):
+        (WebCore::AudioWorkletMessagingProxy::postTaskToAudioWorklet):
+        * Modules/webaudio/AudioWorkletMessagingProxy.h:
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::create):
+        * Modules/webaudio/AudioWorkletThread.h:
+        (WebCore::AudioWorkletThread::messagingProxy):
+        * Modules/webaudio/AutomationRate.h: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        * Modules/webaudio/AutomationRate.idl: Copied from Source/WebCore/Modules/webaudio/AudioWorkletGlobalScope.idl.
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::addAudioParamDescriptors):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::parameterDescriptorMap const):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-10-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingContext::Geometry::contentHeightForFormattingContextRoot should take a const ContainerBox&

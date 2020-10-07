@@ -1,7 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED.
-FAIL Executing "Query |sampleRate| upon AudioWorkletGlobalScope construction" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'frequencyParam.maxValue')"
+PASS Executing "Query |sampleRate| upon AudioWorkletGlobalScope construction"
 PASS Audit report
 PASS > [Query |sampleRate| upon AudioWorkletGlobalScope construction]
+PASS   frequencyParam.maxValue is equal to 24000.
+PASS < [Query |sampleRate| upon AudioWorkletGlobalScope construction] All assertions passed. (total 1 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
 

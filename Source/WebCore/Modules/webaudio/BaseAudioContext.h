@@ -88,6 +88,8 @@ class SecurityOrigin;
 class StereoPannerNode;
 class WaveShaperNode;
 
+struct AudioParamDescriptor;
+
 template<typename IDLType> class DOMPromiseDeferred;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
@@ -321,6 +323,9 @@ public:
 
     PeriodicWave& periodicWave(OscillatorType);
 
+    void addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&&);
+    const HashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
+
 protected:
     explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
     BaseAudioContext(Document&, unsigned numberOfChannels, RefPtr<AudioBuffer>&& renderTarget);
@@ -468,6 +473,8 @@ private:
     RefPtr<PendingActivity<BaseAudioContext>> m_pendingActivity;
 
     AudioIOPosition m_outputPosition;
+
+    HashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
 
     // [[suspended by user]] flag in the specification:
     // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot

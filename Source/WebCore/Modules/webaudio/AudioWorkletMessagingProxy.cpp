@@ -56,7 +56,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
 }
 
 AudioWorkletMessagingProxy::AudioWorkletMessagingProxy(AudioWorklet& worklet)
-    : m_document(*worklet.document())
+    : m_worklet(makeWeakPtr(worklet))
+    , m_document(*worklet.document())
     , m_workletThread(AudioWorkletThread::create(*this, generateWorkletParameters(worklet)))
 {
     ASSERT(isMainThread());
@@ -89,6 +90,14 @@ void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&&
 bool AudioWorkletMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
     return postTaskForModeToWorkletGlobalScope(WTFMove(task), mode);
+}
+
+void AudioWorkletMessagingProxy::postTaskToAudioWorklet(Function<void(AudioWorklet&)>&& task)
+{
+    m_document->postTask([this, protectedThis = makeRef(*this), task = WTFMove(task)](ScriptExecutionContext&) {
+        if (m_worklet)
+            task(*m_worklet);
+    });
 }
 
 } // namespace WebCore
